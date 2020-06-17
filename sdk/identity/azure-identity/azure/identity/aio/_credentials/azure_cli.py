@@ -62,7 +62,7 @@ async def _run_command(command):
     if sys.platform.startswith("win"):
         args = ("cmd", "/c " + command)
     else:
-        args = ("/bin/sh", "-c " + command)
+        args = ("/bin/sh", "-c", command)
 
     working_directory = get_safe_working_dir()
 

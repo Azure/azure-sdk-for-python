@@ -467,7 +467,7 @@ class LROBasePolling(PollingMethod):
             raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
 
         import pickle
-        initial_response = pickle.loads(base64.b64decode(continuation_token))
+        initial_response = pickle.loads(base64.b64decode(continuation_token))   # nosec
         # Restore the transport in the context
         initial_response.context.transport = client._pipeline._transport  # pylint: disable=protected-access
         return client, initial_response, deserialization_callback
