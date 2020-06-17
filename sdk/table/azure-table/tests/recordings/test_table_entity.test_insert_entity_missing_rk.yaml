@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"TableName": "uttabled41f1395"}'
+    body: '{"TableName": "uttabled4231397"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -26,7 +26,7 @@ interactions:
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttabled41f1395"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttabled4231397"}'
     headers:
       cache-control:
       - no-cache
@@ -35,7 +35,7 @@ interactions:
       date:
       - Wed, 17 Jun 2020 20:30:38 GMT
       location:
-      - https://storagename.table.core.windows.net/Tables('uttabled41f1395')
+      - https://storagename.table.core.windows.net/Tables('uttabled4231397')
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -59,15 +59,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 17 Jun 2020 20:30:38 GMT
+      - Wed, 17 Jun 2020 20:30:39 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 17 Jun 2020 20:30:38 GMT
+      - Wed, 17 Jun 2020 20:30:39 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('uttabled41f1395')
+    uri: https://storagename.table.core.windows.net/Tables('uttabled4231397')
   response:
     body:
       string: ''
@@ -77,7 +77,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 17 Jun 2020 20:30:38 GMT
+      - Wed, 17 Jun 2020 20:30:39 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

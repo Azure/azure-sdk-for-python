@@ -182,7 +182,11 @@ class TableClient(StorageAccountHostsMixin):
             **kwargs
     ):
         if table_entity_properties:
-            table_entity_properties = _add_entity_properties(table_entity_properties)
+
+            if "PartitionKey" in table_entity_properties and "RowKey" in table_entity_properties:
+                table_entity_properties = _add_entity_properties(table_entity_properties)
+            else:
+                raise ValueError
         try:
 
             inserted_entity = self._client.table.insert_entity(
@@ -256,12 +260,12 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def query_entities_with_partition_and_row_key(self, partition_key, row_key, query_options=None):
         try:
+
             entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
                                                                                   partition_key=partition_key,
                                                                                   row_key=row_key,
                                                                                   query_options=query_options)
-            entity_properties = entity.additional_properties
-            properties = _convert_entity_to_properties(entity_properties)
+            properties = _convert_to_entity(entity.additional_properties)
             return Entity(properties)
         except ResourceExistsError as error:
             process_storage_error(error)

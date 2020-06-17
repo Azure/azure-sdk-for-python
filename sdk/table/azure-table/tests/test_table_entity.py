@@ -384,7 +384,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_with_large_int32_value_throws(self, resource_group, location, storage_account,
                                                          storage_account_key):
@@ -398,16 +398,16 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             with self.assertRaisesRegex(TypeError,
                                         '{0} is too large to be cast to type Edm.Int32.'.format(2 ** 31)):
-                self.table.create_item(dict32)
+                self.table.insert_entity(table_entity_properties=dict32)
 
             dict32['large'] = EntityProperty(EdmType.INT32, -(2 ** 31 + 1))
             with self.assertRaisesRegex(TypeError,
                                         '{0} is too large to be cast to type Edm.Int32.'.format(-(2 ** 31 + 1))):
-                self.table.create_item(dict32)
+                self.table.insert_entity(table_entity_properties=dict32)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_with_large_int64_value_throws(self, resource_group, location, storage_account,
                                                          storage_account_key):
@@ -421,16 +421,16 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             with self.assertRaisesRegex(TypeError,
                                         '{0} is too large to be cast to type Edm.Int64.'.format(2 ** 63)):
-                self.table.create_item(dict64)
+                self.table.insert_entity(table_entity_properties=dict64)
 
             dict64['large'] = EntityProperty(EdmType.INT64, -(2 ** 63 + 1))
             with self.assertRaisesRegex(TypeError,
                                         '{0} is too large to be cast to type Edm.Int64.'.format(-(2 ** 63 + 1))):
-                self.table.create_item(dict64)
+                self.table.insert_entity(table_entity_properties=dict64)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_missing_pk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -446,7 +446,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_empty_string_pk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -457,16 +457,16 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             if 'cosmos' in self.table.url:
                 with self.assertRaises(HttpResponseError):
-                    self.table.create_item(entity)
+                    self.table.insert_entity(table_entity_properties=entity)
             else:
-                resp = self.table.create_item(entity)
+                resp = self.table.insert_entity(table_entity_properties=entity)
 
                 # Assert
-                self.assertIsNone(resp)
+              #  self.assertIsNone(resp)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_missing_rk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -476,13 +476,13 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             with self.assertRaises(ValueError):
-                resp = self.table.create_item(entity)
+                resp = self.table.insert_entity(table_entity_properties=entity)
 
             # Assert
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_empty_string_rk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -493,16 +493,16 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             if 'cosmos' in self.table.url:
                 with self.assertRaises(HttpResponseError):
-                    self.table.create_item(entity)
+                    self.table.insert_entity(table_entity_properties=entity)
             else:
-                resp = self.table.create_item(entity)
+                resp = self.table.insert_entity(table_entity_properties=entity)
 
                 # Assert
-                self.assertIsNone(resp)
+              #  self.assertIsNone(resp)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_too_many_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -516,13 +516,13 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             with self.assertRaises(HttpResponseError):
-                resp = self.table.create_item(entity)
+                resp = self.table.insert_entity(table_entity_properties=entity)
 
             # Assert
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_property_name_too_long(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -535,13 +535,13 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             with self.assertRaises(HttpResponseError):
-                resp = self.table.create_item(entity)
+                resp = self.table.insert_entity(table_entity_properties=entity)
 
             # Assert
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_get_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -550,12 +550,12 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.read_item(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
+            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
 
             # Assert
-            self.assertEqual(resp.value[0]['PartitionKey'], entity['PartitionKey'])
-            self.assertEqual(resp.value[0]['RowKey'], entity['RowKey'])
-            self._assert_default_entity(resp.value[0])
+            self.assertEqual(resp['PartitionKey'], entity['PartitionKey'])
+            self.assertEqual(resp['RowKey'], entity['RowKey'])
+            self._assert_default_entity(resp)
         finally:
             self._tear_down()
 
