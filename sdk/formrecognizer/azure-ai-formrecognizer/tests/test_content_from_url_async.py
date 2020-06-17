@@ -22,6 +22,14 @@ GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerCl
 class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_encoded_url(self, client):
+        try:
+            poller = await client.begin_recognize_content_from_url("https://fakeuri.com/blank%20space")
+        except HttpResponseError as e:
+            self.assertIn("https://fakeuri.com/blank%20space", e.response.request.body)
+
+    @GlobalFormRecognizerAccountPreparer()
     async def test_content_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
