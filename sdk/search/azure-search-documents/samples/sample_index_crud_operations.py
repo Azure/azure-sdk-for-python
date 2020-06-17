@@ -87,13 +87,13 @@ def update_index():
     )
     scoring_profiles = []
     scoring_profiles.append(scoring_profile)
-    index = Index(
+    index = SearchIndex(
         name=name,
         fields=fields,
         scoring_profiles=scoring_profiles,
         cors_options=cors_options)
 
-    result = client.create_or_update_index(index_name=index.name, index=index)
+    result = client.create_or_update_index(index=index)
     # [END update_index]
 
 def delete_index():
