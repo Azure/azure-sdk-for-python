@@ -7,7 +7,7 @@ For a more complete view of Azure libraries, see the [Github repo](https://githu
 
 # Usage
 
-For code examples, see [Resource Management](https://docs.microsoft.com/python/api/overview/azure/resources)
+For code examples, see [Resource Management](https://docs.microsoft.com/python/api/overview/azure/resources?view=azure-python-preview)
 on docs.microsoft.com.
 
 
