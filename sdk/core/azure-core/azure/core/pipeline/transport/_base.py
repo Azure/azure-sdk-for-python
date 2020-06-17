@@ -114,7 +114,7 @@ def _case_insensitive_dict(*args, **kwargs):
 def _format_url_section(template, **kwargs):
     """String format the template with the kwargs, auto-skip sections of the template that are NOT in the kwargs.
 
-    By default in Python, "format" will raise a KeyError if a template element if not found. Here the section between
+    By default in Python, "format" will raise a KeyError if a template element is not found. Here the section between
     the slashes will be removed from the template instead.
 
     This is used for API like Storage, where when Swagger has template section not defined as parameter.
@@ -122,7 +122,7 @@ def _format_url_section(template, **kwargs):
     :param str template: a string template to fill
     :param dict[str,str] kwargs: Template values as string
     :rtype: str
-    :returns: Template
+    :returns: Template completed
     """
     components = template.split("/")
     while components:
