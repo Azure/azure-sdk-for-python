@@ -3,53 +3,31 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
+from enum import Enum
 
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import (
-    ContentDecodePolicy,
-    UserAgentPolicy,
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
-)
 from azure.core.pipeline.transport import RequestsTransport
 
-from .multi_api import load_generated_api
-from .challenge_auth_policy import ChallengeAuthPolicy
+from . import ChallengeAuthPolicy
+from .._generated import KeyVaultClient as _KeyVaultClient
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
+    # pylint:disable=unused-import,ungrouped-imports
     from typing import Any
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.configuration import Configuration
 
+class ApiVersion(str, Enum):
+    """Key Vault API versions supported by this package"""
 
-def _get_policies(config, **kwargs):
-    logging_policy = HttpLoggingPolicy(**kwargs)
-    logging_policy.allowed_header_names.add("x-ms-keyvault-network-info")
-
-    return [
-        config.headers_policy,
-        UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs),
-        config.proxy_policy,
-        ContentDecodePolicy(),
-        config.redirect_policy,
-        config.retry_policy,
-        config.authentication_policy,
-        config.logging_policy,
-        DistributedTracingPolicy(**kwargs),
-        logging_policy,
-    ]
+    #: this is the default version
+    V7_1_preview = "7.1-preview"
+    V7_0 = "7.0"
+    V2016_10_01 = "2016-10-01"
 
 
-def _build_pipeline(config, transport=None, **kwargs):
-    # type: (Configuration, HttpTransport, **Any) -> Pipeline
-    policies = _get_policies(config)
-    if transport is None:
-        transport = RequestsTransport(**kwargs)
-
-    return Pipeline(transport, policies=policies)
+DEFAULT_VERSION = ApiVersion.V7_1_preview
 
 
 class KeyVaultClientBase(object):
@@ -70,18 +48,26 @@ class KeyVaultClientBase(object):
             self._client = client
             return
 
-        api_version = kwargs.pop("api_version", None)
-        generated = load_generated_api(api_version)
+        api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
         pipeline = kwargs.pop("pipeline", None)
-        if not pipeline:
-            config = generated.config_cls(credential, **kwargs)
-            config.authentication_policy = ChallengeAuthPolicy(credential)
-            pipeline = _build_pipeline(config, **kwargs)
+        transport = kwargs.pop("transport", RequestsTransport(**kwargs))
+        try:
+            self._client = _KeyVaultClient(
+                api_version=api_version,
+                pipeline=pipeline,
+                transport=transport,
+                authentication_policy=ChallengeAuthPolicy(credential),
+                sdk_moniker=USER_AGENT,
+                **kwargs
+            )
+            self._models = _KeyVaultClient.models(api_version=api_version)
+        except NotImplementedError:
+            raise NotImplementedError(
+                "This package doesn't support API version '{}'. ".format(api_version)
+                + "Supported versions: {}".format(", ".join(v.value for v in ApiVersion))
+            )
 
-        # generated clients don't use their credentials parameter
-        self._client = generated.client_cls(credentials="", pipeline=pipeline)
-        self._models = generated.models
 
     @property
     def vault_url(self):
@@ -103,4 +89,4 @@ class KeyVaultClientBase(object):
 
         Calling this method is unnecessary when using the client as a context manager.
         """
-        self._client.__exit__()
+        self._client.close()
