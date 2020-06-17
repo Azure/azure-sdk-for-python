@@ -1,6 +1,6 @@
-# Release History
+# Change Log azure-table
 
-## 12.0.0b (Unreleased)
+## 12.0.0b1 (Unreleased)
 
-- Not Finished
+
 
