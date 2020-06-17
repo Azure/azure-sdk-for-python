@@ -255,6 +255,59 @@ class TablePropertiesPaged(PageIterator):
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 
+class TableEntityPropertiesPaged(PageIterator):
+    """An iterable of TableEntity properties.
+
+    :ivar str service_endpoint: The service URL.
+    :ivar str prefix: A queue name prefix being used to filter the list.
+    :ivar str marker: The continuation token of the current page of results.
+    :ivar int results_per_page: The maximum number of results retrieved per API call.
+    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str location_mode: The location mode being used to list results. The available
+        options include "primary" and "secondary".
+    :param callable command: Function to retrieve the next page of items.
+    :param str prefix: Filters the results to return only queues whose names
+        begin with the specified prefix.
+    :param int results_per_page: The maximum number of queue names to retrieve per
+        call.
+    :param str continuation_token: An opaque continuation token.
+    """
+
+    def __init__(self, command, results_per_page=None, row_key=None, partition_key=None, table=None,
+                 continuation_token=None):
+        super(TableEntityPropertiesPaged, self).__init__(
+            self._get_next_cb,
+            self._extract_data_cb,
+            continuation_token=continuation_token or ""
+        )
+        self._command = command
+        self._headers = None
+        self.results_per_page = results_per_page
+        self.row_key = row_key
+        self.partition_key = partition_key
+        self.table = table
+        self.location_mode = None
+
+    def _get_next_cb(self, continuation_token):
+        try:
+            return self._command(
+                query_options=self.results_per_page or None,
+                next_row_key=self.row_key or None,
+                next_partition_key=self.partition_key or None,
+                table=self.table,
+                cls=return_context_and_deserialized,
+                use_location=self.location_mode
+            )
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response, self._headers = get_next_return
+        props_list = [t for t in self._response.value]
+        return self._headers['x-ms-continuation-NextPartitionKey'] or None, self._headers[
+            'x-ms-continuation-NextRowKey'] or None, props_list
+
+
 class TableSasPermissions(object):
 
     def __init__(self, query=False, add=False, update=False, delete=False, _str=None):
@@ -288,6 +341,7 @@ class TableSasPermissions(object):
                 ('a' if self.add else '') +
                 ('u' if self.update else '') +
                 ('d' if self.delete else ''))
+
 
 TableSasPermissions.QUERY = TableSasPermissions(query=True)
 TableSasPermissions.ADD = TableSasPermissions(add=True)
@@ -332,7 +386,7 @@ class Entity(dict):
         try:
             return self[name]
         except KeyError:
-             raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
+            raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
 
     __setattr__ = dict.__setitem__
 
@@ -413,7 +467,6 @@ class EdmType(object):
 
 class TableServices(Services):
     def __init__(self):
-
         """
         :param bool table:
             Access to the `.TableService`
@@ -426,3 +479,17 @@ class TableServices(Services):
     def __str__(self):
         return 't'
 
+class TablePayloadFormat(object):
+    '''
+    Specifies the accepted content type of the response payload. More information
+    can be found here: https://msdn.microsoft.com/en-us/library/azure/dn535600.aspx
+    '''
+
+    JSON_NO_METADATA = 'application/json;odata=nometadata'
+    '''Returns no type information for the entity properties.'''
+
+    JSON_MINIMAL_METADATA = 'application/json;odata=minimalmetadata'
+    '''Returns minimal type information for the entity properties.'''
+
+    JSON_FULL_METADATA = 'application/json;odata=fullmetadata'
+    '''Returns minimal type information for the entity properties plus some extra odata properties.'''

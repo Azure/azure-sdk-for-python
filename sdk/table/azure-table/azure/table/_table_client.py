@@ -1,16 +1,23 @@
+import functools
+from datetime import datetime
 from urllib.parse import urlparse, quote
 
-import six
+import kwargs
+from azure.core.paging import ItemPaged
 from azure.table._deserialize import deserialize_table_creation
 from azure.table._generated import AzureTable
 from azure.table._generated.models import TableProperties, AccessPolicy, SignedIdentifier
 from azure.table._message_encoding import NoEncodePolicy, NoDecodePolicy
+from azure.table._serialization import _to_entity_datetime, _PYTHON_TO_ENTITY_CONVERSIONS, _EDM_TO_ENTITY_CONVERSIONS, \
+    _add_entity_properties, _convert_entity_to_properties
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 from azure.table._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure.table._shared.response_handlers import process_storage_error
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.table._version import VERSION
 from azure.core.tracing.decorator import distributed_trace
+from ._models import TablePropertiesPaged, TableEntityPropertiesPaged, Entity, EdmType
+from ._generated.models import QueryOptions
 
 from ._shared.response_handlers import return_headers_and_deserialized
 
@@ -51,14 +58,7 @@ class TableClient(StorageAccountHostsMixin):
         """Format the endpoint URL according to the current location
         mode hostname.
         """
-        table_name = self.table_name
-        if isinstance(table_name, six.text_type):
-            table_name = table_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(table_name),
-            self._query_str)
+        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(
@@ -202,51 +202,92 @@ class TableClient(StorageAccountHostsMixin):
             self,
             timeout=None,
             request_id_parameter=None,
-            if_match=None,
+            response_hook=None,
             table_entity_properties=None,
-            query_options=None
+            query_options=None,
+            **kwargs
     ):
-
+        # if_match is what makes it a upsert
         try:
             inserted_entity = self._client.table.insert_entity(
                 table=self.table_name,
-                if_match=if_match,
                 table_entity_properties=table_entity_properties,
-                query_options=query_options
+                query_options=query_options,
+                **kwargs
             )
-            return inserted_entity
-        except ResourceNotFoundError as error:
+        # return inserted_entity
+        except ValueError as error:
             process_storage_error(error)
 
     @distributed_trace
     def update_entity(
             self,
-            partition_key,
-            row_key,
+            partition_key=None,
+            row_key=None,
             timeout=None,
             request_id_parameter=None,
             if_match=None,
+            response_hook=None,
             table_entity_properties=None,
-            query_options=None
+            query_options=None,
+            **kwargs
     ):
         if table_entity_properties:
             partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
             row_key = table_entity_properties['RowKey'] if row_key is None else row_key
+            table_entity_properties = _add_entity_properties(table_entity_properties)
 
         try:
             updated_entity = self._client.table.update_entity(
-                table_name=self.table_name,
+                table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match,
-                table_entity_properties=table_entity_properties)
-            return updated_entity
+                table_entity_properties=table_entity_properties,
+                **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def merge_entity(self):
-        response = self.table_name
+    def merge_entity(
+            self,
+            partition_key,  # type: str
+            row_key,  # type: str
+            timeout=None,  # type: Optional[int]
+            request_id_parameter=None,  # type: Optional[str]
+            if_match=None,  # type: Optional[str]
+            table_entity_properties=None,  # type: Optional[Dict[str, object]]
+            query_options=None,  # type: Optional["models.QueryOptions"]
+            **kwargs  # type: Any
+    ):
+        try:
+            merged_entity = self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
+                                                            row_key=row_key)
+            return merged_entity
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace
+    def query_entities(self, partition_key, row_key, query_options=None):
+        command = functools.partial(
+            self._client.table.query_entities_with_partition_and_row_key)
+        return ItemPaged(
+            command, results_per_page=query_options, row_key=row_key, table=self.table_name,
+            partition_key=partition_key,
+            page_iterator_class=TableEntityPropertiesPaged
+        )
+
+    @distributed_trace
+    def query_entities_with_partition_and_row_key(self, partition_key, row_key, query_options=None):
+        try:
+            entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
+                                                                                  partition_key=partition_key,
+                                                                                  row_key=row_key,
+                                                                                  query_options=query_options)
+            entity_properties = entity.additional_properties
+            properties = _convert_entity_to_properties(entity_properties)
+            return Entity(properties)
+        except ResourceExistsError as error:
+            process_storage_error(error)
 
     @distributed_trace
     def upsert_insert_merge_entity(
@@ -286,7 +327,7 @@ class TableClient(StorageAccountHostsMixin):
     ):
         # Insert or Update
         try:
-            update_entity = self.update_entity(partition_key=partition_key,row_key=row_key)
+            update_entity = self.update_entity(partition_key=partition_key, row_key=row_key)
             return update_entity
         except ResourceNotFoundError:
             insert_entity = self.insert_entity(

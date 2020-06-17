@@ -11,7 +11,7 @@ from azure.table._shared.models import LocationMode
 from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import process_storage_error, return_headers_and_deserialized
 from azure.table._version import VERSION
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.table._table_client import TableClient
@@ -289,17 +289,28 @@ class TableServiceClient(StorageAccountHostsMixin):
     ):
         response = self._client.table.delete_entity()
 
+
     @distributed_trace
     def insert_entity(
             self,
-            table_name,
+            table,
             timeout=None,
             request_id_parameter=None,
             if_match=None,
             table_entity_properties=None,
             query_options=None
     ):
-        response = self._client.table.insert_entity()
+
+        try:
+            inserted_entity = self._client.table.insert_entity(
+                table=table,
+                table_entity_properties=table_entity_properties,
+                query_options=query_options
+            )
+           # return inserted_entity
+        except ResourceNotFoundError as error:
+            process_storage_error(error)
+
 
     def get_access_policy(
             self,
@@ -333,13 +344,9 @@ class TableServiceClient(StorageAccountHostsMixin):
         except AttributeError:
             table_name = table
 
-        _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
-        )
 
         return TableClient(
             self.url, table_name=table_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=_pipeline,
+            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=self._pipeline,
             _configuration=self._config, _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)

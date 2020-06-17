@@ -32,6 +32,30 @@ from ._constants import (
 )
 
 _ERROR_ATTRIBUTE_MISSING = '\'{0}\' object has no attribute \'{1}\''
+_ERROR_BATCH_COMMIT_FAIL = 'Batch Commit Fail'
+_ERROR_CANNOT_FIND_PARTITION_KEY = 'Cannot find partition key in request.'
+_ERROR_CANNOT_FIND_ROW_KEY = 'Cannot find row key in request.'
+_ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY = \
+    'Cannot serialize the specified value ({0}) to an entity.  Please use ' + \
+    'an EntityProperty (which can specify custom types), int, str, bool, ' + \
+    'or datetime.'
+_ERROR_DUPLICATE_ROW_KEY_IN_BATCH = \
+    'Row Keys should not be the same in a batch operations'
+_ERROR_INCORRECT_PARTITION_KEY_IN_BATCH = \
+    'Partition Key should be the same in a batch operations'
+_ERROR_INVALID_ENTITY_TYPE = 'The entity must be either in dict format or an entity object.'
+_ERROR_INVALID_PROPERTY_RESOLVER = \
+    'The specified property resolver returned an invalid type. Name: {0}, Value: {1}, ' + \
+    'EdmType: {2}'
+_ERROR_PROPERTY_NAME_TOO_LONG = 'The property name exceeds the maximum allowed length.'
+_ERROR_TOO_MANY_ENTITIES_IN_BATCH = \
+    'Batches may only contain 100 operations'
+_ERROR_TOO_MANY_PROPERTIES = 'The entity contains more properties than allowed.'
+_ERROR_TYPE_NOT_SUPPORTED = 'Type not supported when sending data to the service: {0}.'
+_ERROR_VALUE_TOO_LARGE = '{0} is too large to be cast to type {1}.'
+_ERROR_UNSUPPORTED_TYPE_FOR_ENCRYPTION = 'Encryption is only supported for not None strings.'
+_ERROR_ENTITY_NOT_ENCRYPTED = 'Entity was not encrypted.'
+_ERROR_ATTRIBUTE_MISSING = '\'{0}\' object has no attribute \'{1}\''
 _ERROR_CONFLICT = 'Conflict ({0})'
 _ERROR_NOT_FOUND = 'Not found ({0})'
 _ERROR_UNKNOWN = 'Unknown error ({0})'
