@@ -1103,7 +1103,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 assert len(messages) == 1
                 await messages[0].complete()
 
-    @pytest.mark.liveTest
     @pytest.mark.asyncio
     async def test_async_queue_mock_no_reusing_auto_lock_renew(self):
         class MockReceivedMessage:
