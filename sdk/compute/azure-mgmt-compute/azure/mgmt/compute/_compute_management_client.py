@@ -19,7 +19,7 @@ from ._configuration import ComputeManagementClientConfiguration
 
 
 class ComputeManagementClient(MultiApiClientMixin, SDKClient):
-    """Compute Client
+    """Compute Client.
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
