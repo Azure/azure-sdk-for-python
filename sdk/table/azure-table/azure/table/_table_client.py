@@ -135,35 +135,6 @@ class TableClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def create_queue(self, table_name, **kwargs):
-        # type: (Optional[Any]) -> None
-        table_properties = TableProperties(table_name=table_name)
-        request_id_parameter = kwargs.pop('request_id_parameter', None)
-        response_preference = kwargs.pop('response_preference', None)
-        query_option = kwargs.pop('query_options', None)
-        try:
-            return self._client.table.create(  # type: ignore
-                table_properties=table_properties,
-                request_id_parameter=request_id_parameter,
-                response_preference=response_preference,
-                query_options=query_option,
-                **kwargs)
-        except HttpResponseError as error:
-            process_storage_error(error)
-
-    @distributed_trace
-    def delete_queue(self, table_name, **kwargs):
-        # type: (Optional[Any]) -> None
-        request_id_parameter = kwargs.pop('request_id_parameter', None)
-        try:
-            self._client.table.delete(
-                table_name=table_name,
-                request_id_parameter=request_id_parameter,
-                **kwargs)
-        except HttpResponseError as error:
-            process_storage_error(error)
-
-    @distributed_trace
     def get_table_properties(self, **kwargs):
         # type: (Optional[Any]) -> TableProperties
         timeout = kwargs.pop('timeout', None)
@@ -209,6 +180,7 @@ class TableClient(StorageAccountHostsMixin):
     ):
         # if_match is what makes it a upsert
         try:
+
             inserted_entity = self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=table_entity_properties,

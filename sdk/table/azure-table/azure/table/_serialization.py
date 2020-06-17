@@ -23,7 +23,7 @@ from math import (
     isnan,
 )
 
-import Guid as Guid
+
 from azure.table._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED, \
     _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY
 from azure.table._models import EdmType, EntityProperty, TablePayloadFormat
