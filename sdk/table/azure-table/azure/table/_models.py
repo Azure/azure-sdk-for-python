@@ -417,7 +417,7 @@ class EntityProperty(object):
         Represents an Azure Table. Returned by list_tables.
 
         :param str type: The type of the property.
-        :param EdmType value: The value of the property.
+        :param any value: The value of the property.
         :param bool encrypt: Indicates whether or not the property should be encrypted.
         """
         self.type = type

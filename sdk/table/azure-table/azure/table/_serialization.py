@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
+import base64
 import sys
 import types
 import uuid
+from plistlib import _decode_base64
 from uuid import UUID
 from datetime import datetime
 from json import (
@@ -30,8 +32,8 @@ from azure.table._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_S
 from azure.table._models import EdmType, EntityProperty, TablePayloadFormat
 from azure.table._shared._common_conversion import _encode_base64, _to_str
 from azure.table._shared.parser import _to_utc_datetime
-from cffi.backend_ctypes import long
 from dateutil.parser import parse
+from numpy.core import long
 from numpy.core import int64
 from pyparsing import unicode
 
@@ -67,7 +69,7 @@ def _to_entity_binary(value):
 
 
 def _string_to_binary(value):
-    return ' '.join(format(x, 'b') for x in bytearray(value, 'utf-8'))
+    return base64.b64decode(value)
 
 
 def _to_entity_bool(value):

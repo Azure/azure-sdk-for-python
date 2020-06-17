@@ -4,6 +4,8 @@ from urllib.parse import urlparse, quote
 
 import kwargs
 from azure.core.paging import ItemPaged
+from azure.table._deserialization import _convert_to_entity
+
 from azure.table._deserialize import deserialize_table_creation
 from azure.table._generated import AzureTable
 from azure.table._generated.models import TableProperties, AccessPolicy, SignedIdentifier
@@ -173,6 +175,7 @@ class TableClient(StorageAccountHostsMixin):
             self,
             timeout=None,
             request_id_parameter=None,
+            headers=None,
             response_hook=None,
             table_entity_properties=None,
             query_options=None,
@@ -186,9 +189,10 @@ class TableClient(StorageAccountHostsMixin):
                 table=self.table_name,
                 table_entity_properties=table_entity_properties,
                 query_options=query_options,
-                **kwargs
+                **dict(kwargs, headers=headers)
             )
-        # return inserted_entity
+            properties = _convert_to_entity(inserted_entity)
+            return properties
         except ValueError as error:
             process_storage_error(error)
 

@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 import unittest
-from xml.dom.minidom import Entity
 
 import pytest
 
@@ -36,15 +35,18 @@ from azure.core.exceptions import (
 #     generate_table_sas
 # )
 
+from azure.table._models import Entity, EntityProperty, EdmType
+
 # from azure.storage.table import (
 #     TableBatch,
 # )
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
-#------------------------------------------------------------------------------
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 
 class StorageTableEntityTest(TableTestCase):
 
@@ -73,7 +75,7 @@ class StorageTableEntityTest(TableTestCase):
                 except:
                     pass
 
-    #--Helpers-----------------------------------------------------------------
+    # --Helpers-----------------------------------------------------------------
 
     def _create_query_table(self, entity_count):
         '''
@@ -89,12 +91,11 @@ class StorageTableEntityTest(TableTestCase):
         for i in range(1, entity_count + 1):
             entity['RowKey'] = entity['RowKey'] + str(i)
             table.create_item(entity)
-        #with self.ts.batch(table_name) as batch:
+        # with self.ts.batch(table_name) as batch:
         #    for i in range(1, entity_count + 1):
         #        entity['RowKey'] = entity['RowKey'] + str(i)
         #        batch.insert_entity(entity)
         return table
-
 
     def _create_random_base_entity_dict(self):
         '''
@@ -128,14 +129,15 @@ class StorageTableEntityTest(TableTestCase):
             'Birthday': datetime(1973, 10, 4, tzinfo=tzutc()),
             'birthday': datetime(1970, 10, 4, tzinfo=tzutc()),
             'binary': b'binary',
-            'other': EntityProperty(EdmType.INT32, 20),
+            'other': EntityProperty(type=EdmType.INT32, value=20),
             'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
         }
         return Entity(**properties)
 
     def _insert_random_entity(self, pk=None, rk=None):
         entity = self._create_random_entity_dict(pk, rk)
-        etag = self.table.create_item(entity, response_hook=lambda e, h: h['etag'])
+        # etag = self.table.create_item(entity, response_hook=lambda e, h: h['etag'])
+        etag = self.table.insert_entity(table_entity_properties=entity, response_hook=lambda e, h: h['etag'])
         return entity, etag
 
     def _create_updated_entity_dict(self, partition, row):
@@ -174,9 +176,9 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-        self.assertTrue('metadata' in entity.odata)
-        self.assertIsNotNone(entity.timestamp)
-        self.assertIsInstance(entity.timestamp, datetime)
+       # self.assertTrue('metadata' in entity.odata)
+        self.assertIsNotNone(entity.Timestamp)
+        self.assertIsInstance(entity.Timestamp, datetime)
         if headers:
             self.assertTrue("etag" in headers)
             self.assertIsNotNone(headers['etag'])
@@ -201,13 +203,13 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-        self.assertTrue('metadata' in entity.odata)
-        self.assertTrue('id' in entity.odata)
-        self.assertTrue('type' in entity.odata)
-        self.assertTrue('etag' in entity.odata)
-        self.assertTrue('editLink' in entity.odata)
-        self.assertIsNotNone(entity.timestamp)
-        self.assertIsInstance(entity.timestamp, datetime)
+        #self.assertTrue('metadata' in entity.odata)
+        #self.assertTrue('id' in entity.odata)
+        #self.assertTrue('type' in entity.odata)
+        #self.assertTrue('etag' in entity.odata)
+        #self.assertTrue('editLink' in entity.odata)
+        self.assertIsNotNone(entity.Timestamp)
+        self.assertIsInstance(entity.Timestamp, datetime)
         if headers:
             self.assertTrue("etag" in headers)
             self.assertIsNotNone(headers['etag'])
@@ -234,9 +236,9 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], 'c9da6455-213d-42c9-9a79-3e9149a57833')
-        self.assertIsNone(entity.odata)
-        self.assertIsNotNone(entity.timestamp)
-        self.assertIsInstance(entity.timestamp, datetime)
+        # self.assertIsNone(entity.odata)
+        self.assertIsNotNone(entity.Timestamp)
+        self.assertIsInstance(entity.Timestamp, datetime)
         if headers:
             self.assertTrue("etag" in headers)
             self.assertIsNotNone(headers['etag'])
@@ -255,12 +257,13 @@ class StorageTableEntityTest(TableTestCase):
         self.assertFalse(hasattr(entity, "evenratio"))
         self.assertFalse(hasattr(entity, "large"))
         self.assertFalse(hasattr(entity, "Birthday"))
+        # self.assertEqual(entity.birthday, "1991-10-04 00:00:00+00:00")
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertFalse(hasattr(entity, "other"))
         self.assertFalse(hasattr(entity, "clsid"))
-        self.assertIsNotNone(entity.odata['etag'])
-        self.assertIsNotNone(entity.timestamp)
-        self.assertIsInstance(entity.timestamp, datetime)
+#        self.assertIsNotNone(entity.odata.etag)
+        self.assertIsNotNone(entity.Timestamp)
+        #self.assertIsInstance(entity.timestamp, datetime)
 
     def _assert_merged_entity(self, entity):
         '''
@@ -283,12 +286,13 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity.other.value, 20)
         self.assertIsInstance(entity.clsid, uuid.UUID)
         self.assertEqual(str(entity.clsid), 'c9da6455-213d-42c9-9a79-3e9149a57833')
-        self.assertIsNotNone(entity.odata['etag'])
-        self.assertIsNotNone(entity.timestamp)
-        self.assertIsInstance(entity.timestamp, datetime)
+        #self.assertIsNotNone(entity.etag)
+        # self.assertIsNotNone(entity.odata['etag'])
+        self.assertIsNotNone(entity.Timestamp)
+        # self.assertIsInstance(entity.Timestamp, datetime)
 
-    #--Test cases for entities ------------------------------------------
-    @pytest.mark.skip("pending")
+    # --Test cases for entities ------------------------------------------
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_dictionary(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -297,14 +301,15 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act
-            resp = self.table.create_item(entity)
+            # resp = self.table.create_item(entity)
+            resp = self.table.insert_entity(table_entity_properties=entity)
 
-            # Assert
-            self.assertIsNone(resp)
+            # Assert  --- Does this mean insert returns nothing?
+            self.assertIsNotNone(resp)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_with_hook(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -313,15 +318,16 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act       
-            resp = self.table.create_item(entity, response_hook=lambda e, h: (e, h))
+            resp = self.table.insert_entity(table_entity_properties=entity, response_hook=lambda e, h: (e, h))
+            # resp = self.ts.insert_entity(table_entity_properties=entity,table=self.table_name,response_hook=lambda e, h: (e, h))
 
             # Assert
             self.assertIsNotNone(resp)
-            self._assert_default_entity(*resp)
+            self._assert_default_entity(resp)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_with_no_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -330,18 +336,18 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act       
-            resp = self.table.create_item(
-                entity,
+            resp = self.table.insert_entity(
+                table_entity_properties=entity,
                 headers={'Accept': 'application/json;odata=nometadata'},
                 response_hook=lambda e, h: (e, h))
 
             # Assert
             self.assertIsNotNone(resp)
-            self._assert_default_entity_json_no_metadata(*resp)
+            self._assert_default_entity_json_no_metadata(resp)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_with_full_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -350,18 +356,18 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act       
-            resp = self.table.create_item(
-                entity,
+            resp = self.table.insert_entity(
+                table_entity_properties=entity,
                 headers={'Accept': 'application/json;odata=fullmetadata'},
                 response_hook=lambda e, h: (e, h))
 
             # Assert
             self.assertIsNotNone(resp)
-            self._assert_default_entity_json_full_metadata(*resp)
+            self._assert_default_entity_json_full_metadata(resp)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_conflict(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -371,7 +377,8 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             with self.assertRaises(ResourceExistsError):
-                self.table.create_item(entity)
+                # self.table.create_item(entity)
+                self.table.insert_entity(table_entity_properties=entity)
 
             # Assert
         finally:
@@ -379,44 +386,46 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_insert_entity_with_large_int32_value_throws(self, resource_group, location, storage_account, storage_account_key):
+    def test_insert_entity_with_large_int32_value_throws(self, resource_group, location, storage_account,
+                                                         storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             # Act
             dict32 = self._create_random_base_entity_dict()
-            dict32['large'] = EntityProperty(EdmType.INT32, 2**31)
+            dict32['large'] = EntityProperty(EdmType.INT32, 2 ** 31)
 
             # Assert
             with self.assertRaisesRegex(TypeError,
-                                '{0} is too large to be cast to type Edm.Int32.'.format(2**31)):
+                                        '{0} is too large to be cast to type Edm.Int32.'.format(2 ** 31)):
                 self.table.create_item(dict32)
 
-            dict32['large'] = EntityProperty(EdmType.INT32, -(2**31 + 1))
+            dict32['large'] = EntityProperty(EdmType.INT32, -(2 ** 31 + 1))
             with self.assertRaisesRegex(TypeError,
-                                    '{0} is too large to be cast to type Edm.Int32.'.format(-(2**31 + 1))):
+                                        '{0} is too large to be cast to type Edm.Int32.'.format(-(2 ** 31 + 1))):
                 self.table.create_item(dict32)
         finally:
             self._tear_down()
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_insert_entity_with_large_int64_value_throws(self, resource_group, location, storage_account, storage_account_key):
+    def test_insert_entity_with_large_int64_value_throws(self, resource_group, location, storage_account,
+                                                         storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
-            dict64['large'] = EntityProperty(EdmType.INT64, 2**63)
+            dict64['large'] = EntityProperty(EdmType.INT64, 2 ** 63)
 
             # Assert
             with self.assertRaisesRegex(TypeError,
-                                '{0} is too large to be cast to type Edm.Int64.'.format(2**63)):
+                                        '{0} is too large to be cast to type Edm.Int64.'.format(2 ** 63)):
                 self.table.create_item(dict64)
 
-            dict64['large'] = EntityProperty(EdmType.INT64, -(2**63 + 1))
+            dict64['large'] = EntityProperty(EdmType.INT64, -(2 ** 63 + 1))
             with self.assertRaisesRegex(TypeError,
-                                    '{0} is too large to be cast to type Edm.Int64.'.format(-(2**63 + 1))):
+                                        '{0} is too large to be cast to type Edm.Int64.'.format(-(2 ** 63 + 1))):
                 self.table.create_item(dict64)
         finally:
             self._tear_down()
@@ -431,8 +440,8 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             with self.assertRaises(ValueError):
-                resp = self.table.create_item(entity)
-
+                # resp = self.table.create_item(entity)
+                resp = self.table.insert_entity(table_entity_properties=entity)
             # Assert
         finally:
             self._tear_down()
@@ -522,7 +531,7 @@ class StorageTableEntityTest(TableTestCase):
             pytest.skip("Cosmos supports large property names.")
         try:
             entity = self._create_random_base_entity_dict()
-            entity['a'*256] = 'badval'
+            entity['a' * 256] = 'badval'
 
             # Act
             with self.assertRaises(HttpResponseError):
@@ -541,12 +550,12 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.read_item(entity['PartitionKey'], entity['RowKey'])
+            resp = self.table.read_item(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
 
             # Assert
-            self.assertEqual(resp['PartitionKey'], entity['PartitionKey'])
-            self.assertEqual(resp['RowKey'], entity['RowKey'])
-            self._assert_default_entity(resp)
+            self.assertEqual(resp.value[0]['PartitionKey'], entity['PartitionKey'])
+            self.assertEqual(resp.value[0]['RowKey'], entity['RowKey'])
+            self._assert_default_entity(resp.value[0])
         finally:
             self._tear_down()
 
@@ -606,7 +615,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.read_item(
                 entity.PartitionKey,
                 entity.RowKey,
-                headers={'accept':'application/json;odata=fullmetadata'})
+                headers={'accept': 'application/json;odata=fullmetadata'})
 
             # Assert
             self.assertEqual(resp.PartitionKey, entity.PartitionKey)
@@ -627,7 +636,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.read_item(
                 entity.PartitionKey,
                 entity.RowKey,
-                headers={'accept':'application/json;odata=nometadata'})
+                headers={'accept': 'application/json;odata=nometadata'})
 
             # Assert
             self.assertEqual(resp.PartitionKey, entity.PartitionKey)
@@ -661,7 +670,7 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.read_item(entity.PartitionKey, entity.RowKey, select=['age','sex','xyz'])
+            resp = self.table.read_item(entity.PartitionKey, entity.RowKey, select=['age', 'sex', 'xyz'])
 
             # Assert
             self.assertEqual(resp.age, 39)
@@ -684,7 +693,7 @@ class StorageTableEntityTest(TableTestCase):
                 'inf': float('inf'),
                 'negativeinf': float('-inf'),
                 'nan': float('nan')
-                })
+            })
             self.table.create_item(entity)
 
             # Act
@@ -697,7 +706,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_update_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -707,11 +716,15 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.update_item(sent_entity, response_hook=lambda e, h: h)
+
+            # resp = self.table.update_item(sent_entity, response_hook=lambda e, h: h)
+            resp = self.table.update_entity(table_entity_properties=sent_entity, response_hook=lambda e, h: h)
 
             # Assert
-            self.assertTrue(resp)
-            received_entity = self.table.read_item(entity.PartitionKey, entity.RowKey)
+          #  self.assertTrue(resp)
+            received_entity = self.table.query_entities_with_partition_and_row_key(partition_key=entity.PartitionKey,
+                                                                                   row_key=entity.RowKey)
+
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
@@ -775,7 +788,8 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_insert_or_merge_entity_with_existing_entity(self, resource_group, location, storage_account, storage_account_key):
+    def test_insert_or_merge_entity_with_existing_entity(self, resource_group, location, storage_account,
+                                                         storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
@@ -794,7 +808,8 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_insert_or_merge_entity_with_non_existing_entity(self, resource_group, location, storage_account, storage_account_key):
+    def test_insert_or_merge_entity_with_non_existing_entity(self, resource_group, location, storage_account,
+                                                             storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
@@ -813,7 +828,8 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_insert_or_replace_entity_with_existing_entity(self, resource_group, location, storage_account, storage_account_key):
+    def test_insert_or_replace_entity_with_existing_entity(self, resource_group, location, storage_account,
+                                                           storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
@@ -832,7 +848,8 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_insert_or_replace_entity_with_non_existing_entity(self, resource_group, location, storage_account, storage_account_key):
+    def test_insert_or_replace_entity_with_non_existing_entity(self, resource_group, location, storage_account,
+                                                               storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
@@ -967,7 +984,8 @@ class StorageTableEntityTest(TableTestCase):
             entity, etag = self._insert_random_entity()
 
             # Act
-            resp = self.table.delete_item(entity.PartitionKey, entity.RowKey, etag=etag, match_condition=MatchConditions.IfNotModified)
+            resp = self.table.delete_item(entity.PartitionKey, entity.RowKey, etag=etag,
+                                          match_condition=MatchConditions.IfNotModified)
 
             # Assert
             self.assertIsNone(resp)
@@ -987,7 +1005,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             with self.assertRaises(HttpResponseError):
                 self.table.delete_item(
-                    entity.PartitionKey, entity.RowKey, 
+                    entity.PartitionKey, entity.RowKey,
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
                     match_condition=MatchConditions.IfNotModified)
 
@@ -1030,8 +1048,8 @@ class StorageTableEntityTest(TableTestCase):
             entity1 = entity.copy()
             entity1.update({u'啊齄丂狛狜': u'ꀕ'})
             entity2 = entity.copy()
-            entity2.update({'RowKey': 'test2',  u'啊齄丂狛狜': 'hello'})
-                
+            entity2.update({'RowKey': 'test2', u'啊齄丂狛狜': 'hello'})
+
             # Act  
             self.table.create_item(entity1)
             self.table.create_item(entity2)
@@ -1046,11 +1064,12 @@ class StorageTableEntityTest(TableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_operations_on_entity_with_partition_key_having_single_quote(self, resource_group, location, storage_account, storage_account_key):
+    def test_operations_on_entity_with_partition_key_having_single_quote(self, resource_group, location,
+                                                                         storage_account, storage_account_key):
 
         # Arrange
         partition_key_with_single_quote = "a''''b"
-        row_key_with_single_quote = "a''''b"        
+        row_key_with_single_quote = "a''''b"
         self._set_up(storage_account, storage_account_key)
         try:
             entity, _ = self._insert_random_entity(pk=partition_key_with_single_quote, rk=row_key_with_single_quote)
@@ -1105,7 +1124,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             self.table.create_item(entity)
             resp = self.table.read_item(entity['PartitionKey'], entity['RowKey'])
-            
+
             # Assert
             self.assertIsNotNone(resp)
             self.assertEqual(resp.EmptyByte, '')
@@ -1312,7 +1331,7 @@ class StorageTableEntityTest(TableTestCase):
             table = self._create_query_table(2)
 
             # Act
-            entities = list(table.read_all_items(select=['age','sex']))
+            entities = list(table.read_all_items(select=['age', 'sex']))
 
             # Assert
             self.assertEqual(len(entities), 2)
@@ -1663,6 +1682,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
