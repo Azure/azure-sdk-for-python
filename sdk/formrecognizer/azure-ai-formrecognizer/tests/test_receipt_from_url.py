@@ -43,6 +43,14 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertIsNotNone(result)
 
     @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_receipts_encoded_url(self, client):
+        try:
+            poller = client.begin_recognize_receipts_from_url("https://fakeuri.com/blank%20space")
+        except HttpResponseError as e:
+            self.assertIn("https://fakeuri.com/blank%20space", e.response.request.body)
+
+    @GlobalFormRecognizerAccountPreparer()
     def test_receipt_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
