@@ -31,6 +31,17 @@ This version uses a next-generation code generator that introduces important bre
 - This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 
+## 0.10.0 (2020-06-08)
+
+**Features**
+
+  - Model WebtestLocationAvailabilityCriteria has a new parameter additional_properties
+  - Added operation group SubscriptionDiagnosticSettingsOperations
+
+**Breaking changes**
+
+  - Model WebtestLocationAvailabilityCriteria has a new required parameter odatatype
+
 ## 0.9.0 (2020-04-09)
 
 **Features**

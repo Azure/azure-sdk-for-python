@@ -32,6 +32,24 @@ This version uses a next-generation code generator that introduces important bre
 - This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 
+## 10.2.0 (2020-04-10)
+
+**Features**
+
+  - Model VpnConnection has a new parameter routing_configuration
+  - Model NatRuleCondition has a new parameter terminate_tls
+  - Model HubVirtualNetworkConnection has a new parameter routing_configuration
+  - Model ExpressRouteConnection has a new parameter routing_configuration
+  - Model FirewallPolicy has a new parameter transport_security
+  - Model FirewallPolicy has a new parameter identity
+  - Model FirewallPolicy has a new parameter threat_intel_whitelist
+  - Model ApplicationRuleCondition has a new parameter target_urls
+  - Model P2SConnectionConfiguration has a new parameter routing_configuration
+  - Model BackendAddressPool has a new parameter load_balancer_backend_addresses
+  - Added operation LoadBalancerBackendAddressPoolsOperations.create_or_update
+  - Added operation LoadBalancerBackendAddressPoolsOperations.delete
+  - Added operation group HubRouteTablesOperations
+
 ## 10.1.0 (2020-04-10)
 
 **Features**
