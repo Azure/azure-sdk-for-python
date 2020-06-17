@@ -15,8 +15,11 @@
 
 - Go to Azure tab and log in with your credential
 
-- Open a terminal, install azure-core & azure-identity
+- Open a terminal, install latest azure-identity by running 
+```python
+pip install azure-identity -i https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python%40Local/pypi/simple/
+```
 
 - Run run-test.py
 
-Expect: a valid access token is printed out.
+Expect: an access token is printed out.
