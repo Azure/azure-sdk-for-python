@@ -30,6 +30,24 @@ This version uses a next-generation code generator that introduces important bre
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
 - This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
+## 4.0.0 (2020-06-12)
+
+**Features**
+
+  - Model Cluster has a new parameter updated_at
+  - Model Cluster has a new parameter created_at
+  - Added operation ClustersOperations.update
+  - Added operation ClustersOperations.create_or_update
+  - Added operation ClustersOperations.list_available_cluster_region
+
+** Breaking changes**
+
+  - Model Cluster no longer has parameter created
+  - Model Cluster no longer has parameter updated
+  - Removed operation ClustersOperations.put
+  - Removed operation ClustersOperations.list_available_clusters
+  - Removed operation ClustersOperations.patch
+
 ## 3.1.0 (2020-05-13)
 
 **Features**
