@@ -1,6 +1,6 @@
 # Release History
 
-## 15.0.0b1 (2020-06-17)
+## 16.0.0b1 (2020-06-17)
 
 This is beta preview version.
 
