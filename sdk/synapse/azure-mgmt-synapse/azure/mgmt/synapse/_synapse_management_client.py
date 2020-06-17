@@ -50,6 +50,7 @@ from .operations import IntegrationRuntimeMonitoringDataOperations
 from .operations import IntegrationRuntimeStatusOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkHubsOperations
 from . import models
 
 
@@ -133,6 +134,8 @@ class SynapseManagementClient(SDKClient):
     :vartype private_link_resources: azure.mgmt.synapse.operations.PrivateLinkResourcesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
     :vartype private_endpoint_connections: azure.mgmt.synapse.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_hubs: PrivateLinkHubs operations
+    :vartype private_link_hubs: azure.mgmt.synapse.operations.PrivateLinkHubsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -226,4 +229,6 @@ class SynapseManagementClient(SDKClient):
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_hubs = PrivateLinkHubsOperations(
             self._client, self.config, self._serialize, self._deserialize)
