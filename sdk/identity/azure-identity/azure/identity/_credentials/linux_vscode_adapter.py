@@ -72,9 +72,9 @@ def _get_refresh_token(service_name, account_name):
     schema = _SECRET_SCHEMA()
     pschema = _PSECRET_SCHEMA(schema)
     ct.memset(pschema, 0, ct.sizeof(schema))
-    setattr(schema, "name", _c_str("org.freedesktop.Secret.Generic"))
-    setattr(schema, "flags", 2)
-    setattr(schema, "attributes", pattributes)
+    schema.name = _c_str("org.freedesktop.Secret.Generic")
+    schema.flags = 2
+    schema.attributes = pattributes
     p_str = _libsecret.secret_password_lookup_sync(
         pschema,
         None,
