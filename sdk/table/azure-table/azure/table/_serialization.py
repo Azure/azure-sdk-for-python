@@ -15,6 +15,7 @@
 import sys
 import types
 import uuid
+from uuid import UUID
 from datetime import datetime
 from json import (
     dumps,
@@ -61,7 +62,6 @@ def _update_storage_table_header(request):
     request.headers['DataServiceVersion'] = '3.0;NetFx'
     request.headers['MaxDataServiceVersion'] = '3.0'
 
-
 def _to_entity_binary(value):
     return EdmType.BINARY, _encode_base64(value)
 
@@ -107,7 +107,6 @@ def _to_entity_guid(value):
 def _string_to_guid(value):
     return value
 
-
 def _to_entity_int32(value):
     if sys.version_info < (3,):
         value = long(value)
@@ -152,6 +151,8 @@ _PYTHON_TO_ENTITY_CONVERSIONS = {
     datetime: _to_entity_datetime,
     float: _to_entity_float,
     str: _to_entity_str,
+    bytes: _to_entity_binary,
+    UUID: _to_entity_guid
 }
 
 # Conversion from Edm type to a function which returns a tuple of the

@@ -178,7 +178,8 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,
             **kwargs
     ):
-        # if_match is what makes it a upsert
+        if table_entity_properties:
+            table_entity_properties = _add_entity_properties(table_entity_properties)
         try:
 
             inserted_entity = self._client.table.insert_entity(
