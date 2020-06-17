@@ -8,7 +8,7 @@
       "python-mode": "update",
       "sdkrel:python-sdks-folder": "./sdk/.",
       "multiapi": "",
-      "track2"
+      "track2": ""
     },
     "advanced_options": {
       "create_sdk_pull_requests": true,
