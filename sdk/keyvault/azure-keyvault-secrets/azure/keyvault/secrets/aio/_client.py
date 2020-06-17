@@ -87,12 +87,19 @@ class SecretClient(AsyncKeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
+        content_type = kwargs.pop("content_type", None)
         if enabled is not None or not_before is not None or expires_on is not None:
             attributes = self._models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
         bundle = await self._client.set_secret(
-            self.vault_url, name, value, secret_attributes=attributes, error_map=_error_map, **kwargs
+            self.vault_url,
+            name,
+            value,
+            secret_attributes=attributes,
+            error_map=_error_map,
+            content_type_parameter=content_type,
+            **kwargs
         )
         return KeyVaultSecret._from_secret_bundle(bundle)
 
@@ -129,6 +136,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
+        content_type = kwargs.pop("content_type", None)
         if enabled is not None or not_before is not None or expires_on is not None:
             attributes = self._models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
@@ -139,6 +147,7 @@ class SecretClient(AsyncKeyVaultClientBase):
             secret_version=version or "",
             secret_attributes=attributes,
             error_map=_error_map,
+            content_type_parameter=content_type,
             **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
