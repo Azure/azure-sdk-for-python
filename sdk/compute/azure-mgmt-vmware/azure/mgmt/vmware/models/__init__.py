@@ -52,7 +52,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import ClusterPaged
 from ._paged_models import OperationPaged
 from ._paged_models import PrivateCloudPaged
-from ._azure_vmware_solution_api_enums import (
+from ._avs_client_enums import (
     QuotaEnabled,
     SslEnum,
     PrivateCloudProvisioningState,

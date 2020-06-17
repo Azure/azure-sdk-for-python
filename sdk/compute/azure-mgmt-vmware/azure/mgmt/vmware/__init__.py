@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import AzureVMwareSolutionAPIConfiguration
-from ._azure_vmware_solution_api import AzureVMwareSolutionAPI
-__all__ = ['AzureVMwareSolutionAPI', 'AzureVMwareSolutionAPIConfiguration']
+from ._configuration import AVSClientConfiguration
+from ._avs_client import AVSClient
+__all__ = ['AVSClient', 'AVSClientConfiguration']
 
 from .version import VERSION
 

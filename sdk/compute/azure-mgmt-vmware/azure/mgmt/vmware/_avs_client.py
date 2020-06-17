@@ -12,7 +12,7 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
-from ._configuration import AzureVMwareSolutionAPIConfiguration
+from ._configuration import AVSClientConfiguration
 from .operations import Operations
 from .operations import LocationsOperations
 from .operations import PrivateCloudsOperations
@@ -20,11 +20,11 @@ from .operations import ClustersOperations
 from . import models
 
 
-class AzureVMwareSolutionAPI(SDKClient):
+class AVSClient(SDKClient):
     """Azure VMware Solution API
 
     :ivar config: Configuration for client.
-    :vartype config: AzureVMwareSolutionAPIConfiguration
+    :vartype config: AVSClientConfiguration
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.vmware.operations.Operations
@@ -46,8 +46,8 @@ class AzureVMwareSolutionAPI(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = AzureVMwareSolutionAPIConfiguration(credentials, subscription_id, base_url)
-        super(AzureVMwareSolutionAPI, self).__init__(self.config.credentials, self.config)
+        self.config = AVSClientConfiguration(credentials, subscription_id, base_url)
+        super(AVSClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2019-08-09-preview'
