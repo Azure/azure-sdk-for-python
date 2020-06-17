@@ -1,8 +1,9 @@
 # Release History
 
-## 15.0.0b1 (2020-06-17)
+## 16.0.0b1 (2020-06-17)
 
 This is beta preview version.
+For detailed changelog please refer to equivalent stable version 10.2.0 (https://pypi.org/project/azure-mgmt-network/10.2.0/)
 
 This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
 
