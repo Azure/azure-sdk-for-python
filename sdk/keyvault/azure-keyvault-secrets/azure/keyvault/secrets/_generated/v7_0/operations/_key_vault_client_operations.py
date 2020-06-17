@@ -351,9 +351,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param key_name: The name of the key to get.
         :type key_name: str
-        :param key_version: Adding the version parameter retrieves a specific version of a key. Though
-         listed as required following OpenAPI guidelines for path parameters, actually optional on the
-         server, which assumes 'latest' if not provided.
+        :param key_version: Adding the version parameter retrieves a specific version of a key. This
+         URI fragment is optional. If not specified, the latest version of the key is returned.
         :type key_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
@@ -1695,9 +1694,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param secret_name: The name of the secret.
         :type secret_name: str
-        :param secret_version: The version of the secret. Though listed as required following OpenAPI
-         guidelines for path parameters, actually optional on the server, which assumes 'latest' if not
-         provided.
+        :param secret_version: The version of the secret. This URI fragment is optional. If not
+         specified, the latest version of the secret is returned.
         :type secret_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
@@ -3446,9 +3444,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate in the given vault.
         :type certificate_name: str
-        :param certificate_version: The version of the certificate. Though listed as required following
-         OpenAPI guidelines for path parameters, actually optional on the server, which assumes 'latest'
-         if not provided.
+        :param certificate_version: The version of the certificate. This URI fragment is optional. If
+         not specified, the latest version of the certificate is returned.
         :type certificate_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)

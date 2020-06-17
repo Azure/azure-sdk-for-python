@@ -261,9 +261,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param secret_name: The name of the secret.
         :type secret_name: str
-        :param secret_version: The version of the secret. Though listed as required following OpenAPI
-         guidelines for path parameters, actually optional on the server, which assumes 'latest' if not
-         provided.
+        :param secret_version: The version of the secret. This URI fragment is optional. If not
+         specified, the latest version of the secret is returned.
         :type secret_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
