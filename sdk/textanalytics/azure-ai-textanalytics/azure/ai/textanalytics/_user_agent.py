@@ -5,6 +5,5 @@
 # ------------------------------------
 
 import platform
-from ._version import VERSION
 
 USER_AGENT = "ai-textanalytics/{}".format(VERSION)
