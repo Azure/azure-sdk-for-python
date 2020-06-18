@@ -1239,6 +1239,35 @@ class DelimitedTextConfiguration(GenDelimitedTextConfiguration):
             headers_present=headers_present)
 
 
+class ObjectReplicationPolicy(DictMixin):
+    """Policy id and rule ids applied to a blob.
+
+    :ivar str policy_id:
+        Policy id for the blob. A replication policy gets created (policy id) when creating a source/destination pair.
+    :ivar list(~azure.storage.blob.ObjectReplicationRule) rules:
+        Within each policy there may be multiple replication rules.
+        e.g. rule 1= src/container/.pdf to dst/container2/; rule2 = src/container1/.jpg to dst/container3
+    """
+
+    def __init__(self, **kwargs):
+        self.policy_id = kwargs.pop('policy_id', None)
+        self.rules = kwargs.pop('rules', None)
+
+
+class ObjectReplicationRule(DictMixin):
+    """Policy id and rule ids applied to a blob.
+
+    :ivar str rule_id:
+        Rule id.
+    :ivar str status:
+        The status of the rule. It could be "Complete" or "Failed"
+    """
+
+    def __init__(self, **kwargs):
+        self.rule_id = kwargs.pop('rule_id', None)
+        self.status = kwargs.pop('status', None)
+
+
 class QuickQueryError(object):
     """The error happened during quick query operation.
 

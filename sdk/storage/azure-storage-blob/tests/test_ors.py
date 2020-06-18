@@ -10,7 +10,6 @@ from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 from azure.storage.blob import (
     BlobServiceClient,
-    BlobType,
     BlobProperties,
 )
 
@@ -43,14 +42,14 @@ class StorageObjectReplicationTest(StorageTestCase):
 
         result = deserialize_ors_policies(response)
         self.assertEqual(len(result), 2)  # 2 policies
-        self.assertEqual(len(result.get('111')), 2)  # 2 rules for policy 111
-        self.assertEqual(len(result.get('222')), 2)  # 2 rules for policy 222
+        self.assertEqual(len(result[0].rules), 2)  # 2 rules for policy 111
+        self.assertEqual(len(result[1].rules), 2)  # 2 rules for policy 222
 
         # check individual result
-        self.assertEqual(result.get('111').get('111'), 'Completed')
-        self.assertEqual(result.get('111').get('222'), 'Failed')
-        self.assertEqual(result.get('222').get('111'), 'Completed')
-        self.assertEqual(result.get('222').get('222'), 'Failed')
+        self.assertEqual(result[0].rules[0].status, 'Completed')
+        self.assertEqual(result[0].rules[1].status, 'Failed')
+        self.assertEqual(result[1].rules[0].status, 'Completed')
+        self.assertEqual(result[1].rules[1].status, 'Failed')
 
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
@@ -67,14 +66,14 @@ class StorageObjectReplicationTest(StorageTestCase):
         # Assert
         self.assertIsInstance(props, BlobProperties)
         self.assertIsNotNone(props.object_replication_source_properties)
-        for policy, rule_result in props.object_replication_source_properties.items():
-            self.assertNotEqual(policy, '')
-            self.assertIsNotNone(rule_result)
+        for replication_policy in props.object_replication_source_properties:
+            self.assertNotEqual(replication_policy.policy_id, '')
+            self.assertIsNotNone(replication_policy.rules)
 
-            for rule_id, result in rule_result.items():
-                self.assertNotEqual(rule_id, '')
-                self.assertIsNotNone(result)
-                self.assertNotEqual(result, '')
+            for rule in replication_policy.rules:
+                self.assertNotEqual(rule.rule_id, '')
+                self.assertIsNotNone(rule.status)
+                self.assertNotEqual(rule.status, '')
 
         # Check that the download function gives back the same result
         stream = blob.download_blob()
