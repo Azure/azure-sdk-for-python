@@ -7,7 +7,7 @@ For a more complete view of Azure libraries, see the [Github repo](https://githu
 
 # Usage
 
-For code examples, see [Azure VMWare Solution Management](https://docs.microsoft.com/python/api/overview/azure/)
+For code examples, see [Azure VMWare Solution Management](https://docs.microsoft.com/python/api/overview/azure/azurevmwaresolution)
 on docs.microsoft.com.
 
 
