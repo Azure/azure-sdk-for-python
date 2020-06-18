@@ -137,7 +137,8 @@ class StorageTableEntityTest(TableTestCase):
     def _insert_random_entity(self, pk=None, rk=None):
         entity = self._create_random_entity_dict(pk, rk)
         # etag = self.table.create_item(entity, response_hook=lambda e, h: h['etag'])
-        etag = self.table.insert_entity(table_entity_properties=entity, response_hook=lambda e, h: h['etag'])
+        e = self.table.insert_entity(table_entity_properties=entity, response_hook=lambda e, h: h['etag'])
+        etag = e['etag']
         return entity, etag
 
     def _create_updated_entity_dict(self, partition, row):
@@ -559,7 +560,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_get_entity_with_hook(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -568,19 +569,20 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp, headers = self.table.read_item(
-                entity['PartitionKey'],
-                entity['RowKey'],
+            #resp, headers
+            resp= self.table.query_entities_with_partition_and_row_key(
+                partition_key=entity['PartitionKey'],
+                row_key=entity['RowKey'],
                 response_hook=lambda e, h: (e, h))
 
             # Assert
             self.assertEqual(resp['PartitionKey'], entity['PartitionKey'])
             self.assertEqual(resp['RowKey'], entity['RowKey'])
-            self._assert_default_entity(resp, headers)
+            self._assert_default_entity(resp)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_get_entity_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -591,10 +593,11 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             # Do a get and confirm the etag is parsed correctly by using it
             # as a condition to delete.
-            resp = self.table.read_item(entity['PartitionKey'], entity['RowKey'])
-            self.table.delete_item(
-                resp['PartitionKey'],
-                resp['RowKey'],
+            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
+
+            self.table.delete_entity(
+                partition_key=resp['PartitionKey'],
+                row_key=resp['RowKey'],
                 etag=etag,
                 match_condition=MatchConditions.IfNotModified
             )

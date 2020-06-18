@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 17 Jun 2020 20:30:39 GMT
+      - Thu, 18 Jun 2020 15:06:19 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 17 Jun 2020 20:30:39 GMT
+      - Thu, 18 Jun 2020 15:06:19 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 17 Jun 2020 20:30:39 GMT
+      - Thu, 18 Jun 2020 15:06:18 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttable97d21773')
       server:
@@ -132,11 +132,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 17 Jun 2020 20:30:40 GMT
+      - Thu, 18 Jun 2020 15:06:20 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 17 Jun 2020 20:30:40 GMT
+      - Thu, 18 Jun 2020 15:06:20 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -145,14 +145,14 @@ interactions:
     body:
       string: '{"odata.error":{"code":"TooManyProperties","message":{"lang":"en-US","value":"The
         entity contains more properties than allowed. Each entity can include up to
-        252 properties to store data. Each entity also has 3 system properties.\nRequestId:7a173412-1002-004f-67e6-44e773000000\nTime:2020-06-17T20:30:40.3166611Z"}}}'
+        252 properties to store data. Each entity also has 3 system properties.\nRequestId:1e5522f5-2002-004b-7782-45d30f000000\nTime:2020-06-18T15:06:18.8699550Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 17 Jun 2020 20:30:39 GMT
+      - Thu, 18 Jun 2020 15:06:18 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -176,11 +176,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 17 Jun 2020 20:30:40 GMT
+      - Thu, 18 Jun 2020 15:06:20 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 17 Jun 2020 20:30:40 GMT
+      - Thu, 18 Jun 2020 15:06:20 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -194,7 +194,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 17 Jun 2020 20:30:39 GMT
+      - Thu, 18 Jun 2020 15:06:18 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

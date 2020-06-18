@@ -12,6 +12,7 @@ from azure.table._generated.models import TableProperties, AccessPolicy, SignedI
 from azure.table._message_encoding import NoEncodePolicy, NoDecodePolicy
 from azure.table._serialization import _to_entity_datetime, _PYTHON_TO_ENTITY_CONVERSIONS, _EDM_TO_ENTITY_CONVERSIONS, \
     _add_entity_properties, _convert_entity_to_properties
+from azure.table._serialize import _get_match_headers
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 from azure.table._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure.table._shared.response_handlers import process_storage_error
@@ -156,17 +157,22 @@ class TableClient(StorageAccountHostsMixin):
             self,
             partition_key,
             row_key,
-            if_match,
+            etag,
+            match_condition,
             timeout=None,
             request_id_parameter=None,
-            query_options=None
+            query_options=None,
+            **kwargs
     ):
+        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
+                                                    etag_param='etag', match_param='match_condition')
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match)
+                if_match=if_match or if_not_match,
+                **kwargs)
         except ResourceNotFoundError as error:
             process_storage_error(error)
 
@@ -258,13 +264,21 @@ class TableClient(StorageAccountHostsMixin):
         )
 
     @distributed_trace
-    def query_entities_with_partition_and_row_key(self, partition_key, row_key, query_options=None):
+    def query_entities_with_partition_and_row_key(
+            self,
+            partition_key,
+            row_key,
+            response_hook=None,
+            query_options=None,
+            **kwargs
+    ):
         try:
 
             entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
                                                                                   partition_key=partition_key,
                                                                                   row_key=row_key,
-                                                                                  query_options=query_options)
+                                                                                  query_options=query_options,
+                                                                                  **kwargs)
             properties = _convert_to_entity(entity.additional_properties)
             return Entity(properties)
         except ResourceExistsError as error:
