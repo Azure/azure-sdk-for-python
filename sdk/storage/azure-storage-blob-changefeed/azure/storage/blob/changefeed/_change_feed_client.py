@@ -80,15 +80,15 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
 
-    def list_changes(self, start_time=None, end_time=None, **kwargs):
+    def list_changes(self, **kwargs):
         # type: (Optional[datetime], Optional[datetime], **Any) -> ItemPaged[BlobProperties]
         """Returns a generator to list the change feed events.
         The generator will lazily follow the continuation tokens returned by
         the service.
 
-        :param datetime start_time:
+        :keyword datetime start_time:
             Filters the results to return only events which happened after this time.
-        :param datetime end_time:
+        :keyword datetime end_time:
             Filters the results to return only events which happened before this time.
         :keyword int results_per_page:
             The page size when list events by page using by_page() method on the generator.
@@ -111,12 +111,10 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
                 :dedent: 8
                 :caption: List change feed events by page.
         """
-
         results_per_page = kwargs.pop('results_per_page', None)
         container_client = self._blob_service_client.get_container_client("$blobchangefeed")
         return ItemPaged(
             container_client,
             results_per_page=results_per_page,
-            start_time=start_time,
-            end_time=end_time,
-            page_iterator_class=ChangeFeedPaged)
+            page_iterator_class=ChangeFeedPaged,
+            **kwargs)

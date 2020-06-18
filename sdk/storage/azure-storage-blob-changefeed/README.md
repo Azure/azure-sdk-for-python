@@ -1,4 +1,4 @@
-# Azure Storage Blob ChangeFeed Client Library for Python
+# Azure Storage Blob ChangeFeed client library for Python
 
 Overview
 
