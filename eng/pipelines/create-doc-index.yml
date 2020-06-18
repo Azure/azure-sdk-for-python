@@ -1,12 +1,5 @@
 trigger: none
 
-resources:
-  repositories:
-    - repository: azure-sdk-tools
-      type: github
-      name: Azure/azure-sdk-tools
-      endpoint: azure
-
 variables:
   PythonVersion: '3.6'
 
@@ -27,7 +20,7 @@ jobs:
         inputs:
           versionSpec: $(PythonVersion)
 
-      - template: eng/pipelines/templates/scripts/replace-relative-links.yml@azure-sdk-tools
+      - template: /eng/common/pipelines/templates/steps/replace-relative-links.yml
         parameters:
           TargetFolder: '.'
           RootFolder: '.'
