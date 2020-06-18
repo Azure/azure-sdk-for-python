@@ -52,7 +52,7 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
             cls, conn_str,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> BlobServiceClient
+        ):  # type: (...) -> ChangeFeedClient
         """Create ChangeFeedClient from a Connection String.
 
         :param str conn_str:
