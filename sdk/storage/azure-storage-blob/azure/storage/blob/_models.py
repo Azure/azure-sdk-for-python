@@ -657,16 +657,17 @@ class BlobPropertiesPaged(PageIterator):
         return item
 
 
-class FilteredBlob(FilterBlobItem):
+class FilteredBlob(DictMixin):
     """Blob info from a Filter Blobs API call.
 
     :ivar name: Blob name
     :type name: str
     :ivar container_name: Container name.
     :type container_name: str
-    :ivar tag_value: tag value filtered by the expression.
-    :type tag_value: str
     """
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name', None)
+        self.container_name = kwargs.get('container_name', None)
 
 
 class FilteredBlobPaged(PageIterator):
@@ -732,7 +733,7 @@ class FilteredBlobPaged(PageIterator):
     @staticmethod
     def _build_item(item):
         if isinstance(item, FilterBlobItem):
-            blob = FilteredBlob(name=item.name, container_name=item.container_name, tag_value=item.tag_value)  # pylint: disable=protected-access
+            blob = FilteredBlob(name=item.name, container_name=item.container_name)  # pylint: disable=protected-access
             return blob
         return item
 

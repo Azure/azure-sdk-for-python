@@ -481,7 +481,6 @@ def generate_blob_sas(
         start=None,  # type: Optional[Union[datetime, str]]
         policy_id=None,  # type: Optional[str]
         ip=None,  # type: Optional[str]
-        version_id=None,  # type: Optional[str]
         **kwargs # type: Any
     ):
     # type: (...) -> Any
@@ -498,12 +497,6 @@ def generate_blob_sas(
         The name of the blob.
     :param str snapshot:
         An optional blob snapshot ID.
-    :param str version_id:
-        An optional blob version ID. This parameter is only for versioning enabled account
-
-        .. versionadded:: 12.4.0
-            This keyword argument was introduced in API version '2019-12-12'.
-
     :param str account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
         Either `account_key` or `user_delegation_key` must be specified.
@@ -545,6 +538,11 @@ def generate_blob_sas(
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
+    :keyword str version_id:
+        An optional blob version ID. This parameter is only for versioning enabled account
+
+        .. versionadded:: 12.4.0
+            This keyword argument was introduced in API version '2019-12-12'.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
     :keyword str cache_control:
@@ -567,6 +565,7 @@ def generate_blob_sas(
     """
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
+    version_id = kwargs.pop('version_id', None)
     if version_id and snapshot:
         raise ValueError("snapshot and version_id cannot be set at the same time.")
     if user_delegation_key:
