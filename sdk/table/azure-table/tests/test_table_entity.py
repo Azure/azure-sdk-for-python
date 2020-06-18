@@ -87,16 +87,16 @@ class StorageTableEntityTest(TableTestCase):
         table_name = self.get_resource_name('querytable')
         table = self.ts.create_table(table_name)
         self.query_tables.append(table_name)
-
+        client = self.ts.get_table_client(table_name)
         entity = self._create_random_entity_dict()
         for i in range(1, entity_count + 1):
             entity['RowKey'] = entity['RowKey'] + str(i)
-            table.create_item(entity)
+            client.insert_entity(table_entity_properties=entity)
         # with self.ts.batch(table_name) as batch:
         #    for i in range(1, entity_count + 1):
         #        entity['RowKey'] = entity['RowKey'] + str(i)
         #        batch.insert_entity(entity)
-        return table
+        return client
 
     def _create_random_base_entity_dict(self):
         '''
@@ -1087,32 +1087,32 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.upsert_item(sent_entity)
+            resp = self.table.upsert_insert_update_entity(table_entity_properties=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.read_item(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.query_entities_with_partition_and_row_key(partition_key=entity.PartitionKey, row_key=entity.RowKey)
             self._assert_updated_entity(received_entity)
 
             # Act
             sent_entity['newField'] = 'newFieldValue'
-            resp = self.table.update_item(sent_entity)
-
+            resp = self.table.update_entity(table_entity_properties=sent_entity)
+            # keys missing ''
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.read_item(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.query_entities_with_partition_and_row_key(partition_key=entity.PartitionKey, row_key=entity.RowKey)
             self._assert_updated_entity(received_entity)
             self.assertEqual(received_entity['newField'], 'newFieldValue')
 
             # Act
-            resp = self.table.delete_item(received_entity.PartitionKey, received_entity.RowKey)
+            resp = self.table.delete_entity(partition_key=received_entity.PartitionKey, row_key=received_entity.RowKey)
 
             # Assert
             self.assertIsNone(resp)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_empty_and_spaces_property_value(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1133,8 +1133,8 @@ class StorageTableEntityTest(TableTestCase):
             })
 
             # Act
-            self.table.create_item(entity)
-            resp = self.table.read_item(entity['PartitionKey'], entity['RowKey'])
+            self.table.insert_entity(table_entity_properties=entity)
+            resp = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
             self.assertIsNotNone(resp)
@@ -1151,7 +1151,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_none_property_value(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1161,8 +1161,8 @@ class StorageTableEntityTest(TableTestCase):
             entity.update({'NoneValue': None})
 
             # Act       
-            self.table.create_item(entity)
-            resp = self.table.read_item(entity['PartitionKey'], entity['RowKey'])
+            self.table.insert_entity(table_entity_properties=entity)
+            resp = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
             self.assertIsNotNone(resp)
@@ -1170,7 +1170,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_binary_property_value(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1181,8 +1181,8 @@ class StorageTableEntityTest(TableTestCase):
             entity.update({'binary': b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'})
 
             # Act  
-            self.table.create_item(entity)
-            resp = self.table.read_item(entity['PartitionKey'], entity['RowKey'])
+            self.table.insert_entity(table_entity_properties=entity)
+            resp = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
             self.assertIsNotNone(resp)
@@ -1202,8 +1202,8 @@ class StorageTableEntityTest(TableTestCase):
             entity.update({'date': local_date})
 
             # Act
-            self.table.create_item(entity)
-            resp = self.table.read_item(entity['PartitionKey'], entity['RowKey'])
+            self.table.insert_entity(table_entity_properties=entity)
+            resp = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
             self.assertIsNotNone(resp)
@@ -1212,7 +1212,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_entities(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1221,7 +1221,7 @@ class StorageTableEntityTest(TableTestCase):
             table = self._create_query_table(2)
 
             # Act
-            entities = list(table.read_all_items())
+            entities = list(table.query_entities())
 
             # Assert
             self.assertEqual(len(entities), 2)
@@ -1230,7 +1230,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_zero_entities(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1239,7 +1239,7 @@ class StorageTableEntityTest(TableTestCase):
             table = self._create_query_table(0)
 
             # Act
-            entities = list(table.read_all_items())
+            entities = list(table.query_entities())
 
             # Assert
             self.assertEqual(len(entities), 0)

@@ -303,7 +303,7 @@ class TableEntityPropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [Entity(t) for t in self._response.value]
+        props_list = [t for t in self._response.value]
         return None , props_list
 
 

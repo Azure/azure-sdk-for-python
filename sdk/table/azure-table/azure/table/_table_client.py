@@ -277,12 +277,15 @@ class TableClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def query_entities(self, query_options=None):
+
         command = functools.partial(
             self._client.table.query_entities)
-        return ItemPaged(
+        paged = ItemPaged(
             command, results_per_page=query_options,  table=self.table_name,
             page_iterator_class=TableEntityPropertiesPaged
         )
+        resp = [Entity(_convert_to_entity(t)) for t in paged]
+        return resp
 
     @distributed_trace
     def query_entities_with_partition_and_row_key(
