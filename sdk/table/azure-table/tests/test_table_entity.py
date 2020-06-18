@@ -36,7 +36,8 @@ from azure.core.exceptions import (
 #     generate_table_sas
 # )
 
-from azure.table._models import Entity, EntityProperty, EdmType
+from azure.table._entity import Entity, EntityProperty, EdmType
+from azure.table._models import TableSasPermissions
 
 # from azure.storage.table import (
 #     TableBatch,
@@ -1246,7 +1247,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_entities_full_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1255,7 +1256,7 @@ class StorageTableEntityTest(TableTestCase):
             table = self._create_query_table(2)
 
             # Act
-            entities = list(table.read_all_items(headers={'accept': 'application/json;odata=fullmetadata'}))
+            entities = list(table.query_entities(headers={'accept': 'application/json;odata=fullmetadata'}))
 
             # Assert
             self.assertEqual(len(entities), 2)
@@ -1264,7 +1265,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_entities_no_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1273,7 +1274,7 @@ class StorageTableEntityTest(TableTestCase):
             table = self._create_query_table(2)
 
             # Act
-            entities = list(table.read_all_items(headers={'accept': 'application/json;odata=nometadata'}))
+            entities = list(table.query_entities(headers={'accept': 'application/json;odata=nometadata'}))
 
             # Assert
             self.assertEqual(len(entities), 2)
@@ -1315,7 +1316,7 @@ class StorageTableEntityTest(TableTestCase):
         # if it runs slowly, it will return fewer results and make the test fail
         self.assertEqual(len(entities), total_entities_count)
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_entities_with_filter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1324,7 +1325,7 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            entities = list(self.table.query_items("PartitionKey eq '{}'".format(entity.PartitionKey)))
+            entities = list(self.table.query_entities(query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity.PartitionKey))))
 
             # Assert
             self.assertEqual(len(entities), 1)
@@ -1333,7 +1334,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_entities_with_select(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1342,7 +1343,7 @@ class StorageTableEntityTest(TableTestCase):
             table = self._create_query_table(2)
 
             # Act
-            entities = list(table.read_all_items(select=['age', 'sex']))
+            entities = list(table.query_entities(query_options=QueryOptions(select="age, sex")))
 
             # Assert
             self.assertEqual(len(entities), 2)
@@ -1354,16 +1355,16 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_entities_with_top(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             table = self._create_query_table(3)
-
+            # circular dependencies made this return a list not an item paged - problem when calling by page
             # Act
-            entities = list(next(table.read_all_items(results_per_page=2).by_page()))
+            entities = list(next(table.query_entities(query_options=QueryOptions(top=2)).by_page()))
 
             # Assert
             self.assertEqual(len(entities), 2)

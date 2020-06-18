@@ -18,7 +18,7 @@ from json import loads
 
 from azure.common import AzureException
 from azure.storage.common.models import _list
-from azure.table._models import EntityProperty, EdmType, Entity, Table
+from azure.table._entity import EntityProperty, EdmType, Entity, Table
 from azure.table._shared import url_quote
 from azure.table._shared._common_conversion import _decode_base64_to_bytes
 from azure.table._shared._error import _validate_decryption_required, _ERROR_DECRYPTION_FAILURE, \

@@ -7,6 +7,7 @@ from azure.core.paging import ItemPaged
 from azure.table._deserialization import _convert_to_entity
 
 from azure.table._deserialize import deserialize_table_creation
+from azure.table._entity import Entity
 from azure.table._generated import AzureTable
 from azure.table._generated.models import TableProperties, AccessPolicy, SignedIdentifier
 from azure.table._message_encoding import NoEncodePolicy, NoDecodePolicy
@@ -19,7 +20,7 @@ from azure.table._shared.response_handlers import process_storage_error
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.table._version import VERSION
 from azure.core.tracing.decorator import distributed_trace
-from ._models import TablePropertiesPaged, TableEntityPropertiesPaged, Entity, EdmType
+from ._models import TablePropertiesPaged, TableEntityPropertiesPaged
 from ._generated.models import QueryOptions
 
 from ._shared.response_handlers import return_headers_and_deserialized
@@ -276,16 +277,16 @@ class TableClient(StorageAccountHostsMixin):
             raise HttpResponseError
 
     @distributed_trace
-    def query_entities(self, query_options=None):
+    def query_entities(self, headers=None, query_options=None,**kwargs):
 
         command = functools.partial(
-            self._client.table.query_entities)
-        paged = ItemPaged(
+            self._client.table.query_entities,
+        **dict(kwargs, headers=headers))
+        return ItemPaged(
             command, results_per_page=query_options,  table=self.table_name,
             page_iterator_class=TableEntityPropertiesPaged
         )
-        resp = [Entity(_convert_to_entity(t)) for t in paged]
-        return resp
+
 
     @distributed_trace
     def query_entities_with_partition_and_row_key(
