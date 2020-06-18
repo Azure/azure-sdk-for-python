@@ -4,8 +4,6 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.transport import AioHttpTransport
-
 from . import AsyncChallengeAuthPolicy
 from .client_base import ApiVersion
 from .._user_agent import USER_AGENT
@@ -44,7 +42,10 @@ class AsyncKeyVaultClientBase(object):
         api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
         pipeline = kwargs.pop("pipeline", None)
-        transport = kwargs.pop("transport", AioHttpTransport(**kwargs))
+        transport = kwargs.pop("transport", None)
+        if not transport:
+            from azure.core.pipeline.transport import AioHttpTransport
+            transport = AioHttpTransport(**kwargs)
 
         try:
             self._client = _KeyVaultClient(
