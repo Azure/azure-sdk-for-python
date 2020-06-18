@@ -733,9 +733,8 @@ class PipelineClientBase(object):
                 try:
                     base = self._base_url.format(**kwargs).rstrip("/")
                 except KeyError as key:
-                    raise ValueError(
-                        "The value provided for the url part {} was incorrect, and resulted in an invalid url".format(key.args[0])
-                    )
+                    err_msg = "The value provided for the url part {} was incorrect, and resulted in an invalid url"
+                    raise ValueError(err_msg.format(key.args[0]))
 
                 url = _urljoin(base, url)
         else:
