@@ -11,6 +11,7 @@ import os
 import time
 import pytest
 import re
+import logging
 from azure.core.credentials import AzureKeyCredential, AccessToken
 from devtools_testutils import (
     AzureTestCase,
@@ -25,6 +26,8 @@ from azure_devtools.scenario_tests import (
 )
 from azure_devtools.scenario_tests.utilities import is_text_payload
 
+LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
+ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
 REGION = os.getenv('REGION', 'centraluseuap')
 
 
@@ -72,6 +75,7 @@ class FormRecognizerTest(AzureTestCase):
     def __init__(self, method_name):
         super(FormRecognizerTest, self).__init__(method_name)
         self.recording_processors.append(AccessTokenReplacer())
+        self.configure_logging()
 
         # URL samples
         self.receipt_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
@@ -108,6 +112,23 @@ class FormRecognizerTest(AzureTestCase):
 
     def generate_fake_token(self):
         return FakeTokenCredential()
+
+    def configure_logging(self):
+        self.enable_logging() if ENABLE_LOGGER == "True" else self.disable_logging()
+
+    def enable_logging(self):
+        self.logger = logging.getLogger('azure')
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+        self.logger.handlers = [handler]
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.propagate = True
+        self.logger.disabled = False
+
+    def disable_logging(self):
+        self.logger.propagate = False
+        self.logger.disabled = True
+        self.logger.handlers = []
 
     def assertModelTransformCorrect(self, model, actual, unlabeled=False):
         self.assertEqual(model.model_id, actual.model_info.model_id)
@@ -543,6 +564,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
             form_recognizer_account,
             AzureKeyCredential(form_recognizer_account_key),
             polling_interval=polling_interval,
+            logging_enable=True if ENABLE_LOGGER == "True" else False,
             **self.client_kwargs
         )
 
