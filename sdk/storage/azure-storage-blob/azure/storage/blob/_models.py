@@ -483,9 +483,8 @@ class BlobProperties(DictMixin):
         container-level scope is configured to allow overrides. Otherwise an error will be raised.
     :ivar bool request_server_encrypted:
         Whether this blob is encrypted.
-    :ivar dict(str, dict(str, str)) object_replication_source_properties:
+    :ivar list(~azure.storage.blob.ObjectReplicationPolicy) object_replication_source_properties:
         Only present for blobs that have policy ids and rule ids applied to them.
-        Dictionary<policy_id, Dictionary<rule_id, status of replication(complete,failed)>
     :ivar str object_replication_destination_policy:
         Represents the Object Replication Policy Id that created this blob.
     :ivar int tag_count:

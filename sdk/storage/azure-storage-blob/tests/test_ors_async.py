@@ -54,14 +54,14 @@ class StorageObjectReplicationTest(StorageTestCase):
         # Assert
         self.assertIsInstance(props, BlobProperties)
         self.assertIsNotNone(props.object_replication_source_properties)
-        for policy, rule_result in props.object_replication_source_properties.items():
-            self.assertNotEqual(policy, '')
-            self.assertIsNotNone(rule_result)
+        for replication_policy in props.object_replication_source_properties:
+            self.assertNotEqual(replication_policy.policy_id, '')
+            self.assertIsNotNone(replication_policy.rules)
 
-            for rule_id, result in rule_result.items():
-                self.assertNotEqual(rule_id, '')
-                self.assertIsNotNone(result)
-                self.assertNotEqual(result, '')
+            for rule in replication_policy.rules:
+                self.assertNotEqual(rule.rule_id, '')
+                self.assertIsNotNone(rule.status)
+                self.assertNotEqual(rule.status, '')
 
         # Check that the download function gives back the same result
         stream = await blob.download_blob()
