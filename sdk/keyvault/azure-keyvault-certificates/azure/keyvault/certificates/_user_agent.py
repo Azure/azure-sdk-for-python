@@ -5,6 +5,4 @@
 import platform
 from ._version import VERSION
 
-USER_AGENT = "keyvault-certificates/{} Python/{} ({})".format(
-    VERSION, platform.python_version(), platform.platform()
-)
+USER_AGENT = "keyvault-certificates/{}".format(VERSION)
