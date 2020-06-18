@@ -43,7 +43,7 @@ class AdminCredentials(Model):
         'vcenter_password': {'key': 'vcenterPassword', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(AdminCredentials, self).__init__(**kwargs)
         self.nsxt_username = None
         self.nsxt_password = None
@@ -55,16 +55,16 @@ class ApiError(Model):
     """API error response.
 
     :param error: An error returned by the API
-    :type error: ~azure.mgmt.vmware.models.ApiErrorBase
+    :type error: ~azure.mgmt.avs.models.ApiErrorBase
     """
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'ApiErrorBase'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, error=None, **kwargs) -> None:
         super(ApiError, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = error
 
 
 class ApiErrorException(HttpOperationError):
@@ -93,10 +93,10 @@ class ApiErrorBase(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
         super(ApiErrorBase, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        self.code = code
+        self.message = message
 
 
 class Circuit(Model):
@@ -115,7 +115,7 @@ class Circuit(Model):
     :param authorizations: Authorizations for the ExpressRoute (Microsoft Colo
      only)
     :type authorizations:
-     list[~azure.mgmt.vmware.models.ExpressRouteAuthorization]
+     list[~azure.mgmt.avs.models.ExpressRouteAuthorization]
     :ivar express_route_private_peering_id: ExpressRoute private peering
      identifier
     :vartype express_route_private_peering_id: str
@@ -136,12 +136,12 @@ class Circuit(Model):
         'express_route_private_peering_id': {'key': 'expressRoutePrivatePeeringID', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, authorizations=None, **kwargs) -> None:
         super(Circuit, self).__init__(**kwargs)
         self.primary_subnet = None
         self.secondary_subnet = None
         self.express_route_id = None
-        self.authorizations = kwargs.get('authorizations', None)
+        self.authorizations = authorizations
         self.express_route_private_peering_id = None
 
 
@@ -179,7 +179,7 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -199,7 +199,7 @@ class Cluster(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :param properties: The properties of a cluster resource
-    :type properties: ~azure.mgmt.vmware.models.ClusterProperties
+    :type properties: ~azure.mgmt.avs.models.ClusterProperties
     """
 
     _validation = {
@@ -215,9 +215,9 @@ class Cluster(Resource):
         'properties': {'key': 'properties', 'type': 'ClusterProperties'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, properties=None, **kwargs) -> None:
         super(Cluster, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.properties = properties
 
 
 class DefaultClusterProperties(Model):
@@ -245,10 +245,10 @@ class DefaultClusterProperties(Model):
         'hosts': {'key': 'hosts', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, cluster_size: int=None, **kwargs) -> None:
         super(DefaultClusterProperties, self).__init__(**kwargs)
         self.cluster_id = None
-        self.cluster_size = kwargs.get('cluster_size', None)
+        self.cluster_size = cluster_size
         self.hosts = None
 
 
@@ -267,7 +267,7 @@ class ClusterProperties(DefaultClusterProperties):
     :ivar provisioning_state: The state of the cluster provisioning. Possible
      values include: 'Succeeded', 'Failed', 'Cancelled', 'Updating'
     :vartype provisioning_state: str or
-     ~azure.mgmt.vmware.models.ClusterProvisioningState
+     ~azure.mgmt.avs.models.ClusterProvisioningState
     """
 
     _validation = {
@@ -283,8 +283,8 @@ class ClusterProperties(DefaultClusterProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ClusterProperties, self).__init__(**kwargs)
+    def __init__(self, *, cluster_size: int=None, **kwargs) -> None:
+        super(ClusterProperties, self).__init__(cluster_size=cluster_size, **kwargs)
         self.provisioning_state = None
 
 
@@ -310,7 +310,7 @@ class Endpoints(Model):
         'vcsa': {'key': 'vcsa', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Endpoints, self).__init__(**kwargs)
         self.nsxt_manager = None
         self.vcsa = None
@@ -341,9 +341,9 @@ class ExpressRouteAuthorization(Model):
         'key': {'key': 'key', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, **kwargs) -> None:
         super(ExpressRouteAuthorization, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name
         self.id = None
         self.key = None
 
@@ -367,7 +367,7 @@ class IdentitySource(Model):
     :type secondary_server: str
     :param ssl: Protect LDAP communication using SSL certificate (LDAPS).
      Possible values include: 'Enabled', 'Disabled'
-    :type ssl: str or ~azure.mgmt.vmware.models.SslEnum
+    :type ssl: str or ~azure.mgmt.avs.models.SslEnum
     :param username: The ID of an Active Directory user with a minimum of
      read-only access to Base DN for users and group
     :type username: str
@@ -389,18 +389,18 @@ class IdentitySource(Model):
         'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, alias: str=None, domain: str=None, base_user_dn: str=None, base_group_dn: str=None, primary_server: str=None, secondary_server: str=None, ssl=None, username: str=None, password: str=None, **kwargs) -> None:
         super(IdentitySource, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.alias = kwargs.get('alias', None)
-        self.domain = kwargs.get('domain', None)
-        self.base_user_dn = kwargs.get('base_user_dn', None)
-        self.base_group_dn = kwargs.get('base_group_dn', None)
-        self.primary_server = kwargs.get('primary_server', None)
-        self.secondary_server = kwargs.get('secondary_server', None)
-        self.ssl = kwargs.get('ssl', None)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs.get('password', None)
+        self.name = name
+        self.alias = alias
+        self.domain = domain
+        self.base_user_dn = base_user_dn
+        self.base_group_dn = base_group_dn
+        self.primary_server = primary_server
+        self.secondary_server = secondary_server
+        self.ssl = ssl
+        self.username = username
+        self.password = password
 
 
 class Operation(Model):
@@ -413,7 +413,7 @@ class Operation(Model):
     :vartype name: str
     :ivar display: Contains the localized display information for this
      operation
-    :vartype display: ~azure.mgmt.vmware.models.OperationDisplay
+    :vartype display: ~azure.mgmt.avs.models.OperationDisplay
     """
 
     _validation = {
@@ -426,7 +426,7 @@ class Operation(Model):
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = None
@@ -463,7 +463,7 @@ class OperationDisplay(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -503,10 +503,10 @@ class TrackedResource(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
         super(TrackedResource, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+        self.location = location
+        self.tags = tags
 
 
 class PrivateCloud(TrackedResource):
@@ -526,9 +526,9 @@ class PrivateCloud(TrackedResource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param sku: The private cloud SKU
-    :type sku: ~azure.mgmt.vmware.models.Sku
+    :type sku: ~azure.mgmt.avs.models.Sku
     :param properties: The properties of a private cloud resource
-    :type properties: ~azure.mgmt.vmware.models.PrivateCloudProperties
+    :type properties: ~azure.mgmt.avs.models.PrivateCloudProperties
     """
 
     _validation = {
@@ -547,10 +547,10 @@ class PrivateCloud(TrackedResource):
         'properties': {'key': 'properties', 'type': 'PrivateCloudProperties'},
     }
 
-    def __init__(self, **kwargs):
-        super(PrivateCloud, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
-        self.properties = kwargs.get('properties', None)
+    def __init__(self, *, location: str=None, tags=None, sku=None, properties=None, **kwargs) -> None:
+        super(PrivateCloud, self).__init__(location=location, tags=tags, **kwargs)
+        self.sku = sku
+        self.properties = properties
 
 
 class PrivateCloudProperties(Model):
@@ -562,20 +562,20 @@ class PrivateCloudProperties(Model):
     :ivar provisioning_state: The provisioning state. Possible values include:
      'Succeeded', 'Failed', 'Cancelled', 'Pending', 'Building', 'Updating'
     :vartype provisioning_state: str or
-     ~azure.mgmt.vmware.models.PrivateCloudProvisioningState
+     ~azure.mgmt.avs.models.PrivateCloudProvisioningState
     :param circuit: An ExpressRoute Circuit
-    :type circuit: ~azure.mgmt.vmware.models.Circuit
+    :type circuit: ~azure.mgmt.avs.models.Circuit
     :param cluster: The default cluster used for management
-    :type cluster: ~azure.mgmt.vmware.models.DefaultClusterProperties
+    :type cluster: ~azure.mgmt.avs.models.DefaultClusterProperties
     :ivar clusters: The clusters
     :vartype clusters: list[str]
     :ivar endpoints: The endpoints
-    :vartype endpoints: ~azure.mgmt.vmware.models.Endpoints
+    :vartype endpoints: ~azure.mgmt.avs.models.Endpoints
     :param internet: Connectivity to internet is enabled or disabled. Possible
      values include: 'Enabled', 'Disabled'
-    :type internet: str or ~azure.mgmt.vmware.models.InternetEnum
+    :type internet: str or ~azure.mgmt.avs.models.InternetEnum
     :param identity_sources: vCenter Single Sign On Identity Sources
-    :type identity_sources: list[~azure.mgmt.vmware.models.IdentitySource]
+    :type identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
     :param network_block: The block of addresses should be unique across VNet
      in your subscription as well as on-premise. Make sure the CIDR format is
      conformed to (A.B.C.D/X) where A,B,C,D are between 0 and 255, and X is
@@ -632,21 +632,21 @@ class PrivateCloudProperties(Model):
         'nsxt_certificate_thumbprint': {'key': 'nsxtCertificateThumbprint', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, circuit=None, cluster=None, internet=None, identity_sources=None, network_block: str=None, vcenter_password: str=None, nsxt_password: str=None, **kwargs) -> None:
         super(PrivateCloudProperties, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.circuit = kwargs.get('circuit', None)
-        self.cluster = kwargs.get('cluster', None)
+        self.circuit = circuit
+        self.cluster = cluster
         self.clusters = None
         self.endpoints = None
-        self.internet = kwargs.get('internet', None)
-        self.identity_sources = kwargs.get('identity_sources', None)
-        self.network_block = kwargs.get('network_block', None)
+        self.internet = internet
+        self.identity_sources = identity_sources
+        self.network_block = network_block
         self.management_network = None
         self.provisioning_network = None
         self.vmotion_network = None
-        self.vcenter_password = kwargs.get('vcenter_password', None)
-        self.nsxt_password = kwargs.get('nsxt_password', None)
+        self.vcenter_password = vcenter_password
+        self.nsxt_password = nsxt_password
         self.vcenter_certificate_thumbprint = None
         self.nsxt_certificate_thumbprint = None
 
@@ -661,7 +661,7 @@ class Quota(Model):
     :vartype hosts_remaining: dict[str, int]
     :param quota_enabled: Host quota is active for current subscription.
      Possible values include: 'Enabled', 'Disabled'
-    :type quota_enabled: str or ~azure.mgmt.vmware.models.QuotaEnabled
+    :type quota_enabled: str or ~azure.mgmt.avs.models.QuotaEnabled
     """
 
     _validation = {
@@ -673,10 +673,10 @@ class Quota(Model):
         'quota_enabled': {'key': 'quotaEnabled', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, quota_enabled=None, **kwargs) -> None:
         super(Quota, self).__init__(**kwargs)
         self.hosts_remaining = None
-        self.quota_enabled = kwargs.get('quota_enabled', None)
+        self.quota_enabled = quota_enabled
 
 
 class Sku(Model):
@@ -696,9 +696,9 @@ class Sku(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, **kwargs) -> None:
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name
 
 
 class Trial(Model):
@@ -709,7 +709,7 @@ class Trial(Model):
 
     :ivar status: Trial status. Possible values include: 'TrialAvailable',
      'TrialUsed', 'TrialDisabled'
-    :vartype status: str or ~azure.mgmt.vmware.models.enum
+    :vartype status: str or ~azure.mgmt.avs.models.enum
     :ivar available_hosts: Number of trial hosts available
     :vartype available_hosts: int
     """
@@ -724,7 +724,7 @@ class Trial(Model):
         'available_hosts': {'key': 'availableHosts', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Trial, self).__init__(**kwargs)
         self.status = None
         self.available_hosts = None

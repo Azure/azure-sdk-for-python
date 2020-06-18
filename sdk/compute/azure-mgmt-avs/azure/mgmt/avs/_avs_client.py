@@ -27,13 +27,13 @@ class AVSClient(SDKClient):
     :vartype config: AVSClientConfiguration
 
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.vmware.operations.Operations
+    :vartype operations: azure.mgmt.avs.operations.Operations
     :ivar locations: Locations operations
-    :vartype locations: azure.mgmt.vmware.operations.LocationsOperations
+    :vartype locations: azure.mgmt.avs.operations.LocationsOperations
     :ivar private_clouds: PrivateClouds operations
-    :vartype private_clouds: azure.mgmt.vmware.operations.PrivateCloudsOperations
+    :vartype private_clouds: azure.mgmt.avs.operations.PrivateCloudsOperations
     :ivar clusters: Clusters operations
-    :vartype clusters: azure.mgmt.vmware.operations.ClustersOperations
+    :vartype clusters: azure.mgmt.avs.operations.ClustersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

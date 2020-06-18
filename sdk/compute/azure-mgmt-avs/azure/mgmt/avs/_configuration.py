@@ -41,7 +41,7 @@ class AVSClientConfiguration(AzureConfiguration):
         # Starting Autorest.Python 4.0.64, make connection pool activated by default
         self.keep_alive = True
 
-        self.add_user_agent('azure-mgmt-vmware/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-avs/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

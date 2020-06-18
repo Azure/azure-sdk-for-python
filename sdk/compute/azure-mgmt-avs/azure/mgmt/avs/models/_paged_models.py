@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class OperationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Operation <azure.mgmt.vmware.models.Operation>` object
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.avs.models.Operation>` object
     """
 
     _attribute_map = {
@@ -27,7 +27,7 @@ class OperationPaged(Paged):
         super(OperationPaged, self).__init__(*args, **kwargs)
 class PrivateCloudPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`PrivateCloud <azure.mgmt.vmware.models.PrivateCloud>` object
+    A paging container for iterating over a list of :class:`PrivateCloud <azure.mgmt.avs.models.PrivateCloud>` object
     """
 
     _attribute_map = {
@@ -40,7 +40,7 @@ class PrivateCloudPaged(Paged):
         super(PrivateCloudPaged, self).__init__(*args, **kwargs)
 class ClusterPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Cluster <azure.mgmt.vmware.models.Cluster>` object
+    A paging container for iterating over a list of :class:`Cluster <azure.mgmt.avs.models.Cluster>` object
     """
 
     _attribute_map = {

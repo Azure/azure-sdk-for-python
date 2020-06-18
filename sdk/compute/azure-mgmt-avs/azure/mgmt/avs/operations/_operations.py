@@ -49,9 +49,9 @@ class Operations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Operation
         :rtype:
-         ~azure.mgmt.vmware.models.OperationPaged[~azure.mgmt.vmware.models.Operation]
+         ~azure.mgmt.avs.models.OperationPaged[~azure.mgmt.avs.models.Operation]
         :raises:
-         :class:`ApiErrorException<azure.mgmt.vmware.models.ApiErrorException>`
+         :class:`ApiErrorException<azure.mgmt.avs.models.ApiErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:

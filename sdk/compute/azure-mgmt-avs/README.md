@@ -1,13 +1,13 @@
 # Microsoft Azure SDK for Python
 
-This is the Microsoft Azure Vmware Management Client Library.
+This is the Microsoft Azure Azure VMWare Solution Management Client Library.
 This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
 For a more complete view of Azure libraries, see the [Github repo](https://github.com/Azure/azure-sdk-for-python/)
 
 
 # Usage
 
-For code examples, see [Vmware Management](https://docs.microsoft.com/python/api/overview/azure/vmware)
+For code examples, see [Azure VMWare Solution Management](https://docs.microsoft.com/python/api/overview/azure/)
 on docs.microsoft.com.
 
 
@@ -18,4 +18,4 @@ If you encounter any bugs or have suggestions, please file an issue in the
 section of the project.
 
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-vmware%2FREADME.png)
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-avs%2FREADME.png)

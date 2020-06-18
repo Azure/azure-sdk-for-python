@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-avs"
+package_pprint_name = "Azure VMWare Solution Management"
+package_doc_id = "azurevmwaresolution"
+is_stable = false

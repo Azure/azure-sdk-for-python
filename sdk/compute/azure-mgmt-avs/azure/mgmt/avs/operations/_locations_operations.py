@@ -50,10 +50,10 @@ class LocationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Trial or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmware.models.Trial or
+        :rtype: ~azure.mgmt.avs.models.Trial or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ApiErrorException<azure.mgmt.vmware.models.ApiErrorException>`
+         :class:`ApiErrorException<azure.mgmt.avs.models.ApiErrorException>`
         """
         # Construct URL
         url = self.check_trial_availability.metadata['url']
@@ -107,10 +107,10 @@ class LocationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Quota or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.vmware.models.Quota or
+        :rtype: ~azure.mgmt.avs.models.Quota or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ApiErrorException<azure.mgmt.vmware.models.ApiErrorException>`
+         :class:`ApiErrorException<azure.mgmt.avs.models.ApiErrorException>`
         """
         # Construct URL
         url = self.check_quota_availability.metadata['url']

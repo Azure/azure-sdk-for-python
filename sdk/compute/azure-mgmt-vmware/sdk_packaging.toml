@@ -1,5 +1,0 @@
-[packaging]
-package_name = "azure-mgmt-vmware"
-package_pprint_name = "Vmware Management"
-package_doc_id = "vmware"
-is_stable = false
