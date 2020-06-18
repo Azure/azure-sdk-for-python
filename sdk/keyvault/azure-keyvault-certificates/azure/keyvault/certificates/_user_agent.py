@@ -5,6 +5,6 @@
 import platform
 from ._version import VERSION
 
-USER_AGENT = "azsdk-python-keyvault-certificates/{} Python/{} ({})".format(
+USER_AGENT = "keyvault-certificates/{} Python/{} ({})".format(
     VERSION, platform.python_version(), platform.platform()
 )
