@@ -204,7 +204,9 @@ Async and sync operations
 -------------------------
 In python>=3.5, Azure Python SDK provides the choice for user to use the asynchronous client for asynchronous programming.
 
-**Create Management Client in async**
+Note that asyncio in Windows is underpowered and please take caution when using async operations on Windows systems
+
+**Create Async Management Client**
 ::
 
     from azure.identity.aio import DefaultAzureCredential
@@ -222,7 +224,7 @@ In python>=3.5, Azure Python SDK provides the choice for user to use the asynchr
         subscription_id=SUBSCRIPTION_ID
     )
 
-**Create a Network Public IP Address**
+**Create a Network Public IP Address Async**
 ::
 
     GROUP_NAME = "testgroup"
@@ -244,6 +246,10 @@ In python>=3.5, Azure Python SDK provides the choice for user to use the asynchr
     )
     public_ip_address = await async_poller.result()
     print("Create Public IP Address:\n{}".format(public_ip_address))
+    
+Code Samples
+-------------------------
+For more code samples, please see `here <https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing>`__
 
 Need help?
 ----------
