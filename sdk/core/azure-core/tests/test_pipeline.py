@@ -207,9 +207,9 @@ class TestClientPipelineURLFormatting(unittest.TestCase):
     def test_format_incorrect_endpoint(self):
         # https://github.com/Azure/azure-sdk-for-python/pull/12106
         client = PipelineClientBase('{Endpoint}/text/analytics/v3.0')
-        formatted = client.format_url("foo/bar")
-        # We don't care about the value, we care it doesn't fail
-        assert formatted is not None
+        with pytest.raises(ValueError) as exp:
+            client.format_url("foo/bar")
+        assert str(exp.value) == "The value provided for the url part Endpoint was incorrect, and resulted in an invalid url"
 
 class TestClientRequest(unittest.TestCase):
     def test_request_json(self):

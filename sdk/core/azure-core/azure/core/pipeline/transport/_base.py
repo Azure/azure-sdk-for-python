@@ -730,7 +730,13 @@ class PipelineClientBase(object):
             parsed = urlparse(url)
             if not parsed.scheme or not parsed.netloc:
                 url = url.lstrip("/")
-                base = _format_url_section(self._base_url, **kwargs).rstrip("/")
+                try:
+                    base = self._base_url.format(**kwargs).rstrip("/")
+                except KeyError as key:
+                    raise ValueError(
+                        "The value provided for the url part {} was incorrect, and resulted in an invalid url".format(key.args[0])
+                    )
+
                 url = _urljoin(base, url)
         else:
             url = self._base_url.format(**kwargs)
