@@ -3,18 +3,20 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import sys
-import pytest
+
 from azure.core.credentials import AccessToken
-from azure.identity import CredentialUnavailableError
+from azure.identity import CredentialUnavailableError, VSCodeCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity._internal.user_agent import USER_AGENT
+from azure.identity._credentials.vscode_credential import get_credentials
+import pytest
+
 from helpers import build_aad_response, mock_response, Request, validating_transport
 
 try:
     from unittest import mock
 except ImportError:  # python < 3.3
     import mock
-from azure.identity._credentials.vscode_credential import VSCodeCredential, get_credentials
 
 
 def test_no_scopes():
@@ -102,6 +104,12 @@ def test_no_obtain_token_if_cached():
         assert mock_client.obtain_token_by_refresh_token.call_count == 0
 
 
+@pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
+def test_segfault():
+    from azure.identity._credentials.linux_vscode_adapter import _get_refresh_token
+    _get_refresh_token("test", "test")
+
+
 @pytest.mark.skipif(not sys.platform.startswith("darwin"), reason="This test only runs on MacOS")
 def test_mac_keychain_valid_value():
     with mock.patch("msal_extensions.osx.Keychain.get_generic_password", return_value="VALUE"):
@@ -116,9 +124,3 @@ def test_mac_keychain_error():
         credential = VSCodeCredential()
         with pytest.raises(CredentialUnavailableError):
             token = credential.get_token("scope")
-
-
-@pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
-def test_get_token():
-    with mock.patch("azure.identity._credentials.linux_vscode_adapter._get_refresh_token", return_value="VALUE"):
-        assert get_credentials() == "VALUE"

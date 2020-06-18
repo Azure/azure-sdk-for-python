@@ -75,7 +75,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     async def test_async_queue_by_queue_client_send_multiple_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
-
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 messages = []
                 for i in range(10):
@@ -675,7 +674,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 finally:
                     await messages[0].complete()
                     await messages[1].complete()
-                    time.sleep(30)
+                    sleep_until_expired(messages[2])
                     with pytest.raises(MessageLockExpired):
                         await messages[2].complete()
 
@@ -1103,3 +1102,38 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await receiver._handler.message_handler.destroy_async()  # destroy the underlying receiver link
                 assert len(messages) == 1
                 await messages[0].complete()
+
+    async def test_async_queue_mock_no_reusing_auto_lock_renew(self):
+        class MockReceivedMessage:
+            def __init__(self):
+                self.received_timestamp_utc = utc_now()
+                self.locked_until_utc = self.received_timestamp_utc + timedelta(seconds=10)
+
+            async def renew_lock(self):
+                self.locked_until_utc = self.locked_until_utc + timedelta(seconds=10)
+
+        auto_lock_renew = AutoLockRenew()
+        async with auto_lock_renew:
+            auto_lock_renew.register(renewable=MockReceivedMessage())
+            await asyncio.sleep(12)
+
+        with pytest.raises(ServiceBusError):
+            async with auto_lock_renew:
+                pass
+
+        with pytest.raises(ServiceBusError):
+            auto_lock_renew.register(renewable=MockReceivedMessage())
+
+        auto_lock_renew = AutoLockRenew()
+
+        auto_lock_renew.register(renewable=MockReceivedMessage())
+        time.sleep(12)
+
+        await auto_lock_renew.shutdown()
+
+        with pytest.raises(ServiceBusError):
+            async with auto_lock_renew:
+                pass
+
+        with pytest.raises(ServiceBusError):
+            auto_lock_renew.register(renewable=MockReceivedMessage())

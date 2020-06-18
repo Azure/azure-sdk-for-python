@@ -30,6 +30,7 @@ def format_bounding_box(bounding_box):
         return "N/A"
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
+
 class RecognizeContentSampleAsync(object):
 
     async def recognize_content(self):
@@ -46,7 +47,9 @@ class RecognizeContentSampleAsync(object):
         ) as form_recognizer_client:
 
             with open(path_to_sample_forms, "rb") as f:
-                contents = await form_recognizer_client.recognize_content(form=f.read())
+                poller = await form_recognizer_client.begin_recognize_content(form=f)
+
+            contents = await poller.result()
 
             for idx, content in enumerate(contents):
                 print("----Recognizing content from page #{}----".format(idx))

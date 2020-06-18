@@ -64,7 +64,7 @@ async def get_data_source_connection():
 async def delete_data_source_connection():
     # [START delete_data_source_connection_async]
     async with client:
-        client.delete_datasource("async-sample-data-source-connection")
+        client.delete_data_source_connection("async-sample-data-source-connection")
     print("Data Source Connection 'async-sample-data-source-connection' successfully deleted")
     # [END delete_data_source_connection_async]
 

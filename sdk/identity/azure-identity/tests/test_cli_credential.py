@@ -5,8 +5,8 @@
 from datetime import datetime
 import json
 
-from azure.identity import CredentialUnavailableError
-from azure.identity._credentials.azure_cli import AzureCliCredential, CLI_NOT_FOUND
+from azure.identity import AzureCliCredential, CredentialUnavailableError
+from azure.identity._credentials.azure_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
 from azure.core.exceptions import ClientAuthenticationError
 
 import subprocess
@@ -98,10 +98,19 @@ def test_cannot_execute_shell():
 
 
 def test_not_logged_in():
-    """When the CLI isn't logged in, the credential should raise an error containing the CLI's output"""
+    """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
 
     output = "ERROR: Please run 'az login' to setup account."
     with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, output)):
+        with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):
+            AzureCliCredential().get_token("scope")
+
+
+def test_unexpected_error():
+    """When the CLI returns an unexpected error, the credential should raise an error containing the CLI's output"""
+
+    output = "something went wrong"
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(42, output)):
         with pytest.raises(ClientAuthenticationError, match=output):
             AzureCliCredential().get_token("scope")
 

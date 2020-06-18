@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity._constants import EnvironmentVariables
 from azure.identity.aio._internal.aad_client import AadClient
+from msal import TokenCache
 import pytest
 
 from helpers import build_aad_response, mock_response
@@ -108,6 +109,30 @@ async def test_authorization_code(secret):
     assert transport.send.call_count == 1
 
 
+async def test_client_secret():
+    tenant_id = "tenant-id"
+    client_id = "client-id"
+    scope = "scope"
+    secret = "refresh-token"
+    access_token = "***"
+
+    async def send(request, **_):
+        assert request.data["client_id"] == client_id
+        assert request.data["client_secret"] == secret
+        assert request.data["grant_type"] == "client_credentials"
+        assert request.data["scope"] == scope
+
+        return mock_response(json_payload={"access_token": access_token, "expires_in": 42})
+
+    transport = Mock(send=Mock(wraps=send))
+
+    client = AadClient(tenant_id, client_id, transport=transport)
+    token = await client.obtain_token_by_client_secret(scopes=(scope,), secret=secret)
+
+    assert token.token == access_token
+    assert transport.send.call_count == 1
+
+
 async def test_refresh_token():
     tenant_id = "tenant-id"
     client_id = "client-id"
@@ -155,3 +180,31 @@ async def test_request_url(authority):
         client = AadClient(tenant_id=tenant_id, client_id="client id", transport=Mock(send=send))
     await client.obtain_token_by_authorization_code("scope", "code", "uri")
     await client.obtain_token_by_refresh_token("scope", "refresh token")
+
+
+async def test_evicts_invalid_refresh_token():
+    """when AAD rejects a refresh token, the client should evict that token from its cache"""
+
+    tenant_id = "tenant-id"
+    client_id = "client-id"
+    invalid_token = "invalid-refresh-token"
+
+    cache = TokenCache()
+    cache.add({"response": build_aad_response(uid="id1", utid="tid1", access_token="*", refresh_token=invalid_token)})
+    cache.add({"response": build_aad_response(uid="id2", utid="tid2", access_token="*", refresh_token="...")})
+    assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN)) == 2
+    assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": invalid_token})) == 1
+
+    async def send(request, **_):
+        assert request.data["refresh_token"] == invalid_token
+        return mock_response(json_payload={"error": "invalid_grant"}, status_code=400)
+
+    transport = Mock(send=Mock(wraps=send))
+
+    client = AadClient(tenant_id, client_id, transport=transport, cache=cache)
+    with pytest.raises(ClientAuthenticationError):
+        await client.obtain_token_by_refresh_token(scopes=("scope",), refresh_token=invalid_token)
+
+    assert transport.send.call_count == 1
+    assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN)) == 1
+    assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": invalid_token})) == 0

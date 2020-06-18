@@ -20,7 +20,7 @@ from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_functi
 
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
-    AnalyzeRequest,
+    AnalyzeTextOptions,
     AnalyzeResult,
     CorsOptions,
     EntityRecognitionSkill,
@@ -148,7 +148,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         etag = result.e_tag
         # get e tag  nd update
         index.scoring_profiles = []
-        await client.create_or_update_index(index.name, index)
+        await client.create_or_update_index(index)
 
         index.e_tag = etag
         with pytest.raises(HttpResponseError):
@@ -198,7 +198,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
             scoring_profiles=scoring_profiles,
             cors_options=cors_options)
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        result = await client.create_or_update_index(index_name=index.name, index=index)
+        result = await client.create_or_update_index(index=index)
         assert len(result.scoring_profiles) == 0
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
         assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
@@ -212,7 +212,7 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
             fields=fields,
             scoring_profiles=scoring_profiles,
             cors_options=cors_options)
-        result = await client.create_or_update_index(index_name=index.name, index=index)
+        result = await client.create_or_update_index(index=index)
         assert result.scoring_profiles[0].name == scoring_profile.name
         assert result.cors_options.allowed_origins == cors_options.allowed_origins
         assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
@@ -250,17 +250,17 @@ class SearchIndexesClientTest(AzureMgmtTestCase):
         etag = result.e_tag
         # get e tag  nd update
         index.scoring_profiles = []
-        await client.create_or_update_index(index.name, index)
+        await client.create_or_update_index(index)
 
         index.e_tag = etag
         with pytest.raises(HttpResponseError):
-            await client.create_or_update_index(index.name, index, match_condition=MatchConditions.IfNotModified)
+            await client.create_or_update_index(index, match_condition=MatchConditions.IfNotModified)
 
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_analyze_text(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
+        analyze_request = AnalyzeTextOptions(text="One's <two/>", analyzer_name="standard.lucene")
         result = await client.analyze_text(index_name, analyze_request)
         assert len(result.tokens) == 2
 
@@ -269,10 +269,12 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_create_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        result = await client.create_synonym_map("test-syn-map", [
+        solr_format_synonyms = "\n".join([
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ])
+        synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+        result = await client.create_synonym_map(synonym_map)
         assert isinstance(result, SynonymMap)
         assert result.name == "test-syn-map"
         assert result.synonyms == [
@@ -285,10 +287,12 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_delete_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        result = await client.create_synonym_map("test-syn-map", [
+        solr_format_synonyms = "\n".join([
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ])
+        synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+        result = await client.create_synonym_map(synonym_map)
         assert len(await client.get_synonym_maps()) == 1
         await client.delete_synonym_map("test-syn-map")
         assert len(await client.get_synonym_maps()) == 0
@@ -297,15 +301,18 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_delete_synonym_map_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        result = await client.create_synonym_map("test-syn-map", [
+        solr_format_synonyms = "\n".join([
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ])
+        synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+        result = await client.create_synonym_map(synonym_map)
         etag = result.e_tag
 
-        await client.create_or_update_synonym_map("test-syn-map", [
-                    "Washington, Wash. => WA",
-                ])
+        synonym_map.synonyms = "\n".join([
+            "Washington, Wash. => WA",
+        ])
+        await client.create_or_update_synonym_map(synonym_map)
 
         result.e_tag = etag
         with pytest.raises(HttpResponseError):
@@ -316,10 +323,12 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        await client.create_synonym_map("test-syn-map", [
+        solr_format_synonyms = "\n".join([
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
         ])
+        synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+        await client.create_synonym_map(synonym_map)
         assert len(await client.get_synonym_maps()) == 1
         result = await client.get_synonym_map("test-syn-map")
         assert isinstance(result, SynonymMap)
@@ -333,12 +342,17 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_synonym_maps(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        await client.create_synonym_map("test-syn-map-1", [
+        solr_format_synonyms = "\n".join([
             "USA, United States, United States of America",
-        ])
-        await client.create_synonym_map("test-syn-map-2", [
             "Washington, Wash. => WA",
         ])
+        synonym_map_1 = SynonymMap(name="test-syn-map-1", synonyms=solr_format_synonyms)
+        await client.create_synonym_map(synonym_map_1)
+        solr_format_synonyms = "\n".join([
+            "Washington, Wash. => WA",
+        ])
+        synonym_map_2 = SynonymMap(name="test-syn-map-2", synonyms=solr_format_synonyms)
+        await client.create_synonym_map(synonym_map_2)
         result = await client.get_synonym_maps()
         assert isinstance(result, list)
         assert all(isinstance(x, SynonymMap) for x in result)
@@ -348,13 +362,17 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_create_or_update_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        await client.create_synonym_map("test-syn-map", [
+        solr_format_synonyms = "\n".join([
             "USA, United States, United States of America",
-        ])
-        assert len(await client.get_synonym_maps()) == 1
-        await client.create_or_update_synonym_map("test-syn-map", [
             "Washington, Wash. => WA",
         ])
+        synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+        await client.create_synonym_map(synonym_map)
+        assert len(await client.get_synonym_maps()) == 1
+        synonym_map.synonyms = "\n".join([
+            "Washington, Wash. => WA",
+        ])
+        await client.create_or_update_synonym_map(synonym_map)
         assert len(await client.get_synonym_maps()) == 1
         result = await client.get_synonym_map("test-syn-map")
         assert isinstance(result, SynonymMap)
@@ -373,7 +391,8 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
-        result = await client.create_skillset(name='test-ss', skills=[s], description="desc")
+        skillset = SearchIndexerSkillset(name='test-ss', skills=list([s]), description="desc")
+        result = await client.create_skillset(skillset)
         assert isinstance(result, SearchIndexerSkillset)
         assert result.name == "test-ss"
         assert result.description == "desc"
@@ -390,7 +409,8 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
-        result = await client.create_skillset(name='test-ss', skills=[s], description="desc")
+        skillset = SearchIndexerSkillset(name='test-ss', skills=list([s]), description="desc")
+        result = await client.create_skillset(skillset)
         assert len(await client.get_skillsets()) == 1
 
         await client.delete_skillset("test-ss")
@@ -405,10 +425,12 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
-        result = await client.create_skillset(name='test-ss', skills=[s], description="desc")
+        skillset = SearchIndexerSkillset(name='test-ss', skills=list([s]), description="desc")
+        result = await client.create_skillset(skillset)
         etag = result.e_tag
 
-        updated = await client.create_or_update_skillset(name='test-ss', skills=[s], description="updated")
+        skillset1 = SearchIndexerSkillset(name='test-ss', skills=list([s]), description="updated")
+        updated = await client.create_or_update_skillset(skillset1)
         updated.e_tag = etag
 
         with pytest.raises(HttpResponseError):
@@ -421,7 +443,8 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
-        await client.create_skillset(name='test-ss', skills=[s], description="desc")
+        skillset = SearchIndexerSkillset(name='test-ss', skills=list([s]), description="desc")
+        await client.create_skillset(skillset)
         assert len(await client.get_skillsets()) == 1
 
         result = await client.get_skillset("test-ss")
@@ -439,8 +462,10 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
-        await client.create_skillset(name='test-ss-1', skills=[s], description="desc1")
-        await client.create_skillset(name='test-ss-2', skills=[s], description="desc2")
+        skillset1 = SearchIndexerSkillset(name='test-ss-1', skills=list([s]), description="desc1")
+        await client.create_skillset(skillset1)
+        skillset2 = SearchIndexerSkillset(name='test-ss-2', skills=list([s]), description="desc2")
+        await client.create_skillset(skillset2)
         result = await client.get_skillsets()
         assert isinstance(result, list)
         assert all(isinstance(x, SearchIndexerSkillset) for x in result)
@@ -453,8 +478,10 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
-        await client.create_or_update_skillset(name='test-ss', skills=[s], description="desc1")
-        await client.create_or_update_skillset(name='test-ss', skills=[s], description="desc2")
+        skillset1 = SearchIndexerSkillset(name='test-ss', skills=list([s]), description="desc1")
+        await client.create_or_update_skillset(skillset1)
+        skillset2 = SearchIndexerSkillset(name='test-ss', skills=list([s]), description="desc2")
+        await client.create_or_update_skillset(skillset2)
         assert len(await client.get_skillsets()) == 1
 
         result = await client.get_skillset("test-ss")
@@ -469,8 +496,10 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
-        ss = await client.create_or_update_skillset(name='test-ss', skills=[s], description="desc1")
-        await client.create_or_update_skillset(name='test-ss', skills=[s], description="desc2", skillset=ss)
+        skillset1 = SearchIndexerSkillset(name='test-ss', skills=list([s]), description="desc1")
+        ss = await client.create_or_update_skillset(skillset1)
+        skillset2 = SearchIndexerSkillset(name='test-ss', skills=[s], description="desc2", skillset=ss)
+        await client.create_or_update_skillset(skillset2)
         assert len(await client.get_skillsets()) == 1
 
         result = await client.get_skillset("test-ss")
@@ -485,15 +514,13 @@ class SearchSkillsetClientTest(AzureMgmtTestCase):
         s = EntityRecognitionSkill(inputs=[InputFieldMappingEntry(name="text", source="/document/content")],
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
 
-        ss = await client.create_or_update_skillset(name='test-ss', skills=[s], description="desc1")
+        skillset1 = SearchIndexerSkillset(name='test-ss', skills=list([s]), description="desc1")
+        ss = await client.create_or_update_skillset(skillset1)
         etag = ss.e_tag
 
-        await client.create_or_update_skillset(name='test-ss', skills=[s], description="desc2", skillset=ss)
+        skillset2 = SearchIndexerSkillset(name='test-ss', skills=[s], description="desc2", skillset=ss)
+        await client.create_or_update_skillset(skillset2)
         assert len(await client.get_skillsets()) == 1
-
-        ss.e_tag = etag
-        with pytest.raises(HttpResponseError):
-            await client.create_or_update_skillset(name='test-ss', skills=[s], skillset=ss, match_condition=MatchConditions.IfNotModified)
 
 
 class SearchDataSourcesClientTest(AzureMgmtTestCase):

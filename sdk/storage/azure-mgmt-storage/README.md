@@ -7,7 +7,7 @@ For a more complete view of Azure libraries, see the [Github repo](https://githu
 
 # Usage
 
-For code examples, see [Storage Management](https://docs.microsoft.com/python/api/overview/azure/storage)
+For code examples, see [Storage Management](https://docs.microsoft.com/python/api/overview/azure/storage?view=azure-python-preview)
 on docs.microsoft.com.
 
 

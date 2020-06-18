@@ -39,7 +39,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_secret_crud_operations(self, client, **kwargs):
         secret_client = client
 
@@ -106,7 +105,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_secret_list_operations(self, client, **kwargs):
         secret_client = client
 
@@ -155,7 +153,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=False)
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_secrets_backup_restore(self, client, **kwargs):
         secret_client = client
         created_secret = await secret_client.set_secret("secret-name", "secret-value")
@@ -184,7 +181,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_example_secrets_recover(self, client, **kwargs):
         secret_client = client
         created_secret = await secret_client.set_secret("secret-name", "secret-value")

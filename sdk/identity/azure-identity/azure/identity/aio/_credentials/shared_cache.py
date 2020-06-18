@@ -8,7 +8,6 @@ from ... import CredentialUnavailableError
 from ..._constants import AZURE_CLI_CLIENT_ID
 from ..._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 from .._internal.aad_client import AadClient
-from .._internal.exception_wrapper import wrap_exceptions
 from .base import AsyncCredentialBase
 
 if TYPE_CHECKING:
@@ -29,6 +28,10 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
+    :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
+        :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
+        is unavailable. Defaults to False.
     """
 
     async def __aenter__(self):
@@ -42,7 +45,6 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
         if self._client:
             await self._client.__aexit__()
 
-    @wrap_exceptions
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Get an access token for `scopes` from the shared cache.
 
@@ -66,6 +68,10 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
 
         account = self._get_account(self._username, self._tenant_id)
 
+        token = self._get_cached_access_token(scopes, account)
+        if token:
+            return token
+
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account):
             token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token)
@@ -74,4 +80,4 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
 
     def _get_auth_client(self, **kwargs: "Any") -> "AadClientBase":
-        return AadClient(tenant_id="common", client_id=AZURE_CLI_CLIENT_ID, **kwargs)
+        return AadClient(client_id=AZURE_CLI_CLIENT_ID, **kwargs)

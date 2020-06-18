@@ -4,20 +4,30 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
 import functools
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
-from azure.ai.formrecognizer.aio import FormTrainingClient, FormRecognizerClient
+from azure.ai.formrecognizer.aio import FormTrainingClient
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
-from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
+from testcase import GlobalClientPreparer as _GlobalClientPreparer
 
 
-GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormTrainingClient)
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestManagementAsync(AsyncFormRecognizerTest):
+
+    @GlobalFormRecognizerAccountPreparer()
+    @pytest.mark.live_test_only
+    async def test_active_directory_auth_async(self):
+        token = self.generate_oauth_token()
+        endpoint = self.get_oauth_endpoint()
+        client = FormTrainingClient(endpoint, token)
+        props = await client.get_account_properties()
+        self.assertIsNotNone(props)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_account_properties_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -32,14 +42,14 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             result = await client.get_custom_model("xx")
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_get_model_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_get_model_empty_model_id(self, client):
         with self.assertRaises(ValueError):
             result = await client.get_custom_model("")
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_get_model_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_get_model_none_model_id(self, client):
         with self.assertRaises(ValueError):
             result = await client.get_custom_model(None)
 
@@ -58,31 +68,31 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             result = await client.delete_model("xx")
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_delete_model_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_delete_model_none_model_id(self, client):
         with self.assertRaises(ValueError):
             result = await client.delete_model(None)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_delete_model_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_delete_model_empty_model_id(self, client):
         with self.assertRaises(ValueError):
             result = await client.delete_model("")
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_account_properties(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormTrainingClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_account_properties(self, client):
         properties = await client.get_account_properties()
 
         self.assertIsNotNone(properties.custom_model_limit)
         self.assertIsNotNone(properties.custom_model_count)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_mgmt_model_labeled(self, client, container_sas_url):
 
-        labeled_model_from_train = await client.train_model(container_sas_url, use_training_labels=True)
-
+        poller = await client.begin_training(container_sas_url, use_training_labels=True)
+        labeled_model_from_train = await poller.result()
         labeled_model_from_get = await client.get_custom_model(labeled_model_from_train.model_id)
 
         self.assertEqual(labeled_model_from_train.model_id, labeled_model_from_get.model_id)
@@ -113,10 +123,10 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             await client.get_custom_model(labeled_model_from_train.model_id)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_mgmt_model_unlabeled(self, client, container_sas_url):
-        unlabeled_model_from_train = await client.train_model(container_sas_url, use_training_labels=False)
-
+        poller = await client.begin_training(container_sas_url, use_training_labels=False)
+        unlabeled_model_from_train = await poller.result()
         unlabeled_model_from_get = await client.get_custom_model(unlabeled_model_from_train.model_id)
 
         self.assertEqual(unlabeled_model_from_train.model_id, unlabeled_model_from_get.model_id)
@@ -155,6 +165,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             assert transport.session is not None
             async with ftc.get_form_recognizer_client() as frc:
                 assert transport.session is not None
-                await frc.recognize_receipts_from_url(self.receipt_url_jpg)
+                await frc.begin_recognize_receipts_from_url(self.receipt_url_jpg)
             await ftc.get_account_properties()
             assert transport.session is not None
