@@ -15,6 +15,7 @@ from base64 import b64encode
 from datetime import datetime, timedelta
 
 from azure.table import TableServiceClient
+from azure.table._generated.models import QueryOptions
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
 
@@ -177,7 +178,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-       # self.assertTrue('metadata' in entity.odata)
+        # self.assertTrue('metadata' in entity.odata)
         self.assertIsNotNone(entity.Timestamp)
         self.assertIsInstance(entity.Timestamp, datetime)
         if headers:
@@ -204,11 +205,11 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-        #self.assertTrue('metadata' in entity.odata)
-        #self.assertTrue('id' in entity.odata)
-        #self.assertTrue('type' in entity.odata)
-        #self.assertTrue('etag' in entity.odata)
-        #self.assertTrue('editLink' in entity.odata)
+        # self.assertTrue('metadata' in entity.odata)
+        # self.assertTrue('id' in entity.odata)
+        # self.assertTrue('type' in entity.odata)
+        # self.assertTrue('etag' in entity.odata)
+        # self.assertTrue('editLink' in entity.odata)
         self.assertIsNotNone(entity.Timestamp)
         self.assertIsInstance(entity.Timestamp, datetime)
         if headers:
@@ -262,9 +263,9 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertFalse(hasattr(entity, "other"))
         self.assertFalse(hasattr(entity, "clsid"))
-#        self.assertIsNotNone(entity.odata.etag)
+        #        self.assertIsNotNone(entity.odata.etag)
         self.assertIsNotNone(entity.Timestamp)
-        #self.assertIsInstance(entity.timestamp, datetime)
+        # self.assertIsInstance(entity.timestamp, datetime)
 
     def _assert_merged_entity(self, entity):
         '''
@@ -287,7 +288,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity.other.value, 20)
         self.assertIsInstance(entity.clsid, uuid.UUID)
         self.assertEqual(str(entity.clsid), 'c9da6455-213d-42c9-9a79-3e9149a57833')
-        #self.assertIsNotNone(entity.etag)
+        # self.assertIsNotNone(entity.etag)
         # self.assertIsNotNone(entity.odata['etag'])
         self.assertIsNotNone(entity.Timestamp)
         # self.assertIsInstance(entity.Timestamp, datetime)
@@ -385,7 +386,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    #@pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_with_large_int32_value_throws(self, resource_group, location, storage_account,
                                                          storage_account_key):
@@ -463,7 +464,7 @@ class StorageTableEntityTest(TableTestCase):
                 resp = self.table.insert_entity(table_entity_properties=entity)
 
                 # Assert
-              #  self.assertIsNone(resp)
+            #  self.assertIsNone(resp)
         finally:
             self._tear_down()
 
@@ -483,7 +484,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    #@pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_empty_string_rk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -499,11 +500,11 @@ class StorageTableEntityTest(TableTestCase):
                 resp = self.table.insert_entity(table_entity_properties=entity)
 
                 # Assert
-              #  self.assertIsNone(resp)
+            #  self.assertIsNone(resp)
         finally:
             self._tear_down()
 
-    #@pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_too_many_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -523,7 +524,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    #@pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_property_name_too_long(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -542,7 +543,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    #@pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_get_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -551,7 +552,8 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
+            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity['PartitionKey'],
+                                                                        row_key=entity['RowKey'])
 
             # Assert
             self.assertEqual(resp['PartitionKey'], entity['PartitionKey'])
@@ -569,8 +571,8 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            #resp, headers
-            resp= self.table.query_entities_with_partition_and_row_key(
+            # resp, headers
+            resp = self.table.query_entities_with_partition_and_row_key(
                 partition_key=entity['PartitionKey'],
                 row_key=entity['RowKey'],
                 response_hook=lambda e, h: (e, h))
@@ -593,7 +595,8 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             # Do a get and confirm the etag is parsed correctly by using it
             # as a condition to delete.
-            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
+            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity['PartitionKey'],
+                                                                        row_key=entity['RowKey'])
 
             self.table.delete_entity(
                 partition_key=resp['PartitionKey'],
@@ -606,7 +609,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_get_entity_full_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -615,7 +618,7 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.read_item(
+            resp = self.table.query_entities_with_partition_and_row_key(
                 entity.PartitionKey,
                 entity.RowKey,
                 headers={'accept': 'application/json;odata=fullmetadata'})
@@ -627,7 +630,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_get_entity_no_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -636,9 +639,9 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.read_item(
-                entity.PartitionKey,
-                entity.RowKey,
+            resp = self.table.query_entities_with_partition_and_row_key(
+                partition_key=entity.PartitionKey,
+                row_key=entity.RowKey,
                 headers={'accept': 'application/json;odata=nometadata'})
 
             # Assert
@@ -648,7 +651,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_get_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -658,13 +661,14 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             with self.assertRaises(ResourceNotFoundError):
-                self.table.read_item(entity.PartitionKey, entity.RowKey)
+                self.table.query_entities_with_partition_and_row_key(partition_key=entity.PartitionKey,
+                                                                     row_key=entity.RowKey)
 
             # Assert
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_get_entity_with_select(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -673,7 +677,10 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.read_item(entity.PartitionKey, entity.RowKey, select=['age', 'sex', 'xyz'])
+            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity.PartitionKey,
+                                                                        row_key=entity.RowKey,
+                                                                        query_options=QueryOptions(
+                                                                            select="age,sex,xyz"))
 
             # Assert
             self.assertEqual(resp.age, 39)
@@ -685,7 +692,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_get_entity_with_special_doubles(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -697,10 +704,11 @@ class StorageTableEntityTest(TableTestCase):
                 'negativeinf': float('-inf'),
                 'nan': float('nan')
             })
-            self.table.create_item(entity)
+            self.table.insert_entity(table_entity_properties=entity)
 
             # Act
-            resp = self.table.read_item(entity['PartitionKey'], entity['RowKey'])
+            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity['PartitionKey'],
+                                                                        row_key=entity['RowKey'])
 
             # Assert
             self.assertEqual(resp.inf, float('inf'))
@@ -724,7 +732,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.update_entity(table_entity_properties=sent_entity, response_hook=lambda e, h: h)
 
             # Assert
-          #  self.assertTrue(resp)
+            #  self.assertTrue(resp)
             received_entity = self.table.query_entities_with_partition_and_row_key(partition_key=entity.PartitionKey,
                                                                                    row_key=entity.RowKey)
 
@@ -743,13 +751,13 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             with self.assertRaises(ResourceNotFoundError):
-                self.table.update_item(sent_entity)
+                self.table.update_entity(table_entity_properties=sent_entity)
 
             # Assert
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_update_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -759,17 +767,17 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.update_item(
-                sent_entity, etag=etag, match_condition=MatchConditions.IfNotModified, response_hook=lambda e, h: h)
+            resp = self.table.update_entity(
+                table_entity_properties=sent_entity, etag=etag, match_condition=MatchConditions.IfNotModified, response_hook=lambda e, h: h)
 
             # Assert
-            self.assertTrue(resp)
-            received_entity = self.table.read_item(entity.PartitionKey, entity.RowKey)
+            #self.assertTrue(resp)
+            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_update_entity_with_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -780,8 +788,8 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             with self.assertRaises(HttpResponseError):
-                self.table.update_item(
-                    sent_entity,
+                self.table.update_entity(
+                    table_entity_properties=sent_entity,
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
                     match_condition=MatchConditions.IfNotModified)
 
@@ -789,7 +797,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_or_merge_entity_with_existing_entity(self, resource_group, location, storage_account,
                                                          storage_account_key):
@@ -800,16 +808,16 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.upsert_item(sent_entity, mode='MERGE')
+            resp = self.table.upsert_insert_merge_entity(table_entity_properties=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.read_item(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_or_merge_entity_with_non_existing_entity(self, resource_group, location, storage_account,
                                                              storage_account_key):
@@ -820,16 +828,16 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = self.table.upsert_item(sent_entity, mode='MERGE')
+            resp = self.table.upsert_insert_merge_entity(table_entity_properties=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.read_item(entity['PartitionKey'], entity['RowKey'])
+            received_entity = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_or_replace_entity_with_existing_entity(self, resource_group, location, storage_account,
                                                            storage_account_key):
@@ -840,16 +848,16 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.upsert_item(sent_entity)
+            resp = self.table.upsert_insert_update_entity(table_entity_properties=sent_entity)
 
             # Assert
-            self.assertIsNone(resp)
-            received_entity = self.table.read_item(entity.PartitionKey, entity.RowKey)
+            #self.assertIsNone(resp)
+            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_or_replace_entity_with_non_existing_entity(self, resource_group, location, storage_account,
                                                                storage_account_key):
@@ -860,16 +868,16 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = self.table.upsert_item(sent_entity)
+            resp = self.table.upsert_insert_update_entity(table_entity_properties=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.read_item(entity['PartitionKey'], entity['RowKey'])
+            received_entity = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_merge_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -879,11 +887,11 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.update_item(sent_entity, mode='MERGE')
+            resp = self.table.merge_entity(table_entity_properties=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.read_item(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()
@@ -899,13 +907,13 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             with self.assertRaises(ResourceNotFoundError):
-                self.table.update_item(sent_entity, mode='MERGE')
+                self.table.merge_entity(table_entity_properties=sent_entity)
 
             # Assert
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_merge_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -915,12 +923,12 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.update_item(
-                sent_entity, mode='MERGE', etag=etag, match_condition=MatchConditions.IfNotModified)
+            resp = self.table.merge_entity(
+                table_entity_properties=sent_entity, etag=etag, match_condition=MatchConditions.IfNotModified)
 
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.read_item(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()
@@ -936,15 +944,15 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             with self.assertRaises(HttpResponseError):
-                self.table.update_item(
-                    sent_entity, mode='MERGE', etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
+                self.table.merge_entity(
+                    table_entity_properties=sent_entity, etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
                     match_condition=MatchConditions.IfNotModified)
 
             # Assert
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_delete_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -953,16 +961,16 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.delete_item(entity.PartitionKey, entity.RowKey)
+            resp = self.table.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
 
             # Assert
             self.assertIsNone(resp)
             with self.assertRaises(ResourceNotFoundError):
-                self.table.read_item(entity.PartitionKey, entity.RowKey)
+                self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_delete_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -972,13 +980,13 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             with self.assertRaises(ResourceNotFoundError):
-                self.table.delete_item(entity['PartitionKey'], entity['RowKey'])
+                self.table.delete_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_delete_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -987,17 +995,17 @@ class StorageTableEntityTest(TableTestCase):
             entity, etag = self._insert_random_entity()
 
             # Act
-            resp = self.table.delete_item(entity.PartitionKey, entity.RowKey, etag=etag,
+            resp = self.table.delete_entity(entity.PartitionKey, entity.RowKey, etag=etag,
                                           match_condition=MatchConditions.IfNotModified)
 
             # Assert
             self.assertIsNone(resp)
             with self.assertRaises(ResourceNotFoundError):
-                self.table.read_item(entity.PartitionKey, entity.RowKey)
+                self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_delete_entity_with_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1007,7 +1015,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             with self.assertRaises(HttpResponseError):
-                self.table.delete_item(
+                self.table.delete_entity(
                     entity.PartitionKey, entity.RowKey,
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
                     match_condition=MatchConditions.IfNotModified)
@@ -1016,7 +1024,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_unicode_property_value(self, resource_group, location, storage_account, storage_account_key):
         ''' regression test for github issue #57'''
@@ -1030,9 +1038,9 @@ class StorageTableEntityTest(TableTestCase):
             entity2.update({'RowKey': 'test2', 'Description': 'ꀕ'})
 
             # Act
-            self.table.create_item(entity1)
-            self.table.create_item(entity2)
-            entities = list(self.table.query_items("PartitionKey eq '{}'".format(entity['PartitionKey'])))
+            self.table.insert_entity(table_entity_properties=entity1)
+            self.table.insert_entity(table_entity_properties=entity2)
+            entities = list(self.table.query_entities(query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity['PartitionKey']))))
 
             # Assert
             self.assertEqual(len(entities), 2)
@@ -1041,7 +1049,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_unicode_property_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1054,9 +1062,9 @@ class StorageTableEntityTest(TableTestCase):
             entity2.update({'RowKey': 'test2', u'啊齄丂狛狜': 'hello'})
 
             # Act  
-            self.table.create_item(entity1)
-            self.table.create_item(entity2)
-            entities = list(self.table.query_items("PartitionKey eq '{}'".format(entity['PartitionKey'])))
+            self.table.insert_entity(table_entity_properties=entity1)
+            self.table.insert_entity(table_entity_properties=entity2)
+            entities = list(self.table.query_entities(query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity['PartitionKey']))))
 
             # Assert
             self.assertEqual(len(entities), 2)

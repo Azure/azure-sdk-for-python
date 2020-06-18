@@ -278,7 +278,7 @@ class TableEntityPropertiesPaged(PageIterator):
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
-            continuation_token=continuation_token or ""
+           # continuation_token=continuation_token or ""
         )
         self._command = command
         self._headers = None
@@ -303,9 +303,8 @@ class TableEntityPropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [t for t in self._response.value]
-        return self._headers['x-ms-continuation-NextPartitionKey'] or None, self._headers[
-            'x-ms-continuation-NextRowKey'] or None, props_list
+        props_list = [Entity(t) for t in self._response.value]
+        return None , props_list
 
 
 class TableSasPermissions(object):

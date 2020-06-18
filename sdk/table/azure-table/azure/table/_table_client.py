@@ -157,15 +157,20 @@ class TableClient(StorageAccountHostsMixin):
             self,
             partition_key,
             row_key,
-            etag,
-            match_condition,
+            etag=None,
+            match_condition=None,
             timeout=None,
             request_id_parameter=None,
             query_options=None,
             **kwargs
     ):
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
-                                                    etag_param='etag', match_param='match_condition')
+
+        if etag is not None:
+            if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
+                                                        etag_param='etag', match_param='match_condition')
+        else:
+            if_match = '*'
+            if_not_match = None
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
@@ -173,8 +178,8 @@ class TableClient(StorageAccountHostsMixin):
                 row_key=row_key,
                 if_match=if_match or if_not_match,
                 **kwargs)
-        except ResourceNotFoundError as error:
-            process_storage_error(error)
+        except ResourceNotFoundError:
+            raise ResourceNotFoundError
 
     @distributed_trace
     def insert_entity(
@@ -213,53 +218,69 @@ class TableClient(StorageAccountHostsMixin):
             row_key=None,
             timeout=None,
             request_id_parameter=None,
-            if_match=None,
+            etag=None,
+            match_condition=None,
             response_hook=None,
             table_entity_properties=None,
             query_options=None,
             **kwargs
     ):
+        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
+                                                    etag_param='etag', match_param='match_condition')
         if table_entity_properties:
             partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
             row_key = table_entity_properties['RowKey'] if row_key is None else row_key
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
         try:
-            updated_entity = self._client.table.update_entity(
+            self._client.table.update_entity(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
                 table_entity_properties=table_entity_properties,
+                if_match=if_match or if_not_match,
                 **kwargs)
-        except HttpResponseError as error:
-            process_storage_error(error)
+        except ResourceNotFoundError:
+            raise ResourceNotFoundError
+        except HttpResponseError:
+            raise HttpResponseError
 
     @distributed_trace
     def merge_entity(
             self,
-            partition_key,  # type: str
-            row_key,  # type: str
+            partition_key=None,  # type: str
+            row_key=None,  # type: str
+            headers=None,
             timeout=None,  # type: Optional[int]
             request_id_parameter=None,  # type: Optional[str]
-            if_match=None,  # type: Optional[str]
+            etag=None,
+            match_condition=None,
             table_entity_properties=None,  # type: Optional[Dict[str, object]]
             query_options=None,  # type: Optional["models.QueryOptions"]
             **kwargs  # type: Any
     ):
+        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
+                                                    etag_param='etag', match_param='match_condition')
+        if table_entity_properties:
+            partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
+            row_key = table_entity_properties['RowKey'] if row_key is None else row_key
+            table_entity_properties = _add_entity_properties(table_entity_properties)
+
         try:
-            merged_entity = self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
-                                                            row_key=row_key)
-            return merged_entity
-        except HttpResponseError as error:
-            process_storage_error(error)
+            self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
+                                            row_key=row_key,
+                                            table_entity_properties=table_entity_properties, **kwargs)
+        except ResourceNotFoundError:
+            raise ResourceNotFoundError
+        except HttpResponseError:
+            raise HttpResponseError
 
     @distributed_trace
-    def query_entities(self, partition_key, row_key, query_options=None):
+    def query_entities(self, query_options=None):
         command = functools.partial(
-            self._client.table.query_entities_with_partition_and_row_key)
+            self._client.table.query_entities)
         return ItemPaged(
-            command, results_per_page=query_options, row_key=row_key, table=self.table_name,
-            partition_key=partition_key,
+            command, results_per_page=query_options,  table=self.table_name,
             page_iterator_class=TableEntityPropertiesPaged
         )
 
@@ -268,6 +289,7 @@ class TableClient(StorageAccountHostsMixin):
             self,
             partition_key,
             row_key,
+            headers=None,
             response_hook=None,
             query_options=None,
             **kwargs
@@ -278,42 +300,52 @@ class TableClient(StorageAccountHostsMixin):
                                                                                   partition_key=partition_key,
                                                                                   row_key=row_key,
                                                                                   query_options=query_options,
-                                                                                  **kwargs)
+                                                                                  **dict(kwargs, headers=headers))
             properties = _convert_to_entity(entity.additional_properties)
             return Entity(properties)
-        except ResourceExistsError as error:
-            process_storage_error(error)
+        except ResourceNotFoundError:
+            raise ResourceNotFoundError
 
     @distributed_trace
     def upsert_insert_merge_entity(
             self,
-            partition_key,
-            row_key,
+            partition_key=None,
+            row_key=None,
             timeout=None,
             request_id_parameter=None,
             if_match=None,
             table_entity_properties=None,
-            query_options=None
+            query_options=None,
+            **kwargs
     ):
         # Insert or Merge
+        if table_entity_properties:
+            partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
+            row_key = table_entity_properties['RowKey'] if row_key is None else row_key
+            table_entity_properties = _add_entity_properties(table_entity_properties)
+
         try:
-            merge_entity = self.merge_entity(
+            self.merge_entity(
                 partition_key=partition_key,
-                row_key=row_key
+                row_key=row_key,
+                table_entity_properties=table_entity_properties,
+                query_options=query_options,
+                **kwargs
             )
-            # update_entity = self.update_entity(partition_key=partition_key,row_key=row_key)
-            return merge_entity
         except ResourceNotFoundError:
             insert_entity = self.insert_entity(
                 partition_key=partition_key,
-                row_key=row_key
+                row_key=row_key,
+                table_entity_properties=table_entity_properties,
+                **kwargs
             )
-            return insert_entity
+            properties = _convert_to_entity(insert_entity)
+            return Entity(properties)
 
     def upsert_insert_update_entity(
             self,
-            partition_key,
-            row_key,
+            partition_key=None,
+            row_key=None,
             timeout=None,
             request_id_parameter=None,
             if_match=None,
@@ -321,12 +353,19 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None
     ):
         # Insert or Update
+        if table_entity_properties:
+            partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
+            row_key = table_entity_properties['RowKey'] if row_key is None else row_key
+            table_entity_properties = _add_entity_properties(table_entity_properties)
+
         try:
-            update_entity = self.update_entity(partition_key=partition_key, row_key=row_key)
+            update_entity = self.update_entity(partition_key=partition_key, row_key=row_key,
+                                               table_entity_properties=table_entity_properties)
             return update_entity
         except ResourceNotFoundError:
             insert_entity = self.insert_entity(
                 partition_key=partition_key,
-                row_key=row_key
+                row_key=row_key,
+                table_entity_properties=table_entity_properties
             )
             return insert_entity
