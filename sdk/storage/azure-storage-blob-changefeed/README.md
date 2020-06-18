@@ -1,8 +1,6 @@
 # Azure Storage Blob ChangeFeed client library for Python
 
-Overview
-
-This preview package for Python enable users to get change feed events by page, get all change feed events, get events in a time range, list events with a continuation token
+This preview package for Python enables users to get blob change feed events. These events can be lazily generated, iterated by page, retrieved for a specific time interval, or iterated from a specific continuation token.
 
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob-changefeed/azure/storage/blobchangefeed) | [Package (PyPi)](https://pypi.org/project/azure-storage-blob-changefeed/) | [API reference documentation](https://aka.ms/azsdk-python-storage-blobchangefeed-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob-changefeed/samples)
@@ -39,7 +37,7 @@ az storage account create -n my-storage-account-name -g my-resource-group --hier
 
 ### Authenticate the client
 
-Interaction with Blob ChangeFeed client starts with an instance of the ChangeFeed class. You need an existing storage account, its URL, and a credential to instantiate the client object.
+Interaction with Blob ChangeFeed client starts with an instance of the ChangeFeedClient class. You need an existing storage account, its URL, and a credential to instantiate the client object.
 
 #### Get credentials
 
@@ -66,8 +64,8 @@ service = ChangeFeedClient(account_url="https://<my-storage-account-name>.dfs.co
 
 #### Clients
 
-The Blob ChangeFeed SDK provides one client:
-ChangeFeedClient: get change feed events by page, get all change feed events, get events in a time range, start listing events with a continuation token
+The Blob ChangeFeed SDK provides one client:  
+* ChangeFeedClient: this client allows you to get change feed events by page, get all change feed events, get events in a time range, start listing events with a continuation token.
 
 ## Examples
 
@@ -100,9 +98,8 @@ start_time = datetime(2020, 1, 6)
 end_time = datetime(2020, 3, 4)
 change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time)
 
-# print first page of events
-events = list(change_feed)
-for event in events:
+# print range of events
+for event in change_feed:
     print(event)
 ```
 
@@ -117,8 +114,7 @@ cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format("YOUR_ACCO
 change_feed = cf_client.list_changes()
 
 # print all events
-events = list(change_feed)
-for event in events:
+for event in change_feed:
     print(event)
 ```
 
@@ -135,8 +131,7 @@ change_feed = cf_client.list_changes().by_page()
 
 # print first page of events
 change_feed_page1 = next(change_feed)
-events_per_page = list(change_feed_page1)
-for event in events_per_page:
+for event in change_feed_page1:
     print(event)
 ```
 

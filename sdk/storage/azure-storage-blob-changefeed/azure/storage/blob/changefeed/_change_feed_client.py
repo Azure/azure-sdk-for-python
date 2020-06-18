@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines,no-self-use
 from typing import (  # pylint: disable=unused-import
-    Optional, Any, TYPE_CHECKING
+    Optional, Any, TYPE_CHECKING, Dict
 )
 
 from azure.core.paging import ItemPaged
@@ -81,7 +81,7 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
         return cls(account_url, credential=credential, **kwargs)
 
     def list_changes(self, **kwargs):
-        # type: (Optional[datetime], Optional[datetime], **Any) -> ItemPaged[BlobProperties]
+        # type: (Optional[datetime], Optional[datetime], **Any) -> ItemPaged[Dict]
         """Returns a generator to list the change feed events.
         The generator will lazily follow the continuation tokens returned by
         the service.

@@ -43,14 +43,12 @@ class ChangeFeedSamples(object):
 
         # print first page of events
         change_feed_page1 = next(change_feed)
-        events_per_page = list(change_feed_page1)
-        for event in events_per_page:
+        for event in change_feed_page1:
             print(event)
 
         # print second page of events
         change_feed_page2 = next(change_feed)
-        events_per_page = list(change_feed_page2)
-        for event in events_per_page:
+        for event in change_feed_page2:
             print(event)
         # [END list_events_by_page]
 
@@ -61,8 +59,7 @@ class ChangeFeedSamples(object):
         change_feed = cf_client.list_changes()
 
         # print all events
-        events = list(change_feed)
-        for event in events:
+        for event in change_feed:
             print(event)
     # [END list_all_events]
 
@@ -74,8 +71,7 @@ class ChangeFeedSamples(object):
         change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time)
 
         # print first page of events
-        events = list(change_feed)
-        for event in events:
+        for event in change_feed:
             print(event)
 
     def list_events_using_continuation_token(self):
@@ -86,16 +82,14 @@ class ChangeFeedSamples(object):
         # to get continuation token
         change_feed = cf_client.list_changes(results_per_page=2).by_page()
         change_feed_page1 = next(change_feed)
-        events_per_page1 = list(change_feed_page1)
-        for event in events_per_page1:
+        for event in change_feed_page1:
             print(event)
         token = change_feed.continuation_token
 
         # restart using the continuation token
         change_feed2 = cf_client.list_changes(results_per_page=3).by_page(continuation_token=token)
         change_feed_page2 = next(change_feed2)
-        events_per_page2 = list(change_feed_page2)
-        for event in events_per_page2:
+        for event in change_feed_page2:
             print(event)
 
 
