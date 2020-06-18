@@ -33,7 +33,7 @@ import unittest
 import time
 
 from azure.core.exceptions import HttpResponseError
-import azure.mgmt.network.v2020_03_01
+import azure.mgmt.network
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
@@ -43,7 +43,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtNetworkTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.network.v2020_03_01.NetworkManagementClient
+            azure.mgmt.network.NetworkManagementClient
         )
 
     def create_network_interface(self, group_name, location, nic_name, subnet_id, ipconfig):
