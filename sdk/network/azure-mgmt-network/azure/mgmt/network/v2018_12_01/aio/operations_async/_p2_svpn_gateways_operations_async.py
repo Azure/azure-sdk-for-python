@@ -82,7 +82,6 @@ class P2SVpnGatewaysOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -131,7 +130,6 @@ class P2SVpnGatewaysOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(p2_s_vpn_gateway_parameters, 'P2SVpnGateway')
         body_content_kwargs['content'] = body_content
@@ -145,7 +143,6 @@ class P2SVpnGatewaysOperations:
             error = self._deserialize(models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('P2SVpnGateway', pipeline_response)
 
@@ -164,7 +161,7 @@ class P2SVpnGatewaysOperations:
         gateway_name: str,
         p2_s_vpn_gateway_parameters: "models.P2SVpnGateway",
         **kwargs
-    ) -> "models.P2SVpnGateway":
+    ) -> AsyncLROPoller["models.P2SVpnGateway"]:
         """Creates a virtual wan p2s vpn gateway if it doesn't exist else updates the existing gateway.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway.
@@ -180,8 +177,8 @@ class P2SVpnGatewaysOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: P2SVpnGateway, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2018_12_01.models.P2SVpnGateway
+        :return: An instance of AsyncLROPoller that returns either P2SVpnGateway or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2018_12_01.models.P2SVpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -255,7 +252,6 @@ class P2SVpnGatewaysOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(p2_s_vpn_gateway_parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
@@ -269,7 +265,6 @@ class P2SVpnGatewaysOperations:
             error = self._deserialize(models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('P2SVpnGateway', pipeline_response)
 
@@ -288,7 +283,7 @@ class P2SVpnGatewaysOperations:
         gateway_name: str,
         p2_s_vpn_gateway_parameters: "models.TagsObject",
         **kwargs
-    ) -> "models.P2SVpnGateway":
+    ) -> AsyncLROPoller["models.P2SVpnGateway"]:
         """Updates virtual wan p2s vpn gateway tags.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway.
@@ -304,8 +299,8 @@ class P2SVpnGatewaysOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: P2SVpnGateway, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2018_12_01.models.P2SVpnGateway
+        :return: An instance of AsyncLROPoller that returns either P2SVpnGateway or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2018_12_01.models.P2SVpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -375,7 +370,6 @@ class P2SVpnGatewaysOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -395,7 +389,7 @@ class P2SVpnGatewaysOperations:
         resource_group_name: str,
         gateway_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes a virtual wan p2s vpn gateway.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway.
@@ -408,8 +402,8 @@ class P2SVpnGatewaysOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -468,6 +462,10 @@ class P2SVpnGatewaysOperations:
         api_version = "2018-12-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -480,15 +478,11 @@ class P2SVpnGatewaysOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -533,6 +527,10 @@ class P2SVpnGatewaysOperations:
         api_version = "2018-12-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -544,15 +542,11 @@ class P2SVpnGatewaysOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -586,8 +580,8 @@ class P2SVpnGatewaysOperations:
         gateway_name: str,
         parameters: "models.P2SVpnProfileParameters",
         **kwargs
-    ) -> "models.VpnProfileResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnProfileResponse"]
+    ) -> Optional["models.VpnProfileResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnProfileResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-12-01"
@@ -611,7 +605,6 @@ class P2SVpnGatewaysOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'P2SVpnProfileParameters')
         body_content_kwargs['content'] = body_content
@@ -640,7 +633,7 @@ class P2SVpnGatewaysOperations:
         gateway_name: str,
         parameters: "models.P2SVpnProfileParameters",
         **kwargs
-    ) -> "models.VpnProfileResponse":
+    ) -> AsyncLROPoller["models.VpnProfileResponse"]:
         """Generates VPN profile for P2S client of the P2SVpnGateway in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -656,8 +649,8 @@ class P2SVpnGatewaysOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VpnProfileResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2018_12_01.models.VpnProfileResponse
+        :return: An instance of AsyncLROPoller that returns either VpnProfileResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2018_12_01.models.VpnProfileResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
