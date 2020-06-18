@@ -57,7 +57,7 @@ setup(
         'azure.core.tracing.ext.opencensus_span',
     ],
     install_requires=[
-        'opencensus>=0.6.0',
+        'opencensus==0.7.8',
         'opencensus-ext-azure>=0.3.1',
         'opencensus-ext-threading',
         'azure-core<2.0.0,>=1.0.0',
