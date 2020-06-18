@@ -68,7 +68,7 @@ class StorageChangeFeedTest(StorageTestCase):
             page_size = len(list(page))
             event_number_in_all_pages += page_size
 
-        self.assertEqual(ceil(len(all_events)/results_per_page), len(pages))
+        self.assertEqual(ceil(len(all_events)*1.0/results_per_page), len(pages))
         self.assertEqual(total_events, event_number_in_all_pages)
 
     @GlobalStorageAccountPreparer()

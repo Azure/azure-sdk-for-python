@@ -8,7 +8,6 @@
 import collections
 import json
 from datetime import datetime
-from io import BytesIO
 
 from azure.storage.blob._shared.avro.datafile import DataFileReader
 from azure.storage.blob._shared.avro.avro_io import DatumReader
@@ -353,7 +352,8 @@ class ChangeFeedStreamer(object):
     def __iter__(self):
         return self._iterator
 
-    def seekable(self):
+    @staticmethod
+    def seekable():
         return True
 
     def next(self):

@@ -9,7 +9,7 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from azure.core.paging import ItemPaged
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobServiceClient  # pylint: disable=no-name-in-module
 
 from azure.storage.blob._shared.base_client import parse_connection_str
 from ._models import ChangeFeedPaged
