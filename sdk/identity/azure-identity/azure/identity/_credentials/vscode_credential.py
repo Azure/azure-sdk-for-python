@@ -48,9 +48,17 @@ class VSCodeCredential(object):
 
         token = self._client.get_cached_access_token(scopes)
 
-        if token:
-            return token
+        if not token:
+            token = self._redeem_refresh_token(scopes, **kwargs)
+        elif self._client.is_refresh(token):
+            try:
+                self._redeem_refresh_token(scopes, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
+        return token
 
+    def _redeem_refresh_token(self, scopes, **kwargs):
+        # type: (Sequence[str], **Any) -> Optional[AccessToken]
         if not self._refresh_token:
             self._refresh_token = get_credentials()
             if not self._refresh_token:

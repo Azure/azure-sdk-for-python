@@ -80,6 +80,8 @@ class AuthorizationCodeCredential(AsyncCredentialBase):
         token = self._client.get_cached_access_token(scopes)
         if not token:
             token = await self._redeem_refresh_token(scopes, **kwargs)
+        elif self._client.is_refresh(token):
+            await self._redeem_refresh_token(scopes, **kwargs)
 
         if not token:
             raise ClientAuthenticationError(

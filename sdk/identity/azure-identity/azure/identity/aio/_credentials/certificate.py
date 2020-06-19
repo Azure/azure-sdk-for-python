@@ -54,6 +54,8 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
         token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
         if not token:
             token = await self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
+        elif self._client.is_refresh(token):
+            await self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
         return token
 
     def _get_auth_client(self, tenant_id, client_id, **kwargs):
