@@ -3303,12 +3303,14 @@ class NetworkProfile(Model):
 class OrchestrationServiceStateInput(Model):
     """The input for OrchestrationServiceState.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :param service_name: Required. The name of the service. Possible values
-     include: 'AutomaticRepairs'
-    :type service_name: str or
-     ~azure.mgmt.compute.v2019_12_01.models.OrchestrationServiceNames
+    :ivar service_name: Required. The name of the service. Default value:
+     "AutomaticRepairs" .
+    :vartype service_name: str
     :param action: Required. The action to be performed. Possible values
      include: 'Resume', 'Suspend'
     :type action: str or
@@ -3316,7 +3318,7 @@ class OrchestrationServiceStateInput(Model):
     """
 
     _validation = {
-        'service_name': {'required': True},
+        'service_name': {'required': True, 'constant': True},
         'action': {'required': True},
     }
 
@@ -3325,9 +3327,10 @@ class OrchestrationServiceStateInput(Model):
         'action': {'key': 'action', 'type': 'str'},
     }
 
+    service_name = "AutomaticRepairs"
+
     def __init__(self, **kwargs):
         super(OrchestrationServiceStateInput, self).__init__(**kwargs)
-        self.service_name = kwargs.get('service_name', None)
         self.action = kwargs.get('action', None)
 
 
@@ -5214,7 +5217,7 @@ class VirtualMachine(Resource):
      ~azure.mgmt.compute.v2019_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine and Azure Spot scale set. <br><br>For Azure Spot virtual
-     machines, the only supported value is 'Deallocate' and the minimum
+     machines, both 'Deallocate' and 'Delete' are supported and the minimum
      api-version is 2019-03-01. <br><br>For Azure Spot scale sets, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
@@ -6561,13 +6564,13 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     :param load_balancer_backend_address_pools: Specifies an array of
      references to backend address pools of load balancers. A scale set can
      reference backend address pools of one public and one internal load
-     balancer. Multiple scale sets cannot use the same load balancer.
+     balancer. Multiple scale sets cannot use the same basic sku load balancer.
     :type load_balancer_backend_address_pools:
      list[~azure.mgmt.compute.v2019_12_01.models.SubResource]
     :param load_balancer_inbound_nat_pools: Specifies an array of references
      to inbound Nat pools of the load balancers. A scale set can reference
      inbound nat pools of one public and one internal load balancer. Multiple
-     scale sets cannot use the same load balancer
+     scale sets cannot use the same basic sku load balancer.
     :type load_balancer_inbound_nat_pools:
      list[~azure.mgmt.compute.v2019_12_01.models.SubResource]
     """
@@ -7929,7 +7932,7 @@ class VirtualMachineScaleSetVMProfile(Model):
      ~azure.mgmt.compute.v2019_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine and Azure Spot scale set. <br><br>For Azure Spot virtual
-     machines, the only supported value is 'Deallocate' and the minimum
+     machines, both 'Deallocate' and 'Delete' are supported and the minimum
      api-version is 2019-03-01. <br><br>For Azure Spot scale sets, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
@@ -8142,7 +8145,7 @@ class VirtualMachineUpdate(UpdateResource):
      ~azure.mgmt.compute.v2019_12_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine and Azure Spot scale set. <br><br>For Azure Spot virtual
-     machines, the only supported value is 'Deallocate' and the minimum
+     machines, both 'Deallocate' and 'Delete' are supported and the minimum
      api-version is 2019-03-01. <br><br>For Azure Spot scale sets, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'

@@ -1841,8 +1841,8 @@ class VirtualMachineScaleSetsOperations(object):
 
 
     def _set_orchestration_service_state_initial(
-            self, resource_group_name, vm_scale_set_name, service_name, action, custom_headers=None, raw=False, **operation_config):
-        parameters = models.OrchestrationServiceStateInput(service_name=service_name, action=action)
+            self, resource_group_name, vm_scale_set_name, action, custom_headers=None, raw=False, **operation_config):
+        parameters = models.OrchestrationServiceStateInput(action=action)
 
         # Construct URL
         url = self.set_orchestration_service_state.metadata['url']
@@ -1884,7 +1884,7 @@ class VirtualMachineScaleSetsOperations(object):
             return client_raw_response
 
     def set_orchestration_service_state(
-            self, resource_group_name, vm_scale_set_name, service_name, action, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, vm_scale_set_name, action, custom_headers=None, raw=False, polling=True, **operation_config):
         """Changes ServiceState property for a given service.
 
         :param resource_group_name: The name of the resource group.
@@ -1892,10 +1892,6 @@ class VirtualMachineScaleSetsOperations(object):
         :param vm_scale_set_name: The name of the virtual machine scale set to
          create or update.
         :type vm_scale_set_name: str
-        :param service_name: The name of the service. Possible values include:
-         'AutomaticRepairs'
-        :type service_name: str or
-         ~azure.mgmt.compute.v2019_12_01.models.OrchestrationServiceNames
         :param action: The action to be performed. Possible values include:
          'Resume', 'Suspend'
         :type action: str or
@@ -1914,7 +1910,6 @@ class VirtualMachineScaleSetsOperations(object):
         raw_result = self._set_orchestration_service_state_initial(
             resource_group_name=resource_group_name,
             vm_scale_set_name=vm_scale_set_name,
-            service_name=service_name,
             action=action,
             custom_headers=custom_headers,
             raw=True,
