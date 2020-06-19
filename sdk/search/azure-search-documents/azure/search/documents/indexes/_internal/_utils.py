@@ -317,8 +317,12 @@ def pack_search_indexer_data_source(search_indexer_data_source):
     # type: (SearchIndexerDataSourceConnection) -> _SearchIndexerDataSource
     if not search_indexer_data_source:
         return None
+    if search_indexer_data_source.connection_string is None or search_indexer_data_source.connection_string == "":
+        connection_string = "<unchanged>"
+    else:
+        connection_string = search_indexer_data_source.connection_string
     credentials = DataSourceCredentials(
-        connection_string=search_indexer_data_source.connection_string
+        connection_string=connection_string
     )
     return _SearchIndexerDataSource(
         name=search_indexer_data_source.name,
