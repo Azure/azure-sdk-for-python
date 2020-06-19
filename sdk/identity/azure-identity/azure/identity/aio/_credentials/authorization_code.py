@@ -81,8 +81,10 @@ class AuthorizationCodeCredential(AsyncCredentialBase):
         if not token:
             token = await self._redeem_refresh_token(scopes, **kwargs)
         elif self._client.is_refresh(token):
-            await self._redeem_refresh_token(scopes, **kwargs)
-
+            try:
+                await self._redeem_refresh_token(scopes, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
         if not token:
             raise ClientAuthenticationError(
                 message="No authorization code, cached access token, or refresh token available."

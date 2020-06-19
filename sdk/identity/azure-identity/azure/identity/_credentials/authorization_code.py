@@ -68,7 +68,10 @@ class AuthorizationCodeCredential(object):
         if not token:
             token = self._redeem_refresh_token(scopes, **kwargs)
         elif self._client.is_refresh(token):
-            self._redeem_refresh_token(scopes, **kwargs)
+            try:
+                self._redeem_refresh_token(scopes, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
 
         if not token:
             raise ClientAuthenticationError(

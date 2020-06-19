@@ -55,7 +55,10 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
         if not token:
             token = await self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
         elif self._client.is_refresh(token):
-            await self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
+            try:
+                await self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
         return token
 
     def _get_auth_client(self, tenant_id, client_id, **kwargs):

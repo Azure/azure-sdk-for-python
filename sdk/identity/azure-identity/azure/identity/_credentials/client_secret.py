@@ -50,7 +50,10 @@ class ClientSecretCredential(ClientSecretCredentialBase):
         if not token:
             token = self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
         elif self._client.is_refresh(token):
-            self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
+            try:
+                self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
         return token
 
     def _get_auth_client(self, tenant_id, client_id, **kwargs):
