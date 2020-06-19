@@ -52,8 +52,8 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations(object):
         virtual_wan_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VpnServerConfigurationsResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnServerConfigurationsResponse"]
+        # type: (...) -> Optional["models.VpnServerConfigurationsResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnServerConfigurationsResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-08-01"
@@ -75,7 +75,6 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -100,7 +99,7 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations(object):
         virtual_wan_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VpnServerConfigurationsResponse"]
         """Gives the list of VpnServerConfigurations associated with Virtual Wan in a resource group.
 
         :param resource_group_name: The resource group name.
