@@ -46,10 +46,10 @@ class StorageObjectReplicationTest(StorageTestCase):
         self.assertEqual(len(result[1].rules), 2)  # 2 rules for policy 222
 
         # check individual result
-        self.assertEqual(result[0].rules[0].status, 'Completed')
-        self.assertEqual(result[0].rules[1].status, 'Failed')
-        self.assertEqual(result[1].rules[0].status, 'Completed')
-        self.assertEqual(result[1].rules[1].status, 'Failed')
+        self.assertEqual(result[0].rules[0].status, 'Completed' if result[0].rules[0].rule_id == '111' else 'Failed')
+        self.assertEqual(result[0].rules[1].status, 'Failed' if result[0].rules[1].rule_id == '222' else 'Completed')
+        self.assertEqual(result[1].rules[0].status, 'Completed' if result[1].rules[0].rule_id == '111' else 'Failed')
+        self.assertEqual(result[1].rules[1].status, 'Failed' if result[1].rules[1].rule_id == '222' else 'Completed')
 
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
