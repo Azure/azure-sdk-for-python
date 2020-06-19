@@ -40,6 +40,8 @@ stages:
   parameters:
     ServiceDirectory: compute
     Artifacts:
+    - name: azure_mgmt_avs
+      safeName: azuremgmtavs
     - name: azure_mgmt_compute
       safeName: azuremgmtcompute
     - name: azure_mgmt_imagebuilder
