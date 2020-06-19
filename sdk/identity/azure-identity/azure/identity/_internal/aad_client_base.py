@@ -74,7 +74,7 @@ class AadClientBase(ABC):
         now = int(time.time())
         if expires_on - now > self._token_refresh_offset:
             return False
-        if now - self._last_refresh_time < self._token_refresh_offset:
+        if now - self._last_refresh_time < self._token_refresh_timeout:
             return False
         return True
 
