@@ -274,27 +274,32 @@ class TableEntityPropertiesPaged(PageIterator):
     :param str continuation_token: An opaque continuation token.
     """
 
-    def __init__(self, command, results_per_page=None, row_key=None, partition_key=None, table=None,
+    def __init__(self, command, results_per_page=None, table=None, next_row_key=None, next_partition_key=None,
                  continuation_token=None):
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
-           # continuation_token=continuation_token or ""
+            continuation_token=continuation_token or ""
         )
         self._command = command
         self._headers = None
         self.results_per_page = results_per_page
-        self.row_key = row_key
-        self.partition_key = partition_key
         self.table = table
         self.location_mode = None
 
     def _get_next_cb(self, continuation_token):
+        print(continuation_token)
+        row_key = None
+        partition_key = None
+        if continuation_token:
+            tokens = continuation_token.split(" ")
+            row_key = tokens[1]
+            partition_key = tokens[0]
         try:
             return self._command(
                 query_options=self.results_per_page or None,
-                next_row_key=self.row_key or None,
-                next_partition_key=self.partition_key or None,
+                next_row_key=row_key or None,
+                next_partition_key=partition_key or None,
                 table=self.table,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode
@@ -304,8 +309,17 @@ class TableEntityPropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list =  [Entity(_convert_to_entity(t)) for t in self._response.value]
-        return None , props_list
+        props_list = [Entity(_convert_to_entity(t)) for t in self._response.value]
+        pk = self._headers['x-ms-continuation-NextPartitionKey']
+        rk = self._headers['x-ms-continuation-NextRowKey']
+        next = ''
+        if pk and rk:
+            next = pk + " " + rk
+        elif pk:
+            next = pk
+        elif rk:
+            next = " " + rk
+        return next or None, props_list
 
 
 class TableSasPermissions(object):
@@ -372,8 +386,6 @@ def service_properties_deserialize(generated):
     }
 
 
-
-
 class TableServices(Services):
     def __init__(self):
         """
@@ -387,6 +399,7 @@ class TableServices(Services):
 
     def __str__(self):
         return 't'
+
 
 class TablePayloadFormat(object):
     '''

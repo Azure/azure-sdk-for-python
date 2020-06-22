@@ -1,5 +1,6 @@
-
 from ._shared._error import _ERROR_ATTRIBUTE_MISSING
+
+
 class Entity(dict):
     """
     An entity object. Can be accessed as a dict or as an obj. The attributes of

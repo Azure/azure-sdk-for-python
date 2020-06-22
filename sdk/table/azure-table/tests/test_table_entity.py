@@ -26,6 +26,9 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ClientAuthenticationError)
 
+from azure.table._shared.shared_access_signature import TableSharedAccessSignature
+
+
 # from azure.tables import (
 #     AccessPolicy,
 #     TableSasPermissions,
@@ -322,7 +325,6 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act       
             resp = self.table.insert_entity(table_entity_properties=entity, response_hook=lambda e, h: (e, h))
-            # resp = self.ts.insert_entity(table_entity_properties=entity,table=self.table_name,response_hook=lambda e, h: (e, h))
 
             # Assert
             self.assertIsNotNone(resp)
@@ -1371,7 +1373,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_entities_with_top_and_next(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1380,11 +1382,11 @@ class StorageTableEntityTest(TableTestCase):
             table = self._create_query_table(5)
 
             # Act
-            resp1 = table.read_all_items(results_per_page=2).by_page()
+            resp1 = table.query_entities(query_options=QueryOptions(top=2)).by_page()
             next(resp1)
-            resp2 = table.read_all_items(results_per_page=2).by_page(continuation_token=resp1.continuation_token)
+            resp2 = table.query_entities(query_options=QueryOptions(top=2)).by_page(continuation_token=resp1.continuation_token)
             next(resp2)
-            resp3 = table.read_all_items(results_per_page=2).by_page(continuation_token=resp2.continuation_token)
+            resp3 = table.query_entities(query_options=QueryOptions(top=2)).by_page(continuation_token=resp2.continuation_token)
             next(resp3)
 
             entities1 = resp1._current_page
@@ -1416,13 +1418,12 @@ class StorageTableEntityTest(TableTestCase):
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
-            token = generate_table_sas(
-                storage_account.name,
-                self.table_name,
-                storage_account_key,
+            sas_service = TableSharedAccessSignature(storage_account.name,storage_account_key)
+            token = sas_service._generate_table_sas(
+                table_name=self.table_name,
                 permission=TableSasPermissions(query=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1),
+                start=datetime.utcnow() - timedelta(minutes=1)
             )
 
             # Act
@@ -1431,7 +1432,7 @@ class StorageTableEntityTest(TableTestCase):
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
-            entities = list(table.query_items("PartitionKey eq '{}'".format(entity['PartitionKey'])))
+            entities = list(table.query_entities(query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity.PartitionKey))))
 
             # Assert
             self.assertEqual(len(entities), 1)
@@ -1450,7 +1451,7 @@ class StorageTableEntityTest(TableTestCase):
         self._set_up(storage_account, storage_account_key)
         try:
             # Arrange
-            token = generate_table_sas(
+            token = _generate_table_sas(
                 storage_account.name,
                 self.table_name,
                 storage_account_key,
@@ -1467,10 +1468,10 @@ class StorageTableEntityTest(TableTestCase):
             table = service.get_table_client(self.table_name)
 
             entity = self._create_random_entity_dict()
-            table.create_item(entity)
+            table.insert_entity(table_entity_properties=entity)
 
             # Assert
-            resp = self.table.read_item(entity['PartitionKey'], entity['RowKey'])
+            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
             self._assert_default_entity(resp)
         finally:
             self._tear_down()
@@ -1503,10 +1504,10 @@ class StorageTableEntityTest(TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             entity = self._create_random_entity_dict('test', 'test1')
-            table.create_item(entity)
+            table.insert_entity(table_entity_properties=entity)
 
             # Assert
-            resp = self.table.read_item('test', 'test1')
+            resp = list(self.table.query_entities(query_options=QueryOptions(select='test,test1')))
             self._assert_default_entity(resp)
         finally:
             self._tear_down()
