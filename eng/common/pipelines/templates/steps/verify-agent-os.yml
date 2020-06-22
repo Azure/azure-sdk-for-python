@@ -33,6 +33,6 @@ steps:
 
         if (agent_os.lower() == os_parameter.lower()):
             print('Job ran on OS: %s' % (agent_os))
-            print('##vso[task.setvariable variable=OSName]%s' % (agent_os))
+            #print('##vso[task.setvariable variable=OSName]%s' % (agent_os))
         else:
             raise Exception('Job ran on the wrong OS: %s' % (agent_os))
