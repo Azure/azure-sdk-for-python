@@ -4,4 +4,4 @@
 # ------------------------------------
 from ._version import VERSION
 
-SDK_MONIKER = "keyvault-secrets/{}".format(VERSION)
+USER_AGENT = "keyvault-secrets/{}".format(VERSION)
