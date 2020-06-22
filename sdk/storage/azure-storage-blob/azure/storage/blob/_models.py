@@ -483,9 +483,8 @@ class BlobProperties(DictMixin):
         container-level scope is configured to allow overrides. Otherwise an error will be raised.
     :ivar bool request_server_encrypted:
         Whether this blob is encrypted.
-    :ivar dict(str, dict(str, str)) object_replication_source_properties:
+    :ivar list(~azure.storage.blob.ObjectReplicationPolicy) object_replication_source_properties:
         Only present for blobs that have policy ids and rule ids applied to them.
-        Dictionary<policy_id, Dictionary<rule_id, status of replication(complete,failed)>
     :ivar str object_replication_destination_policy:
         Represents the Object Replication Policy Id that created this blob.
     :ivar int tag_count:
@@ -657,16 +656,17 @@ class BlobPropertiesPaged(PageIterator):
         return item
 
 
-class FilteredBlob(FilterBlobItem):
+class FilteredBlob(DictMixin):
     """Blob info from a Filter Blobs API call.
 
     :ivar name: Blob name
     :type name: str
     :ivar container_name: Container name.
     :type container_name: str
-    :ivar tag_value: tag value filtered by the expression.
-    :type tag_value: str
     """
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name', None)
+        self.container_name = kwargs.get('container_name', None)
 
 
 class FilteredBlobPaged(PageIterator):
@@ -732,7 +732,7 @@ class FilteredBlobPaged(PageIterator):
     @staticmethod
     def _build_item(item):
         if isinstance(item, FilterBlobItem):
-            blob = FilteredBlob(name=item.name, container_name=item.container_name, tag_value=item.tag_value)  # pylint: disable=protected-access
+            blob = FilteredBlob(name=item.name, container_name=item.container_name)  # pylint: disable=protected-access
             return blob
         return item
 
@@ -1236,6 +1236,35 @@ class DelimitedTextConfiguration(GenDelimitedTextConfiguration):
             record_separator=record_separator,
             escape_char=escape_char,
             headers_present=headers_present)
+
+
+class ObjectReplicationPolicy(DictMixin):
+    """Policy id and rule ids applied to a blob.
+
+    :ivar str policy_id:
+        Policy id for the blob. A replication policy gets created (policy id) when creating a source/destination pair.
+    :ivar list(~azure.storage.blob.ObjectReplicationRule) rules:
+        Within each policy there may be multiple replication rules.
+        e.g. rule 1= src/container/.pdf to dst/container2/; rule2 = src/container1/.jpg to dst/container3
+    """
+
+    def __init__(self, **kwargs):
+        self.policy_id = kwargs.pop('policy_id', None)
+        self.rules = kwargs.pop('rules', None)
+
+
+class ObjectReplicationRule(DictMixin):
+    """Policy id and rule ids applied to a blob.
+
+    :ivar str rule_id:
+        Rule id.
+    :ivar str status:
+        The status of the rule. It could be "Complete" or "Failed"
+    """
+
+    def __init__(self, **kwargs):
+        self.rule_id = kwargs.pop('rule_id', None)
+        self.status = kwargs.pop('status', None)
 
 
 class QuickQueryError(object):

@@ -33,7 +33,6 @@ from ._download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.core.pipeline.policies import HTTPPolicy
     from .._models import (  # pylint: disable=unused-import
         ContentSettings,
         PremiumPageBlobTier,
@@ -61,12 +60,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the URL already has a SAS token, specifying an explicit credential will take priority.
-    :keyword str version_id:
-        The version id parameter is an opaque DateTime
-        value that, when present, specifies the version of the blob to download.
-
-        .. versionadded:: 12.4.0
-        This keyword argument was introduced in API version '2019-12-12'.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-07-07'.
         Setting to an older version may result in reduced feature compatibility.

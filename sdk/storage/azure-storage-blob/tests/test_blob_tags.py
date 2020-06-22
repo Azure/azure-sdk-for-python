@@ -278,10 +278,5 @@ class StorageBlobTagsTest(StorageTestCase):
         items_on_page2 = list(second_page)
 
         self.assertEqual(2, len(items_on_page1))
-
-        for blob in items_on_page1:
-            self.assertEqual(blob.tag_value, "firsttag")
-        for blob in items_on_page2:
-            self.assertEqual(blob.tag_value, "firsttag")
-
+        self.assertEqual(2, len(items_on_page2))
 #------------------------------------------------------------------------------

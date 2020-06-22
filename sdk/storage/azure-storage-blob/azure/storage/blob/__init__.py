@@ -53,7 +53,9 @@ from ._models import (
     CustomerProvidedEncryptionKey,
     ContainerEncryptionScope,
     QuickQueryError,
-    DelimitedTextConfiguration
+    DelimitedTextConfiguration,
+    ObjectReplicationPolicy,
+    ObjectReplicationRule
 )
 
 __version__ = VERSION
@@ -214,5 +216,7 @@ __all__ = [
     'ContainerEncryptionScope',
     'QuickQueryError',
     'DelimitedTextConfiguration',
-    'QuickQueryReader'
+    'QuickQueryReader',
+    'ObjectReplicationPolicy',
+    'ObjectReplicationRule'
 ]
