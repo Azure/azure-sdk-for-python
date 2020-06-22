@@ -133,7 +133,7 @@ client = SearchClient(endpoint=endpoint,
                       credential=credential)
 
 # Let's get the top 5 jobs related to Microsoft
-results = client.search(search_text="Microsoft", include_total_result_count=5)
+results = client.search(search_text="Microsoft", top=5)
 
 for result in results:
     # Print out the title and job description
@@ -323,6 +323,26 @@ result = client.upload_documents(documents=[DOCUMENT])
 
 print("Upload of new document succeeded: {}".format(result[0].succeeded))
 ```
+
+
+### Async APIs
+This library includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+for more information.
+
+
+```py
+from azure.search.documents.aio import SearchClient
+
+client = SearchClient(
+            endpoint, index_name, AzureKeyCredential(api_key)
+        )
+
+async with client:
+  results = await client.search(search_text="hotel")
+...
 
 
 ## Troubleshooting
