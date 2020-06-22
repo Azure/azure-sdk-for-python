@@ -96,7 +96,7 @@ async def update_index():
         scoring_profiles=scoring_profiles,
         cors_options=cors_options)
 
-    result = await client.create_or_update_index(index_name=index.name, index=index)
+    result = await client.create_or_update_index(index=index)
     # [END update_index_async]
 
 async def delete_index():

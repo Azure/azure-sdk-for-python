@@ -1,6 +1,38 @@
 # Azure Cognitive Search client library for Python
 
-Azure Cognitive Search is a fully managed cloud search service that provides a rich search experience to custom applications.
+[Azure Cognitive Search](https://docs.microsoft.com/azure/search/) is a
+search-as-a-service cloud solution that gives developers APIs and tools
+for adding a rich search experience over private, heterogeneous content
+in web, mobile, and enterprise applications.
+
+The Azure Cognitive Search service is well suited for the following
+ application scenarios:
+
+* Consolidate varied content types into a single searchable index.
+  To populate an index, you can push JSON documents that contain your content,
+  or if your data is already in Azure, create an indexer to pull in data
+  automatically.
+* Attach skillsets to an indexer to create searchable content from images
+  and large text documents. A skillset leverages AI from Cognitive Services
+  for built-in OCR, entity recognition, key phrase extraction, language
+  detection, text translation, and sentiment analysis. You can also add
+  custom skills to integrate external processing of your content during
+  data ingestion.
+* In a search client application, implement query logic and user experiences
+  similar to commercial web search engines.
+
+Use the Azure.Search.Documents client library to:
+
+* Submit queries for simple and advanced query forms that include fuzzy
+  search, wildcard search, regular expressions.
+* Implement filtered queries for faceted navigation, geospatial search,
+  or to narrow results based on filter criteria.
+* Create and manage search indexes.
+* Upload and update documents in the search index.
+* Create and manage indexers that pull data from Azure into an index.
+* Create and manage skillsets that add AI enrichment to data ingestion.
+* Create and manage analyzers for advanced text analysis or multi-lingual content.
+* Optimize results through scoring profiles to factor in business logic or freshness.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents) |
 [Package (PyPI)](https://pypi.org/project/azure-search-documents/) |
@@ -22,172 +54,197 @@ pip install azure-search-documents --pre
 ### Prerequisites
 
 * Python 2.7, or 3.5 or later is required to use this package.
-* You must have an [Azure subscription][azure_sub] and an existing
+* You need an [Azure subscription][azure_sub] and a
 [Azure Cognitive Search service][search_resource] to use this package.
 
-If you need to create the resource, you can use the [Azure portal][create_search_service_docs], [Azure PowerShell][create_search_service_ps], or the [Azure CLI][create_search_service_cli].
+To create a new search service, you can use the [Azure portal][create_search_service_docs], [Azure PowerShell][create_search_service_ps], or the [Azure CLI][create_search_service_cli].
 
-If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-resource-name>` with your own unique names:
-
-```PowerShell
-az search service create --resource-group <your-resource-group-name> --name <your-resource-name> --sku Standard
+```Powershell
+az search service create --name <mysearch> --resource-group <mysearch-rg> --sku free --location westus
 ```
 
-The above creates a resource with the "Standard" pricing tier. See [choosing a pricing tier](https://docs.microsoft.com/en-us/azure/search/search-sku-tier) for more information.
+See [choosing a pricing tier](https://docs.microsoft.com/azure/search/search-sku-tier)
+ for more information about available options.
 
 ### Authenticate the client
 
-In order to interact with the Cognitive Search service you'll need to create an instance of the Search Client class.
-To make this possible you will need an [api-key of the Cognitive Search service](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys).
+All requests to a search service need an api-key that was generated specifically
+for your service. [The api-key is the sole mechanism for authenticating access to
+your search service endpoint.](https://docs.microsoft.com/azure/search/search-security-api-keys)
+You can obtain your api-key from the
+[Azure portal](https://portal.azure.com/) or via the Azure CLI:
 
-The SDK provides three clients.
+```Powershell
+az search admin-key show --service-name <mysearch> --resource-group <mysearch-rg>
+```
 
-1. SearchClient for all document operations.
-2. SearchIndexClient for all CRUD operations on index resources.
-3. SearchIndexerClient for all CRUD operations on indexer resources.
+There are two types of keys used to access your search service: **admin**
+*(read-write)* and **query** *(read-only)* keys.  Restricting access and
+operations in client apps is essential to safeguarding the search assets on your
+service.  Always use a query key rather than an admin key for any query
+originating from a client app.
 
-#### Create a SearchClient
+*Note: The example Azure CLI snippet above retrieves an admin key so it's easier
+to get started exploring APIs, but it should be managed carefully.*
 
-To create a SearchClient, you will need an existing index name as well as the values of the Cognitive Search Service
-[service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint) and
-[api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys).
-Note that you will need an admin key to index documents (query keys only work for queries).
+We can use the api-key to create a new `SearchClient`.
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import SearchClient
+
+index_name = "nycjobs";
+# Get the service endpoint and API key from the environment
+endpoint = os.environ["SEARCH_ENDPOINT"]
+key = os.environ["SEARCH_API_KEY"]
+
+# Create a client
+credential = AzureKeyCredential(key)
+client = SearchClient(endpoint=endpoint,
+                      index_name=index_name,
+                      credential=credential)
+```
+
+
+### Send your first search request
+
+To get running immediately, we're going to connect to a well known sandbox
+Search service provided by Microsoft.  This means you do not need an Azure
+subscription or Azure Cognitive Search service to try out this query.
 
 
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 
-credential = AzureKeyCredential("<api key>")
+# We'll connect to the Azure Cognitive Search public sandbox and send a
+# query to its "nycjobs" index built from a public dataset of available jobs
+# in New York.
+service_name = "azs-playground"
+index_name = "nycjobs"
+api_key = "252044BE3886FE4A8E3BAA4F595114BB"
 
-client = SearchClient(endpoint="<service endpoint>",
-                      index_name="<index name>",
+# Create a SearchClient to send queries
+endpoint = "https://{}.search.windows.net/".format(service_name)
+credential = AzureKeyCredential(api_key)
+client = SearchClient(endpoint=endpoint,
+                      index_name=index_name,
                       credential=credential)
-```
 
-#### Create a SearchIndexClient
+# Let's get the top 5 jobs related to Microsoft
+results = client.search(search_text="Microsoft", include_total_result_count=5)
 
-Once you have the values of the Cognitive Search Service [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint)
-and [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys) you can create the Search Index client:
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents.indexes import SearchIndexClient
-
-credential = AzureKeyCredential("<api key>")
-
-client = SearchIndexClient(endpoint="<service endpoint>",
-                             credential=credential)
-```
-
-#### Create a SearchIndexerClient
-
-Once you have the values of the Cognitive Search Service [service endpoint](https://docs.microsoft.com/en-us/azure/search/search-create-service-portal#get-a-key-and-url-endpoint)
-and [api key](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys) you can create the Search Indexer client:
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents.indexes import SearchIndexerClient
-
-credential = AzureKeyCredential("<api key>")
-
-client = SearchIndexerClient(endpoint="<service endpoint>",
-                             credential=credential)
-```
-
-### Send your first search request
-
-You can use the `SearchClient` you created in the first section above to make a basic search request:
-```python
-results = client.search(search_text="spa")
-
-print("Hotels containing 'spa' in the name (or other fields):")
 for result in results:
-    print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
+    # Print out the title and job description
+    print("{}\n{}\n)".format(result["business_title"], result["job_description"]))
 ```
 
 ## Key concepts
 
-Azure Cognitive Search has the concepts of search services and indexes and documents, where a search service contains
-one or more indexes that provides persistent storage of searchable data, and data is loaded in the form of JSON documents.
-Data can be pushed to an index from an external data source, but if you use an indexer, it's possible to crawl a data
-source to extract and load data into an index.
+An Azure Cognitive Search service contains one or more indexes that provide
+persistent storage of searchable data in the form of JSON documents.  _(If
+you're brand new to search, you can make a very rough analogy between
+indexes and database tables.)_  The Azure.Search.Documents client library
+exposes operations on these resources through two main client types.
 
-There are several types of operations that can be executed against the service:
+* `SearchClient` helps with:
+  * [Searching](https://docs.microsoft.com/azure/search/search-lucene-query-architecture)
+    your indexed documents using
+    [rich queries](https://docs.microsoft.com/azure/search/search-query-overview)
+    and [powerful data shaping](https://docs.microsoft.com/azure/search/search-filters)
+  * [Autocompleting](https://docs.microsoft.com/rest/api/searchservice/autocomplete)
+    partially typed search terms based on documents in the index
+  * [Suggesting](https://docs.microsoft.com/rest/api/searchservice/suggestions)
+    the most likely matching text in documents as a user types
+  * [Adding, Updating or Deleting Documents](https://docs.microsoft.com/rest/api/searchservice/addupdate-or-delete-documents)
+    documents from an index
 
-- **Index management operations** Create, delete, update, or configure a search index. ([API Reference](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/azure.search.documents.html#azure.search.documents.SearchIndexesClient), [Service Docs](https://docs.microsoft.com/en-us/rest/api/searchservice/index-operations))
-- **Document operations** Add, update, or delete documents in the index, query the index, or look up specific documents by ID. ([API Reference](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/azure.search.documents.html#azure.search.documents.SearchClient), [Service Docs](https://docs.microsoft.com/en-us/rest/api/searchservice/document-operations))
-- **Datasource operations** Create, delete, update, or configure data sources for Search Indexers ([API Reference](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/azure.search.documents.html#azure.search.documents.SearchDataSourcesClient), [Service Docs](https://docs.microsoft.com/en-us/rest/api/searchservice/indexer-operations))
-- **Indexer operations** Automate aspects of an indexing operation by configuring a data source and an indexer that you can schedule or run on demand. This feature is supported for a limited number of data source types. ([API Reference](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/azure.search.documents.html#azure.search.documents.SearchIndexersClient), [Service Docs](https://docs.microsoft.com/en-us/rest/api/searchservice/indexer-operations))
-- **Skillset operations** Part of a cognitive search workload, a skillset defines a series of a series of enrichment processing steps. A skillset is consumed by an indexer. ([API Reference](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/azure.search.documents.html#azure.search.documents.SearchSkillsetsClient), [Service Docs](https://docs.microsoft.com/en-us/rest/api/searchservice/skillset-operations))
-- **Synonym map operations** A synonym map is a service-level resource that contains user-defined synonyms. This resource is maintained independently from search indexes. Once uploaded, you can point any searchable field to the synonym map (one per field). ([API Reference](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/azure.search.documents.html#azure.search.documents.SearchSynonymMapsClient), [Service Docs](https://docs.microsoft.com/en-us/rest/api/searchservice/synonym-map-operations))
+* `SearchIndexClient` allows you to:
+  * [Create, delete, update, or configure a search index](https://docs.microsoft.com/rest/api/searchservice/index-operations)
+  * [Declare custom synonym maps to expand or rewrite queries](https://docs.microsoft.com/rest/api/searchservice/synonym-map-operations)
+  * Most of the `SearchServiceClient` functionality is not yet available in our current preview
+
+* `SearchIndexerClient` allows you to:
+  * [Start indexers to automatically crawl data sources](https://docs.microsoft.com/rest/api/searchservice/indexer-operations)
+  * [Define AI powered Skillsets to transform and enrich your data](https://docs.microsoft.com/rest/api/searchservice/skillset-operations)
+
+_The `Azure.Search.Documents` client library (v1) is a brand new offering for
+Python developers who want to use search technology in their applications.  There
+is an older, fully featured `Microsoft.Azure.Search` client library (v10) with
+many similar looking APIs, so please be careful to avoid confusion when
+exploring online resources._
 
 ## Examples
 
-The following sections contain snippets for some common operations:
+The following examples all use a simple [Hotel data set](https://docs.microsoft.com/samples/azure-samples/azure-search-sample-data/azure-search-sample-data/)
+that you can [import into your own index from the Azure portal.](https://docs.microsoft.com/azure/search/search-get-started-portal#step-1---start-the-import-data-wizard-and-create-a-data-source)
+These are just a few of the basics - please [check out our Samples](samples) for
+much more.
 
-* [Perform a simple text search](#perform-a-simple-text-search-on-documents)
-* [Retrieve a specific document](#retrieve-a-specific-document-from-an-index)
-* [Get search suggestions](#get-search-suggestions)
-* [Create an index](#create-an-index)
-* [Upload documents to an index](#upload-documents-to-an-index)
 
-More examples, covering topics such as indexers, skillets, and synonym maps can be found in the [Samples directory](samples).
+### Querying
 
-### Perform a simple text search on documents
-Search the entire index or documents matching a simple search text, e.g. find
-hotels with the text "spa":
+Let's start by importing our namespaces.
+
 ```python
+import os
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
-client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
-
-results = client.search(search_text="spa")
-
-print("Hotels containing 'spa' in the name (or other fields):")
-for result in results:
-    print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
 ```
 
-### Retrieve a specific document from an index
-Get a specific document from the index, e.f. obtain the document for hotel "23":
+We'll then create a `SearchClient` to access our hotels search index.
+
 ```python
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
+index_name = "hotels"
+# Get the service endpoint and API key from the environment
+endpoint = os.environ["SEARCH_ENDPOINT"]
+key = os.environ["SEARCH_API_KEY"]
 
-result = client.get_document(key="23")
-
-print("Details for hotel '23' are:")
-print("        Name: {}".format(result["HotelName"]))
-print("      Rating: {}".format(result["Rating"]))
-print("    Category: {}".format(result["Category"]))
+# Create a client
+credential = AzureKeyCredential(key)
+client = SearchClient(endpoint=endpoint,
+                      index_name=index_name,
+                      credential=credential)
 ```
 
-### Get search suggestions
+Let's search for a "luxury" hotel.
 
-Get search suggestions for related terms, e.g. find search suggestions for
-the term "coffee":
 ```python
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
+results = client.search(search_text="luxury")
 
-results = client.suggest(search_text="coffee", suggester_name="sg")
-
-print("Search suggestions for 'coffee'")
 for result in results:
-    hotel = client.get_document(key=result["HotelId"])
-    print("    Text: {} for Hotel: {}".format(repr(result["text"]), hotel["HotelName"]))
+    print("{}: {})".format(result["hotelId"], result["hotelName"]))
 ```
 
 
 ### Create an index
 
+You can use the `SearchIndexClient` to create a search index. Fields can be
+defined using convenient `SimpleField`, `SearchableField`, or `ComplexField`
+models. Indexes can also define suggesters, lexical analyzers, and more.
+
 ```python
+import os
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents.indexes import SearchIndexClient, CorsOptions, SearchIndex, ScoringProfile
-client = SearchIndexClient("<service endpoint>", AzureKeyCredential("<api key>"))
+from azure.search.documents.indexes import SearchIndexClient
+from azure.search.documents.indexes.models import ( 
+    ComplexField, 
+    CorsOptions, 
+    SearchIndex, 
+    ScoringProfile, 
+    SearchFieldDataType, 
+    SimpleField, 
+    SearchableField 
+)
+
+endpoint = os.environ["SEARCH_ENDPOINT"]
+key = os.environ["SEARCH_API_KEY"]
+
+# Create a service client
+client = SearchIndexClient(endpoint, AzureKeyCredential(key))
+
+# Create the index
 name = "hotels"
 fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
@@ -210,14 +267,49 @@ index = SearchIndex(
 result = client.create_index(index)
 ```
 
-### Upload documents to an index
 
-Add documents (or update existing ones), e.g add a new document for a new hotel:
+### Retrieve a specific document from an index
+
+In addition to querying for documents using keywords and optional filters,
+you can retrieve a specific document from your index if you already know the
+key. You could get the key from a query, for example, and want to show more
+information about it or navigate your customer to that document.
 
 ```python
+import os
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
-client = SearchClient("<service endpoint>", "<index_name>", AzureKeyCredential("<api key>"))
+
+index_name = "hotels"
+endpoint = os.environ["SEARCH_ENDPOINT"]
+key = os.environ["SEARCH_API_KEY"]
+
+client = SearchClient(endpoint, index_name, AzureKeyCredential(key))
+
+result = client.get_document(key="1")
+
+print("Details for hotel '1' are:")
+print("        Name: {}".format(result["HotelName"]))
+print("      Rating: {}".format(result["Rating"]))
+print("    Category: {}".format(result["Category"]))
+```
+
+
+### Adding documents to your index
+
+You can `Upload`, `Merge`, `MergeOrUpload`, and `Delete` multiple documents from
+an index in a single batched request.  There are
+[a few special rules for merging](https://docs.microsoft.com/rest/api/searchservice/addupdate-or-delete-documents#document-actions)
+to be aware of.
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import SearchClient
+
+index_name = "hotels"
+endpoint = os.environ["SEARCH_ENDPOINT"]
+key = os.environ["SEARCH_API_KEY"]
 
 DOCUMENT = {
     'Category': 'Hotel',
@@ -231,6 +323,7 @@ result = client.upload_documents(documents=[DOCUMENT])
 
 print("Upload of new document succeeded: {}".format(result[0].succeeded))
 ```
+
 
 ## Troubleshooting
 
@@ -273,17 +366,26 @@ result =  client.search(search_text="spa", logging_enable=True)
 
 ## Next steps
 
-### Additional documentation
-
-For more extensive documentation on Cognitive Search, see the [Azure Cognitive Search documentation](https://docs.microsoft.com/en-us/azure/search/) on docs.microsoft.com.
+* [Go further with Azure.Search.Documents and our samples](samples)
+* [Watch a demo or deep dive video](https://azure.microsoft.com/resources/videos/index/?services=search)
+* [Read more about the Azure Cognitive Search service](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
 
 ## Contributing
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
+See our [Search CONTRIBUTING.md][search_contrib] for details on building,
+testing, and contributing to this library.
 
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+This project welcomes contributions and suggestions.  Most contributions require
+you to agree to a Contributor License Agreement (CLA) declaring that you have
+the right to, and actually do, grant us the rights to use your contribution. For
+details, visit [cla.microsoft.com][cla].
 
-This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information see the [Code of Conduct FAQ][coc_faq] or contact [opencode@microsoft.com][coc_contact] with any additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct].
+For more information see the [Code of Conduct FAQ][coc_faq]
+or contact [opencode@microsoft.com][coc_contact] with any
+additional questions or comments.
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-net%2Fsdk%2Fsearch%2FAzure.Search.Documents%2FREADME.png)
 
 ## Related projects
 
@@ -302,7 +404,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [create_search_service_docs]: https://docs.microsoft.com/azure/search/search-create-service-portal
 [create_search_service_ps]: https://docs.microsoft.com/azure/search/search-manage-powershell#create-or-delete-a-service
 [create_search_service_cli]: https://docs.microsoft.com/cli/azure/search/service?view=azure-cli-latest#az-search-service-create
-
+[search_contrib]: ../CONTRIBUTING.md
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 
 [cla]: https://cla.microsoft.com

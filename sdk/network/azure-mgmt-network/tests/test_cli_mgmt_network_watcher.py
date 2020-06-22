@@ -470,6 +470,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         INTERFACE_NAME = self.get_resource_name("interface")
         VIRTUAL_MACHINE_NAME = self.get_resource_name("virtualmachine")
         CONNECTION_MONITOR_NAME = self.get_resource_name("connectionmonitor")
+        CONNECTION_MONITOR_NAME_V2 = self.get_resource_name("connectionmonitorv2")
         VIRTUAL_MACHINE_EXTENSION_NAME = self.get_resource_name("virtualmachineextension")
 
         if self.is_live:
@@ -483,70 +484,70 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         result = self.mgmt_client.network_watchers.create_or_update(resource_group.name, NETWORK_WATCHER_NAME, BODY)
 
         # # Create connection monitor V2[put]
-        # BODY = {
-        #   "properties": {
-        #     "endpoints": [
-        #       {
-        #         "name": "vm1",
-        #         "resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + ""
-        #       },
-        #       {
-        #         "name": "CanaryWorkspaceVamshi",
-        #         "resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.OperationalInsights/workspaces/" + WORKSPACE_NAME + "",
-        #         "filter": {
-        #           "type": "Include",
-        #           "items": [
-        #             {
-        #               "type": "AgentAddress",
-        #               "address": "npmuser"
-        #             }
-        #           ]
-        #         }
-        #       },
-        #       {
-        #         "name": "bing",
-        #         "address": "bing.com"
-        #       },
-        #       {
-        #         "name": "google",
-        #         "address": "google.com"
-        #       }
-        #     ],
-        #     "test_configurations": [
-        #       {
-        #         "name": "testConfig1",
-        #         "test_frequency_sec": "60",
-        #         "protocol": "Tcp",
-        #         "tcp_configuration": {
-        #           "port": "80",
-        #           "disable_trace_route": False
-        #         }
-        #       }
-        #     ],
-        #     "test_groups": [
-        #       {
-        #         "name": "test1",
-        #         "disable": False,
-        #         "test_configurations": [
-        #           "testConfig1"
-        #         ],
-        #         "sources": [
-        #           "vm1",
-        #           "CanaryWorkspaceVamshi"
-        #         ],
-        #         "destinations": [
-        #           "bing",
-        #           "google"
-        #         ]
-        #       }
-        #     ],
-        #     "outputs": []
-        #   }
-        # }
-        # result = self.mgmt_client.connection_monitors.begin_create_or_update(resource_group.name, NETWORK_WATCHER_NAME, CONNECTION_MONITOR_NAME, BODY)
-        # result = result.result()
+        BODY = {
+          "location": "eastus",
+          "endpoints": [
+            {
+              "name": "vm1",
+              "resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VIRTUAL_MACHINE_NAME + ""
+            },
+            # {
+            #   "name": "CanaryWorkspaceVamshi",
+            #   "resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.OperationalInsights/workspaces/" + WORKSPACE_NAME + "",
+            #   "filter": {
+            #     "type": "Include",
+            #     "items": [
+            #       {
+            #         "type": "AgentAddress",
+            #         "address": "npmuser"
+            #       }
+            #     ]
+            #   }
+            # },
+            {
+              "name": "bing",
+              "address": "bing.com"
+            },
+            {
+              "name": "google",
+              "address": "google.com"
+            }
+          ],
+          "test_configurations": [
+            {
+              "name": "testConfig1",
+              "test_frequency_sec": "60",
+              "protocol": "Tcp",
+              "tcp_configuration": {
+                "port": "80",
+                "disable_trace_route": False
+              }
+            }
+          ],
+          "test_groups": [
+            {
+              "name": "test1",
+              "disable": False,
+              "test_configurations": [
+                "testConfig1"
+              ],
+              "sources": [
+                "vm1",
+                # "CanaryWorkspaceVamshi"
+              ],
+              "destinations": [
+                "bing",
+                "google"
+              ]
+            }
+          ],
+          "outputs": []
+        }
+        result = self.mgmt_client.connection_monitors.begin_create_or_update(resource_group.name, NETWORK_WATCHER_NAME, CONNECTION_MONITOR_NAME_V2, BODY)
+        result = result.result()
 
         # Create connection monitor V1[put]
+        # [Kaihui] v1 only supports api version <= 2019-06-01
         BODY = {
           "location": AZURE_LOCATION,
           "source": {
@@ -570,7 +571,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         # List connection monitors[get]
         result = self.mgmt_client.connection_monitors.list(resource_group.name, NETWORK_WATCHER_NAME)
 
-        # # Query connection monitor[post]
+        # Query connection monitor[post]
         result = self.mgmt_client.connection_monitors.begin_query(resource_group.name, NETWORK_WATCHER_NAME, CONNECTION_MONITOR_NAME)
         result = result.result()
 
@@ -593,6 +594,10 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
         # Delete connection monitor[delete]
         result = self.mgmt_client.connection_monitors.begin_delete(resource_group.name, NETWORK_WATCHER_NAME, CONNECTION_MONITOR_NAME)
+        result = result.result()
+
+        # Delete connection monitor[delete]
+        result = self.mgmt_client.connection_monitors.begin_delete(resource_group.name, NETWORK_WATCHER_NAME, CONNECTION_MONITOR_NAME_V2)
         result = result.result()
 
         # Delete network watcher[delete]

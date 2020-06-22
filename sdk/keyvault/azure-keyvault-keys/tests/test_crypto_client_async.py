@@ -3,11 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import codecs
-import functools
+from datetime import datetime
 import hashlib
 import os
 
 from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyVaultKey
+from azure.keyvault.keys.crypto._client import _UTC
 from azure.keyvault.keys.crypto.aio import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
@@ -15,7 +16,6 @@ import pytest
 
 from _shared.json_attribute_matcher import json_attribute_matcher
 from _shared.test_case_async import KeyVaultTestCase
-
 from crypto_client_preparer_async import CryptoClientPreparer
 
 # without keys/get, a CryptographyClient created with a key ID performs all ops remotely
@@ -81,7 +81,6 @@ class CryptoClientTests(KeyVaultTestCase):
     @KeyVaultPreparer(permissions=NO_GET)
     @CryptoClientPreparer()
     async def test_encrypt_and_decrypt(self, key_client, credential, **kwargs):
-        # TODO: use iv, authentication_data
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = await self._import_test_key(key_client, key_name)
@@ -216,14 +215,69 @@ class CryptoClientTests(KeyVaultTestCase):
             result = await crypto_client.verify(result.algorithm, digest, result.signature)
             self.assertTrue(result.is_valid)
 
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(permissions=NO_GET)
+    @CryptoClientPreparer()
+    async def test_local_validity_period_enforcement(self, key_client, credential, **kwargs):
+        """Local crypto operations should respect a key's nbf and exp properties"""
+
+        async def test_operations(key, expected_error_substrings, encrypt_algorithms, wrap_algorithms):
+            crypto_client = CryptographyClient(key, credential)
+            for algorithm in encrypt_algorithms:
+                with pytest.raises(ValueError) as ex:
+                    await crypto_client.encrypt(algorithm, self.plaintext)
+                for substring in expected_error_substrings:
+                    assert substring in str(ex.value)
+            for algorithm in wrap_algorithms:
+                with pytest.raises(ValueError) as ex:
+                    await crypto_client.wrap_key(algorithm, self.plaintext)
+                for substring in expected_error_substrings:
+                    assert substring in str(ex.value)
+
+        # operations should not succeed with a key whose nbf is in the future
+        the_year_3000 = datetime(3000, 1, 1, tzinfo=_UTC)
+
+        rsa_wrap_algorithms = [algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")]
+        rsa_not_yet_valid = await key_client.create_rsa_key("rsa-not-yet-valid", not_before=the_year_3000)
+        await test_operations(rsa_not_yet_valid, [str(the_year_3000)], EncryptionAlgorithm, rsa_wrap_algorithms)
+
+        ec_not_yet_valid = await key_client.create_ec_key("ec-not-yet-valid", not_before=the_year_3000)
+        await test_operations(
+            ec_not_yet_valid, [str(the_year_3000)], encrypt_algorithms=[], wrap_algorithms=[KeyWrapAlgorithm.aes_256]
+        )
+
+        # nor should they succeed with a key whose exp has passed
+        the_year_2000 = datetime(2000, 1, 1, tzinfo=_UTC)
+
+        rsa_expired = await key_client.create_rsa_key("rsa-expired", expires_on=the_year_2000)
+        await test_operations(rsa_expired, [str(the_year_2000)], EncryptionAlgorithm, rsa_wrap_algorithms)
+
+        ec_expired = await key_client.create_ec_key("ec-expired", expires_on=the_year_2000)
+        await test_operations(
+            ec_expired, [str(the_year_2000)], encrypt_algorithms=[], wrap_algorithms=[KeyWrapAlgorithm.aes_256]
+        )
+
+        # when exp and nbf are set, error messages should contain both
+        the_year_3001 = datetime(3001, 1, 1, tzinfo=_UTC)
+
+        rsa_valid = await key_client.create_rsa_key("rsa-valid", not_before=the_year_3000, expires_on=the_year_3001)
+        await test_operations(
+            rsa_valid, (str(the_year_3000), str(the_year_3001)), EncryptionAlgorithm, rsa_wrap_algorithms
+        )
+
+        ec_valid = await key_client.create_ec_key("ec-valid", not_before=the_year_3000, expires_on=the_year_3001)
+        await test_operations(
+            ec_valid,
+            (str(the_year_3000), str(the_year_3001)),
+            encrypt_algorithms=[],
+            wrap_algorithms=[KeyWrapAlgorithm.aes_256],
+        )
+
 
 @pytest.mark.asyncio
 async def test_symmetric_wrap_and_unwrap_local():
     key = KeyVaultKey(
-        key_id="http://fake.test.vault/keys/key/version",
-        k=os.urandom(32),
-        kty="oct",
-        key_ops=["unwrapKey", "wrapKey"],
+        key_id="http://fake.test.vault/keys/key/version", k=os.urandom(32), kty="oct", key_ops=["unwrapKey", "wrapKey"],
     )
 
     crypto_client = CryptographyClient(key, credential=lambda *_: None)

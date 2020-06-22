@@ -1,7 +1,7 @@
 # Release History
 
 ## 4.2.0b2 (Unreleased)
-
+- Updated minimum `azure-core` version to 1.4.0
 
 ## 4.2.0b1 (2020-03-10)
 - Support for Key Vault API version 7.1-preview

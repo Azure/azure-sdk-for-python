@@ -44,7 +44,7 @@ async def create_synonym_map():
 async def get_synonym_maps():
     # [START get_synonym_maps_async]
     result = await client.get_synonym_maps()
-    names = [x["name"] for x in result]
+    names = [x.name for x in result]
     print("Found {} Synonym Maps in the service: {}".format(len(result), ", ".join(names)))
     # [END get_synonym_maps_async]
 
@@ -52,7 +52,7 @@ async def get_synonym_map():
     # [START get_synonym_map_async]
     result = await client.get_synonym_map("test-syn-map")
     print("Retrived Synonym Map 'test-syn-map' with synonyms")
-    for syn in result["synonyms"]:
+    for syn in result.synonyms:
         print("    {}".format(syn))
     # [END get_synonym_map_async]
 

@@ -12,13 +12,40 @@ from azure.ai.formrecognizer._generated.models import Model
 from azure.ai.formrecognizer._models import CustomFormModel
 from azure.ai.formrecognizer import FormTrainingClient
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
-from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
+from testcase import GlobalClientPreparer as _GlobalClientPreparer
 
 
-GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormTrainingClient)
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestTraining(FormRecognizerTest):
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True)
+    def test_polling_interval(self, client, container_sas_url):
+        def check_poll_value(poll):
+            if self.is_live:
+                self.assertEqual(poll, 5)
+            else:
+                self.assertEqual(poll, 0)
+        check_poll_value(client._client._config.polling_interval)
+        poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False, polling_interval=6)
+        poller.wait()
+        self.assertEqual(poller._polling_method._timeout, 6)
+        poller2 = client.begin_training(training_files_url=container_sas_url, use_training_labels=False)
+        poller2.wait()
+        check_poll_value(poller2._polling_method._timeout)  # goes back to client default
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_training_encoded_url(self, client):
+        with self.assertRaises(HttpResponseError):
+            poller = client.begin_training(
+                training_files_url="https://fakeuri.com/blank%20space",
+                use_training_labels=False
+            )
+            self.assertIn("https://fakeuri.com/blank%20space", poller._polling_method._initial_response.http_request.body)
+            poller.wait()
 
     @GlobalFormRecognizerAccountPreparer()
     def test_training_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -27,7 +54,7 @@ class TestTraining(FormRecognizerTest):
             poller = client.begin_training("xx", use_training_labels=False)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     def test_training(self, client, container_sas_url):
 
         poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False)
@@ -50,7 +77,7 @@ class TestTraining(FormRecognizerTest):
                 self.assertIsNotNone(field.name)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True)
+    @GlobalClientPreparer(training=True, multipage=True)
     def test_training_multipage(self, client, container_sas_url):
 
         poller = client.begin_training(container_sas_url, use_training_labels=False)
@@ -73,7 +100,7 @@ class TestTraining(FormRecognizerTest):
                 self.assertIsNotNone(field.name)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     def test_training_transform(self, client, container_sas_url):
 
         raw_response = []
@@ -92,7 +119,7 @@ class TestTraining(FormRecognizerTest):
         self.assertModelTransformCorrect(custom_model, raw_model, unlabeled=True)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True)
+    @GlobalClientPreparer(training=True, multipage=True)
     def test_training_multipage_transform(self, client, container_sas_url):
 
         raw_response = []
@@ -111,7 +138,7 @@ class TestTraining(FormRecognizerTest):
         self.assertModelTransformCorrect(custom_model, raw_model, unlabeled=True)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     def test_training_with_labels(self, client, container_sas_url):
 
         poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=True)
@@ -135,7 +162,7 @@ class TestTraining(FormRecognizerTest):
                 self.assertIsNotNone(field.name)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True)
+    @GlobalClientPreparer(training=True, multipage=True)
     def test_training_multipage_with_labels(self, client, container_sas_url):
 
         poller = client.begin_training(container_sas_url, use_training_labels=True)
@@ -159,7 +186,7 @@ class TestTraining(FormRecognizerTest):
                 self.assertIsNotNone(field.name)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     def test_training_with_labels_transform(self, client, container_sas_url):
 
         raw_response = []
@@ -178,7 +205,7 @@ class TestTraining(FormRecognizerTest):
         self.assertModelTransformCorrect(custom_model, raw_model)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True)
+    @GlobalClientPreparer(training=True, multipage=True)
     def test_train_multipage_w_labels_transform(self, client, container_sas_url):
 
         raw_response = []
@@ -197,7 +224,7 @@ class TestTraining(FormRecognizerTest):
         self.assertModelTransformCorrect(custom_model, raw_model)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     def test_training_with_files_filter(self, client, container_sas_url):
 
         poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False, include_sub_folders=True)
@@ -215,7 +242,7 @@ class TestTraining(FormRecognizerTest):
             model = poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     @pytest.mark.live_test_only
     def test_training_continuation_token(self, client, container_sas_url):
 
