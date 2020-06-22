@@ -104,6 +104,13 @@ class LargeFileSharesState(str, Enum):
     enabled = "Enabled"
 
 
+class MinimumTlsVersion(str, Enum):
+
+    tls1_0 = "TLS1_0"
+    tls1_1 = "TLS1_1"
+    tls1_2 = "TLS1_2"
+
+
 class GeoReplicationStatus(str, Enum):
 
     live = "Live"
