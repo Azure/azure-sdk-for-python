@@ -9,7 +9,7 @@ from azure.core.pipeline.transport import RequestsTransport
 
 from . import ChallengeAuthPolicy
 from .._generated import KeyVaultClient as _KeyVaultClient
-from .._user_agent import USER_AGENT
+from .._sdk_moniker import SDK_MONIKER
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -58,7 +58,7 @@ class KeyVaultClientBase(object):
                 pipeline=pipeline,
                 transport=transport,
                 authentication_policy=ChallengeAuthPolicy(credential),
-                sdk_moniker=USER_AGENT,
+                sdk_moniker=SDK_MONIKER,
                 **kwargs
             )
             self._models = _KeyVaultClient.models(api_version=api_version)
