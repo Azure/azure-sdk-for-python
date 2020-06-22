@@ -15,6 +15,9 @@ DESCRIPTION:
     note that a similar approach can be used for any custom form as long as you properly update the
     fields' names and types.
 
+    See fields found on a receipt here:
+    https://aka.ms/azsdk/python/formrecognizer/receiptfields
+
 USAGE:
     python sample_strongly_typed_recognized_form.py
 
@@ -32,7 +35,7 @@ class Receipt(object):
     If a specific field is not found on the receipt, it will return None.
 
     See fields found on a receipt here:
-    https://westus2.dev.cognitive.microsoft.com/docs/services/form-recognizer-api-v2-preview/operations/GetAnalyzeReceiptResult
+    https://aka.ms/azsdk/python/formrecognizer/receiptfields
     """
 
     def __init__(self, form):
