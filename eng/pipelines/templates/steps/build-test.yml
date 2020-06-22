@@ -29,6 +29,7 @@ steps:
       python -m pip install pip==20.1
       pip install -r eng/ci_tools.txt
       pip --version
+      Get-ChildItem Env:
     displayName: 'Prep Environment'
 
   - ${{ parameters.BeforeTestSteps }}
