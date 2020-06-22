@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from . import AsyncChallengeAuthPolicy
 from .client_base import ApiVersion
-from .._user_agent import USER_AGENT
+from .._sdk_moniker import SDK_MONIKER
 from .._generated.aio import KeyVaultClient as _KeyVaultClient
 
 if TYPE_CHECKING:
@@ -53,7 +53,7 @@ class AsyncKeyVaultClientBase(object):
                 pipeline=pipeline,
                 transport=transport,
                 authentication_policy=AsyncChallengeAuthPolicy(credential),
-                sdk_moniker=USER_AGENT,
+                sdk_moniker=SDK_MONIKER,
                 **kwargs
             )
             self._models = _KeyVaultClient.models(api_version=api_version)
