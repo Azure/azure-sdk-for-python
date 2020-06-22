@@ -380,7 +380,7 @@ you to agree to a Contributor License Agreement (CLA) declaring that you have
 the right to, and actually do, grant us the rights to use your contribution. For
 details, visit [cla.microsoft.com][cla].
 
-This project has adopted the [Microsoft Open Source Code of Conduct][coc].
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct].
 For more information see the [Code of Conduct FAQ][coc_faq]
 or contact [opencode@microsoft.com][coc_contact] with any
 additional questions or comments.
@@ -404,7 +404,7 @@ additional questions or comments.
 [create_search_service_docs]: https://docs.microsoft.com/azure/search/search-create-service-portal
 [create_search_service_ps]: https://docs.microsoft.com/azure/search/search-manage-powershell#create-or-delete-a-service
 [create_search_service_cli]: https://docs.microsoft.com/cli/azure/search/service?view=azure-cli-latest#az-search-service-create
-
+[search_contrib]: ../CONTRIBUTING.md
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 
 [cla]: https://cla.microsoft.com

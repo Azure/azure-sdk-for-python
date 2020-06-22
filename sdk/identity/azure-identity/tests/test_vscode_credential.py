@@ -105,14 +105,9 @@ def test_no_obtain_token_if_cached():
 
 
 @pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
-def test_distro():
-    mock_client = mock.Mock(spec=object)
-    mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=None)
-    mock_client.get_cached_access_token = mock.Mock(return_value=None)
-
-    with pytest.raises(CredentialUnavailableError):
-        credential = VSCodeCredential(_client=mock_client)
-        token = credential.get_token("scope")
+def test_segfault():
+    from azure.identity._credentials.linux_vscode_adapter import _get_refresh_token
+    _get_refresh_token("test", "test")
 
 
 @pytest.mark.skipif(not sys.platform.startswith("darwin"), reason="This test only runs on MacOS")
