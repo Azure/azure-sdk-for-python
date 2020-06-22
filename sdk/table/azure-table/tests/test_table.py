@@ -340,8 +340,8 @@ class StorageTableTest(TableTestCase):
         # Act
         identifiers = dict()
         identifiers['testid'] = AccessPolicy(start=datetime.utcnow() - timedelta(minutes=5),
-                                              expiry=datetime.utcnow() + timedelta(hours=1),
-                                              permission=TableSasPermissions(query=True))
+                                             expiry=datetime.utcnow() + timedelta(hours=1),
+                                             permission=TableSasPermissions(query=True))
         try:
             client.set_table_access_policy(signed_identifiers=identifiers)
             # Assert
@@ -353,7 +353,7 @@ class StorageTableTest(TableTestCase):
             # self._delete_table(table)
             ts.delete_table(table.table_name)
 
-    #@pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_table_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -393,10 +393,10 @@ class StorageTableTest(TableTestCase):
                 'RowKey': 'test1',
                 'text': 'hello',
             }
-            tsc.upsert_item(table_name=table.table_name,table_entity_properties=entity)
+            tsc.upsert_item(table_name=table.table_name, table_entity_properties=entity)
 
             entity['RowKey'] = 'test2'
-            tsc.upsert_item(table_name=table.table_name,table_entity_properties=entity)
+            tsc.upsert_item(table_name=table.table_name, table_entity_properties=entity)
 
             token = generate_account_sas(
                 storage_account.name,

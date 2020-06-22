@@ -120,11 +120,12 @@ class TableServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_service_stats(self, **kwargs):
+    def get_service_stats(self, raw_response_hook=None, **kwargs):
         # type: (Optional[Any]) -> Dict[str, Any]
         try:
-            # failing on get_statistics
-            stats = self._client.service.get_statistics(**kwargs)
+            timeout = kwargs.pop('timeout', None)
+            stats = self._client.service.get_statistics(  # type: ignore
+                timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -149,7 +150,6 @@ class TableServiceClient(StorageAccountHostsMixin):
     ):
         # type: (...) -> None
 
-        timeout = kwargs.pop('timeout', None)
         props = TableServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,
@@ -157,7 +157,7 @@ class TableServiceClient(StorageAccountHostsMixin):
             cors=cors
         )
         try:
-            return self._client.service.set_properties(props, timeout=timeout, **kwargs)  # type: ignore
+            return self._client.service.set_properties(props, **kwargs)  # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -220,7 +220,6 @@ class TableServiceClient(StorageAccountHostsMixin):
             table_name = table.name
         except AttributeError:
             table_name = table
-
 
         return TableClient(
             self.url, table_name=table_name, credential=self.credential,

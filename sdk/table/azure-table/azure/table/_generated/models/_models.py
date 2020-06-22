@@ -495,6 +495,9 @@ class TableServiceProperties(msrest.serialization.Model):
     :param cors: The set of CORS rules.
     :type cors: list[~azure.table.models.CorsRule]
     """
+    _xml_map = {
+        'name': 'StorageServiceProperties'
+    }
 
     _attribute_map = {
         'logging': {'key': 'Logging', 'type': 'Logging'},

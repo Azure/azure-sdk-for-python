@@ -165,13 +165,11 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,
             **kwargs
     ):
-
-        if etag is not None:
+        if_match = '*'
+        if_not_match = None
+        if etag:
             if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
                                                         etag_param='etag', match_param='match_condition')
-        else:
-            if_match = '*'
-            if_not_match = None
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
@@ -226,8 +224,12 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,
             **kwargs
     ):
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
-                                                    etag_param='etag', match_param='match_condition')
+        if_match = '*'
+        if_not_match = None
+        if etag:
+            if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
+                                                        etag_param='etag', match_param='match_condition')
+
         if table_entity_properties:
             partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
             row_key = table_entity_properties['RowKey'] if row_key is None else row_key
@@ -260,8 +262,12 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,  # type: Optional["models.QueryOptions"]
             **kwargs  # type: Any
     ):
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
-                                                    etag_param='etag', match_param='match_condition')
+        if_match = '*'
+        if_not_match = None
+        if etag:
+            if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
+                                                        etag_param='etag', match_param='match_condition')
+
         if table_entity_properties:
             partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
             row_key = table_entity_properties['RowKey'] if row_key is None else row_key
@@ -269,7 +275,7 @@ class TableClient(StorageAccountHostsMixin):
 
         try:
             self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
-                                            row_key=row_key,
+                                            row_key=row_key, if_match=if_match or if_not_match,
                                             table_entity_properties=table_entity_properties, **kwargs)
         except ResourceNotFoundError:
             raise ResourceNotFoundError
@@ -277,16 +283,15 @@ class TableClient(StorageAccountHostsMixin):
             raise HttpResponseError
 
     @distributed_trace
-    def query_entities(self, headers=None, query_options=None,**kwargs):
+    def query_entities(self, headers=None, query_options=None, **kwargs):
 
         command = functools.partial(
             self._client.table.query_entities,
-        **dict(kwargs, headers=headers))
+            **dict(kwargs, headers=headers))
         return ItemPaged(
-            command, results_per_page=query_options,  table=self.table_name,
+            command, results_per_page=query_options, table=self.table_name,
             page_iterator_class=TableEntityPropertiesPaged
         )
-
 
     @distributed_trace
     def query_entities_with_partition_and_row_key(
@@ -317,7 +322,8 @@ class TableClient(StorageAccountHostsMixin):
             row_key=None,
             timeout=None,
             request_id_parameter=None,
-            if_match=None,
+            etag=None,
+            match_condition=None,
             table_entity_properties=None,
             query_options=None,
             **kwargs
@@ -332,6 +338,8 @@ class TableClient(StorageAccountHostsMixin):
             self.merge_entity(
                 partition_key=partition_key,
                 row_key=row_key,
+                etag=etag,
+                match_condition=match_condition,
                 table_entity_properties=table_entity_properties,
                 query_options=query_options,
                 **kwargs
@@ -352,7 +360,8 @@ class TableClient(StorageAccountHostsMixin):
             row_key=None,
             timeout=None,
             request_id_parameter=None,
-            if_match=None,
+            etag=None,
+            match_condition=None,
             table_entity_properties=None,
             query_options=None
     ):
@@ -363,7 +372,8 @@ class TableClient(StorageAccountHostsMixin):
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
         try:
-            update_entity = self.update_entity(partition_key=partition_key, row_key=row_key,
+            update_entity = self.update_entity(partition_key=partition_key, row_key=row_key, etag=etag,
+                                               match_condition=match_condition,
                                                table_entity_properties=table_entity_properties)
             return update_entity
         except ResourceNotFoundError:
