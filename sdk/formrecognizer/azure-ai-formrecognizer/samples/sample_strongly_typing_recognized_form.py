@@ -11,7 +11,7 @@ FILE: sample_strongly_typed_recognized_form.py
 
 DESCRIPTION:
     This sample demonstrates how to use the fields in your recognized forms to create an object with
-    strongly-typed fields. The pre-trained receipt model will be used to illustrate this sample, but
+    strongly-typed fields. The pre-trained receipt method will be used to illustrate this sample, but
     note that a similar approach can be used for any custom form as long as you properly update the
     fields' names and types.
 
@@ -30,6 +30,9 @@ from azure.ai.formrecognizer import FormField
 class Receipt(object):
     """Creates a strongly-typed Receipt class from the fields returned in a RecognizedForm.
     If a specific field is not found on the receipt, it will return None.
+
+    See fields found on a receipt here:
+    https://westus2.dev.cognitive.microsoft.com/docs/services/form-recognizer-api-v2-preview/operations/GetAnalyzeReceiptResult
     """
 
     def __init__(self, form):

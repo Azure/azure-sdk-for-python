@@ -14,6 +14,9 @@ DESCRIPTION:
     using a pre-trained receipt model. For a suggested approach to extracting information
     from receipts, see sample_strongly_typed_recognized_form_async.py.
 
+    See fields found on a receipt here:
+    https://westus2.dev.cognitive.microsoft.com/docs/services/form-recognizer-api-v2-preview/operations/GetAnalyzeReceiptResult
+
 USAGE:
     python sample_recognize_receipts_from_url_async.py
 
