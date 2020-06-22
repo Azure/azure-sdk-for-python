@@ -14,8 +14,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?model-version=latest&showStats=true
   response:
@@ -24,13 +23,13 @@ interactions:
         Gates","the CEO of Microsoft"],"statistics":{"charactersCount":35,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - bf6a6858-92ab-4284-8285-3fa3323641f9
+      - f0ce9612-c59c-4bcd-b098-80327c810b9d
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Wed, 27 May 2020 16:04:08 GMT
+      - Thu, 18 Jun 2020 19:52:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '24'
+      - '6'
     status:
       code: 200
       message: OK

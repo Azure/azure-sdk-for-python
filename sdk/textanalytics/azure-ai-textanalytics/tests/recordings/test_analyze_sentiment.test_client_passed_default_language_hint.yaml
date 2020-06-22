@@ -16,8 +16,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
@@ -28,13 +27,13 @@ interactions:
         restaurant had really good food."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 29a54d72-954e-4405-93fd-8c503159d42c
+      - 31654ab2-9d20-44d7-8a32-27bed4d42ee7
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Wed, 27 May 2020 16:04:02 GMT
+      - Thu, 18 Jun 2020 19:52:33 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +41,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '376'
+      - '108'
     status:
       code: 200
       message: OK
@@ -63,8 +62,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
@@ -75,13 +73,13 @@ interactions:
         restaurant had really good food."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - ad3384c2-89d8-4dc2-b634-519a8a687898
+      - 69099214-9e2b-4e78-ad55-75422bce9fa2
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Wed, 27 May 2020 16:04:02 GMT
+      - Thu, 18 Jun 2020 19:52:33 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -89,7 +87,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '103'
+      - '88'
     status:
       code: 200
       message: OK
@@ -110,8 +108,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
@@ -122,13 +119,13 @@ interactions:
         restaurant had really good food."}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 896f3fe4-b6d1-4918-aad2-0f35ad243bab
+      - 100b38e5-f6d9-430c-97f5-347d77c72be5
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Wed, 27 May 2020 16:04:02 GMT
+      - Thu, 18 Jun 2020 19:52:33 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -136,7 +133,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '121'
+      - '114'
     status:
       code: 200
       message: OK
