@@ -372,8 +372,7 @@ class TableClient(StorageAccountHostsMixin):
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
         try:
-            update_entity = self.update_entity(partition_key=partition_key, row_key=row_key, etag=etag,
-                                               match_condition=match_condition,
+            update_entity = self.update_entity(partition_key=partition_key, row_key=row_key,
                                                table_entity_properties=table_entity_properties)
             return update_entity
         except ResourceNotFoundError:

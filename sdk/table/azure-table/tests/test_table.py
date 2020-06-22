@@ -5,11 +5,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import kwargs
 import pytest
 import sys
 import locale
 import os
-from azure.table import TableServiceClient, generate_account_sas
+from azure.table import TableServiceClient
 from time import time
 from wsgiref.handlers import format_date_time
 from datetime import (
@@ -18,7 +19,7 @@ from datetime import (
 )
 
 from azure.table._generated.models import AccessPolicy, QueryOptions
-from azure.table._models import TableSasPermissions
+from azure.table._models import TableSasPermissions, TableServices
 from azure.table._shared.models import ResourceTypes, AccountSasPermissions
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
@@ -27,7 +28,7 @@ from azure.core.pipeline.policies import (
 )
 
 from _shared.testcase import TableTestCase, GlobalStorageAccountPreparer
-from azure.table._shared.authentication import SharedKeyCredentialPolicy
+from azure.table._shared.authentication import SharedKeyCredentialPolicy, _StorageSASAuthentication
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
@@ -46,6 +47,7 @@ from azure.core.exceptions import (
 # )
 
 # ------------------------------------------------------------------------------
+from azure.table._shared.shared_access_signature import TableSharedAccessSignature
 
 TEST_TABLE_PREFIX = 'pytablesync'
 
@@ -325,7 +327,7 @@ class StorageTableTest(TableTestCase):
             # self._delete_table(table)
             ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_table_acl_with_signed_identifiers(self, resource_group, location, storage_account,
                                                    storage_account_key):
@@ -353,7 +355,7 @@ class StorageTableTest(TableTestCase):
             # self._delete_table(table)
             ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_table_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -387,33 +389,34 @@ class StorageTableTest(TableTestCase):
             pytest.skip("Cosmos Tables does not yet support sas")
         tsc = TableServiceClient(url, storage_account_key)
         table = self._create_table(tsc)
+        client = tsc.get_table_client(table.table_name)
         try:
             entity = {
                 'PartitionKey': 'test',
                 'RowKey': 'test1',
                 'text': 'hello',
             }
-            tsc.upsert_item(table_name=table.table_name, table_entity_properties=entity)
+            client.insert_entity(table_entity_properties=entity)
 
             entity['RowKey'] = 'test2'
-            tsc.upsert_item(table_name=table.table_name, table_entity_properties=entity)
+            client.insert_entity(table_entity_properties=entity)
 
-            token = generate_account_sas(
-                storage_account.name,
-                storage_account_key,
+            sas = TableSharedAccessSignature(storage_account.name, storage_account_key)
+            token = sas.generate_account(
+                TableServices,
                 resource_types=ResourceTypes(object=True),
                 permission=AccountSasPermissions(read=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1),
+                start=datetime.utcnow() - timedelta(minutes=1)
             )
 
             # Act
             service = TableServiceClient(
                 self.account_url(storage_account, "table"),
-                credential=token,
+                credential= token,
             )
             sas_table = service.get_table_client(table.table_name)
-            entities = list(sas_table.read_all_items())
+            entities = list(sas_table.query_entities())
 
             # Assert
             self.assertEqual(len(entities), 2)

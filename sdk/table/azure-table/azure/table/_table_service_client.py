@@ -4,12 +4,16 @@ from urllib.parse import urlparse
 from azure.table._generated import AzureTable
 from azure.table._generated.models import TableProperties, TableServiceStats, TableServiceProperties, \
     AccessPolicy, SignedIdentifier
-from azure.table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
+from azure.table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize, \
+    TableServices
+from azure.table._serialization import _add_entity_properties
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, \
     TransportWrapper
+from azure.table._shared.encryption import _validate_not_none
 from azure.table._shared.models import LocationMode
 from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import process_storage_error, return_headers_and_deserialized
+from azure.table._shared.shared_access_signature import TableSharedAccessSignature
 from azure.table._version import VERSION
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
@@ -111,10 +115,11 @@ class TableServiceClient(StorageAccountHostsMixin):
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
+        signed_identifiers = identifiers  # type: ignore
         try:
             self._client.table.set_access_policy(
                 table=table_name,
-                table_acl=identifiers or None,
+                table_acl=signed_identifiers or None,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)

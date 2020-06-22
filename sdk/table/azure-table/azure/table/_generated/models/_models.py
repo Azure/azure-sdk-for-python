@@ -28,8 +28,8 @@ class AccessPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601', 'str': {'name': 'Start'}},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'str': {'name': 'Expiry'}},
+        'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'str', 'xml': {'name': 'Expiry'}},
         'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
     }
     _xml_map = {
@@ -37,8 +37,8 @@ class AccessPolicy(msrest.serialization.Model):
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(AccessPolicy, self).__init__(**kwargs)
         self.start = kwargs['start']
@@ -91,8 +91,8 @@ class CorsRule(msrest.serialization.Model):
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(CorsRule, self).__init__(**kwargs)
         self.allowed_origins = kwargs['allowed_origins']
@@ -130,8 +130,8 @@ class GeoReplication(msrest.serialization.Model):
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(GeoReplication, self).__init__(**kwargs)
         self.status = kwargs['status']
@@ -175,8 +175,8 @@ class Logging(msrest.serialization.Model):
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(Logging, self).__init__(**kwargs)
         self.version = kwargs['version']
@@ -213,12 +213,12 @@ class Metrics(msrest.serialization.Model):
         'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
     }
     _xml_map = {
-        
+
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(Metrics, self).__init__(**kwargs)
         self.version = kwargs.get('version', None)
@@ -255,8 +255,8 @@ class QueryOptions(msrest.serialization.Model):
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(QueryOptions, self).__init__(**kwargs)
         self.format = kwargs.get('format', None)
@@ -291,8 +291,8 @@ class RetentionPolicy(msrest.serialization.Model):
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(RetentionPolicy, self).__init__(**kwargs)
         self.enabled = kwargs['enabled']
@@ -312,7 +312,6 @@ class SignedIdentifier(msrest.serialization.Model):
 
     _validation = {
         'id': {'required': True},
-        'access_policy': {'required': True},
     }
 
     _attribute_map = {
@@ -324,8 +323,8 @@ class SignedIdentifier(msrest.serialization.Model):
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(SignedIdentifier, self).__init__(**kwargs)
         self.id = kwargs['id']
@@ -347,8 +346,8 @@ class TableEntityQueryResponse(msrest.serialization.Model):
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(TableEntityQueryResponse, self).__init__(**kwargs)
         self.odata_metadata = kwargs.get('odata_metadata', None)
@@ -367,8 +366,8 @@ class TableProperties(msrest.serialization.Model):
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(TableProperties, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
@@ -389,8 +388,8 @@ class TableQueryResponse(msrest.serialization.Model):
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(TableQueryResponse, self).__init__(**kwargs)
         self.odata_metadata = kwargs.get('odata_metadata', None)
@@ -418,8 +417,8 @@ class TableResponseProperties(msrest.serialization.Model):
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(TableResponseProperties, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
@@ -452,8 +451,8 @@ class TableResponse(TableResponseProperties):
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(TableResponse, self).__init__(**kwargs)
         self.odata_metadata = kwargs.get('odata_metadata', None)
@@ -470,12 +469,12 @@ class TableServiceError(msrest.serialization.Model):
         'message': {'key': 'Message', 'type': 'str', 'xml': {'name': 'Message'}},
     }
     _xml_map = {
-        
+
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(TableServiceError, self).__init__(**kwargs)
         self.message = kwargs.get('message', None)
@@ -498,17 +497,17 @@ class TableServiceProperties(msrest.serialization.Model):
     _xml_map = {
         'name': 'StorageServiceProperties'
     }
-
     _attribute_map = {
         'logging': {'key': 'Logging', 'type': 'Logging'},
         'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
         'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
-        'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'wrapped': True, 'itemsName': 'CorsRule'}},
+        'cors': {'key': 'Cors', 'type': '[CorsRule]',
+                 'xml': {'name': 'Cors', 'wrapped': True, 'itemsName': 'CorsRule'}},
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(TableServiceProperties, self).__init__(**kwargs)
         self.logging = kwargs.get('logging', None)
@@ -528,12 +527,12 @@ class TableServiceStats(msrest.serialization.Model):
         'geo_replication': {'key': 'GeoReplication', 'type': 'GeoReplication'},
     }
     _xml_map = {
-        
+
     }
 
     def __init__(
-        self,
-        **kwargs
+            self,
+            **kwargs
     ):
         super(TableServiceStats, self).__init__(**kwargs)
         self.geo_replication = kwargs.get('geo_replication', None)

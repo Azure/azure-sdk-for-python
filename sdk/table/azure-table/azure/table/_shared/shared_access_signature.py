@@ -15,6 +15,7 @@ from .parser import _str, _to_utc_datetime
 from .constants import X_MS_VERSION
 from . import sign_string, url_quote
 
+
 class TableSharedAccessSignature(SharedAccessSignature):
     '''
     Provides a factory for creating file and share access
@@ -108,7 +109,8 @@ class TableSharedAccessSignature(SharedAccessSignature):
 
         return sas.get_token()
 
-class _TableQueryStringConstants( _QueryStringConstants):
+
+class _TableQueryStringConstants(_QueryStringConstants):
     TABLE_NAME = 'tn'
 
 
@@ -147,7 +149,6 @@ class _TableSharedAccessHelper(_SharedAccessHelper):
              get_value_to_append(_QueryStringConstants.SIGNED_PROTOCOL) +
              get_value_to_append(_QueryStringConstants.SIGNED_VERSION))
 
-
         string_to_sign += \
             (get_value_to_append(_QueryStringConstants.START_PK) +
              get_value_to_append(_QueryStringConstants.START_RK) +
@@ -161,48 +162,48 @@ class _TableSharedAccessHelper(_SharedAccessHelper):
         self._add_query(_QueryStringConstants.SIGNED_SIGNATURE,
                         _sign_string(account_key, string_to_sign))
 
-def generate_table_shared_access_signature(self, table_name, permission=None,
-                                           expiry=None, start=None, id=None,
-                                           ip=None, protocol=None,
-                                           start_pk=None, start_rk=None,
-                                           end_pk=None, end_rk=None):
-    '''
-    Generates a shared access signature for the table.
-    Use the returned signature with the sas_token parameter of TableService.
+    def generate_table_shared_access_signature(self, table_name, permission=None,
+                                               expiry=None, start=None, id=None,
+                                               ip=None, protocol=None,
+                                               start_pk=None, start_rk=None,
+                                               end_pk=None, end_rk=None):
+        '''
+        Generates a shared access signature for the table.
+        Use the returned signature with the sas_token parameter of TableService.
 
-    :param str table_name:
-        The name of the table to create a SAS token for.
-    :param TablePermissions permission:
+        :param str table_name:
+           The name of the table to create a SAS token for.
+        :param TablePermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :param expiry:
+        :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: datetime or str
-    :param start:
+        :type expiry: datetime or str
+        :param start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: datetime or str
-    :param str id:
+        :type start: datetime or str
+        :param str id:
         A unique value up to 64 characters in length that correlates to a
         stored access policy. To create a stored access policy, use :func:`~set_table_acl`.
-    :param str ip:
+        :param str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying sip='168.1.5.65' or sip='168.1.5.60-168.1.5.70' on the SAS
         restricts the request to those IP addresses.
-    :param str protocol:
+        :param str protocol:
         Specifies the protocol permitted for a request made. The default value
         is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
     :param str start_pk:
@@ -227,24 +228,25 @@ def generate_table_shared_access_signature(self, table_name, permission=None,
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     '''
-    _validate_not_none('table_name', table_name)
-    _validate_not_none('self.account_name', self.account_name)
-    _validate_not_none('self.account_key', self.account_key)
+        _validate_not_none('table_name', table_name)
+        _validate_not_none('self.account_name', self.account_name)
+        _validate_not_none('self.account_key', self.account_key)
 
-    sas = TableSharedAccessSignature(self.account_name, self.account_key)
-    return sas.generate_table(
-        table_name,
-        permission=permission,
-        expiry=expiry,
-        start=start,
-        id=id,
-        ip=ip,
-        protocol=protocol,
-        start_pk=start_pk,
-        start_rk=start_rk,
-        end_pk=end_pk,
-        end_rk=end_rk,
-    )
+        sas = TableSharedAccessSignature(self.account_name, self.account_key)
+        return sas.generate_table(
+            table_name,
+            permission=permission,
+            expiry=expiry,
+            start=start,
+            id=id,
+            ip=ip,
+            protocol=protocol,
+            start_pk=start_pk,
+            start_rk=start_rk,
+            end_pk=end_pk,
+            end_rk=end_rk,
+        )
+
 
 def generate_account_sas(
         account_name,  # type: str
@@ -252,8 +254,8 @@ def generate_account_sas(
         resource_types,  # type: Union[ResourceTypes, str]
         permission,  # type: Union[AccountSasPermissions, str]
         expiry,  # type: Optional[Union[datetime, str]]
-        **kwargs # type: Any
-    ):  # type: (...) -> str
+        **kwargs  # type: Any
+):  # type: (...) -> str
     """Generates a shared access signature for the DataLake service.
 
     Use the returned signature as the credential parameter of any DataLakeServiceClient,
@@ -299,14 +301,11 @@ def generate_account_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
-    return generate_account_sas(
-        account_name=account_name,
-        account_key=account_key,
-        resource_types=resource_types,
-        permission=permission,
-        expiry=expiry,
-        **kwargs
-    )
+    sas = _SharedAccessHelper()
+    sas.add_account_signature(account_name, account_key)
+
+    return sas.get_token()
+
 
 class QueryStringConstants(object):
     SIGNED_SIGNATURE = 'sig'

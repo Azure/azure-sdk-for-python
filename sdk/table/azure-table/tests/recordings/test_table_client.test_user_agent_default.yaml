@@ -3,34 +3,39 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/xml
+      - application/json;odata=minimalmetadata
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
+      DataServiceVersion:
+      - '3.0'
       Date:
-      - Mon, 22 Jun 2020 15:42:59 GMT
+      - Mon, 22 Jun 2020 19:24:09 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 22 Jun 2020 15:42:59 GMT
+      - Mon, 22 Jun 2020 19:24:09 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://pyacrstoragestorname-secondary.table.core.windows.net/?restype=service&comp=stats
+    uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Mon,
-        22 Jun 2020 15:41:18 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables","value":[]}'
     headers:
+      cache-control:
+      - no-cache
       content-type:
-      - application/xml
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Mon, 22 Jun 2020 15:42:58 GMT
+      - Mon, 22 Jun 2020 19:24:09 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
+      x-content-type-options:
+      - nosniff
       x-ms-version:
       - '2019-07-07'
     status:
