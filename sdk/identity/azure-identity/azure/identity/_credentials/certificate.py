@@ -48,7 +48,7 @@ class CertificateCredential(CertificateCredentialBase):
         token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
         if not token:
             token = self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
-        elif self._client.is_refresh(token):
+        elif self._client.should_refresh(token):
             try:
                 self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
             except Exception:  # pylint: disable=broad-except

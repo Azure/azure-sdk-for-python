@@ -92,13 +92,13 @@ def test_cache_refresh_token():
 
 
 def test_no_obtain_token_if_cached():
-    def mock_is_refresh(token):
+    def mock_should_refresh(token):
         return False
 
     expected_token = AccessToken("token", 42)
 
     mock_client = mock.Mock(spec=object)
-    mock_client.is_refresh = mock_is_refresh
+    mock_client.should_refresh = mock_should_refresh
     mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.get_cached_access_token = mock.Mock(return_value="VALUE")
 

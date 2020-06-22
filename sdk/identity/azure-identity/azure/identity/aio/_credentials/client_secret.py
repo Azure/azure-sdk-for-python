@@ -55,7 +55,7 @@ class ClientSecretCredential(AsyncCredentialBase, ClientSecretCredentialBase):
         token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
         if not token:
             token = await self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
-        elif self._client.is_refresh(token):
+        elif self._client.should_refresh(token):
             try:
                 await self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
             except Exception:  # pylint: disable=broad-except

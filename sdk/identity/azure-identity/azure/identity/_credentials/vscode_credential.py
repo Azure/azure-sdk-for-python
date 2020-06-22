@@ -50,7 +50,7 @@ class VSCodeCredential(object):
 
         if not token:
             token = self._redeem_refresh_token(scopes, **kwargs)
-        elif self._client.is_refresh(token):
+        elif self._client.should_refresh(token):
             try:
                 self._redeem_refresh_token(scopes, **kwargs)
             except Exception:  # pylint: disable=broad-except

@@ -19,17 +19,17 @@ def test_if_refresh():
 
     # do not need refresh
     token = AccessToken("token", now + 500)
-    is_refresh = client.is_refresh(token)
-    assert not is_refresh
+    should_refresh = client.should_refresh(token)
+    assert not should_refresh
 
     # need refresh
     token = AccessToken("token", now + 100)
     client._last_refresh_time = now - 500
-    is_refresh = client.is_refresh(token)
-    assert is_refresh
+    should_refresh = client.should_refresh(token)
+    assert should_refresh
 
     # not exceed cool down time, do not refresh
     token = AccessToken("token", now + 100)
     client._last_refresh_time = now - 5
-    is_refresh = client.is_refresh(token)
-    assert not is_refresh
+    should_refresh = client.should_refresh(token)
+    assert not should_refresh
