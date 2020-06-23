@@ -528,8 +528,8 @@ class DataSource(ProxyResource):
     :param properties: Required. The data source properties in raw json
      format, each kind of data source have it's own schema.
     :type properties: object
-    :param e_tag: The ETag of the data source.
-    :type e_tag: str
+    :param etag: The ETag of the data source.
+    :type etag: str
     :param kind: Required. Possible values include: 'WindowsEvent',
      'WindowsPerformanceCounter', 'IISLogs', 'LinuxSyslog',
      'LinuxSyslogCollection', 'LinuxPerformanceObject',
@@ -564,15 +564,15 @@ class DataSource(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'object'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, properties, kind, e_tag: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, properties, kind, etag: str=None, tags=None, **kwargs) -> None:
         super(DataSource, self).__init__(**kwargs)
         self.properties = properties
-        self.e_tag = e_tag
+        self.etag = etag
         self.kind = kind
         self.tags = tags
 
@@ -1086,8 +1086,8 @@ class SavedSearch(ProxyResource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param e_tag: The ETag of the saved search.
-    :type e_tag: str
+    :param etag: The ETag of the saved search.
+    :type etag: str
     :param category: Required. The category of the saved search. This helps
      the user to find a saved search faster.
     :type category: str
@@ -1123,7 +1123,7 @@ class SavedSearch(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'category': {'key': 'properties.category', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'query': {'key': 'properties.query', 'type': 'str'},
@@ -1133,9 +1133,9 @@ class SavedSearch(ProxyResource):
         'tags': {'key': 'properties.tags', 'type': '[Tag]'},
     }
 
-    def __init__(self, *, category: str, display_name: str, query: str, e_tag: str=None, function_alias: str=None, function_parameters: str=None, version: int=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, category: str, display_name: str, query: str, etag: str=None, function_alias: str=None, function_parameters: str=None, version: int=None, tags=None, **kwargs) -> None:
         super(SavedSearch, self).__init__(**kwargs)
-        self.e_tag = e_tag
+        self.etag = etag
         self.category = category
         self.display_name = display_name
         self.query = query
