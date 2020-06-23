@@ -31,7 +31,8 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
             msgs_to_send = [Message("message: {}".format(i)) for i in range(10)]
             sender.send(msgs_to_send)
             print('Send messages to non-sessionful queue.')
-
+        
+        # Can also be called via "with AutoLockRenew() as renewer" to automate shutdown.
         renewer = AutoLockRenew()
 
         with servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch=10) as receiver:

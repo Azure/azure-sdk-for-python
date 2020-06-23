@@ -20,6 +20,9 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
     receiving messages from the Azure Service Bus Queue or Topic Subscription
     while utilizing a session for FIFO and ownership semantics.
 
+    The two primary channels for message receipt are `receive()` to make a single request for messages,
+    and `for message in receiver:` to continuously receive incoming messages in an ongoing fashion.    
+
     :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :vartype fully_qualified_namespace: str
@@ -45,9 +48,9 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-     lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-     will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-     the client fails to process the message. The default mode is PeekLock.
+     lock period (or have their lock renewed) before they will be removed from the queue. Messages received 
+     with ReceiveAndDelete will be immediately removed from the queue, and cannot be subsequently rejected 
+     or re-received if the client fails to process the message. The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
     :keyword session_id: A specific session from which to receive. This must be specified for a
      sessionful entity, otherwise it must be None. In order to receive messages from the next available
@@ -115,9 +118,9 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
          specified Topic the client connects to.
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-         will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-         the client fails to process the message. The default mode is PeekLock.
+         lock period (or have their lock renewed) before they will be removed from the queue. Messages received 
+         with ReceiveAndDelete will be immediately removed from the queue, and cannot be subsequently rejected 
+         or re-received if the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful entity, otherwise it must be None. In order to receive messages from the next available

@@ -136,7 +136,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
     async def schedule(self, messages, schedule_time_utc):
         # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]
-        """Send Message or multiple Messages to be enqueued at a specific time.
+        """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
         :param messages: The message or list of messages to schedule.
         :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
