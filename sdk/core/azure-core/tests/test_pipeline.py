@@ -264,6 +264,25 @@ class TestClientRequest(unittest.TestCase):
 
         self.assertIn(request.url, ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"])
 
+    def test_request_text(self):
+        client = PipelineClientBase('http://example.org')
+        request = client.get(
+            "/",
+            content="foo"
+        )
+
+        # In absence of information, everything is JSON (double quote added)
+        assert request.data == json.dumps("foo")
+
+        request = client.post(
+            "/",
+            headers={'content-type': 'text/whatever'},
+            content="foo"
+        )
+
+        # We want a direct string
+        assert request.data == "foo"
+
 
 if __name__ == "__main__":
     unittest.main()
