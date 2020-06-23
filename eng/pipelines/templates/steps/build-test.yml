@@ -43,7 +43,7 @@ steps:
       python ./scripts/devops_tasks/setup_execute_tests.py "${{ parameters.BuildTargetingString }}" ${{ parameters.AdditionalTestArgs }} ${{ parameters.CoverageArg }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}" --toxenv="${{ parameters.ToxTestEnv }}" --injected-packages="${{ parameters.InjectedPackages }}" ${{ parameters.ToxEnvParallel }}"
     env: 
       PYTHON_HOME: ""
-      VIRTUAL_ENV: $(Build.SourcesDirectory)/env
+      VIRTUAL_ENV: "$(Build.SourcesDirectory)/env"
       ${{ insert }}: ${{ parameters.EnvVars }}
     displayName: 'Run Tests'
 
