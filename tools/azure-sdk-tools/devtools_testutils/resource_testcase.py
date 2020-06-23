@@ -6,7 +6,6 @@
 from collections import namedtuple
 import functools
 import os
-import datetime
 from functools import partial
 
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
@@ -34,8 +33,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                  parameter_name_for_location='location', location='westus',
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None,
-                 random_name_enabled=False,
-                 delete_after_tag_timedelta=datetime.timedelta(days=1)):
+                 random_name_enabled=False):
         super(ResourceGroupPreparer, self).__init__(name_prefix, random_name_length,
                                                     disable_recording=disable_recording,
                                                     playback_fake_resource=playback_fake_resource,
@@ -52,18 +50,13 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         if self.random_name_enabled:
             self.resource_moniker = self.name_prefix + "rgname"
         self.set_cache(use_cache, parameter_name)
-        self.delete_after_tag_timedelta = delete_after_tag_timedelta
 
     def create_resource(self, name, **kwargs):
         if self.is_live and self._need_creation:
             self.client = self.create_mgmt_client(ResourceManagementClient)
-            parameters = {'location': self.location}
-            if self.delete_after_tag_timedelta:
-                expiry = datetime.datetime.utcnow() + self.delete_after_tag_timedelta
-                parameters['tags'] = {'DeleteAfter': expiry.isoformat()}
             try:
                 self.resource = self.client.resource_groups.create_or_update(
-                    name, parameters
+                    name, {'location': self.location}
                 )
             except Exception as ex:
                 if "ReservedResourceName" in str(ex):
@@ -99,4 +92,4 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
                 pass
 
 RandomNameResourceGroupPreparer = partial(ResourceGroupPreparer, random_name_enabled=True)
-CachedResourceGroupPreparer = partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)
+CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)

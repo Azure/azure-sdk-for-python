@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrest.exceptions import HttpOperationError
 from .. import models
 
 
@@ -398,64 +397,6 @@ class CustomVisionTrainingClientOperationsMixin(object):
         return deserialized
     update_project.metadata = {'url': '/projects/{projectId}'}
 
-    def get_artifact(
-            self, project_id, path, custom_headers=None, raw=False, callback=None, **operation_config):
-        """Get artifact content from blob storage, based on artifact relative path
-        in the blob.
-
-        :param project_id: The project id.
-        :type project_id: str
-        :param path: The relative path for artifact.
-        :type path: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param callback: When specified, will be called with each chunk of
-         data that is streamed. The callback should take two arguments, the
-         bytes of the current chunk of data and the response object. If the
-         data is uploading, response will be None.
-        :type callback: Callable[Bytes, response=None]
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: Generator or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
-        """
-        # Construct URL
-        url = self.get_artifact.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['path'] = self._serialize.query("path", path, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/octet-stream'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=True, **operation_config)
-
-        if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
-
-        deserialized = self._client.stream_download(response, callback)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_artifact.metadata = {'url': '/projects/{projectId}/artifacts'}
-
     def export_project(
             self, project_id, custom_headers=None, raw=False, **operation_config):
         """Exports a project.
@@ -509,107 +450,6 @@ class CustomVisionTrainingClientOperationsMixin(object):
         return deserialized
     export_project.metadata = {'url': '/projects/{projectId}/export'}
 
-    def get_images(
-            self, project_id, iteration_id=None, tag_ids=None, tagging_status=None, filter=None, order_by=None, take=50, skip=0, custom_headers=None, raw=False, **operation_config):
-        """Get images for a given project iteration or workspace.
-
-        This API supports batching and range selection. By default it will only
-        return first 50 images matching images.
-        Use the {take} and {skip} parameters to control how many images to
-        return in a given batch.
-        The filtering is on an and/or relationship. For example, if the
-        provided tag ids are for the "Dog" and
-        "Cat" tags, then only images tagged with Dog and/or Cat will be
-        returned.
-
-        :param project_id: The project id.
-        :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace.
-        :type iteration_id: str
-        :param tag_ids: A list of tags ids to filter the images. Defaults to
-         all tagged images when null. Limited to 20.
-        :type tag_ids: list[str]
-        :param tagging_status: The tagging status filter. It can be 'All',
-         'Tagged', or 'Untagged'. Defaults to 'All'. Possible values include:
-         'All', 'Tagged', 'Untagged'
-        :type tagging_status: str
-        :param filter: An expression to filter the images against image
-         metadata. Only images where the expression evaluates to true are
-         included in the response.
-         The expression supports eq (Equal), ne (Not equal), and (Logical and),
-         or (Logical or) operators.
-         Here is an example, metadata=key1 eq 'value1' and key2 ne 'value2'.
-        :type filter: str
-        :param order_by: The ordering. Defaults to newest. Possible values
-         include: 'Newest', 'Oldest'
-        :type order_by: str
-        :param take: Maximum number of images to return. Defaults to 50,
-         limited to 256.
-        :type take: int
-        :param skip: Number of images to skip before beginning the image
-         batch. Defaults to 0.
-        :type skip: int
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: list or ClientRawResponse if raw=true
-        :rtype:
-         list[~azure.cognitiveservices.vision.customvision.training.models.Image]
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
-        """
-        # Construct URL
-        url = self.get_images.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if iteration_id is not None:
-            query_parameters['iterationId'] = self._serialize.query("iteration_id", iteration_id, 'str')
-        if tag_ids is not None:
-            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',', max_items=20, min_items=0)
-        if tagging_status is not None:
-            query_parameters['taggingStatus'] = self._serialize.query("tagging_status", tagging_status, 'str')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if order_by is not None:
-            query_parameters['orderBy'] = self._serialize.query("order_by", order_by, 'str')
-        if take is not None:
-            query_parameters['take'] = self._serialize.query("take", take, 'int', maximum=256, minimum=0)
-        if skip is not None:
-            query_parameters['skip'] = self._serialize.query("skip", skip, 'int')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.CustomVisionErrorException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('[Image]', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_images.metadata = {'url': '/projects/{projectId}/images'}
-
     def create_images_from_data(
             self, project_id, image_data, tag_ids=None, custom_headers=None, raw=False, **operation_config):
         """Add the provided images to the set of training images.
@@ -617,10 +457,6 @@ class CustomVisionTrainingClientOperationsMixin(object):
         This API accepts body content as multipart/form-data and
         application/octet-stream. When using multipart
         multiple image files can be sent at once, with a maximum of 64 files.
-        If all images are successful created, 200(OK) status code will be
-        returned.
-        Otherwise, 207 (Multi-Status) status code will be returned and detail
-        status for each image will be listed in the response payload.
 
         :param project_id: The project id.
         :type project_id: str
@@ -671,13 +507,11 @@ class CustomVisionTrainingClientOperationsMixin(object):
         request = self._client.post(url, query_parameters, header_parameters, form_content=form_data_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 207]:
+        if response.status_code not in [200]:
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ImageCreateSummary', response)
-        if response.status_code == 207:
             deserialized = self._deserialize('ImageCreateSummary', response)
 
         if raw:
@@ -808,103 +642,20 @@ class CustomVisionTrainingClientOperationsMixin(object):
         return deserialized
     get_image_region_proposals.metadata = {'url': '/projects/{projectId}/images/{imageId}/regionproposals'}
 
-    def get_image_count(
-            self, project_id, iteration_id=None, tagging_status=None, filter=None, tag_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Get the number of images.
-
-        The filtering is on an and/or relationship. For example, if the
-        provided tag ids are for the "Dog" and
-        "Cat" tags, then only images tagged with Dog and/or Cat will be
-        returned.
-
-        :param project_id: The project id.
-        :type project_id: str
-        :param iteration_id: The iteration id. Defaults to workspace.
-        :type iteration_id: str
-        :param tagging_status: The tagging status filter. It can be 'All',
-         'Tagged', or 'Untagged'. Defaults to 'All'. Possible values include:
-         'All', 'Tagged', 'Untagged'
-        :type tagging_status: str
-        :param filter: An expression to filter the images against image
-         metadata. Only images where the expression evaluates to true are
-         included in the response.
-         The expression supports eq (Equal), ne (Not equal), and (Logical and),
-         or (Logical or) operators.
-         Here is an example, metadata=key1 eq 'value1' and key2 ne 'value2'.
-        :type filter: str
-        :param tag_ids: A list of tags ids to filter the images to count.
-         Defaults to all tags when null.
-        :type tag_ids: list[str]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: int or ClientRawResponse if raw=true
-        :rtype: int or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
-        """
-        # Construct URL
-        url = self.get_image_count.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if iteration_id is not None:
-            query_parameters['iterationId'] = self._serialize.query("iteration_id", iteration_id, 'str')
-        if tagging_status is not None:
-            query_parameters['taggingStatus'] = self._serialize.query("tagging_status", tagging_status, 'str')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if tag_ids is not None:
-            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.CustomVisionErrorException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('int', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_image_count.metadata = {'url': '/projects/{projectId}/images/count'}
-
     def create_images_from_files(
-            self, project_id, batch, custom_headers=None, raw=False, **operation_config):
+            self, project_id, images=None, tag_ids=None, custom_headers=None, raw=False, **operation_config):
         """Add the provided batch of images to the set of training images.
 
         This API accepts a batch of files, and optionally tags, to create
         images. There is a limit of 64 images and 20 tags.
-        If all images are successful created, 200(OK) status code will be
-        returned.
-        Otherwise, 207 (Multi-Status) status code will be returned and detail
-        status for each image will be listed in the response payload.
 
         :param project_id: The project id.
         :type project_id: str
-        :param batch: The batch of image files to add. Limited to 64 images
-         and 20 tags per batch.
-        :type batch:
-         ~azure.cognitiveservices.vision.customvision.training.models.ImageFileCreateBatch
+        :param images:
+        :type images:
+         list[~azure.cognitiveservices.vision.customvision.training.models.ImageFileCreateEntry]
+        :param tag_ids:
+        :type tag_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -917,6 +668,8 @@ class CustomVisionTrainingClientOperationsMixin(object):
         :raises:
          :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
+        batch = models.ImageFileCreateBatch(images=images, tag_ids=tag_ids)
+
         # Construct URL
         url = self.create_images_from_files.metadata['url']
         path_format_arguments = {
@@ -942,13 +695,11 @@ class CustomVisionTrainingClientOperationsMixin(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 207]:
+        if response.status_code not in [200]:
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ImageCreateSummary', response)
-        if response.status_code == 207:
             deserialized = self._deserialize('ImageCreateSummary', response)
 
         if raw:
@@ -1023,92 +774,20 @@ class CustomVisionTrainingClientOperationsMixin(object):
         return deserialized
     get_images_by_ids.metadata = {'url': '/projects/{projectId}/images/id'}
 
-    def update_image_metadata(
-            self, project_id, image_ids, metadata, custom_headers=None, raw=False, **operation_config):
-        """Update metadata of images.
-
-        This API accepts a batch of image Ids, and metadata, to update images.
-        There is a limit of 64 images.
-
-        :param project_id: The project id.
-        :type project_id: str
-        :param image_ids: The list of image ids to update. Limited to 64.
-        :type image_ids: list[str]
-        :param metadata: The metadata to be updated to the specified images.
-         Limited to 50 key-value pairs per image. The length of key is limited
-         to 256. The length of value is limited to 512.
-        :type metadata: dict[str, str]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: ImageMetadataUpdateSummary or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.customvision.training.models.ImageMetadataUpdateSummary
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
-        """
-        # Construct URL
-        url = self.update_image_metadata.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'projectId': self._serialize.url("project_id", project_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',', max_items=256, min_items=0)
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(metadata, '{str}')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 207]:
-            raise models.CustomVisionErrorException(self._deserialize, response)
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('ImageMetadataUpdateSummary', response)
-        if response.status_code == 207:
-            deserialized = self._deserialize('ImageMetadataUpdateSummary', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    update_image_metadata.metadata = {'url': '/projects/{projectId}/images/metadata'}
-
     def create_images_from_predictions(
-            self, project_id, batch, custom_headers=None, raw=False, **operation_config):
+            self, project_id, images=None, tag_ids=None, custom_headers=None, raw=False, **operation_config):
         """Add the specified predicted images to the set of training images.
 
         This API creates a batch of images from predicted images specified.
         There is a limit of 64 images and 20 tags.
-        If all images are successful created, 200(OK) status code will be
-        returned.
-        Otherwise, 207 (Multi-Status) status code will be returned and detail
-        status for each image will be listed in the response payload.
 
         :param project_id: The project id.
         :type project_id: str
-        :param batch: Image, tag ids, and metadata. Limited to 64 images and
-         20 tags per batch.
-        :type batch:
-         ~azure.cognitiveservices.vision.customvision.training.models.ImageIdCreateBatch
+        :param images:
+        :type images:
+         list[~azure.cognitiveservices.vision.customvision.training.models.ImageIdCreateEntry]
+        :param tag_ids:
+        :type tag_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1121,6 +800,8 @@ class CustomVisionTrainingClientOperationsMixin(object):
         :raises:
          :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
+        batch = models.ImageIdCreateBatch(images=images, tag_ids=tag_ids)
+
         # Construct URL
         url = self.create_images_from_predictions.metadata['url']
         path_format_arguments = {
@@ -1146,13 +827,11 @@ class CustomVisionTrainingClientOperationsMixin(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 207]:
+        if response.status_code not in [200]:
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ImageCreateSummary', response)
-        if response.status_code == 207:
             deserialized = self._deserialize('ImageCreateSummary', response)
 
         if raw:
@@ -1169,10 +848,6 @@ class CustomVisionTrainingClientOperationsMixin(object):
         This API accepts a batch of image regions, and optionally tags, to
         update existing images with region information.
         There is a limit of 64 entries in the batch.
-        If all regions are successful created, 200(OK) status code will be
-        returned.
-        Otherwise, 207 (Multi-Status) status code will be returned and detail
-        status for each region will be listed in the response payload.
 
         :param project_id: The project id.
         :type project_id: str
@@ -1218,13 +893,11 @@ class CustomVisionTrainingClientOperationsMixin(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 207]:
+        if response.status_code not in [200]:
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ImageRegionCreateSummary', response)
-        if response.status_code == 207:
             deserialized = self._deserialize('ImageRegionCreateSummary', response)
 
         if raw:
@@ -1821,22 +1494,19 @@ class CustomVisionTrainingClientOperationsMixin(object):
     get_untagged_image_count.metadata = {'url': '/projects/{projectId}/images/untagged/count'}
 
     def create_images_from_urls(
-            self, project_id, batch, custom_headers=None, raw=False, **operation_config):
+            self, project_id, images=None, tag_ids=None, custom_headers=None, raw=False, **operation_config):
         """Add the provided images urls to the set of training images.
 
         This API accepts a batch of urls, and optionally tags, to create
         images. There is a limit of 64 images and 20 tags.
-        If all images are successful created, 200(OK) status code will be
-        returned.
-        Otherwise, 207 (Multi-Status) status code will be returned and detail
-        status for each image will be listed in the response payload.
 
         :param project_id: The project id.
         :type project_id: str
-        :param batch: Image urls, tag ids, and metadata. Limited to 64 images
-         and 20 tags per batch.
-        :type batch:
-         ~azure.cognitiveservices.vision.customvision.training.models.ImageUrlCreateBatch
+        :param images:
+        :type images:
+         list[~azure.cognitiveservices.vision.customvision.training.models.ImageUrlCreateEntry]
+        :param tag_ids:
+        :type tag_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1849,6 +1519,8 @@ class CustomVisionTrainingClientOperationsMixin(object):
         :raises:
          :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
+        batch = models.ImageUrlCreateBatch(images=images, tag_ids=tag_ids)
+
         # Construct URL
         url = self.create_images_from_urls.metadata['url']
         path_format_arguments = {
@@ -1874,13 +1546,11 @@ class CustomVisionTrainingClientOperationsMixin(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 207]:
+        if response.status_code not in [200]:
             raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ImageCreateSummary', response)
-        if response.status_code == 207:
             deserialized = self._deserialize('ImageCreateSummary', response)
 
         if raw:
@@ -2449,7 +2119,7 @@ class CustomVisionTrainingClientOperationsMixin(object):
     get_image_performance_count.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}/performance/images/count'}
 
     def publish_iteration(
-            self, project_id, iteration_id, publish_name, prediction_id, overwrite=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, iteration_id, publish_name, prediction_id, custom_headers=None, raw=False, **operation_config):
         """Publish a specific iteration.
 
         :param project_id: The project id.
@@ -2460,9 +2130,6 @@ class CustomVisionTrainingClientOperationsMixin(object):
         :type publish_name: str
         :param prediction_id: The id of the prediction resource to publish to.
         :type prediction_id: str
-        :param overwrite: Whether to overwrite the published model with the
-         given name (default: false).
-        :type overwrite: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2486,8 +2153,6 @@ class CustomVisionTrainingClientOperationsMixin(object):
         query_parameters = {}
         query_parameters['publishName'] = self._serialize.query("publish_name", publish_name, 'str')
         query_parameters['predictionId'] = self._serialize.query("prediction_id", prediction_id, 'str')
-        if overwrite is not None:
-            query_parameters['overwrite'] = self._serialize.query("overwrite", overwrite, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -2882,7 +2547,7 @@ class CustomVisionTrainingClientOperationsMixin(object):
         :param description: Optional description for the tag.
         :type description: str
         :param type: Optional type for the tag. Possible values include:
-         'Regular', 'Negative', 'GeneralProduct'
+         'Regular', 'Negative'
         :type type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -3261,14 +2926,11 @@ class CustomVisionTrainingClientOperationsMixin(object):
     train_project.metadata = {'url': '/projects/{projectId}/train'}
 
     def import_project(
-            self, token, name=None, custom_headers=None, raw=False, **operation_config):
+            self, token, custom_headers=None, raw=False, **operation_config):
         """Imports a project.
 
         :param token: Token generated from the export project call.
         :type token: str
-        :param name: Optional, name of the project to use instead of
-         auto-generated name.
-        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -3291,8 +2953,6 @@ class CustomVisionTrainingClientOperationsMixin(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['token'] = self._serialize.query("token", token, 'str')
-        if name is not None:
-            query_parameters['name'] = self._serialize.query("name", name, 'str')
 
         # Construct headers
         header_parameters = {}
