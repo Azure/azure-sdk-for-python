@@ -14,23 +14,18 @@ parameters:
   TestTimeoutInMinutes: 120
   Matrix:
     Linux_Python35:
-      OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
       PythonVersion: '3.5'
     MacOs_Python37:
-      OSName: 'MacOS'
       OSVmImage: 'macOS-10.15'
       PythonVersion: '3.7'
     Windows_Python27:
-      OSName: 'Windows'
       OSVmImage: 'windows-2019'
       PythonVersion: '2.7'
     Linux_PyPy3:
-      OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
       PythonVersion: 'pypy3'
     Linux_Python38:
-      OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
       PythonVersion: '3.8'
 
@@ -78,7 +73,7 @@ jobs:
           BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
           AfterTestSteps: ${{ parameters.AfterTestSteps }}
           PythonVersion: $(PythonVersion)
-          OSName: $(OSName)
+          OSVmImage: $(OSVmImage)
           ToxTestEnv: "whl"
           AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
