@@ -26,36 +26,23 @@ steps:
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
 
   - script: |
-      python -m pip install --upgrade setuptools virtualenv wheel
+      python -m pip install -r eng/ci_tools.txt
       mkdir $(Build.SourcesDirectory)/env
       python -m virtualenv $(Build.SourcesDirectory)/env 
-
     displayName: 'Prep Environment'
-
-  - pwsh: |
-      Get-ChildItem Env:
 
   - ${{ parameters.BeforeTestSteps }}
 
   - pwsh: |
+      # prepend path and install ci requirements
       $env:Path = "$(Build.SourcesDirectory)/env;" + $env:Path
       python -m pip install pip==20.1
       python -m pip install -r eng/ci_tools.txt
       python -m pip --version
 
+      # execute tests
       Write-Host 'python ./scripts/devops_tasks/setup_execute_tests.py "${{ parameters.BuildTargetingString }}" ${{ parameters.AdditionalTestArgs }} ${{ parameters.CoverageArg }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}" --toxenv="${{ parameters.ToxTestEnv }}" --injected-packages="${{ parameters.InjectedPackages }}" ${{ parameters.ToxEnvParallel }}"'
-
-      Write-Host "TEST SESSION BEGINS"
-
-      python ./scripts/devops_tasks/setup_execute_tests.py `
-        "${{ parameters.BuildTargetingString }}" `
-        ${{ parameters.AdditionalTestArgs }} `
-        ${{ parameters.CoverageArg }} `
-        --mark_arg="${{ parameters.TestMarkArgument }}" `
-        --service="${{ parameters.ServiceDirectory }}" `
-        --toxenv="${{ parameters.ToxTestEnv }}" `
-        --injected-packages="${{ parameters.InjectedPackages }}" `
-        ${{ parameters.ToxEnvParallel }}
+      python ./scripts/devops_tasks/setup_execute_tests.py "${{ parameters.BuildTargetingString }}" ${{ parameters.AdditionalTestArgs }} ${{ parameters.CoverageArg }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}" --toxenv="${{ parameters.ToxTestEnv }}" --injected-packages="${{ parameters.InjectedPackages }}" ${{ parameters.ToxEnvParallel }}"
     env: 
       PYTHON_HOME: ""
       VIRTUAL_ENV: $(Build.SourcesDirectory)/env
