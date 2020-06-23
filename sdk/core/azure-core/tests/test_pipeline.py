@@ -274,7 +274,7 @@ class TestClientRequest(unittest.TestCase):
         # In absence of information, everything is JSON (double quote added)
         assert request.data == json.dumps("foo")
 
-        request = client.get(
+        request = client.post(
             "/",
             headers={'content-type': 'text/whatever'},
             content="foo"
