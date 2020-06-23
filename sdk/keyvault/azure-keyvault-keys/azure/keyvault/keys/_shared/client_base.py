@@ -25,6 +25,12 @@ class ApiVersion(str, Enum):
     V7_1_preview = "7.1-preview"
     V7_0 = "7.0"
     V2016_10_01 = "2016-10-01"
+    
+def _get_policies(config, **kwargs):
+    logging_policy = HttpLoggingPolicy(**kwargs)
+    logging_policy.allowed_header_names.update(
+        {"x-ms-keyvault-network-info", "x-ms-keyvault-region", "x-ms-keyvault-service-version"}
+    )
 
 
 DEFAULT_VERSION = ApiVersion.V7_1_preview
