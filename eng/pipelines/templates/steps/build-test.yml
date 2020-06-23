@@ -26,6 +26,8 @@ steps:
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
 
   - script: |
+      python -m venv env
+      ./env/scripts/activate
       python -m pip install pip==20.1
       pip install -r eng/ci_tools.txt
       pip --version
@@ -36,20 +38,11 @@ steps:
 
   - ${{ parameters.BeforeTestSteps }}
 
-  - task: PythonScript@0
-    displayName: 'Run Tests'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: >-
-        "${{ parameters.BuildTargetingString }}"
-        ${{ parameters.AdditionalTestArgs }}
-        ${{ parameters.CoverageArg }}
-        --mark_arg="${{ parameters.TestMarkArgument }}"
-        --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="${{ parameters.ToxTestEnv }}"
-        --injected-packages="${{ parameters.InjectedPackages }}"
-        ${{ parameters.ToxEnvParallel }}
+  - pwsh: |
+      ./env/scripts/activate
+      ./scripts/devops_tasks/setup_execute_tests.py "${{ parameters.BuildTargetingString }}" ${{ parameters.AdditionalTestArgs }} ${{ parameters.CoverageArg }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}" --toxenv="${{ parameters.ToxTestEnv }}" --injected-packages="${{ parameters.InjectedPackages }}" ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
+    displayName: 'Run Tests'
 
   - ${{ parameters.AfterTestSteps }}
 
