@@ -188,7 +188,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         timeout_ms = 1000 * (timeout or self._idle_timeout) if (timeout or self._idle_timeout) else 0
         batch = self._handler.receive_message_batch(
             max_batch_size=max_batch_size,
-            timeout=timeout_ms
+            timeout=timeout_ms,
+            issue_link_credit_on_demand=True
         )
 
         return [self._build_message(message) for message in batch]
@@ -309,9 +310,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         """
         self._check_live()
-        if max_batch_size and self._prefetch < max_batch_size:
-            raise ValueError("max_batch_size should be less than or equal to prefetch of ServiceBusReceiver, or you "
-                             "could set a larger prefetch value when you're constructing the ServiceBusReceiver.")
+        # if max_batch_size and self._prefetch < max_batch_size:
+        #     raise ValueError("max_batch_size should be less than or equal to prefetch of ServiceBusReceiver, or you "
+        #                      "could set a larger prefetch value when you're constructing the ServiceBusReceiver.")
         return self._do_retryable_operation(
             self._receive,
             max_batch_size=max_batch_size,
