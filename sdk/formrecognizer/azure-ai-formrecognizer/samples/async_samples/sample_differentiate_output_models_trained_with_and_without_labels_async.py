@@ -11,8 +11,10 @@ FILE: sample_differentiate_output_models_trained_with_and_without_labels_async.p
 
 DESCRIPTION:
     This sample demonstrates the differences in output that arise when recognize_custom_forms
-    is called with custom models trained with labels and without labels. For a more general
-    example of recognizing custom forms, see sample_recognize_custom_forms_async.py
+    is called with custom models trained with labels and without labels. The models used in this
+    sample can be created in sample_train_model_with_labels_async.py and sample_train_model_without_labels_async.py
+
+    For a more general example of recognizing custom forms, see sample_recognize_custom_forms_async.py
 
 USAGE:
     python sample_differentiate_output_models_trained_with_and_without_labels_async.py
@@ -75,9 +77,14 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabelsSampleAsync(object):
                         format_bounding_box(field.value_data.bounding_box),
                         field.confidence
                     ))
-            print("\nFind the value for a specific labeled field using the training-time label:")
-            for labeled_form in forms_with_labeled_model:
-                print("The Merchant is {}\n".format(labeled_form.fields["Merchant"].value))
+
+            # Find a specific labeled field. Substitute "Merchant" with your specific training-time label
+            try:
+                print("\nValue for a specific labeled field using the training-time label:")
+                for labeled_form in forms_with_labeled_model:
+                    print("The Merchant is {}\n".format(labeled_form.fields["Merchant"].value))
+            except KeyError:
+                print("'Merchant' training-time label does not exist. Substitute with your own training-time label.")
 
             print("------------------------------------------------------------------")
             print("-------Recognizing forms with models trained without labels-------")
@@ -97,7 +104,9 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabelsSampleAsync(object):
                         format_bounding_box(field.value_data.bounding_box),
                         field.confidence
                     ))
-            print("\nFind the value for a specific unlabeled field:")
+
+            # Find the value of a specific unlabeled field. Will only be found if sample training forms used
+            print("\nValue for a specific unlabeled field:")
             for unlabeled_form in forms_with_unlabeled_model:
                 for name, field in unlabeled_form.fields.items():
                     if field.label_data.text == "Vendor Name:":
