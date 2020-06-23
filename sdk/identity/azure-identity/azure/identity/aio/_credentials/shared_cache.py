@@ -63,6 +63,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
+        if not self._initialized:
+            self._initialize()
+
         if not self._client:
             raise CredentialUnavailableError(message="Shared token cache unavailable")
 
