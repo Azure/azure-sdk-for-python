@@ -265,7 +265,7 @@ When receiving from a queue, you have multiple actions you can take on the messa
 
 > **NOTE**: You can only settle `ReceivedMessage` objects having been returned from `ServiceBusReceiver.receive()` and `ServiceBusReceive.__iter__()` in `ReceiveSettleMode.PeekLock` mode
 > (this is the default).  `ReceiveSettleMode.ReceiveAndDelete` mode removes the message from the queue on receipt.  `PeekMessage` messages
-> returned from `peek()` cannot be settled, as the message lock is not taken like it is in the aformentioned receive methods.  Sessionful messages have a similar limitation.
+> returned from `peek()` cannot be settled, as the message lock is not taken like it is in the aforementioned receive methods.  Sessionful messages have a similar limitation.
 
 If the message has a lock as mentioned above, settlement will fail if the message lock has expired.  
 If processing would take longer than the lock duration, it must be maintained via `message.renew_lock()` before it expires.  
@@ -357,7 +357,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 There are various timeouts a user should be aware of within the library.
 - 10 minute service side link closure:  A link, once opened, will be closed after 10 minutes idle to protect the service against resource leakage.  This should largely
-be transparent to a user, but if you notice a reconnect occuring after such a duration, this is why.  Performing any operations, including management operations, on the
+be transparent to a user, but if you notice a reconnect occurring after such a duration, this is why.  Performing any operations, including management operations, on the
 link will extend this timeout.
 - idle_timeout: Provided on creation of a receiver, the time after which the underlying UAMQP link will be closed after no traffic.  This primarily dictates the length
 a generator-style receive will run for before exiting if there are no messages.  Passing None (default) will wait forever, up until the 10 minute threshold if no other action is taken.
