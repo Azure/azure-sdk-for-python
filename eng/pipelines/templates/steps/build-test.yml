@@ -42,10 +42,24 @@ steps:
       python -m pip install pip==20.1
       python -m pip install -r eng/ci_tools.txt
       python -m pip --version
-      python ./scripts/devops_tasks/setup_execute_tests.py "${{ parameters.BuildTargetingString }}" ${{ parameters.AdditionalTestArgs }} ${{ parameters.CoverageArg }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}" --toxenv="${{ parameters.ToxTestEnv }}" --injected-packages="${{ parameters.InjectedPackages }}" ${{ parameters.ToxEnvParallel }}
+
+      Write-Host 'python ./scripts/devops_tasks/setup_execute_tests.py "${{ parameters.BuildTargetingString }}" ${{ parameters.AdditionalTestArgs }} ${{ parameters.CoverageArg }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}" --toxenv="${{ parameters.ToxTestEnv }}" --injected-packages="${{ parameters.InjectedPackages }}" ${{ parameters.ToxEnvParallel }}"'
+
+      Write-Host "TEST SESSION BEGINS"
+
+      python ./scripts/devops_tasks/setup_execute_tests.py `
+        "${{ parameters.BuildTargetingString }}" `
+        ${{ parameters.AdditionalTestArgs }} `
+        ${{ parameters.CoverageArg }} `
+        --mark_arg="${{ parameters.TestMarkArgument }}" `
+        --service="${{ parameters.ServiceDirectory }}" `
+        --toxenv="${{ parameters.ToxTestEnv }}" `
+        --injected-packages="${{ parameters.InjectedPackages }}" `
+        ${{ parameters.ToxEnvParallel }}
     env: 
       PYTHON_HOME: ""
       VIRTUAL_ENV: $(Build.SourcesDirectory)/env
+      ${{ insert }}: ${{ parameters.EnvVars }}
     displayName: 'Run Tests'
 
   - ${{ parameters.AfterTestSteps }}
