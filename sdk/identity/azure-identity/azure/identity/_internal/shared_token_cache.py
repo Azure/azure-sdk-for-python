@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
+import platform
 import time
 
 from msal import TokenCache
@@ -236,12 +237,4 @@ class SharedTokenCacheBase(ABC):
 
         :rtype: bool
         """
-        try:
-            load_user_cache(allow_unencrypted=False)
-        except NotImplementedError:
-            return False
-        except ValueError:
-            # cache is supported but can't be encrypted
-            pass
-
-        return True
+        return platform.system() in {"Darwin", "Linux", "Windows"}
