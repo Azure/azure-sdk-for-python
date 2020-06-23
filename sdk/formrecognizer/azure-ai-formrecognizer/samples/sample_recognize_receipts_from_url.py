@@ -10,7 +10,12 @@
 FILE: sample_recognize_receipts_from_url.py
 
 DESCRIPTION:
-    This sample demonstrates how to recognize US sales receipts from a URL.
+    This sample demonstrates how to recognize and extract common fields from a US receipt URL,
+    using a pre-trained receipt model. For a suggested approach to extracting information
+    from receipts, see sample_strongly_typed_recognized_form.py.
+
+    See fields found on a receipt here:
+    https://aka.ms/azsdk/python/formrecognizer/receiptfields
 
 USAGE:
     python sample_recognize_receipts_from_url.py
