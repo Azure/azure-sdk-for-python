@@ -40,11 +40,9 @@ class CustomVisionErrorCodes(str, Enum):
     bad_request_tag_description = "BadRequestTagDescription"
     bad_request_tag_type = "BadRequestTagType"
     bad_request_multiple_negative_tag = "BadRequestMultipleNegativeTag"
-    bad_request_multiple_general_product_tag = "BadRequestMultipleGeneralProductTag"
     bad_request_image_tags = "BadRequestImageTags"
     bad_request_image_regions = "BadRequestImageRegions"
     bad_request_negative_and_regular_tag_on_same_image = "BadRequestNegativeAndRegularTagOnSameImage"
-    bad_request_unsupported_domain = "BadRequestUnsupportedDomain"
     bad_request_required_param_is_null = "BadRequestRequiredParamIsNull"
     bad_request_iteration_is_published = "BadRequestIterationIsPublished"
     bad_request_invalid_publish_name = "BadRequestInvalidPublishName"
@@ -64,7 +62,6 @@ class CustomVisionErrorCodes(str, Enum):
     bad_request_image_url = "BadRequestImageUrl"
     bad_request_image_format = "BadRequestImageFormat"
     bad_request_image_size_bytes = "BadRequestImageSizeBytes"
-    bad_request_image_dimensions = "BadRequestImageDimensions"
     bad_request_image_exceeded_count = "BadRequestImageExceededCount"
     bad_request_training_not_needed = "BadRequestTrainingNotNeeded"
     bad_request_training_not_needed_but_training_pipeline_updated = "BadRequestTrainingNotNeededButTrainingPipelineUpdated"
@@ -89,11 +86,6 @@ class CustomVisionErrorCodes(str, Enum):
     bad_request_prediction_invalid_query_parameters = "BadRequestPredictionInvalidQueryParameters"
     bad_request_invalid_import_token = "BadRequestInvalidImportToken"
     bad_request_export_while_training = "BadRequestExportWhileTraining"
-    bad_request_image_metadata_key = "BadRequestImageMetadataKey"
-    bad_request_image_metadata_value = "BadRequestImageMetadataValue"
-    bad_request_operation_not_supported = "BadRequestOperationNotSupported"
-    bad_request_invalid_artifact_uri = "BadRequestInvalidArtifactUri"
-    bad_request_customer_managed_key_revoked = "BadRequestCustomerManagedKeyRevoked"
     bad_request_invalid = "BadRequestInvalid"
     unsupported_media_type = "UnsupportedMediaType"
     forbidden = "Forbidden"
@@ -142,7 +134,6 @@ class CustomVisionErrorCodes(str, Enum):
     error_prediction = "ErrorPrediction"
     error_prediction_storage = "ErrorPredictionStorage"
     error_region_proposal = "ErrorRegionProposal"
-    error_unknown_base_model = "ErrorUnknownBaseModel"
     error_invalid = "ErrorInvalid"
 
 
@@ -194,21 +185,6 @@ class ImageCreateStatus(str, Enum):
     error_negative_and_regular_tag_on_same_image = "ErrorNegativeAndRegularTagOnSameImage"
 
 
-class ImageMetadataUpdateStatus(str, Enum):
-
-    ok = "OK"
-    error_image_not_found = "ErrorImageNotFound"
-    error_limit_exceed = "ErrorLimitExceed"
-    error_unknown = "ErrorUnknown"
-
-
-class TagType(str, Enum):
-
-    regular = "Regular"
-    negative = "Negative"
-    general_product = "GeneralProduct"
-
-
 class Classifier(str, Enum):
 
     multiclass = "Multiclass"
@@ -239,3 +215,9 @@ class SortBy(str, Enum):
 
     uncertainty_ascending = "UncertaintyAscending"
     uncertainty_descending = "UncertaintyDescending"
+
+
+class TagType(str, Enum):
+
+    regular = "Regular"
+    negative = "Negative"

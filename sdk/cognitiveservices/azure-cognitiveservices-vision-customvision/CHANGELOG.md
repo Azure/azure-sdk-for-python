@@ -1,35 +1,5 @@
 # Release History
 
-## 3.0.0 (2020-06-22)
-
-*Training 3.3*
-
-**Features**
-
-  - Model ImageUrlCreateBatch has a new parameter metadata
-  - Model ImageIdCreateBatch has a new parameter metadata
-  - Model Prediction has a new parameter tag_type
-  - Model ImageFileCreateBatch has a new parameter metadata
-  - Model Image has a new parameter metadata
-  - Added operation get_images
-  - Added operation update_image_metadata
-  - Added operation get_artifact
-  - Added operation get_image_count
-
-**Breaking changes**
-
-  - Operation import_project has a new signature
-  - Operation publish_iteration has a new signature
-  - Operation create_images_from_files has a new signature
-  - Operation create_images_from_urls has a new signature
-  - Operation create_images_from_predictions has a new signature
-
-*Prediction 3.1*
-
-**Features**
-
-  - Model Prediction has a new parameter tag_type
-
 ## 2.0.0 (2020-05-14)
 
 **Features**

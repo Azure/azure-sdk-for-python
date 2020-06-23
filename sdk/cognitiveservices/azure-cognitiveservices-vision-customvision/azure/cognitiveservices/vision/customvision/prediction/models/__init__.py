@@ -23,7 +23,6 @@ except (SyntaxError, ImportError):
     from ._models import Prediction
 from ._custom_vision_prediction_client_enums import (
     CustomVisionErrorCodes,
-    TagType,
 )
 
 __all__ = [
@@ -33,5 +32,4 @@ __all__ = [
     'ImageUrl',
     'Prediction',
     'CustomVisionErrorCodes',
-    'TagType',
 ]

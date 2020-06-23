@@ -70,21 +70,19 @@ class CustomVisionError(Model):
      'BadRequestWorkspaceCannotBeModified', 'BadRequestWorkspaceNotDeletable',
      'BadRequestTagName', 'BadRequestTagNameNotUnique',
      'BadRequestTagDescription', 'BadRequestTagType',
-     'BadRequestMultipleNegativeTag', 'BadRequestMultipleGeneralProductTag',
-     'BadRequestImageTags', 'BadRequestImageRegions',
-     'BadRequestNegativeAndRegularTagOnSameImage',
-     'BadRequestUnsupportedDomain', 'BadRequestRequiredParamIsNull',
-     'BadRequestIterationIsPublished', 'BadRequestInvalidPublishName',
-     'BadRequestInvalidPublishTarget', 'BadRequestUnpublishFailed',
-     'BadRequestIterationNotPublished', 'BadRequestSubscriptionApi',
-     'BadRequestExceedProjectLimit',
+     'BadRequestMultipleNegativeTag', 'BadRequestImageTags',
+     'BadRequestImageRegions', 'BadRequestNegativeAndRegularTagOnSameImage',
+     'BadRequestRequiredParamIsNull', 'BadRequestIterationIsPublished',
+     'BadRequestInvalidPublishName', 'BadRequestInvalidPublishTarget',
+     'BadRequestUnpublishFailed', 'BadRequestIterationNotPublished',
+     'BadRequestSubscriptionApi', 'BadRequestExceedProjectLimit',
      'BadRequestExceedIterationPerProjectLimit',
      'BadRequestExceedTagPerProjectLimit', 'BadRequestExceedTagPerImageLimit',
      'BadRequestExceededQuota', 'BadRequestCannotMigrateProjectWithName',
      'BadRequestNotLimitedTrial', 'BadRequestImageBatch',
      'BadRequestImageStream', 'BadRequestImageUrl', 'BadRequestImageFormat',
-     'BadRequestImageSizeBytes', 'BadRequestImageDimensions',
-     'BadRequestImageExceededCount', 'BadRequestTrainingNotNeeded',
+     'BadRequestImageSizeBytes', 'BadRequestImageExceededCount',
+     'BadRequestTrainingNotNeeded',
      'BadRequestTrainingNotNeededButTrainingPipelineUpdated',
      'BadRequestTrainingValidationFailed',
      'BadRequestClassificationTrainingValidationFailed',
@@ -104,10 +102,7 @@ class CustomVisionError(Model):
      'BadRequestPredictionInvalidApplicationName',
      'BadRequestPredictionInvalidQueryParameters',
      'BadRequestInvalidImportToken', 'BadRequestExportWhileTraining',
-     'BadRequestImageMetadataKey', 'BadRequestImageMetadataValue',
-     'BadRequestOperationNotSupported', 'BadRequestInvalidArtifactUri',
-     'BadRequestCustomerManagedKeyRevoked', 'BadRequestInvalid',
-     'UnsupportedMediaType', 'Forbidden', 'ForbiddenUser',
+     'BadRequestInvalid', 'UnsupportedMediaType', 'Forbidden', 'ForbiddenUser',
      'ForbiddenUserResource', 'ForbiddenUserSignupDisabled',
      'ForbiddenUserSignupAllowanceExceeded', 'ForbiddenUserDoesNotExist',
      'ForbiddenUserDisabled', 'ForbiddenUserInsufficientCapability',
@@ -127,8 +122,7 @@ class CustomVisionError(Model):
      'ErrorExporterInvalidFeaturizer', 'ErrorExporterInvalidClassifier',
      'ErrorPredictionServiceUnavailable', 'ErrorPredictionModelNotFound',
      'ErrorPredictionModelNotCached', 'ErrorPrediction',
-     'ErrorPredictionStorage', 'ErrorRegionProposal', 'ErrorUnknownBaseModel',
-     'ErrorInvalid'
+     'ErrorPredictionStorage', 'ErrorRegionProposal', 'ErrorInvalid'
     :type code: str or
      ~azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorCodes
     :param message: Required. A message explaining the error reported by the
@@ -222,9 +216,7 @@ class Export(Model):
      'Failed', 'Done'
     :vartype status: str or
      ~azure.cognitiveservices.vision.customvision.training.models.ExportStatus
-    :ivar download_uri: URI used to download the model. If VNET feature is
-     enabled this will be a relative path to be used with GetArtifact,
-     otherwise this will be an absolute URI to the resource.
+    :ivar download_uri: URI used to download the model.
     :vartype download_uri: str
     :ivar flavor: Flavor of the export. These are specializations of the
      export platform.
@@ -280,16 +272,10 @@ class Image(Model):
     :ivar height: Height of the image.
     :vartype height: int
     :ivar resized_image_uri: The URI to the (resized) image used for training.
-     If VNET feature is enabled this will be a relative path to be used with
-     GetArtifact, otherwise this will be an absolute URI to the resource.
     :vartype resized_image_uri: str
-    :ivar thumbnail_uri: The URI to the thumbnail of the original image. If
-     VNET feature is enabled this will be a relative path to be used with
-     GetArtifact, otherwise this will be an absolute URI to the resource.
+    :ivar thumbnail_uri: The URI to the thumbnail of the original image.
     :vartype thumbnail_uri: str
-    :ivar original_image_uri: The URI to the original uploaded image. If VNET
-     feature is enabled this will be a relative path to be used with
-     GetArtifact, otherwise this will be an absolute URI to the resource.
+    :ivar original_image_uri: The URI to the original uploaded image.
     :vartype original_image_uri: str
     :ivar tags: Tags associated with this image.
     :vartype tags:
@@ -297,8 +283,6 @@ class Image(Model):
     :ivar regions: Regions associated with this image.
     :vartype regions:
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageRegion]
-    :ivar metadata: Metadata associated with this image.
-    :vartype metadata: dict[str, str]
     """
 
     _validation = {
@@ -311,7 +295,6 @@ class Image(Model):
         'original_image_uri': {'readonly': True},
         'tags': {'readonly': True},
         'regions': {'readonly': True},
-        'metadata': {'readonly': True},
     }
 
     _attribute_map = {
@@ -324,7 +307,6 @@ class Image(Model):
         'original_image_uri': {'key': 'originalImageUri', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '[ImageTag]'},
         'regions': {'key': 'regions', 'type': '[ImageRegion]'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
@@ -338,7 +320,6 @@ class Image(Model):
         self.original_image_uri = None
         self.tags = None
         self.regions = None
-        self.metadata = None
 
 
 class ImageCreateResult(Model):
@@ -418,23 +399,17 @@ class ImageFileCreateBatch(Model):
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageFileCreateEntry]
     :param tag_ids:
     :type tag_ids: list[str]
-    :param metadata: The metadata of image. Limited to 50 key-value pairs per
-     image. The length of key is limited to 256. The length of value is limited
-     to 512.
-    :type metadata: dict[str, str]
     """
 
     _attribute_map = {
         'images': {'key': 'images', 'type': '[ImageFileCreateEntry]'},
         'tag_ids': {'key': 'tagIds', 'type': '[str]'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
         super(ImageFileCreateBatch, self).__init__(**kwargs)
         self.images = kwargs.get('images', None)
         self.tag_ids = kwargs.get('tag_ids', None)
-        self.metadata = kwargs.get('metadata', None)
 
 
 class ImageFileCreateEntry(Model):
@@ -474,23 +449,17 @@ class ImageIdCreateBatch(Model):
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageIdCreateEntry]
     :param tag_ids:
     :type tag_ids: list[str]
-    :param metadata: The metadata of image. Limited to 50 key-value pairs per
-     image. The length of key is limited to 256. The length of value is limited
-     to 512.
-    :type metadata: dict[str, str]
     """
 
     _attribute_map = {
         'images': {'key': 'images', 'type': '[ImageIdCreateEntry]'},
         'tag_ids': {'key': 'tagIds', 'type': '[str]'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
         super(ImageIdCreateBatch, self).__init__(**kwargs)
         self.images = kwargs.get('images', None)
         self.tag_ids = kwargs.get('tag_ids', None)
-        self.metadata = kwargs.get('metadata', None)
 
 
 class ImageIdCreateEntry(Model):
@@ -516,61 +485,6 @@ class ImageIdCreateEntry(Model):
         self.id = kwargs.get('id', None)
         self.tag_ids = kwargs.get('tag_ids', None)
         self.regions = kwargs.get('regions', None)
-
-
-class ImageMetadataUpdateEntry(Model):
-    """Entry associating a metadata to an image.
-
-    :param image_id: Id of the image.
-    :type image_id: str
-    :param status: Status of the metadata update. Possible values include:
-     'OK', 'ErrorImageNotFound', 'ErrorLimitExceed', 'ErrorUnknown'
-    :type status: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.ImageMetadataUpdateStatus
-    :param metadata: Metadata of the image.
-    :type metadata: dict[str, str]
-    """
-
-    _attribute_map = {
-        'image_id': {'key': 'imageId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ImageMetadataUpdateEntry, self).__init__(**kwargs)
-        self.image_id = kwargs.get('image_id', None)
-        self.status = kwargs.get('status', None)
-        self.metadata = kwargs.get('metadata', None)
-
-
-class ImageMetadataUpdateSummary(Model):
-    """ImageMetadataUpdateSummary.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar is_batch_successful:
-    :vartype is_batch_successful: bool
-    :ivar images:
-    :vartype images:
-     list[~azure.cognitiveservices.vision.customvision.training.models.ImageMetadataUpdateEntry]
-    """
-
-    _validation = {
-        'is_batch_successful': {'readonly': True},
-        'images': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'is_batch_successful': {'key': 'isBatchSuccessful', 'type': 'bool'},
-        'images': {'key': 'images', 'type': '[ImageMetadataUpdateEntry]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ImageMetadataUpdateSummary, self).__init__(**kwargs)
-        self.is_batch_successful = None
-        self.images = None
 
 
 class ImagePerformance(Model):
@@ -1080,23 +994,17 @@ class ImageUrlCreateBatch(Model):
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageUrlCreateEntry]
     :param tag_ids:
     :type tag_ids: list[str]
-    :param metadata: The metadata of image. Limited to 50 key-value pairs per
-     image. The length of key is limited to 256. The length of value is limited
-     to 512.
-    :type metadata: dict[str, str]
     """
 
     _attribute_map = {
         'images': {'key': 'images', 'type': '[ImageUrlCreateEntry]'},
         'tag_ids': {'key': 'tagIds', 'type': '[str]'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
         super(ImageUrlCreateBatch, self).__init__(**kwargs)
         self.images = kwargs.get('images', None)
         self.tag_ids = kwargs.get('tag_ids', None)
-        self.metadata = kwargs.get('metadata', None)
 
 
 class ImageUrlCreateEntry(Model):
@@ -1304,10 +1212,6 @@ class Prediction(Model):
     :ivar bounding_box: Bounding box of the prediction.
     :vartype bounding_box:
      ~azure.cognitiveservices.vision.customvision.training.models.BoundingBox
-    :ivar tag_type: Type of the predicted tag. Possible values include:
-     'Regular', 'Negative', 'GeneralProduct'
-    :vartype tag_type: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.TagType
     """
 
     _validation = {
@@ -1315,7 +1219,6 @@ class Prediction(Model):
         'tag_id': {'readonly': True},
         'tag_name': {'readonly': True},
         'bounding_box': {'readonly': True},
-        'tag_type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1323,7 +1226,6 @@ class Prediction(Model):
         'tag_id': {'key': 'tagId', 'type': 'str'},
         'tag_name': {'key': 'tagName', 'type': 'str'},
         'bounding_box': {'key': 'boundingBox', 'type': 'BoundingBox'},
-        'tag_type': {'key': 'tagType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1332,7 +1234,6 @@ class Prediction(Model):
         self.tag_id = None
         self.tag_name = None
         self.bounding_box = None
-        self.tag_type = None
 
 
 class PredictionQueryResult(Model):
@@ -1345,7 +1246,7 @@ class PredictionQueryResult(Model):
     :param token: Prediction Query Token.
     :type token:
      ~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryToken
-    :ivar results: Result of an image prediction request.
+    :ivar results: Result of an prediction request.
     :vartype results:
      list[~azure.cognitiveservices.vision.customvision.training.models.StoredImagePrediction]
     """
@@ -1460,9 +1361,7 @@ class Project(Model):
     :vartype created: datetime
     :ivar last_modified: Gets the date this project was last modified.
     :vartype last_modified: datetime
-    :ivar thumbnail_uri: Gets the thumbnail url representing the image. If
-     VNET feature is enabled this will be a relative path to be used with
-     GetArtifact, otherwise this will be an absolute URI to the resource.
+    :ivar thumbnail_uri: Gets the thumbnail url representing the image.
     :vartype thumbnail_uri: str
     :ivar dr_mode_enabled: Gets if the Disaster Recovery (DR) mode is on,
      indicating the project is temporarily read-only.
@@ -1688,17 +1587,12 @@ class StoredImagePrediction(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar resized_image_uri: The URI to the (resized) prediction image. If
-     VNET feature is enabled this will be a relative path to be used with
-     GetArtifact, otherwise this will be an absolute URI to the resource.
+    :ivar resized_image_uri: The URI to the (resized) prediction image.
     :vartype resized_image_uri: str
     :ivar thumbnail_uri: The URI to the thumbnail of the original prediction
-     image. If VNET feature is enabled this will be a relative path to be used
-     with GetArtifact, otherwise this will be an absolute URI to the resource.
+     image.
     :vartype thumbnail_uri: str
-    :ivar original_image_uri: The URI to the original prediction image. If
-     VNET feature is enabled this will be a relative path to be used with
-     GetArtifact, otherwise this will be an absolute URI to the resource.
+    :ivar original_image_uri: The URI to the original prediction image.
     :vartype original_image_uri: str
     :ivar domain: Domain used for the prediction.
     :vartype domain: str
@@ -1762,17 +1656,12 @@ class StoredSuggestedTagAndRegion(Model):
     :vartype width: int
     :ivar height: Height of the resized image.
     :vartype height: int
-    :ivar resized_image_uri: The URI to the (resized) prediction image. If
-     VNET feature is enabled this will be a relative path to be used with
-     GetArtifact, otherwise this will be an absolute URI to the resource.
+    :ivar resized_image_uri: The URI to the (resized) prediction image.
     :vartype resized_image_uri: str
     :ivar thumbnail_uri: The URI to the thumbnail of the original prediction
-     image. If VNET feature is enabled this will be a relative path to be used
-     with GetArtifact, otherwise this will be an absolute URI to the resource.
+     image.
     :vartype thumbnail_uri: str
-    :ivar original_image_uri: The URI to the original prediction image. If
-     VNET feature is enabled this will be a relative path to be used with
-     GetArtifact, otherwise this will be an absolute URI to the resource.
+    :ivar original_image_uri: The URI to the original prediction image.
     :vartype original_image_uri: str
     :ivar domain: Domain used for the prediction.
     :vartype domain: str
@@ -1978,7 +1867,7 @@ class Tag(Model):
     :param description: Required. Gets or sets the description of the tag.
     :type description: str
     :param type: Required. Gets or sets the type of the tag. Possible values
-     include: 'Regular', 'Negative', 'GeneralProduct'
+     include: 'Regular', 'Negative'
     :type type: str or
      ~azure.cognitiveservices.vision.customvision.training.models.TagType
     :ivar image_count: Gets the number of images with this tag.

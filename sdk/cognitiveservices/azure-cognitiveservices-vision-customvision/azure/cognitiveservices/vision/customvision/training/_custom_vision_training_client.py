@@ -14,7 +14,6 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import CustomVisionTrainingClientConfiguration
 from .operations import CustomVisionTrainingClientOperationsMixin
-from msrest.exceptions import HttpOperationError
 from . import models
 
 
@@ -38,7 +37,7 @@ class CustomVisionTrainingClient(CustomVisionTrainingClientOperationsMixin, SDKC
         super(CustomVisionTrainingClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '3.3'
+        self.api_version = '3.2'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

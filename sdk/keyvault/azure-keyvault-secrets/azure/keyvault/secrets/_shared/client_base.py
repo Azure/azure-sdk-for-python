@@ -27,9 +27,7 @@ if TYPE_CHECKING:
 
 def _get_policies(config, **kwargs):
     logging_policy = HttpLoggingPolicy(**kwargs)
-    logging_policy.allowed_header_names.update(
-        {"x-ms-keyvault-network-info", "x-ms-keyvault-region", "x-ms-keyvault-service-version"}
-    )
+    logging_policy.allowed_header_names.add("x-ms-keyvault-network-info")
 
     return [
         config.headers_policy,
