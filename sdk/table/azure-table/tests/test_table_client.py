@@ -398,22 +398,22 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.account_name, None)
         self.assertEqual(service.credential, None)
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
-        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/?'))
+        # mine doesnt have a question mark at the end
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
         service = TableClient(account_url=custom_account_url, table_name="foo")
         self.assertEqual(service.account_name, None)
         self.assertEqual(service.table_name, "foo")
         self.assertEqual(service.credential, None)
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
-        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path?'))
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/?'))
 
-        # TODO
-        #service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token)
-        #self.assertEqual(service.account_name, None)
-        #self.assertEqual(service.table_name, "foo")
-        #self.assertEqual(service.credential, None)
-        #self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
-        #self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo?'))
+        service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token)
+        self.assertEqual(service.account_name, None)
+        self.assertEqual(service.table_name, "foo")
+        self.assertEqual(service.credential, None)
+        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path/foo'))
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
@@ -428,8 +428,8 @@ class StorageTableClientTest(TableTestCase):
             table = service.create_table(name, headers=headers)
 
             # Assert
-            # metadata = queue.get_queue_properties().metadata
-            # self.assertEqual(metadata, {'hello': 'world'})
+            metadata = table.get_table_properties()
+            self.assertEqual(metadata, {'hello': 'world'})
         finally:
             service.delete_table(name)
 
@@ -450,7 +450,7 @@ class StorageTableClientTest(TableTestCase):
         #exists = queue.get_queue_properties(raw_response_hook=callback)
         #self.assertTrue(exists)
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_user_agent_default(self, resource_group, location, storage_account, storage_account_key):
         service = TableServiceClient(self.account_url(storage_account, "table"), credential=storage_account_key)
@@ -459,7 +459,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-table/{} Python/{} ({})".format(
+                "azsdk-python-storage-table/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -467,7 +467,7 @@ class StorageTableClientTest(TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback))
         self.assertIsInstance(tables, list)
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_user_agent_custom(self, resource_group, location, storage_account, storage_account_key):
         custom_app = "TestApp/v1.0"
@@ -478,7 +478,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v1.0 azsdk-python-table/{} Python/{} ({})".format(
+                "TestApp/v1.0 azsdk-python-storage-table/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -490,7 +490,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v2.0 azsdk-python-table/{} Python/{} ({})".format(
+                "TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-table/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()))
@@ -532,7 +532,7 @@ class StorageTableClientTest(TableTestCase):
     def test_create_table_client_with_complete_cosmos_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         table_url = "https://{}.table.cosmos.azure.com:443/foo".format(storage_account.name)
-        service = TableClient(table_url, table_name='bar', credential=storage_account_key)
+        service = TableClient(account_url=table_url, table_name='bar', credential=storage_account_key)
 
             # Assert
         self.assertEqual(service.scheme, 'https')

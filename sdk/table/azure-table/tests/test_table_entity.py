@@ -743,7 +743,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_update_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -899,7 +899,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_merge_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -936,7 +936,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    #@pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_merge_entity_with_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -948,7 +948,7 @@ class StorageTableEntityTest(TableTestCase):
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             with self.assertRaises(HttpResponseError):
                 self.table.merge_entity(
-                    table_entity_properties=sent_entity, etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
+                    table_entity_properties=sent_entity, etag='W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
                     match_condition=MatchConditions.IfNotModified)
 
             # Assert
@@ -1090,7 +1090,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.upsert_insert_update_entity(table_entity_properties=sent_entity)
+            resp = self.table.upsert_insert_update_entity(table_entity_properties=sent_entity,partition_key=entity.PartitionKey,row_key=entity.RowKey)
 
             # Assert
             self.assertIsNone(resp)
@@ -1451,7 +1451,7 @@ class StorageTableEntityTest(TableTestCase):
         self._set_up(storage_account, storage_account_key)
         try:
             # Arrange
-            token = _generate_table_sas(
+            token = self.table._generate_table_sas(
                 storage_account.name,
                 self.table_name,
                 storage_account_key,

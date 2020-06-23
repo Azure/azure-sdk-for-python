@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 22 Jun 2020 13:00:23 GMT
+      - Tue, 23 Jun 2020 20:03:05 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 22 Jun 2020 13:00:23 GMT
+      - Tue, 23 Jun 2020 20:03:05 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Mon, 22 Jun 2020 13:00:23 GMT
+      - Tue, 23 Jun 2020 20:03:05 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttablebfd90c40')
       server:
@@ -69,84 +69,35 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 22 Jun 2020 13:00:24 GMT
+      - Tue, 23 Jun 2020 20:03:06 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 22 Jun 2020 13:00:24 GMT
+      - Tue, 23 Jun 2020 20:03:06 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/uttablebfd90c40
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablebfd90c40/@Element","odata.etag":"W/\"datetime''2020-06-22T13%3A00%3A24.2433507Z''\"","PartitionKey":"pkbfd90c40","RowKey":"rkbfd90c40","Timestamp":"2020-06-22T13:00:24.2433507Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+      string: '{"odata.error":{"code":"AuthenticationFailed","message":{"lang":"en-US","value":"Server
+        failed to authenticate the request. Make sure the value of Authorization header
+        is formed correctly including the signature.\nRequestId:379145c3-8002-002e-6899-499f58000000\nTime:2020-06-23T20:03:06.2776781Z"}}}'
     headers:
-      cache-control:
-      - no-cache
+      content-length:
+      - '299'
       content-type:
-      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      - application/json
       date:
-      - Mon, 22 Jun 2020 13:00:23 GMT
-      etag:
-      - W/"datetime'2020-06-22T13%3A00%3A24.2433507Z'"
-      location:
-      - https://storagename.table.core.windows.net/uttablebfd90c40(PartitionKey='pkbfd90c40',RowKey='rkbfd90c40')
+      - Tue, 23 Jun 2020 20:03:05 GMT
       server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-ms-version:
-      - '2019-07-07'
+      - Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - AuthenticationFailed
     status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json;odata=minimalmetadata
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      DataServiceVersion:
-      - '3.0'
-      Date:
-      - Mon, 22 Jun 2020 13:00:24 GMT
-      User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 22 Jun 2020 13:00:24 GMT
-      x-ms-version:
-      - '2019-07-07'
-    method: GET
-    uri: https://storagename.table.core.windows.net/uttablebfd90c40(PartitionKey='pkbfd90c40',RowKey='rkbfd90c40')
-  response:
-    body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablebfd90c40/@Element","odata.etag":"W/\"datetime''2020-06-22T13%3A00%3A24.2433507Z''\"","PartitionKey":"pkbfd90c40","RowKey":"rkbfd90c40","Timestamp":"2020-06-22T13:00:24.2433507Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-type:
-      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date:
-      - Mon, 22 Jun 2020 13:00:23 GMT
-      etag:
-      - W/"datetime'2020-06-22T13%3A00%3A24.2433507Z'"
-      server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-ms-version:
-      - '2019-07-07'
-    status:
-      code: 200
-      message: OK
+      code: 403
+      message: Server failed to authenticate the request. Make sure the value of Authorization
+        header is formed correctly including the signature.
 - request:
     body: null
     headers:
@@ -159,11 +110,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 22 Jun 2020 13:00:24 GMT
+      - Tue, 23 Jun 2020 20:03:06 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 22 Jun 2020 13:00:24 GMT
+      - Tue, 23 Jun 2020 20:03:06 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -177,7 +128,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 22 Jun 2020 13:00:24 GMT
+      - Tue, 23 Jun 2020 20:03:05 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

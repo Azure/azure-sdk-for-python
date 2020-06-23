@@ -1,6 +1,6 @@
 import functools
 from datetime import datetime
-from urllib.parse import urlparse, quote
+from urllib.parse import urlparse, quote, unquote
 
 import kwargs
 from azure.core.paging import ItemPaged
@@ -15,9 +15,11 @@ from azure.table._serialization import _to_entity_datetime, _PYTHON_TO_ENTITY_CO
     _add_entity_properties, _convert_entity_to_properties
 from azure.table._serialize import _get_match_headers
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
+from azure.table._shared.encryption import _validate_not_none
 from azure.table._shared.request_handlers import add_metadata_headers, serialize_iso
 from azure.table._shared.response_handlers import process_storage_error
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
+from azure.table._shared.shared_access_signature import TableSharedAccessSignature
 from azure.table._version import VERSION
 from azure.core.tracing.decorator import distributed_trace
 from ._models import TablePropertiesPaged, TableEntityPropertiesPaged
@@ -101,6 +103,67 @@ class TableClient(StorageAccountHostsMixin):
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)  # type: ignore
 
+    @classmethod
+    def from_table_url(cls, table_url, credential=None, **kwargs):
+        # type: (str, Optional[Any], Any) -> QueueClient
+        """A client to interact with a specific Queue.
+
+        :param str table_url: The full URI to the queue, including SAS token if used.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string, an account
+            shared access key, or an instance of a TokenCredentials class from azure.identity.
+        :returns: A queue client.
+        :rtype: ~azure.storage.queue.QueueClient
+        """
+        try:
+            if not table_url.lower().startswith('http'):
+                queue_url = "https://" + table_url
+        except AttributeError:
+            raise ValueError("Queue URL must be a string.")
+        parsed_url = urlparse(table_url.rstrip('/'))
+
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(table_url))
+
+        table_path = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(table_path) > 1:
+            account_path = "/" + "/".join(table_path[:-1])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+        table_name = unquote(table_path[-1])
+        if not table_name:
+            raise ValueError("Invalid URL. Please provide a URL with a valid queue name")
+        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
+
+    def _generate_table_sas(self, account_name, table_name, account_key, permission=None,
+                            expiry=None, start=None, id=None,
+                            ip=None, protocol=None,
+                            start_pk=None, start_rk=None,
+                            end_pk=None, end_rk=None):
+        _validate_not_none('table_name', table_name)
+        _validate_not_none('self.account_name', account_name)
+        _validate_not_none('self.account_key', account_key)
+
+        sas = TableSharedAccessSignature(account_name, account_key)
+        return sas.generate_table(
+            table_name,
+            permission=permission,
+            expiry=expiry,
+            start=start,
+            id=id,
+            ip=ip,
+            protocol=protocol,
+            start_pk=start_pk,
+            start_rk=start_rk,
+            end_pk=end_pk,
+            end_rk=end_rk,
+        )
+
     @distributed_trace
     def get_table_access_policy(
             self,
@@ -144,13 +207,12 @@ class TableClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         request_id_parameter = kwargs.pop('request_id_parameter', None)
         try:
-            response = self._client.table.get_properties(
+            response = self._client.service.get_properties(
                 timeout=timeout,
                 request_id_parameter=request_id_parameter,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        response.name = self.table_name
         return response  # type: ignore
 
     @distributed_trace
@@ -165,17 +227,15 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,
             **kwargs
     ):
-        if_match = '*'
-        if_not_match = None
-        if etag:
-            if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
-                                                        etag_param='etag', match_param='match_condition')
+        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
+                                                    etag_param='etag', match_param='match_condition')
+
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                if_match=if_match or if_not_match,
+                if_match=if_match or if_not_match or '*',
                 **kwargs)
         except ResourceNotFoundError:
             raise ResourceNotFoundError
@@ -224,11 +284,8 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,
             **kwargs
     ):
-        if_match = '*'
-        if_not_match = None
-        if etag:
-            if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
-                                                        etag_param='etag', match_param='match_condition')
+        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
+                                                    etag_param='etag', match_param='match_condition')
 
         if table_entity_properties:
             partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
@@ -241,12 +298,10 @@ class TableClient(StorageAccountHostsMixin):
                 partition_key=partition_key,
                 row_key=row_key,
                 table_entity_properties=table_entity_properties,
-                if_match=if_match or if_not_match,
+                if_match=if_match or if_not_match or "*",
                 **kwargs)
         except ResourceNotFoundError:
             raise ResourceNotFoundError
-        except HttpResponseError:
-            raise HttpResponseError
 
     @distributed_trace
     def merge_entity(
@@ -262,11 +317,9 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,  # type: Optional["models.QueryOptions"]
             **kwargs  # type: Any
     ):
-        if_match = '*'
-        if_not_match = None
-        if etag:
-            if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
-                                                        etag_param='etag', match_param='match_condition')
+
+        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
+                                                    etag_param='etag', match_param='match_condition')
 
         if table_entity_properties:
             partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
@@ -275,12 +328,11 @@ class TableClient(StorageAccountHostsMixin):
 
         try:
             self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
-                                            row_key=row_key, if_match=if_match or if_not_match,
+                                            row_key=row_key, if_match=if_match or if_not_match or '*',
                                             table_entity_properties=table_entity_properties, **kwargs)
+
         except ResourceNotFoundError:
             raise ResourceNotFoundError
-        except HttpResponseError:
-            raise HttpResponseError
 
     @distributed_trace
     def query_entities(self, headers=None, query_options=None, **kwargs):
@@ -322,8 +374,6 @@ class TableClient(StorageAccountHostsMixin):
             row_key=None,
             timeout=None,
             request_id_parameter=None,
-            etag=None,
-            match_condition=None,
             table_entity_properties=None,
             query_options=None,
             **kwargs
@@ -335,11 +385,10 @@ class TableClient(StorageAccountHostsMixin):
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
         try:
-            self.merge_entity(
+            self._client.table.merge_entity(
+                table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                etag=etag,
-                match_condition=match_condition,
                 table_entity_properties=table_entity_properties,
                 query_options=query_options,
                 **kwargs
@@ -354,16 +403,16 @@ class TableClient(StorageAccountHostsMixin):
             properties = _convert_to_entity(insert_entity)
             return Entity(properties)
 
+    @distributed_trace
     def upsert_insert_update_entity(
             self,
             partition_key=None,
             row_key=None,
             timeout=None,
             request_id_parameter=None,
-            etag=None,
-            match_condition=None,
             table_entity_properties=None,
-            query_options=None
+            query_options=None,
+            **kwargs
     ):
         # Insert or Update
         if table_entity_properties:
@@ -372,8 +421,12 @@ class TableClient(StorageAccountHostsMixin):
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
         try:
-            update_entity = self.update_entity(partition_key=partition_key, row_key=row_key,
-                                               table_entity_properties=table_entity_properties)
+            update_entity = self._client.table.update_entity(
+                table=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                table_entity_properties=table_entity_properties,
+                **kwargs)
             return update_entity
         except ResourceNotFoundError:
             insert_entity = self.insert_entity(

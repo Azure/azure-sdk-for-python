@@ -28,7 +28,7 @@ from azure.core.pipeline.policies import (
 )
 
 from _shared.testcase import TableTestCase, GlobalStorageAccountPreparer
-from azure.table._shared.authentication import SharedKeyCredentialPolicy, _StorageSASAuthentication
+from azure.table._shared.authentication import SharedKeyCredentialPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
@@ -47,7 +47,8 @@ from azure.core.exceptions import (
 # )
 
 # ------------------------------------------------------------------------------
-from azure.table._shared.shared_access_signature import TableSharedAccessSignature
+from azure.table._shared.shared_access_signature import TableSharedAccessSignature, SharedAccessSignature, \
+    generate_account_sas
 
 TEST_TABLE_PREFIX = 'pytablesync'
 
@@ -355,7 +356,7 @@ class StorageTableTest(TableTestCase):
             # self._delete_table(table)
             ts.delete_table(table.table_name)
 
-    #@pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_set_table_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -401,19 +402,18 @@ class StorageTableTest(TableTestCase):
             entity['RowKey'] = 'test2'
             client.insert_entity(table_entity_properties=entity)
 
-            sas = TableSharedAccessSignature(storage_account.name, storage_account_key)
-            token = sas.generate_account(
-                TableServices,
+            token = '?' + generate_account_sas(
+                storage_account.name, storage_account_key,
                 resource_types=ResourceTypes(object=True),
-                permission=AccountSasPermissions(read=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1)
+                permission=AccountSasPermissions(read=True, list=True),
+                start=datetime.now() - timedelta(hours=24),
+                expiry=datetime.now() + timedelta(days=8)
             )
 
             # Act
             service = TableServiceClient(
                 self.account_url(storage_account, "table"),
-                credential= token,
+                credential=token
             )
             sas_table = service.get_table_client(table.table_name)
             entities = list(sas_table.query_entities())

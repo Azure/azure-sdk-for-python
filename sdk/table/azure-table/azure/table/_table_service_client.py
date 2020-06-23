@@ -169,12 +169,15 @@ class TableServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def create_table(
             self,
-            table_name
+            table_name,
+            headers=None,
+            **kwargs
     ):
-        table_properties = TableProperties(table_name=table_name)
-        response = self._client.table.create(table_properties)
-        return response
-        # table = self.get_table_client(table=table_name)
+        table_properties = TableProperties(table_name=table_name,**dict(kwargs,headers=headers))
+        self._client.table.create(table_properties)
+        table = self.get_table_client(table=table_name)
+        return table
+
 
     @distributed_trace
     def delete_table(
