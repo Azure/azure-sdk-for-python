@@ -26,6 +26,7 @@ steps:
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
 
   - script: |
+      python -m pip install venv
       python -m venv ./env
       ls -l .
       ls -l ./venv
