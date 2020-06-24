@@ -64,7 +64,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
                 position=result['position']
             )
             if self._errors:
-                self._errors(error):
+                self._errors(error)
 
     def _iter_stream(self):
         if self._first_result is not None:
