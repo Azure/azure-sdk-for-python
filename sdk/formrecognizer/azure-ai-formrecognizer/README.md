@@ -256,7 +256,7 @@ credential = AzureKeyCredential("<api_key>")
 form_training_client = FormTrainingClient(endpoint, credential)
 
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
-poller = form_training_client.begin_training(container_sas_url)
+poller = form_training_client.begin_training(container_sas_url, use_training_labels=False)
 model = poller.result()
 
 # Custom model information

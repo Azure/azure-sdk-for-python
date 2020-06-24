@@ -87,6 +87,9 @@ class FormRecognizerClient(object):
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
+        See fields found on a receipt here:
+        https://aka.ms/azsdk/python/formrecognizer/receiptfields
+
         :param receipt: JPEG, PNG, PDF and TIFF type file stream or bytes.
              Currently only supports US sales receipts.
         :type receipt: bytes or IO[bytes]
@@ -140,6 +143,9 @@ class FormRecognizerClient(object):
         # type: (str, Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be the location (Url) of the receipt to be analyzed.
+
+        See fields found on a receipt here:
+        https://aka.ms/azsdk/python/formrecognizer/receiptfields
 
         :param str receipt_url: The url of the receipt to analyze. The input must be a valid, encoded url
             of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports

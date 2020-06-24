@@ -319,6 +319,19 @@ class HttpRequest(object):
         self.data = data
         self.files = None
 
+    def set_text_body(self, data):
+        """Set a text as body of the request.
+
+        :param data: A text to send as body.
+        :type data: str
+        """
+        if data is None:
+            self.data = None
+        else:
+            self.data = data
+            self.headers["Content-Length"] = str(len(self.data))
+        self.files = None
+
     def set_xml_body(self, data):
         """Set an XML element tree as the body of the request.
 
@@ -685,6 +698,11 @@ class PipelineClientBase(object):
         # type: (...) -> HttpRequest
         """Create HttpRequest object.
 
+        If content is not None, guesses will be used to set the right body:
+        - If content is an XML tree, will serialize as XML
+        - If content-type starts by "text/", set the content as text
+        - Else, try JSON serialization
+
         :param str method: HTTP method (GET, HEAD, etc.)
         :param str url: URL for the request.
         :param dict params: URL query parameters.
@@ -703,8 +721,15 @@ class PipelineClientBase(object):
             request.headers.update(headers)
 
         if content is not None:
+            content_type = request.headers.get("Content-Type")
             if isinstance(content, ET.Element):
                 request.set_xml_body(content)
+            # https://github.com/Azure/azure-sdk-for-python/issues/12137
+            # A string is valid JSON, make the difference between text
+            # and a plain JSON string.
+            # Content-Type is a good indicator of intent from user
+            elif content_type and content_type.startswith("text/"):
+                request.set_text_body(content)
             else:
                 try:
                     request.set_json_body(content)
