@@ -39,7 +39,7 @@ async def test_request_url(authority):
         await client.request_token(("scope",))
 
 
-def test_should_refresh():
+async def test_should_refresh():
     client = AsyncAuthnClient(endpoint="http://foo")
     now = int(time.time())
 

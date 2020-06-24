@@ -211,7 +211,7 @@ async def test_evicts_invalid_refresh_token():
     assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": invalid_token})) == 0
 
 
-def test_should_refresh():
+async def test_should_refresh():
     client = AadClient("test", "test")
     now = int(time.time())
 
