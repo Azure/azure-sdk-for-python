@@ -233,7 +233,7 @@ async def test_should_refresh():
     assert not should_refresh
 
 
-def test_token_refresh_kwargs():
+async def test_token_refresh_kwargs():
     client = AadClient("test", "test")
     assert client._token_refresh_retry_timeout == DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT
     assert client._token_refresh_offset == DEFAULT_REFRESH_OFFSET
