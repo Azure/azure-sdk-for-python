@@ -39,3 +39,21 @@ class EntityStatus(str, Enum):
     restoring = "Restoring"
     send_disabled = "SendDisabled"
     unknown = "Unknown"
+
+class MessagingSku(str, Enum):
+    """The SKU for the messaging entity.
+    """
+
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+
+class NamespaceType(str, Enum):
+    """The type of entities the namespace can contain.
+    """
+
+    messaging = "Messaging"
+    notification_hub = "NotificationHub"
+    mixed = "Mixed"
+    event_hub = "EventHub"
+    relay = "Relay"

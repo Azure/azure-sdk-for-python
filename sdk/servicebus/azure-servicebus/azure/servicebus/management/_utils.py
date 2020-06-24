@@ -26,20 +26,20 @@ def get_next_template(list_func, *args, **kwargs):
         next_link = args[0]
     else:
         next_link = kwargs.pop("next_link")
-    if not next_link:
-        start_index = kwargs.pop("start_index", 0)
-        max_count = kwargs.pop("max_count", 100)
-        api_version = constants.API_VERSION
-    else:
+
+    start_index = kwargs.pop("start_index", 0)
+    max_page_size = kwargs.pop("max_page_size", 100)
+    api_version = constants.API_VERSION
+    if next_link:
         queries = urlparse.parse_qs(urlparse.urlparse(next_link).query)
         start_index = int(queries['$skip'][0])
-        max_count = int(queries['$top'][0])
+        max_page_size = int(queries['$top'][0])
         api_version = queries['api-version'][0]
     with _handle_response_error():
         feed_element = cast(
             ElementTree,
             list_func(
-                skip=start_index, top=max_count,
+                skip=start_index, top=max_page_size,
                 api_version=api_version,
                 **kwargs
             )

@@ -131,7 +131,7 @@ class EntityOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        content_type = kwargs.pop("content_type", "application/xml")
+        content_type = kwargs.pop("content_type", "application/atom+xml")
 
         # Construct URL
         url = self.put.metadata['url']  # type: ignore

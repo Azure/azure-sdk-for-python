@@ -13,67 +13,72 @@ from ._generated.models import QueueDescription as InternalQueueDescription, \
 class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
     """Description of a Service Bus queue resource.
 
-    :param queue_name: Name of the queue.
-    :type queue_name: str
-    :param authorization_rules: Authorization rules for resource.
-    :type authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
-    :param auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
-     automatically deleted. The minimum duration is 5 minutes.
-    :type auto_delete_on_idle: ~datetime.timedelta
-    :param dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
-     letter support when a message expires.
-    :type dead_lettering_on_message_expiration: bool
-    :param default_message_time_to_live: ISO 8601 default message timespan to live value. This is
-     the duration after which the message expires, starting from when the message is sent to Service
-     Bus. This is the default value used when TimeToLive is not set on a message itself.
-    :type default_message_time_to_live: ~datetime.timedelta
-    :param duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
-     duration of the duplicate detection history. The default value is 10 minutes.
-    :type duplicate_detection_history_time_window: ~datetime.timedelta
-    :param entity_availability_status: Availibility status of the entity. Possible values include:
-     "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
-     ~azure.servicebus.management.EntityAvailabilityStatus
-    :param enable_batched_operations: Value that indicates whether server-side batched operations
-     are enabled.
-    :type enable_batched_operations: bool
-    :param enable_express: A value that indicates whether Express Entities are enabled. An express
-     queue holds a message in memory temporarily before writing it to persistent storage.
-    :type enable_express: bool
-    :param enable_partitioning: A value that indicates whether the queue is to be partitioned
-     across multiple message brokers.
-    :type enable_partitioning: bool
-    :param is_anonymous_accessible: A value indicating if the resource can be accessed without
-     authorization.
-    :type is_anonymous_accessible: bool
-    :param lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
-     that the message is locked for other receivers. The maximum value for LockDuration is 5
-     minutes; the default value is 1 minute.
-    :type lock_duration: ~datetime.timedelta
-    :param max_delivery_count: The maximum delivery count. A message is automatically deadlettered
-     after this number of deliveries. Default value is 10.
-    :type max_delivery_count: int
-    :param max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
-     memory allocated for the queue.
-    :type max_size_in_megabytes: int
-    :param requires_duplicate_detection: A value indicating if this queue requires duplicate
-     detection.
-    :type requires_duplicate_detection: bool
-    :param requires_session: A value that indicates whether the queue supports the concept of
-     sessions.
-    :type requires_session: bool
-    :param status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
-     "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.servicebus.management.EntityStatus
-    :param support_ordering: A value that indicates whether the queue supports ordering.
-    :type support_ordering: bool
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        self.queue_name = kwargs.get('queue_name', None)
+        """
+
+        :keyword name: Name of the queue.
+        :type name: str
+        :keyword authorization_rules: Authorization rules for resource.
+        :type authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
+        :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
+         automatically deleted. The minimum duration is 5 minutes.
+        :type auto_delete_on_idle: ~datetime.timedelta
+        :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
+         letter support when a message expires.
+        :type dead_lettering_on_message_expiration: bool
+        :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+         the duration after which the message expires, starting from when the message is sent to Service
+         Bus. This is the default value used when TimeToLive is not set on a message itself.
+        :type default_message_time_to_live: ~datetime.timedelta
+        :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
+         duration of the duplicate detection history. The default value is 10 minutes.
+        :type duplicate_detection_history_time_window: ~datetime.timedelta
+        :keyword entity_availability_status: Availibility status of the entity. Possible values include:
+         "Available", "Limited", "Renaming", "Restoring", "Unknown".
+        :type entity_availability_status: str or
+         ~azure.servicebus.management.EntityAvailabilityStatus
+        :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+         are enabled.
+        :type enable_batched_operations: bool
+        :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
+         queue holds a message in memory temporarily before writing it to persistent storage.
+        :type enable_express: bool
+        :keyword enable_partitioning: A value that indicates whether the queue is to be partitioned
+         across multiple message brokers.
+        :type enable_partitioning: bool
+        :keyword is_anonymous_accessible: A value indicating if the resource can be accessed without
+         authorization.
+        :type is_anonymous_accessible: bool
+        :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
+         that the message is locked for other receivers. The maximum value for LockDuration is 5
+         minutes; the default value is 1 minute.
+        :type lock_duration: ~datetime.timedelta
+        :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
+         after this number of deliveries. Default value is 10.
+        :type max_delivery_count: int
+        :keyword max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
+         memory allocated for the queue.
+        :type max_size_in_megabytes: int
+        :keyword requires_duplicate_detection: A value indicating if this queue requires duplicate
+         detection.
+        :type requires_duplicate_detection: bool
+        :keyword requires_session: A value that indicates whether the queue supports the concept of
+         sessions.
+        :type requires_session: bool
+        :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+         "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
+        :type status: str or ~azure.servicebus.management.EntityStatus
+        :keyword support_ordering: A value that indicates whether the queue supports ordering.
+        :type support_ordering: bool
+
+        :rtype: None
+        """
+        self.name = kwargs.get('name', None)
         self._internal_qd = None
 
         self.authorization_rules = kwargs.get('authorization_rules', None)
@@ -93,7 +98,6 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         self.requires_session = kwargs.get('requires_session', None)
         self.status = kwargs.get('status', None)
         self.support_ordering = kwargs.get('support_ordering', None)
-        self.created_at = kwargs.get('created_at', None)
 
     @classmethod
     def _from_internal_entity(cls, internal_qd):
@@ -118,7 +122,6 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         qd.requires_session = internal_qd.requires_session
         qd.status = internal_qd.status
         qd.support_ordering = internal_qd.support_ordering
-        qd.created_at = internal_qd.created_at
 
         return qd
 
@@ -144,7 +147,6 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         self._internal_qd.requires_session = self.requires_session
         self._internal_qd.status = self.status
         self._internal_qd.support_ordering = self.support_ordering
-        self._internal_qd.created_at = self.created_at
 
         return self._internal_qd
 
@@ -152,28 +154,32 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
 class QueueRuntimeInfo(object):
     """Service Bus queue metrics.
 
-    :param queue_name: Name of the queue.
-    :type queue_name: str
-    :param accessed_at: Last time a message was sent, or the last time there was a receive request
-     to this queue.
-    :type accessed_at: ~datetime.datetime
-    :param created_at: The exact time the queue was created.
-    :type created_at: ~datetime.datetime
-    :param updated_at: The exact time a message was updated in the queue.
-    :type updated_at: ~datetime.datetime
-    :param size_in_bytes: The size of the queue, in bytes.
-    :type size_in_bytes: int
-    :param message_count: The number of messages in the queue.
-    :type message_count: int
-    :param message_count_details: Details about the message counts in queue.
-    :type message_count_details: ~azure.servicebus.management.MessageCountDetails
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        self.queue_name = kwargs.get('queue_name', None)
+        """
+        :keyword name: Name of the queue.
+        :type name: str
+        :keyword accessed_at: Last time a message was sent, or the last time there was a receive request
+         to this queue.
+        :type accessed_at: ~datetime.datetime
+        :keyword created_at: The exact time the queue was created.
+        :type created_at: ~datetime.datetime
+        :keyword updated_at: The exact time a message was updated in the queue.
+        :type updated_at: ~datetime.datetime
+        :keyword size_in_bytes: The size of the queue, in bytes.
+        :type size_in_bytes: int
+        :keyword message_count: The number of messages in the queue.
+        :type message_count: int
+        :keyword message_count_details: Details about the message counts in queue.
+        :type message_count_details: ~azure.servicebus.management.MessageCountDetails
+
+        :rtype: None
+        """
+        self.name = kwargs.get('name', None)
         self._internal_qr = None
 
         self.accessed_at = kwargs.get('accessed_at', None)
@@ -200,12 +206,67 @@ class QueueRuntimeInfo(object):
 
 
 class TopicDescription(object):
+    """Description of a Service Bus topic resource.
+
+    """
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword str name:
+        :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+         the duration after which the message expires, starting from when the message is sent to Service
+         Bus. This is the default value used when TimeToLive is not set on a message itself.
+        :type default_message_time_to_live: ~datetime.timedelta
+        :keyword max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
+         memory allocated for the topic.
+        :type max_size_in_megabytes: long
+        :keyword requires_duplicate_detection: A value indicating if this topic requires duplicate
+         detection.
+        :type requires_duplicate_detection: bool
+        :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
+         duration of the duplicate detection history. The default value is 10 minutes.
+        :type duplicate_detection_history_time_window: ~datetime.timedelta
+        :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+         are enabled.
+        :type enable_batched_operations: bool
+        :keyword size_in_bytes: The size of the queue, in bytes.
+        :type size_in_bytes: int
+        :keyword is_anonymous_accessible: A value indicating if the resource can be accessed without
+         authorization.
+        :type is_anonymous_accessible: bool
+        :keyword authorization_rules: Authorization rules for resource.
+        :type authorization_rules:
+         list[~azure.servicebus.management._generated.models.AuthorizationRule]
+        :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+         "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
+        :type status: str or ~azure.servicebus.management._generated.models.EntityStatus
+        :keyword support_ordering: A value that indicates whether the topic supports ordering.
+        :type support_ordering: bool
+        :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
+         automatically deleted. The minimum duration is 5 minutes.
+        :type auto_delete_on_idle: ~datetime.timedelta
+        :keyword enable_partitioning: A value that indicates whether the topic is to be partitioned
+         across multiple message brokers.
+        :type enable_partitioning: bool
+        :keyword entity_availability_status: Availability status of the entity. Possible values include:
+         "Available", "Limited", "Renaming", "Restoring", "Unknown".
+        :type entity_availability_status: str or
+         ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
+        :keyword enable_subscription_partitioning: A value that indicates whether the topic's
+         subscription is to be partitioned.
+        :type enable_subscription_partitioning: bool
+        :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
+         queue holds a message in memory temporarily before writing it to persistent storage.
+        :type enable_express: bool
+        :keyword user_metadata: Metadata associated with the topic.
+        :type user_metadata: str
+
+        :rtype: None
+        """
         super(TopicDescription, self).__init__(**kwargs)
-        self.topic_name = kwargs.get('topic_name', None)
+        self.name = kwargs.get('name', None)
         self._internal_td = None
 
         self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
@@ -214,7 +275,6 @@ class TopicDescription(object):
         self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
         self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
         self.size_in_bytes = kwargs.get('size_in_bytes', None)
-        self.filtering_messages_before_publishing = kwargs.get('filtering_messages_before_publishing', None)
         self.is_anonymous_accessible = kwargs.get('is_anonymous_accessible', None)
         self.authorization_rules = kwargs.get('authorization_rules', None)
         self.status = kwargs.get('status', None)
@@ -228,6 +288,7 @@ class TopicDescription(object):
 
     @classmethod
     def _from_internal_entity(cls, internal_td):
+        # type: (InternalTopicDescription) -> TopicDescription
         qd = cls()
         qd._internal_td = deepcopy(internal_td)
 
@@ -237,7 +298,6 @@ class TopicDescription(object):
         qd.duplicate_detection_history_time_window = internal_td.duplicate_detection_history_time_window
         qd.enable_batched_operations = internal_td.enable_batched_operations
         qd.size_in_bytes = internal_td.size_in_bytes
-        qd.filtering_messages_before_publishing = internal_td.filtering_messages_before_publishing
         qd.is_anonymous_accessible = internal_td.is_anonymous_accessible
         qd.authorization_rules = internal_td.authorization_rules
         qd.status = internal_td.status
@@ -249,16 +309,18 @@ class TopicDescription(object):
         qd.enable_express = internal_td.enable_express
         qd.user_metadata = internal_td.user_metadata
 
+        return qd
+
     def _to_internal_entity(self):
+        # type: () -> InternalTopicDescription
         if not self._internal_td:
-            self._internal_td = InternalQueueDescription()
+            self._internal_td = InternalTopicDescription()
         self._internal_td.default_message_time_to_live = self.default_message_time_to_live
         self._internal_td.max_size_in_megabytes = self.max_size_in_megabytes
         self._internal_td.requires_duplicate_detection = self.requires_duplicate_detection
         self._internal_td.duplicate_detection_history_time_window = self.duplicate_detection_history_time_window
         self._internal_td.enable_batched_operations = self.enable_batched_operations
         self._internal_td.size_in_bytes = self.size_in_bytes
-        self._internal_td.filtering_messages_before_publishing = self.filtering_messages_before_publishing
         self._internal_td.is_anonymous_accessible = self.is_anonymous_accessible
         self._internal_td.authorization_rules = self.authorization_rules
         self._internal_td.status = self.status
@@ -274,14 +336,32 @@ class TopicDescription(object):
 
 
 class TopicRuntimeInfo(object):
+    """Description of a Service Bus topic resource.
+
+    """
     def __init__(
         self,
         **kwargs
     ):
+        """
+        :keyword str name:
+        :keyword created_at: The exact time the queue was created.
+        :type created_at: ~datetime.datetime
+        :keyword updated_at: The exact time a message was updated in the queue.
+        :type updated_at: ~datetime.datetime
+        :keyword accessed_at: Last time a message was sent, or the last time there was a receive request
+         to this queue.
+        :type accessed_at: ~datetime.datetime
+        :keyword message_count_details: Details about the message counts in queue.
+        :type message_count_details: ~azure.servicebus.management._generated.models.MessageCountDetails
+        :keyword subscription_count: The number of subscriptions in the topic.
+        :type subscription_count: int
+
+        :rtype: None
+        """
         super(TopicRuntimeInfo, self).__init__(**kwargs)
-        self.topic_name = kwargs.get('topic_name', None)
+        self.name = kwargs.get('name', None)
         self._internal_td = None
-        self.status = kwargs.get('status', None)
         self.created_at = kwargs.get('created_at', None)
         self.updated_at = kwargs.get('updated_at', None)
         self.accessed_at = kwargs.get('accessed_at', None)
@@ -290,19 +370,71 @@ class TopicRuntimeInfo(object):
 
     @classmethod
     def _from_internal_entity(cls, internal_td):
+        # type: (InternalTopicDescription) -> TopicRuntimeInfo
         qd = cls()
+        qd._internal_td = internal_td
+
         qd.created_at = internal_td.created_at
         qd.updated_at = internal_td.updated_at
         qd.accessed_at = internal_td.accessed_at
         qd.message_count_details = internal_td.message_count_details
         qd.subscription_count = internal_td.subscription_count
 
+        return qd
+
 
 class SubscriptionDescription(object):
+    """Description of a Service Bus queue resource.
+
+    """
     def __init__(self, **kwargs):
+        """
+
+        :keyword str name:
+        :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
+         that the message is locked for other receivers. The maximum value for LockDuration is 5
+         minutes; the default value is 1 minute.
+        :type lock_duration: ~datetime.timedelta
+        :keyword requires_session: A value that indicates whether the queue supports the concept of
+         sessions.
+        :type requires_session: bool
+        :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+         the duration after which the message expires, starting from when the message is sent to Service
+         Bus. This is the default value used when TimeToLive is not set on a message itself.
+        :type default_message_time_to_live: ~datetime.timedelta
+        :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
+         letter support when a message expires.
+        :type dead_lettering_on_message_expiration: bool
+        :keyword dead_lettering_on_filter_evaluation_exceptions: A value that indicates whether this
+         queue has dead letter support when a message expires.
+        :type dead_lettering_on_filter_evaluation_exceptions: bool
+        :keyword message_count: The number of messages in the queue.
+        :type message_count: int
+        :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
+         after this number of deliveries. Default value is 10.
+        :type max_delivery_count: int
+        :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+         are enabled.
+        :type enable_batched_operations: bool
+        :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+         "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
+        :type status: str or ~azure.servicebus.management._generated.models.EntityStatus
+        :keyword forward_to: .. raw:: html
+
+            <to add>.
+        :type forward_to: str
+        :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
+         automatically deleted. The minimum duration is 5 minutes.
+        :type auto_delete_on_idle: ~datetime.timedelta
+        :keyword entity_availability_status: Availability status of the entity. Possible values include:
+         "Available", "Limited", "Renaming", "Restoring", "Unknown".
+        :type entity_availability_status: str or
+         ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
+
+        :rtype: None
+        """
         super(SubscriptionDescription, self).__init__(**kwargs)
-        self.topic_name = kwargs.get("topic_name")
-        self.subscription_name = kwargs.get("subscription_name")
+        self.name = kwargs.get("name")
         self._internal_sd = None
 
         self.lock_duration = kwargs.get('lock_duration', None)
@@ -318,12 +450,66 @@ class SubscriptionDescription(object):
         self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
         self.entity_availability_status = kwargs.get('entity_availability_status', None)
 
+    @classmethod
+    def _from_internal_entity(cls, internal_subscription):
+        # type: (InternalSubscriptionDescription) -> SubscriptionDescription
+        subscription = cls()
+        subscription._internal_sd = internal_subscription
+        subscription.lock_duration = internal_subscription.lock_duration
+        subscription.requires_session = internal_subscription.requires_session
+        subscription.default_message_time_to_live = internal_subscription.default_message_time_to_live
+        subscription.dead_lettering_on_message_expiration = internal_subscription.dead_lettering_on_message_expiration
+        subscription.dead_lettering_on_filter_evaluation_exceptions = internal_subscription.dead_lettering_on_filter_evaluation_exceptions
+        subscription.max_delivery_count = internal_subscription.max_delivery_count
+        subscription.enable_batched_operations = internal_subscription.enable_batched_operations
+        subscription.status = internal_subscription.status
+        subscription.forward_to = internal_subscription.forward_to
+        subscription.auto_delete_on_idle = internal_subscription.auto_delete_on_idle
+        subscription.entity_availability_status = internal_subscription.entity_availability_status
+
+        return subscription
+
+    def _to_internal_entity(self):
+        # type: () -> InternalSubscriptionDescription
+        if not self._internal_sd:
+            self._internal_sd = InternalSubscriptionDescription()
+        self._internal_sd.lock_duration = self.lock_duration
+        self._internal_sd.requires_session = self.requires_session
+        self._internal_sd.default_message_time_to_live = self.default_message_time_to_live
+        self._internal_sd.dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration
+        self._internal_sd.dead_lettering_on_filter_evaluation_exceptions = self.dead_lettering_on_filter_evaluation_exceptions
+        self._internal_sd.max_delivery_count = self.max_delivery_count
+        self._internal_sd.enable_batched_operations = self.enable_batched_operations
+        self._internal_sd.status = self.status
+        self._internal_sd.forward_to = self.forward_to
+        self._internal_sd.auto_delete_on_idle = self.auto_delete_on_idle
+        self._internal_sd.entity_availability_status = self.entity_availability_status
+
+        return self._internal_sd
+
 
 class SubscriptionRuntimeInfo(object):
+    """Description of a Service Bus queue resource.
+
+    """
     def __init__(self, **kwargs):
+        """
+
+        :keyword str name:
+        :keyword created_at: The exact time the queue was created.
+        :type created_at: ~datetime.datetime
+        :keyword updated_at: The exact time a message was updated in the queue.
+        :type updated_at: ~datetime.datetime
+        :keyword accessed_at: Last time a message was sent, or the last time there was a receive request
+         to this queue.
+        :type accessed_at: ~datetime.datetime
+        :keyword message_count_details: Details about the message counts in queue.
+        :type message_count_details: ~azure.servicebus.management._generated.models.MessageCountDetails
+
+        :rtype: None
+        """
         super(SubscriptionRuntimeInfo, self).__init__(**kwargs)
-        self.topic_name = kwargs.get("topic_name")
-        self.subscription_name = kwargs.get("subscription_name")
+        self.name = kwargs.get("name")
 
         self.message_count = kwargs.get('message_count', None)
         self.created_at = kwargs.get('created_at', None)
@@ -331,10 +517,66 @@ class SubscriptionRuntimeInfo(object):
         self.accessed_at = kwargs.get('accessed_at', None)
         self.message_count_details = kwargs.get('message_count_details', None)
 
+    @classmethod
+    def _from_internal_entity(cls, internal_subscription):
+        # type: (InternalSubscriptionDescription) -> SubscriptionRuntimeInfo
+        subscription = cls()
+        subscription._internal_sd = internal_subscription
+        subscription.message_count = internal_subscription.message_count
+        subscription.created_at = internal_subscription.created_at
+        subscription.updated_at = internal_subscription.updated_at
+        subscription.accessed_at = internal_subscription.accessed_at
+        subscription.message_count_details = internal_subscription.message_count_details
+
+        return subscription
+
 
 class RuleDescription(object):
+    """RuleDescription.
+
+    """
+
     def __init__(self, **kwargs):
-        self.topic_name = kwargs.get("topic_name")
-        self.subscription_name = kwargs.get("subscription_name")
-        self._internal_rd = None
+        """
+
+        :keyword filter:
+        :type filter: ~azure.servicebus.management._generated.models.RuleFilter
+        :keyword action:
+        :type action: ~azure.servicebus.management._generated.models.RuleAction
+        :keyword created_at: The exact time the queue was created.
+        :type created_at: ~datetime.datetime
+        :keyword name:
+        :type name: str
+
+        :rtype: None
+        """
         super(RuleDescription, self).__init__(**kwargs)
+        self.filter = kwargs.get('filter', None)
+        self.action = kwargs.get('action', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.name = kwargs.get('name', None)
+
+        self._internal_rule = None
+
+    @classmethod
+    def _from_internal_entity(cls, internal_rule):
+        # type: (InternalRuleDescription) -> RuleDescription
+        rule = cls()
+        rule._internal_rule = internal_rule
+        rule.filter = internal_rule.filter
+        rule.action = internal_rule.action
+        rule.created_at = internal_rule.created_at
+        rule.name = internal_rule.name
+
+        return rule
+
+    def _to_internal_entity(self):
+        # type: () -> InternalRuleDescription
+        if not self._internal_rule:
+            self._internal_rule = InternalRuleDescription()
+        self._internal_rule.filter = self.filter
+        self._internal_rule.action = self.action
+        self._internal_rule.created_at = self.created_at
+        self._internal_rule.name = self.name
+
+        return self._internal_rule

@@ -14,6 +14,9 @@ from msrest import Deserializer, Serializer
 from ._configuration_async import ServiceBusManagementClientConfiguration
 from .operations_async import EntityOperations
 from .operations_async import ServiceBusManagementClientOperationsMixin
+from .operations_async import SubscriptionOperations
+from .operations_async import RuleOperations
+from .operations_async import NamespaceOperations
 from .. import models
 
 
@@ -22,6 +25,12 @@ class ServiceBusManagementClient(ServiceBusManagementClientOperationsMixin):
 
     :ivar entity: EntityOperations operations
     :vartype entity: azure.servicebus.management._generated.aio.operations_async.EntityOperations
+    :ivar subscription: SubscriptionOperations operations
+    :vartype subscription: azure.servicebus.management._generated.aio.operations_async.SubscriptionOperations
+    :ivar rule: RuleOperations operations
+    :vartype rule: azure.servicebus.management._generated.aio.operations_async.RuleOperations
+    :ivar namespace: NamespaceOperations operations
+    :vartype namespace: azure.servicebus.management._generated.aio.operations_async.NamespaceOperations
     :param endpoint: The Service Bus fully qualified domain name.
     :type endpoint: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -41,6 +50,12 @@ class ServiceBusManagementClient(ServiceBusManagementClientOperationsMixin):
         self._deserialize = Deserializer(client_models)
 
         self.entity = EntityOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.subscription = SubscriptionOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.rule = RuleOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.namespace = NamespaceOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def close(self) -> None:

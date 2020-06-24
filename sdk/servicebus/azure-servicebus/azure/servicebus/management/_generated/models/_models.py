@@ -64,6 +64,90 @@ class AuthorizationRule(msrest.serialization.Model):
         self.secondary_key = kwargs.get('secondary_key', None)
 
 
+class RuleFilter(msrest.serialization.Model):
+    """RuleFilter.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CorrelationFilter, FalseFilter, SqlFilter, TrueFilter.
+
+    :param type: Constant filled by server.
+    :type type: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
+    }
+
+    _subtype_map = {
+        'type': {'CorrelationFilter': 'CorrelationFilter', 'FalseFilter': 'FalseFilter', 'SqlFilter': 'SqlFilter', 'TrueFilter': 'TrueFilter'}
+    }
+    _xml_map = {
+        'name': 'Filter', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleFilter, self).__init__(**kwargs)
+        self.type = None
+
+
+class CorrelationFilter(RuleFilter):
+    """CorrelationFilter.
+
+    :param type: Constant filled by server.
+    :type type: str
+    :param correlation_id:
+    :type correlation_id: str
+    :param message_id:
+    :type message_id: str
+    :param to:
+    :type to: str
+    :param reply_to:
+    :type reply_to: str
+    :param label:
+    :type label: str
+    :param session_id:
+    :type session_id: str
+    :param reply_to_session_id:
+    :type reply_to_session_id: str
+    :param content_type:
+    :type content_type: str
+    :param properties:
+    :type properties: list[~azure.servicebus.management._generated.models.KeyValue]
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
+        'correlation_id': {'key': 'CorrelationId', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_id': {'key': 'MessageId', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'to': {'key': 'To', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'reply_to': {'key': 'ReplyTo', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'label': {'key': 'Label', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'session_id': {'key': 'SessionId', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'reply_to_session_id': {'key': 'ReplyToSessionId', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'content_type': {'key': 'ContentType', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'properties': {'key': 'Properties', 'type': '[KeyValue]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'KeyValueOfstringanyType', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CorrelationFilter, self).__init__(**kwargs)
+        self.type = 'CorrelationFilter'
+        self.correlation_id = kwargs.get('correlation_id', None)
+        self.message_id = kwargs.get('message_id', None)
+        self.to = kwargs.get('to', None)
+        self.reply_to = kwargs.get('reply_to', None)
+        self.label = kwargs.get('label', None)
+        self.session_id = kwargs.get('session_id', None)
+        self.reply_to_session_id = kwargs.get('reply_to_session_id', None)
+        self.content_type = kwargs.get('content_type', None)
+        self.properties = kwargs.get('properties', None)
+
+
 class CreateQueueBody(msrest.serialization.Model):
     """The request body for creating a queue.
 
@@ -110,6 +194,103 @@ class CreateQueueBodyContent(msrest.serialization.Model):
         super(CreateQueueBodyContent, self).__init__(**kwargs)
         self.type = kwargs.get('type', "application/xml")
         self.queue_description = kwargs.get('queue_description', None)
+
+
+class CreateRuleBody(msrest.serialization.Model):
+    """The request body for creating a topic.
+
+    :param content: RuleDescription for the new Rule.
+    :type content: ~azure.servicebus.management._generated.models.CreateRuleBodyContent
+    """
+
+    _attribute_map = {
+        'content': {'key': 'content', 'type': 'CreateRuleBodyContent'},
+    }
+    _xml_map = {
+        'name': 'entry', 'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CreateRuleBody, self).__init__(**kwargs)
+        self.content = kwargs.get('content', None)
+
+
+class CreateRuleBodyContent(msrest.serialization.Model):
+    """RuleDescription for the new Rule.
+
+    :param type: MIME type of content.
+    :type type: str
+    :param rule_description: Rule information to create.
+    :type rule_description: ~azure.servicebus.management._generated.models.RuleDescription
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
+        'rule_description': {'key': 'RuleDescription', 'type': 'RuleDescription'},
+    }
+    _xml_map = {
+        'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CreateRuleBodyContent, self).__init__(**kwargs)
+        self.type = kwargs.get('type', "application/xml")
+        self.rule_description = kwargs.get('rule_description', None)
+
+
+class CreateSubscriptionBody(msrest.serialization.Model):
+    """The request body for creating a topic.
+
+    :param content: TopicDescription for the new topic.
+    :type content: ~azure.servicebus.management._generated.models.CreateSubscriptionBodyContent
+    """
+
+    _attribute_map = {
+        'content': {'key': 'content', 'type': 'CreateSubscriptionBodyContent'},
+    }
+    _xml_map = {
+        'name': 'entry', 'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CreateSubscriptionBody, self).__init__(**kwargs)
+        self.content = kwargs.get('content', None)
+
+
+class CreateSubscriptionBodyContent(msrest.serialization.Model):
+    """TopicDescription for the new topic.
+
+    :param type: MIME type of content.
+    :type type: str
+    :param subscription_description: Topic information to create.
+    :type subscription_description:
+     ~azure.servicebus.management._generated.models.SubscriptionDescription
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
+        'subscription_description': {'key': 'SubscriptionDescription', 'type': 'SubscriptionDescription'},
+    }
+    _xml_map = {
+        'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(CreateSubscriptionBodyContent, self).__init__(**kwargs)
+        self.type = kwargs.get('type', "application/xml")
+        self.subscription_description = kwargs.get('subscription_description', None)
 
 
 class CreateTopicBody(msrest.serialization.Model):
@@ -160,6 +341,103 @@ class CreateTopicBodyContent(msrest.serialization.Model):
         self.topic_description = kwargs.get('topic_description', None)
 
 
+class RuleAction(msrest.serialization.Model):
+    """RuleAction.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: EmptyRuleAction, SqlRuleAction.
+
+    :param type: Constant filled by server.
+    :type type: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
+    }
+
+    _subtype_map = {
+        'type': {'EmptyRuleAction': 'EmptyRuleAction', 'SqlRuleAction': 'SqlRuleAction'}
+    }
+    _xml_map = {
+        'name': 'Action', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleAction, self).__init__(**kwargs)
+        self.type = None
+
+
+class EmptyRuleAction(RuleAction):
+    """EmptyRuleAction.
+
+    :param type: Constant filled by server.
+    :type type: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(EmptyRuleAction, self).__init__(**kwargs)
+        self.type = 'EmptyRuleAction'
+
+
+class FalseFilter(RuleFilter):
+    """FalseFilter.
+
+    :param type: Constant filled by server.
+    :type type: str
+    :param sql_expression:
+    :type sql_expression: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
+        'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FalseFilter, self).__init__(**kwargs)
+        self.type = 'FalseFilter'
+        self.sql_expression = kwargs.get('sql_expression', "1 != 1")
+
+
+class KeyValue(msrest.serialization.Model):
+    """KeyValue.
+
+    :param key:
+    :type key: str
+    :param value:
+    :type value: str
+    """
+
+    _attribute_map = {
+        'key': {'key': 'Key', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'value': {'key': 'Value', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+    _xml_map = {
+        'name': 'KeyValueOfstringanyType', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(KeyValue, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.value = kwargs.get('value', None)
+
+
 class MessageCountDetails(msrest.serialization.Model):
     """Details about the message counts in queue.
 
@@ -199,50 +477,129 @@ class MessageCountDetails(msrest.serialization.Model):
         self.transfer_message_count = kwargs.get('transfer_message_count', None)
 
 
+class NamespaceProperties(msrest.serialization.Model):
+    """The metadata related to a Service Bus namespace.
+
+    :param alias: Alias for the geo-disaster recovery Service Bus namespace.
+    :type alias: str
+    :param created_time: The exact time the namespace was created.
+    :type created_time: ~datetime.datetime
+    :param messaging_sku: The SKU for the messaging entity. Possible values include: "Basic",
+     "Standard", "Premium".
+    :type messaging_sku: str or ~azure.servicebus.management._generated.models.MessagingSku
+    :param messaging_units: The number of messaging units allocated to the namespace.
+    :type messaging_units: int
+    :param modified_time: The exact time the namespace was last modified.
+    :type modified_time: ~datetime.datetime
+    :param name: Name of the namespace.
+    :type name: str
+    :param namespace_type: The type of entities the namespace can contain. Possible values include:
+     "Messaging", "NotificationHub", "Mixed", "EventHub", "Relay".
+    :type namespace_type: str or ~azure.servicebus.management._generated.models.NamespaceType
+    """
+
+    _attribute_map = {
+        'alias': {'key': 'Alias', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_time': {'key': 'CreatedTime', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'messaging_sku': {'key': 'MessagingSku', 'type': 'str', 'xml': {'name': 'MessagingSKU', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'messaging_units': {'key': 'MessagingUnits', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'modified_time': {'key': 'ModifiedTime', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'namespace_type': {'key': 'NamespaceType', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+    _xml_map = {
+        'name': 'NamespaceInfo', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NamespaceProperties, self).__init__(**kwargs)
+        self.alias = kwargs.get('alias', None)
+        self.created_time = kwargs.get('created_time', None)
+        self.messaging_sku = kwargs.get('messaging_sku', None)
+        self.messaging_units = kwargs.get('messaging_units', None)
+        self.modified_time = kwargs.get('modified_time', None)
+        self.name = kwargs.get('name', None)
+        self.namespace_type = kwargs.get('namespace_type', None)
+
+
+class NamespacePropertiesEntry(msrest.serialization.Model):
+    """Represents an entry in the feed when querying namespace info.
+
+    :param id: The URL of the GET request.
+    :type id: str
+    :param title: The name of the namespace.
+    :type title: str
+    :param updated: The timestamp for when this namespace was last updated.
+    :type updated: ~datetime.datetime
+    :param author: The author that created this resource.
+    :type author: ~azure.servicebus.management._generated.models.ResponseAuthor
+    :param link: The URL for the HTTP request.
+    :type link: ~azure.servicebus.management._generated.models.ResponseLink
+    :param content: Information about the namespace.
+    :type content: ~azure.servicebus.management._generated.models.NamespacePropertiesEntryContent
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'author': {'key': 'author', 'type': 'ResponseAuthor'},
+        'link': {'key': 'link', 'type': 'ResponseLink'},
+        'content': {'key': 'content', 'type': 'NamespacePropertiesEntryContent'},
+    }
+    _xml_map = {
+        'name': 'entry', 'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NamespacePropertiesEntry, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.title = kwargs.get('title', None)
+        self.updated = kwargs.get('updated', None)
+        self.author = kwargs.get('author', None)
+        self.link = kwargs.get('link', None)
+        self.content = kwargs.get('content', None)
+
+
+class NamespacePropertiesEntryContent(msrest.serialization.Model):
+    """Information about the namespace.
+
+    :param type: Type of content in namespace info response.
+    :type type: str
+    :param namespace_properties: The metadata related to a Service Bus namespace.
+    :type namespace_properties: ~azure.servicebus.management._generated.models.NamespaceProperties
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
+        'namespace_properties': {'key': 'NamespaceProperties', 'type': 'NamespaceProperties'},
+    }
+    _xml_map = {
+        'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NamespacePropertiesEntryContent, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.namespace_properties = kwargs.get('namespace_properties', None)
+
+
 class QueueDescription(msrest.serialization.Model):
     """Description of a Service Bus queue resource.
 
-    :param authorization_rules: Authorization rules for resource.
-    :type authorization_rules:
-     list[~azure.servicebus.management._generated.models.AuthorizationRule]
-    :param auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
-     automatically deleted. The minimum duration is 5 minutes.
-    :type auto_delete_on_idle: ~datetime.timedelta
-    :param created_at: The exact time the queue was created.
-    :type created_at: ~datetime.datetime
-    :param dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
-     letter support when a message expires.
-    :type dead_lettering_on_message_expiration: bool
-    :param default_message_time_to_live: ISO 8601 default message timespan to live value. This is
-     the duration after which the message expires, starting from when the message is sent to Service
-     Bus. This is the default value used when TimeToLive is not set on a message itself.
-    :type default_message_time_to_live: ~datetime.timedelta
-    :param duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
-     duration of the duplicate detection history. The default value is 10 minutes.
-    :type duplicate_detection_history_time_window: ~datetime.timedelta
-    :param entity_availability_status: Availability status of the entity. Possible values include:
-     "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type entity_availability_status: str or
-     ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
-    :param enable_batched_operations: Value that indicates whether server-side batched operations
-     are enabled.
-    :type enable_batched_operations: bool
-    :param enable_express: A value that indicates whether Express Entities are enabled. An express
-     queue holds a message in memory temporarily before writing it to persistent storage.
-    :type enable_express: bool
-    :param enable_partitioning: A value that indicates whether the queue is to be partitioned
-     across multiple message brokers.
-    :type enable_partitioning: bool
-    :param is_anonymous_accessible: A value indicating if the resource can be accessed without
-     authorization.
-    :type is_anonymous_accessible: bool
     :param lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
     :type lock_duration: ~datetime.timedelta
-    :param max_delivery_count: The maximum delivery count. A message is automatically deadlettered
-     after this number of deliveries. Default value is 10.
-    :type max_delivery_count: int
     :param max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
      memory allocated for the queue.
     :type max_size_in_megabytes: int
@@ -252,48 +609,85 @@ class QueueDescription(msrest.serialization.Model):
     :param requires_session: A value that indicates whether the queue supports the concept of
      sessions.
     :type requires_session: bool
-    :param status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
-     "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.servicebus.management._generated.models.EntityStatus
-    :param support_ordering: A value that indicates whether the queue supports ordering.
-    :type support_ordering: bool
-    :param accessed_at: Last time a message was sent, or the last time there was a receive request
-     to this queue.
-    :type accessed_at: ~datetime.datetime
-    :param updated_at: The exact time a message was updated in the queue.
-    :type updated_at: ~datetime.datetime
+    :param default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+     the duration after which the message expires, starting from when the message is sent to Service
+     Bus. This is the default value used when TimeToLive is not set on a message itself.
+    :type default_message_time_to_live: ~datetime.timedelta
+    :param dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
+     letter support when a message expires.
+    :type dead_lettering_on_message_expiration: bool
+    :param duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
+     duration of the duplicate detection history. The default value is 10 minutes.
+    :type duplicate_detection_history_time_window: ~datetime.timedelta
+    :param max_delivery_count: The maximum delivery count. A message is automatically deadlettered
+     after this number of deliveries. Default value is 10.
+    :type max_delivery_count: int
+    :param enable_batched_operations: Value that indicates whether server-side batched operations
+     are enabled.
+    :type enable_batched_operations: bool
     :param size_in_bytes: The size of the queue, in bytes.
     :type size_in_bytes: int
     :param message_count: The number of messages in the queue.
     :type message_count: int
+    :param is_anonymous_accessible: A value indicating if the resource can be accessed without
+     authorization.
+    :type is_anonymous_accessible: bool
+    :param authorization_rules: Authorization rules for resource.
+    :type authorization_rules:
+     list[~azure.servicebus.management._generated.models.AuthorizationRule]
+    :param status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+     "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
+    :type status: str or ~azure.servicebus.management._generated.models.EntityStatus
+    :param created_at: The exact time the queue was created.
+    :type created_at: ~datetime.datetime
+    :param updated_at: The exact time a message was updated in the queue.
+    :type updated_at: ~datetime.datetime
+    :param accessed_at: Last time a message was sent, or the last time there was a receive request
+     to this queue.
+    :type accessed_at: ~datetime.datetime
+    :param support_ordering: A value that indicates whether the queue supports ordering.
+    :type support_ordering: bool
     :param message_count_details: Details about the message counts in queue.
     :type message_count_details: ~azure.servicebus.management._generated.models.MessageCountDetails
+    :param auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
+     automatically deleted. The minimum duration is 5 minutes.
+    :type auto_delete_on_idle: ~datetime.timedelta
+    :param enable_partitioning: A value that indicates whether the queue is to be partitioned
+     across multiple message brokers.
+    :type enable_partitioning: bool
+    :param entity_availability_status: Availability status of the entity. Possible values include:
+     "Available", "Limited", "Renaming", "Restoring", "Unknown".
+    :type entity_availability_status: str or
+     ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
+    :param enable_express: A value that indicates whether Express Entities are enabled. An express
+     queue holds a message in memory temporarily before writing it to persistent storage.
+    :type enable_express: bool
     """
 
     _attribute_map = {
-        'authorization_rules': {'key': 'AuthorizationRules', 'type': '[AuthorizationRule]', 'xml': {'name': 'AuthorizationRules', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AuthorizationRule', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'dead_lettering_on_message_expiration': {'key': 'DeadLetteringOnMessageExpiration', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'duplicate_detection_history_time_window': {'key': 'DuplicateDetectionHistoryTimeWindow', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'entity_availability_status': {'key': 'EntityAvailabilityStatus', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'enable_batched_operations': {'key': 'EnableBatchedOperations', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'enable_express': {'key': 'EnableExpress', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'enable_partitioning': {'key': 'EnablePartitioning', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'is_anonymous_accessible': {'key': 'IsAnonymousAccessible', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'lock_duration': {'key': 'LockDuration', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'max_delivery_count': {'key': 'MaxDeliveryCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'max_size_in_megabytes': {'key': 'MaxSizeInMegabytes', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'requires_duplicate_detection': {'key': 'RequiresDuplicateDetection', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'requires_session': {'key': 'RequiresSession', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'status': {'key': 'Status', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'support_ordering': {'key': 'SupportOrdering', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'accessed_at': {'key': 'AccessedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'updated_at': {'key': 'UpdatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'dead_lettering_on_message_expiration': {'key': 'DeadLetteringOnMessageExpiration', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'duplicate_detection_history_time_window': {'key': 'DuplicateDetectionHistoryTimeWindow', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'max_delivery_count': {'key': 'MaxDeliveryCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_batched_operations': {'key': 'EnableBatchedOperations', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'size_in_bytes': {'key': 'SizeInBytes', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'message_count': {'key': 'MessageCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'is_anonymous_accessible': {'key': 'IsAnonymousAccessible', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'authorization_rules': {'key': 'AuthorizationRules', 'type': '[AuthorizationRule]', 'xml': {'name': 'AuthorizationRules', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'AuthorizationRule', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'status': {'key': 'Status', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'updated_at': {'key': 'UpdatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'accessed_at': {'key': 'AccessedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'support_ordering': {'key': 'SupportOrdering', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'message_count_details': {'key': 'MessageCountDetails', 'type': 'MessageCountDetails'},
+        'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_partitioning': {'key': 'EnablePartitioning', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'entity_availability_status': {'key': 'EntityAvailabilityStatus', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_express': {'key': 'EnableExpress', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
     _xml_map = {
         'name': 'QueueDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -304,29 +698,29 @@ class QueueDescription(msrest.serialization.Model):
         **kwargs
     ):
         super(QueueDescription, self).__init__(**kwargs)
-        self.authorization_rules = kwargs.get('authorization_rules', None)
-        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.dead_lettering_on_message_expiration = kwargs.get('dead_lettering_on_message_expiration', None)
-        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
-        self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
-        self.entity_availability_status = kwargs.get('entity_availability_status', None)
-        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
-        self.enable_express = kwargs.get('enable_express', None)
-        self.enable_partitioning = kwargs.get('enable_partitioning', None)
-        self.is_anonymous_accessible = kwargs.get('is_anonymous_accessible', None)
         self.lock_duration = kwargs.get('lock_duration', None)
-        self.max_delivery_count = kwargs.get('max_delivery_count', None)
         self.max_size_in_megabytes = kwargs.get('max_size_in_megabytes', None)
         self.requires_duplicate_detection = kwargs.get('requires_duplicate_detection', None)
         self.requires_session = kwargs.get('requires_session', None)
-        self.status = kwargs.get('status', None)
-        self.support_ordering = kwargs.get('support_ordering', None)
-        self.accessed_at = kwargs.get('accessed_at', None)
-        self.updated_at = kwargs.get('updated_at', None)
+        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
+        self.dead_lettering_on_message_expiration = kwargs.get('dead_lettering_on_message_expiration', None)
+        self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
+        self.max_delivery_count = kwargs.get('max_delivery_count', None)
+        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
         self.size_in_bytes = kwargs.get('size_in_bytes', None)
         self.message_count = kwargs.get('message_count', None)
+        self.is_anonymous_accessible = kwargs.get('is_anonymous_accessible', None)
+        self.authorization_rules = kwargs.get('authorization_rules', None)
+        self.status = kwargs.get('status', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.updated_at = kwargs.get('updated_at', None)
+        self.accessed_at = kwargs.get('accessed_at', None)
+        self.support_ordering = kwargs.get('support_ordering', None)
         self.message_count_details = kwargs.get('message_count_details', None)
+        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
+        self.enable_partitioning = kwargs.get('enable_partitioning', None)
+        self.entity_availability_status = kwargs.get('entity_availability_status', None)
+        self.enable_express = kwargs.get('enable_express', None)
 
 
 class QueueDescriptionEntry(msrest.serialization.Model):
@@ -491,6 +885,146 @@ class ResponseLink(msrest.serialization.Model):
         self.rel = kwargs.get('rel', None)
 
 
+class RuleDescription(msrest.serialization.Model):
+    """RuleDescription.
+
+    :param filter:
+    :type filter: ~azure.servicebus.management._generated.models.RuleFilter
+    :param action:
+    :type action: ~azure.servicebus.management._generated.models.RuleAction
+    :param created_at: The exact time the queue was created.
+    :type created_at: ~datetime.datetime
+    :param name:
+    :type name: str
+    """
+
+    _attribute_map = {
+        'filter': {'key': 'Filter', 'type': 'RuleFilter'},
+        'action': {'key': 'Action', 'type': 'RuleAction'},
+        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'name': {'key': 'Name', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+    _xml_map = {
+        'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleDescription, self).__init__(**kwargs)
+        self.filter = kwargs.get('filter', None)
+        self.action = kwargs.get('action', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.name = kwargs.get('name', None)
+
+
+class RuleDescriptionEntry(msrest.serialization.Model):
+    """Represents an entry in the feed when querying rules.
+
+    :param id: The URL of the GET request.
+    :type id: str
+    :param title: The name of the rule.
+    :type title: str
+    :param published: The timestamp for when this queue was published.
+    :type published: ~datetime.datetime
+    :param updated: The timestamp for when this queue was last updated.
+    :type updated: ~datetime.datetime
+    :param link: The URL for the HTTP request.
+    :type link: ~azure.servicebus.management._generated.models.ResponseLink
+    :param content: The QueueDescription.
+    :type content: ~azure.servicebus.management._generated.models.RuleDescriptionEntryContent
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'published': {'key': 'published', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'link': {'key': 'link', 'type': 'ResponseLink'},
+        'content': {'key': 'content', 'type': 'RuleDescriptionEntryContent'},
+    }
+    _xml_map = {
+        'name': 'entry', 'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleDescriptionEntry, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.title = kwargs.get('title', None)
+        self.published = kwargs.get('published', None)
+        self.updated = kwargs.get('updated', None)
+        self.link = kwargs.get('link', None)
+        self.content = kwargs.get('content', None)
+
+
+class RuleDescriptionEntryContent(msrest.serialization.Model):
+    """The QueueDescription.
+
+    :param type: Type of content in queue response.
+    :type type: str
+    :param rule_description:
+    :type rule_description: ~azure.servicebus.management._generated.models.RuleDescription
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
+        'rule_description': {'key': 'RuleDescription', 'type': 'RuleDescription'},
+    }
+    _xml_map = {
+        'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleDescriptionEntryContent, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.rule_description = kwargs.get('rule_description', None)
+
+
+class RuleDescriptionFeed(msrest.serialization.Model):
+    """Response from listing Service Bus queues.
+
+    :param id: URL of the list queues query.
+    :type id: str
+    :param title: The entity type for the feed.
+    :type title: str
+    :param updated: Datetime of the query.
+    :type updated: ~datetime.datetime
+    :param link: Links to paginated response.
+    :type link: list[~azure.servicebus.management._generated.models.ResponseLink]
+    :param entry: Queue entries.
+    :type entry: list[~azure.servicebus.management._generated.models.RuleDescriptionEntry]
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'link': {'key': 'link', 'type': '[ResponseLink]'},
+        'entry': {'key': 'entry', 'type': '[RuleDescriptionEntry]'},
+    }
+    _xml_map = {
+        'name': 'feed', 'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(RuleDescriptionFeed, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.title = kwargs.get('title', None)
+        self.updated = kwargs.get('updated', None)
+        self.link = kwargs.get('link', None)
+        self.entry = kwargs.get('entry', None)
+
+
 class ServiceBusManagementError(msrest.serialization.Model):
     """The error response from Service Bus.
 
@@ -512,6 +1046,258 @@ class ServiceBusManagementError(msrest.serialization.Model):
         super(ServiceBusManagementError, self).__init__(**kwargs)
         self.code = kwargs.get('code', None)
         self.detail = kwargs.get('detail', None)
+
+
+class SqlFilter(RuleFilter):
+    """SqlFilter.
+
+    :param type: Constant filled by server.
+    :type type: str
+    :param sql_expression:
+    :type sql_expression: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
+        'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlFilter, self).__init__(**kwargs)
+        self.type = 'SqlFilter'
+        self.sql_expression = kwargs.get('sql_expression', None)
+
+
+class SqlRuleAction(RuleAction):
+    """SqlRuleAction.
+
+    :param type: Constant filled by server.
+    :type type: str
+    :param sql_expression:
+    :type sql_expression: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
+        'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlRuleAction, self).__init__(**kwargs)
+        self.type = 'SqlRuleAction'
+        self.sql_expression = kwargs.get('sql_expression', None)
+
+
+class SubscriptionDescription(msrest.serialization.Model):
+    """Description of a Service Bus queue resource.
+
+    :param lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
+     that the message is locked for other receivers. The maximum value for LockDuration is 5
+     minutes; the default value is 1 minute.
+    :type lock_duration: ~datetime.timedelta
+    :param requires_session: A value that indicates whether the queue supports the concept of
+     sessions.
+    :type requires_session: bool
+    :param default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+     the duration after which the message expires, starting from when the message is sent to Service
+     Bus. This is the default value used when TimeToLive is not set on a message itself.
+    :type default_message_time_to_live: ~datetime.timedelta
+    :param dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
+     letter support when a message expires.
+    :type dead_lettering_on_message_expiration: bool
+    :param dead_lettering_on_filter_evaluation_exceptions: A value that indicates whether this
+     queue has dead letter support when a message expires.
+    :type dead_lettering_on_filter_evaluation_exceptions: bool
+    :param message_count: The number of messages in the queue.
+    :type message_count: int
+    :param max_delivery_count: The maximum delivery count. A message is automatically deadlettered
+     after this number of deliveries. Default value is 10.
+    :type max_delivery_count: int
+    :param enable_batched_operations: Value that indicates whether server-side batched operations
+     are enabled.
+    :type enable_batched_operations: bool
+    :param status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+     "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
+    :type status: str or ~azure.servicebus.management._generated.models.EntityStatus
+    :param forward_to: .. raw:: html
+    
+        <to add>.
+    :type forward_to: str
+    :param created_at: The exact time the queue was created.
+    :type created_at: ~datetime.datetime
+    :param updated_at: The exact time a message was updated in the queue.
+    :type updated_at: ~datetime.datetime
+    :param accessed_at: Last time a message was sent, or the last time there was a receive request
+     to this queue.
+    :type accessed_at: ~datetime.datetime
+    :param message_count_details: Details about the message counts in queue.
+    :type message_count_details: ~azure.servicebus.management._generated.models.MessageCountDetails
+    :param auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
+     automatically deleted. The minimum duration is 5 minutes.
+    :type auto_delete_on_idle: ~datetime.timedelta
+    :param entity_availability_status: Availability status of the entity. Possible values include:
+     "Available", "Limited", "Renaming", "Restoring", "Unknown".
+    :type entity_availability_status: str or
+     ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
+    """
+
+    _attribute_map = {
+        'lock_duration': {'key': 'LockDuration', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_session': {'key': 'RequiresSession', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'dead_lettering_on_message_expiration': {'key': 'DeadLetteringOnMessageExpiration', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'dead_lettering_on_filter_evaluation_exceptions': {'key': 'DeadLetteringOnFilterEvaluationExceptions', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_count': {'key': 'MessageCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'max_delivery_count': {'key': 'MaxDeliveryCount', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'enable_batched_operations': {'key': 'EnableBatchedOperations', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'status': {'key': 'Status', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'forward_to': {'key': 'ForwardTo', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'created_at': {'key': 'CreatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'updated_at': {'key': 'UpdatedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'accessed_at': {'key': 'AccessedAt', 'type': 'iso-8601', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'message_count_details': {'key': 'MessageCountDetails', 'type': 'MessageCountDetails'},
+        'auto_delete_on_idle': {'key': 'AutoDeleteOnIdle', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'entity_availability_status': {'key': 'EntityAvailabilityStatus', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+    _xml_map = {
+        'name': 'SubscriptionDescription', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SubscriptionDescription, self).__init__(**kwargs)
+        self.lock_duration = kwargs.get('lock_duration', None)
+        self.requires_session = kwargs.get('requires_session', None)
+        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
+        self.dead_lettering_on_message_expiration = kwargs.get('dead_lettering_on_message_expiration', None)
+        self.dead_lettering_on_filter_evaluation_exceptions = kwargs.get('dead_lettering_on_filter_evaluation_exceptions', None)
+        self.message_count = kwargs.get('message_count', None)
+        self.max_delivery_count = kwargs.get('max_delivery_count', None)
+        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
+        self.status = kwargs.get('status', None)
+        self.forward_to = kwargs.get('forward_to', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.updated_at = kwargs.get('updated_at', None)
+        self.accessed_at = kwargs.get('accessed_at', None)
+        self.message_count_details = kwargs.get('message_count_details', None)
+        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
+        self.entity_availability_status = kwargs.get('entity_availability_status', None)
+
+
+class SubscriptionDescriptionEntry(msrest.serialization.Model):
+    """Represents an entry in the feed when querying queues.
+
+    :param id: The URL of the GET request.
+    :type id: str
+    :param title: The name of the subscription.
+    :type title: str
+    :param published: The timestamp for when this queue was published.
+    :type published: ~datetime.datetime
+    :param updated: The timestamp for when this queue was last updated.
+    :type updated: ~datetime.datetime
+    :param link: The URL for the HTTP request.
+    :type link: ~azure.servicebus.management._generated.models.ResponseLink
+    :param content: The QueueDescription.
+    :type content:
+     ~azure.servicebus.management._generated.models.SubscriptionDescriptionEntryContent
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'published': {'key': 'published', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'link': {'key': 'link', 'type': 'ResponseLink'},
+        'content': {'key': 'content', 'type': 'SubscriptionDescriptionEntryContent'},
+    }
+    _xml_map = {
+        'name': 'entry', 'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SubscriptionDescriptionEntry, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.title = kwargs.get('title', None)
+        self.published = kwargs.get('published', None)
+        self.updated = kwargs.get('updated', None)
+        self.link = kwargs.get('link', None)
+        self.content = kwargs.get('content', None)
+
+
+class SubscriptionDescriptionEntryContent(msrest.serialization.Model):
+    """The QueueDescription.
+
+    :param type: Type of content in queue response.
+    :type type: str
+    :param subscription_description: Description of a Service Bus queue resource.
+    :type subscription_description:
+     ~azure.servicebus.management._generated.models.SubscriptionDescription
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True}},
+        'subscription_description': {'key': 'SubscriptionDescription', 'type': 'SubscriptionDescription'},
+    }
+    _xml_map = {
+        'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SubscriptionDescriptionEntryContent, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.subscription_description = kwargs.get('subscription_description', None)
+
+
+class SubscriptionDescriptionFeed(msrest.serialization.Model):
+    """Response from listing Service Bus queues.
+
+    :param id: URL of the list queues query.
+    :type id: str
+    :param title: The entity type for the feed.
+    :type title: str
+    :param updated: Datetime of the query.
+    :type updated: ~datetime.datetime
+    :param link: Links to paginated response.
+    :type link: list[~azure.servicebus.management._generated.models.ResponseLink]
+    :param entry: Queue entries.
+    :type entry: list[~azure.servicebus.management._generated.models.SubscriptionDescriptionEntry]
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'link': {'key': 'link', 'type': '[ResponseLink]'},
+        'entry': {'key': 'entry', 'type': '[SubscriptionDescriptionEntry]'},
+    }
+    _xml_map = {
+        'name': 'feed', 'ns': 'http://www.w3.org/2005/Atom'
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SubscriptionDescriptionFeed, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.title = kwargs.get('title', None)
+        self.updated = kwargs.get('updated', None)
+        self.link = kwargs.get('link', None)
+        self.entry = kwargs.get('entry', None)
 
 
 class TopicDescription(msrest.serialization.Model):
@@ -748,3 +1534,26 @@ class TopicDescriptionFeed(msrest.serialization.Model):
         self.updated = kwargs.get('updated', None)
         self.link = kwargs.get('link', None)
         self.entry = kwargs.get('entry', None)
+
+
+class TrueFilter(RuleFilter):
+    """TrueFilter.
+
+    :param type: Constant filled by server.
+    :type type: str
+    :param sql_expression:
+    :type sql_expression: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
+        'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(TrueFilter, self).__init__(**kwargs)
+        self.type = 'TrueFilter'
+        self.sql_expression = kwargs.get('sql_expression', "1 = 1")

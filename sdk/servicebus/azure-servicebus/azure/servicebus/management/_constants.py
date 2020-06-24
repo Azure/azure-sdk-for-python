@@ -11,3 +11,4 @@ COUNT_DETAILS_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebu
 TITLE_TAG = "{http://www.w3.org/2005/Atom}title"
 
 ENTITY_TYPE_QUEUES = "queues"
+ENTITY_TYPE_TOPICS = "topics"
