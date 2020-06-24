@@ -1,5 +1,17 @@
 # Release History
 
+## 0.7.0 (2020-06-23)
+
+**Features**
+
+  - Model SavedSearch has a new parameter e_tag
+  - Model DataSource has a new parameter e_tag
+
+**Breaking changes**
+
+  - Model SavedSearch no longer has parameter etag
+  - Model DataSource no longer has parameter etag
+
 ## 0.6.0 (2020-05-28)
 
 **Features**
