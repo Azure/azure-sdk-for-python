@@ -129,6 +129,7 @@ six>=1.6
 #override azure-ai-formrecognizer azure-core<2.0.0,>=1.6.0
 #override azure-storage-blob azure-core<2.0.0,>=1.4.0
 #override azure-storage-blob msrest>=0.6.10
+#override azure-storage-blob-changefeed azure-storage-blob>=12.3.0
 #override azure-storage-queue msrest>=0.6.10
 #override azure-storage-file-share msrest>=0.6.10
 #override azure-storage-file-datalake msrest>=0.6.10

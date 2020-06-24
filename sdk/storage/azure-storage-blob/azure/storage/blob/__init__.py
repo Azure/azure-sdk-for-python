@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import os
 
 from typing import Union, Iterable, AnyStr, IO, Any, Dict  # pylint: disable=unused-import
