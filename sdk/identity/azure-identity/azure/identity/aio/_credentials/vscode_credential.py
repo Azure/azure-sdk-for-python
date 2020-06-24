@@ -11,12 +11,12 @@ from ..._credentials.vscode_credential import get_credentials
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, Optional
+    from typing import Any
     from azure.core.credentials import AccessToken
 
 
 class VSCodeCredential(AsyncCredentialBase):
-    """Authenticates by redeeming a refresh token previously saved by VS Code
+    """Authenticates by redeeming a refresh token previously saved by VS Code"""
 
     :keyword int refresh_retry_timeout: the amount of time to wait before retrying a token refresh in seconds,
           default to 30s.
@@ -26,7 +26,7 @@ class VSCodeCredential(AsyncCredentialBase):
 
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: "Any") -> None:
         self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
         self._refresh_token = None
 
