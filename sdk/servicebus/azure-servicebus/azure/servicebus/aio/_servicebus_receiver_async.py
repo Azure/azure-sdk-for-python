@@ -63,8 +63,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      specified Topic the client connects to.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-     lock period (or have their lock renewed) before they will be removed from the queue. Messages received 
-     with ReceiveAndDelete will be immediately removed from the queue, and cannot be subsequently rejected 
+     lock period (or have their lock renewed) before they will be removed from the queue. Messages received
+     with ReceiveAndDelete will be immediately removed from the queue, and cannot be subsequently rejected
      or re-received if the client fails to process the message. The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
     :keyword int prefetch: The maximum number of messages to cache with each request to the service.
@@ -227,8 +227,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          specified Topic the client connects to.
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period (or have their lock renewed) before they will be removed from the queue. Messages received 
-         with ReceiveAndDelete will be immediately removed from the queue, and cannot be subsequently rejected 
+         lock period (or have their lock renewed) before they will be removed from the queue. Messages received
+         with ReceiveAndDelete will be immediately removed from the queue, and cannot be subsequently rejected
          or re-received if the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
@@ -274,8 +274,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         # type: (int, float) -> List[ReceivedMessage]
         """Receive a batch of messages at once.
 
-        This approach it optimal if you wish to process multiple messages simultaneously, or 
+        This approach it optimal if you wish to process multiple messages simultaneously, or
         perform an ad-hoc receive as a single call.
+
         Note that the number of messages retrieved in a single batch will be dependent on
         whether `prefetch` was set for the receiver. This call will prioritize returning
         quickly over meeting a specified batch size, and so will return as soon as at least

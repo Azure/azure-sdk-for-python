@@ -671,7 +671,8 @@ class ReceivedMessage(PeekMessage):
                 :end-before: [END receive_deadletter_sync]
                 :language: python
                 :dedent: 4
-                :caption: Dead letter a message to remove it from the queue by sending it to the dead letter subqueue, and receiving it from there.
+                :caption: Dead letter a message to remove it from the queue by sending it to the dead letter subqueue,
+                    and receiving it from there.
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
@@ -725,7 +726,8 @@ class ReceivedMessage(PeekMessage):
                 :end-before: [END receive_defer_sync]
                 :language: python
                 :dedent: 4
-                :caption: Deferring a received message sets it aside such that it can now only be received by calling receive_deffered_messages with its sequence number
+                :caption: Deferring a received message sets it aside such that it can only be received
+                    by calling receive_deffered_messages with its sequence number
         """
         self._check_live(MESSAGE_DEFER)
         self._settle_message(MESSAGE_DEFER)
@@ -735,16 +737,16 @@ class ReceivedMessage(PeekMessage):
         # type: () -> None
         """Renew the message lock.
 
-        This will maintain the lock on the message to ensure it is not returned to the queue 
-        to be reprocessed. 
+        This will maintain the lock on the message to ensure it is not returned to the queue
+        to be reprocessed.
         
-        In order to complete (or otherwise settle) the message, the lock must be maintained, 
+        In order to complete (or otherwise settle) the message, the lock must be maintained,
         and cannot already have expired; an expired lock cannot be renewed.
 
-        Messages received via ReceiveAndDelete mode are not locked, and therefore cannot be renewed. 
+        Messages received via ReceiveAndDelete mode are not locked, and therefore cannot be renewed.
         This operation is only available for non-sessionful messages as well.
 
-        Lock renewal can be performed as a background task by registering the message with an 
+        Lock renewal can be performed as a background task by registering the message with an
         `azure.servicebus.AutoLockRenew` instance.
 
         :rtype: None

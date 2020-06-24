@@ -48,8 +48,8 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-     lock period (or have their lock renewed) before they will be removed from the queue. Messages received 
-     with ReceiveAndDelete will be immediately removed from the queue, and cannot be subsequently rejected 
+     lock period (or have their lock renewed) before they will be removed from the queue. Messages received
+     with ReceiveAndDelete will be immediately removed from the queue, and cannot be subsequently rejected
      or re-received if the client fails to process the message. The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
     :keyword session_id: A specific session from which to receive. This must be specified for a
@@ -118,8 +118,8 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
          specified Topic the client connects to.
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period (or have their lock renewed) before they will be removed from the queue. Messages received 
-         with ReceiveAndDelete will be immediately removed from the queue, and cannot be subsequently rejected 
+         lock period (or have their lock renewed) before they will be removed from the queue. Messages received
+         with ReceiveAndDelete will be immediately removed from the queue, and cannot be subsequently rejected
          or re-received if the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
         :keyword session_id: A specific session from which to receive. This must be specified for a
