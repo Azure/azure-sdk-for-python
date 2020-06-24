@@ -27,7 +27,7 @@ steps:
     parameters:
       OSName: ${{ parameters.OSName }}
 
-   - script: |
+  - script: |
       python -m pip install pip==20.1
       pip install -r eng/ci_tools.txt
       pip --version
