@@ -4,18 +4,18 @@
 
 **Features**
 
-  - Model CachedImages has a new parameter id
-  - Added operation group ServiceAssociationLinkOperations
-  - Added operation group ContainerOperations
-  - Added operation group ContainerGroupUsageOperations
+  - Model ContainerGroup has a new parameter init_containers
+  - Model ContainerGroup has a new parameter sku
+  - Model ContainerGroup has a new parameter encryption_properties
+  - Added operation group ContainersOperations
+  - Added operation group LocationOperations
 
 **Breaking changes**
 
-  - Model ContainerGroup no longer has parameter encryption_properties
-  - Model ContainerGroup no longer has parameter init_containers
-  - Model ContainerGroup no longer has parameter sku
-  - Removed operation group LocationOperations
-  - Removed operation group ContainersOperations
+  - Model CachedImages no longer has parameter id
+  - Removed operation group ContainerGroupUsageOperations
+  - Removed operation group ServiceAssociationLinkOperations
+  - Removed operation group ContainerOperations
 
 ## 1.5.0 (2019-05-22)
 
