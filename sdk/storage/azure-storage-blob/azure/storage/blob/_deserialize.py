@@ -11,7 +11,7 @@ from typing import (  # pylint: disable=unused-import
 
 from ._shared.response_handlers import deserialize_metadata
 from ._models import BlobProperties, ContainerProperties, BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy, \
-    StaticWebsite
+    StaticWebsite, ObjectReplicationPolicy, ObjectReplicationRule
 
 if TYPE_CHECKING:
     from azure.storage.blob._generated.models import PageList
@@ -48,13 +48,13 @@ def deserialize_ors_policies(response):
         policy_id = policy_and_rule_ids[0]
         rule_id = policy_and_rule_ids[1]
 
-        try:
-            parsed_result[policy_id][rule_id] = val
-        except KeyError:
-            # we are seeing this policy for the first time, so a new rule_id -> result dict is needed
-            parsed_result[policy_id] = {rule_id: val}
+        # If we are seeing this policy for the first time, create a new list to store rule_id -> result
+        parsed_result[policy_id] = parsed_result.get(policy_id) or list()
+        parsed_result[policy_id].append(ObjectReplicationRule(rule_id=rule_id, status=val))
 
-    return parsed_result
+    result_list = [ObjectReplicationPolicy(policy_id=k, rules=v) for k, v in parsed_result.items()]
+
+    return result_list
 
 
 def deserialize_blob_stream(response, obj, headers):
