@@ -3,10 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
-
+import time
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT
 from azure.identity._internal.aad_client import AadClient
+from azure.core.credentials import AccessToken
 import pytest
 from msal import TokenCache
 from six.moves.urllib_parse import urlparse
@@ -201,3 +202,34 @@ def test_evicts_invalid_refresh_token():
     assert transport.send.call_count == 1
     assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN)) == 1
     assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": invalid_token})) == 0
+
+
+def test_should_refresh():
+    client = AadClient("test", "test")
+    now = int(time.time())
+
+    # do not need refresh
+    token = AccessToken("token", now + 500)
+    should_refresh = client.should_refresh(token)
+    assert not should_refresh
+
+    # need refresh
+    token = AccessToken("token", now + 100)
+    client._last_refresh_time = now - 500
+    should_refresh = client.should_refresh(token)
+    assert should_refresh
+
+    # not exceed cool down time, do not refresh
+    token = AccessToken("token", now + 100)
+    client._last_refresh_time = now - 5
+    should_refresh = client.should_refresh(token)
+    assert not should_refresh
+
+
+def test_token_refresh_kwargs():
+    client = AadClient("test", "test")
+    assert client._token_refresh_retry_timeout == DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT
+    assert client._token_refresh_offset == DEFAULT_REFRESH_OFFSET
+    client = AadClient("test", "test", token_refresh_retry_timeout=10, token_refresh_offset=100)
+    assert client._token_refresh_retry_timeout == 10
+    assert client._token_refresh_offset == 100

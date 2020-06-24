@@ -27,9 +27,9 @@ class ClientSecretCredential(AsyncCredentialBase, ClientSecretCredentialBase):
           False.
     :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
           is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
-    :keyword int refresh_retry_timeout: the amount of time to wait before retrying a token refresh in seconds,
+    :keyword int token_refresh_retry_timeout: the number of seconds to wait before retrying a token refresh in seconds,
           default to 30s.
-    :keyword int token_refresh_offset: the amount of time to subtract from the token expiry time, whereupon
+    :keyword int token_refresh_offset: the number of seconds to subtract from the token expiry time, whereupon
           attempts will be made to refresh the token. By default this will occur two minutes prior to the expiry
           of the token.
     """

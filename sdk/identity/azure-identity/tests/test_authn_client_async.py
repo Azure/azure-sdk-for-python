@@ -3,11 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
+import time
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
 import pytest
-from azure.identity._constants import EnvironmentVariables
+from azure.core.credentials import AccessToken
+from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT
 from azure.identity.aio._authn_client import AsyncAuthnClient
 
 from helpers import mock_response
@@ -35,3 +37,34 @@ async def test_request_url(authority):
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
         client = AsyncAuthnClient(tenant=tenant_id, transport=Mock(send=wrap_in_future(mock_send)))
         await client.request_token(("scope",))
+
+
+def test_should_refresh():
+    client = AsyncAuthnClient(endpoint="http://foo")
+    now = int(time.time())
+
+    # do not need refresh
+    token = AccessToken("token", now + 500)
+    should_refresh = client.should_refresh(token)
+    assert not should_refresh
+
+    # need refresh
+    token = AccessToken("token", now + 100)
+    client._last_refresh_time = now - 500
+    should_refresh = client.should_refresh(token)
+    assert should_refresh
+
+    # not exceed cool down time, do not refresh
+    token = AccessToken("token", now + 100)
+    client._last_refresh_time = now - 5
+    should_refresh = client.should_refresh(token)
+    assert not should_refresh
+
+
+def test_token_refresh_kwargs():
+    client = AsyncAuthnClient(endpoint="http://foo")
+    assert client._token_refresh_retry_timeout == DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT
+    assert client._token_refresh_offset == DEFAULT_REFRESH_OFFSET
+    client = AsyncAuthnClient(endpoint="http://foo", token_refresh_retry_timeout=10, token_refresh_offset=100)
+    assert client._token_refresh_retry_timeout == 10
+    assert client._token_refresh_offset == 100

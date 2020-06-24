@@ -28,9 +28,9 @@ class AuthorizationCodeCredential(object):
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
           defines authorities for other clouds.
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
-    :keyword int refresh_retry_timeout: the amount of time to wait before retrying a token refresh in seconds,
+    :keyword int token_refresh_retry_timeout: the number of seconds to wait before retrying a token refresh in seconds,
           default to 30s.
-    :keyword int token_refresh_offset: the amount of time to subtract from the token expiry time, whereupon
+    :keyword int token_refresh_offset: the number of seconds to subtract from the token expiry time, whereupon
           attempts will be made to refresh the token. By default this will occur two minutes prior to the expiry
           of the token.
     """

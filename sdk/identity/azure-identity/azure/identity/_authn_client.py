@@ -22,7 +22,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
-from ._constants import AZURE_CLI_CLIENT_ID, DEFAULT_REFRESH_OFFSET, DEFAULT_REFRESH_RETRY_TIMEOUT
+from ._constants import AZURE_CLI_CLIENT_ID, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT
 from ._internal import get_default_authority, normalize_authority
 from ._internal.user_agent import USER_AGENT
 
@@ -65,9 +65,9 @@ class AuthnClientBase(ABC):
             authority = normalize_authority(authority) if authority else get_default_authority()
             self._auth_url = "/".join((authority, tenant.strip("/"), "oauth2/v2.0/token"))
         self._cache = kwargs.get("cache") or TokenCache()  # type: TokenCache
-        self._refresh_retry_timeout = kwargs.get("refresh_retry_timeout", DEFAULT_REFRESH_RETRY_TIMEOUT)  # default 30s
+        self._token_refresh_retry_timeout = kwargs.get("token_refresh_retry_timeout", DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT)  # default 30s
         self._token_refresh_offset = kwargs.get("token_refresh_offset", DEFAULT_REFRESH_OFFSET)  # default 2 min
-        self._last_refresh_time = int(time.time())
+        self._last_refresh_time = 0
 
     @property
     def auth_url(self):
@@ -81,7 +81,7 @@ class AuthnClientBase(ABC):
         now = int(time.time())
         if expires_on - now > self._token_refresh_offset:
             return False
-        if now - self._last_refresh_time < self._refresh_retry_timeout:
+        if now - self._last_refresh_time < self._token_refresh_retry_timeout:
             return False
         return True
 
