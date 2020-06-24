@@ -121,9 +121,8 @@ class StorageQuickQueryTest(StorageTestCase):
 
         def on_error(error):
             errors.append(error)
-            return True
 
-        reader = blob_client.query_blob("SELECT * from BlobStorage", errors=on_error)
+        reader = blob_client.query_blob("SELECT * from BlobStorage", on_error=on_error)
         data = reader.readall()
 
         self.assertEqual(len(errors), 0)
@@ -177,9 +176,8 @@ class StorageQuickQueryTest(StorageTestCase):
 
         def on_error(error):
             errors.append(error)
-            return True
 
-        reader = blob_client.query_blob("SELECT * from BlobStorage", errors=on_error, encoding='utf-8')
+        reader = blob_client.query_blob("SELECT * from BlobStorage", on_error=on_error, encoding='utf-8')
         data = reader.readall()
 
         self.assertEqual(len(errors), 0)
@@ -224,7 +222,8 @@ class StorageQuickQueryTest(StorageTestCase):
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         blob_client.upload_blob(CSV_DATA, overwrite=True)
 
-        reader = blob_client.query_blob("SELECT * from BlobStorage", has_header=True)
+        input_format = DelimitedTextDialect(has_header=True)
+        reader = blob_client.query_blob("SELECT * from BlobStorage", blob_format=input_format)
         read_records = reader.records()
 
         # Assert first line does not include header
@@ -283,13 +282,13 @@ class StorageQuickQueryTest(StorageTestCase):
 
         def on_error(error):
             errors.append(error)
-            return True
 
         input_format = DelimitedTextDialect(
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
-            escapechar=''
+            escapechar='',
+            has_header=False
         )
         output_format = DelimitedTextDialect(
             delimiter=';',
@@ -299,10 +298,9 @@ class StorageQuickQueryTest(StorageTestCase):
         )
         resp = blob_client.query_blob(
             "SELECT * from BlobStorage",
-            errors=on_error,
+            on_error=on_error,
             blob_format=input_format,
-            output_format=output_format,
-            has_header=False)
+            output_format=output_format)
         query_result = resp.readall()
 
         self.assertEqual(len(errors), 0)
@@ -327,7 +325,8 @@ class StorageQuickQueryTest(StorageTestCase):
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
-            escapechar=''
+            escapechar='',
+            has_header=False
         )
         output_format = DelimitedTextDialect(
             delimiter=';',
@@ -339,8 +338,7 @@ class StorageQuickQueryTest(StorageTestCase):
         reader = blob_client.query_blob(
             "SELECT * from BlobStorage",
             blob_format=input_format,
-            output_format=output_format,
-            has_header=False)
+            output_format=output_format)
         data = []
         for record in reader.records():
             if record:
@@ -378,7 +376,6 @@ class StorageQuickQueryTest(StorageTestCase):
 
         def on_error(error):
             errors.append(error)
-            return True
 
         input_format = DelimitedJSON()
         output_format = DelimitedTextDialect(
@@ -389,7 +386,7 @@ class StorageQuickQueryTest(StorageTestCase):
         )
         resp = blob_client.query_blob(
             "SELECT * from BlobStorage",
-            errors=on_error,
+            on_error=on_error,
             blob_format=input_format,
             output_format=output_format)
         query_result = resp.readall()
@@ -425,7 +422,6 @@ class StorageQuickQueryTest(StorageTestCase):
 
         def on_error(error):
             errors.append(error)
-            return True
 
         input_format = DelimitedJSON()
         output_format = DelimitedTextDialect(
@@ -436,7 +432,7 @@ class StorageQuickQueryTest(StorageTestCase):
         )
         resp = blob_client.query_blob(
             "SELECT * from BlobStorage",
-            errors=on_error,
+            on_error=on_error,
             blob_format=input_format,
             output_format=output_format)
         data = []
@@ -474,8 +470,7 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
 
         def on_error(error):
-            errors.append(error)
-            return False
+            raise error
 
         input_format = DelimitedJSON()
         output_format = DelimitedTextDialect(
@@ -486,7 +481,7 @@ class StorageQuickQueryTest(StorageTestCase):
         )
         resp = blob_client.query_blob(
             "SELECT * from BlobStorage",
-            errors=on_error,
+            on_error=on_error,
             blob_format=input_format,
             output_format=output_format)
         with pytest.raises(BlobQueryError):
@@ -518,7 +513,7 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
 
         def on_error(error):
-            errors.append(error)
+            raise error
 
         input_format = DelimitedJSON()
         output_format = DelimitedTextDialect(
@@ -529,7 +524,7 @@ class StorageQuickQueryTest(StorageTestCase):
         )
         resp = blob_client.query_blob(
             "SELECT * from BlobStorage",
-            errors=on_error,
+            on_error=on_error,
             blob_format=input_format,
             output_format=output_format)
 
@@ -565,11 +560,9 @@ class StorageQuickQueryTest(StorageTestCase):
         )
         resp = blob_client.query_blob(
             "SELECT * from BlobStorage",
-            errors='ignore',
             blob_format=input_format,
             output_format=output_format)
-        with pytest.raises(BlobQueryError):
-            query_result = resp.readall()
+        query_result = resp.readall()
         self._teardown(bsc)
 
     @GlobalStorageAccountPreparer()
@@ -604,13 +597,11 @@ class StorageQuickQueryTest(StorageTestCase):
         )
         resp = blob_client.query_blob(
             "SELECT * from BlobStorage",
-            errors='ignore',
             blob_format=input_format,
             output_format=output_format)
 
-        with pytest.raises(BlobQueryError):
-            for record in resp.records():
-                print(record)
+        for record in resp.records():
+            print(record)
         self._teardown(bsc)
 
     @GlobalStorageAccountPreparer()
@@ -630,13 +621,13 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
         def on_error(error):
             errors.append(error)
-            return True
 
         input_format = DelimitedTextDialect(
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
-            escapechar=''
+            escapechar='',
+            has_header=True
         )
         output_format = DelimitedTextDialect(
             delimiter=';',
@@ -648,8 +639,7 @@ class StorageQuickQueryTest(StorageTestCase):
             "SELECT RepoPath from BlobStorage",
             blob_format=input_format,
             output_format=output_format,
-            has_header=True,
-            errors=on_error)
+            on_error=on_error)
         query_result = resp.readall()
 
         # the error is because that line only has one column
@@ -675,13 +665,13 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
         def on_error(error):
             errors.append(error)
-            return True
 
         input_format = DelimitedTextDialect(
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
-            escapechar=''
+            escapechar='',
+            has_header=True
         )
         output_format = DelimitedTextDialect(
             delimiter=';',
@@ -693,86 +683,13 @@ class StorageQuickQueryTest(StorageTestCase):
             "SELECT RepoPath from BlobStorage",
             blob_format=input_format,
             output_format=output_format,
-            has_header=True,
-            errors=on_error)
+            on_error=on_error)
         data = list(resp.records())
 
         # the error is because that line only has one column
         self.assertEqual(len(errors), 1)
         self.assertEqual(resp._size, len(CSV_DATA))
         self.assertEqual(len(data), 32)
-        self._teardown(bsc)
-
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_readall_with_nonfatal_error_strict(self, resource_group, location, storage_account,
-                                                                 storage_account_key):
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
-        # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
-
-        input_format = DelimitedTextDialect(
-            delimiter=',',
-            quotechar='"',
-            lineterminator='\n',
-            escapechar=''
-        )
-        output_format = DelimitedTextDialect(
-            delimiter=';',
-            quotechar="'",
-            lineterminator='.',
-            escapechar='\\',
-        )
-        resp = blob_client.query_blob(
-            "SELECT RepoPath from BlobStorage",
-            blob_format=input_format,
-            output_format=output_format,
-            has_header=True,
-            errors='strict')
-        with pytest.raises(BlobQueryError):
-            query_result = resp.readall()
-        self._teardown(bsc)
-
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records_with_nonfatal_error_strict(self, resource_group, location, storage_account,
-                                                                 storage_account_key):
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
-        # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
-
-        input_format = DelimitedTextDialect(
-            delimiter=',',
-            quotechar='"',
-            lineterminator='\n',
-            escapechar=''
-        )
-        output_format = DelimitedTextDialect(
-            delimiter=';',
-            quotechar="'",
-            lineterminator='.',
-            escapechar='\\',
-        )
-        resp = blob_client.query_blob(
-            "SELECT RepoPath from BlobStorage",
-            blob_format=input_format,
-            output_format=output_format,
-            has_header=True,
-            errors='strict')
-        with pytest.raises(BlobQueryError):
-            list(resp.records())
         self._teardown(bsc)
 
     @GlobalStorageAccountPreparer()
@@ -793,7 +710,8 @@ class StorageQuickQueryTest(StorageTestCase):
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
-            escapechar=''
+            escapechar='',
+            has_header=True
         )
         output_format = DelimitedTextDialect(
             delimiter=';',
@@ -804,9 +722,7 @@ class StorageQuickQueryTest(StorageTestCase):
         resp = blob_client.query_blob(
             "SELECT RepoPath from BlobStorage",
             blob_format=input_format,
-            output_format=output_format,
-            has_header=True,
-            errors='ignore')
+            output_format=output_format)
         query_result = resp.readall()
         self.assertEqual(resp._size, len(CSV_DATA))
         self.assertTrue(len(query_result) > 0)
@@ -830,7 +746,8 @@ class StorageQuickQueryTest(StorageTestCase):
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
-            escapechar=''
+            escapechar='',
+            has_header=True
         )
         output_format = DelimitedTextDialect(
             delimiter=';',
@@ -841,9 +758,7 @@ class StorageQuickQueryTest(StorageTestCase):
         resp = blob_client.query_blob(
             "SELECT RepoPath from BlobStorage",
             blob_format=input_format,
-            output_format=output_format,
-            has_header=True,
-            errors='ignore')
+            output_format=output_format)
         data = list(resp.records())
         self.assertEqual(resp._size, len(CSV_DATA))
         self.assertEqual(len(data), 32)
@@ -870,14 +785,13 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
         def on_error(error):
             errors.append(error)
-            return True
 
         input_format = DelimitedJSON(delimiter='\n')
         output_format = DelimitedJSON(delimiter=';')
 
         resp = blob_client.query_blob(
             "SELECT name from BlobStorage",
-            errors=on_error,
+            on_error=on_error,
             blob_format=input_format,
             output_format=output_format)
         query_result = resp.readall()
@@ -908,14 +822,13 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
         def on_error(error):
             errors.append(error)
-            return True
 
         input_format = DelimitedJSON(delimiter='\n')
         output_format = DelimitedJSON(delimiter=';')
 
         resp = blob_client.query_blob(
             "SELECT name from BlobStorage",
-            errors=on_error,
+            on_error=on_error,
             blob_format=input_format,
             output_format=output_format)
         listdata = list(resp.records())
