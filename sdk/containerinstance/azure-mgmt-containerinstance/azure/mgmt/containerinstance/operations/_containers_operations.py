@@ -16,14 +16,16 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ContainerOperations(object):
-    """ContainerOperations operations.
+class ContainersOperations(object):
+    """ContainersOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2018-10-01".
+    :ivar api_version: Client API version. Constant value: "2019-12-01".
     """
 
     models = models
@@ -33,7 +35,7 @@ class ContainerOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-10-01"
+        self.api_version = "2019-12-01"
 
         self.config = config
 
@@ -100,7 +102,6 @@ class ContainerOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Logs', response)
 
@@ -179,7 +180,6 @@ class ContainerOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ContainerExecResponse', response)
 
