@@ -657,10 +657,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 delimiter = output_format.lineterminator
             except AttributeError:
                 delimiter = output_format.delimiter
-        has_header = kwargs.pop('has_header', None)
         query_request = QueryRequest(
             expression=query_expression,
-            input_serialization=serialize_query_format(input_format, headers=has_header),
+            input_serialization=serialize_query_format(input_format),
             output_serialization=serialize_query_format(output_format)
         )
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -696,28 +695,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         :param str query_expression:
             Required. a query statement.
-        :keyword Union[str, Callable[Exception]] errors:
-            Determines the error behaviour. The default value is 'strict', where any non-fatal error will be
-            raised. Other possible values include:
-                - 'ignore': Non-fatal errors will be ignored, this may result in dropped records.
-                - Callable[Exception]: If a callable is provided, customer error handling can be defined.
+        :keyword Callable[Exception] on_error:
+            A function to be called on any processing errors returned by the service.
         :keyword blob_format:
             Optional. Defines the serialization of the data currently stored in the blob. The default is to
             treat the blob data as CSV data formatted in the default dialect. This can be overridden with
-            a custom CSVDialect, or alternatively a DelimitedJSON.
-        :paramtype blob_format: ~azure.storage.blob.CSVDialect or ~azure.storage.blob.DelimitedJSON
+            a custom DelimitedTextDialect, or alternatively a DelimitedJSON.
+        :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJSON
         :keyword output_format:
             Optional. Defines the output serialization for the data stream. By default the data will be returned
             as it is represented in the blob. By providing an output format, the blob data will be reformatted
-            according to that profile. This value can be a CSVDialect or a DelimitedJSON.
-        :paramtype output_format: ~azure.storage.blob.CSVDialect or ~azure.storage.blob.DelimitedJSON
-        :keyword bool has_header:
-            Whether the blob data includes headers in the first line. The default value is False, meaning that the
-            data will be returned inclusive of the first line. If set to True, the data will be returned exclusive
-            of the first line.
-
-            .. note: This parameter only applies to blob data formatted as CSV.
-
+            according to that profile. This value can be a DelimitedTextDialect or a DelimitedJSON.
+        :paramtype output_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJSON
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -758,7 +747,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :dedent: 4
                 :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
         """
-        errors = kwargs.pop("errors", None) or 'strict'
+        errors = kwargs.pop("on_error", None)
         encoding = kwargs.pop("encoding", None)
         options, delimiter = self._quick_query_options(query_expression, **kwargs)
         try:

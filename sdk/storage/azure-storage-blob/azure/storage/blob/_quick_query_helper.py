@@ -22,11 +22,6 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         The name of the container where the blob is.
     :ivar dict response_headers:
         The response_headers of the quick query request.
-    :ivar int size:
-        The size of the total data in the stream.
-    :ivar int bytes_processed:
-        The number of bytes that the service has so far processed and
-        returned. This value is incrementally updated as the data is streamed.
     :ivar bytes record_delimiter:
         The delimiter used to separate lines, or records with the data. The `records`
         method will return these lines via a generator.
@@ -36,7 +31,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         self,
         name=None,
         container=None,
-        errors='strict',
+        errors=None,
         record_delimiter='\n',
         encoding=None,
         headers=None,
@@ -45,20 +40,20 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         self.name = name
         self.container = container
         self.response_headers = headers
-        self.size = 0
-        self.bytes_processed = 0
         self.record_delimiter = record_delimiter
+        self._size = 0
+        self._bytes_processed = 0
         self._errors = errors
         self._encoding = encoding
         self._parsed_results = DataFileReader(QuickQueryStreamer(response), DatumReader())
         self._first_result = self._process_record(next(self._parsed_results))
 
     def __len__(self):
-        return self.size
+        return self._size
 
     def _process_record(self, result):
-        self.size = result.get('totalBytes', self.size)
-        self.bytes_processed = result.get('bytesScanned', self.bytes_processed)
+        self._size = result.get('totalBytes', self._size)
+        self._bytes_processed = result.get('bytesScanned', self._bytes_processed)
         if 'data' in result:
             return result.get('data')
         if 'fatal' in result:
@@ -68,13 +63,8 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
                 description=result['description'],
                 position=result['position']
             )
-            if (self._errors == 'ignore' and result['fatal']) or self._errors == 'strict':
-                raise error
-            if self._errors == 'ignore':
-                return None
-            if not self._errors(error):
-                raise error
-        return None
+            if self._errors:
+                self._errors(error):
 
     def _iter_stream(self):
         if self._first_result is not None:

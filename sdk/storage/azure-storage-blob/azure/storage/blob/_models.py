@@ -1223,19 +1223,28 @@ class DelimitedJSON(object):
         self.delimiter = kwargs.pop('delimiter', '\n')
 
 
-class CSVDialect(object):
+class DelimitedTextDialect(object):
     """Defines the input or output delimited (CSV) serialization for a blob query request.
 
-    :keyword str delimiter: column separator, defaults to ','
-    :keyword str quotechar: field quote, defaults to '"'
-    :keyword str lineterminator: record separator, defaults to '\n'
-    :keyword str escapechar: escape char, defaults to empty
+    :keyword str delimiter:
+        Column separator, defaults to ','.
+    :keyword str quotechar:
+        Field quote, defaults to '"'.
+    :keyword str lineterminator:
+        Record separator, defaults to '\n'.
+    :keyword str escapechar:
+        Escape char, defaults to empty.
+    :keyword bool has_header:
+        Whether the blob data includes headers in the first line. The default value is False, meaning that the
+        data will be returned inclusive of the first line. If set to True, the data will be returned exclusive
+        of the first line.
     """
     def __init__(self, **kwargs):
         self.delimiter = kwargs.pop('delimiter', ',')
         self.quotechar = kwargs.pop('quotechar', '"')
         self.lineterminator = kwargs.pop('lineterminator', '\n')
         self.escapechar = kwargs.pop('escapechar', "")
+        self.has_header = kwargs.pop('has_header', False)
 
 
 class BlobQueryError(Exception):

@@ -54,7 +54,7 @@ from ._models import (
     ContainerEncryptionScope,
     BlobQueryError,
     DelimitedJSON,
-    CSVDialect
+    DelimitedTextDialect
 )
 
 __version__ = VERSION
@@ -215,6 +215,6 @@ __all__ = [
     'ContainerEncryptionScope',
     'BlobQueryError',
     'DelimitedJSON',
-    'CSVDialect',
+    'DelimitedTextDialect',
     'BlobQueryReader'
 ]

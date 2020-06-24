@@ -13,8 +13,7 @@ from azure.core import MatchConditions
 
 from ._models import (
     ContainerEncryptionScope,
-    DelimitedJSON,
-    CSVDialect
+    DelimitedJSON
 )
 from ._generated.models import (
     ModifiedAccessConditions,
@@ -144,25 +143,25 @@ def serialize_blob_tags(tags=None):
     return BlobTags(blob_tag_set=tag_list)
 
 
-def serialize_query_format(formater, headers=None):
+def serialize_query_format(formater):
     if isinstance(formater, DelimitedJSON):
-        if headers is not None:
-            raise ValueError("The 'has_header' parameter is not supported for JSON data.")
         serialization_settings = JsonTextConfiguration(
             record_separator=formater.delimiter
         )
         qq_format = QueryFormat(
             type=QueryFormatType.json,
             json_text_configuration=serialization_settings)
-    elif headers or hasattr(formater, 'quotechar'):  # This supports a csv.Dialect as well
-        if not formater:
-            formater = CSVDialect()
+    elif hasattr(formater, 'quotechar'):  # This supports a csv.Dialect as well
+        try:
+            headers = formater.has_header
+        except AttributeError:
+            headers = False
         serialization_settings = DelimitedTextConfiguration(
             column_separator=formater.delimiter,
             field_quote=formater.quotechar,
             record_separator=formater.lineterminator,
             escape_char=formater.escapechar,
-            headers_present=headers or False
+            headers_present=headers
         )
         qq_format = QueryFormat(
             type=QueryFormatType.delimited,
@@ -171,5 +170,5 @@ def serialize_query_format(formater, headers=None):
     elif not formater:
         return None
     else:
-        raise TypeError("Format must be CSVDialect or DelimitedJSON.")
+        raise TypeError("Format must be DelimitedTextDialect or DelimitedJSON.")
     return QuerySerialization(format=qq_format)

@@ -11,7 +11,7 @@ import pytest
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 from azure.storage.blob import (
     BlobServiceClient,
-    CSVDialect,
+    DelimitedTextDialect,
     DelimitedJSON,
     BlobQueryError
 )
@@ -128,7 +128,7 @@ class StorageQuickQueryTest(StorageTestCase):
 
         self.assertEqual(len(errors), 0)
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader.size, reader.bytes_processed)
+        self.assertEqual(reader._size, reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'\n'))
         self._teardown(bsc)
 
@@ -156,7 +156,7 @@ class StorageQuickQueryTest(StorageTestCase):
             data += record
 
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader.size, reader.bytes_processed)
+        self.assertEqual(reader._size, reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b''))
         self._teardown(bsc)
 
@@ -184,7 +184,7 @@ class StorageQuickQueryTest(StorageTestCase):
 
         self.assertEqual(len(errors), 0)
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader.size, reader.bytes_processed)
+        self.assertEqual(reader._size, reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'\n').decode('utf-8'))
         self._teardown(bsc)
 
@@ -207,7 +207,7 @@ class StorageQuickQueryTest(StorageTestCase):
             data += record
 
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader.size, reader.bytes_processed)
+        self.assertEqual(reader._size, reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'').decode('utf-8'))
         self._teardown(bsc)
 
@@ -235,7 +235,7 @@ class StorageQuickQueryTest(StorageTestCase):
             data += record
 
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader.size, reader.bytes_processed)
+        self.assertEqual(reader._size, reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'')[44:])
         self._teardown(bsc)
 
@@ -254,15 +254,15 @@ class StorageQuickQueryTest(StorageTestCase):
 
         reader = blob_client.query_blob("SELECT * from BlobStorage")
         data = b''
-        progress = reader.bytes_processed
+        progress = 0
         for record in reader.records():
             if record:
                 data += record
                 progress += len(record) + 2
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader.size, reader.bytes_processed)
+        self.assertEqual(reader._size, reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b''))
-        self.assertEqual(progress, reader.size)
+        self.assertEqual(progress, reader._size)
         self._teardown(bsc)
 
     @GlobalStorageAccountPreparer()
@@ -285,13 +285,13 @@ class StorageQuickQueryTest(StorageTestCase):
             errors.append(error)
             return True
 
-        input_format = CSVDialect(
+        input_format = DelimitedTextDialect(
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
             escapechar=''
         )
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='.',
@@ -306,7 +306,7 @@ class StorageQuickQueryTest(StorageTestCase):
         query_result = resp.readall()
 
         self.assertEqual(len(errors), 0)
-        self.assertEqual(resp.size, len(CSV_DATA))
+        self.assertEqual(resp._size, len(CSV_DATA))
         self.assertEqual(query_result, CONVERTED_CSV_DATA)
         self._teardown(bsc)
 
@@ -323,13 +323,13 @@ class StorageQuickQueryTest(StorageTestCase):
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         blob_client.upload_blob(CSV_DATA, overwrite=True)
 
-        input_format = CSVDialect(
+        input_format = DelimitedTextDialect(
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
             escapechar=''
         )
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='%',
@@ -347,7 +347,7 @@ class StorageQuickQueryTest(StorageTestCase):
                 data.append(record)
 
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader.size, reader.bytes_processed)
+        self.assertEqual(reader._size, reader._bytes_processed)
         self.assertEqual(len(data), 33)
         self._teardown(bsc)
 
@@ -381,7 +381,7 @@ class StorageQuickQueryTest(StorageTestCase):
             return True
 
         input_format = DelimitedJSON()
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='.',
@@ -395,7 +395,7 @@ class StorageQuickQueryTest(StorageTestCase):
         query_result = resp.readall()
 
         self.assertEqual(len(errors), 1)
-        self.assertEqual(resp.size, 43)
+        self.assertEqual(resp._size, 43)
         self.assertEqual(query_result, b'')
         self._teardown(bsc)
 
@@ -428,7 +428,7 @@ class StorageQuickQueryTest(StorageTestCase):
             return True
 
         input_format = DelimitedJSON()
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='.',
@@ -444,7 +444,7 @@ class StorageQuickQueryTest(StorageTestCase):
             data.append(record)
         
         self.assertEqual(len(errors), 1)
-        self.assertEqual(resp.size, 43)
+        self.assertEqual(resp._size, 43)
         self.assertEqual(data, [b''])
         self._teardown(bsc)
 
@@ -478,7 +478,7 @@ class StorageQuickQueryTest(StorageTestCase):
             return False
 
         input_format = DelimitedJSON()
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='.',
@@ -521,7 +521,7 @@ class StorageQuickQueryTest(StorageTestCase):
             errors.append(error)
 
         input_format = DelimitedJSON()
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='.',
@@ -557,7 +557,7 @@ class StorageQuickQueryTest(StorageTestCase):
         blob_client.upload_blob(data, overwrite=True)
 
         input_format = DelimitedJSON()
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='.',
@@ -596,7 +596,7 @@ class StorageQuickQueryTest(StorageTestCase):
         blob_client.upload_blob(data, overwrite=True)
 
         input_format = DelimitedJSON()
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='.',
@@ -632,13 +632,13 @@ class StorageQuickQueryTest(StorageTestCase):
             errors.append(error)
             return True
 
-        input_format = CSVDialect(
+        input_format = DelimitedTextDialect(
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
             escapechar=''
         )
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='.',
@@ -654,7 +654,7 @@ class StorageQuickQueryTest(StorageTestCase):
 
         # the error is because that line only has one column
         self.assertEqual(len(errors), 1)
-        self.assertEqual(resp.size, len(CSV_DATA))
+        self.assertEqual(resp._size, len(CSV_DATA))
         self.assertTrue(len(query_result) > 0)
         self._teardown(bsc)
 
@@ -677,13 +677,13 @@ class StorageQuickQueryTest(StorageTestCase):
             errors.append(error)
             return True
 
-        input_format = CSVDialect(
+        input_format = DelimitedTextDialect(
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
             escapechar=''
         )
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='%',
@@ -699,7 +699,7 @@ class StorageQuickQueryTest(StorageTestCase):
 
         # the error is because that line only has one column
         self.assertEqual(len(errors), 1)
-        self.assertEqual(resp.size, len(CSV_DATA))
+        self.assertEqual(resp._size, len(CSV_DATA))
         self.assertEqual(len(data), 32)
         self._teardown(bsc)
 
@@ -717,13 +717,13 @@ class StorageQuickQueryTest(StorageTestCase):
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         blob_client.upload_blob(CSV_DATA, overwrite=True)
 
-        input_format = CSVDialect(
+        input_format = DelimitedTextDialect(
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
             escapechar=''
         )
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='.',
@@ -753,13 +753,13 @@ class StorageQuickQueryTest(StorageTestCase):
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         blob_client.upload_blob(CSV_DATA, overwrite=True)
 
-        input_format = CSVDialect(
+        input_format = DelimitedTextDialect(
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
             escapechar=''
         )
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='.',
@@ -789,13 +789,13 @@ class StorageQuickQueryTest(StorageTestCase):
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         blob_client.upload_blob(CSV_DATA, overwrite=True)
 
-        input_format = CSVDialect(
+        input_format = DelimitedTextDialect(
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
             escapechar=''
         )
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='.',
@@ -808,7 +808,7 @@ class StorageQuickQueryTest(StorageTestCase):
             has_header=True,
             errors='ignore')
         query_result = resp.readall()
-        self.assertEqual(resp.size, len(CSV_DATA))
+        self.assertEqual(resp._size, len(CSV_DATA))
         self.assertTrue(len(query_result) > 0)
         self._teardown(bsc)
 
@@ -826,13 +826,13 @@ class StorageQuickQueryTest(StorageTestCase):
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         blob_client.upload_blob(CSV_DATA, overwrite=True)
 
-        input_format = CSVDialect(
+        input_format = DelimitedTextDialect(
             delimiter=',',
             quotechar='"',
             lineterminator='\n',
             escapechar=''
         )
-        output_format = CSVDialect(
+        output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
             lineterminator='$',
@@ -845,7 +845,7 @@ class StorageQuickQueryTest(StorageTestCase):
             has_header=True,
             errors='ignore')
         data = list(resp.records())
-        self.assertEqual(resp.size, len(CSV_DATA))
+        self.assertEqual(resp._size, len(CSV_DATA))
         self.assertEqual(len(data), 32)
         self._teardown(bsc)
 
@@ -883,7 +883,7 @@ class StorageQuickQueryTest(StorageTestCase):
         query_result = resp.readall()
 
         self.assertEqual(len(errors), 0)
-        self.assertEqual(resp.size, len(data))
+        self.assertEqual(resp._size, len(data))
         self.assertEqual(query_result, b'{"name":"owner"};{};{"name":"owner"};')
         self._teardown(bsc)
 
@@ -921,7 +921,7 @@ class StorageQuickQueryTest(StorageTestCase):
         listdata = list(resp.records())
 
         self.assertEqual(len(errors), 0)
-        self.assertEqual(resp.size, len(data))
+        self.assertEqual(resp._size, len(data))
         self.assertEqual(listdata, [b'{"name":"owner"}',b'{}',b'{"name":"owner"}', b''])
         self._teardown(bsc)
 
