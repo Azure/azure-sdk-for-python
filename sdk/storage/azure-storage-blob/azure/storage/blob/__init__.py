@@ -53,7 +53,7 @@ from ._models import (
     ContainerEncryptionScope,
     BlobQueryError,
     DelimitedJSON,
-    DelimitedTextDialect
+    DelimitedTextDialect,
     ObjectReplicationPolicy,
     ObjectReplicationRule
 )
@@ -217,7 +217,7 @@ __all__ = [
     'BlobQueryError',
     'DelimitedJSON',
     'DelimitedTextDialect',
-    'BlobQueryReader'
+    'BlobQueryReader',
     'ObjectReplicationPolicy',
     'ObjectReplicationRule'
 ]
