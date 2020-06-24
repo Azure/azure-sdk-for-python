@@ -92,13 +92,19 @@ class SecretClient(AsyncKeyVaultClientBase):
             attributes = self._models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
+
+        parameters = self._models.SecretSetParameters(
+            value=value,
+            tags=kwargs.pop("tags", None),
+            content_type=content_type,
+            secret_attributes=attributes
+        )
+
         bundle = await self._client.set_secret(
             self.vault_url,
             name,
-            value,
-            secret_attributes=attributes,
+            parameters=parameters,
             error_map=_error_map,
-            content_type_parameter=content_type,
             **kwargs
         )
         return KeyVaultSecret._from_secret_bundle(bundle)
@@ -141,13 +147,19 @@ class SecretClient(AsyncKeyVaultClientBase):
             attributes = self._models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
+
+        parameters = self._models.SecretUpdateParameters(
+            content_type=content_type,
+            secret_attributes=attributes,
+            tags=kwargs.pop("tags", None)
+        )
+
         bundle = await self._client.update_secret(
             self.vault_url,
             name,
             secret_version=version or "",
-            secret_attributes=attributes,
+            parameters=parameters,
             error_map=_error_map,
-            content_type_parameter=content_type,
             **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
@@ -242,7 +254,12 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Restore a backed up secret
                 :dedent: 8
         """
-        bundle = await self._client.restore_secret(self.vault_url, backup, error_map=_error_map, **kwargs)
+        bundle = await self._client.restore_secret(
+            self.vault_url,
+            parameters=self._models.SecretRestoreParameters(secret_bundle_backup=backup),
+            error_map=_error_map,
+            **kwargs
+        )
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace_async

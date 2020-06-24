@@ -110,13 +110,19 @@ class SecretClient(KeyVaultClientBase):
             )
         else:
             attributes = None
+
+        parameters = self._models.SecretSetParameters(
+            value=value,
+            tags=kwargs.pop("tags", None),
+            content_type=content_type,
+            secret_attributes=attributes
+        )
+
         bundle = self._client.set_secret(
             vault_base_url=self.vault_url,
             secret_name=name,
-            value=value,
-            secret_attributes=attributes,
+            parameters=parameters,
             error_map=_error_map,
-            content_type_parameter=content_type,
             **kwargs
         )
         return KeyVaultSecret._from_secret_bundle(bundle)
@@ -161,13 +167,19 @@ class SecretClient(KeyVaultClientBase):
             )
         else:
             attributes = None
+
+        parameters = self._models.SecretUpdateParameters(
+            content_type=content_type,
+            secret_attributes=attributes,
+            tags=kwargs.pop("tags", None)
+        )
+
         bundle = self._client.update_secret(
             self.vault_url,
             name,
             secret_version=version or "",
-            secret_attributes=attributes,
+            parameters=parameters,
             error_map=_error_map,
-            content_type_parameter=content_type,
             **kwargs
         )
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
@@ -272,7 +284,12 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.restore_secret(self.vault_url, backup, error_map=_error_map, **kwargs)
+        bundle = self._client.restore_secret(
+            self.vault_url,
+            parameters=self._models.SecretRestoreParameters(secret_bundle_backup=backup),
+            error_map=_error_map,
+            **kwargs
+        )
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace

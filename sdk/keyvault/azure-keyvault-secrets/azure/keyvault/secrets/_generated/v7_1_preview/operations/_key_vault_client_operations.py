@@ -28,10 +28,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         secret_name,  # type: str
-        value,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
-        content_type_parameter=None,  # type: Optional[str]
-        secret_attributes=None,  # type: Optional["models.SecretAttributes"]
+        parameters,  # type: "models.SecretSetParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.SecretBundle"
@@ -45,14 +42,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param secret_name: The name of the secret.
         :type secret_name: str
-        :param value: The value of the secret.
-        :type value: str
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
-        :param content_type_parameter: Type of the secret value such as a password.
-        :type content_type_parameter: str
-        :param secret_attributes: The secret management attributes.
-        :type secret_attributes: ~azure.keyvault.v7_1.models.SecretAttributes
+        :param parameters: The parameters for setting the secret.
+        :type parameters: ~azure.keyvault.v7_1.models.SecretSetParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_1.models.SecretBundle
@@ -61,8 +52,6 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.SecretSetParameters(value=value, tags=tags, content_type=content_type_parameter, secret_attributes=secret_attributes)
         api_version = "7.1-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -84,7 +73,7 @@ class KeyVaultClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'SecretSetParameters')
+        body_content = self._serialize.body(parameters, 'SecretSetParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -168,9 +157,7 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         secret_name,  # type: str
         secret_version,  # type: str
-        content_type_parameter=None,  # type: Optional[str]
-        secret_attributes=None,  # type: Optional["models.SecretAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.SecretUpdateParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.SecretBundle"
@@ -186,12 +173,8 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :param secret_version: The version of the secret.
         :type secret_version: str
-        :param content_type_parameter: Type of the secret value such as a password.
-        :type content_type_parameter: str
-        :param secret_attributes: The secret management attributes.
-        :type secret_attributes: ~azure.keyvault.v7_1.models.SecretAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters for update secret operation.
+        :type parameters: ~azure.keyvault.v7_1.models.SecretUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_1.models.SecretBundle
@@ -200,8 +183,6 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.SecretUpdateParameters(content_type=content_type_parameter, secret_attributes=secret_attributes, tags=tags)
         api_version = "7.1-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -224,7 +205,7 @@ class KeyVaultClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'SecretUpdateParameters')
+        body_content = self._serialize.body(parameters, 'SecretUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -793,7 +774,7 @@ class KeyVaultClientOperationsMixin(object):
     def restore_secret(
         self,
         vault_base_url,  # type: str
-        secret_bundle_backup,  # type: bytes
+        parameters,  # type: "models.SecretRestoreParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.SecretBundle"
@@ -804,8 +785,8 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param secret_bundle_backup: The backup blob associated with a secret bundle.
-        :type secret_bundle_backup: bytes
+        :param parameters: The parameters to restore the secret.
+        :type parameters: ~azure.keyvault.v7_1.models.SecretRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_1.models.SecretBundle
@@ -814,8 +795,6 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.SecretRestoreParameters(secret_bundle_backup=secret_bundle_backup)
         api_version = "7.1-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -836,7 +815,7 @@ class KeyVaultClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'SecretRestoreParameters')
+        body_content = self._serialize.body(parameters, 'SecretRestoreParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
