@@ -16,6 +16,7 @@ from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from . import get_default_authority, normalize_authority
+from .._constants import DEFAULT_REFRESH_RETRY_TIMEOUT, DEFAULT_REFRESH_OFFSET
 
 try:
     from typing import TYPE_CHECKING
@@ -48,8 +49,8 @@ class AadClientBase(ABC):
         self._cache = cache or TokenCache()
         self._client_id = client_id
         self._pipeline = self._build_pipeline(**kwargs)
-        self._token_refresh_timeout = 30    # default 30s
-        self._token_refresh_offset = 120    # default 2 min
+        self._refresh_retry_timeout = kwargs.get("refresh_retry_timeout", DEFAULT_REFRESH_RETRY_TIMEOUT)  # default 30s
+        self._token_refresh_offset = kwargs.get("token_refresh_offset", DEFAULT_REFRESH_OFFSET)  # default 2 min
         self._last_refresh_time = int(time.time())
 
     def get_cached_access_token(self, scopes, query=None):
@@ -74,7 +75,7 @@ class AadClientBase(ABC):
         now = int(time.time())
         if expires_on - now > self._token_refresh_offset:
             return False
-        if now - self._last_refresh_time < self._token_refresh_timeout:
+        if now - self._last_refresh_time < self._refresh_retry_timeout:
             return False
         return True
 
@@ -101,7 +102,7 @@ class AadClientBase(ABC):
 
     def _process_response(self, response, request_time):
         # type: (PipelineResponse, int) -> AccessToken
-        self._last_refresh_time = time.time()   # no matter succeed or not, update the last refresh time
+        self._last_refresh_time = int(time.time())   # no matter succeed or not, update the last refresh time
 
         content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 

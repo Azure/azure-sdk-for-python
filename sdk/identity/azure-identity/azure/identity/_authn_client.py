@@ -22,7 +22,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
-from ._constants import AZURE_CLI_CLIENT_ID
+from ._constants import AZURE_CLI_CLIENT_ID, DEFAULT_REFRESH_OFFSET, DEFAULT_REFRESH_RETRY_TIMEOUT
 from ._internal import get_default_authority, normalize_authority
 from ._internal.user_agent import USER_AGENT
 
@@ -65,10 +65,25 @@ class AuthnClientBase(ABC):
             authority = normalize_authority(authority) if authority else get_default_authority()
             self._auth_url = "/".join((authority, tenant.strip("/"), "oauth2/v2.0/token"))
         self._cache = kwargs.get("cache") or TokenCache()  # type: TokenCache
+        self._refresh_retry_timeout = kwargs.get("refresh_retry_timeout", DEFAULT_REFRESH_RETRY_TIMEOUT)  # default 30s
+        self._token_refresh_offset = kwargs.get("token_refresh_offset", DEFAULT_REFRESH_OFFSET)  # default 2 min
+        self._last_refresh_time = int(time.time())
 
     @property
     def auth_url(self):
         return self._auth_url
+
+    def should_refresh(self, token):
+        # type: (AccessToken) -> bool
+        """ check if the token needs refresh or not
+        """
+        expires_on = int(token.expires_on)
+        now = int(time.time())
+        if expires_on - now > self._token_refresh_offset:
+            return False
+        if now - self._last_refresh_time < self._refresh_retry_timeout:
+            return False
+        return True
 
     def get_cached_token(self, scopes):
         # type: (Iterable[str]) -> Optional[AccessToken]
@@ -215,6 +230,7 @@ class AuthnClient(AuthnClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> AccessToken
+        self._last_refresh_time = int(time.time())   # no matter succeed or not, update the last refresh time
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
         request_time = int(time.time())
         response = self._pipeline.run(request, stream=False, **kwargs)
