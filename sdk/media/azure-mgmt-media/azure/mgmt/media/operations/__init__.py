@@ -12,6 +12,8 @@
 from ._account_filters_operations import AccountFiltersOperations
 from ._operations import Operations
 from ._mediaservices_operations import MediaservicesOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._locations_operations import LocationsOperations
 from ._assets_operations import AssetsOperations
 from ._asset_filters_operations import AssetFiltersOperations
@@ -28,6 +30,8 @@ __all__ = [
     'AccountFiltersOperations',
     'Operations',
     'MediaservicesOperations',
+    'PrivateLinkResourcesOperations',
+    'PrivateEndpointConnectionsOperations',
     'LocationsOperations',
     'AssetsOperations',
     'AssetFiltersOperations',

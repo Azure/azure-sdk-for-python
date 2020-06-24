@@ -195,17 +195,47 @@ class AbsoluteClipTime(ClipTime):
         self.odatatype = '#Microsoft.Media.AbsoluteClipTime'
 
 
+class AccountEncryption(Model):
+    """AccountEncryption.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The type of key used to encrypt the Account Key.
+     Possible values include: 'SystemKey', 'CustomerKey'
+    :type type: str or ~azure.mgmt.media.models.AccountEncryptionKeyType
+    :param key_vault_properties: The properties of the key used to encrypt the
+     account.
+    :type key_vault_properties: ~azure.mgmt.media.models.KeyVaultProperties
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AccountEncryption, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.key_vault_properties = kwargs.get('key_vault_properties', None)
+
+
 class Resource(Model):
-    """The core properties of ARM resources.
+    """Resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     """
 
@@ -229,16 +259,19 @@ class Resource(Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource.
+    """The resource model definition for a ARM proxy resource. It will have
+    everything other than required location and tags.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     """
 
@@ -264,11 +297,13 @@ class AccountFilter(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param presentation_time_range: The presentation time range.
     :type presentation_time_range:
@@ -346,7 +381,7 @@ class AkamaiSignatureHeaderAuthenticationKey(Model):
 class ApiError(Model):
     """The API error.
 
-    :param error: ApiError. The error properties.
+    :param error: The error properties.
     :type error: ~azure.mgmt.media.models.ODataError
     """
 
@@ -377,11 +412,13 @@ class Asset(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :ivar asset_id: The Asset ID.
     :vartype asset_id: str
@@ -492,11 +529,13 @@ class AssetFilter(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param presentation_time_range: The presentation time range.
     :type presentation_time_range:
@@ -800,6 +839,44 @@ class AudioOverlay(Overlay):
         self.odatatype = '#Microsoft.Media.AudioOverlay'
 
 
+class AzureEntityResource(Resource):
+    """The resource model definition for a Azure Resource Manager resource with an
+    etag.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureEntityResource, self).__init__(**kwargs)
+        self.etag = None
+
+
 class BuiltInStandardEncoderPreset(Preset):
     """Describes a built-in preset for encoding the input video with the Standard
     Encoder.
@@ -980,11 +1057,13 @@ class ContentKeyPolicy(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :ivar policy_id: The legacy Policy ID.
     :vartype policy_id: str
@@ -2633,15 +2712,19 @@ class Video(Codec):
     :type label: str
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param key_frame_interval: The distance between two key frames, thereby
-     defining a group of pictures (GOP). The value should be a non-zero integer
-     in the range [1, 30] seconds, specified in ISO 8601 format. The default is
-     2 seconds (PT2S).
+    :param key_frame_interval: The distance between two key frames. The value
+     should be non-zero in the range [0.5, 20] seconds, specified in ISO 8601
+     format. The default is 2 seconds(PT2S). Note that this setting is ignored
+     if VideoSyncMode.Passthrough is set, where the KeyFrameInterval value will
+     follow the input source setting.
     :type key_frame_interval: timedelta
     :param stretch_mode: The resizing mode - how the input video will be
      resized to fit the desired output resolution(s). Default is AutoSize.
      Possible values include: 'None', 'AutoSize', 'AutoFit'
     :type stretch_mode: str or ~azure.mgmt.media.models.StretchMode
+    :param sync_mode: The Video Sync Mode. Possible values include: 'Auto',
+     'Passthrough', 'Cfr', 'Vfr'
+    :type sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
     """
 
     _validation = {
@@ -2653,6 +2736,7 @@ class Video(Codec):
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
         'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
+        'sync_mode': {'key': 'syncMode', 'type': 'str'},
     }
 
     _subtype_map = {
@@ -2663,6 +2747,7 @@ class Video(Codec):
         super(Video, self).__init__(**kwargs)
         self.key_frame_interval = kwargs.get('key_frame_interval', None)
         self.stretch_mode = kwargs.get('stretch_mode', None)
+        self.sync_mode = kwargs.get('sync_mode', None)
         self.odatatype = '#Microsoft.Media.Video'
 
 
@@ -2676,15 +2761,19 @@ class H264Video(Video):
     :type label: str
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param key_frame_interval: The distance between two key frames, thereby
-     defining a group of pictures (GOP). The value should be a non-zero integer
-     in the range [1, 30] seconds, specified in ISO 8601 format. The default is
-     2 seconds (PT2S).
+    :param key_frame_interval: The distance between two key frames. The value
+     should be non-zero in the range [0.5, 20] seconds, specified in ISO 8601
+     format. The default is 2 seconds(PT2S). Note that this setting is ignored
+     if VideoSyncMode.Passthrough is set, where the KeyFrameInterval value will
+     follow the input source setting.
     :type key_frame_interval: timedelta
     :param stretch_mode: The resizing mode - how the input video will be
      resized to fit the desired output resolution(s). Default is AutoSize.
      Possible values include: 'None', 'AutoSize', 'AutoFit'
     :type stretch_mode: str or ~azure.mgmt.media.models.StretchMode
+    :param sync_mode: The Video Sync Mode. Possible values include: 'Auto',
+     'Passthrough', 'Cfr', 'Vfr'
+    :type sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
     :param scene_change_detection: Whether or not the encoder should insert
      key frames at scene changes. If not specified, the default is false. This
      flag should be set to true only when the encoder is being configured to
@@ -2708,6 +2797,7 @@ class H264Video(Video):
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
         'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
+        'sync_mode': {'key': 'syncMode', 'type': 'str'},
         'scene_change_detection': {'key': 'sceneChangeDetection', 'type': 'bool'},
         'complexity': {'key': 'complexity', 'type': 'str'},
         'layers': {'key': 'layers', 'type': '[H264Layer]'},
@@ -2752,15 +2842,19 @@ class Image(Video):
     :type label: str
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param key_frame_interval: The distance between two key frames, thereby
-     defining a group of pictures (GOP). The value should be a non-zero integer
-     in the range [1, 30] seconds, specified in ISO 8601 format. The default is
-     2 seconds (PT2S).
+    :param key_frame_interval: The distance between two key frames. The value
+     should be non-zero in the range [0.5, 20] seconds, specified in ISO 8601
+     format. The default is 2 seconds(PT2S). Note that this setting is ignored
+     if VideoSyncMode.Passthrough is set, where the KeyFrameInterval value will
+     follow the input source setting.
     :type key_frame_interval: timedelta
     :param stretch_mode: The resizing mode - how the input video will be
      resized to fit the desired output resolution(s). Default is AutoSize.
      Possible values include: 'None', 'AutoSize', 'AutoFit'
     :type stretch_mode: str or ~azure.mgmt.media.models.StretchMode
+    :param sync_mode: The Video Sync Mode. Possible values include: 'Auto',
+     'Passthrough', 'Cfr', 'Vfr'
+    :type sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
     :param start: Required. The position in the input video from where to
      start generating thumbnails. The value can be in absolute timestamp (ISO
      8601, e.g: PT05S), or a frame count (For example, 10 for the 10th frame),
@@ -2790,6 +2884,7 @@ class Image(Video):
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
         'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
+        'sync_mode': {'key': 'syncMode', 'type': 'str'},
         'start': {'key': 'start', 'type': 'str'},
         'step': {'key': 'step', 'type': 'str'},
         'range': {'key': 'range', 'type': 'str'},
@@ -2897,11 +2992,13 @@ class Job(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :ivar created: The UTC date and time when the Job was created, in
      'YYYY-MM-DDThh:mm:ssZ' format.
@@ -3456,15 +3553,19 @@ class JpgImage(Image):
     :type label: str
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param key_frame_interval: The distance between two key frames, thereby
-     defining a group of pictures (GOP). The value should be a non-zero integer
-     in the range [1, 30] seconds, specified in ISO 8601 format. The default is
-     2 seconds (PT2S).
+    :param key_frame_interval: The distance between two key frames. The value
+     should be non-zero in the range [0.5, 20] seconds, specified in ISO 8601
+     format. The default is 2 seconds(PT2S). Note that this setting is ignored
+     if VideoSyncMode.Passthrough is set, where the KeyFrameInterval value will
+     follow the input source setting.
     :type key_frame_interval: timedelta
     :param stretch_mode: The resizing mode - how the input video will be
      resized to fit the desired output resolution(s). Default is AutoSize.
      Possible values include: 'None', 'AutoSize', 'AutoFit'
     :type stretch_mode: str or ~azure.mgmt.media.models.StretchMode
+    :param sync_mode: The Video Sync Mode. Possible values include: 'Auto',
+     'Passthrough', 'Cfr', 'Vfr'
+    :type sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
     :param start: Required. The position in the input video from where to
      start generating thumbnails. The value can be in absolute timestamp (ISO
      8601, e.g: PT05S), or a frame count (For example, 10 for the 10th frame),
@@ -3497,6 +3598,7 @@ class JpgImage(Image):
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
         'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
+        'sync_mode': {'key': 'syncMode', 'type': 'str'},
         'start': {'key': 'start', 'type': 'str'},
         'step': {'key': 'step', 'type': 'str'},
         'range': {'key': 'range', 'type': 'str'},
@@ -3549,6 +3651,37 @@ class JpgLayer(Layer):
         super(JpgLayer, self).__init__(**kwargs)
         self.quality = kwargs.get('quality', None)
         self.odatatype = '#Microsoft.Media.JpgLayer'
+
+
+class KeyVaultProperties(Model):
+    """KeyVaultProperties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param key_identifier: The URL of the Key Vault key used to encrypt the
+     account. The key may either be versioned (for example
+     https://vault/keys/mykey/version1) or reference a key without a version
+     (for example https://vault/keys/mykey).
+    :type key_identifier: str
+    :ivar current_key_identifier: The current key used to encrypt the Media
+     Services account, including the key version.
+    :vartype current_key_identifier: str
+    """
+
+    _validation = {
+        'current_key_identifier': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
+        'current_key_identifier': {'key': 'currentKeyIdentifier', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.key_identifier = kwargs.get('key_identifier', None)
+        self.current_key_identifier = None
 
 
 class ListContainerSasInput(Model):
@@ -3654,20 +3787,24 @@ class ListStreamingLocatorsResponse(Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked resource.
+    """The resource model definition for a ARM tracked top level resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param location: The Azure Region of the resource.
+    :param location: Required. The geo-location where the resource lives
     :type location: str
     """
 
@@ -3675,6 +3812,7 @@ class TrackedResource(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -3699,15 +3837,17 @@ class LiveEvent(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param location: The Azure Region of the resource.
+    :param location: Required. The geo-location where the resource lives
     :type location: str
     :param description: The Live Event description.
     :type description: str
@@ -3726,11 +3866,13 @@ class LiveEvent(TrackedResource):
     :param cross_site_access_policies: The Live Event access policies.
     :type cross_site_access_policies:
      ~azure.mgmt.media.models.CrossSiteAccessPolicies
-    :param vanity_url: Specifies whether to use a vanity url with the Live
-     Event.  This value is specified at creation time and cannot be updated.
-    :type vanity_url: bool
+    :param use_static_hostname: Specifies whether to use a vanity url with the
+     Live Event.  This value is specified at creation time and cannot be
+     updated.
+    :type use_static_hostname: bool
     :param stream_options: The options to use for the LiveEvent.  This value
-     is specified at creation time and cannot be updated.
+     is specified at creation time and cannot be updated. The valid values for
+     the array entry values are 'Default' and 'LowLatency'.
     :type stream_options: list[str or
      ~azure.mgmt.media.models.StreamOptionsFlag]
     :ivar created: The exact time the Live Event was created.
@@ -3743,6 +3885,7 @@ class LiveEvent(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'input': {'required': True},
         'provisioning_state': {'readonly': True},
         'resource_state': {'readonly': True},
@@ -3763,7 +3906,7 @@ class LiveEvent(TrackedResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'cross_site_access_policies': {'key': 'properties.crossSiteAccessPolicies', 'type': 'CrossSiteAccessPolicies'},
-        'vanity_url': {'key': 'properties.vanityUrl', 'type': 'bool'},
+        'use_static_hostname': {'key': 'properties.useStaticHostname', 'type': 'bool'},
         'stream_options': {'key': 'properties.streamOptions', 'type': '[str]'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
@@ -3778,7 +3921,7 @@ class LiveEvent(TrackedResource):
         self.provisioning_state = None
         self.resource_state = None
         self.cross_site_access_policies = kwargs.get('cross_site_access_policies', None)
-        self.vanity_url = kwargs.get('vanity_url', None)
+        self.use_static_hostname = kwargs.get('use_static_hostname', None)
         self.stream_options = kwargs.get('stream_options', None)
         self.created = None
         self.last_modified = None
@@ -3804,12 +3947,21 @@ class LiveEventActionInput(Model):
 class LiveEventEncoding(Model):
     """The Live Event encoding.
 
-    :param encoding_type: The encoding type for Live Event.  This value is
-     specified at creation time and cannot be updated. Possible values include:
-     'None', 'Basic', 'Standard', 'Premium1080p'
+    :param encoding_type: The encoding type for Live Event. This value is
+     specified at creation time and cannot be updated. When encodingType is set
+     to None, the service simply passes through the incoming video and audio
+     layer(s) to the output. When encodingType is set to Standard or
+     Premium1080p, a live encoder transcodes the incoming stream into multiple
+     bit rates or layers. See https://go.microsoft.com/fwlink/?linkid=2095101
+     for more information. The encodingType of Basic is obsolete – if
+     specified, the service will treat this as a Standard Live Event. Possible
+     values include: 'None', 'Basic', 'Standard', 'Premium1080p'
     :type encoding_type: str or ~azure.mgmt.media.models.LiveEventEncodingType
-    :param preset_name: The encoding preset name.  This value is specified at
-     creation time and cannot be updated.
+    :param preset_name: The optional encoding preset name, used when
+     encodingType is not None. This value is specified at creation time and
+     cannot be updated. If the encodingType is set to Standard, then the
+     default preset name is ‘Default720p’. Else if the encodingType is set to
+     Premium1080p, the default preset is ‘Default1080p’.
     :type preset_name: str
     """
 
@@ -3859,9 +4011,9 @@ class LiveEventInput(Model):
     :param key_frame_interval_duration: ISO 8601 timespan duration of the key
      frame interval duration.
     :type key_frame_interval_duration: str
-    :param access_token: A unique identifier for a stream.  This can be
-     specified at creation time but cannot be updated.  If omitted, the service
-     will generate a unique value.
+    :param access_token: A UUID in string form to uniquely identify the
+     stream. This can be specified at creation time but cannot be updated.  If
+     omitted, the service will generate a unique value.
     :type access_token: str
     :param endpoints: The input endpoints for the Live Event.
     :type endpoints: list[~azure.mgmt.media.models.LiveEventEndpoint]
@@ -3972,11 +4124,13 @@ class LiveOutput(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param description: The description of the Live Output.
     :type description: str
@@ -4069,32 +4223,78 @@ class Location(Model):
         self.name = kwargs.get('name', None)
 
 
+class LogSpecification(Model):
+    """A diagnostic log emitted by service.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The diagnostic log category name.
+    :vartype name: str
+    :ivar display_name: The diagnostic log category display name.
+    :vartype display_name: str
+    :ivar blob_duration: The time range for requests in each blob.
+    :vartype blob_duration: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'display_name': {'readonly': True},
+        'blob_duration': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LogSpecification, self).__init__(**kwargs)
+        self.name = None
+        self.display_name = None
+        self.blob_duration = None
+
+
 class MediaService(TrackedResource):
     """A Media Services account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param location: The Azure Region of the resource.
+    :param location: Required. The geo-location where the resource lives
     :type location: str
     :ivar media_service_id: The Media Services account ID.
     :vartype media_service_id: str
     :param storage_accounts: The storage accounts for this resource.
     :type storage_accounts: list[~azure.mgmt.media.models.StorageAccount]
+    :param storage_authentication: Possible values include: 'System',
+     'ManagedIdentity'
+    :type storage_authentication: str or
+     ~azure.mgmt.media.models.StorageAuthentication
+    :param encryption: The account encryption properties.
+    :type encryption: ~azure.mgmt.media.models.AccountEncryption
+    :param identity: The Managed Identity for the Media Services account.
+    :type identity: ~azure.mgmt.media.models.MediaServiceIdentity
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'media_service_id': {'readonly': True},
     }
 
@@ -4106,63 +4306,54 @@ class MediaService(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'media_service_id': {'key': 'properties.mediaServiceId', 'type': 'str'},
         'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
+        'storage_authentication': {'key': 'properties.storageAuthentication', 'type': 'str'},
+        'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
+        'identity': {'key': 'identity', 'type': 'MediaServiceIdentity'},
     }
 
     def __init__(self, **kwargs):
         super(MediaService, self).__init__(**kwargs)
         self.media_service_id = None
         self.storage_accounts = kwargs.get('storage_accounts', None)
+        self.storage_authentication = kwargs.get('storage_authentication', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.identity = kwargs.get('identity', None)
 
 
-class Metric(Model):
-    """A metric emitted by service.
+class MediaServiceIdentity(Model):
+    """MediaServiceIdentity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The metric name.
-    :vartype name: str
-    :ivar display_name: The metric display name.
-    :vartype display_name: str
-    :ivar display_description: The metric display description.
-    :vartype display_description: str
-    :ivar unit: The metric unit. Possible values include: 'Bytes', 'Count',
-     'Milliseconds'
-    :vartype unit: str or ~azure.mgmt.media.models.MetricUnit
-    :ivar aggregation_type: The metric aggregation type. Possible values
-     include: 'Average', 'Count', 'Total'
-    :vartype aggregation_type: str or
-     ~azure.mgmt.media.models.MetricAggregationType
-    :ivar dimensions: The metric dimensions.
-    :vartype dimensions: list[~azure.mgmt.media.models.MetricDimension]
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The identity type. Possible values include:
+     'SystemAssigned', 'None'
+    :type type: str or ~azure.mgmt.media.models.ManagedIdentityType
+    :ivar principal_id: The Principal ID of the identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The Tenant ID of the identity.
+    :vartype tenant_id: str
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'display_description': {'readonly': True},
-        'unit': {'readonly': True},
-        'aggregation_type': {'readonly': True},
-        'dimensions': {'readonly': True},
+        'type': {'required': True},
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Metric, self).__init__(**kwargs)
-        self.name = None
-        self.display_name = None
-        self.display_description = None
-        self.unit = None
-        self.aggregation_type = None
-        self.dimensions = None
+        super(MediaServiceIdentity, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.principal_id = None
+        self.tenant_id = None
 
 
 class MetricDimension(Model):
@@ -4198,28 +4389,59 @@ class MetricDimension(Model):
         self.to_be_exported_for_shoebox = None
 
 
-class MetricProperties(Model):
-    """Metric properties.
+class MetricSpecification(Model):
+    """A metric emitted by service.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar service_specification: The service specifications.
-    :vartype service_specification:
-     ~azure.mgmt.media.models.ServiceSpecification
+    :ivar name: The metric name.
+    :vartype name: str
+    :ivar display_name: The metric display name.
+    :vartype display_name: str
+    :ivar display_description: The metric display description.
+    :vartype display_description: str
+    :ivar unit: The metric unit. Possible values include: 'Bytes', 'Count',
+     'Milliseconds'
+    :vartype unit: str or ~azure.mgmt.media.models.MetricUnit
+    :ivar aggregation_type: The metric aggregation type. Possible values
+     include: 'Average', 'Count', 'Total'
+    :vartype aggregation_type: str or
+     ~azure.mgmt.media.models.MetricAggregationType
+    :param supported_aggregation_types: Supported aggregation types.
+    :type supported_aggregation_types: list[str]
+    :ivar dimensions: The metric dimensions.
+    :vartype dimensions: list[~azure.mgmt.media.models.MetricDimension]
     """
 
     _validation = {
-        'service_specification': {'readonly': True},
+        'name': {'readonly': True},
+        'display_name': {'readonly': True},
+        'display_description': {'readonly': True},
+        'unit': {'readonly': True},
+        'aggregation_type': {'readonly': True},
+        'dimensions': {'readonly': True},
     }
 
     _attribute_map = {
-        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
+        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
     }
 
     def __init__(self, **kwargs):
-        super(MetricProperties, self).__init__(**kwargs)
-        self.service_specification = None
+        super(MetricSpecification, self).__init__(**kwargs)
+        self.name = None
+        self.display_name = None
+        self.display_description = None
+        self.unit = None
+        self.aggregation_type = None
+        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
+        self.dimensions = None
 
 
 class MultiBitrateFormat(Format):
@@ -4365,7 +4587,7 @@ class Operation(Model):
     :param origin: Origin of the operation.
     :type origin: str
     :param properties: Operation properties format.
-    :type properties: ~azure.mgmt.media.models.MetricProperties
+    :type properties: ~azure.mgmt.media.models.Properties
     """
 
     _validation = {
@@ -4376,7 +4598,7 @@ class Operation(Model):
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
         'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'MetricProperties'},
+        'properties': {'key': 'properties', 'type': 'Properties'},
     }
 
     def __init__(self, **kwargs):
@@ -4486,15 +4708,19 @@ class PngImage(Image):
     :type label: str
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param key_frame_interval: The distance between two key frames, thereby
-     defining a group of pictures (GOP). The value should be a non-zero integer
-     in the range [1, 30] seconds, specified in ISO 8601 format. The default is
-     2 seconds (PT2S).
+    :param key_frame_interval: The distance between two key frames. The value
+     should be non-zero in the range [0.5, 20] seconds, specified in ISO 8601
+     format. The default is 2 seconds(PT2S). Note that this setting is ignored
+     if VideoSyncMode.Passthrough is set, where the KeyFrameInterval value will
+     follow the input source setting.
     :type key_frame_interval: timedelta
     :param stretch_mode: The resizing mode - how the input video will be
      resized to fit the desired output resolution(s). Default is AutoSize.
      Possible values include: 'None', 'AutoSize', 'AutoFit'
     :type stretch_mode: str or ~azure.mgmt.media.models.StretchMode
+    :param sync_mode: The Video Sync Mode. Possible values include: 'Auto',
+     'Passthrough', 'Cfr', 'Vfr'
+    :type sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
     :param start: Required. The position in the input video from where to
      start generating thumbnails. The value can be in absolute timestamp (ISO
      8601, e.g: PT05S), or a frame count (For example, 10 for the 10th frame),
@@ -4527,6 +4753,7 @@ class PngImage(Image):
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
         'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
+        'sync_mode': {'key': 'syncMode', 'type': 'str'},
         'start': {'key': 'start', 'type': 'str'},
         'step': {'key': 'step', 'type': 'str'},
         'range': {'key': 'range', 'type': 'str'},
@@ -4614,6 +4841,215 @@ class PresentationTimeRange(Model):
         self.force_end_timestamp = kwargs.get('force_end_timestamp', None)
 
 
+class PrivateEndpoint(Model):
+    """The Private Endpoint resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ARM identifier for Private Endpoint
+    :vartype id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpoint, self).__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """The Private Endpoint Connection resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param private_endpoint: The resource of private end point.
+    :type private_endpoint: ~azure.mgmt.media.models.PrivateEndpoint
+    :param private_link_service_connection_state: Required. A collection of
+     information about the state of the connection between service consumer and
+     provider.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.media.models.PrivateLinkServiceConnectionState
+    :param provisioning_state: The provisioning state of the private endpoint
+     connection resource. Possible values include: 'Succeeded', 'Creating',
+     'Deleting', 'Failed'
+    :type provisioning_state: str or
+     ~azure.mgmt.media.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'private_link_service_connection_state': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+
+
+class PrivateEndpointConnectionListResult(Model):
+    """List of private endpoint connection associated with the specified storage
+    account.
+
+    :param value: Array of private endpoint connections
+    :type value: list[~azure.mgmt.media.models.PrivateEndpointConnection]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :param required_zone_names: The private link resource Private link DNS
+     zone name.
+    :type required_zone_names: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+        self.required_zone_names = kwargs.get('required_zone_names', None)
+
+
+class PrivateLinkResourceListResult(Model):
+    """A list of private link resources.
+
+    :param value: Array of private link resources
+    :type value: list[~azure.mgmt.media.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class PrivateLinkServiceConnectionState(Model):
+    """A collection of information about the state of the connection between
+    service consumer and provider.
+
+    :param status: Indicates whether the connection has been
+     Approved/Rejected/Removed by the owner of the service. Possible values
+     include: 'Pending', 'Approved', 'Rejected'
+    :type status: str or
+     ~azure.mgmt.media.models.PrivateEndpointServiceConnectionStatus
+    :param description: The reason for approval/rejection of the connection.
+    :type description: str
+    :param actions_required: A message indicating if changes on the service
+     provider require any updates on the consumer.
+    :type actions_required: str
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = kwargs.get('actions_required', None)
+
+
+class Properties(Model):
+    """The service specification property.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar service_specification: The service specifications.
+    :vartype service_specification:
+     ~azure.mgmt.media.models.ServiceSpecification
+    """
+
+    _validation = {
+        'service_specification': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Properties, self).__init__(**kwargs)
+        self.service_specification = None
+
+
 class Provider(Model):
     """A resource provider.
 
@@ -4679,20 +5115,27 @@ class ServiceSpecification(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar log_specifications: List of log specifications.
+    :vartype log_specifications:
+     list[~azure.mgmt.media.models.LogSpecification]
     :ivar metric_specifications: List of metric specifications.
-    :vartype metric_specifications: list[~azure.mgmt.media.models.Metric]
+    :vartype metric_specifications:
+     list[~azure.mgmt.media.models.MetricSpecification]
     """
 
     _validation = {
+        'log_specifications': {'readonly': True},
         'metric_specifications': {'readonly': True},
     }
 
     _attribute_map = {
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[Metric]'},
+        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
+        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
     }
 
     def __init__(self, **kwargs):
         super(ServiceSpecification, self).__init__(**kwargs)
+        self.log_specifications = None
         self.metric_specifications = None
 
 
@@ -4797,15 +5240,17 @@ class StreamingEndpoint(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param location: The Azure Region of the resource.
+    :param location: Required. The geo-location where the resource lives
     :type location: str
     :param description: The StreamingEndpoint description.
     :type description: str
@@ -4855,6 +5300,7 @@ class StreamingEndpoint(TrackedResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'scale_units': {'required': True},
         'host_name': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -4952,11 +5398,13 @@ class StreamingLocator(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param asset_name: Required. Asset Name
     :type asset_name: str
@@ -5122,11 +5570,13 @@ class StreamingPolicy(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :ivar created: Creation time of Streaming Policy
     :vartype created: datetime
@@ -5305,51 +5755,6 @@ class StreamingPolicyWidevineConfiguration(Model):
         self.custom_license_acquisition_url_template = kwargs.get('custom_license_acquisition_url_template', None)
 
 
-class SubscriptionMediaService(TrackedResource):
-    """A Media Services account.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param location: The Azure Region of the resource.
-    :type location: str
-    :ivar media_service_id: The Media Services account ID.
-    :vartype media_service_id: str
-    :param storage_accounts: The storage accounts for this resource.
-    :type storage_accounts: list[~azure.mgmt.media.models.StorageAccount]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'media_service_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'media_service_id': {'key': 'properties.mediaServiceId', 'type': 'str'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubscriptionMediaService, self).__init__(**kwargs)
-        self.media_service_id = None
-        self.storage_accounts = kwargs.get('storage_accounts', None)
-
-
 class SyncStorageKeysInput(Model):
     """The input to the sync storage keys request.
 
@@ -5429,11 +5834,13 @@ class Transform(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :ivar created: The UTC date and time when the Transform was created, in
      'YYYY-MM-DDThh:mm:ssZ' format.

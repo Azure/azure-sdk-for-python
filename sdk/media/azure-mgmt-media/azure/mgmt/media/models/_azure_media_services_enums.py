@@ -48,6 +48,39 @@ class StorageAccountType(str, Enum):
     secondary = "Secondary"  #: A secondary storage account for the Media Services account.
 
 
+class StorageAuthentication(str, Enum):
+
+    system = "System"  #: System authentication.
+    managed_identity = "ManagedIdentity"  #: Managed Identity authentication.
+
+
+class AccountEncryptionKeyType(str, Enum):
+
+    system_key = "SystemKey"  #: The Account Key is encrypted with a System Key.
+    customer_key = "CustomerKey"  #: The Account Key is encrypted with a Customer Key.
+
+
+class ManagedIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"  #: A system-assigned managed identity.
+    none = "None"  #: No managed identity.
+
+
+class PrivateEndpointConnectionProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    creating = "Creating"
+    deleting = "Deleting"
+    failed = "Failed"
+
+
+class PrivateEndpointServiceConnectionStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+
+
 class AssetStorageEncryptionFormat(str, Enum):
 
     none = "None"  #: The Asset does not use client-side storage encryption (this is the only allowed value for new Assets).
@@ -120,6 +153,14 @@ class StretchMode(str, Enum):
     auto_fit = "AutoFit"  #: Pad the output (with either letterbox or pillar box) to honor the output resolution, while ensuring that the active video region in the output has the same aspect ratio as the input. For example, if the input is 1920x1080 and the encoding preset asks for 1280x1280, then the output will be at 1280x1280, which contains an inner rectangle of 1280x720 at aspect ratio of 16:9, and pillar box regions 280 pixels wide at the left and right.
 
 
+class VideoSyncMode(str, Enum):
+
+    auto = "Auto"  #: This is the default method. Chooses between Cfr and Vfr depending on muxer capabilities. For output format MP4, the default mode is Cfr.
+    passthrough = "Passthrough"  #: The presentation timestamps on frames are passed through from the input file to the output file writer. Recommended when the input source has variable frame rate, and are attempting to produce multiple layers for adaptive streaming in the output which have aligned GOP boundaries. Note: if two or more frames in the input have duplicate timestamps, then the output will also have the same behavior
+    cfr = "Cfr"  #: Input frames will be repeated and/or dropped as needed to achieve exactly the requested constant frame rate. Recommended when the output frame rate is explicitly set at a specified value
+    vfr = "Vfr"  #: Similar to the Passthrough mode, but if the input has frames that have duplicate timestamps, then only one frame is passed through to the output, and others are dropped. Recommended when the number of output frames is expected to be equal to the number of input frames. For example, the output is used to calculate a quality metric like PSNR against the input
+
+
 class DeinterlaceParity(str, Enum):
 
     auto = "Auto"  #: Automatically detect the order of fields
@@ -168,16 +209,16 @@ class H264Complexity(str, Enum):
 
 class EncoderNamedPreset(str, Enum):
 
-    h264_single_bitrate_sd = "H264SingleBitrateSD"  #: Produces an MP4 file where the video is encoded with H.264 codec at 2200 kbps and a picture height of 480 pixels, and the stereo audio is encoded with AAC-LC codec at 64 kbps.
-    h264_single_bitrate720p = "H264SingleBitrate720p"  #: Produces an MP4 file where the video is encoded with H.264 codec at 4500 kbps and a picture height of 720 pixels, and the stereo audio is encoded with AAC-LC codec at 64 kbps.
-    h264_single_bitrate1080p = "H264SingleBitrate1080p"  #: Produces an MP4 file where the video is encoded with H.264 codec at 6750 kbps and a picture height of 1080 pixels, and the stereo audio is encoded with AAC-LC codec at 64 kbps.
+    h264_single_bitrate_sd = "H264SingleBitrateSD"  #: Produces an MP4 file where the video is encoded with H.264 codec at 2200 kbps and a picture height of 480 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
+    h264_single_bitrate720p = "H264SingleBitrate720p"  #: Produces an MP4 file where the video is encoded with H.264 codec at 4500 kbps and a picture height of 720 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
+    h264_single_bitrate1080p = "H264SingleBitrate1080p"  #: Produces an MP4 file where the video is encoded with H.264 codec at 6750 kbps and a picture height of 1080 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
     adaptive_streaming = "AdaptiveStreaming"  #: Produces a set of GOP aligned MP4 files with H.264 video and stereo AAC audio. Auto-generates a bitrate ladder based on the input resolution and bitrate. The auto-generated preset will never exceed the input resolution and bitrate. For example, if the input is 720p at 3 Mbps, output will remain 720p at best, and will start at rates lower than 3 Mbps. The output will have video and audio in separate MP4 files, which is optimal for adaptive streaming.
     aac_good_quality_audio = "AACGoodQualityAudio"  #: Produces a single MP4 file containing only stereo audio encoded at 192 kbps.
     content_aware_encoding_experimental = "ContentAwareEncodingExperimental"  #: Exposes an experimental preset for content-aware encoding. Given any input content, the service attempts to automatically determine the optimal number of layers, appropriate bitrate and resolution settings for delivery by adaptive streaming. The underlying algorithms will continue to evolve over time. The output will contain MP4 files with video and audio interleaved.
     content_aware_encoding = "ContentAwareEncoding"  #: Produces a set of GOP-aligned MP4s by using content-aware encoding. Given any input content, the service performs an initial lightweight analysis of the input content, and uses the results to determine the optimal number of layers, appropriate bitrate and resolution settings for delivery by adaptive streaming. This preset is particularly effective for low and medium complexity videos, where the output files will be at lower bitrates but at a quality that still delivers a good experience to viewers. The output will contain MP4 files with video and audio interleaved.
-    h264_multiple_bitrate1080p = "H264MultipleBitrate1080p"  #: Produces a set of 8 GOP-aligned MP4 files, ranging from 6000 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 1080p and goes down to 360p.
-    h264_multiple_bitrate720p = "H264MultipleBitrate720p"  #: Produces a set of 6 GOP-aligned MP4 files, ranging from 3400 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 720p and goes down to 360p.
-    h264_multiple_bitrate_sd = "H264MultipleBitrateSD"  #: Produces a set of 5 GOP-aligned MP4 files, ranging from 1600kbps to 400 kbps, and stereo AAC audio. Resolution starts at 480p and goes down to 360p.
+    h264_multiple_bitrate1080p = "H264MultipleBitrate1080p"  #: Produces a set of 8 GOP-aligned MP4 files, ranging from 6000 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 1080p and goes down to 180p.
+    h264_multiple_bitrate720p = "H264MultipleBitrate720p"  #: Produces a set of 6 GOP-aligned MP4 files, ranging from 3400 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 720p and goes down to 180p.
+    h264_multiple_bitrate_sd = "H264MultipleBitrateSD"  #: Produces a set of 5 GOP-aligned MP4 files, ranging from 1900kbps to 400 kbps, and stereo AAC audio. Resolution starts at 480p and goes down to 240p.
 
 
 class InsightsType(str, Enum):
