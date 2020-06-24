@@ -351,8 +351,9 @@ class ImageTemplateFileCustomizer(ImageTemplateCustomizer):
 class ImageTemplateIdentity(Model):
     """Identity for the image template.
 
-    :param type: The type of identity used for the image template. Possible
-     values include: 'UserAssigned'
+    :param type: The type of identity used for the image template. The type
+     'None' will remove any identities from the image template. Possible values
+     include: 'UserAssigned', 'None'
     :type type: str or ~azure.mgmt.imagebuilder.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated
      with the image template. The user identity dictionary key references will
