@@ -17,7 +17,7 @@ from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -174,7 +174,7 @@ class KeyVaultClientOperationsMixin(object):
     def set_certificate_contacts(
         self,
         vault_base_url,  # type: str
-        contact_list=None,  # type: Optional[List["models.Contact"]]
+        contacts,  # type: "models.Contacts"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.Contacts"
@@ -185,8 +185,8 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param contact_list: The contact list for the vault certificates.
-        :type contact_list: list[~azure.keyvault.v7_1.models.Contact]
+        :param contacts: The contacts for the key vault certificate.
+        :type contacts: ~azure.keyvault.v7_1.models.Contacts
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Contacts, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_1.models.Contacts
@@ -195,8 +195,6 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Contacts"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _contacts = models.Contacts(contact_list=contact_list)
         api_version = "7.1-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -217,7 +215,7 @@ class KeyVaultClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_contacts, 'Contacts')
+        body_content = self._serialize.body(contacts, 'Contacts')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -433,10 +431,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         issuer_name,  # type: str
-        provider,  # type: str
-        credentials=None,  # type: Optional["models.IssuerCredentials"]
-        organization_details=None,  # type: Optional["models.OrganizationDetails"]
-        attributes=None,  # type: Optional["models.IssuerAttributes"]
+        parameter,  # type: "models.CertificateIssuerSetParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.IssuerBundle"
@@ -449,14 +444,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param issuer_name: The name of the issuer.
         :type issuer_name: str
-        :param provider: The issuer provider.
-        :type provider: str
-        :param credentials: The credentials to be used for the issuer.
-        :type credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
-        :param organization_details: Details of the organization as provided to the issuer.
-        :type organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
-        :param attributes: Attributes of the issuer object.
-        :type attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
+        :param parameter: Certificate issuer set parameter.
+        :type parameter: ~azure.keyvault.v7_1.models.CertificateIssuerSetParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IssuerBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_1.models.IssuerBundle
@@ -465,8 +454,6 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.IssuerBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameter = models.CertificateIssuerSetParameters(provider=provider, credentials=credentials, organization_details=organization_details, attributes=attributes)
         api_version = "7.1-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -488,7 +475,7 @@ class KeyVaultClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameter, 'CertificateIssuerSetParameters')
+        body_content = self._serialize.body(parameter, 'CertificateIssuerSetParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -512,10 +499,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         issuer_name,  # type: str
-        provider=None,  # type: Optional[str]
-        credentials=None,  # type: Optional["models.IssuerCredentials"]
-        organization_details=None,  # type: Optional["models.OrganizationDetails"]
-        attributes=None,  # type: Optional["models.IssuerAttributes"]
+        parameter,  # type: "models.CertificateIssuerUpdateParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.IssuerBundle"
@@ -528,14 +512,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param issuer_name: The name of the issuer.
         :type issuer_name: str
-        :param provider: The issuer provider.
-        :type provider: str
-        :param credentials: The credentials to be used for the issuer.
-        :type credentials: ~azure.keyvault.v7_1.models.IssuerCredentials
-        :param organization_details: Details of the organization as provided to the issuer.
-        :type organization_details: ~azure.keyvault.v7_1.models.OrganizationDetails
-        :param attributes: Attributes of the issuer object.
-        :type attributes: ~azure.keyvault.v7_1.models.IssuerAttributes
+        :param parameter: Certificate issuer update parameter.
+        :type parameter: ~azure.keyvault.v7_1.models.CertificateIssuerUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IssuerBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_1.models.IssuerBundle
@@ -544,8 +522,6 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.IssuerBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameter = models.CertificateIssuerUpdateParameters(provider=provider, credentials=credentials, organization_details=organization_details, attributes=attributes)
         api_version = "7.1-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -567,7 +543,7 @@ class KeyVaultClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameter, 'CertificateIssuerUpdateParameters')
+        body_content = self._serialize.body(parameter, 'CertificateIssuerUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -710,9 +686,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        certificate_policy=None,  # type: Optional["models.CertificatePolicy"]
-        certificate_attributes=None,  # type: Optional["models.CertificateAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.CertificateCreateParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.CertificateOperation"
@@ -725,12 +699,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
-        :param certificate_policy: The management policy for the certificate.
-        :type certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
-        :param certificate_attributes: The attributes of the certificate (optional).
-        :type certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters to create a certificate.
+        :type parameters: ~azure.keyvault.v7_1.models.CertificateCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_1.models.CertificateOperation
@@ -739,8 +709,6 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateOperation"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.CertificateCreateParameters(certificate_policy=certificate_policy, certificate_attributes=certificate_attributes, tags=tags)
         api_version = "7.1-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -762,7 +730,7 @@ class KeyVaultClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'CertificateCreateParameters')
+        body_content = self._serialize.body(parameters, 'CertificateCreateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -786,11 +754,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        base64_encoded_certificate,  # type: str
-        password=None,  # type: Optional[str]
-        certificate_policy=None,  # type: Optional["models.CertificatePolicy"]
-        certificate_attributes=None,  # type: Optional["models.CertificateAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.CertificateImportParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.CertificateBundle"
@@ -805,18 +769,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
-        :param base64_encoded_certificate: Base64 encoded representation of the certificate object to
-         import. This certificate needs to contain the private key.
-        :type base64_encoded_certificate: str
-        :param password: If the private key in base64EncodedCertificate is encrypted, the password used
-         for encryption.
-        :type password: str
-        :param certificate_policy: The management policy for the certificate.
-        :type certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
-        :param certificate_attributes: The attributes of the certificate (optional).
-        :type certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters to import the certificate.
+        :type parameters: ~azure.keyvault.v7_1.models.CertificateImportParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_1.models.CertificateBundle
@@ -825,8 +779,6 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.CertificateImportParameters(base64_encoded_certificate=base64_encoded_certificate, password=password, certificate_policy=certificate_policy, certificate_attributes=certificate_attributes, tags=tags)
         api_version = "7.1-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -848,7 +800,7 @@ class KeyVaultClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'CertificateImportParameters')
+        body_content = self._serialize.body(parameters, 'CertificateImportParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -1086,9 +1038,7 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         certificate_name,  # type: str
         certificate_version,  # type: str
-        certificate_policy=None,  # type: Optional["models.CertificatePolicy"]
-        certificate_attributes=None,  # type: Optional["models.CertificateAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.CertificateUpdateParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.CertificateBundle"
@@ -1104,12 +1054,8 @@ class KeyVaultClientOperationsMixin(object):
         :type certificate_name: str
         :param certificate_version: The version of the certificate.
         :type certificate_version: str
-        :param certificate_policy: The management policy for the certificate.
-        :type certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
-        :param certificate_attributes: The attributes of the certificate (optional).
-        :type certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters for certificate update.
+        :type parameters: ~azure.keyvault.v7_1.models.CertificateUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_1.models.CertificateBundle
@@ -1118,8 +1064,6 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.CertificateUpdateParameters(certificate_policy=certificate_policy, certificate_attributes=certificate_attributes, tags=tags)
         api_version = "7.1-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -1142,7 +1086,7 @@ class KeyVaultClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'CertificateUpdateParameters')
+        body_content = self._serialize.body(parameters, 'CertificateUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -1230,7 +1174,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        cancellation_requested,  # type: bool
+        certificate_operation,  # type: "models.CertificateOperationUpdateParameter"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.CertificateOperation"
@@ -1243,9 +1187,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
-        :param cancellation_requested: Indicates if cancellation was requested on the certificate
-         operation.
-        :type cancellation_requested: bool
+        :param certificate_operation: The certificate operation response.
+        :type certificate_operation: ~azure.keyvault.v7_1.models.CertificateOperationUpdateParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_1.models.CertificateOperation
@@ -1254,8 +1197,6 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateOperation"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _certificate_operation = models.CertificateOperationUpdateParameter(cancellation_requested=cancellation_requested)
         api_version = "7.1-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -1277,7 +1218,7 @@ class KeyVaultClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_certificate_operation, 'CertificateOperationUpdateParameter')
+        body_content = self._serialize.body(certificate_operation, 'CertificateOperationUpdateParameter')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -1420,9 +1361,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        x509_certificates,  # type: List[bytearray]
-        certificate_attributes=None,  # type: Optional["models.CertificateAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.CertificateMergeParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.CertificateBundle"
@@ -1436,12 +1375,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
-        :param x509_certificates: The certificate or the certificate chain to merge.
-        :type x509_certificates: list[bytearray]
-        :param certificate_attributes: The attributes of the certificate (optional).
-        :type certificate_attributes: ~azure.keyvault.v7_1.models.CertificateAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters to merge certificate.
+        :type parameters: ~azure.keyvault.v7_1.models.CertificateMergeParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_1.models.CertificateBundle
@@ -1450,8 +1385,6 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.CertificateMergeParameters(x509_certificates=x509_certificates, certificate_attributes=certificate_attributes, tags=tags)
         api_version = "7.1-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -1473,7 +1406,7 @@ class KeyVaultClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'CertificateMergeParameters')
+        body_content = self._serialize.body(parameters, 'CertificateMergeParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 
@@ -1556,7 +1489,7 @@ class KeyVaultClientOperationsMixin(object):
     def restore_certificate(
         self,
         vault_base_url,  # type: str
-        certificate_bundle_backup,  # type: bytes
+        parameters,  # type: "models.CertificateRestoreParameters"
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.CertificateBundle"
@@ -1567,8 +1500,8 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param certificate_bundle_backup: The backup blob associated with a certificate bundle.
-        :type certificate_bundle_backup: bytes
+        :param parameters: The parameters to restore the certificate.
+        :type parameters: ~azure.keyvault.v7_1.models.CertificateRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_1.models.CertificateBundle
@@ -1577,8 +1510,6 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = models.CertificateRestoreParameters(certificate_bundle_backup=certificate_bundle_backup)
         api_version = "7.1-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -1599,7 +1530,7 @@ class KeyVaultClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'CertificateRestoreParameters')
+        body_content = self._serialize.body(parameters, 'CertificateRestoreParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
 

@@ -19,7 +19,7 @@ from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, List, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 
 
 class KeyVaultClientOperationsMixin(object):
@@ -174,9 +174,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        certificate_policy=None,  # type: Optional["models.CertificatePolicy"]
-        certificate_attributes=None,  # type: Optional["models.CertificateAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.CertificateCreateParameters"
         **kwargs  # type: Any
     ):
         """Creates a new certificate.
@@ -188,12 +186,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
-        :param certificate_policy: The management policy for the certificate.
-        :type certificate_policy: ~azure.keyvault.v7_2.models.CertificatePolicy
-        :param certificate_attributes: The attributes of the certificate (optional).
-        :type certificate_attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters to create a certificate.
+        :type parameters: ~azure.keyvault.v7_2.models.CertificateCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_2.models.CertificateOperation
@@ -215,18 +209,13 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.create_certificate(vault_base_url, certificate_name, certificate_policy, certificate_attributes, tags, **kwargs)
+        return mixin_instance.create_certificate(vault_base_url, certificate_name, parameters, **kwargs)
 
     def create_key(
         self,
         vault_base_url,  # type: str
         key_name,  # type: str
-        kty,  # type: Union[str, "models.JsonWebKeyType"]
-        key_size=None,  # type: Optional[int]
-        key_ops=None,  # type: Optional[List[Union[str, "models.JsonWebKeyOperation"]]]
-        key_attributes=None,  # type: Optional["models.KeyAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
-        curve=None,  # type: Optional[Union[str, "models.JsonWebKeyCurveName"]]
+        parameters,  # type: "models.KeyCreateParameters"
         **kwargs  # type: Any
     ):
         """Creates a new key, stores it, then returns key parameters and attributes to the client.
@@ -240,18 +229,8 @@ class KeyVaultClientOperationsMixin(object):
         :param key_name: The name for the new key. The system will generate the version name for the
          new key.
         :type key_name: str
-        :param kty: The type of key to create. For valid values, see JsonWebKeyType.
-        :type kty: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
-        :param key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
-        :type key_size: int
-        :param key_ops:
-        :type key_ops: list[str or ~azure.keyvault.v7_0.models.JsonWebKeyOperation]
-        :param key_attributes: The attributes of a key managed by the key vault service.
-        :type key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
-        :param curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName.
-        :type curve: str or ~azure.keyvault.v7_0.models.JsonWebKeyCurveName
+        :param parameters: The parameters to create a key.
+        :type parameters: ~azure.keyvault.v7_0.models.KeyCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.KeyBundle
@@ -269,15 +248,14 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.create_key(vault_base_url, key_name, kty, key_size, key_ops, key_attributes, tags, curve, **kwargs)
+        return mixin_instance.create_key(vault_base_url, key_name, parameters, **kwargs)
 
     def decrypt(
         self,
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        algorithm,  # type: Union[str, "models.JsonWebKeyEncryptionAlgorithm"]
-        value,  # type: bytes
+        parameters,  # type: "models.KeyOperationsParameters"
         **kwargs  # type: Any
     ):
         """Decrypts a single block of encrypted data.
@@ -295,10 +273,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key.
         :type key_version: str
-        :param algorithm: algorithm identifier.
-        :type algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
-        :param value:
-        :type value: bytes
+        :param parameters: The parameters for the decryption operation.
+        :type parameters: ~azure.keyvault.v7_0.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
@@ -316,7 +292,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.decrypt(vault_base_url, key_name, key_version, algorithm, value, **kwargs)
+        return mixin_instance.decrypt(vault_base_url, key_name, key_version, parameters, **kwargs)
 
     def delete_certificate(
         self,
@@ -610,8 +586,7 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        algorithm,  # type: Union[str, "models.JsonWebKeyEncryptionAlgorithm"]
-        value,  # type: bytes
+        parameters,  # type: "models.KeyOperationsParameters"
         **kwargs  # type: Any
     ):
         """Encrypts an arbitrary sequence of bytes using an encryption key that is stored in a key vault.
@@ -631,10 +606,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key.
         :type key_version: str
-        :param algorithm: algorithm identifier.
-        :type algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
-        :param value:
-        :type value: bytes
+        :param parameters: The parameters for the encryption operation.
+        :type parameters: ~azure.keyvault.v7_0.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
@@ -652,7 +625,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.encrypt(vault_base_url, key_name, key_version, algorithm, value, **kwargs)
+        return mixin_instance.encrypt(vault_base_url, key_name, key_version, parameters, **kwargs)
 
     def get_certificate(
         self,
@@ -1698,11 +1671,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        base64_encoded_certificate,  # type: str
-        password=None,  # type: Optional[str]
-        certificate_policy=None,  # type: Optional["models.CertificatePolicy"]
-        certificate_attributes=None,  # type: Optional["models.CertificateAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.CertificateImportParameters"
         **kwargs  # type: Any
     ):
         """Imports a certificate into a specified key vault.
@@ -1716,18 +1685,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
-        :param base64_encoded_certificate: Base64 encoded representation of the certificate object to
-         import. This certificate needs to contain the private key.
-        :type base64_encoded_certificate: str
-        :param password: If the private key in base64EncodedCertificate is encrypted, the password used
-         for encryption.
-        :type password: str
-        :param certificate_policy: The management policy for the certificate.
-        :type certificate_policy: ~azure.keyvault.v7_2.models.CertificatePolicy
-        :param certificate_attributes: The attributes of the certificate (optional).
-        :type certificate_attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters to import the certificate.
+        :type parameters: ~azure.keyvault.v7_2.models.CertificateImportParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_2.models.CertificateBundle
@@ -1749,16 +1708,13 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.import_certificate(vault_base_url, certificate_name, base64_encoded_certificate, password, certificate_policy, certificate_attributes, tags, **kwargs)
+        return mixin_instance.import_certificate(vault_base_url, certificate_name, parameters, **kwargs)
 
     def import_key(
         self,
         vault_base_url,  # type: str
         key_name,  # type: str
-        key,  # type: "models.JsonWebKey"
-        hsm=None,  # type: Optional[bool]
-        key_attributes=None,  # type: Optional["models.KeyAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.KeyImportParameters"
         **kwargs  # type: Any
     ):
         """Imports an externally created key, stores it, and returns key parameters and attributes to the client.
@@ -1771,14 +1727,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param key_name: Name for the imported key.
         :type key_name: str
-        :param key: The Json web key.
-        :type key: ~azure.keyvault.v7_0.models.JsonWebKey
-        :param hsm: Whether to import as a hardware key (HSM) or software key.
-        :type hsm: bool
-        :param key_attributes: The key management attributes.
-        :type key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters to import a key.
+        :type parameters: ~azure.keyvault.v7_0.models.KeyImportParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.KeyBundle
@@ -1796,15 +1746,13 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.import_key(vault_base_url, key_name, key, hsm, key_attributes, tags, **kwargs)
+        return mixin_instance.import_key(vault_base_url, key_name, parameters, **kwargs)
 
     def merge_certificate(
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        x509_certificates,  # type: List[bytearray]
-        certificate_attributes=None,  # type: Optional["models.CertificateAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.CertificateMergeParameters"
         **kwargs  # type: Any
     ):
         """Merges a certificate or a certificate chain with a key pair existing on the server.
@@ -1817,12 +1765,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
-        :param x509_certificates: The certificate or the certificate chain to merge.
-        :type x509_certificates: list[bytearray]
-        :param certificate_attributes: The attributes of the certificate (optional).
-        :type certificate_attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters to merge certificate.
+        :type parameters: ~azure.keyvault.v7_2.models.CertificateMergeParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_2.models.CertificateBundle
@@ -1844,7 +1788,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.merge_certificate(vault_base_url, certificate_name, x509_certificates, certificate_attributes, tags, **kwargs)
+        return mixin_instance.merge_certificate(vault_base_url, certificate_name, parameters, **kwargs)
 
     def purge_deleted_certificate(
         self,
@@ -2171,7 +2115,7 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url,  # type: str
         storage_account_name,  # type: str
-        key_name,  # type: str
+        parameters,  # type: "models.StorageAccountRegenerteKeyParameters"
         **kwargs  # type: Any
     ):
         """Regenerates the specified key value for the given storage account. This operation requires the
@@ -2181,8 +2125,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
-        :param key_name: The storage account key name.
-        :type key_name: str
+        :param parameters: The parameters to regenerate storage account key.
+        :type parameters: ~azure.keyvault.v7_0.models.StorageAccountRegenerteKeyParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.StorageBundle
@@ -2200,12 +2144,12 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.regenerate_storage_account_key(vault_base_url, storage_account_name, key_name, **kwargs)
+        return mixin_instance.regenerate_storage_account_key(vault_base_url, storage_account_name, parameters, **kwargs)
 
     def restore_certificate(
         self,
         vault_base_url,  # type: str
-        certificate_bundle_backup,  # type: bytes
+        parameters,  # type: "models.CertificateRestoreParameters"
         **kwargs  # type: Any
     ):
         """Restores a backed up certificate to a vault.
@@ -2215,8 +2159,8 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param certificate_bundle_backup: The backup blob associated with a certificate bundle.
-        :type certificate_bundle_backup: bytes
+        :param parameters: The parameters to restore the certificate.
+        :type parameters: ~azure.keyvault.v7_2.models.CertificateRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_2.models.CertificateBundle
@@ -2236,12 +2180,12 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.restore_certificate(vault_base_url, certificate_bundle_backup, **kwargs)
+        return mixin_instance.restore_certificate(vault_base_url, parameters, **kwargs)
 
     def restore_key(
         self,
         vault_base_url,  # type: str
-        key_bundle_backup,  # type: bytes
+        parameters,  # type: "models.KeyRestoreParameters"
         **kwargs  # type: Any
     ):
         """Restores a backed up key to a vault.
@@ -2259,8 +2203,8 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_bundle_backup: The backup blob associated with a key bundle.
-        :type key_bundle_backup: bytes
+        :param parameters: The parameters to restore the key.
+        :type parameters: ~azure.keyvault.v7_0.models.KeyRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.KeyBundle
@@ -2278,12 +2222,12 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.restore_key(vault_base_url, key_bundle_backup, **kwargs)
+        return mixin_instance.restore_key(vault_base_url, parameters, **kwargs)
 
     def restore_secret(
         self,
         vault_base_url,  # type: str
-        secret_bundle_backup,  # type: bytes
+        parameters,  # type: "models.SecretRestoreParameters"
         **kwargs  # type: Any
     ):
         """Restores a backed up secret to a vault.
@@ -2293,8 +2237,8 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param secret_bundle_backup: The backup blob associated with a secret bundle.
-        :type secret_bundle_backup: bytes
+        :param parameters: The parameters to restore the secret.
+        :type parameters: ~azure.keyvault.v7_0.models.SecretRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.SecretBundle
@@ -2312,12 +2256,12 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.restore_secret(vault_base_url, secret_bundle_backup, **kwargs)
+        return mixin_instance.restore_secret(vault_base_url, parameters, **kwargs)
 
     def restore_storage_account(
         self,
         vault_base_url,  # type: str
-        storage_bundle_backup,  # type: bytes
+        parameters,  # type: "models.StorageRestoreParameters"
         **kwargs  # type: Any
     ):
         """Restores a backed up storage account to a vault.
@@ -2327,8 +2271,8 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param storage_bundle_backup: The backup blob associated with a storage account.
-        :type storage_bundle_backup: bytes
+        :param parameters: The parameters to restore the storage account.
+        :type parameters: ~azure.keyvault.v7_0.models.StorageRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.StorageBundle
@@ -2344,12 +2288,12 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.restore_storage_account(vault_base_url, storage_bundle_backup, **kwargs)
+        return mixin_instance.restore_storage_account(vault_base_url, parameters, **kwargs)
 
     def set_certificate_contacts(
         self,
         vault_base_url,  # type: str
-        contact_list=None,  # type: Optional[List["models.Contact"]]
+        contacts,  # type: "models.Contacts"
         **kwargs  # type: Any
     ):
         """Sets the certificate contacts for the specified key vault.
@@ -2359,8 +2303,8 @@ class KeyVaultClientOperationsMixin(object):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param contact_list: The contact list for the vault certificates.
-        :type contact_list: list[~azure.keyvault.v7_2.models.Contact]
+        :param contacts: The contacts for the key vault certificate.
+        :type contacts: ~azure.keyvault.v7_2.models.Contacts
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Contacts, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_2.models.Contacts
@@ -2382,16 +2326,13 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.set_certificate_contacts(vault_base_url, contact_list, **kwargs)
+        return mixin_instance.set_certificate_contacts(vault_base_url, contacts, **kwargs)
 
     def set_certificate_issuer(
         self,
         vault_base_url,  # type: str
         issuer_name,  # type: str
-        provider,  # type: str
-        credentials=None,  # type: Optional["models.IssuerCredentials"]
-        organization_details=None,  # type: Optional["models.OrganizationDetails"]
-        attributes=None,  # type: Optional["models.IssuerAttributes"]
+        parameter,  # type: "models.CertificateIssuerSetParameters"
         **kwargs  # type: Any
     ):
         """Sets the specified certificate issuer.
@@ -2403,14 +2344,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param issuer_name: The name of the issuer.
         :type issuer_name: str
-        :param provider: The issuer provider.
-        :type provider: str
-        :param credentials: The credentials to be used for the issuer.
-        :type credentials: ~azure.keyvault.v7_2.models.IssuerCredentials
-        :param organization_details: Details of the organization as provided to the issuer.
-        :type organization_details: ~azure.keyvault.v7_2.models.OrganizationDetails
-        :param attributes: Attributes of the issuer object.
-        :type attributes: ~azure.keyvault.v7_2.models.IssuerAttributes
+        :param parameter: Certificate issuer set parameter.
+        :type parameter: ~azure.keyvault.v7_2.models.CertificateIssuerSetParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IssuerBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_2.models.IssuerBundle
@@ -2432,18 +2367,14 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.set_certificate_issuer(vault_base_url, issuer_name, provider, credentials, organization_details, attributes, **kwargs)
+        return mixin_instance.set_certificate_issuer(vault_base_url, issuer_name, parameter, **kwargs)
 
     def set_sas_definition(
         self,
         vault_base_url,  # type: str
         storage_account_name,  # type: str
         sas_definition_name,  # type: str
-        template_uri,  # type: str
-        sas_type,  # type: Union[str, "models.SasTokenType"]
-        validity_period,  # type: str
-        sas_definition_attributes=None,  # type: Optional["models.SasDefinitionAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.SasDefinitionCreateParameters"
         **kwargs  # type: Any
     ):
         """Creates or updates a new SAS definition for the specified storage account. This operation
@@ -2455,18 +2386,8 @@ class KeyVaultClientOperationsMixin(object):
         :type storage_account_name: str
         :param sas_definition_name: The name of the SAS definition.
         :type sas_definition_name: str
-        :param template_uri: The SAS definition token template signed with an arbitrary key.  Tokens
-         created according to the SAS definition will have the same properties as the template.
-        :type template_uri: str
-        :param sas_type: The type of SAS token the SAS definition will create.
-        :type sas_type: str or ~azure.keyvault.v7_0.models.SasTokenType
-        :param validity_period: The validity period of SAS tokens created according to the SAS
-         definition.
-        :type validity_period: str
-        :param sas_definition_attributes: The attributes of the SAS definition.
-        :type sas_definition_attributes: ~azure.keyvault.v7_0.models.SasDefinitionAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters to create a SAS definition.
+        :type parameters: ~azure.keyvault.v7_0.models.SasDefinitionCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SasDefinitionBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.SasDefinitionBundle
@@ -2484,16 +2405,13 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.set_sas_definition(vault_base_url, storage_account_name, sas_definition_name, template_uri, sas_type, validity_period, sas_definition_attributes, tags, **kwargs)
+        return mixin_instance.set_sas_definition(vault_base_url, storage_account_name, sas_definition_name, parameters, **kwargs)
 
     def set_secret(
         self,
         vault_base_url,  # type: str
         secret_name,  # type: str
-        value,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
-        content_type_parameter=None,  # type: Optional[str]
-        secret_attributes=None,  # type: Optional["models.SecretAttributes"]
+        parameters,  # type: "models.SecretSetParameters"
         **kwargs  # type: Any
     ):
         """Sets a secret in a specified key vault.
@@ -2506,14 +2424,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param secret_name: The name of the secret.
         :type secret_name: str
-        :param value: The value of the secret.
-        :type value: str
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
-        :param content_type_parameter: Type of the secret value such as a password.
-        :type content_type_parameter: str
-        :param secret_attributes: The secret management attributes.
-        :type secret_attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+        :param parameters: The parameters for setting the secret.
+        :type parameters: ~azure.keyvault.v7_0.models.SecretSetParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.SecretBundle
@@ -2531,18 +2443,13 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.set_secret(vault_base_url, secret_name, value, tags, content_type_parameter, secret_attributes, **kwargs)
+        return mixin_instance.set_secret(vault_base_url, secret_name, parameters, **kwargs)
 
     def set_storage_account(
         self,
         vault_base_url,  # type: str
         storage_account_name,  # type: str
-        resource_id,  # type: str
-        active_key_name,  # type: str
-        auto_regenerate_key,  # type: bool
-        regeneration_period=None,  # type: Optional[str]
-        storage_account_attributes=None,  # type: Optional["models.StorageAccountAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.StorageAccountCreateParameters"
         **kwargs  # type: Any
     ):
         """Creates or updates a new storage account. This operation requires the storage/set permission.
@@ -2551,18 +2458,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
-        :param resource_id: Storage account resource id.
-        :type resource_id: str
-        :param active_key_name: Current active storage account key name.
-        :type active_key_name: str
-        :param auto_regenerate_key: whether keyvault should manage the storage account for the user.
-        :type auto_regenerate_key: bool
-        :param regeneration_period: The key regeneration time duration specified in ISO-8601 format.
-        :type regeneration_period: str
-        :param storage_account_attributes: The attributes of the storage account.
-        :type storage_account_attributes: ~azure.keyvault.v7_0.models.StorageAccountAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters to create a storage account.
+        :type parameters: ~azure.keyvault.v7_0.models.StorageAccountCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.StorageBundle
@@ -2580,15 +2477,14 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.set_storage_account(vault_base_url, storage_account_name, resource_id, active_key_name, auto_regenerate_key, regeneration_period, storage_account_attributes, tags, **kwargs)
+        return mixin_instance.set_storage_account(vault_base_url, storage_account_name, parameters, **kwargs)
 
     def sign(
         self,
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        algorithm,  # type: Union[str, "models.JsonWebKeySignatureAlgorithm"]
-        value,  # type: bytes
+        parameters,  # type: "models.KeySignParameters"
         **kwargs  # type: Any
     ):
         """Creates a signature from a digest using the specified key.
@@ -2603,11 +2499,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key.
         :type key_version: str
-        :param algorithm: The signing/verification algorithm identifier. For more information on
-         possible algorithm types, see JsonWebKeySignatureAlgorithm.
-        :type algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeySignatureAlgorithm
-        :param value:
-        :type value: bytes
+        :param parameters: The parameters for the signing operation.
+        :type parameters: ~azure.keyvault.v7_0.models.KeySignParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
@@ -2625,15 +2518,14 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.sign(vault_base_url, key_name, key_version, algorithm, value, **kwargs)
+        return mixin_instance.sign(vault_base_url, key_name, key_version, parameters, **kwargs)
 
     def unwrap_key(
         self,
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        algorithm,  # type: Union[str, "models.JsonWebKeyEncryptionAlgorithm"]
-        value,  # type: bytes
+        parameters,  # type: "models.KeyOperationsParameters"
         **kwargs  # type: Any
     ):
         """Unwraps a symmetric key using the specified key that was initially used for wrapping that key.
@@ -2649,10 +2541,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key.
         :type key_version: str
-        :param algorithm: algorithm identifier.
-        :type algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
-        :param value:
-        :type value: bytes
+        :param parameters: The parameters for the key operation.
+        :type parameters: ~azure.keyvault.v7_0.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
@@ -2670,16 +2560,14 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.unwrap_key(vault_base_url, key_name, key_version, algorithm, value, **kwargs)
+        return mixin_instance.unwrap_key(vault_base_url, key_name, key_version, parameters, **kwargs)
 
     def update_certificate(
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
         certificate_version,  # type: str
-        certificate_policy=None,  # type: Optional["models.CertificatePolicy"]
-        certificate_attributes=None,  # type: Optional["models.CertificateAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.CertificateUpdateParameters"
         **kwargs  # type: Any
     ):
         """Updates the specified attributes associated with the given certificate.
@@ -2694,12 +2582,8 @@ class KeyVaultClientOperationsMixin(object):
         :type certificate_name: str
         :param certificate_version: The version of the certificate.
         :type certificate_version: str
-        :param certificate_policy: The management policy for the certificate.
-        :type certificate_policy: ~azure.keyvault.v7_2.models.CertificatePolicy
-        :param certificate_attributes: The attributes of the certificate (optional).
-        :type certificate_attributes: ~azure.keyvault.v7_2.models.CertificateAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters for certificate update.
+        :type parameters: ~azure.keyvault.v7_2.models.CertificateUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_2.models.CertificateBundle
@@ -2721,16 +2605,13 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.update_certificate(vault_base_url, certificate_name, certificate_version, certificate_policy, certificate_attributes, tags, **kwargs)
+        return mixin_instance.update_certificate(vault_base_url, certificate_name, certificate_version, parameters, **kwargs)
 
     def update_certificate_issuer(
         self,
         vault_base_url,  # type: str
         issuer_name,  # type: str
-        provider=None,  # type: Optional[str]
-        credentials=None,  # type: Optional["models.IssuerCredentials"]
-        organization_details=None,  # type: Optional["models.OrganizationDetails"]
-        attributes=None,  # type: Optional["models.IssuerAttributes"]
+        parameter,  # type: "models.CertificateIssuerUpdateParameters"
         **kwargs  # type: Any
     ):
         """Updates the specified certificate issuer.
@@ -2742,14 +2623,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param issuer_name: The name of the issuer.
         :type issuer_name: str
-        :param provider: The issuer provider.
-        :type provider: str
-        :param credentials: The credentials to be used for the issuer.
-        :type credentials: ~azure.keyvault.v7_2.models.IssuerCredentials
-        :param organization_details: Details of the organization as provided to the issuer.
-        :type organization_details: ~azure.keyvault.v7_2.models.OrganizationDetails
-        :param attributes: Attributes of the issuer object.
-        :type attributes: ~azure.keyvault.v7_2.models.IssuerAttributes
+        :param parameter: Certificate issuer update parameter.
+        :type parameter: ~azure.keyvault.v7_2.models.CertificateIssuerUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IssuerBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_2.models.IssuerBundle
@@ -2771,13 +2646,13 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.update_certificate_issuer(vault_base_url, issuer_name, provider, credentials, organization_details, attributes, **kwargs)
+        return mixin_instance.update_certificate_issuer(vault_base_url, issuer_name, parameter, **kwargs)
 
     def update_certificate_operation(
         self,
         vault_base_url,  # type: str
         certificate_name,  # type: str
-        cancellation_requested,  # type: bool
+        certificate_operation,  # type: "models.CertificateOperationUpdateParameter"
         **kwargs  # type: Any
     ):
         """Updates a certificate operation.
@@ -2789,9 +2664,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
-        :param cancellation_requested: Indicates if cancellation was requested on the certificate
-         operation.
-        :type cancellation_requested: bool
+        :param certificate_operation: The certificate operation response.
+        :type certificate_operation: ~azure.keyvault.v7_2.models.CertificateOperationUpdateParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_2.models.CertificateOperation
@@ -2813,7 +2687,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.update_certificate_operation(vault_base_url, certificate_name, cancellation_requested, **kwargs)
+        return mixin_instance.update_certificate_operation(vault_base_url, certificate_name, certificate_operation, **kwargs)
 
     def update_certificate_policy(
         self,
@@ -2861,9 +2735,7 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        key_ops=None,  # type: Optional[List[Union[str, "models.JsonWebKeyOperation"]]]
-        key_attributes=None,  # type: Optional["models.KeyAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.KeyUpdateParameters"
         **kwargs  # type: Any
     ):
         """The update key operation changes specified attributes of a stored key and can be applied to any key type and key version stored in Azure Key Vault.
@@ -2878,13 +2750,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key to update.
         :type key_version: str
-        :param key_ops: Json web key operations. For more information on possible key operations, see
-         JsonWebKeyOperation.
-        :type key_ops: list[str or ~azure.keyvault.v7_0.models.JsonWebKeyOperation]
-        :param key_attributes: The attributes of a key managed by the key vault service.
-        :type key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters of the key to update.
+        :type parameters: ~azure.keyvault.v7_0.models.KeyUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.KeyBundle
@@ -2902,18 +2769,14 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.update_key(vault_base_url, key_name, key_version, key_ops, key_attributes, tags, **kwargs)
+        return mixin_instance.update_key(vault_base_url, key_name, key_version, parameters, **kwargs)
 
     def update_sas_definition(
         self,
         vault_base_url,  # type: str
         storage_account_name,  # type: str
         sas_definition_name,  # type: str
-        template_uri=None,  # type: Optional[str]
-        sas_type=None,  # type: Optional[Union[str, "models.SasTokenType"]]
-        validity_period=None,  # type: Optional[str]
-        sas_definition_attributes=None,  # type: Optional["models.SasDefinitionAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.SasDefinitionUpdateParameters"
         **kwargs  # type: Any
     ):
         """Updates the specified attributes associated with the given SAS definition. This operation
@@ -2925,18 +2788,8 @@ class KeyVaultClientOperationsMixin(object):
         :type storage_account_name: str
         :param sas_definition_name: The name of the SAS definition.
         :type sas_definition_name: str
-        :param template_uri: The SAS definition token template signed with an arbitrary key.  Tokens
-         created according to the SAS definition will have the same properties as the template.
-        :type template_uri: str
-        :param sas_type: The type of SAS token the SAS definition will create.
-        :type sas_type: str or ~azure.keyvault.v7_0.models.SasTokenType
-        :param validity_period: The validity period of SAS tokens created according to the SAS
-         definition.
-        :type validity_period: str
-        :param sas_definition_attributes: The attributes of the SAS definition.
-        :type sas_definition_attributes: ~azure.keyvault.v7_0.models.SasDefinitionAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters to update a SAS definition.
+        :type parameters: ~azure.keyvault.v7_0.models.SasDefinitionUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SasDefinitionBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.SasDefinitionBundle
@@ -2954,16 +2807,14 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.update_sas_definition(vault_base_url, storage_account_name, sas_definition_name, template_uri, sas_type, validity_period, sas_definition_attributes, tags, **kwargs)
+        return mixin_instance.update_sas_definition(vault_base_url, storage_account_name, sas_definition_name, parameters, **kwargs)
 
     def update_secret(
         self,
         vault_base_url,  # type: str
         secret_name,  # type: str
         secret_version,  # type: str
-        content_type_parameter=None,  # type: Optional[str]
-        secret_attributes=None,  # type: Optional["models.SecretAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.SecretUpdateParameters"
         **kwargs  # type: Any
     ):
         """Updates the attributes associated with a specified secret in a given key vault.
@@ -2978,12 +2829,8 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :param secret_version: The version of the secret.
         :type secret_version: str
-        :param content_type_parameter: Type of the secret value such as a password.
-        :type content_type_parameter: str
-        :param secret_attributes: The secret management attributes.
-        :type secret_attributes: ~azure.keyvault.v7_0.models.SecretAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters for update secret operation.
+        :type parameters: ~azure.keyvault.v7_0.models.SecretUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.SecretBundle
@@ -3001,17 +2848,13 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.update_secret(vault_base_url, secret_name, secret_version, content_type_parameter, secret_attributes, tags, **kwargs)
+        return mixin_instance.update_secret(vault_base_url, secret_name, secret_version, parameters, **kwargs)
 
     def update_storage_account(
         self,
         vault_base_url,  # type: str
         storage_account_name,  # type: str
-        active_key_name=None,  # type: Optional[str]
-        auto_regenerate_key=None,  # type: Optional[bool]
-        regeneration_period=None,  # type: Optional[str]
-        storage_account_attributes=None,  # type: Optional["models.StorageAccountAttributes"]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "models.StorageAccountUpdateParameters"
         **kwargs  # type: Any
     ):
         """Updates the specified attributes associated with the given storage account. This operation
@@ -3021,16 +2864,8 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
-        :param active_key_name: The current active storage account key name.
-        :type active_key_name: str
-        :param auto_regenerate_key: whether keyvault should manage the storage account for the user.
-        :type auto_regenerate_key: bool
-        :param regeneration_period: The key regeneration time duration specified in ISO-8601 format.
-        :type regeneration_period: str
-        :param storage_account_attributes: The attributes of the storage account.
-        :type storage_account_attributes: ~azure.keyvault.v7_0.models.StorageAccountAttributes
-        :param tags: Application specific metadata in the form of key-value pairs.
-        :type tags: dict[str, str]
+        :param parameters: The parameters to update a storage account.
+        :type parameters: ~azure.keyvault.v7_0.models.StorageAccountUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageBundle, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.StorageBundle
@@ -3048,16 +2883,14 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.update_storage_account(vault_base_url, storage_account_name, active_key_name, auto_regenerate_key, regeneration_period, storage_account_attributes, tags, **kwargs)
+        return mixin_instance.update_storage_account(vault_base_url, storage_account_name, parameters, **kwargs)
 
     def verify(
         self,
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        algorithm,  # type: Union[str, "models.JsonWebKeySignatureAlgorithm"]
-        digest,  # type: bytes
-        signature,  # type: bytes
+        parameters,  # type: "models.KeyVerifyParameters"
         **kwargs  # type: Any
     ):
         """Verifies a signature using a specified key.
@@ -3074,13 +2907,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key.
         :type key_version: str
-        :param algorithm: The signing/verification algorithm. For more information on possible
-         algorithm types, see JsonWebKeySignatureAlgorithm.
-        :type algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeySignatureAlgorithm
-        :param digest: The digest used for signing.
-        :type digest: bytes
-        :param signature: The signature to be verified.
-        :type signature: bytes
+        :param parameters: The parameters for verify operations.
+        :type parameters: ~azure.keyvault.v7_0.models.KeyVerifyParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyVerifyResult, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.KeyVerifyResult
@@ -3098,15 +2926,14 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.verify(vault_base_url, key_name, key_version, algorithm, digest, signature, **kwargs)
+        return mixin_instance.verify(vault_base_url, key_name, key_version, parameters, **kwargs)
 
     def wrap_key(
         self,
         vault_base_url,  # type: str
         key_name,  # type: str
         key_version,  # type: str
-        algorithm,  # type: Union[str, "models.JsonWebKeyEncryptionAlgorithm"]
-        value,  # type: bytes
+        parameters,  # type: "models.KeyOperationsParameters"
         **kwargs  # type: Any
     ):
         """Wraps a symmetric key using a specified key.
@@ -3124,10 +2951,8 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param key_version: The version of the key.
         :type key_version: str
-        :param algorithm: algorithm identifier.
-        :type algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
-        :param value:
-        :type value: bytes
+        :param parameters: The parameters for wrap operation.
+        :type parameters: ~azure.keyvault.v7_0.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
         :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
@@ -3145,4 +2970,4 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.wrap_key(vault_base_url, key_name, key_version, algorithm, value, **kwargs)
+        return mixin_instance.wrap_key(vault_base_url, key_name, key_version, parameters, **kwargs)

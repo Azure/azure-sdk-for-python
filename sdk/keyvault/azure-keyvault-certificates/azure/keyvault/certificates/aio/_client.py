@@ -85,18 +85,22 @@ class CertificateClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 5
         enabled = kwargs.pop("enabled", None)
-        tags = kwargs.pop("tags", None)
 
         if enabled is not None:
             attributes = self._models.CertificateAttributes(enabled=enabled)
         else:
             attributes = None
+
+        parameters = self._models.CertificateCreateParameters(
+            certificate_policy=policy._to_certificate_policy_bundle(),
+            certificate_attributes=attributes,
+            tags=kwargs.pop("tags", None)
+        )
+
         cert_bundle = await self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=certificate_name,
-            certificate_policy=policy._to_certificate_policy_bundle(),
-            certificate_attributes=attributes,
-            tags=tags,
+            parameters=parameters,
             error_map=_error_map,
             **kwargs
         )
@@ -330,7 +334,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
 
         enabled = kwargs.pop("enabled", None)
-        password = kwargs.pop("password", None)
         policy = kwargs.pop("policy", None)
 
         if enabled is not None:
@@ -338,13 +341,19 @@ class CertificateClient(AsyncKeyVaultClientBase):
         else:
             attributes = None
         base64_encoded_certificate = base64.b64encode(certificate_bytes).decode("utf-8")
+
+        parameters = self._models.CertificateImportParameters(
+            base64_encoded_certificate=base64_encoded_certificate,
+            password=kwargs.pop("password", None),
+            certificate_policy=policy._to_certificate_policy_bundle(),
+            certificate_attributes=attributes,
+            tags=None,
+        )
+
         bundle = await self._client.import_certificate(
             vault_base_url=self.vault_url,
             certificate_name=certificate_name,
-            base64_encoded_certificate=base64_encoded_certificate,
-            password=password,
-            certificate_policy=CertificatePolicy._to_certificate_policy_bundle(policy),
-            certificate_attributes=attributes,
+            parameters=parameters,
             error_map=_error_map,
             **kwargs
         )
@@ -421,11 +430,16 @@ class CertificateClient(AsyncKeyVaultClientBase):
         else:
             attributes = None
 
+        parameters = self._models.CertificateUpdateParameters(
+            certificate_attributes=attributes,
+            tags=kwargs.pop("tags", None)
+        )
+
         bundle = await self._client.update_certificate(
             vault_base_url=self.vault_url,
             certificate_name=certificate_name,
             certificate_version=version or "",
-            certificate_attributes=attributes,
+            parameters=parameters,
             error_map=_error_map,
             **kwargs
         )
@@ -482,7 +496,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         bundle = await self._client.restore_certificate(
-            vault_base_url=self.vault_url, certificate_bundle_backup=backup, error_map=_error_map, **kwargs
+            vault_base_url=self.vault_url,
+            parameters=self._models.CertificateRestoreParameters(certificate_bundle_backup=backup),
+            error_map=_error_map,
+            **kwargs
         )
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
@@ -603,7 +620,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         contacts = await self._client.set_certificate_contacts(
             vault_base_url=self.vault_url,
-            contact_list=[c._to_certificate_contacts_item() for c in contacts],
+            contacts=self._models.Contacts(contact_list=[c._to_certificate_contacts_item() for c in contacts]),
             error_map=_error_map,
             **kwargs
         )
@@ -706,7 +723,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         bundle = await self._client.update_certificate_operation(
             vault_base_url=self.vault_url,
             certificate_name=certificate_name,
-            cancellation_requested=True,
+            certificate_operation=self._models.CertificateOperationUpdateParameter(cancellation_requested=True),
             error_map=_error_map,
             **kwargs
         )
@@ -741,11 +758,17 @@ class CertificateClient(AsyncKeyVaultClientBase):
             attributes = self._models.CertificateAttributes(enabled=enabled)
         else:
             attributes = None
+
+        parameters = self._models.CertificateMergeParameters(
+            x509_certificates=x509_certificates,
+            certificate_attributes=attributes,
+            tags=kwargs.pop("tags", None)
+        )
+
         bundle = await self._client.merge_certificate(
             vault_base_url=self.vault_url,
             certificate_name=certificate_name,
-            x509_certificates=x509_certificates,
-            certificate_attributes=attributes,
+            parameters=parameters,
             error_map=_error_map,
             **kwargs
         )
@@ -833,13 +856,18 @@ class CertificateClient(AsyncKeyVaultClientBase):
             issuer_attributes = self._models.IssuerAttributes(enabled=enabled)
         else:
             issuer_attributes = None
-        issuer_bundle = await self._client.set_certificate_issuer(
-            vault_base_url=self.vault_url,
-            issuer_name=issuer_name,
+
+        parameters = self._models.CertificateIssuerSetParameters(
             provider=provider,
             credentials=issuer_credentials,
             organization_details=organization_details,
             attributes=issuer_attributes,
+        )
+
+        issuer_bundle = await self._client.set_certificate_issuer(
+            vault_base_url=self.vault_url,
+            issuer_name=issuer_name,
+            parameter=parameters,
             error_map=_error_map,
             **kwargs
         )
@@ -864,7 +892,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
 
         enabled = kwargs.pop("enabled", None)
-        provider = kwargs.pop("provider", None)
         account_id = kwargs.pop("account_id", None)
         password = kwargs.pop("password", None)
         organization_id = kwargs.pop("organization_id", None)
@@ -896,13 +923,18 @@ class CertificateClient(AsyncKeyVaultClientBase):
             issuer_attributes = self._models.IssuerAttributes(enabled=enabled)
         else:
             issuer_attributes = None
+
+        parameters = self._models.CertificateIssuerUpdateParameters(
+            provider=kwargs.pop("provider", None),
+            credentials=issuer_credentials,
+            organization_details=organization_details,
+            attributes=issuer_attributes
+        )
+
         issuer_bundle = await self._client.update_certificate_issuer(
             vault_base_url=self.vault_url,
             issuer_name=issuer_name,
-            provider=provider,
-            credentials=issuer_credentials,
-            organization_details=organization_details,
-            attributes=issuer_attributes,
+            parameter=parameters,
             error_map=_error_map,
             **kwargs
         )

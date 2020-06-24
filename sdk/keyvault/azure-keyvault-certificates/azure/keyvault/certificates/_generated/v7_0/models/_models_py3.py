@@ -238,7 +238,8 @@ class CertificateAttributes(Attributes):
      in the current vault. If it contains 'Purgeable', the certificate can be permanently deleted by
      a privileged user; otherwise, only the system can purge the certificate, at the end of the
      retention interval. Possible values include: "Purgeable", "Recoverable+Purgeable",
-     "Recoverable", "Recoverable+ProtectedSubscription".
+     "Recoverable", "Recoverable+ProtectedSubscription", "CustomizedRecoverable+Purgeable",
+     "CustomizedRecoverable", "CustomizedRecoverable+ProtectedSubscription".
     :vartype recovery_level: str or ~azure.keyvault.v7_0.models.DeletionRecoveryLevel
     """
 
@@ -2359,7 +2360,8 @@ class KeyAttributes(Attributes):
      current vault. If it contains 'Purgeable' the key can be permanently deleted by a privileged
      user; otherwise, only the system can purge the key, at the end of the retention interval.
      Possible values include: "Purgeable", "Recoverable+Purgeable", "Recoverable",
-     "Recoverable+ProtectedSubscription".
+     "Recoverable+ProtectedSubscription", "CustomizedRecoverable+Purgeable",
+     "CustomizedRecoverable", "CustomizedRecoverable+ProtectedSubscription".
     :vartype recovery_level: str or ~azure.keyvault.v7_0.models.DeletionRecoveryLevel
     """
 
@@ -2902,7 +2904,9 @@ class SasDefinitionAttributes(msrest.serialization.Model):
      definitions in the current vault. If it contains 'Purgeable' the SAS definition can be
      permanently deleted by a privileged user; otherwise, only the system can purge the SAS
      definition, at the end of the retention interval. Possible values include: "Purgeable",
-     "Recoverable+Purgeable", "Recoverable", "Recoverable+ProtectedSubscription".
+     "Recoverable+Purgeable", "Recoverable", "Recoverable+ProtectedSubscription",
+     "CustomizedRecoverable+Purgeable", "CustomizedRecoverable",
+     "CustomizedRecoverable+ProtectedSubscription".
     :vartype recovery_level: str or ~azure.keyvault.v7_0.models.DeletionRecoveryLevel
     """
 
@@ -3078,7 +3082,8 @@ class SecretAttributes(Attributes):
      the current vault. If it contains 'Purgeable', the secret can be permanently deleted by a
      privileged user; otherwise, only the system can purge the secret, at the end of the retention
      interval. Possible values include: "Purgeable", "Recoverable+Purgeable", "Recoverable",
-     "Recoverable+ProtectedSubscription".
+     "Recoverable+ProtectedSubscription", "CustomizedRecoverable+Purgeable",
+     "CustomizedRecoverable", "CustomizedRecoverable+ProtectedSubscription".
     :vartype recovery_level: str or ~azure.keyvault.v7_0.models.DeletionRecoveryLevel
     """
 
@@ -3276,7 +3281,9 @@ class StorageAccountAttributes(msrest.serialization.Model):
      accounts in the current vault. If it contains 'Purgeable' the storage account can be
      permanently deleted by a privileged user; otherwise, only the system can purge the storage
      account, at the end of the retention interval. Possible values include: "Purgeable",
-     "Recoverable+Purgeable", "Recoverable", "Recoverable+ProtectedSubscription".
+     "Recoverable+Purgeable", "Recoverable", "Recoverable+ProtectedSubscription",
+     "CustomizedRecoverable+Purgeable", "CustomizedRecoverable",
+     "CustomizedRecoverable+ProtectedSubscription".
     :vartype recovery_level: str or ~azure.keyvault.v7_0.models.DeletionRecoveryLevel
     """
 
