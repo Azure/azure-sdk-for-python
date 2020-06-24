@@ -33,6 +33,7 @@
 /sdk/hdinsight/                                                      @idear1203
 /sdk/machinelearningcompute/                                         @shutchings
 /sdk/recoveryservices/                                               @DheerendraRathor
+/sdk/search/                                                         @xiangyan99
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
 /sql/sql/                                                            @jaredmoo
 /sdk/servicebus/                                                     @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
