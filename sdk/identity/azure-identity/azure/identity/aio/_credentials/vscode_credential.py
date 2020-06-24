@@ -18,7 +18,13 @@ if TYPE_CHECKING:
 class VSCodeCredential(AsyncCredentialBase):
     """Authenticates by redeeming a refresh token previously saved by VS Code
 
-        """
+    :keyword int refresh_retry_timeout: the amount of time to wait before retrying a token refresh in seconds,
+          default to 30s.
+    :keyword int token_refresh_offset: the amount of time to subtract from the token expiry time, whereupon
+          attempts will be made to refresh the token. By default this will occur two minutes prior to the expiry
+          of the token.
+
+    """
 
     def __init__(self, **kwargs):
         self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)

@@ -32,6 +32,11 @@ class ManagedIdentityCredential(AsyncCredentialBase):
       or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
       learn what values it expects.
     :paramtype identity_config: Mapping[str, str]
+    :keyword int refresh_retry_timeout: the amount of time to wait before retrying a token refresh in seconds,
+      default to 30s.
+    :keyword int token_refresh_offset: the amount of time to subtract from the token expiry time, whereupon
+      attempts will be made to refresh the token. By default this will occur two minutes prior to the expiry of the
+      token.
     """
 
     def __init__(self, **kwargs: "Any") -> None:
