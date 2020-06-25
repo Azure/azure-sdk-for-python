@@ -15,14 +15,16 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class EnrollmentAccountsOperations(object):
-    """EnrollmentAccountsOperations operations.
+class AgreementsOperations(object):
+    """AgreementsOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-03-01-preview. Constant value: "2018-03-01-preview".
+    :ivar api_version: The version of the API to be used with the client request. The current version is 2020-05-01. Constant value: "2020-05-01".
     """
 
     models = models
@@ -32,34 +34,44 @@ class EnrollmentAccountsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
+        self.api_version = "2020-05-01"
 
         self.config = config
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists the enrollment accounts the caller has access to.
+    def list_by_billing_account(
+            self, billing_account_name, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Lists the agreements for a billing account.
 
+        :param billing_account_name: The ID that uniquely identifies a billing
+         account.
+        :type billing_account_name: str
+        :param expand: May be used to expand the participants.
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of EnrollmentAccount
+        :return: An iterator like instance of Agreement
         :rtype:
-         ~azure.mgmt.billing.models.EnrollmentAccountPaged[~azure.mgmt.billing.models.EnrollmentAccount]
+         ~azure.mgmt.billing.models.AgreementPaged[~azure.mgmt.billing.models.Agreement]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_billing_account.metadata['url']
+                path_format_arguments = {
+                    'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
             else:
                 url = next_link
@@ -67,7 +79,7 @@ class EnrollmentAccountsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -76,9 +88,13 @@ class EnrollmentAccountsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -86,29 +102,32 @@ class EnrollmentAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.EnrollmentAccountPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.EnrollmentAccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.AgreementPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/enrollmentAccounts'}
+    list_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/agreements'}
 
     def get(
-            self, name, custom_headers=None, raw=False, **operation_config):
-        """Gets a enrollment account by name.
+            self, billing_account_name, agreement_name, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Gets an agreement by ID.
 
-        :param name: Enrollment Account name.
-        :type name: str
+        :param billing_account_name: The ID that uniquely identifies a billing
+         account.
+        :type billing_account_name: str
+        :param agreement_name: The ID that uniquely identifies an agreement.
+        :type agreement_name: str
+        :param expand: May be used to expand the participants.
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: EnrollmentAccount or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.EnrollmentAccount or
+        :return: Agreement or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.Agreement or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -116,17 +135,20 @@ class EnrollmentAccountsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'name': self._serialize.url("name", name, 'str')
+            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+            'agreementName': self._serialize.url("agreement_name", agreement_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -135,20 +157,19 @@ class EnrollmentAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('EnrollmentAccount', response)
+            deserialized = self._deserialize('Agreement', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Billing/enrollmentAccounts/{name}'}
+    get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/agreements/{agreementName}'}
