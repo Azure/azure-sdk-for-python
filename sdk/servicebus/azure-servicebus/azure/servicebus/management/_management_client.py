@@ -12,7 +12,10 @@ from azure.core.paging import ItemPaged
 from ._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
     QueueDescriptionEntry, SubscriptionDescriptionFeed, SubscriptionDescriptionEntry, RuleDescriptionEntry, \
     RuleDescriptionFeed, NamespacePropertiesEntry, CreateTopicBody, CreateTopicBodyContent, \
-    TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, CreateRuleBodyContent
+    TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, \
+    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, \
+    QueueDescription as InternalQueueDescription, TopicDescription as InternalTopicDescription, \
+    SubscriptionDescription as InternalSubscriptionDescription, RuleDescription as InternalRuleDescription
 from ._utils import extract_data_template, get_next_template
 from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from msrest.exceptions import ValidationError
@@ -27,11 +30,8 @@ from .._common.utils import parse_conn_str
 from .._base_handler import ServiceBusSharedKeyCredential
 from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from ._generated._configuration import ServiceBusManagementClientConfiguration
-from ._generated.models import CreateQueueBody, CreateQueueBodyContent, \
-    QueueDescription as InternalQueueDescription, TopicDescription as InternalTopicDescription, \
-    SubscriptionDescription as InternalSubscriptionDescription, RuleDescription as InternalRuleDescription
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
-from ._model_workaround import QUEUE_DESCRIPTION_SERIALIZE_ATTRIBUTES, avoid_timedelta_overflow
+from ._model_workaround import avoid_timedelta_overflow
 from . import _constants as constants
 from ._models import QueueRuntimeInfo, QueueDescription, TopicDescription, TopicRuntimeInfo, \
     SubscriptionDescription, SubscriptionRuntimeInfo, RuleDescription
@@ -160,7 +160,7 @@ class ServiceBusManagementClient:
         if not entry.content:
             raise ResourceNotFoundError("Queue {} does not exist".format(queue_name))
         runtime_info = QueueRuntimeInfo._from_internal_entity(entry.content.queue_description)
-        runtime_info.queue_name = queue_name
+        runtime_info.name = queue_name
         return runtime_info
 
     def create_queue(self, queue, **kwargs):
@@ -225,6 +225,8 @@ class ServiceBusManagementClient:
         :rtype: ~azure.servicebus.management.QueueDescription
         """
 
+        # TODO: validate whether a queue_description has enough information
+
         if not isinstance(queue_description, QueueDescription):
             raise TypeError("queue_description must be of type QueueDescription")
 
@@ -266,7 +268,7 @@ class ServiceBusManagementClient:
                                 "including non-empty string name")
 
     def delete_queue(self, queue, **kwargs):
-        # type: (str, Union[str, QueueDescription]) -> None
+        # type: (Union[str, QueueDescription], Any) -> None
         """Delete a queue.
 
         :param Union[str, azure.servicebus.management.QueueDescription] queue: The name of the queue.
@@ -411,6 +413,8 @@ class ServiceBusManagementClient:
         :keyword timedelta duplicate_detection_history_time_window:
         :rtype： None
         """
+
+        # TODO: validate whether topic_description has enough information (refer to the create_topic response)
         if not isinstance(topic_description, TopicDescription):
             raise TypeError("topic_description must be of type TopicDescription")
 
@@ -577,15 +581,16 @@ class ServiceBusManagementClient:
                         subscription_name,  # type: ignore
                         request_body, api_version=constants.API_VERSION, **kwargs)
                 )
-        except ValidationError as e:
+        except ValidationError:
             # post-hoc try to give a somewhat-justifiable failure reason.
+            # TODO: validate param topic
             if isinstance(subscription, (six.string_types, SubscriptionDescription)):
                 raise_with_traceback(
                     ValueError,
                     message="subscription must be a non-empty str or a SubscriptionDescription with non-empty str name")
             raise_with_traceback(
                 TypeError,
-                message="subscription must be a non-empty str or a QueueDescription with non-empty str name")
+                message="subscription must be a non-empty str or a SubscriptionDescription with non-empty str name")
 
         entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
         result = SubscriptionDescription._from_internal_entity(entry.content.subscription_description)
@@ -595,10 +600,11 @@ class ServiceBusManagementClient:
     def update_subscription(self, topic, subscription_description, **kwargs):
         """
 
-        :param Union[str, TopicDescription]
+        :param Union[str, TopicDescription] topic:
         :param ~azure.servicebus.management.SubscriptionDescription subscription:
         :rtype: None
         """
+        # TODO: validate param topic and whether subscription_description has enough properties.
         try:
             topic_name = topic.name
         except AttributeError:
@@ -731,6 +737,7 @@ class ServiceBusManagementClient:
         :param Union[str, ~azure.servicebus.management.RuleDescription] rule:
         :rtype: ~azure.servicebus.management.RuleDescription
         """
+        # TODO: validate param topic, subscription and rule.
         try:
             topic_name = topic.name
         except AttributeError:
@@ -770,6 +777,7 @@ class ServiceBusManagementClient:
         :param ~azure.servicebus.management.RuleDescription rule_description:
         :rtype: None
         """
+        # TODO: validate param topic, subscription and rule_description.
         try:
             topic_name = topic.name
         except AttributeError:
@@ -804,7 +812,7 @@ class ServiceBusManagementClient:
 
         :param Union[str, TopicDescription] topic:
         :param Union[str, SubscriptionDescription] subscription:
-        :param str rule:
+        :param Union[str, RuleDescription] subscription:
         :rtype: None
         """
         try:

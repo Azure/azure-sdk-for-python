@@ -1,7 +1,6 @@
 from typing import cast, Union
 from xml.etree.ElementTree import ElementTree
 
-from azure.core.exceptions import ResourceNotFoundError
 
 try:
     import urllib.parse as urlparse
