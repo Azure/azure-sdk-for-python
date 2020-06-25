@@ -334,14 +334,15 @@ for more information.
 
 
 ```py
+from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 
-client = SearchClient(
-            endpoint, index_name, AzureKeyCredential(api_key)
-        )
+client = SearchClient(endpoint, index_name, AzureKeyCredential(api_key))
 
 async with client:
   results = await client.search(search_text="hotel")
+  async for result in results:
+    print("{}: {})".format(result["hotelId"], result["hotelName"]))
 ...
 
 

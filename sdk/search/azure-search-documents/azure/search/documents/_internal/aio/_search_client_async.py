@@ -11,7 +11,7 @@ from .._generated.aio import SearchIndexClient
 from .._generated.models import IndexBatch, IndexingResult
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
-from ..._api_versions import get_api_version
+from ..._api_versions import check_api_version
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
 
@@ -48,7 +48,9 @@ class SearchClient(HeadersMixin):
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, AzureKeyCredential, **Any) -> None
 
-        get_api_version(kwargs, "2019-05-06-Preview")
+        api_version = kwargs.pop('api_version', None)
+        if api_version:
+            check_api_version(api_version)
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._credential = credential  # type: AzureKeyCredential
@@ -112,68 +114,54 @@ class SearchClient(HeadersMixin):
 
         :param str search_text: A full-text search query expression; Use "*" or omit this parameter to
         match all documents.
-        :keyword include_total_result_count: A value that specifies whether to fetch the total count of
+        :keyword bool include_total_result_count: A value that specifies whether to fetch the total count of
         results. Default is false. Setting this value to true may have a performance impact. Note that
         the count returned is an approximation.
-        :type include_total_result_count: bool
-        :keyword facets: The list of facet expressions to apply to the search query. Each facet
+        :keyword list[str] facets: The list of facet expressions to apply to the search query. Each facet
          expression contains a field name, optionally followed by a comma-separated list of name:value
          pairs.
-        :type facets: list[str]
-        :keyword filter: The OData $filter expression to apply to the search query.
-        :type filter: str
-        :keyword highlight_fields: The list of field names to use for hit highlights. Only searchable
+        :keyword str filter: The OData $filter expression to apply to the search query.
+        :keyword list[str] highlight_fields: The list of field names to use for hit highlights. Only searchable
          fields can be used for hit highlighting.
-        :type highlight_fields: list[str]
-        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+        :keyword str highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
          highlightPreTag. Default is &lt;/em&gt;.
-        :type highlight_post_tag: str
-        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+        :keyword str highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
          highlightPostTag. Default is &lt;em&gt;.
-        :type highlight_pre_tag: str
-        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+        :keyword float minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
          must be covered by a search query in order for the query to be reported as a success. This
          parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 100.
-        :type minimum_coverage: float
-        :keyword order_by: The list of OData $orderby expressions by which to sort the results. Each
+        :keyword list[str] order_by: The list of OData $orderby expressions by which to sort the results. Each
          expression can be either a field name or a call to either the geo.distance() or the
          search.score() functions. Each expression can be followed by asc to indicate ascending, and
          desc to indicate descending. The default is ascending order. Ties will be broken by the match
          scores of documents. If no OrderBy is specified, the default sort order is descending by
          document match score. There can be at most 32 $orderby clauses.
-        :type order_by: list[str]
         :keyword query_type: A value that specifies the syntax of the search query. The default is
          'simple'. Use 'full' if your query uses the Lucene query syntax. Possible values include:
          'simple', 'full'.
-        :type query_type: str or ~search_index_client.models.QueryType
-        :keyword scoring_parameters: The list of parameter values to be used in scoring functions (for
+        :paramtype query_type: str or ~search_index_client.models.QueryType
+        :keyword list[str] scoring_parameters: The list of parameter values to be used in scoring functions (for
          example, referencePointParameter) using the format name-values. For example, if the scoring
          profile defines a function with a parameter called 'mylocation' the parameter string would be
          "mylocation--122.2,44.8" (without the quotes).
-        :type scoring_parameters: list[str]
-        :keyword scoring_profile: The name of a scoring profile to evaluate match scores for matching
+        :keyword str scoring_profile: The name of a scoring profile to evaluate match scores for matching
          documents in order to sort the results.
-        :type scoring_profile: str
-        :keyword search_fields: The list of field names to which to scope the full-text search. When
+        :keyword list[str] search_fields: The list of field names to which to scope the full-text search. When
          using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
          each fielded search expression take precedence over any field names listed in this parameter.
-        :type search_fields: list[str]
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
          matched in order to count the document as a match. Possible values include: 'any', 'all'.
-        :type search_mode: str or ~search_index_client.models.SearchMode
-        :keyword select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
+        :paramtype search_mode: str or ~search_index_client.models.SearchMode
+        :keyword list[str] select: The list of fields to retrieve. If unspecified, all fields marked as retrievable
          in the schema are included.
-        :type select: list[str]
-        :keyword skip: The number of search results to skip. This value cannot be greater than 100,000.
+        :keyword int skip: The number of search results to skip. This value cannot be greater than 100,000.
          If you need to scan documents in sequence, but cannot use $skip due to this limitation,
          consider using $orderby on a totally-ordered key and $filter with a range query instead.
-        :type skip: int
-        :keyword top: The number of search results to retrieve. This can be used in conjunction with
+        :keyword int top: The number of search results to retrieve. This can be used in conjunction with
          $skip to implement client-side paging of search results. If results are truncated due to
          server-side paging, the response will include a continuation token that can be used to issue
          another Search request for the next page of results.
-        :type top: int
         :rtype:  AsyncSearchItemPaged[dict]
 
         .. admonition:: Example:
@@ -253,41 +241,32 @@ class SearchClient(HeadersMixin):
         character, and no more than 100 characters.
         :param str suggester_name: Required. The name of the suggester as specified in the suggesters
         collection that's part of the index definition.
-        :keyword filter: An OData expression that filters the documents considered for suggestions.
-        :type filter: str
-        :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the suggestions
+        :keyword str filter: An OData expression that filters the documents considered for suggestions.
+        :keyword bool use_fuzzy_matching: A value indicating whether to use fuzzy matching for the suggestions
          query. Default is false. When set to true, the query will find terms even if there's a
          substituted or missing character in the search text. While this provides a better experience in
          some scenarios, it comes at a performance cost as fuzzy suggestions queries are slower and
          consume more resources.
-        :type use_fuzzy_matching: bool
-        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+        :keyword str highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
          highlightPreTag. If omitted, hit highlighting of suggestions is disabled.
-        :type highlight_post_tag: str
-        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+        :keyword str highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
          highlightPostTag. If omitted, hit highlighting of suggestions is disabled.
-        :type highlight_pre_tag: str
-        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+        :keyword float minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
          must be covered by a suggestions query in order for the query to be reported as a success. This
          parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 80.
-        :type minimum_coverage: float
-        :keyword order_by: The list of OData $orderby expressions by which to sort the results. Each
+        :keyword list[str] order_by: The list of OData $orderby expressions by which to sort the results. Each
          expression can be either a field name or a call to either the geo.distance() or the
          search.score() functions. Each expression can be followed by asc to indicate ascending, or desc
          to indicate descending. The default is ascending order. Ties will be broken by the match scores
          of documents. If no $orderby is specified, the default sort order is descending by document
          match score. There can be at most 32 $orderby clauses.
-        :type order_by: list[str]
-        :keyword search_fields: The list of field names to search for the specified search text. Target
+        :keyword list[str] search_fields: The list of field names to search for the specified search text. Target
          fields must be included in the specified suggester.
-        :type search_fields: list[str]
-        :keyword select: The list of fields to retrieve. If unspecified, only the key field will be
+        :keyword list[str] select: The list of fields to retrieve. If unspecified, only the key field will be
          included in the results.
-        :type select: list[str]
-        :keyword top: The number of suggestions to retrieve. The value must be a number between 1 and
+        :keyword int top: The number of suggestions to retrieve. The value must be a number between 1 and
          100. The default is 5.
-        :type top: int
         :rtype:  List[dict]
 
         .. admonition:: Example:
@@ -340,33 +319,26 @@ class SearchClient(HeadersMixin):
         :keyword autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
          'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
          auto-completed terms. Possible values include: 'oneTerm', 'twoTerms', 'oneTermWithContext'.
-        :type autocomplete_mode: str or ~search_index_client.models.AutocompleteMode
-        :keyword filter: An OData expression that filters the documents used to produce completed terms
+        :paramtype autocomplete_mode: str or ~search_index_client.models.AutocompleteMode
+        :keyword str filter: An OData expression that filters the documents used to produce completed terms
          for the Autocomplete result.
-        :type filter: str
-        :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
+        :keyword bool use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
          autocomplete query. Default is false. When set to true, the query will find terms even if
          there's a substituted or missing character in the search text. While this provides a better
          experience in some scenarios, it comes at a performance cost as fuzzy autocomplete queries are
          slower and consume more resources.
-        :type use_fuzzy_matching: bool
-        :keyword highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
+        :keyword str highlight_post_tag: A string tag that is appended to hit highlights. Must be set with
          highlightPreTag. If omitted, hit highlighting is disabled.
-        :type highlight_post_tag: str
-        :keyword highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
+        :keyword str highlight_pre_tag: A string tag that is prepended to hit highlights. Must be set with
          highlightPostTag. If omitted, hit highlighting is disabled.
-        :type highlight_pre_tag: str
-        :keyword minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
+        :keyword float minimum_coverage: A number between 0 and 100 indicating the percentage of the index that
          must be covered by an autocomplete query in order for the query to be reported as a success.
          This parameter can be useful for ensuring search availability even for services with only one
          replica. The default is 80.
-        :type minimum_coverage: float
-        :keyword search_fields: The list of field names to consider when querying for auto-completed
+        :keyword list[str] search_fields: The list of field names to consider when querying for auto-completed
          terms. Target fields must be included in the specified suggester.
-        :type search_fields: list[str]
-        :keyword top: The number of auto-completed terms to retrieve. This must be a value between 1 and
+        :keyword int top: The number of auto-completed terms to retrieve. This must be a value between 1 and
          100. The default is 5.
-        :type top: int
         :rtype:  List[dict]
 
         .. admonition:: Example:

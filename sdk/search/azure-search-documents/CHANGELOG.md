@@ -2,6 +2,8 @@
 
 ## 11.0.0 (2020-07-07)
 
+**Features**
+
 - Exposed more models:
 
   * BM25SimilarityAlgorithm
