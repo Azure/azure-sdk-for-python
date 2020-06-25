@@ -314,7 +314,7 @@ class CustomRuleEnabledState(str, Enum):
 class MatchVariable(str, Enum):
 
     remote_addr = "RemoteAddr"
-    country = "Country"
+    socket_addr = "SocketAddr"
     request_method = "RequestMethod"
     request_header = "RequestHeader"
     request_uri = "RequestUri"
