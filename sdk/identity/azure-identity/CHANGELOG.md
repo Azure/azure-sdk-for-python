@@ -1,5 +1,17 @@
 # Release History
 
+## 1.4.0b6 (Unreleased)
+- The async `AzureCliCredential` correctly invokes `/bin/sh`
+  ([#12048](https://github.com/Azure/azure-sdk-for-python/issues/12048))
+
+## 1.4.0b5 (2020-06-12)
+- Prevent an error on importing `AzureCliCredential` on Windows caused by a bug
+  in old versions of Python 3.6 (this bug was fixed in Python 3.6.5).
+  ([#12014](https://github.com/Azure/azure-sdk-for-python/issues/12014))
+- `SharedTokenCacheCredential.get_token` raises `ValueError` instead of
+  `ClientAuthenticationError` when called with no scopes.
+  ([#11553](https://github.com/Azure/azure-sdk-for-python/issues/11553))
+
 ## 1.4.0b4 (2020-06-09)
 - `ManagedIdentityCredential` can configure a user-assigned identity using any
   identifier supported by the current hosting environment. To specify an

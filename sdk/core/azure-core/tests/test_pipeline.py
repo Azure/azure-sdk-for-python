@@ -204,6 +204,12 @@ class TestClientPipelineURLFormatting(unittest.TestCase):
         formatted = client.format_url("https://google.com/subpath/{foo}", foo="bar")
         assert formatted == "https://google.com/subpath/bar"
 
+    def test_format_incorrect_endpoint(self):
+        # https://github.com/Azure/azure-sdk-for-python/pull/12106
+        client = PipelineClientBase('{Endpoint}/text/analytics/v3.0')
+        with pytest.raises(ValueError) as exp:
+            client.format_url("foo/bar")
+        assert str(exp.value) == "The value provided for the url part Endpoint was incorrect, and resulted in an invalid url"
 
 class TestClientRequest(unittest.TestCase):
     def test_request_json(self):
@@ -257,6 +263,25 @@ class TestClientRequest(unittest.TestCase):
         request.format_parameters({"g": "h"})
 
         self.assertIn(request.url, ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"])
+
+    def test_request_text(self):
+        client = PipelineClientBase('http://example.org')
+        request = client.get(
+            "/",
+            content="foo"
+        )
+
+        # In absence of information, everything is JSON (double quote added)
+        assert request.data == json.dumps("foo")
+
+        request = client.post(
+            "/",
+            headers={'content-type': 'text/whatever'},
+            content="foo"
+        )
+
+        # We want a direct string
+        assert request.data == "foo"
 
 
 if __name__ == "__main__":

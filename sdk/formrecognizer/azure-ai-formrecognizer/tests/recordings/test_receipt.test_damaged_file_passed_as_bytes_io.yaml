@@ -18,21 +18,21 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error":{"code":"BadArgument","innerError":{"requestId":"180905cc-b574-4901-bce3-112c7a5da6a3"},"message":"Bad
-        or unrecognizable request JSON or binary file."}}'
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "1e155ca1-beee-4b80-986b-ef0ee27633ae"},
+        "message": "Bad or unrecognizable request JSON or binary file."}}'
     headers:
       apim-request-id:
-      - 180905cc-b574-4901-bce3-112c7a5da6a3
+      - 1e155ca1-beee-4b80-986b-ef0ee27633ae
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Apr 2020 22:35:16 GMT
+      - Thu, 11 Jun 2020 15:43:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

@@ -28,7 +28,7 @@ from ._user_agent import USER_AGENT
 from ._polling import AnalyzePolling
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential, TokenCredential
-    from ._models import RecognizedReceipt, FormPage, RecognizedForm
+    from ._models import FormPage, RecognizedForm
 
 
 class FormRecognizerClient(object):
@@ -66,11 +66,13 @@ class FormRecognizerClient(object):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
 
         authentication_policy = get_authentication_policy(credential)
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
+            polling_interval=polling_interval,
             **kwargs
         )
 
@@ -80,10 +82,13 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_receipts(self, receipt, **kwargs):
-        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedReceipt]]
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
+
+        See fields found on a receipt here:
+        https://aka.ms/azsdk/python/formrecognizer/receiptfields
 
         :param receipt: JPEG, PNG, PDF and TIFF type file stream or bytes.
              Currently only supports US sales receipts.
@@ -97,8 +102,8 @@ class FormRecognizerClient(object):
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedReceipt`].
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedReceipt]]
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -111,7 +116,7 @@ class FormRecognizerClient(object):
                 :caption: Recognize US sales receipt fields.
         """
 
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
@@ -135,9 +140,12 @@ class FormRecognizerClient(object):
 
     @distributed_trace
     def begin_recognize_receipts_from_url(self, receipt_url, **kwargs):
-        # type: (str, Any) -> LROPoller[List[RecognizedReceipt]]
+        # type: (str, Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given US sales receipt.
         The input document must be the location (Url) of the receipt to be analyzed.
+
+        See fields found on a receipt here:
+        https://aka.ms/azsdk/python/formrecognizer/receiptfields
 
         :param str receipt_url: The url of the receipt to analyze. The input must be a valid, encoded url
             of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
@@ -148,8 +156,8 @@ class FormRecognizerClient(object):
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedReceipt`].
-        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedReceipt]]
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -162,7 +170,7 @@ class FormRecognizerClient(object):
                 :caption: Recognize US sales receipt fields from a URL.
         """
 
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         include_text_content = kwargs.pop("include_text_content", False)
 
@@ -210,7 +218,7 @@ class FormRecognizerClient(object):
                 :caption: Recognize text and content/layout information from a form.
         """
 
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
@@ -246,7 +254,7 @@ class FormRecognizerClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
         return self._client.begin_analyze_layout_async(
@@ -296,7 +304,7 @@ class FormRecognizerClient(object):
             raise ValueError("model_id cannot be None or empty.")
 
         cls = kwargs.pop("cls", None)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
@@ -348,7 +356,7 @@ class FormRecognizerClient(object):
             raise ValueError("model_id cannot be None or empty.")
 
         cls = kwargs.pop("cls", None)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         include_text_content = kwargs.pop("include_text_content", False)
 

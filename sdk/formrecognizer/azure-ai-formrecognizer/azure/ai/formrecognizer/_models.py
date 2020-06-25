@@ -23,23 +23,20 @@ def adjust_confidence(score):
 def get_elements(field, read_result):
     text_elements = []
 
-    try:
-        for item in field.elements:
-            nums = [int(s) for s in re.findall(r"\d+", item)]
-            read = nums[0]
-            line = nums[1]
-            if len(nums) == 3:
-                word = nums[2]
-                ocr_word = read_result[read].lines[line].words[word]
-                extracted_word = FormWord._from_generated(ocr_word, page=read + 1)
-                text_elements.append(extracted_word)
-                continue
-            ocr_line = read_result[read].lines[line]
-            extracted_line = FormLine._from_generated(ocr_line, page=read + 1)
-            text_elements.append(extracted_line)
-        return text_elements
-    except IndexError:
-        return None  # https://github.com/Azure/azure-sdk-for-python/issues/11014
+    for item in field.elements:
+        nums = [int(s) for s in re.findall(r"\d+", item)]
+        read = nums[0]
+        line = nums[1]
+        if len(nums) == 3:
+            word = nums[2]
+            ocr_word = read_result[read].lines[line].words[word]
+            extracted_word = FormWord._from_generated(ocr_word, page=read + 1)
+            text_elements.append(extracted_word)
+            continue
+        ocr_line = read_result[read].lines[line]
+        extracted_line = FormLine._from_generated(ocr_line, page=read + 1)
+        text_elements.append(extracted_line)
+    return text_elements
 
 
 def get_field_value(field, value, read_result):  # pylint: disable=too-many-return-statements
@@ -176,29 +173,6 @@ class RecognizedForm(object):
 
     def __repr__(self):
         return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={})".format(
-            self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages)
-        )[:1024]
-
-class RecognizedReceipt(RecognizedForm):
-    """Represents a receipt that has been recognized by a trained model.
-
-    :ivar str form_type:
-        The type of form the model identified the submitted form to be.
-    :ivar fields:
-        A dictionary of the fields found on the form. The fields dictionary
-        keys are the `name` of the field. For models trained with labels,
-        this is the training-time label of the field. For models trained
-        without labels, a unique name is generated for each field.
-    :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
-    :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
-        The first and last page number of the input form.
-    :ivar list[~azure.ai.formrecognizer.FormPage] pages:
-        A list of pages recognized from the input document. Contains lines,
-        words, tables and page metadata.
-    """
-
-    def __repr__(self):
-        return "RecognizedReceipt(form_type={}, fields={}, page_range={}, pages={})".format(
             self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages)
         )[:1024]
 

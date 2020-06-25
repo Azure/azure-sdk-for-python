@@ -18,7 +18,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from uamqp import authentication
 
-from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout
+from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusError
 from .._version import VERSION as sdk_version
 from .constants import (
     JWT_TOKEN_SCOPE,
@@ -194,6 +194,9 @@ class AutoLockRenew(object):
         self.renew_period = 10
 
     def __enter__(self):
+        if self._shutdown.is_set():
+            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+                                  " auto lock renewing.")
         return self
 
     def __exit__(self, *args):
@@ -237,6 +240,9 @@ class AutoLockRenew(object):
         :param float timeout: A time in seconds that the lock should be maintained for.
          Default value is 300 (5 minutes).
         """
+        if self._shutdown.is_set():
+            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+                                  " auto lock renewing.")
         starttime = renewable_start_time(renewable)
         self.executor.submit(self._auto_lock_renew, renewable, starttime, timeout)
 
@@ -246,4 +252,5 @@ class AutoLockRenew(object):
         :param wait: Whether to block until thread pool has shutdown. Default is `True`.
         :type wait: bool
         """
+        self._shutdown.set()
         self.executor.shutdown(wait=wait)

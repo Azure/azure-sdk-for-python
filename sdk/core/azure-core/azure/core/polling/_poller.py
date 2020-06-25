@@ -31,9 +31,13 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from typing import Any, Callable, Union, List, Optional, Tuple, TypeVar, Generic
+from typing import TYPE_CHECKING, TypeVar, Generic
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
+
+if TYPE_CHECKING:
+    from typing import Any, Callable, Union, List, Optional, Tuple
+
 
 PollingReturnType = TypeVar("PollingReturnType")
 
@@ -129,7 +133,7 @@ class NoPolling(PollingMethod):
         except KeyError:
             raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
         import pickle
-        initial_response = pickle.loads(base64.b64decode(continuation_token))
+        initial_response = pickle.loads(base64.b64decode(continuation_token))   # nosec
         return None, initial_response, deserialization_callback
 
 

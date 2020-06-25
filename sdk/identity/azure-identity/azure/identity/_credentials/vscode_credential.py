@@ -17,16 +17,15 @@ else:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, Optional
+    from typing import Any
     from azure.core.credentials import AccessToken
 
 
 class VSCodeCredential(object):
-    """Authenticates by redeeming a refresh token previously saved by VS Code
-
-        """
+    """Authenticates by redeeming a refresh token previously saved by VS Code"""
 
     def __init__(self, **kwargs):
+        # type: (**Any) -> None
         self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
         self._refresh_token = None
 

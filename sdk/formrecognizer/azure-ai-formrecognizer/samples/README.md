@@ -60,6 +60,7 @@ what you can do with the Azure Form Recognizer client library.
 
 |**Advanced Sample File Name**|**Description**|
 |----------------|-------------|
+|[sample_strongly_typing_recognized_form.py][sample_strongly_typing_recognized_form] and [sample_strongly_typing_recognized_form_async.py][sample_strongly_typing_recognized_form_async]|Use the fields in your recognized forms to create an object with strongly-typed fields|
 |[sample_get_bounding_boxes.py][sample_get_bounding_boxes] and [sample_get_bounding_boxes_async.py][sample_get_bounding_boxes_async]|Get info to visualize the outlines of form content and fields, which can be used for manual validation|
 |[sample_differentiate_output_models_trained_with_and_without_labels.py][sample_differentiate_output_models_trained_with_and_without_labels] and [sample_differentiate_output_models_trained_with_and_without_labels_async.py][sample_differentiate_output_models_trained_with_and_without_labels_async]|See the differences in output when using a custom model trained with labeled data and one trained with unlabeled data|
 
@@ -69,7 +70,7 @@ what you can do with the Azure Form Recognizer client library.
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_form_recognizer_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
-[python-fr-ref-docs]: https://aka.ms/azsdk-python-formrecognizer-ref-docs
+[python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [get-endpoint-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/README.md#looking-up-the-endpoint
 [get-key-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/README.md#types-of-credentials
 
@@ -95,3 +96,5 @@ what you can do with the Azure Form Recognizer client library.
 [sample_train_model_without_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_without_labels_async.py
 [sample_copy_model]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_copy_model.py
 [sample_copy_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_copy_model_async.py
+[sample_strongly_typing_recognized_form]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_strongly_typing_recognized_form.py
+[sample_strongly_typing_recognized_form_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_strongly_typing_recognized_form_async.py
