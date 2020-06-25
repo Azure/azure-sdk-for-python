@@ -4,41 +4,44 @@
 # --------------------------------------------------------------------------------------------
 import functools
 from copy import copy
-from typing import TYPE_CHECKING, Dict, Any, Union, cast
-from xml.etree.ElementTree import ElementTree
+from typing import TYPE_CHECKING, Dict, Any, Union, List, cast, Tuple
+from xml.etree.ElementTree import ElementTree, Element
 
 import six
-from azure.core.paging import ItemPaged
-from ._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
+from azure.core.async_paging import AsyncItemPaged
+from azure.servicebus.aio.management._utils import extract_data_template, get_next_template
+from azure.servicebus.management._model_workaround import avoid_timedelta_overflow
+from msrest.exceptions import ValidationError
+from azure.core.exceptions import raise_with_traceback, ResourceNotFoundError
+from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
+    RequestIdPolicy, AsyncBearerTokenCredentialPolicy
+from azure.core.pipeline.transport import AioHttpTransport
+
+from ...management._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
     QueueDescriptionEntry, SubscriptionDescriptionFeed, SubscriptionDescriptionEntry, RuleDescriptionEntry, \
     RuleDescriptionFeed, NamespacePropertiesEntry, CreateTopicBody, CreateTopicBodyContent, \
     TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, \
     CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, \
     QueueDescription as InternalQueueDescription, TopicDescription as InternalTopicDescription, \
     SubscriptionDescription as InternalSubscriptionDescription, RuleDescription as InternalRuleDescription
-from ._utils import extract_data_template, get_next_template
-from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
-from msrest.exceptions import ValidationError
-from azure.core.exceptions import raise_with_traceback, ResourceNotFoundError
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
-    RequestIdPolicy, BearerTokenCredentialPolicy
-from azure.core.pipeline.transport import RequestsTransport
 
-from .._common.constants import JWT_TOKEN_SCOPE
-from .._common.utils import parse_conn_str
-from .._base_handler import ServiceBusSharedKeyCredential
-from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
-from ._generated._configuration import ServiceBusManagementClientConfiguration
-from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
-from ._model_workaround import avoid_timedelta_overflow
-from . import _constants as constants
-from ._models import QueueRuntimeInfo, QueueDescription, TopicDescription, TopicRuntimeInfo, \
+from ..._common.utils import parse_conn_str
+from ..._common.constants import JWT_TOKEN_SCOPE
+from ...aio._base_handler_async import ServiceBusSharedKeyCredential
+from ...management._generated.aio._configuration_async import ServiceBusManagementClientConfiguration
+from ...management._generated.aio._service_bus_management_client_async import ServiceBusManagementClient \
+    as ServiceBusManagementClientImpl
+from ...management import _constants as constants
+from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
+from ...management._models import QueueRuntimeInfo, QueueDescription, TopicDescription, TopicRuntimeInfo, \
     SubscriptionDescription, SubscriptionRuntimeInfo, RuleDescription
-from ._handle_response_error import _handle_response_error
+from ...management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
+from ...management._handle_response_error import _handle_response_error
+
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential  # pylint:disable=ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential  # pylint:disable=ungrouped-imports
 
 
 class ServiceBusManagementClient:
@@ -50,7 +53,8 @@ class ServiceBusManagementClient:
     """
 
     def __init__(self, fully_qualified_namespace, credential, **kwargs):
-        # type: (str, Union[TokenCredential, ServiceBusSharedKeyCredential], Dict[str, Any]) -> None
+        # type: (str, Union[AsyncTokenCredential, ServiceBusSharedKeyCredential], Dict[str, Any]) -> None
+
         self.fully_qualified_namespace = fully_qualified_namespace
         self._credential = credential
         self._endpoint = "https://" + fully_qualified_namespace
@@ -58,19 +62,20 @@ class ServiceBusManagementClient:
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(endpoint=fully_qualified_namespace, pipeline=self._pipeline)
 
-    def __enter__(self):
-        self._impl.__enter__()
+    async def __aenter__(self) -> "ServiceBusManagementClient":
+        await self._impl.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        self._impl.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._impl.__aexit__(*exc_details)
 
     def _build_pipeline(self, **kwargs):  # pylint: disable=no-self-use
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
-        credential_policy = ServiceBusSharedKeyCredentialPolicy(self._endpoint, self._credential, "Authorization") \
+        credential_policy = \
+            AsyncServiceBusSharedKeyCredentialPolicy(self._endpoint, self._credential, "Authorization") \
             if isinstance(self._credential, ServiceBusSharedKeyCredential) \
-            else BearerTokenCredentialPolicy(self._credential, JWT_TOKEN_SCOPE)
+            else AsyncBearerTokenCredentialPolicy(self._credential, JWT_TOKEN_SCOPE)
         if policies is None:  # [] is a valid policy list
             policies = [
                 RequestIdPolicy(**kwargs),
@@ -87,8 +92,8 @@ class ServiceBusManagementClient:
                 HttpLoggingPolicy(**kwargs),
             ]
         if not transport:
-            transport = RequestsTransport(**kwargs)
-        return Pipeline(transport, policies)
+            transport = AioHttpTransport(**kwargs)
+        return AsyncPipeline(transport, policies)
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
@@ -96,51 +101,51 @@ class ServiceBusManagementClient:
         """Create a client from connection string.
 
         :param str conn_str: The connection string of the Service Bus Namespace.
-        :rtype: ~azure.servicebus.management.ServiceBusManagementClient
+        :rtype: ~azure.servicebus.management.aio.ServiceBusManagementClient
         """
         endpoint, shared_access_key_name, shared_access_key, _ = parse_conn_str(conn_str)
         if "//" in endpoint:
-            endpoint = endpoint[endpoint.index("//") + 2:]
+            endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key), **kwargs)
 
-    def _get_entity_element(self, entity_name, enrich=False, **kwargs):
+    async def _get_entity_element(self, entity_name, enrich=False, **kwargs):
         # type: (str, bool, Any) -> ElementTree
 
         with _handle_response_error():
             element = cast(
                 ElementTree,
-                self._impl.entity.get(entity_name, enrich=enrich, api_version=constants.API_VERSION, **kwargs)
+                await self._impl.entity.get(entity_name, enrich=enrich, api_version=constants.API_VERSION, **kwargs)
             )
         return element
 
-    def _get_subscription_element(self, topic_name, subscription_name, enrich=False, **kwargs):
+    async def _get_subscription_element(self, topic_name, subscription_name, enrich=False, **kwargs):
         # type: (str, str, bool, Any) -> ElementTree
 
         with _handle_response_error():
             element = cast(
                 ElementTree,
-                self._impl.subscription.get(topic_name, subscription_name, enrich=enrich, api_version=constants.API_VERSION, **kwargs)
+                await self._impl.subscription.get(topic_name, subscription_name, enrich=enrich, api_version=constants.API_VERSION, **kwargs)
             )
         return element
 
-    def _get_rule_element(self, topic_name, subscription_name, rule_name, **kwargs):
+    async def _get_rule_element(self, topic_name, subscription_name, rule_name, **kwargs):
         # type: (str, str, str, Any) -> ElementTree
 
         with _handle_response_error():
             element = cast(
                 ElementTree,
-                self._impl.rule.get(topic_name, subscription_name, rule_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
+                await self._impl.rule.get(topic_name, subscription_name, rule_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
             )
         return element
 
-    def get_queue(self, queue_name, **kwargs):
+    async def get_queue(self, queue_name, **kwargs):
         # type: (str, Any) -> QueueDescription
         """Get a QueueDescription.
 
         :param str queue_name: The name of the queue.
         :rtype: ~azure.servicebus.management.QueueDescription
         """
-        entry_ele = self._get_entity_element(queue_name, **kwargs)
+        entry_ele = await self._get_entity_element(queue_name, **kwargs)
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
@@ -148,14 +153,14 @@ class ServiceBusManagementClient:
         queue_description.name = queue_name
         return queue_description
 
-    def get_queue_runtime_info(self, queue_name, **kwargs):
+    async def get_queue_runtime_info(self, queue_name, **kwargs):
         # type: (str, Any) -> QueueRuntimeInfo
         """Get the runtime information of a queue.
 
         :param str queue_name: The name of the queue.
         :rtype: ~azure.servicebus.management.QueueRuntimeInfo
         """
-        entry_ele = self._get_entity_element(queue_name, **kwargs)
+        entry_ele = await self._get_entity_element(queue_name, **kwargs)
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Queue {} does not exist".format(queue_name))
@@ -163,12 +168,12 @@ class ServiceBusManagementClient:
         runtime_info.name = queue_name
         return runtime_info
 
-    def create_queue(self, queue, **kwargs):
+    async def create_queue(self, queue, **kwargs):
         # type: (Union[str, QueueDescription], Any) -> QueueDescription
         """Create a queue.
 
         :param queue: The queue name or a `QueueDescription` instance. When it's a str, it will be the name
-         of the created queue. Other properties of the created queue will have default values decided by the
+         of the created queue. Other properties of the created queue will have async default values decided by the
          ServiceBus. Use a `QueueDescription` if you want to set queue properties other than the queue name.
         :type queue: Union[str, ~azure.servicebus.management.QueueDescription]
         :rtype: ~azure.servicebus.management.QueueDescription
@@ -190,7 +195,7 @@ class ServiceBusManagementClient:
             with _handle_response_error():
                 entry_ele = cast(
                     ElementTree,
-                    self._impl.entity.put(
+                    await self._impl.entity.put(
                         queue_name,  # type: ignore
                         request_body, api_version=constants.API_VERSION, **kwargs)
                 )
@@ -209,7 +214,7 @@ class ServiceBusManagementClient:
         result.name = queue_name
         return result
 
-    def update_queue(self, queue_description, **kwargs):
+    async def update_queue(self, queue_description, **kwargs):
         # type: (QueueDescription, Any) -> None
         """Update a queue.
 
@@ -217,7 +222,7 @@ class ServiceBusManagementClient:
          ServiceBus. Only a portion of properties can be updated.
          Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
         :type queue_description: ~azure.servicebus.management.QueueDescription
-        :keyword timedelta default_message_time_to_live
+        :keyword timedelta async default_message_time_to_live
         :keyword timedelta lock_duration
         :keyword bool dead_lettering_on_message_expiration
         :keyword timedelta duplicate_detection_history_time_window
@@ -234,7 +239,7 @@ class ServiceBusManagementClient:
         to_update = copy(internal_description)  # pylint:disable=protected-access
 
         to_update.default_message_time_to_live = kwargs.get(
-            "default_message_time_to_live") or queue_description.default_message_time_to_live
+            "async default_message_time_to_live") or queue_description.default_message_time_to_live
         to_update.lock_duration = kwargs.get("lock_duration") or queue_description.lock_duration
         to_update.dead_lettering_on_message_expiration = kwargs.get(
             "dead_lettering_on_message_expiration") or queue_description.dead_lettering_on_message_expiration
@@ -253,7 +258,7 @@ class ServiceBusManagementClient:
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             try:
-                self._impl.entity.put(
+                await self._impl.entity.put(
                     queue_description.name,  # type: ignore
                     request_body,
                     api_version=constants.API_VERSION,
@@ -267,7 +272,7 @@ class ServiceBusManagementClient:
                     message="queue_description must be a QueueDescription with valid fields, "
                                 "including non-empty string name")
 
-    def delete_queue(self, queue, **kwargs):
+    async def delete_queue(self, queue, **kwargs):
         # type: (Union[str, QueueDescription], Any) -> None
         """Delete a queue.
 
@@ -281,10 +286,10 @@ class ServiceBusManagementClient:
         if not queue_name:
             raise ValueError("queue_name must not be None or empty")
         with _handle_response_error():
-            self._impl.entity.delete(queue_name, api_version=constants.API_VERSION, **kwargs)
+            await self._impl.entity.delete(queue_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_queues(self, **kwargs):
-        # type: (Any) -> ItemPaged[QueueDescription]
+        # type: (Any) -> AsyncItemPaged[QueueDescription]
         """List the queues of a ServiceBus namespace.
 
         :keyword int start_index: skip this number of queues.
@@ -304,11 +309,11 @@ class ServiceBusManagementClient:
         get_next = functools.partial(
             get_next_template, functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES), **kwargs
         )
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data)
 
     def list_queues_runtime_info(self, **kwargs):
-        # type: (Any) -> ItemPaged[QueueRuntimeInfo]
+        # type: (Any) -> AsyncItemPaged[QueueRuntimeInfo]
         """List the runtime info of the queues in a ServiceBus namespace.
 
         :keyword int start_index: skip this number of queues.
@@ -328,17 +333,17 @@ class ServiceBusManagementClient:
         get_next = functools.partial(
             get_next_template, functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES), **kwargs
         )
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data)
 
-    def get_topic(self, topic_name, **kwargs):
+    async def get_topic(self, topic_name, **kwargs):
         # type: (str, Any) -> TopicDescription
         """Get a TopicDescription.
 
         :param str topic_name: The name of the queue.
         :rtype: ~azure.servicebus.management.TopicDescription
         """
-        entry_ele = self._get_entity_element(topic_name, **kwargs)
+        entry_ele = await self._get_entity_element(topic_name, **kwargs)
         entry = TopicDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Topic '{}' does not exist".format(topic_name))
@@ -346,14 +351,14 @@ class ServiceBusManagementClient:
         topic_description.name = topic_name
         return topic_description
 
-    def get_topic_runtime_info(self, topic_name, **kwargs):
+    async def get_topic_runtime_info(self, topic_name, **kwargs):
         # type: (str, Any) -> TopicRuntimeInfo
         """Get a TopicRuntimeInfo
 
         :param str topic_name:
         :rtype: ~azure.servicebus.management.TopicRuntimeInfo
         """
-        entry_ele = self._get_entity_element(topic_name, **kwargs)
+        entry_ele = await self._get_entity_element(topic_name, **kwargs)
         entry = TopicDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Topic {} does not exist".format(topic_name))
@@ -361,7 +366,7 @@ class ServiceBusManagementClient:
         topic_description.name = topic_name
         return topic_description
 
-    def create_topic(self, topic, **kwargs):
+    async def create_topic(self, topic, **kwargs):
         # type: (Union[str, TopicDescription], Any) -> TopicDescription
         """
 
@@ -385,7 +390,7 @@ class ServiceBusManagementClient:
             with _handle_response_error():
                 entry_ele = cast(
                     ElementTree,
-                    self._impl.entity.put(
+                    await self._impl.entity.put(
                         topic_name,  # type: ignore
                         request_body, api_version=constants.API_VERSION, **kwargs)
                 )
@@ -404,12 +409,12 @@ class ServiceBusManagementClient:
         result.name = topic_name
         return result
 
-    def update_topic(self, topic_description, **kwargs):
+    async def update_topic(self, topic_description, **kwargs):
         # type: (TopicDescription, Any) -> None
         """
 
         :param ~azure.servicebus.management.TopicDescription topic_description:
-        :keyword timedelta default_message_time_to_live:
+        :keyword timedelta async default_message_time_to_live:
         :keyword timedelta duplicate_detection_history_time_window:
         :rtype： None
         """
@@ -421,7 +426,7 @@ class ServiceBusManagementClient:
         internal_description = topic_description._to_internal_entity()
         to_update = copy(internal_description)  # pylint:disable=protected-access
 
-        to_update.default_message_time_to_live = kwargs.get("default_message_time_to_live") or topic_description.default_message_time_to_live
+        to_update.default_message_time_to_live = kwargs.get("async default_message_time_to_live") or topic_description.default_message_time_to_live
         to_update.duplicate_detection_history_time_window = kwargs.get("duplicate_detection_history_time_window") or topic_description.duplicate_detection_history_time_window
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
@@ -435,7 +440,7 @@ class ServiceBusManagementClient:
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             try:
-                self._impl.entity.put(
+                await self._impl.entity.put(
                     topic_description.name,  # type: ignore
                     request_body,
                     api_version=constants.API_VERSION,
@@ -449,7 +454,7 @@ class ServiceBusManagementClient:
                     message="topic_description must be a TopicDescription with valid fields, "
                             "including non-empty string topic name")
 
-    def delete_topic(self, topic, **kwargs):
+    async def delete_topic(self, topic, **kwargs):
         # type: (Union[str, TopicDescription], Any) -> None
         """
 
@@ -460,7 +465,7 @@ class ServiceBusManagementClient:
             topic_name = topic.name
         except AttributeError:
             topic_name = topic
-        self._impl.entity.delete(topic_name, api_version=constants.API_VERSION, **kwargs)
+        await self._impl.entity.delete(topic_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_topics(self, **kwargs):
         # type: (Any) -> ItemPaged[TopicDescription]
@@ -481,7 +486,7 @@ class ServiceBusManagementClient:
         get_next = functools.partial(
             get_next_template, functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_TOPICS), **kwargs
         )
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data)
 
     def list_topics_runtime_info(self, **kwargs):
@@ -503,10 +508,10 @@ class ServiceBusManagementClient:
         get_next = functools.partial(
             get_next_template, functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_TOPICS), **kwargs
         )
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data)
 
-    def get_subscription(self, topic, subscription_name, **kwargs):
+    async def get_subscription(self, topic, subscription_name, **kwargs):
         # type: (Union[str, TopicDescription], str, Any) -> SubscriptionDescription
         """
 
@@ -527,7 +532,7 @@ class ServiceBusManagementClient:
         subscription.name = entry.title
         return subscription
 
-    def get_subscription_runtime_info(self, topic, subscription_name, **kwargs):
+    async def get_subscription_runtime_info(self, topic, subscription_name, **kwargs):
         # type: (Union[str, TopicDescription], str, Any) -> SubscriptionRuntimeInfo
         """
 
@@ -548,7 +553,7 @@ class ServiceBusManagementClient:
         subscription.name = entry.title
         return subscription
 
-    def create_subscription(self, topic, subscription, **kwargs):
+    async def create_subscription(self, topic, subscription, **kwargs):
         """
 
         :param Union[str, TopicDescription] topic:
@@ -576,7 +581,7 @@ class ServiceBusManagementClient:
             with _handle_response_error():
                 entry_ele = cast(
                     ElementTree,
-                    self._impl.subscription.put(
+                    await self._impl.subscription.put(
                         topic_name,
                         subscription_name,  # type: ignore
                         request_body, api_version=constants.API_VERSION, **kwargs)
@@ -597,7 +602,7 @@ class ServiceBusManagementClient:
         result.name = subscription_name
         return result
 
-    def update_subscription(self, topic, subscription_description, **kwargs):
+    async def update_subscription(self, topic, subscription_description, **kwargs):
         """
 
         :param Union[str, TopicDescription] topic:
@@ -625,7 +630,7 @@ class ServiceBusManagementClient:
         )
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
-            self._impl.subscription.put(
+            await self._impl.subscription.put(
                 topic_name,
                 subscription_description.name,
                 request_body,
@@ -634,7 +639,7 @@ class ServiceBusManagementClient:
                 **kwargs
             )
 
-    def delete_subscription(self, topic, subscription, **kwargs):
+    async def delete_subscription(self, topic, subscription, **kwargs):
         """
         :param Union[str, TopicDescription] topic:
         :param Union[str, SubscriptionDescription] subscription:
@@ -648,7 +653,7 @@ class ServiceBusManagementClient:
             subscription_name = subscription.name
         except AttributeError:
             subscription_name = subscription
-        self._impl.subscription.delete(topic_name, subscription_name, api_version=constants.API_VERSION, **kwargs)
+        await self._impl.subscription.delete(topic_name, subscription_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_subscriptions(self, topic, **kwargs):
         """List the subscriptions of a ServiceBus Topic.
@@ -675,7 +680,7 @@ class ServiceBusManagementClient:
         get_next = functools.partial(
             get_next_template, functools.partial(self._impl.list_subscriptions, topic_name), **kwargs
         )
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data)
 
     def list_subscriptions_runtime_info(self, topic, **kwargs):
@@ -703,10 +708,10 @@ class ServiceBusManagementClient:
         get_next = functools.partial(
             get_next_template, functools.partial(self._impl.list_subscriptions, topic_name), **kwargs
         )
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data)
 
-    def get_rule(self, topic, subscription, rule_name, **kwargs):
+    async def get_rule(self, topic, subscription, rule_name, **kwargs):
         """
 
         :param Union[str, TopicDescription] topic:
@@ -730,7 +735,7 @@ class ServiceBusManagementClient:
         rule_description = RuleDescription._from_internal_entity(entry.content.rule_description)
         return rule_description
 
-    def create_rule(self, topic, subscription, rule, **kwargs):
+    async def create_rule(self, topic, subscription, rule, **kwargs):
         """
         :param Union[str, TopicDescription] topic:
         :param Union[str, SubscriptionDescription] subscription:
@@ -760,7 +765,7 @@ class ServiceBusManagementClient:
         )
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
-            entry_ele = self._impl.rule.put(
+            entry_ele = await self._impl.rule.put(
                 topic_name,
                 subscription_name,  # type: ignore
                 rule_name,
@@ -769,7 +774,7 @@ class ServiceBusManagementClient:
         result = entry.content.rule_description
         return result
 
-    def update_rule(self, topic, subscription, rule_description, **kwargs):
+    async def update_rule(self, topic, subscription, rule_description, **kwargs):
         """
 
         :param Union[str, TopicDescription] topic:
@@ -797,7 +802,7 @@ class ServiceBusManagementClient:
         )
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
-            self._impl.rule.put(
+            await self._impl.rule.put(
                 topic_name,
                 subscription_name,
                 rule_description.name,
@@ -807,7 +812,7 @@ class ServiceBusManagementClient:
                 **kwargs
             )
 
-    def delete_rule(self, topic, subscription, rule, **kwargs):
+    async def delete_rule(self, topic, subscription, rule, **kwargs):
         """
 
         :param Union[str, TopicDescription] topic:
@@ -827,7 +832,7 @@ class ServiceBusManagementClient:
             rule_name = rule.name
         except AttributeError:
             rule_name = rule
-        self._impl.rule.delete(topic_name, subscription_name, rule_name, api_version=constants.API_VERSION, **kwargs)
+        await self._impl.rule.delete(topic_name, subscription_name, rule_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_rules(self, topic, subscription, **kwargs):
         """
@@ -857,14 +862,14 @@ class ServiceBusManagementClient:
         get_next = functools.partial(
             get_next_template, functools.partial(self._impl.list_rules, topic_name, subscription_name), **kwargs
         )
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data)
 
-    def get_namespace_properties(self, **kwargs):
+    async def get_namespace_properties(self, **kwargs):
         """
 
         :rtype: NamespaceProperties
         """
-        entry_el = self._impl.namespace.get(api_version=constants.API_VERSION, **kwargs)
+        entry_el = await self._impl.namespace.get(api_version=constants.API_VERSION, **kwargs)
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
         return namespace_entry.content.namespace_properties
