@@ -79,7 +79,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
 
-        if service not in ["blob", "queue", "file-share", "dfs","table"]:
+        if service not in ["blob", "queue", "file-share", "dfs", "table"]:
             raise ValueError("Invalid service: {}".format(service))
         service_name = service.split('-')[0]
         account = parsed_url.netloc.split(".{}.core.".format(service_name))

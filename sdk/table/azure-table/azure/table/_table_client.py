@@ -1,29 +1,28 @@
-import functools
-from datetime import datetime
-from urllib.parse import urlparse, quote, unquote
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 
-import kwargs
+import functools
+from urllib.parse import urlparse, unquote
+
 from azure.core.paging import ItemPaged
 from azure.table._deserialization import _convert_to_entity
-
-from azure.table._deserialize import deserialize_table_creation
 from azure.table._entity import Entity
 from azure.table._generated import AzureTable
 from azure.table._generated.models import TableProperties, AccessPolicy, SignedIdentifier
 from azure.table._message_encoding import NoEncodePolicy, NoDecodePolicy
-from azure.table._serialization import _to_entity_datetime, _PYTHON_TO_ENTITY_CONVERSIONS, _EDM_TO_ENTITY_CONVERSIONS, \
-    _add_entity_properties, _convert_entity_to_properties
+from azure.table._serialization import _add_entity_properties
 from azure.table._serialize import _get_match_headers
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
-from azure.table._shared.encryption import _validate_not_none
-from azure.table._shared.request_handlers import add_metadata_headers, serialize_iso
+
+from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import process_storage_error
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
-from azure.table._shared.shared_access_signature import TableSharedAccessSignature
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.table._version import VERSION
 from azure.core.tracing.decorator import distributed_trace
-from ._models import TablePropertiesPaged, TableEntityPropertiesPaged
-from ._generated.models import QueryOptions
+from ._models import TableEntityPropertiesPaged
 
 from ._shared.response_handlers import return_headers_and_deserialized
 
@@ -118,9 +117,9 @@ class TableClient(StorageAccountHostsMixin):
         """
         try:
             if not table_url.lower().startswith('http'):
-                queue_url = "https://" + table_url
+                table_url = "https://" + table_url
         except AttributeError:
-            raise ValueError("Queue URL must be a string.")
+            raise ValueError("Table URL must be a string.")
         parsed_url = urlparse(table_url.rstrip('/'))
 
         if not parsed_url.netloc:
@@ -139,7 +138,6 @@ class TableClient(StorageAccountHostsMixin):
         if not table_name:
             raise ValueError("Invalid URL. Please provide a URL with a valid queue name")
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)
-
 
     @distributed_trace
     def get_table_access_policy(
@@ -199,9 +197,6 @@ class TableClient(StorageAccountHostsMixin):
             row_key,
             etag=None,
             match_condition=None,
-            timeout=None,
-            request_id_parameter=None,
-            query_options=None,
             **kwargs
     ):
         if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
@@ -220,10 +215,7 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def insert_entity(
             self,
-            timeout=None,
-            request_id_parameter=None,
             headers=None,
-            response_hook=None,
             table_entity_properties=None,
             query_options=None,
             **kwargs
@@ -252,13 +244,9 @@ class TableClient(StorageAccountHostsMixin):
             self,
             partition_key=None,
             row_key=None,
-            timeout=None,
-            request_id_parameter=None,
             etag=None,
             match_condition=None,
-            response_hook=None,
             table_entity_properties=None,
-            query_options=None,
             **kwargs
     ):
         if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
@@ -285,13 +273,9 @@ class TableClient(StorageAccountHostsMixin):
             self,
             partition_key=None,  # type: str
             row_key=None,  # type: str
-            headers=None,
-            timeout=None,  # type: Optional[int]
-            request_id_parameter=None,  # type: Optional[str]
             etag=None,
             match_condition=None,
             table_entity_properties=None,  # type: Optional[Dict[str, object]]
-            query_options=None,  # type: Optional["models.QueryOptions"]
             **kwargs  # type: Any
     ):
 
@@ -328,7 +312,6 @@ class TableClient(StorageAccountHostsMixin):
             partition_key,
             row_key,
             headers=None,
-            response_hook=None,
             query_options=None,
             **kwargs
     ):
@@ -349,8 +332,6 @@ class TableClient(StorageAccountHostsMixin):
             self,
             partition_key=None,
             row_key=None,
-            timeout=None,
-            request_id_parameter=None,
             table_entity_properties=None,
             query_options=None,
             **kwargs
@@ -362,7 +343,7 @@ class TableClient(StorageAccountHostsMixin):
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
         try:
-            self._client.table.merge_entity(
+            merged_entity = self._client.table.merge_entity(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
@@ -370,6 +351,7 @@ class TableClient(StorageAccountHostsMixin):
                 query_options=query_options,
                 **kwargs
             )
+            return merged_entity
         except ResourceNotFoundError:
             insert_entity = self.insert_entity(
                 partition_key=partition_key,
@@ -385,10 +367,7 @@ class TableClient(StorageAccountHostsMixin):
             self,
             partition_key=None,
             row_key=None,
-            timeout=None,
-            request_id_parameter=None,
             table_entity_properties=None,
-            query_options=None,
             **kwargs
     ):
         # Insert or Update

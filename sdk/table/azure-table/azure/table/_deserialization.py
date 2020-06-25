@@ -12,19 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-import sys
-from http.client import HTTPResponse
-from json import loads
-
-from azure.common import AzureException
-from azure.storage.common.models import _list
-from azure.table._entity import EntityProperty, EdmType, Entity, Table
-from azure.table._shared import url_quote
-from azure.table._shared._common_conversion import _decode_base64_to_bytes
-from azure.table._shared._error import _validate_decryption_required, _ERROR_DECRYPTION_FAILURE, \
-    _ERROR_INVALID_PROPERTY_RESOLVER, _ERROR_TYPE_NOT_SUPPORTED
 from dateutil import parser
 from uuid import UUID
+from azure.table._entity import EntityProperty, EdmType, Entity
+from azure.table._shared import url_quote
+from azure.table._shared._common_conversion import _decode_base64_to_bytes
 
 def _get_continuation_from_response_headers(response):
     marker = {}
@@ -121,7 +113,7 @@ def _convert_to_entity(entry_element):
         mtype = edmtypes.get(name)
 
         # Add type for Int32
-        if type(value) is int:
+        if isinstance(value) is int:
             mtype = EdmType.INT32
 
         # no type info, property should parse automatically
@@ -131,14 +123,14 @@ def _convert_to_entity(entry_element):
             conv = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
             if conv is not None:
                 try:
-                    property = conv(value)
+                    new_property = conv(value)
                 except Exception as e:
                     # throw if the type returned by the property resolver
                     # cannot be used in the conversion
                     raise e
             else:
-                property = EntityProperty(mtype, value)
-            entity[name] = property
+                new_property = EntityProperty(mtype, value)
+            entity[name] = new_property
 
     # extract etag from entry
     etag = odata.get('etag')

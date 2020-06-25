@@ -6,37 +6,21 @@
 
 import logging
 import sys
-
-try:
-    from urllib.parse import urlparse, unquote, parse_qsl
-except ImportError:
-    from urlparse import urlparse  # type: ignore
-    from urllib2 import unquote  # type: ignore
-
-try:
-    from yarl import URL
-except ImportError:
-    pass
-
-try:
-    from azure.core.pipeline.transport import AioHttpTransport
-except ImportError:
-    AioHttpTransport = None
+from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-
-from ._common_conversion import (
-    _sign_string,
-)
 
 from azure.table._shared._constants import (
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_SECONDARY_NAME
 )
 
+from ._common_conversion import (
+    _sign_string,
+)
+
 from ._error import (
-    AzureSigningError,
     _wrap_exception,
 )
 

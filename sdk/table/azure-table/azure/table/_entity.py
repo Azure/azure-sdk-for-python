@@ -1,3 +1,9 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from ._shared._error import _ERROR_ATTRIBUTE_MISSING
 
 
@@ -60,7 +66,6 @@ class Table(object):
 
     :ivar str name: The name of the table.
     """
-    pass
 
 
 class EdmType(object):

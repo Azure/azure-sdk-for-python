@@ -1,9 +1,13 @@
-import kwargs as kwargs
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from azure.table._deserialization import _convert_to_entity
 from azure.table._entity import Entity
-from azure.table._generated.models import TableProperties
 from azure.table._shared.response_handlers import return_context_and_deserialized, process_storage_error
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
@@ -56,7 +60,8 @@ class AccessPolicy(GenAccessPolicy):
     :type start: ~datetime.datetime or str
     """
 
-    def __init__(self, permission=None, expiry=None, start=None):
+    def __init__(self, permission=None, expiry=None, start=None, **kwargs):
+        super().__init__(**kwargs)
         self.start = start
         self.expiry = expiry
         self.permission = permission
@@ -76,6 +81,7 @@ class TableAnalyticsLogging(GeneratedLogging):
     """
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.version = kwargs.get('version', u'1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
@@ -110,6 +116,7 @@ class Metrics(GeneratedMetrics):
     """
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.version = kwargs.get('version', u'1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
@@ -141,7 +148,8 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         be deleted.
     """
 
-    def __init__(self, enabled=False, days=None):
+    def __init__(self, enabled=False, days=None, **kwargs):
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.days = days
         if self.enabled and (self.days is None):
@@ -188,6 +196,7 @@ class CorsRule(GeneratedCorsRule):
     """
 
     def __init__(self, allowed_origins, allowed_methods, **kwargs):
+        super().__init__(**kwargs)
         self.allowed_origins = ','.join(allowed_origins)
         self.allowed_methods = ','.join(allowed_methods)
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
@@ -274,7 +283,7 @@ class TableEntityPropertiesPaged(PageIterator):
     :param str continuation_token: An opaque continuation token.
     """
 
-    def __init__(self, command, results_per_page=None, table=None, next_row_key=None, next_partition_key=None,
+    def __init__(self, command, results_per_page=None, table=None,
                  continuation_token=None):
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
@@ -312,14 +321,14 @@ class TableEntityPropertiesPaged(PageIterator):
         props_list = [Entity(_convert_to_entity(t)) for t in self._response.value]
         pk = self._headers['x-ms-continuation-NextPartitionKey']
         rk = self._headers['x-ms-continuation-NextRowKey']
-        next = ''
+        next_entity = ''
         if pk and rk:
-            next = pk + " " + rk
+            next_entity = pk + " " + rk
         elif pk:
-            next = pk
+            next_entity = pk
         elif rk:
-            next = " " + rk
-        return next or None, props_list
+            next_entity = " " + rk
+        return next_entity or None, props_list
 
 
 class TableSasPermissions(object):
@@ -395,10 +404,12 @@ class TableServices(Services):
             A string representing the services.
         """
 
+        super().__init__()
         self.table = True
 
     def __str__(self):
         return 't'
+
 
 class TablePayloadFormat(object):
     '''

@@ -7,6 +7,16 @@ from sys import version_info
 
 from pyparsing import unicode
 
+from azure.common import (
+    AzureHttpError,
+    AzureConflictHttpError,
+    AzureMissingResourceHttpError,
+    AzureException,
+)
+from ._constants import (
+    _ENCRYPTION_PROTOCOL_V1,
+)
+
 if version_info < (3,):
     def _str(value):
         if isinstance(value, unicode):
@@ -20,16 +30,6 @@ else:
 def _to_str(value):
     return _str(value) if value is not None else None
 
-
-from azure.common import (
-    AzureHttpError,
-    AzureConflictHttpError,
-    AzureMissingResourceHttpError,
-    AzureException,
-)
-from ._constants import (
-    _ENCRYPTION_PROTOCOL_V1,
-)
 
 _ERROR_ATTRIBUTE_MISSING = '\'{0}\' object has no attribute \'{1}\''
 _ERROR_BATCH_COMMIT_FAIL = 'Batch Commit Fail'
@@ -83,7 +83,8 @@ _ERROR_RANGE_TOO_LARGE_FOR_MD5 = \
 _ERROR_MD5_MISMATCH = \
     'MD5 mismatch. Expected value is \'{0}\', computed value is \'{1}\'.'
 _ERROR_TOO_MANY_ACCESS_POLICIES = \
-    'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
+    'Too many access policies provided. ' \
+    'The server does not support setting more than 5 access policies on a single resource.'
 _ERROR_OBJECT_INVALID = \
     '{0} does not define a complete interface. Value of {1} is either missing or invalid.'
 _ERROR_UNSUPPORTED_ENCRYPTION_VERSION = \
@@ -141,6 +142,7 @@ def _http_error_handler(http_error):
 
     raise ex
 
+
 def _validate_type_bytes(param_name, param):
     if not isinstance(param, bytes):
         raise TypeError(_ERROR_VALUE_SHOULD_BE_BYTES.format(param_name))
@@ -195,12 +197,12 @@ def _validate_decryption_required(require_encryption, kek, resolver):
 
 
 def _validate_encryption_protocol_version(encryption_protocol):
-    if not (_ENCRYPTION_PROTOCOL_V1 == encryption_protocol):
+    if not _ENCRYPTION_PROTOCOL_V1 == encryption_protocol:
         raise ValueError(_ERROR_UNSUPPORTED_ENCRYPTION_VERSION)
 
 
 def _validate_kek_id(kid, resolved_id):
-    if not (kid == resolved_id):
+    if not kid == resolved_id:
         raise ValueError(_ERROR_INVALID_KID)
 
 
@@ -231,4 +233,3 @@ class AzureSigningError(AzureException):
     In general, the cause of this exception is user error. For example, the given account key is not valid.
     Please visit https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account for more info.
     """
-    pass

@@ -14,28 +14,23 @@
 # --------------------------------------------------------------------------
 import base64
 import sys
-import types
 import uuid
-from plistlib import _decode_base64
 from uuid import UUID
 from datetime import datetime
-from json import (
-    dumps,
-)
+
 from math import (
     isnan,
 )
-
+from cffi.backend_ctypes import long
+from dateutil.parser import parse
+from numpy import int64
 from azure.table._entity import EdmType, EntityProperty
 from azure.table._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED, \
     _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY
 from azure.table._models import TablePayloadFormat
 from azure.table._shared._common_conversion import _encode_base64, _to_str
 from azure.table._shared.parser import _to_utc_datetime
-from dateutil.parser import parse
-from numpy.core import long
-from numpy.core import int64
-from pyparsing import unicode
+
 
 if sys.version_info < (3,):
     def _new_boundary():
@@ -141,7 +136,7 @@ def _to_entity_str(value):
     return None, value
 
 
-def _to_entity_none(value):
+def _to_entity_none():
     return None, None
 
 
@@ -180,13 +175,6 @@ _EDM_TO_TYPE_CONVERSIONS = {
     EdmType.INT64: _string_to_int64,
     EdmType.STRING: _to_entity_str,
 }
-
-if sys.version_info < (3,):
-    _PYTHON_TO_ENTITY_CONVERSIONS.update({
-        long: _to_entity_int64,
-        types.NoneType: _to_entity_none,
-        unicode: _to_entity_str,
-    })
 
 
 def _add_entity_properties(source):
@@ -246,7 +234,6 @@ def _convert_entity_to_properties(source):
     # set properties type for types we know if value has no type info.
     # if value has type info, then set the type to value.type
     for name, value in source.items():
-        mtype = ''
         ntype = name + '@odata.type'
         if ntype in source:
             conv = _EDM_TO_TYPE_CONVERSIONS.get(source[ntype])

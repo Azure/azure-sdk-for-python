@@ -1,26 +1,26 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 import functools
+from typing import Any
 from urllib.parse import urlparse
 
 from azure.table._generated import AzureTable
-from azure.table._generated.models import TableProperties, TableServiceStats, TableServiceProperties, \
+from azure.table._generated.models import TableProperties, TableServiceProperties, \
     AccessPolicy, SignedIdentifier
-from azure.table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize, \
-    TableServices
-from azure.table._serialization import _add_entity_properties
-from azure.table._serialize import get_api_version
-from azure.table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, \
-    TransportWrapper
-from azure.table._shared.encryption import _validate_not_none
+from azure.table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
+from azure.table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from azure.table._shared.models import LocationMode
 from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import process_storage_error, return_headers_and_deserialized
-from azure.table._shared.shared_access_signature import TableSharedAccessSignature
 from azure.table._version import VERSION
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.table._table_client import TableClient
-from msrest.pipeline import Pipeline
 
 
 class TableServiceClient(StorageAccountHostsMixin):
@@ -86,100 +86,22 @@ class TableServiceClient(StorageAccountHostsMixin):
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
 
-
-    def generate_table_shared_access_signature(self, account_name, account_key, table_name, permission=None,
-                                               expiry=None, start=None, id=None,
-                                               ip=None, protocol=None,
-                                               start_pk=None, start_rk=None,
-                                               end_pk=None, end_rk=None):
-        '''
-        Generates a shared access signature for the table.
-        Use the returned signature with the sas_token parameter of TableService.
-
-        :param str table_name:
-            The name of the table to create a SAS token for.
-        :param TablePermissions permission:
-            The permissions associated with the shared access signature. The
-            user is restricted to operations allowed by the permissions.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has been
-            specified in an associated stored access policy.
-        :param expiry:
-            The time at which the shared access signature becomes invalid.
-            Required unless an id is given referencing a stored access policy
-            which contains this field. This field must be omitted if it has
-            been specified in an associated stored access policy. Azure will always
-            convert values to UTC. If a date is passed in without timezone info, it
-            is assumed to be UTC.
-        :type expiry: datetime or str
-        :param start:
-            The time at which the shared access signature becomes valid. If
-            omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
-        :type start: datetime or str
-        :param str id:
-            A unique value up to 64 characters in length that correlates to a
-            stored access policy. To create a stored access policy, use :func:`~set_table_acl`.
-        :param str ip:
-            Specifies an IP address or a range of IP addresses from which to accept requests.
-            If the IP address from which the request originates does not match the IP address
-            or address range specified on the SAS token, the request is not authenticated.
-            For example, specifying sip='168.1.5.65' or sip='168.1.5.60-168.1.5.70' on the SAS
-            restricts the request to those IP addresses.
-        :param str protocol:
-            Specifies the protocol permitted for a request made. The default value
-            is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
-        :param str start_pk:
-            The minimum partition key accessible with this shared access
-            signature. startpk must accompany startrk. Key values are inclusive.
-            If omitted, there is no lower bound on the table entities that can
-            be accessed.
-        :param str start_rk:
-            The minimum row key accessible with this shared access signature.
-            startpk must accompany startrk. Key values are inclusive. If
-            omitted, there is no lower bound on the table entities that can be
-            accessed.
-        :param str end_pk:
-            The maximum partition key accessible with this shared access
-            signature. endpk must accompany endrk. Key values are inclusive. If
-            omitted, there is no upper bound on the table entities that can be
-            accessed.
-        :param str end_rk:
-            The maximum row key accessible with this shared access signature.
-            endpk must accompany endrk. Key values are inclusive. If omitted,
-            there is no upper bound on the table entities that can be accessed.
-        :return: A Shared Access Signature (sas) token.
-        :rtype: str
-        '''
-        _validate_not_none('table_name', table_name)
-        _validate_not_none('account_name', account_name)
-        _validate_not_none('account_key', account_key)
-
-        sas = TableSharedAccessSignature(account_name, account_key)
-        return sas.generate_table(
-            table_name,
-            permission=permission,
-            expiry=expiry,
-            start=start,
-            id=id,
-            ip=ip,
-            protocol=protocol,
-            start_pk=start_pk,
-            start_rk=start_rk,
-            end_pk=end_pk,
-            end_rk=end_rk,
-        )
-
-
-
     @distributed_trace
     def get_table_access_policy(
             self,
-            table_name,
-            **kwargs
+            table_name,  # type: str
+            **kwargs  # type: Any
     ):
+        """Retrieves details about any stored access policies specified on the table that may be
+        used with Shared Access Signatures.
+
+                :param table_name: The name of the table.
+                :type table_name: str
+                :keyword callable cls: A custom type or function that will be passed the direct response
+                :return: list of SignedIdentifier, or the result of cls(response)
+                :rtype: list[~azure.table.models.SignedIdentifier]
+                :raises: ~azure.core.exceptions.HttpResponseError
+                """
         timeout = kwargs.pop('timeout', None)
         try:
             _, identifiers = self._client.table.get_access_policy(
@@ -193,7 +115,17 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_table_access_policy(self, table_name, signed_identifiers, **kwargs):
-        # type: (Dict[str, AccessPolicy], Optional[Any]) -> None
+        """Sets stored access policies for the table that may be used with Shared Access Signatures.
+
+                :param signed_identifiers:
+                :type signed_identifiers: {id,AccessPolicy}
+                :param table_name: The name of the table.
+                :type table_name: str
+                :keyword callable cls: A custom type or function that will be passed the direct response
+                :return: None, or the result of cls(response)
+                :rtype: None
+                :raises: ~azure.core.exceptions.HttpResponseError
+                """
         if len(signed_identifiers) > 5:
             raise ValueError(
                 'Too many access policies provided. The server does not support setting '
@@ -214,8 +146,15 @@ class TableServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_service_stats(self, raw_response_hook=None, **kwargs):
-        # type: (Optional[Any]) -> Dict[str, Any]
+    def get_service_stats(self, **kwargs):
+        """Retrieves statistics related to replication for the Table service. It is only available on the secondary
+        location endpoint when read-access geo-redundant replication is enabled for the account.
+
+                :keyword callable cls: A custom type or function that will be passed the direct response
+                :return: TableServiceStats, or the result of cls(response)
+                :rtype: ~azure.table.models.TableServiceStats
+                :raises: ~azure.core.exceptions.HttpResponseError
+                """
         try:
             timeout = kwargs.pop('timeout', None)
             stats = self._client.service.get_statistics(  # type: ignore
@@ -226,7 +165,14 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
-        # type: (Optional[Any]) -> Dict[str, Any]
+        """Gets the properties of an account's Table service,
+        including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
+
+                :keyword callable cls: A custom type or function that will be passed the direct response
+                :return: TableServiceProperties, or the result of cls(response)
+                :rtype: ~azure.table.models.TableServiceProperties
+                :raises: ~azure.core.exceptions.HttpResponseError
+                """
         timeout = kwargs.pop('timeout', None)
         try:
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
@@ -235,15 +181,26 @@ class TableServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def set_service_properties(  # type: ignore
-            self, analytics_logging=None,  # type: Optional[TableAnalyticsLogging]
-            hour_metrics=None,  # type: Optional[Metrics]
-            minute_metrics=None,  # type: Optional[Metrics]
-            cors=None,  # type: Optional[List[CorsRule]]
+    def set_service_properties(
+            self, analytics_logging=None,
+            hour_metrics=None,
+            minute_metrics=None,
+            cors=None,
             **kwargs
     ):
-        # type: (...) -> None
+        """Sets properties for an account's Table service endpoint,
+        including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
+
+               :param cors:
+               :param minute_metrics:
+               :param hour_metrics:
+               :param analytics_logging:
+               :keyword callable cls: A custom type or function that will be passed the direct response
+               :return: None, or the result of cls(response)
+               :rtype: None
+               :raises: ~azure.core.exceptions.HttpResponseError
+               """
         props = TableServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,
@@ -262,19 +219,38 @@ class TableServiceClient(StorageAccountHostsMixin):
             headers=None,
             **kwargs
     ):
-        table_properties = TableProperties(table_name=table_name,**dict(kwargs,headers=headers))
+        """Creates a new table under the given account.
+
+                :param headers:
+                :param table_name: The Table name.
+                :type table_name: ~azure.table._models.Table
+                :return: TableClient, or the result of cls(response)
+                :rtype: ~azure.table.TableClient or None
+                :raises: ~azure.core.exceptions.HttpResponseError
+                """
+        table_properties = TableProperties(table_name=table_name, **dict(kwargs, headers=headers))
         self._client.table.create(table_properties)
         table = self.get_table_client(table=table_name)
         return table
-
 
     @distributed_trace
     def delete_table(
             self,
             table_name,
-            request_id_parameter=None
+            request_id_parameter=None,
+            **kwargs
     ):
-        response = self._client.table.delete(table=table_name, request_id_parameter=request_id_parameter)
+        """Creates a new table under the given account.
+
+                        :param request_id_parameter: Request Id parameter
+                        :type request_id_parameter: str
+                        :param table_name: The Table name.
+                        :type table_name: str
+                        :keyword callable cls: A custom type or function that will be passed the direct response
+                        :return: None
+                        :rtype: ~None
+                        """
+        response = self._client.table.delete(table=table_name, request_id_parameter=request_id_parameter, **kwargs)
         return response
         # table = self.get_table_client(table=table_name)
         # table.delete_queue(table_name)
@@ -282,11 +258,19 @@ class TableServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def list_tables(
             self,
-            request_id_parameter=None,
-            next_table_name=None,  # type: Optional[str]
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs
     ):
+        # type: (...) -> "ItemPaged"
+        """Queries tables under the given account.
+
+        :param query_options: Parameter group.
+        :type query_options: ~azure.table.models.QueryOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ItemPaged, or the result of cls(response)
+        :rtype: ~ItemPaged
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         command = functools.partial(
             self._client.table.query,
             **kwargs)
@@ -298,11 +282,19 @@ class TableServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def query_tables(
             self,
-            request_id_parameter=None,
-            next_table_name=None,
             query_options=None,
             **kwargs
     ):
+        # type: (...) -> "ItemPaged"
+        """Queries tables under the given account.
+
+        :param query_options: Parameter group.
+        :type query_options: ~azure.table.models.QueryOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ItemPaged, or the result of cls(response)
+        :rtype: ~ItemPaged
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         command = functools.partial(self._client.table.query,
                                     **kwargs)
         return ItemPaged(
@@ -312,7 +304,18 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     def get_table_client(self, table, **kwargs):
         # type: (Union[TableProperties, str], Optional[Any]) -> TableClient
+        """Get a client to interact with the specified table.
 
+               The table need not already exist.
+
+               :param table:
+                   The queue. This can either be the name of the queue,
+                   or an instance of QueueProperties.
+               :type table: str or ~azure.storage.table.TableProperties
+               :returns: A :class:`~azure.table.TableClient` object.
+               :rtype: ~azure.table.TableClient
+
+               """
         try:
             table_name = table.name
         except AttributeError:

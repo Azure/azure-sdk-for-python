@@ -23,9 +23,7 @@ from ._message_encoding import (
 )
 from ._models import (
     TableProperties,
-    TableSasPermissions,
     AccessPolicy,
-    TableAnalyticsLogging,
     Metrics,
     CorsRule,
     RetentionPolicy, TableAnalyticsLogging, TableSasPermissions,

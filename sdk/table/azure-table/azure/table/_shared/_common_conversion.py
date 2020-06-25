@@ -107,10 +107,7 @@ def _get_content_md5(data):
         md5.update(data)
     elif hasattr(data, 'read'):
         pos = 0
-        try:
-            pos = data.tell()
-        except:
-            pass
+        pos = data.tell()
         for chunk in iter(lambda: data.read(4096), b""):
             md5.update(chunk)
         try:

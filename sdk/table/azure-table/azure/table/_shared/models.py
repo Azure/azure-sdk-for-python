@@ -9,11 +9,9 @@ from enum import Enum
 from pyparsing import unicode
 
 if sys.version_info < (3,):
-    from collections import Iterable
 
     _unicode_type = unicode
 else:
-    from collections.abc import Iterable
 
     _unicode_type = str
 
