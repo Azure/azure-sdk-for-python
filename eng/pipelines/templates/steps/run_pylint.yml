@@ -13,6 +13,7 @@ steps:
     
 
   - script: |
+      python -m pip install pip==20.1
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
     condition: succeededOrFailed()
