@@ -38,8 +38,7 @@ class SearchIndexClient(HeadersMixin):
     :type endpoint: str
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword str api_version:
-        The Search API version to use for requests. Default value is "2019-05-06-Preview".
+    :keyword str api_version: The Search API version to use for requests.
 
     """
 
