@@ -10,11 +10,14 @@
 FILE: sample_differentiate_output_models_trained_with_and_without_labels_async.py
 
 DESCRIPTION:
-    This sample demonstrates the differences in output that arise when recognize_custom_forms
+    This sample demonstrates the differences in output that arise when begin_recognize_custom_forms
     is called with custom models trained with labels and without labels. The models used in this
     sample can be created in sample_train_model_with_labels_async.py and sample_train_model_without_labels_async.py
 
     For a more general example of recognizing custom forms, see sample_recognize_custom_forms_async.py
+
+    An explanation of the difference between training with and without labels can be found in the
+    service documentation: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview#train-without-labels
 
 USAGE:
     python sample_differentiate_output_models_trained_with_and_without_labels_async.py
@@ -64,10 +67,10 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabelsSampleAsync(object):
             )
             forms_with_unlabeled_model = await without_labels_poller.result()
 
-            # With a form recognized by a model trained with labels, this 'name' key will be its
-            # training-time label, otherwise it will be denoted by numeric indices.
-            # Label data is not returned for model trained with labels.
-            print("---------Recognizing forms with models trained with labels---------")
+            # With a form recognized by a model trained with labels, the `name` key will be its label given during training.
+            # `value` will contain the typed field value and `value_data` will contain information about the field value
+            # `label_data` is not populated for a model trained with labels as this was the given label used to extract the key
+            print("---------Recognizing forms using models trained with labeled data---------")
             for labeled_form in forms_with_labeled_model:
                 for name, field in labeled_form.fields.items():
                     print("...Field '{}' has value '{}' based on '{}' within bounding box '{}', with a confidence score of {}".format(
@@ -86,8 +89,11 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabelsSampleAsync(object):
             except KeyError:
                 print("'Merchant' training-time label does not exist. Substitute with your own training-time label.")
 
-            print("------------------------------------------------------------------")
-            print("-------Recognizing forms with models trained without labels-------")
+            # With a form recognized by a model trained without labels, the `name` key will be denoted by numeric indices.
+            # Non-unique form field label names will be found in the `label_data.text`
+            # Information about the form field label and the field value are found in `label_data` and `value_data`
+            print("-----------------------------------------------------------------------")
+            print("-------Recognizing forms using models trained with unlabeled data-------")
             for unlabeled_form in forms_with_unlabeled_model:
                 for name, field in unlabeled_form.fields.items():
                     # The form recognized with a model trained with unlabeled data will also include data about your labels
