@@ -216,7 +216,7 @@ async def test_should_refresh():
     now = int(time.time())
 
     # do not need refresh
-    token = AccessToken("token", now + 500)
+    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET + 1)
     should_refresh = client.should_refresh(token)
     assert not should_refresh
 
@@ -237,6 +237,30 @@ async def test_token_refresh_kwargs():
     client = AadClient("test", "test")
     assert client._token_refresh_retry_timeout == DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT
     assert client._token_refresh_offset == DEFAULT_REFRESH_OFFSET
-    client = AadClient("test", "test", token_refresh_retry_timeout=10, token_refresh_offset=100)
-    assert client._token_refresh_retry_timeout == 10
-    assert client._token_refresh_offset == 100
+
+    test_token_refresh_retry_timeout = 10
+    test_token_refresh_offset = 100
+    client = AadClient("test", "test",
+                       token_refresh_retry_timeout=test_token_refresh_retry_timeout,
+                       token_refresh_offset=test_token_refresh_offset)
+    assert client._token_refresh_retry_timeout == test_token_refresh_retry_timeout
+    assert client._token_refresh_offset == test_token_refresh_offset
+
+    now = int(time.time())
+
+    # do not need refresh
+    token = AccessToken("token", now + test_token_refresh_offset + 1)
+    should_refresh = client.should_refresh(token)
+    assert not should_refresh
+
+    # need refresh
+    token = AccessToken("token", now + test_token_refresh_offset - 1)
+    client._last_refresh_time = now - test_token_refresh_retry_timeout - 1
+    should_refresh = client.should_refresh(token)
+    assert should_refresh
+
+    # not exceed cool down time, do not refresh
+    token = AccessToken("token", now + test_token_refresh_offset - 1)
+    client._last_refresh_time = now - test_token_refresh_retry_timeout + 1
+    should_refresh = client.should_refresh(token)
+    assert not should_refresh
