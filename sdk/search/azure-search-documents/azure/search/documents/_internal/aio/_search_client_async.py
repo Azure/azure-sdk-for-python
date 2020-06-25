@@ -11,7 +11,7 @@ from .._generated.aio import SearchIndexClient
 from .._generated.models import IndexBatch, IndexingResult
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
-from ..._api_versions import check_api_version
+from ..._api_versions import validate_api_version
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
 
@@ -48,8 +48,7 @@ class SearchClient(HeadersMixin):
         # type: (str, str, AzureKeyCredential, **Any) -> None
 
         api_version = kwargs.pop('api_version', None)
-        if api_version:
-            check_api_version(api_version)
+        validate_api_version(api_version)
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._credential = credential  # type: AzureKeyCredential

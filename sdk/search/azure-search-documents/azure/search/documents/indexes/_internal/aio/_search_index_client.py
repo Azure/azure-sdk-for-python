@@ -19,7 +19,7 @@ from .._utils import (
     get_access_conditions,
     normalize_endpoint,
 )
-from ...._api_versions import check_api_version
+from ...._api_versions import validate_api_version
 from ...._headers_mixin import HeadersMixin
 from ...._version import SDK_MONIKER
 
@@ -48,8 +48,7 @@ class SearchIndexClient(HeadersMixin):
         # type: (str, AzureKeyCredential, **Any) -> None
 
         api_version = kwargs.pop('api_version', None)
-        if api_version:
-            check_api_version(api_version)
+        validate_api_version(api_version)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential  # type: AzureKeyCredential
         self._client = _SearchServiceClient(

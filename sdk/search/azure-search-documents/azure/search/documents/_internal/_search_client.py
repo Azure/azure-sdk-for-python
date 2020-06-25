@@ -8,7 +8,7 @@ from typing import cast, List, TYPE_CHECKING
 import six
 
 from azure.core.tracing.decorator import distributed_trace
-from .._api_versions import check_api_version
+from .._api_versions import validate_api_version
 from ._generated import SearchIndexClient
 from ._generated.models import IndexBatch, IndexingResult
 from ._index_documents_batch import IndexDocumentsBatch
@@ -78,8 +78,7 @@ class SearchClient(HeadersMixin):
         # type: (str, str, AzureKeyCredential, **Any) -> None
 
         api_version = kwargs.pop('api_version', None)
-        if api_version:
-            check_api_version(api_version)
+        validate_api_version(api_version)
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._credential = credential  # type: AzureKeyCredential
