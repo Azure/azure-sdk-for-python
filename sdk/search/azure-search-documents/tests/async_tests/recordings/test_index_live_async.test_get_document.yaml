@@ -9,7 +9,7 @@ interactions:
       api-key:
       - AB0C0391C5B486DC4244CF967D7CAFD9
     method: GET
-    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2019-05-06-Preview
+    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"1","hotelName":"Fancy Stay","description":"Best hotel in
@@ -37,7 +37,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2019-05-06-Preview
+    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -48,7 +48,7 @@ interactions:
       api-key:
       - AB0C0391C5B486DC4244CF967D7CAFD9
     method: GET
-    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2019-05-06-Preview
+    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"2","hotelName":"Roach Motel","description":"Cheapest hotel
@@ -71,7 +71,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2019-05-06-Preview
+    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -82,7 +82,7 @@ interactions:
       api-key:
       - AB0C0391C5B486DC4244CF967D7CAFD9
     method: GET
-    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2019-05-06-Preview
+    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"3","hotelName":"EconoStay","description":"Very popular
@@ -104,7 +104,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2019-05-06-Preview
+    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -115,7 +115,7 @@ interactions:
       api-key:
       - AB0C0391C5B486DC4244CF967D7CAFD9
     method: GET
-    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
+    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"4","hotelName":"Express Rooms","description":"Pretty good
@@ -137,7 +137,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
+    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -148,7 +148,7 @@ interactions:
       api-key:
       - AB0C0391C5B486DC4244CF967D7CAFD9
     method: GET
-    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2019-05-06-Preview
+    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"5","hotelName":"Comfy Place","description":"Another good
@@ -170,7 +170,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2019-05-06-Preview
+    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -181,7 +181,7 @@ interactions:
       api-key:
       - AB0C0391C5B486DC4244CF967D7CAFD9
     method: GET
-    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2019-05-06-Preview
+    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"6","hotelName":null,"description":"Surprisingly expensive.
@@ -203,7 +203,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2019-05-06-Preview
+    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -214,7 +214,7 @@ interactions:
       api-key:
       - AB0C0391C5B486DC4244CF967D7CAFD9
     method: GET
-    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2019-05-06-Preview
+    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"7","hotelName":"Modern Stay","description":"Modern architecture,
@@ -237,7 +237,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2019-05-06-Preview
+    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -248,7 +248,7 @@ interactions:
       api-key:
       - AB0C0391C5B486DC4244CF967D7CAFD9
     method: GET
-    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2019-05-06-Preview
+    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"8","hotelName":null,"description":"Has some road noise
@@ -272,7 +272,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2019-05-06-Preview
+    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -283,7 +283,7 @@ interactions:
       api-key:
       - AB0C0391C5B486DC4244CF967D7CAFD9
     method: GET
-    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2019-05-06-Preview
+    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"9","hotelName":"Secret Point Motel","description":"The
@@ -321,7 +321,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2019-05-06-Preview
+    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -332,7 +332,7 @@ interactions:
       api-key:
       - AB0C0391C5B486DC4244CF967D7CAFD9
     method: GET
-    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2019-05-06-Preview
+    uri: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"10","hotelName":"Countryside Hotel","description":"Save
@@ -366,5 +366,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2019-05-06-Preview
+    url: https://search41be100f.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30
 version: 1

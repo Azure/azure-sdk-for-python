@@ -9,7 +9,7 @@ interactions:
       api-key:
       - A267E470BFF120455C4300D9DF89C73B
     method: DELETE
-    uri: https://search86db11ac.search.windows.net/indexes('drgqefsg')?api-version=2019-05-06-Preview
+    uri: https://search86db11ac.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30
   response:
     body:
       string: ''
@@ -24,7 +24,7 @@ interactions:
     status:
       code: 204
       message: No Content
-    url: https://search86db11ac.search.windows.net/indexes('drgqefsg')?api-version=2019-05-06-Preview
+    url: https://search86db11ac.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -35,7 +35,7 @@ interactions:
       api-key:
       - A267E470BFF120455C4300D9DF89C73B
     method: GET
-    uri: https://search86db11ac.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://search86db11ac.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search86db11ac.search.windows.net/$metadata#indexes","value":[]}'
@@ -56,5 +56,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search86db11ac.search.windows.net/indexes?api-version=2019-05-06-Preview
+    url: https://search86db11ac.search.windows.net/indexes?api-version=2020-06-30
 version: 1

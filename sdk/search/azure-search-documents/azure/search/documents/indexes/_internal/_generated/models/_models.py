@@ -181,7 +181,7 @@ class TokenFilter(msrest.serialization.Model):
         **kwargs
     ):
         super(TokenFilter, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type = None  # type: Optional[str]
         self.name = kwargs['name']
 
 
@@ -218,7 +218,7 @@ class AsciiFoldingTokenFilter(TokenFilter):
         **kwargs
     ):
         super(AsciiFoldingTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.AsciiFoldingTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.AsciiFoldingTokenFilter'  # type: str
         self.preserve_original = kwargs.get('preserve_original', False)
 
 
@@ -282,7 +282,7 @@ class Similarity(msrest.serialization.Model):
         **kwargs
     ):
         super(Similarity, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type = None  # type: Optional[str]
 
 
 class BM25Similarity(Similarity):
@@ -317,7 +317,7 @@ class BM25Similarity(Similarity):
         **kwargs
     ):
         super(BM25Similarity, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.BM25Similarity'
+        self.odata_type = '#Microsoft.Azure.Search.BM25Similarity'  # type: str
         self.k1 = kwargs.get('k1', None)
         self.b = kwargs.get('b', None)
 
@@ -358,7 +358,7 @@ class CharFilter(msrest.serialization.Model):
         **kwargs
     ):
         super(CharFilter, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type = None  # type: Optional[str]
         self.name = kwargs['name']
 
 
@@ -399,7 +399,7 @@ class CjkBigramTokenFilter(TokenFilter):
         **kwargs
     ):
         super(CjkBigramTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.CjkBigramTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.CjkBigramTokenFilter'  # type: str
         self.ignore_scripts = kwargs.get('ignore_scripts', None)
         self.output_unigrams = kwargs.get('output_unigrams', False)
 
@@ -426,7 +426,7 @@ class ClassicSimilarity(Similarity):
         **kwargs
     ):
         super(ClassicSimilarity, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.ClassicSimilarity'
+        self.odata_type = '#Microsoft.Azure.Search.ClassicSimilarity'  # type: str
 
 
 class LexicalTokenizer(msrest.serialization.Model):
@@ -465,7 +465,7 @@ class LexicalTokenizer(msrest.serialization.Model):
         **kwargs
     ):
         super(LexicalTokenizer, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type = None  # type: Optional[str]
         self.name = kwargs['name']
 
 
@@ -503,7 +503,7 @@ class ClassicTokenizer(LexicalTokenizer):
         **kwargs
     ):
         super(ClassicTokenizer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.ClassicTokenizer'
+        self.odata_type = '#Microsoft.Azure.Search.ClassicTokenizer'  # type: str
         self.max_token_length = kwargs.get('max_token_length', 255)
 
 
@@ -540,7 +540,7 @@ class CognitiveServicesAccount(msrest.serialization.Model):
         **kwargs
     ):
         super(CognitiveServicesAccount, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type = None  # type: Optional[str]
         self.description = kwargs.get('description', None)
 
 
@@ -575,7 +575,7 @@ class CognitiveServicesAccountKey(CognitiveServicesAccount):
         **kwargs
     ):
         super(CognitiveServicesAccountKey, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.CognitiveServicesByKey'
+        self.odata_type = '#Microsoft.Azure.Search.CognitiveServicesByKey'  # type: str
         self.key = kwargs['key']
 
 
@@ -621,7 +621,7 @@ class CommonGramTokenFilter(TokenFilter):
         **kwargs
     ):
         super(CommonGramTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.CommonGramTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.CommonGramTokenFilter'  # type: str
         self.common_words = kwargs['common_words']
         self.ignore_case = kwargs.get('ignore_case', False)
         self.use_query_mode = kwargs.get('use_query_mode', False)
@@ -680,7 +680,7 @@ class SearchIndexerSkill(msrest.serialization.Model):
         **kwargs
     ):
         super(SearchIndexerSkill, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type = None  # type: Optional[str]
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
         self.context = kwargs.get('context', None)
@@ -734,7 +734,7 @@ class ConditionalSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(ConditionalSkill, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Skills.Util.ConditionalSkill'
+        self.odata_type = '#Microsoft.Skills.Util.ConditionalSkill'  # type: str
 
 
 class CorsOptions(msrest.serialization.Model):
@@ -805,7 +805,7 @@ class LexicalAnalyzer(msrest.serialization.Model):
         **kwargs
     ):
         super(LexicalAnalyzer, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type = None  # type: Optional[str]
         self.name = kwargs['name']
 
 
@@ -856,7 +856,7 @@ class CustomAnalyzer(LexicalAnalyzer):
         **kwargs
     ):
         super(CustomAnalyzer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.CustomAnalyzer'
+        self.odata_type = '#Microsoft.Azure.Search.CustomAnalyzer'  # type: str
         self.tokenizer = kwargs['tokenizer']
         self.token_filters = kwargs.get('token_filters', None)
         self.char_filters = kwargs.get('char_filters', None)
@@ -892,7 +892,7 @@ class DataChangeDetectionPolicy(msrest.serialization.Model):
         **kwargs
     ):
         super(DataChangeDetectionPolicy, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type = None  # type: Optional[str]
 
 
 class DataDeletionDetectionPolicy(msrest.serialization.Model):
@@ -925,7 +925,7 @@ class DataDeletionDetectionPolicy(msrest.serialization.Model):
         **kwargs
     ):
         super(DataDeletionDetectionPolicy, self).__init__(**kwargs)
-        self.odata_type = None
+        self.odata_type = None  # type: Optional[str]
 
 
 class DataSourceCredentials(msrest.serialization.Model):
@@ -973,7 +973,7 @@ class DefaultCognitiveServicesAccount(CognitiveServicesAccount):
         **kwargs
     ):
         super(DefaultCognitiveServicesAccount, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.DefaultCognitiveServices'
+        self.odata_type = '#Microsoft.Azure.Search.DefaultCognitiveServices'  # type: str
 
 
 class DictionaryDecompounderTokenFilter(TokenFilter):
@@ -1028,7 +1028,7 @@ class DictionaryDecompounderTokenFilter(TokenFilter):
         **kwargs
     ):
         super(DictionaryDecompounderTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter'  # type: str
         self.word_list = kwargs['word_list']
         self.min_word_size = kwargs.get('min_word_size', 5)
         self.min_subword_size = kwargs.get('min_subword_size', 2)
@@ -1080,7 +1080,7 @@ class ScoringFunction(msrest.serialization.Model):
         **kwargs
     ):
         super(ScoringFunction, self).__init__(**kwargs)
-        self.type = None
+        self.type = None  # type: Optional[str]
         self.field_name = kwargs['field_name']
         self.boost = kwargs['boost']
         self.interpolation = kwargs.get('interpolation', None)
@@ -1127,7 +1127,7 @@ class DistanceScoringFunction(ScoringFunction):
         **kwargs
     ):
         super(DistanceScoringFunction, self).__init__(**kwargs)
-        self.type = 'distance'
+        self.type = 'distance'  # type: str
         self.parameters = kwargs['parameters']
 
 
@@ -1203,7 +1203,7 @@ class EdgeNGramTokenFilter(TokenFilter):
         **kwargs
     ):
         super(EdgeNGramTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.EdgeNGramTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.EdgeNGramTokenFilter'  # type: str
         self.min_gram = kwargs.get('min_gram', 1)
         self.max_gram = kwargs.get('max_gram', 2)
         self.side = kwargs.get('side', None)
@@ -1251,7 +1251,7 @@ class EdgeNGramTokenFilterV2(TokenFilter):
         **kwargs
     ):
         super(EdgeNGramTokenFilterV2, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.EdgeNGramTokenFilterV2'
+        self.odata_type = '#Microsoft.Azure.Search.EdgeNGramTokenFilterV2'  # type: str
         self.min_gram = kwargs.get('min_gram', 1)
         self.max_gram = kwargs.get('max_gram', 2)
         self.side = kwargs.get('side', None)
@@ -1298,7 +1298,7 @@ class EdgeNGramTokenizer(LexicalTokenizer):
         **kwargs
     ):
         super(EdgeNGramTokenizer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.EdgeNGramTokenizer'
+        self.odata_type = '#Microsoft.Azure.Search.EdgeNGramTokenizer'  # type: str
         self.min_gram = kwargs.get('min_gram', 1)
         self.max_gram = kwargs.get('max_gram', 2)
         self.token_chars = kwargs.get('token_chars', None)
@@ -1336,7 +1336,7 @@ class ElisionTokenFilter(TokenFilter):
         **kwargs
     ):
         super(ElisionTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.ElisionTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.ElisionTokenFilter'  # type: str
         self.articles = kwargs.get('articles', None)
 
 
@@ -1406,7 +1406,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(EntityRecognitionSkill, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Skills.Text.EntityRecognitionSkill'
+        self.odata_type = '#Microsoft.Skills.Text.EntityRecognitionSkill'  # type: str
         self.categories = kwargs.get('categories', None)
         self.default_language_code = kwargs.get('default_language_code', None)
         self.include_typeless_entities = kwargs.get('include_typeless_entities', None)
@@ -1518,7 +1518,7 @@ class FreshnessScoringFunction(ScoringFunction):
         **kwargs
     ):
         super(FreshnessScoringFunction, self).__init__(**kwargs)
-        self.type = 'freshness'
+        self.type = 'freshness'  # type: str
         self.parameters = kwargs['parameters']
 
 
@@ -1607,7 +1607,7 @@ class HighWaterMarkChangeDetectionPolicy(DataChangeDetectionPolicy):
         **kwargs
     ):
         super(HighWaterMarkChangeDetectionPolicy, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy'
+        self.odata_type = '#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy'  # type: str
         self.high_water_mark_column_name = kwargs['high_water_mark_column_name']
 
 
@@ -1668,7 +1668,7 @@ class ImageAnalysisSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(ImageAnalysisSkill, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Skills.Vision.ImageAnalysisSkill'
+        self.odata_type = '#Microsoft.Skills.Vision.ImageAnalysisSkill'  # type: str
         self.default_language_code = kwargs.get('default_language_code', None)
         self.visual_features = kwargs.get('visual_features', None)
         self.details = kwargs.get('details', None)
@@ -1888,7 +1888,7 @@ class KeepTokenFilter(TokenFilter):
         **kwargs
     ):
         super(KeepTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.KeepTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.KeepTokenFilter'  # type: str
         self.keep_words = kwargs['keep_words']
         self.lower_case_keep_words = kwargs.get('lower_case_keep_words', False)
 
@@ -1949,7 +1949,7 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(KeyPhraseExtractionSkill, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Skills.Text.KeyPhraseExtractionSkill'
+        self.odata_type = '#Microsoft.Skills.Text.KeyPhraseExtractionSkill'  # type: str
         self.default_language_code = kwargs.get('default_language_code', None)
         self.max_key_phrase_count = kwargs.get('max_key_phrase_count', None)
 
@@ -1991,7 +1991,7 @@ class KeywordMarkerTokenFilter(TokenFilter):
         **kwargs
     ):
         super(KeywordMarkerTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.KeywordMarkerTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.KeywordMarkerTokenFilter'  # type: str
         self.keywords = kwargs['keywords']
         self.ignore_case = kwargs.get('ignore_case', False)
 
@@ -2028,7 +2028,7 @@ class KeywordTokenizer(LexicalTokenizer):
         **kwargs
     ):
         super(KeywordTokenizer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.KeywordTokenizer'
+        self.odata_type = '#Microsoft.Azure.Search.KeywordTokenizer'  # type: str
         self.buffer_size = kwargs.get('buffer_size', 256)
 
 
@@ -2066,7 +2066,7 @@ class KeywordTokenizerV2(LexicalTokenizer):
         **kwargs
     ):
         super(KeywordTokenizerV2, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.KeywordTokenizerV2'
+        self.odata_type = '#Microsoft.Azure.Search.KeywordTokenizerV2'  # type: str
         self.max_token_length = kwargs.get('max_token_length', 256)
 
 
@@ -2116,7 +2116,7 @@ class LanguageDetectionSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(LanguageDetectionSkill, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Skills.Text.LanguageDetectionSkill'
+        self.odata_type = '#Microsoft.Skills.Text.LanguageDetectionSkill'  # type: str
 
 
 class LengthTokenFilter(TokenFilter):
@@ -2157,7 +2157,7 @@ class LengthTokenFilter(TokenFilter):
         **kwargs
     ):
         super(LengthTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.LengthTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.LengthTokenFilter'  # type: str
         self.min_length = kwargs.get('min_length', 0)
         self.max_length = kwargs.get('max_length', 300)
 
@@ -2198,7 +2198,7 @@ class LimitTokenFilter(TokenFilter):
         **kwargs
     ):
         super(LimitTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.LimitTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.LimitTokenFilter'  # type: str
         self.max_token_count = kwargs.get('max_token_count', 1)
         self.consume_all_tokens = kwargs.get('consume_all_tokens', False)
 
@@ -2375,7 +2375,7 @@ class LuceneStandardAnalyzer(LexicalAnalyzer):
         **kwargs
     ):
         super(LuceneStandardAnalyzer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.StandardAnalyzer'
+        self.odata_type = '#Microsoft.Azure.Search.StandardAnalyzer'  # type: str
         self.max_token_length = kwargs.get('max_token_length', 255)
         self.stopwords = kwargs.get('stopwords', None)
 
@@ -2413,7 +2413,7 @@ class LuceneStandardTokenizer(LexicalTokenizer):
         **kwargs
     ):
         super(LuceneStandardTokenizer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.StandardTokenizer'
+        self.odata_type = '#Microsoft.Azure.Search.StandardTokenizer'  # type: str
         self.max_token_length = kwargs.get('max_token_length', 255)
 
 
@@ -2451,7 +2451,7 @@ class LuceneStandardTokenizerV2(LexicalTokenizer):
         **kwargs
     ):
         super(LuceneStandardTokenizerV2, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.StandardTokenizerV2'
+        self.odata_type = '#Microsoft.Azure.Search.StandardTokenizerV2'  # type: str
         self.max_token_length = kwargs.get('max_token_length', 255)
 
 
@@ -2496,7 +2496,7 @@ class MagnitudeScoringFunction(ScoringFunction):
         **kwargs
     ):
         super(MagnitudeScoringFunction, self).__init__(**kwargs)
-        self.type = 'magnitude'
+        self.type = 'magnitude'  # type: str
         self.parameters = kwargs['parameters']
 
 
@@ -2569,7 +2569,7 @@ class MappingCharFilter(CharFilter):
         **kwargs
     ):
         super(MappingCharFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.MappingCharFilter'
+        self.odata_type = '#Microsoft.Azure.Search.MappingCharFilter'  # type: str
         self.mappings = kwargs['mappings']
 
 
@@ -2627,7 +2627,7 @@ class MergeSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(MergeSkill, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Skills.Text.MergeSkill'
+        self.odata_type = '#Microsoft.Skills.Text.MergeSkill'  # type: str
         self.insert_pre_tag = kwargs.get('insert_pre_tag', " ")
         self.insert_post_tag = kwargs.get('insert_post_tag', " ")
 
@@ -2682,7 +2682,7 @@ class MicrosoftLanguageStemmingTokenizer(LexicalTokenizer):
         **kwargs
     ):
         super(MicrosoftLanguageStemmingTokenizer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer'
+        self.odata_type = '#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer'  # type: str
         self.max_token_length = kwargs.get('max_token_length', 255)
         self.is_search_tokenizer = kwargs.get('is_search_tokenizer', False)
         self.language = kwargs.get('language', None)
@@ -2737,7 +2737,7 @@ class MicrosoftLanguageTokenizer(LexicalTokenizer):
         **kwargs
     ):
         super(MicrosoftLanguageTokenizer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.MicrosoftLanguageTokenizer'
+        self.odata_type = '#Microsoft.Azure.Search.MicrosoftLanguageTokenizer'  # type: str
         self.max_token_length = kwargs.get('max_token_length', 255)
         self.is_search_tokenizer = kwargs.get('is_search_tokenizer', False)
         self.language = kwargs.get('language', None)
@@ -2779,7 +2779,7 @@ class NGramTokenFilter(TokenFilter):
         **kwargs
     ):
         super(NGramTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.NGramTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.NGramTokenFilter'  # type: str
         self.min_gram = kwargs.get('min_gram', 1)
         self.max_gram = kwargs.get('max_gram', 2)
 
@@ -2822,7 +2822,7 @@ class NGramTokenFilterV2(TokenFilter):
         **kwargs
     ):
         super(NGramTokenFilterV2, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.NGramTokenFilterV2'
+        self.odata_type = '#Microsoft.Azure.Search.NGramTokenFilterV2'  # type: str
         self.min_gram = kwargs.get('min_gram', 1)
         self.max_gram = kwargs.get('max_gram', 2)
 
@@ -2868,7 +2868,7 @@ class NGramTokenizer(LexicalTokenizer):
         **kwargs
     ):
         super(NGramTokenizer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.NGramTokenizer'
+        self.odata_type = '#Microsoft.Azure.Search.NGramTokenizer'  # type: str
         self.min_gram = kwargs.get('min_gram', 1)
         self.max_gram = kwargs.get('max_gram', 2)
         self.token_chars = kwargs.get('token_chars', None)
@@ -2898,10 +2898,6 @@ class OcrSkill(SearchIndexerSkill):
     :param outputs: Required. The output of a skill is either a field in a search index, or a value
      that can be consumed as an input by another skill.
     :type outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
-    :param text_extraction_algorithm: A value indicating which algorithm to use for extracting
-     text. Default is printed. Possible values include: "printed", "handwritten".
-    :type text_extraction_algorithm: str or
-     ~azure.search.documents.indexes.models.TextExtractionAlgorithm
     :param default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "zh-Hans", "zh-Hant", "cs", "da", "nl", "en", "fi", "fr", "de", "el",
      "hu", "it", "ja", "ko", "nb", "pl", "pt", "ru", "es", "sv", "tr", "ar", "ro", "sr-Cyrl", "sr-
@@ -2925,7 +2921,6 @@ class OcrSkill(SearchIndexerSkill):
         'context': {'key': 'context', 'type': 'str'},
         'inputs': {'key': 'inputs', 'type': '[InputFieldMappingEntry]'},
         'outputs': {'key': 'outputs', 'type': '[OutputFieldMappingEntry]'},
-        'text_extraction_algorithm': {'key': 'textExtractionAlgorithm', 'type': 'str'},
         'default_language_code': {'key': 'defaultLanguageCode', 'type': 'str'},
         'should_detect_orientation': {'key': 'detectOrientation', 'type': 'bool'},
     }
@@ -2935,8 +2930,7 @@ class OcrSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(OcrSkill, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Skills.Vision.OcrSkill'
-        self.text_extraction_algorithm = kwargs.get('text_extraction_algorithm', None)
+        self.odata_type = '#Microsoft.Skills.Vision.OcrSkill'  # type: str
         self.default_language_code = kwargs.get('default_language_code', None)
         self.should_detect_orientation = kwargs.get('should_detect_orientation', False)
 
@@ -3016,7 +3010,7 @@ class PathHierarchyTokenizerV2(LexicalTokenizer):
         **kwargs
     ):
         super(PathHierarchyTokenizerV2, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.PathHierarchyTokenizerV2'
+        self.odata_type = '#Microsoft.Azure.Search.PathHierarchyTokenizerV2'  # type: str
         self.delimiter = kwargs.get('delimiter', "/")
         self.replacement = kwargs.get('replacement', "/")
         self.max_token_length = kwargs.get('max_token_length', 300)
@@ -3068,7 +3062,7 @@ class PatternAnalyzer(LexicalAnalyzer):
         **kwargs
     ):
         super(PatternAnalyzer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.PatternAnalyzer'
+        self.odata_type = '#Microsoft.Azure.Search.PatternAnalyzer'  # type: str
         self.lower_case_terms = kwargs.get('lower_case_terms', True)
         self.pattern = kwargs.get('pattern', "\W+")
         self.flags = kwargs.get('flags', None)
@@ -3112,7 +3106,7 @@ class PatternCaptureTokenFilter(TokenFilter):
         **kwargs
     ):
         super(PatternCaptureTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.PatternCaptureTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.PatternCaptureTokenFilter'  # type: str
         self.patterns = kwargs['patterns']
         self.preserve_original = kwargs.get('preserve_original', True)
 
@@ -3154,7 +3148,7 @@ class PatternReplaceCharFilter(CharFilter):
         **kwargs
     ):
         super(PatternReplaceCharFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.PatternReplaceCharFilter'
+        self.odata_type = '#Microsoft.Azure.Search.PatternReplaceCharFilter'  # type: str
         self.pattern = kwargs['pattern']
         self.replacement = kwargs['replacement']
 
@@ -3196,7 +3190,7 @@ class PatternReplaceTokenFilter(TokenFilter):
         **kwargs
     ):
         super(PatternReplaceTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.PatternReplaceTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.PatternReplaceTokenFilter'  # type: str
         self.pattern = kwargs['pattern']
         self.replacement = kwargs['replacement']
 
@@ -3243,7 +3237,7 @@ class PatternTokenizer(LexicalTokenizer):
         **kwargs
     ):
         super(PatternTokenizer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.PatternTokenizer'
+        self.odata_type = '#Microsoft.Azure.Search.PatternTokenizer'  # type: str
         self.pattern = kwargs.get('pattern', "\W+")
         self.flags = kwargs.get('flags', None)
         self.group = kwargs.get('group', -1)
@@ -3287,7 +3281,7 @@ class PhoneticTokenFilter(TokenFilter):
         **kwargs
     ):
         super(PhoneticTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.PhoneticTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.PhoneticTokenFilter'  # type: str
         self.encoder = kwargs.get('encoder', None)
         self.replace_original_tokens = kwargs.get('replace_original_tokens', True)
 
@@ -3946,7 +3940,7 @@ class SearchIndexerSkillset(msrest.serialization.Model):
 
     :param name: Required. The name of the skillset.
     :type name: str
-    :param description: Required. The description of the skillset.
+    :param description: The description of the skillset.
     :type description: str
     :param skills: Required. A list of skills in the skillset.
     :type skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
@@ -3960,7 +3954,6 @@ class SearchIndexerSkillset(msrest.serialization.Model):
 
     _validation = {
         'name': {'required': True},
-        'description': {'required': True},
         'skills': {'required': True},
     }
 
@@ -3978,7 +3971,7 @@ class SearchIndexerSkillset(msrest.serialization.Model):
     ):
         super(SearchIndexerSkillset, self).__init__(**kwargs)
         self.name = kwargs['name']
-        self.description = kwargs['description']
+        self.description = kwargs.get('description', None)
         self.skills = kwargs['skills']
         self.cognitive_services_account = kwargs.get('cognitive_services_account', None)
         self.e_tag = kwargs.get('e_tag', None)
@@ -4176,7 +4169,7 @@ class SentimentSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(SentimentSkill, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Skills.Text.SentimentSkill'
+        self.odata_type = '#Microsoft.Skills.Text.SentimentSkill'  # type: str
         self.default_language_code = kwargs.get('default_language_code', None)
 
 
@@ -4345,7 +4338,7 @@ class ShaperSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(ShaperSkill, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Skills.Util.ShaperSkill'
+        self.odata_type = '#Microsoft.Skills.Util.ShaperSkill'  # type: str
 
 
 class ShingleTokenFilter(TokenFilter):
@@ -4403,7 +4396,7 @@ class ShingleTokenFilter(TokenFilter):
         **kwargs
     ):
         super(ShingleTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.ShingleTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.ShingleTokenFilter'  # type: str
         self.max_shingle_size = kwargs.get('max_shingle_size', 2)
         self.min_shingle_size = kwargs.get('min_shingle_size', 2)
         self.output_unigrams = kwargs.get('output_unigrams', True)
@@ -4448,7 +4441,7 @@ class SnowballTokenFilter(TokenFilter):
         **kwargs
     ):
         super(SnowballTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.SnowballTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.SnowballTokenFilter'  # type: str
         self.language = kwargs['language']
 
 
@@ -4481,7 +4474,7 @@ class SoftDeleteColumnDeletionDetectionPolicy(DataDeletionDetectionPolicy):
         **kwargs
     ):
         super(SoftDeleteColumnDeletionDetectionPolicy, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy'
+        self.odata_type = '#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy'  # type: str
         self.soft_delete_column_name = kwargs.get('soft_delete_column_name', None)
         self.soft_delete_marker_value = kwargs.get('soft_delete_marker_value', None)
 
@@ -4543,7 +4536,7 @@ class SplitSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(SplitSkill, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Skills.Text.SplitSkill'
+        self.odata_type = '#Microsoft.Skills.Text.SplitSkill'  # type: str
         self.default_language_code = kwargs.get('default_language_code', None)
         self.text_split_mode = kwargs.get('text_split_mode', None)
         self.maximum_page_length = kwargs.get('maximum_page_length', None)
@@ -4572,7 +4565,7 @@ class SqlIntegratedChangeTrackingPolicy(DataChangeDetectionPolicy):
         **kwargs
     ):
         super(SqlIntegratedChangeTrackingPolicy, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy'
+        self.odata_type = '#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy'  # type: str
 
 
 class StemmerOverrideTokenFilter(TokenFilter):
@@ -4609,7 +4602,7 @@ class StemmerOverrideTokenFilter(TokenFilter):
         **kwargs
     ):
         super(StemmerOverrideTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.StemmerOverrideTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.StemmerOverrideTokenFilter'  # type: str
         self.rules = kwargs['rules']
 
 
@@ -4654,7 +4647,7 @@ class StemmerTokenFilter(TokenFilter):
         **kwargs
     ):
         super(StemmerTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.StemmerTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.StemmerTokenFilter'  # type: str
         self.language = kwargs['language']
 
 
@@ -4690,7 +4683,7 @@ class StopAnalyzer(LexicalAnalyzer):
         **kwargs
     ):
         super(StopAnalyzer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.StopAnalyzer'
+        self.odata_type = '#Microsoft.Azure.Search.StopAnalyzer'  # type: str
         self.stopwords = kwargs.get('stopwords', None)
 
 
@@ -4743,7 +4736,7 @@ class StopwordsTokenFilter(TokenFilter):
         **kwargs
     ):
         super(StopwordsTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.StopwordsTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.StopwordsTokenFilter'  # type: str
         self.stopwords = kwargs.get('stopwords', None)
         self.stopwords_list = kwargs.get('stopwords_list', None)
         self.ignore_case = kwargs.get('ignore_case', False)
@@ -4895,7 +4888,7 @@ class SynonymTokenFilter(TokenFilter):
         **kwargs
     ):
         super(SynonymTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.SynonymTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.SynonymTokenFilter'  # type: str
         self.synonyms = kwargs['synonyms']
         self.ignore_case = kwargs.get('ignore_case', False)
         self.expand = kwargs.get('expand', True)
@@ -4942,7 +4935,7 @@ class TagScoringFunction(ScoringFunction):
         **kwargs
     ):
         super(TagScoringFunction, self).__init__(**kwargs)
-        self.type = 'tag'
+        self.type = 'tag'  # type: str
         self.parameters = kwargs['parameters']
 
 
@@ -5050,7 +5043,7 @@ class TextTranslationSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(TextTranslationSkill, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Skills.Text.TranslationSkill'
+        self.odata_type = '#Microsoft.Skills.Text.TranslationSkill'  # type: str
         self.default_to_language_code = kwargs['default_to_language_code']
         self.default_from_language_code = kwargs.get('default_from_language_code', None)
         self.suggested_from = kwargs.get('suggested_from', None)
@@ -5115,7 +5108,7 @@ class TruncateTokenFilter(TokenFilter):
         **kwargs
     ):
         super(TruncateTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.TruncateTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.TruncateTokenFilter'  # type: str
         self.length = kwargs.get('length', 300)
 
 
@@ -5153,7 +5146,7 @@ class UaxUrlEmailTokenizer(LexicalTokenizer):
         **kwargs
     ):
         super(UaxUrlEmailTokenizer, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.UaxUrlEmailTokenizer'
+        self.odata_type = '#Microsoft.Azure.Search.UaxUrlEmailTokenizer'  # type: str
         self.max_token_length = kwargs.get('max_token_length', 255)
 
 
@@ -5190,7 +5183,7 @@ class UniqueTokenFilter(TokenFilter):
         **kwargs
     ):
         super(UniqueTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.UniqueTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.UniqueTokenFilter'  # type: str
         self.only_on_same_position = kwargs.get('only_on_same_position', False)
 
 
@@ -5260,7 +5253,7 @@ class WebApiSkill(SearchIndexerSkill):
         **kwargs
     ):
         super(WebApiSkill, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Skills.Custom.WebApiSkill'
+        self.odata_type = '#Microsoft.Skills.Custom.WebApiSkill'  # type: str
         self.uri = kwargs['uri']
         self.http_headers = kwargs.get('http_headers', None)
         self.http_method = kwargs.get('http_method', None)
@@ -5338,7 +5331,7 @@ class WordDelimiterTokenFilter(TokenFilter):
         **kwargs
     ):
         super(WordDelimiterTokenFilter, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Azure.Search.WordDelimiterTokenFilter'
+        self.odata_type = '#Microsoft.Azure.Search.WordDelimiterTokenFilter'  # type: str
         self.generate_word_parts = kwargs.get('generate_word_parts', True)
         self.generate_number_parts = kwargs.get('generate_number_parts', True)
         self.catenate_words = kwargs.get('catenate_words', False)

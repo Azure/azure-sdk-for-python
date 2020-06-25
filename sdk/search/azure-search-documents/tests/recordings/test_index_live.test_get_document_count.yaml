@@ -13,7 +13,7 @@ interactions:
       api-key:
       - 4E1885551AC6A7AC5096353C8E0B706B
     method: GET
-    uri: https://search40b5101a.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
+    uri: https://search40b5101a.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
   response:
     body:
       string: "\uFEFF10"
