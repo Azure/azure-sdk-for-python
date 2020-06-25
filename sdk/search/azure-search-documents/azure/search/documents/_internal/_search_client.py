@@ -143,7 +143,7 @@ class SearchClient(HeadersMixin):
 
         :param str search_text: A full-text search query expression; Use "*" or omit this parameter to
         match all documents.
-        :keyword bool include_total_result_count: A value that specifies whether to fetch the total count of
+        :keyword bool include_total_count: A value that specifies whether to fetch the total count of
         results. Default is false. Setting this value to true may have a performance impact. Note that
         the count returned is an approximation.
         :keyword list[str] facets: The list of facet expressions to apply to the search query. Each facet
@@ -220,7 +220,7 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get search result facets.
         """
-        include_total_result_count = kwargs.pop("include_total_result_count", None)
+        include_total_result_count = kwargs.pop("include_total_count", None)
         facets = kwargs.pop("facets", None)
         filter_arg = kwargs.pop("filter", None)
         highlight_fields = kwargs.pop("highlight_fields", None)
@@ -345,10 +345,10 @@ class SearchClient(HeadersMixin):
         :param str search_text: The search text on which to base autocomplete results.
         :param str suggester_name: The name of the suggester as specified in the suggesters
         collection that's part of the index definition.
-        :keyword autocomplete_mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
+        :keyword mode: Specifies the mode for Autocomplete. The default is 'oneTerm'. Use
          'twoTerms' to get shingles and 'oneTermWithContext' to use the current context while producing
          auto-completed terms. Possible values include: 'oneTerm', 'twoTerms', 'oneTermWithContext'.
-        :paramtype autocomplete_mode: str or ~search_index_client.models.AutocompleteMode
+        :paramtype mode: str or ~search_index_client.models.AutocompleteMode
         :keyword str filter: An OData expression that filters the documents used to produce completed terms
          for the Autocomplete result.
         :keyword bool use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
@@ -379,7 +379,7 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get a auto-completions.
         """
-        autocomplete_mode = kwargs.pop("autocomplete_mode", None)
+        autocomplete_mode = kwargs.pop("mode", None)
         filter_arg = kwargs.pop("filter", None)
         use_fuzzy_matching = kwargs.pop("use_fuzzy_matching", None)
         highlight_post_tag = kwargs.pop("highlight_post_tag", None)
