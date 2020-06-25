@@ -9,6 +9,7 @@ from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
+from ..._api_versions import validate_api_version
 from ._generated import SearchServiceClient as _SearchServiceClient
 from ._utils import (
     unpack_search_index,
@@ -32,12 +33,20 @@ if TYPE_CHECKING:
 class SearchIndexClient(HeadersMixin):
     """A client to interact with Azure search service index.
 
+    :param endpoint: The URL endpoint of an Azure search service
+    :type endpoint: str
+    :param credential: A credential to authorize search client requests
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword str api_version: The Search API version to use for requests.
+
     """
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
 
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
 
+        api_version = kwargs.pop('api_version', None)
+        validate_api_version(api_version)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential  # type: AzureKeyCredential
         self._client = _SearchServiceClient(
