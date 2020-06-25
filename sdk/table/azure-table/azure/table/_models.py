@@ -400,7 +400,6 @@ class TableServices(Services):
     def __str__(self):
         return 't'
 
-
 class TablePayloadFormat(object):
     '''
     Specifies the accepted content type of the response payload. More information

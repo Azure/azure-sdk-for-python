@@ -7,6 +7,7 @@ from azure.table._generated.models import TableProperties, TableServiceStats, Ta
 from azure.table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize, \
     TableServices
 from azure.table._serialization import _add_entity_properties
+from azure.table._serialize import get_api_version
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, \
     TransportWrapper
 from azure.table._shared.encryption import _validate_not_none
@@ -84,6 +85,94 @@ class TableServiceClient(StorageAccountHostsMixin):
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
+
+
+    def generate_table_shared_access_signature(self, account_name, account_key, table_name, permission=None,
+                                               expiry=None, start=None, id=None,
+                                               ip=None, protocol=None,
+                                               start_pk=None, start_rk=None,
+                                               end_pk=None, end_rk=None):
+        '''
+        Generates a shared access signature for the table.
+        Use the returned signature with the sas_token parameter of TableService.
+
+        :param str table_name:
+            The name of the table to create a SAS token for.
+        :param TablePermissions permission:
+            The permissions associated with the shared access signature. The
+            user is restricted to operations allowed by the permissions.
+            Required unless an id is given referencing a stored access policy
+            which contains this field. This field must be omitted if it has been
+            specified in an associated stored access policy.
+        :param expiry:
+            The time at which the shared access signature becomes invalid.
+            Required unless an id is given referencing a stored access policy
+            which contains this field. This field must be omitted if it has
+            been specified in an associated stored access policy. Azure will always
+            convert values to UTC. If a date is passed in without timezone info, it
+            is assumed to be UTC.
+        :type expiry: datetime or str
+        :param start:
+            The time at which the shared access signature becomes valid. If
+            omitted, start time for this call is assumed to be the time when the
+            storage service receives the request. Azure will always convert values
+            to UTC. If a date is passed in without timezone info, it is assumed to
+            be UTC.
+        :type start: datetime or str
+        :param str id:
+            A unique value up to 64 characters in length that correlates to a
+            stored access policy. To create a stored access policy, use :func:`~set_table_acl`.
+        :param str ip:
+            Specifies an IP address or a range of IP addresses from which to accept requests.
+            If the IP address from which the request originates does not match the IP address
+            or address range specified on the SAS token, the request is not authenticated.
+            For example, specifying sip='168.1.5.65' or sip='168.1.5.60-168.1.5.70' on the SAS
+            restricts the request to those IP addresses.
+        :param str protocol:
+            Specifies the protocol permitted for a request made. The default value
+            is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
+        :param str start_pk:
+            The minimum partition key accessible with this shared access
+            signature. startpk must accompany startrk. Key values are inclusive.
+            If omitted, there is no lower bound on the table entities that can
+            be accessed.
+        :param str start_rk:
+            The minimum row key accessible with this shared access signature.
+            startpk must accompany startrk. Key values are inclusive. If
+            omitted, there is no lower bound on the table entities that can be
+            accessed.
+        :param str end_pk:
+            The maximum partition key accessible with this shared access
+            signature. endpk must accompany endrk. Key values are inclusive. If
+            omitted, there is no upper bound on the table entities that can be
+            accessed.
+        :param str end_rk:
+            The maximum row key accessible with this shared access signature.
+            endpk must accompany endrk. Key values are inclusive. If omitted,
+            there is no upper bound on the table entities that can be accessed.
+        :return: A Shared Access Signature (sas) token.
+        :rtype: str
+        '''
+        _validate_not_none('table_name', table_name)
+        _validate_not_none('account_name', account_name)
+        _validate_not_none('account_key', account_key)
+
+        sas = TableSharedAccessSignature(account_name, account_key)
+        return sas.generate_table(
+            table_name,
+            permission=permission,
+            expiry=expiry,
+            start=start,
+            id=id,
+            ip=ip,
+            protocol=protocol,
+            start_pk=start_pk,
+            start_rk=start_rk,
+            end_pk=end_pk,
+            end_rk=end_rk,
+        )
+
+
 
     @distributed_trace
     def get_table_access_policy(

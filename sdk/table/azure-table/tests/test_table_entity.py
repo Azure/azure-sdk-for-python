@@ -14,7 +14,7 @@ import uuid
 from base64 import b64encode
 from datetime import datetime, timedelta
 
-from azure.table import TableServiceClient
+from azure.table import TableServiceClient, TableClient
 from azure.table._generated.models import QueryOptions
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
@@ -26,8 +26,7 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ClientAuthenticationError)
 
-from azure.table._shared.shared_access_signature import TableSharedAccessSignature
-
+from azure.table._shared.shared_access_signature import TableSharedAccessSignature, generate_table_sas
 
 # from azure.tables import (
 #     AccessPolicy,
@@ -1418,12 +1417,13 @@ class StorageTableEntityTest(TableTestCase):
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
-            sas_service = TableSharedAccessSignature(storage_account.name,storage_account_key)
-            token = sas_service._generate_table_sas(
-                table_name=self.table_name,
+            token = self.ts.generate_table_shared_access_signature(
+                storage_account.name,
+                storage_account_key,
+                self.table_name,
                 permission=TableSasPermissions(query=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1)
+                start=datetime.utcnow() - timedelta(minutes=1),
             )
 
             # Act
@@ -1432,7 +1432,7 @@ class StorageTableEntityTest(TableTestCase):
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
-            entities = list(table.query_entities(query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity.PartitionKey))))
+            entities = list(table.query_entities(query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity['PartitionKey']))))
 
             # Assert
             self.assertEqual(len(entities), 1)

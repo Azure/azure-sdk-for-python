@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 23 Jun 2020 16:10:28 GMT
+      - Thu, 25 Jun 2020 14:09:50 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 23 Jun 2020 16:10:28 GMT
+      - Thu, 25 Jun 2020 14:09:50 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -27,14 +27,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"InvalidResourceName","message":{"lang":"en-US","value":"The
-        specifed resource name contains invalid characters.\nRequestId:7aed19aa-c002-004c-5f78-49a8b7000000\nTime:2020-06-23T16:10:27.0954319Z"}}}'
+        specifed resource name contains invalid characters.\nRequestId:98579a8f-4002-0037-74fa-4a2a98000000\nTime:2020-06-25T14:09:48.3853955Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 23 Jun 2020 16:10:26 GMT
+      - Thu, 25 Jun 2020 14:09:47 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

@@ -140,29 +140,6 @@ class TableClient(StorageAccountHostsMixin):
             raise ValueError("Invalid URL. Please provide a URL with a valid queue name")
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
-    def _generate_table_sas(self, account_name, table_name, account_key, permission=None,
-                            expiry=None, start=None, id=None,
-                            ip=None, protocol=None,
-                            start_pk=None, start_rk=None,
-                            end_pk=None, end_rk=None):
-        _validate_not_none('table_name', table_name)
-        _validate_not_none('self.account_name', account_name)
-        _validate_not_none('self.account_key', account_key)
-
-        sas = TableSharedAccessSignature(account_name, account_key)
-        return sas.generate_table(
-            table_name,
-            permission=permission,
-            expiry=expiry,
-            start=start,
-            id=id,
-            ip=ip,
-            protocol=protocol,
-            start_pk=start_pk,
-            start_rk=start_rk,
-            end_pk=end_pk,
-            end_rk=end_rk,
-        )
 
     @distributed_trace
     def get_table_access_policy(

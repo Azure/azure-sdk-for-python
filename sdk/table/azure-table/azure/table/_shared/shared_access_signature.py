@@ -8,12 +8,107 @@ from datetime import date
 
 from azure.storage.common import SharedAccessSignature
 from azure.storage.common.sharedaccesssignature import _QueryStringConstants, _SharedAccessHelper
+from azure.table._models import TableServices
 from azure.table._shared._common_conversion import _sign_string
 from azure.table._shared.encryption import _validate_not_none
+from azure.table._shared.models import Services
 
 from .parser import _str, _to_utc_datetime
 from .constants import X_MS_VERSION
 from . import sign_string, url_quote
+
+
+def generate_table_sas(
+        account_name,
+        account_key,
+        table_name,
+        permission=None,
+        expiry=None,
+        start=None,
+        id=None,
+        ip=None,
+        protocol=None,
+        start_pk=None,
+        start_rk=None,
+        end_pk=None,
+        end_rk=None
+):  # type: (...) -> str
+
+    sas = TableSharedAccessSignature(account_name, account_key)
+    return sas.generate_table(
+        table_name=table_name,
+        permission=permission,
+        expiry=expiry,
+        start=start,
+        id=id,
+        ip=ip,
+        protocol=protocol,
+        start_pk=start_pk,
+        start_rk=start_rk,
+        end_pk=end_pk,
+        end_rk=end_rk
+    )  # type: ignore
+
+
+def generate_account_sas(
+        account_name,  # type: str
+        account_key,  # type: str
+        resource_types,  # type: Union[ResourceTypes, str]
+        permission,  # type: Union[AccountSasPermissions, str]
+        expiry,  # type: Optional[Union[datetime, str]]
+        start=None,  # type: Optional[Union[datetime, str]]
+        ip=None,  # type: Optional[str]
+        **kwargs  # type: Any
+):  # type: (...) -> str
+    """Generates a shared access signature for the queue service.
+
+    Use the returned signature with the credential parameter of any Queue Service.
+
+    :param str account_name:
+        The storage account name used to generate the shared access signature.
+    :param str account_key:
+        The account key, also called shared key or access key, to generate the shared access signature.
+    :param ~azure.storage.queue.ResourceTypes resource_types:
+        Specifies the resource types that are accessible with the account SAS.
+    :param ~azure.storage.queue.AccountSasPermissions permission:
+        The permissions associated with the shared access signature. The
+        user is restricted to operations allowed by the permissions.
+    :param expiry:
+        The time at which the shared access signature becomes invalid.
+        Required unless an id is given referencing a stored access policy
+        which contains this field. This field must be omitted if it has
+        been specified in an associated stored access policy. Azure will always
+        convert values to UTC. If a date is passed in without timezone info, it
+        is assumed to be UTC.
+    :type expiry: ~datetime.datetime or str
+    :param start:
+        The time at which the shared access signature becomes valid. If
+        omitted, start time for this call is assumed to be the time when the
+        storage service receives the request. Azure will always convert values
+        to UTC. If a date is passed in without timezone info, it is assumed to
+        be UTC.
+    :type start: ~datetime.datetime or str
+    :param str ip:
+        Specifies an IP address or a range of IP addresses from which to accept requests.
+        If the IP address from which the request originates does not match the IP address
+        or address range specified on the SAS token, the request is not authenticated.
+        For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
+        restricts the request to those IP addresses.
+    :keyword str protocol:
+        Specifies the protocol permitted for a request made. The default value is https.
+    :return: A Shared Access Signature (sas) token.
+    :rtype: str
+    """
+    sas = SharedAccessSignature(account_name, account_key)
+    return sas.generate_account(
+        services=TableServices(),
+        resource_types=resource_types,
+        permission=permission,
+        expiry=expiry,
+        start=start,
+        ip=ip,
+        **kwargs
+    )  # type: ignore
 
 
 class TableSharedAccessSignature(SharedAccessSignature):
@@ -248,65 +343,6 @@ class _TableSharedAccessHelper(_SharedAccessHelper):
         )
 
 
-def generate_account_sas(
-        account_name,  # type: str
-        account_key,  # type: str
-        resource_types,  # type: Union[ResourceTypes, str]
-        permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Optional[Union[datetime, str]]
-        **kwargs  # type: Any
-):  # type: (...) -> str
-    """Generates a shared access signature for the DataLake service.
-
-    Use the returned signature as the credential parameter of any DataLakeServiceClient,
-    FileSystemClient, DataLakeDirectoryClient or DataLakeFileClient.
-
-    :param str account_name:
-        The storage account name used to generate the shared access signature.
-    :param str account_key:
-        The access key to generate the shared access signature.
-    :param resource_types:
-        Specifies the resource types that are accessible with the account SAS.
-    :type resource_types: str or ~azure.storage.filedatalake.ResourceTypes
-    :param permission:
-        The permissions associated with the shared access signature. The
-        user is restricted to operations allowed by the permissions.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has been
-        specified in an associated stored access policy.
-    :type permission: str or ~azure.storage.filedatalake.AccountSasPermissions
-    :param expiry:
-        The time at which the shared access signature becomes invalid.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has
-        been specified in an associated stored access policy. Azure will always
-        convert values to UTC. If a date is passed in without timezone info, it
-        is assumed to be UTC.
-    :type expiry: ~datetime.datetime or str
-    :keyword start:
-        The time at which the shared access signature becomes valid. If
-        omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always convert values
-        to UTC. If a date is passed in without timezone info, it is assumed to
-        be UTC.
-    :paramtype start: ~datetime.datetime or str
-    :keyword str ip:
-        Specifies an IP address or a range of IP addresses from which to accept requests.
-        If the IP address from which the request originates does not match the IP address
-        or address range specified on the SAS token, the request is not authenticated.
-        For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
-        restricts the request to those IP addresses.
-    :keyword str protocol:
-        Specifies the protocol permitted for a request made. The default value is https.
-    :return: A Shared Access Signature (sas) token.
-    :rtype: str
-    """
-    sas = _SharedAccessHelper()
-    sas.add_account_signature(account_name, account_key)
-
-    return sas.get_token()
-
-
 class QueryStringConstants(object):
     SIGNED_SIGNATURE = 'sig'
     SIGNED_PERMISSION = 'sp'
@@ -315,6 +351,7 @@ class QueryStringConstants(object):
     SIGNED_RESOURCE = 'sr'
     SIGNED_IDENTIFIER = 'si'
     SIGNED_IP = 'sip'
+    TABLE_NAME = 'tn'
     SIGNED_PROTOCOL = 'spr'
     SIGNED_VERSION = 'sv'
     SIGNED_CACHE_CONTROL = 'rscc'
@@ -338,6 +375,7 @@ class QueryStringConstants(object):
     @staticmethod
     def to_list():
         return [
+            QueryStringConstants.TABLE_NAME,
             QueryStringConstants.SIGNED_SIGNATURE,
             QueryStringConstants.SIGNED_PERMISSION,
             QueryStringConstants.SIGNED_START,

@@ -36,7 +36,7 @@ from azure.core.pipeline.policies import (
     ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    UserAgentPolicy,
+    UserAgentPolicy
 )
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
@@ -53,7 +53,6 @@ from .policies import (
     ExponentialRetry,
 )
 from .._version import VERSION
-# from .._generated.models import StorageErrorException
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
@@ -62,8 +61,8 @@ _SERVICE_PARAMS = {
     "blob": {"primary": "BlobEndpoint", "secondary": "BlobSecondaryEndpoint"},
     "queue": {"primary": "QueueEndpoint", "secondary": "QueueSecondaryEndpoint"},
     "file": {"primary": "FileEndpoint", "secondary": "FileSecondaryEndpoint"},
-    "table": {"primary": "TableEndpoint", "secondary": "TableSecondaryEndpoint"},
     "dfs": {"primary": "BlobEndpoint", "secondary": "BlobEndpoint"},
+    "table": {"primary": "TableEndpoint", "secondary": "TableSecondaryEndpoint"},
 }
 
 
@@ -80,7 +79,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
 
-        if service not in ["blob", "queue", "file-share", "dfs", "table"]:
+        if service not in ["blob", "queue", "file-share", "dfs","table"]:
             raise ValueError("Invalid service: {}".format(service))
         service_name = service.split('-')[0]
         account = parsed_url.netloc.split(".{}.core.".format(service_name))
@@ -233,6 +232,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             config.headers_policy,
             config.proxy_policy,
             config.user_agent_policy,
+            StorageContentValidation(),
             StorageRequestHook(**kwargs),
             self._credential_policy,
             ContentDecodePolicy(response_encoding="utf-8"),
@@ -255,18 +255,24 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            url='{}://{}/?comp=batch{}{}'.format(
+                self.scheme,
+                self.primary_hostname,
+                kwargs.pop('sas', None),
+                kwargs.pop('timeout', None)
+            ),
             headers={
                 'x-ms-version': self.api_version
             }
         )
 
+        policies = [StorageHeadersPolicy()]
+        if self._credential_policy:
+            policies.append(self._credential_policy)
+
         request.set_multipart_mixed(
             *reqs,
-            policies=[
-                StorageHeadersPolicy(),
-                self._credential_policy
-            ],
+            policies=policies,
             enforce_https=False
         )
 
@@ -384,7 +390,6 @@ def create_configuration(**kwargs):
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
 
-# all can be ignored
     # Storage settings
     config.max_single_put_size = kwargs.get("max_single_put_size", 64 * 1024 * 1024)
     config.copy_polling_interval = 15

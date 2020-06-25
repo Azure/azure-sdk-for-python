@@ -390,33 +390,35 @@ class StorageTableTest(TableTestCase):
             pytest.skip("Cosmos Tables does not yet support sas")
         tsc = TableServiceClient(url, storage_account_key)
         table = self._create_table(tsc)
-        client = tsc.get_table_client(table.table_name)
         try:
             entity = {
                 'PartitionKey': 'test',
                 'RowKey': 'test1',
                 'text': 'hello',
             }
-            client.insert_entity(table_entity_properties=entity)
+            table.upsert_insert_update_entity(table_entity_properties=entity)
 
             entity['RowKey'] = 'test2'
-            client.insert_entity(table_entity_properties=entity)
+            table.upsert_insert_update_entity(table_entity_properties=entity)
 
-            token = '?' + generate_account_sas(
-                storage_account.name, storage_account_key,
+            token = generate_account_sas(
+                storage_account.name,
+                storage_account_key,
                 resource_types=ResourceTypes(object=True),
-                permission=AccountSasPermissions(read=True, list=True),
-                start=datetime.now() - timedelta(hours=24),
-                expiry=datetime.now() + timedelta(days=8)
+                permission=AccountSasPermissions(update=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1)
             )
 
             # Act
             service = TableServiceClient(
                 self.account_url(storage_account, "table"),
-                credential=token
+                credential=token,
             )
             sas_table = service.get_table_client(table.table_name)
-            entities = list(sas_table.query_entities())
+            # this works to here - authenticate up to here and gets table client
+            entity['text'] = 'meow'
+            entities = (sas_table.update_entity(table_entity_properties=entity))
 
             # Assert
             self.assertEqual(len(entities), 2)
