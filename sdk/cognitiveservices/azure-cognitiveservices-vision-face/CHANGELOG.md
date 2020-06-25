@@ -1,5 +1,8 @@
 # Release History
 
+## 0.4.2 (Unreleased)
+
+
 ## 0.4.1 (2020-06-24)
 
 **Features**
