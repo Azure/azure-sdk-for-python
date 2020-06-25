@@ -2,12 +2,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
+from collections import OrderedDict
 from copy import deepcopy
+
+from azure.servicebus.management._generated.models import KeyValue
+
 from ._generated.models import QueueDescription as InternalQueueDescription, \
     TopicDescription as InternalTopicDescription, \
     SubscriptionDescription as InternalSubscriptionDescription, \
-    RuleDescription as InternalRuleDescription
+    RuleDescription as InternalRuleDescription, \
+    SqlRuleAction as InternalSqlRuleAction, \
+    EmptyRuleAction as InternalEmptyRuleAction, \
+    CorrelationFilter as InternalCorrelationFilter, \
+    SqlFilter as InternalSqlFilter, TrueFilter as InternalTrueFilter, FalseFilter as InternalFalseFilter
+
+from ._model_workaround import adjust_attribute_map
+
+adjust_attribute_map()
 
 
 class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
@@ -563,8 +574,10 @@ class RuleDescription(object):
         # type: (InternalRuleDescription) -> RuleDescription
         rule = cls()
         rule._internal_rule = internal_rule
-        rule.filter = internal_rule.filter
-        rule.action = internal_rule.action
+
+        rule.filter = RULE_CLASS_MAPPING[type(internal_rule.filter)]._from_internal_entity(internal_rule.filter)
+        rule.action = RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity(internal_rule.action) \
+            if internal_rule.action and type(internal_rule.action) != InternalEmptyRuleAction else None
         rule.created_at = internal_rule.created_at
         rule.name = internal_rule.name
 
@@ -574,9 +587,114 @@ class RuleDescription(object):
         # type: () -> InternalRuleDescription
         if not self._internal_rule:
             self._internal_rule = InternalRuleDescription()
-        self._internal_rule.filter = self.filter
-        self._internal_rule.action = self.action
+        self._internal_rule.filter = self.filter._to_internal_entity() if self.filter else TRUE_FILTER
+        self._internal_rule.action = self.action._to_internal_entity() if self.action else EMPTY_RULE_ACTION
         self._internal_rule.created_at = self.created_at
         self._internal_rule.name = self.name
 
         return self._internal_rule
+
+
+class CorrelationRuleFilter(object):
+    def __init__(self, **kwargs):
+        self.correlation_id = kwargs.get('correlation_id', None)
+        self.message_id = kwargs.get('message_id', None)
+        self.to = kwargs.get('to', None)
+        self.reply_to = kwargs.get('reply_to', None)
+        self.label = kwargs.get('label', None)
+        self.session_id = kwargs.get('session_id', None)
+        self.reply_to_session_id = kwargs.get('reply_to_session_id', None)
+        self.content_type = kwargs.get('content_type', None)
+        self.properties = kwargs.get('properties', None)
+
+    @classmethod
+    def _from_internal_entity(cls, internal_correlation_filter):
+        # type: (InternalCorrelationFilter) -> CorrelationRuleFilter
+        correlation_filter = cls()
+        correlation_filter.correlation_id = internal_correlation_filter.correlation_id
+        correlation_filter.message_id = internal_correlation_filter.message_id
+        correlation_filter.to = internal_correlation_filter.to
+        correlation_filter.reply_to = internal_correlation_filter.reply_to
+        correlation_filter.label = internal_correlation_filter.label
+        correlation_filter.session_id = internal_correlation_filter.session_id
+        correlation_filter.reply_to_session_id = internal_correlation_filter.reply_to_session_id
+        correlation_filter.content_type = internal_correlation_filter.content_type
+        correlation_filter.properties = \
+            OrderedDict((kv.key, kv.value) for kv in internal_correlation_filter.properties) \
+            if internal_correlation_filter.properties else OrderedDict()
+
+        return correlation_filter
+
+    def _to_internal_entity(self):
+        internal_entity = InternalCorrelationFilter()
+        internal_entity.correlation_id = self.correlation_id
+
+        internal_entity.message_id = self.message_id
+        internal_entity.to = self.to
+        internal_entity.reply_to = self.reply_to
+        internal_entity.label = self.label
+        internal_entity.session_id = self.session_id
+        internal_entity.reply_to_session_id = self.reply_to_session_id
+        internal_entity.content_type = self.content_type
+        internal_entity.properties = [KeyValue(key=key, value=value) for key, value in self.properties.items()] \
+            if self.properties else None
+
+        return internal_entity
+
+
+class SqlRuleFilter(object):
+    def __init__(self, sql_expression=None):
+        self.sql_expression = sql_expression
+
+    @classmethod
+    def _from_internal_entity(cls, internal_sql_rule_filter):
+        sql_rule_filter = cls()
+        sql_rule_filter.sql_expression = internal_sql_rule_filter.sql_expression
+        return sql_rule_filter
+
+    def _to_internal_entity(self):
+        internal_entity = InternalSqlFilter(sql_expression=self.sql_expression)
+        return internal_entity
+
+
+class TrueRuleFilter(SqlRuleFilter):
+    def __init__(self):
+        super(TrueRuleFilter, self).__init__("1=1")
+
+    def _to_internal_entity(self):
+        internal_entity = InternalTrueFilter()
+        return internal_entity
+
+
+class FalseRuleFilter(SqlRuleFilter):
+    def __init__(self):
+        super(FalseRuleFilter, self).__init__("1>1")
+
+    def _to_internal_entity(self):
+        internal_entity = InternalFalseFilter()
+        return internal_entity
+
+
+class SqlRuleAction(object):
+    def __init__(self, sql_expression=None):
+        self.sql_expression = sql_expression
+
+    @classmethod
+    def _from_internal_entity(cls, internal_sql_rule_action):
+        sql_rule_filter = cls(internal_sql_rule_action.sql_expression)
+        return sql_rule_filter
+
+    def _to_internal_entity(self):
+        return InternalSqlRuleAction(sql_expression=self.sql_expression)
+
+
+RULE_CLASS_MAPPING = {
+    InternalSqlRuleAction: SqlRuleAction,
+    InternalEmptyRuleAction: None,
+    InternalCorrelationFilter: CorrelationRuleFilter,
+    InternalSqlFilter: SqlRuleFilter,
+    InternalTrueFilter: TrueRuleFilter,
+    InternalFalseFilter: FalseRuleFilter,
+}
+EMPTY_RULE_ACTION = InternalEmptyRuleAction()
+TRUE_FILTER = TrueRuleFilter()
