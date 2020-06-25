@@ -18,7 +18,7 @@ def validate_api_version(api_version):
 
 
 def get_api_version(kwargs, default):
-    # type: (Dict[str, Any]) -> str
+    # type: (Dict[str, Any], str) -> str
     api_version = kwargs.pop('api_version', None)
     validate_api_version(api_version)
     return api_version or default
