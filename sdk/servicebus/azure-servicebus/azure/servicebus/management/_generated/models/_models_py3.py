@@ -595,7 +595,7 @@ class NamespacePropertiesEntry(msrest.serialization.Model):
     :param id: The URL of the GET request.
     :type id: str
     :param title: The name of the namespace.
-    :type title: str
+    :type title: object
     :param updated: The timestamp for when this namespace was last updated.
     :type updated: ~datetime.datetime
     :param author: The author that created this resource.
@@ -608,7 +608,7 @@ class NamespacePropertiesEntry(msrest.serialization.Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'object'},
         'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'author': {'key': 'author', 'type': 'ResponseAuthor'},
         'link': {'key': 'link', 'type': 'ResponseLink'},
@@ -622,7 +622,7 @@ class NamespacePropertiesEntry(msrest.serialization.Model):
         self,
         *,
         id: Optional[str] = None,
-        title: Optional[str] = None,
+        title: Optional[object] = None,
         updated: Optional[datetime.datetime] = None,
         author: Optional["ResponseAuthor"] = None,
         link: Optional["ResponseLink"] = None,
@@ -829,7 +829,7 @@ class QueueDescriptionEntry(msrest.serialization.Model):
     :param id: The URL of the GET request.
     :type id: str
     :param title: The name of the queue.
-    :type title: str
+    :type title: object
     :param published: The timestamp for when this queue was published.
     :type published: ~datetime.datetime
     :param updated: The timestamp for when this queue was last updated.
@@ -845,7 +845,7 @@ class QueueDescriptionEntry(msrest.serialization.Model):
     _attribute_map = {
         'base': {'key': 'base', 'type': 'str', 'xml': {'name': 'base', 'attr': True, 'prefix': 'xml'}},
         'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'object'},
         'published': {'key': 'published', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'author': {'key': 'author', 'type': 'ResponseAuthor'},
@@ -861,7 +861,7 @@ class QueueDescriptionEntry(msrest.serialization.Model):
         *,
         base: Optional[str] = None,
         id: Optional[str] = None,
-        title: Optional[str] = None,
+        title: Optional[object] = None,
         published: Optional[datetime.datetime] = None,
         updated: Optional[datetime.datetime] = None,
         author: Optional["ResponseAuthor"] = None,
@@ -915,7 +915,7 @@ class QueueDescriptionFeed(msrest.serialization.Model):
     :param id: URL of the list queues query.
     :type id: str
     :param title: The entity type for the feed.
-    :type title: str
+    :type title: object
     :param updated: Datetime of the query.
     :type updated: ~datetime.datetime
     :param link: Links to paginated response.
@@ -926,7 +926,7 @@ class QueueDescriptionFeed(msrest.serialization.Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'object'},
         'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'link': {'key': 'link', 'type': '[ResponseLink]'},
         'entry': {'key': 'entry', 'type': '[QueueDescriptionEntry]'},
@@ -939,7 +939,7 @@ class QueueDescriptionFeed(msrest.serialization.Model):
         self,
         *,
         id: Optional[str] = None,
-        title: Optional[str] = None,
+        title: Optional[object] = None,
         updated: Optional[datetime.datetime] = None,
         link: Optional[List["ResponseLink"]] = None,
         entry: Optional[List["QueueDescriptionEntry"]] = None,
@@ -1051,7 +1051,7 @@ class RuleDescriptionEntry(msrest.serialization.Model):
     :param id: The URL of the GET request.
     :type id: str
     :param title: The name of the rule.
-    :type title: str
+    :type title: object
     :param published: The timestamp for when this queue was published.
     :type published: ~datetime.datetime
     :param updated: The timestamp for when this queue was last updated.
@@ -1064,7 +1064,7 @@ class RuleDescriptionEntry(msrest.serialization.Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'object'},
         'published': {'key': 'published', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'link': {'key': 'link', 'type': 'ResponseLink'},
@@ -1078,7 +1078,7 @@ class RuleDescriptionEntry(msrest.serialization.Model):
         self,
         *,
         id: Optional[str] = None,
-        title: Optional[str] = None,
+        title: Optional[object] = None,
         published: Optional[datetime.datetime] = None,
         updated: Optional[datetime.datetime] = None,
         link: Optional["ResponseLink"] = None,
@@ -1129,7 +1129,7 @@ class RuleDescriptionFeed(msrest.serialization.Model):
     :param id: URL of the list queues query.
     :type id: str
     :param title: The entity type for the feed.
-    :type title: str
+    :type title: object
     :param updated: Datetime of the query.
     :type updated: ~datetime.datetime
     :param link: Links to paginated response.
@@ -1140,7 +1140,7 @@ class RuleDescriptionFeed(msrest.serialization.Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'object'},
         'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'link': {'key': 'link', 'type': '[ResponseLink]'},
         'entry': {'key': 'entry', 'type': '[RuleDescriptionEntry]'},
@@ -1153,7 +1153,7 @@ class RuleDescriptionFeed(msrest.serialization.Model):
         self,
         *,
         id: Optional[str] = None,
-        title: Optional[str] = None,
+        title: Optional[object] = None,
         updated: Optional[datetime.datetime] = None,
         link: Optional[List["ResponseLink"]] = None,
         entry: Optional[List["RuleDescriptionEntry"]] = None,
@@ -1364,7 +1364,7 @@ class SubscriptionDescriptionEntry(msrest.serialization.Model):
     :param id: The URL of the GET request.
     :type id: str
     :param title: The name of the subscription.
-    :type title: str
+    :type title: object
     :param published: The timestamp for when this queue was published.
     :type published: ~datetime.datetime
     :param updated: The timestamp for when this queue was last updated.
@@ -1378,7 +1378,7 @@ class SubscriptionDescriptionEntry(msrest.serialization.Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'object'},
         'published': {'key': 'published', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'link': {'key': 'link', 'type': 'ResponseLink'},
@@ -1392,7 +1392,7 @@ class SubscriptionDescriptionEntry(msrest.serialization.Model):
         self,
         *,
         id: Optional[str] = None,
-        title: Optional[str] = None,
+        title: Optional[object] = None,
         published: Optional[datetime.datetime] = None,
         updated: Optional[datetime.datetime] = None,
         link: Optional["ResponseLink"] = None,
@@ -1444,7 +1444,7 @@ class SubscriptionDescriptionFeed(msrest.serialization.Model):
     :param id: URL of the list queues query.
     :type id: str
     :param title: The entity type for the feed.
-    :type title: str
+    :type title: object
     :param updated: Datetime of the query.
     :type updated: ~datetime.datetime
     :param link: Links to paginated response.
@@ -1455,7 +1455,7 @@ class SubscriptionDescriptionFeed(msrest.serialization.Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'object'},
         'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'link': {'key': 'link', 'type': '[ResponseLink]'},
         'entry': {'key': 'entry', 'type': '[SubscriptionDescriptionEntry]'},
@@ -1468,7 +1468,7 @@ class SubscriptionDescriptionFeed(msrest.serialization.Model):
         self,
         *,
         id: Optional[str] = None,
-        title: Optional[str] = None,
+        title: Optional[object] = None,
         updated: Optional[datetime.datetime] = None,
         link: Optional[List["ResponseLink"]] = None,
         entry: Optional[List["SubscriptionDescriptionEntry"]] = None,
@@ -1635,7 +1635,7 @@ class TopicDescriptionEntry(msrest.serialization.Model):
     :param id: The URL of the GET request.
     :type id: str
     :param title: The name of the queue.
-    :type title: str
+    :type title: object
     :param published: The timestamp for when this queue was published.
     :type published: ~datetime.datetime
     :param updated: The timestamp for when this queue was last updated.
@@ -1651,7 +1651,7 @@ class TopicDescriptionEntry(msrest.serialization.Model):
     _attribute_map = {
         'base': {'key': 'base', 'type': 'str', 'xml': {'name': 'base', 'attr': True, 'prefix': 'xml'}},
         'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'object'},
         'published': {'key': 'published', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'author': {'key': 'author', 'type': 'ResponseAuthor'},
@@ -1667,7 +1667,7 @@ class TopicDescriptionEntry(msrest.serialization.Model):
         *,
         base: Optional[str] = None,
         id: Optional[str] = None,
-        title: Optional[str] = None,
+        title: Optional[object] = None,
         published: Optional[datetime.datetime] = None,
         updated: Optional[datetime.datetime] = None,
         author: Optional["ResponseAuthor"] = None,
@@ -1721,7 +1721,7 @@ class TopicDescriptionFeed(msrest.serialization.Model):
     :param id: URL of the list queues query.
     :type id: str
     :param title: The entity type for the feed.
-    :type title: str
+    :type title: object
     :param updated: Datetime of the query.
     :type updated: ~datetime.datetime
     :param link: Links to paginated response.
@@ -1732,7 +1732,7 @@ class TopicDescriptionFeed(msrest.serialization.Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
-        'title': {'key': 'title', 'type': 'str', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
+        'title': {'key': 'title', 'type': 'object'},
         'updated': {'key': 'updated', 'type': 'iso-8601', 'xml': {'ns': 'http://www.w3.org/2005/Atom'}},
         'link': {'key': 'link', 'type': '[ResponseLink]'},
         'entry': {'key': 'entry', 'type': '[TopicDescriptionEntry]'},
@@ -1745,7 +1745,7 @@ class TopicDescriptionFeed(msrest.serialization.Model):
         self,
         *,
         id: Optional[str] = None,
-        title: Optional[str] = None,
+        title: Optional[object] = None,
         updated: Optional[datetime.datetime] = None,
         link: Optional[List["ResponseLink"]] = None,
         entry: Optional[List["TopicDescriptionEntry"]] = None,
