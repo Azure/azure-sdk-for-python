@@ -95,9 +95,10 @@ class FormRecognizerClient(object):
         :type receipt: bytes or IO[bytes]
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
-        :keyword str content_type: Media type of the body sent to the API. Content-type is
+        :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :paramtype: str or ~azure.ai.formrecognizer.FormContentType
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -197,9 +198,10 @@ class FormRecognizerClient(object):
 
         :param form: JPEG, PNG, PDF and TIFF type file stream or bytes.
         :type form: bytes or IO[bytes]
-        :keyword str content_type: Media type of the body sent to the API. Content-type is
+        :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :paramtype: str or ~azure.ai.formrecognizer.FormContentType
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -279,9 +281,10 @@ class FormRecognizerClient(object):
         :type form: bytes or IO[bytes]
         :keyword bool include_text_content:
             Whether or not to include text elements such as lines and words in addition to form fields.
-        :keyword str content_type: Media type of the body sent to the API. Content-type is
+        :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :paramtype: str or ~azure.ai.formrecognizer.FormContentType
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
