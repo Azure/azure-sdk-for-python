@@ -428,3 +428,16 @@ class SecureScoreControlDefinitionItemPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SecureScoreControlDefinitionItemPaged, self).__init__(*args, **kwargs)
+class ConnectorSettingPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ConnectorSetting <azure.mgmt.security.models.ConnectorSetting>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ConnectorSetting]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ConnectorSettingPaged, self).__init__(*args, **kwargs)

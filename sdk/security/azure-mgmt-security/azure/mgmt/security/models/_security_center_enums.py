@@ -281,6 +281,29 @@ class ControlType(str, Enum):
     custom = "Custom"  #: Non Azure Security Center managed assessments
 
 
+class HybridComputeProvisioningState(str, Enum):
+
+    valid = "Valid"  #: Valid service principal details.
+    invalid = "Invalid"  #: Invalid service principal details.
+    expired = "Expired"  #: the service principal details are expired
+
+
+class AuthenticationProvisioningState(str, Enum):
+
+    valid = "Valid"  #: Valid connector
+    invalid = "Invalid"  #: Invalid connector
+    expired = "Expired"  #: the connection is expired
+    incorrect_policy = "IncorrectPolicy"  #: Incorrect policy of the connector
+
+
+class PermissionProperty(str, Enum):
+
+    awsaws_security_hub_read_only_access = "AWS::AWSSecurityHubReadOnlyAccess"  #: This permission provides read only access to AWS Security Hub resources.
+    aws_security_audit = "AWS::SecurityAudit"  #: This permission grants access to read security configuration metadata.
+    aws_amazon_ssm_automation_role = "AWS::AmazonSSMAutomationRole"  #: The permission provides for EC2 Automation service to execute activities defined within Automation documents.
+    gcp_security_center_admin_viewer = "GCP::Security Center Admin Viewer"  #: This permission provides read only access to GCP Security Command Center.
+
+
 class ExpandEnum(str, Enum):
 
     links = "links"  #: All links associated with an assessment

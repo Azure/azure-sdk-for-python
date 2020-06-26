@@ -46,6 +46,7 @@ from ._external_security_solutions_operations import ExternalSecuritySolutionsOp
 from ._secure_scores_operations import SecureScoresOperations
 from ._secure_score_controls_operations import SecureScoreControlsOperations
 from ._secure_score_control_definitions_operations import SecureScoreControlDefinitionsOperations
+from ._connectors_operations import ConnectorsOperations
 
 __all__ = [
     'ComplianceResultsOperations',
@@ -85,4 +86,5 @@ __all__ = [
     'SecureScoresOperations',
     'SecureScoreControlsOperations',
     'SecureScoreControlDefinitionsOperations',
+    'ConnectorsOperations',
 ]

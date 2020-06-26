@@ -1452,6 +1452,54 @@ class AtaSolutionProperties(ExternalSecuritySolutionProperties):
         self.last_event_received = kwargs.get('last_event_received', None)
 
 
+class AuthenticationDetailsProperties(Model):
+    """Settings for cloud authentication management.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AwsCredsAuthenticationDetailsProperties,
+    AwAssumeRoleAuthenticationDetailsProperties,
+    GcpCredentialsDetailsProperties
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar authentication_provisioning_state: State of the multi-cloud
+     connector. Possible values include: 'Valid', 'Invalid', 'Expired',
+     'IncorrectPolicy'
+    :vartype authentication_provisioning_state: str or
+     ~azure.mgmt.security.models.AuthenticationProvisioningState
+    :ivar granted_permissions: The permissions detected in the cloud account.
+    :vartype granted_permissions: list[str or
+     ~azure.mgmt.security.models.PermissionProperty]
+    :param authentication_type: Required. Constant filled by server.
+    :type authentication_type: str
+    """
+
+    _validation = {
+        'authentication_provisioning_state': {'readonly': True},
+        'granted_permissions': {'readonly': True},
+        'authentication_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_provisioning_state': {'key': 'authenticationProvisioningState', 'type': 'str'},
+        'granted_permissions': {'key': 'grantedPermissions', 'type': '[str]'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'authentication_type': {'awsCreds': 'AwsCredsAuthenticationDetailsProperties', 'awsAssumeRole': 'AwAssumeRoleAuthenticationDetailsProperties', 'gcpCredentials': 'GcpCredentialsDetailsProperties'}
+    }
+
+    def __init__(self, **kwargs):
+        super(AuthenticationDetailsProperties, self).__init__(**kwargs)
+        self.authentication_provisioning_state = None
+        self.granted_permissions = None
+        self.authentication_type = None
+
+
 class TrackedResource(Model):
     """Describes an Azure tracked resource.
 
@@ -1869,6 +1917,121 @@ class AutoProvisioningSetting(Resource):
     def __init__(self, **kwargs):
         super(AutoProvisioningSetting, self).__init__(**kwargs)
         self.auto_provision = kwargs.get('auto_provision', None)
+
+
+class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsProperties):
+    """AWS cloud account connector based assume role, the role enables delegating
+    access to your AWS resources. The role is composed of role arn and external
+    id, for more details, refer to <a
+    href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user.html">Creating
+    a Role to Delegate Permissions to an IAM User (write only)</a>.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar authentication_provisioning_state: State of the multi-cloud
+     connector. Possible values include: 'Valid', 'Invalid', 'Expired',
+     'IncorrectPolicy'
+    :vartype authentication_provisioning_state: str or
+     ~azure.mgmt.security.models.AuthenticationProvisioningState
+    :ivar granted_permissions: The permissions detected in the cloud account.
+    :vartype granted_permissions: list[str or
+     ~azure.mgmt.security.models.PermissionProperty]
+    :param authentication_type: Required. Constant filled by server.
+    :type authentication_type: str
+    :ivar account_id: The ID of the cloud account
+    :vartype account_id: str
+    :param aws_assume_role_arn: Required. Assumed role ID is an identifier
+     that you can use to create temporary security credentials.
+    :type aws_assume_role_arn: str
+    :param aws_external_id: Required. A unique identifier that is required
+     when you assume a role in another account.
+    :type aws_external_id: str
+    """
+
+    _validation = {
+        'authentication_provisioning_state': {'readonly': True},
+        'granted_permissions': {'readonly': True},
+        'authentication_type': {'required': True},
+        'account_id': {'readonly': True},
+        'aws_assume_role_arn': {'required': True},
+        'aws_external_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_provisioning_state': {'key': 'authenticationProvisioningState', 'type': 'str'},
+        'granted_permissions': {'key': 'grantedPermissions', 'type': '[str]'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'account_id': {'key': 'accountId', 'type': 'str'},
+        'aws_assume_role_arn': {'key': 'awsAssumeRoleArn', 'type': 'str'},
+        'aws_external_id': {'key': 'awsExternalId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AwAssumeRoleAuthenticationDetailsProperties, self).__init__(**kwargs)
+        self.account_id = None
+        self.aws_assume_role_arn = kwargs.get('aws_assume_role_arn', None)
+        self.aws_external_id = kwargs.get('aws_external_id', None)
+        self.authentication_type = 'awsAssumeRole'
+
+
+class AwsCredsAuthenticationDetailsProperties(AuthenticationDetailsProperties):
+    """AWS cloud account connector based credentials, the credentials is composed
+    of access key id and secret key, for more details, refer to <a
+    href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html">Creating
+    an IAM User in Your AWS Account (write only)</a>.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar authentication_provisioning_state: State of the multi-cloud
+     connector. Possible values include: 'Valid', 'Invalid', 'Expired',
+     'IncorrectPolicy'
+    :vartype authentication_provisioning_state: str or
+     ~azure.mgmt.security.models.AuthenticationProvisioningState
+    :ivar granted_permissions: The permissions detected in the cloud account.
+    :vartype granted_permissions: list[str or
+     ~azure.mgmt.security.models.PermissionProperty]
+    :param authentication_type: Required. Constant filled by server.
+    :type authentication_type: str
+    :ivar account_id: The ID of the cloud account
+    :vartype account_id: str
+    :param aws_access_key_id: Required. Public key element of the AWS
+     credential object (write only)
+    :type aws_access_key_id: str
+    :param aws_secret_access_key: Required. Secret key element of the AWS
+     credential object (write only)
+    :type aws_secret_access_key: str
+    """
+
+    _validation = {
+        'authentication_provisioning_state': {'readonly': True},
+        'granted_permissions': {'readonly': True},
+        'authentication_type': {'required': True},
+        'account_id': {'readonly': True},
+        'aws_access_key_id': {'required': True},
+        'aws_secret_access_key': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_provisioning_state': {'key': 'authenticationProvisioningState', 'type': 'str'},
+        'granted_permissions': {'key': 'grantedPermissions', 'type': '[str]'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'account_id': {'key': 'accountId', 'type': 'str'},
+        'aws_access_key_id': {'key': 'awsAccessKeyId', 'type': 'str'},
+        'aws_secret_access_key': {'key': 'awsSecretAccessKey', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AwsCredsAuthenticationDetailsProperties, self).__init__(**kwargs)
+        self.account_id = None
+        self.aws_access_key_id = kwargs.get('aws_access_key_id', None)
+        self.aws_secret_access_key = kwargs.get('aws_secret_access_key', None)
+        self.authentication_type = 'awsCreds'
 
 
 class ResourceDetails(Model):
@@ -2327,6 +2490,48 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
     def __init__(self, **kwargs):
         super(ConnectionToIpNotAllowed, self).__init__(**kwargs)
         self.rule_type = 'ConnectionToIpNotAllowed'
+
+
+class ConnectorSetting(Resource):
+    """The connector setting.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param hybrid_compute_settings: Settings for hybrid compute management,
+     these settings are relevant only Arc autoProvision (Hybrid Compute).
+    :type hybrid_compute_settings:
+     ~azure.mgmt.security.models.HybridComputeSettingsProperties
+    :param authentication_details: Settings for authentication management,
+     these settings are relevant only for the cloud connector.
+    :type authentication_details:
+     ~azure.mgmt.security.models.AuthenticationDetailsProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'hybrid_compute_settings': {'key': 'properties.hybridComputeSettings', 'type': 'HybridComputeSettingsProperties'},
+        'authentication_details': {'key': 'properties.authenticationDetails', 'type': 'AuthenticationDetailsProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ConnectorSetting, self).__init__(**kwargs)
+        self.hybrid_compute_settings = kwargs.get('hybrid_compute_settings', None)
+        self.authentication_details = kwargs.get('authentication_details', None)
 
 
 class ContainerRegistryVulnerabilityProperties(AdditionalData):
@@ -2943,6 +3148,106 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
         self.rule_type = 'FileUploadsNotInAllowedRange'
 
 
+class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):
+    """GCP cloud account connector based service to service credentials, the
+    credentials is composed of organization id and json api key (write
+    only)</a>.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar authentication_provisioning_state: State of the multi-cloud
+     connector. Possible values include: 'Valid', 'Invalid', 'Expired',
+     'IncorrectPolicy'
+    :vartype authentication_provisioning_state: str or
+     ~azure.mgmt.security.models.AuthenticationProvisioningState
+    :ivar granted_permissions: The permissions detected in the cloud account.
+    :vartype granted_permissions: list[str or
+     ~azure.mgmt.security.models.PermissionProperty]
+    :param authentication_type: Required. Constant filled by server.
+    :type authentication_type: str
+    :param organization_id: Required. The Organization ID of the GCP cloud
+     account
+    :type organization_id: str
+    :param type: Required. Type field of the API key (write only)
+    :type type: str
+    :param project_id: Required. Project Id field of the API key (write only)
+    :type project_id: str
+    :param private_key_id: Required. Private key Id field of the API key
+     (write only)
+    :type private_key_id: str
+    :param private_key: Required. Private key field of the API key (write
+     only)
+    :type private_key: str
+    :param client_email: Required. Client email field of the API key (write
+     only)
+    :type client_email: str
+    :param client_id: Required. Client Id field of the API key (write only)
+    :type client_id: str
+    :param auth_uri: Required. Auth Uri field of the API key (write only)
+    :type auth_uri: str
+    :param token_uri: Required. Token Uri field of the API key (write only)
+    :type token_uri: str
+    :param auth_provider_x509_cert_url: Required. Auth provider x509
+     certificate url field of the API key (write only)
+    :type auth_provider_x509_cert_url: str
+    :param client_x509_cert_url: Required. Client x509 certificate url field
+     of the API key (write only)
+    :type client_x509_cert_url: str
+    """
+
+    _validation = {
+        'authentication_provisioning_state': {'readonly': True},
+        'granted_permissions': {'readonly': True},
+        'authentication_type': {'required': True},
+        'organization_id': {'required': True},
+        'type': {'required': True},
+        'project_id': {'required': True},
+        'private_key_id': {'required': True},
+        'private_key': {'required': True},
+        'client_email': {'required': True},
+        'client_id': {'required': True},
+        'auth_uri': {'required': True},
+        'token_uri': {'required': True},
+        'auth_provider_x509_cert_url': {'required': True},
+        'client_x509_cert_url': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_provisioning_state': {'key': 'authenticationProvisioningState', 'type': 'str'},
+        'granted_permissions': {'key': 'grantedPermissions', 'type': '[str]'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'organization_id': {'key': 'organizationId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'project_id': {'key': 'projectId', 'type': 'str'},
+        'private_key_id': {'key': 'privateKeyId', 'type': 'str'},
+        'private_key': {'key': 'privateKey', 'type': 'str'},
+        'client_email': {'key': 'clientEmail', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'auth_uri': {'key': 'authUri', 'type': 'str'},
+        'token_uri': {'key': 'tokenUri', 'type': 'str'},
+        'auth_provider_x509_cert_url': {'key': 'authProviderX509CertUrl', 'type': 'str'},
+        'client_x509_cert_url': {'key': 'clientX509CertUrl', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GcpCredentialsDetailsProperties, self).__init__(**kwargs)
+        self.organization_id = kwargs.get('organization_id', None)
+        self.type = kwargs.get('type', None)
+        self.project_id = kwargs.get('project_id', None)
+        self.private_key_id = kwargs.get('private_key_id', None)
+        self.private_key = kwargs.get('private_key', None)
+        self.client_email = kwargs.get('client_email', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.auth_uri = kwargs.get('auth_uri', None)
+        self.token_uri = kwargs.get('token_uri', None)
+        self.auth_provider_x509_cert_url = kwargs.get('auth_provider_x509_cert_url', None)
+        self.client_x509_cert_url = kwargs.get('client_x509_cert_url', None)
+        self.authentication_type = 'gcpCredentials'
+
+
 class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     """Number of cloud to device messages (HTTP protocol) is not in allowed range.
 
@@ -3089,6 +3394,61 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     def __init__(self, **kwargs):
         super(HttpD2CMessagesNotInAllowedRange, self).__init__(**kwargs)
         self.rule_type = 'HttpD2CMessagesNotInAllowedRange'
+
+
+class HybridComputeSettingsProperties(Model):
+    """Settings for hybrid compute management.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar hybrid_compute_provisioning_state: State of the service principal
+     and its secret. Possible values include: 'Valid', 'Invalid', 'Expired'
+    :vartype hybrid_compute_provisioning_state: str or
+     ~azure.mgmt.security.models.HybridComputeProvisioningState
+    :param auto_provision: Required. Whether or not to automatically install
+     Azure Arc (hybrid compute) agents on machines. Possible values include:
+     'On', 'Off'
+    :type auto_provision: str or ~azure.mgmt.security.models.AutoProvision
+    :param resource_group_name: The name of the resource group where Arc
+     (Hybrid Compute) connectors are connected.
+    :type resource_group_name: str
+    :param region: The location where the meta data of machines will be stored
+    :type region: str
+    :param proxy_server: For a non-Azure machine that is not connected
+     directly to the internet, specify a proxy server that the non-Azure
+     machine can use.
+    :type proxy_server: ~azure.mgmt.security.models.ProxyServerProperties
+    :param service_principal: An object to access resources that are secured
+     by an Azure AD tenant.
+    :type service_principal:
+     ~azure.mgmt.security.models.ServicePrincipalProperties
+    """
+
+    _validation = {
+        'hybrid_compute_provisioning_state': {'readonly': True},
+        'auto_provision': {'required': True},
+    }
+
+    _attribute_map = {
+        'hybrid_compute_provisioning_state': {'key': 'hybridComputeProvisioningState', 'type': 'str'},
+        'auto_provision': {'key': 'autoProvision', 'type': 'str'},
+        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
+        'region': {'key': 'region', 'type': 'str'},
+        'proxy_server': {'key': 'proxyServer', 'type': 'ProxyServerProperties'},
+        'service_principal': {'key': 'servicePrincipal', 'type': 'ServicePrincipalProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(HybridComputeSettingsProperties, self).__init__(**kwargs)
+        self.hybrid_compute_provisioning_state = None
+        self.auto_provision = kwargs.get('auto_provision', None)
+        self.resource_group_name = kwargs.get('resource_group_name', None)
+        self.region = kwargs.get('region', None)
+        self.proxy_server = kwargs.get('proxy_server', None)
+        self.service_principal = kwargs.get('service_principal', None)
 
 
 class InformationProtectionKeyword(Model):
@@ -4687,6 +5047,27 @@ class ProtectionMode(Model):
         self.executable = kwargs.get('executable', None)
 
 
+class ProxyServerProperties(Model):
+    """For a non-Azure machine that is not connected directly to the internet,
+    specify a proxy server that the non-Azure machine can use.
+
+    :param ip: Proxy server IP
+    :type ip: str
+    :param port: Proxy server port
+    :type port: str
+    """
+
+    _attribute_map = {
+        'ip': {'key': 'ip', 'type': 'str'},
+        'port': {'key': 'port', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProxyServerProperties, self).__init__(**kwargs)
+        self.ip = kwargs.get('ip', None)
+        self.port = kwargs.get('port', None)
+
+
 class PublisherInfo(Model):
     """Represents the publisher information of a process/rule.
 
@@ -5957,6 +6338,27 @@ class ServerVulnerabilityProperties(AdditionalData):
         self.published_time = None
         self.vendor_references = None
         self.assessed_resource_type = 'ServerVulnerabilityAssessment'
+
+
+class ServicePrincipalProperties(Model):
+    """Details of the service principal.
+
+    :param application_id: Application id of service principal.
+    :type application_id: str
+    :param secret: A secret string that the application uses to prove its
+     identity, also can be referred to as application password (write only).
+    :type secret: str
+    """
+
+    _attribute_map = {
+        'application_id': {'key': 'applicationId', 'type': 'str'},
+        'secret': {'key': 'secret', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServicePrincipalProperties, self).__init__(**kwargs)
+        self.application_id = kwargs.get('application_id', None)
+        self.secret = kwargs.get('secret', None)
 
 
 class SqlServerVulnerabilityProperties(AdditionalData):

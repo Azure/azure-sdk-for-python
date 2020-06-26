@@ -50,6 +50,7 @@ from .operations import ExternalSecuritySolutionsOperations
 from .operations import SecureScoresOperations
 from .operations import SecureScoreControlsOperations
 from .operations import SecureScoreControlDefinitionsOperations
+from .operations import ConnectorsOperations
 from . import models
 
 
@@ -133,6 +134,8 @@ class SecurityCenter(SDKClient):
     :vartype secure_score_controls: azure.mgmt.security.operations.SecureScoreControlsOperations
     :ivar secure_score_control_definitions: SecureScoreControlDefinitions operations
     :vartype secure_score_control_definitions: azure.mgmt.security.operations.SecureScoreControlDefinitionsOperations
+    :ivar connectors: Connectors operations
+    :vartype connectors: azure.mgmt.security.operations.ConnectorsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -228,4 +231,6 @@ class SecurityCenter(SDKClient):
         self.secure_score_controls = SecureScoreControlsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.secure_score_control_definitions = SecureScoreControlDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.connectors = ConnectorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
