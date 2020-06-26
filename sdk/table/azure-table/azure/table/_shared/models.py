@@ -6,15 +6,6 @@
 import sys
 from enum import Enum
 
-from pyparsing import unicode
-
-if sys.version_info < (3,):
-
-    _unicode_type = unicode
-else:
-
-    _unicode_type = str
-
 
 def get_enum_value(value):
     if value is None or value in ["None", ""]:
@@ -26,7 +17,6 @@ def get_enum_value(value):
 
 
 class StorageErrorCode(str, Enum):
-
     # Generic storage values
     account_already_exists = "AccountAlreadyExists"
     account_being_created = "AccountBeingCreated"
@@ -274,8 +264,8 @@ class ResourceTypes(object):
         self.container = container
         self.object = object
         self._str = (('s' if self.service else '') +
-                ('c' if self.container else '') +
-                ('o' if self.object else ''))
+                     ('c' if self.container else '') +
+                     ('o' if self.object else ''))
 
     def __str__(self):
         return self._str
@@ -332,6 +322,7 @@ class AccountSasPermissions(object):
     :param bool process:
         Valid for the following Object resource type only: queue messages.
     """
+
     def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
                  add=False, create=False, update=False, process=False):
         self.read = read
@@ -343,7 +334,7 @@ class AccountSasPermissions(object):
         self.update = update
         self.process = process
         self._str = (('r' if self.read else '') +
-                     ('w' if  self.write else '') +
+                     ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('l' if self.list else '') +
                      ('a' if self.add else '') +
@@ -377,8 +368,9 @@ class AccountSasPermissions(object):
         p_process = 'p' in permission
 
         parsed = cls(p_read, p_write, p_delete, p_list, p_add, p_create, p_update, p_process)
-        parsed._str = permission # pylint: disable = protected-access
+        parsed._str = permission  # pylint: disable = protected-access
         return parsed
+
 
 class Services(object):
     """Specifies the services accessible with the account SAS.
@@ -396,8 +388,8 @@ class Services(object):
         self.queue = queue
         self.fileshare = fileshare
         self._str = (('b' if self.blob else '') +
-                ('q' if self.queue else '') +
-                ('f' if self.fileshare else ''))
+                     ('q' if self.queue else '') +
+                     ('f' if self.fileshare else ''))
 
     def __str__(self):
         return self._str
@@ -447,6 +439,7 @@ class UserDelegationKey(object):
     :ivar str value:
         The user delegation key.
     """
+
     def __init__(self):
         self.signed_oid = None
         self.signed_tid = None
