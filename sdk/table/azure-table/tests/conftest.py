@@ -26,7 +26,6 @@
 import sys
 
 # fixture needs to be visible from conftest
-from _shared.testcase import storage_account
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []

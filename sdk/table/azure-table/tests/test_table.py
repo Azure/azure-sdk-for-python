@@ -47,8 +47,7 @@ from azure.core.exceptions import (
 # )
 
 # ------------------------------------------------------------------------------
-from azure.table._shared.shared_access_signature import TableSharedAccessSignature, SharedAccessSignature, \
-    generate_account_sas
+from azure.table._shared.shared_access_signature import generate_account_sas
 
 TEST_TABLE_PREFIX = 'pytablesync'
 
