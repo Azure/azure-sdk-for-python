@@ -23,7 +23,7 @@ from math import (
 )
 from cffi.backend_ctypes import long
 from dateutil.parser import parse
-from numpy import int64 # pylint:disable=E0401
+from numpy import int64
 from azure.table._entity import EdmType, EntityProperty
 from azure.table._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED, \
     _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY
