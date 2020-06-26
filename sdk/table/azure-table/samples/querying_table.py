@@ -1,4 +1,4 @@
-from azure.azure_table._generated.models import QueryOptions
+from azure.table._generated.models import QueryOptions
 
 
 class QueryTable(object):
@@ -14,10 +14,10 @@ class QueryTable(object):
     query_options = QueryOptions(filter=name_filter)
 
     def list_tables(self):
-        from azure.azure_table import TableClient
+        from azure.table import TableServiceClient
 
-        table_client = TableClient(account_url=self.account_url, credential=self.access_key)
-        tables = table_client.list_tables()
+        table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
+        tables = table_service_client.list_tables()
         # table_client.list_tables() returns an itemPaged
         # tables is a list of tables
 
@@ -25,7 +25,7 @@ class QueryTable(object):
             print(table.table_name)
 
     def query_tables(self):
-        from azure.azure_table import TableServiceClient
+        from azure.table import TableServiceClient
 
         table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
         queried_tables = table_service_client.query_tables(query_options=self.name_filter)

@@ -1,4 +1,4 @@
-from azure.azure_table._generated.models import QueryOptions
+from azure.table._generated.models import QueryOptions
 
 
 class CreateODataQuery(object):
@@ -20,12 +20,12 @@ class CreateODataQuery(object):
 
     def create_query_entities(self):
 
-        from azure.azure_table import TableClient
+        from azure.table import TableClient
         from azure.core.exceptions import HttpResponseError
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
-            queried_entities = table_client.query_entity(query_options=self.query_options)
+            queried_entities = table_client.query_entities(query_options=self.query_options)
 
             # queried_entities type is ItemPaged
             for entity_chosen in queried_entities:

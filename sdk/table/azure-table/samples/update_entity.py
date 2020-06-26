@@ -16,7 +16,7 @@ class UpdateEntity(object):
     }
 
     def update_entity(self):
-        from azure.azure_table import TableClient
+        from azure.table import TableClient
         from azure.core.exceptions import HttpResponseError
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
@@ -27,12 +27,12 @@ class UpdateEntity(object):
             print(e.response)
 
     def upsert_entity(self):
-        from azure.azure_table import TableClient
+        from azure.table import TableClient
         from azure.core.exceptions import HttpResponseError
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
-            table_client.upsert_entity(partition_key=self.partition_key, row_key=self.row_key,
+            table_client.upsert_insert_update_entity(partition_key=self.partition_key, row_key=self.row_key,
                                        table_entity_properties=self.entity)
         except HttpResponseError as e:
             print(e.response)
