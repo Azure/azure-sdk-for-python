@@ -6,7 +6,7 @@
 import sys
 from enum import Enum
 
-from cffi.backend_ctypes import unicode
+from idna import unicode
 
 if sys.version_info < (3,):
 
