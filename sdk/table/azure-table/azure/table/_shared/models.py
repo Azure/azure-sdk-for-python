@@ -6,7 +6,7 @@
 import sys
 from enum import Enum
 
-from appdirs import unicode
+from cffi.backend_ctypes import unicode
 
 if sys.version_info < (3,):
 
