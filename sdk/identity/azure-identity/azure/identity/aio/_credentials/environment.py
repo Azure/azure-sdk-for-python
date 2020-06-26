@@ -6,7 +6,7 @@ import os
 from typing import TYPE_CHECKING
 
 from ... import CredentialUnavailableError
-from ..._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET
+from ..._constants import EnvironmentVariables
 from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
 from .base import AsyncCredentialBase

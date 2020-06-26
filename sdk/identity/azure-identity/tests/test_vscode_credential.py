@@ -111,7 +111,7 @@ def test_no_obtain_token_if_cached():
 
 @pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
 def test_segfault():
-    from azure.identity._credentials.linux_vscode_adapter import _get_refresh_token
+    from azure.identity._internal.linux_vscode_adapter import _get_refresh_token
     _get_refresh_token("test", "test")
 
 
