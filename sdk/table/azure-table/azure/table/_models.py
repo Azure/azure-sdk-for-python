@@ -97,7 +97,7 @@ class TableAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy) # pylint:disable=W0212
             # pylint: disable=protected-access
         )
 
@@ -130,7 +130,7 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)
+            retention_policy=RetentionPolicy.from_generated(generated.retention_policy)
             # pylint: disable=protected-access
         )
 
@@ -156,7 +156,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def _from_generated(cls, generated):
+    def from_generated(cls, generated):
         if not generated:
             return cls()
         return cls(

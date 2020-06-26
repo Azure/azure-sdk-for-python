@@ -108,25 +108,25 @@ _ERROR_DATA_NOT_ENCRYPTED = 'Encryption required, but received data does not con
 
 
 def _dont_fail_on_exist(error):
-    ''' don't throw exception if the resource exists.
-    This is called by create_* APIs with fail_on_exist=False'''
-    if isinstance(error, AzureConflictHttpError):
+    """ don't throw exception if the resource exists.
+    This is called by create_* APIs with fail_on_exist=False"""
+    if isinstance(error, AzureConflictHttpError):   # pylint: disable=R1705
         return False
     else:
         raise error
 
 
 def _dont_fail_not_exist(error):
-    ''' don't throw exception if the resource doesn't exist.
-    This is called by create_* APIs with fail_on_exist=False'''
-    if isinstance(error, AzureMissingResourceHttpError):
+    """ don't throw exception if the resource doesn't exist.
+    This is called by create_* APIs with fail_on_exist=False"""
+    if isinstance(error, AzureMissingResourceHttpError):   # pylint: disable=R1705
         return False
     else:
         raise error
 
 
 def _http_error_handler(http_error):
-    ''' Simple error handler for azure.'''
+    """ Simple error handler for azure."""
     message = str(http_error)
     error_code = None
 
@@ -214,9 +214,9 @@ def _validate_encryption_unsupported(require_encryption, key_encryption_key):
 # wraps a given exception with the desired exception type
 def _wrap_exception(ex, desired_type):
     msg = ""
-    if len(ex.args) > 0:
+    if len(ex.args) > 0:   # pylint: disable=C1801
         msg = ex.args[0]
-    if version_info >= (3,):
+    if version_info >= (3,):   # pylint: disable=R1705
         # Automatic chaining in Python 3 means we keep the trace
         return desired_type(msg)
     else:

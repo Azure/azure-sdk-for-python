@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-from dateutil import parser
 from uuid import UUID
+from dateutil import parser
 from azure.table._entity import EntityProperty, EdmType, Entity
 from azure.table._shared import url_quote
 from azure.table._shared._common_conversion import _decode_base64_to_bytes

@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 from ._shared._error import _ERROR_ATTRIBUTE_MISSING
 
 
@@ -47,7 +46,7 @@ class EntityProperty(object):
         entity.x = EntityProperty(EdmType.STRING, 'y')
     """
 
-    def __init__(self, type=None, value=None, encrypt=False):
+    def __init__(self, type=None, value=None, encrypt=False):  # pylint:disable=W0622
         """
         Represents an Azure Table. Returned by list_tables.
 

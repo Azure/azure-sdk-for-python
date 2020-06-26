@@ -5,13 +5,14 @@
 # --------------------------------------------------------------------------
 
 import functools
+from typing import Optional, Any
 from urllib.parse import urlparse, unquote
 
 from azure.core.paging import ItemPaged
 from azure.table._deserialization import _convert_to_entity
 from azure.table._entity import Entity
 from azure.table._generated import AzureTable
-from azure.table._generated.models import TableProperties, AccessPolicy, SignedIdentifier
+from azure.table._generated.models import AccessPolicy, SignedIdentifier
 from azure.table._message_encoding import NoEncodePolicy, NoDecodePolicy
 from azure.table._serialization import _add_entity_properties
 from azure.table._serialize import _get_match_headers
@@ -104,16 +105,16 @@ class TableClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_table_url(cls, table_url, credential=None, **kwargs):
-        # type: (str, Optional[Any], Any) -> QueueClient
-        """A client to interact with a specific Queue.
+        # type: (str, Optional[Any], Any) -> TableClient
+        """A client to interact with a specific Table.
 
-        :param str table_url: The full URI to the queue, including SAS token if used.
+        :param str table_url: The full URI to the table, including SAS token if used.
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
             shared access key, or an instance of a TokenCredentials class from azure.identity.
-        :returns: A queue client.
-        :rtype: ~azure.storage.queue.QueueClient
+        :returns: A table client.
+        :rtype: ~azure.table.TableClient
         """
         try:
             if not table_url.lower().startswith('http'):
@@ -142,8 +143,17 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def get_table_access_policy(
             self,
-            **kwargs
+            **kwargs  # type: Any
     ):
+        # type: (...) -> List["models.SignedIdentifier"]
+        """Retrieves details about any stored access policies specified on the table that may be
+        used with Shared Access Signatures.
+
+                :keyword callable cls: A custom type or function that will be passed the direct response
+                :return: list of SignedIdentifier, or the result of cls(response)
+                :rtype: list[~azure.table.models.SignedIdentifier]
+                :raises: ~azure.core.exceptions.HttpResponseError
+                """
         timeout = kwargs.pop('timeout', None)
         try:
             _, identifiers = self._client.table.get_access_policy(
@@ -157,7 +167,16 @@ class TableClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_table_access_policy(self, signed_identifiers, **kwargs):
-        # type: (Dict[str, AccessPolicy], Optional[Any]) -> None
+        # type: (...) -> None
+        """Sets stored access policies for the table that may be used with Shared Access Signatures.
+
+                :param signed_identifiers:
+                :type signed_identifiers: {id,AccessPolicy}
+                :keyword callable cls: A custom type or function that will be passed the direct response
+                :return: None, or the result of cls(response)
+                :rtype: None
+                :raises: ~azure.core.exceptions.HttpResponseError
+                """
         if len(signed_identifiers) > 5:
             raise ValueError(
                 'Too many access policies provided. The server does not support setting '
@@ -168,17 +187,29 @@ class TableClient(StorageAccountHostsMixin):
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
+        signed_identifiers = identifiers  # type: ignore
         try:
             self._client.table.set_access_policy(
                 table=self.table_name,
-                table_acl=identifiers,
+                table_acl=signed_identifiers or None,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def get_table_properties(self, **kwargs):
-        # type: (Optional[Any]) -> TableProperties
+    def get_table_properties(
+            self,
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> "models.TableServiceProperties"
+        """Gets the properties of an account's Table service,
+        including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
+
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TableServiceProperties, or the result of cls(response)
+        :rtype: ~azure.table.models.TableServiceProperties
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         timeout = kwargs.pop('timeout', None)
         request_id_parameter = kwargs.pop('request_id_parameter', None)
         try:
@@ -186,9 +217,9 @@ class TableClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 request_id_parameter=request_id_parameter,
                 **kwargs)
+            return response
         except HttpResponseError as error:
             process_storage_error(error)
-        return response  # type: ignore
 
     @distributed_trace
     def delete_entity(
@@ -199,6 +230,23 @@ class TableClient(StorageAccountHostsMixin):
             match_condition=None,
             **kwargs
     ):
+        # type: (...) -> None
+        """Deletes the specified entity in a table.
+
+        :param match_condition: MatchCondition
+        :type match_condition: ~azure.core.MatchConditions
+        :param etag: Etag of the entity
+        :type etag: str
+        :param partition_key: The partition key of the entity.
+        :type partition_key: str
+        :param row_key: The row key of the entity.
+        :type row_key: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
         if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
                                                     etag_param='etag', match_param='match_condition')
 
@@ -220,6 +268,21 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,
             **kwargs
     ):
+        # type: (...) -> Dict[str, object]
+        """Insert entity in a table.
+
+        :param headers: Headers for service request
+        :type headers: HttpResponse Headers
+        :param table_entity_properties: The properties for the table entity.
+        :type table_entity_properties: dict[str, object]
+        :param query_options: Parameter group.
+        :type query_options: ~azure.table.models.QueryOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: dict mapping str to object, or the result of cls(response)
+        :rtype: dict[str, object] or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
         if table_entity_properties:
 
             if "PartitionKey" in table_entity_properties and "RowKey" in table_entity_properties:
@@ -249,6 +312,25 @@ class TableClient(StorageAccountHostsMixin):
             table_entity_properties=None,
             **kwargs
     ):
+        # type: (...) -> None
+        """Update entity in a table.
+
+        :param table_entity_properties: The properties for the table entity.
+        :type table_entity_properties: dict[str, object]
+        :param match_condition: MatchCondition
+        :type match_condition: ~azure.core.MatchConditions
+        :param etag: Etag of the entity
+        :type etag: str
+        :param partition_key: The partition key of the entity.
+        :type partition_key: str
+        :param row_key: The row key of the entity.
+        :type row_key: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
         if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
                                                     etag_param='etag', match_param='match_condition')
 
@@ -273,12 +355,29 @@ class TableClient(StorageAccountHostsMixin):
             self,
             partition_key=None,  # type: str
             row_key=None,  # type: str
-            etag=None,
-            match_condition=None,
+            etag=None,  # type: str
+            match_condition=None,  # type: MatchConditions
             table_entity_properties=None,  # type: Optional[Dict[str, object]]
             **kwargs  # type: Any
     ):
+        # type: (...) -> None
+        """Merge entity in a table.
 
+        :param partition_key: The partition key of the entity.
+        :type partition_key: str
+        :param row_key: The row key of the entity.
+        :type row_key: str
+         :param match_condition: MatchCondition
+        :type match_condition: ~azure.core.MatchConditions
+        :param etag: Etag of the entity
+        :type etag: str
+        :param table_entity_properties: The properties for the table entity.
+        :type table_entity_properties: dict[str, object]
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
                                                     etag_param='etag', match_param='match_condition')
 
@@ -296,8 +395,24 @@ class TableClient(StorageAccountHostsMixin):
             raise ResourceNotFoundError
 
     @distributed_trace
-    def query_entities(self, headers=None, query_options=None, **kwargs):
+    def query_entities(
+            self,
+            headers=None,
+            query_options=None,
+            **kwargs
+    ):
+        # type: (...) -> "models.TableEntityQueryResponse"
+        """Queries entities in a table.
 
+        :param headers: Headers for service request
+        :type headers: HttpResponse Headers
+        :param query_options: Parameter group.
+        :type query_options: ~azure.table.models.QueryOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TableEntityQueryResponse, or the result of cls(response)
+        :rtype: ~azure.table.models.TableEntityQueryResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         command = functools.partial(
             self._client.table.query_entities,
             **dict(kwargs, headers=headers))
@@ -315,6 +430,23 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,
             **kwargs
     ):
+        # type: (...) -> "models.TableEntityQueryResponse"
+        """Queries entities in a table.
+
+        :param headers: Headers for service request
+        :type headers: HttpResponse Headers
+        :param partition_key: The partition key of the entity.
+        :type partition_key: str
+        :param row_key: The row key of the entity.
+        :type row_key: str
+        :param query_options: Parameter group.
+        :type query_options: ~azure.table.models.QueryOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TableEntityQueryResponse, or the result of cls(response)
+        :rtype: ~azure.table.models.TableEntityQueryResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
         try:
 
             entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
@@ -336,6 +468,24 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,
             **kwargs
     ):
+        # type: (...) -> None
+        """Merge or Insert entity into table.
+
+
+        :param partition_key: The partition key of the entity.
+        :type partition_key: str
+        :param row_key: The row key of the entity.
+        :type row_key: str
+        :param table_entity_properties: The properties for the table entity.
+        :type table_entity_properties: dict[str, object]
+        :param query_options: Parameter group.
+        :type query_options: ~azure.table.models.QueryOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TableEntityQueryResponse, or the result of cls(response)
+        :rtype: ~azure.table.models.TableEntityQueryResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
         # Insert or Merge
         if table_entity_properties:
             partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
@@ -370,6 +520,22 @@ class TableClient(StorageAccountHostsMixin):
             table_entity_properties=None,
             **kwargs
     ):
+        # type: (...) -> None
+        """Update or Insert entity into table.
+
+
+        :param partition_key: The partition key of the entity.
+        :type partition_key: str
+        :param row_key: The row key of the entity.
+        :type row_key: str
+        :param table_entity_properties: The properties for the table entity.
+        :type table_entity_properties: dict[str, object]
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TableEntityQueryResponse, or the result of cls(response)
+        :rtype: ~azure.table.models.TableEntityQueryResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
         # Insert or Update
         if table_entity_properties:
             partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key

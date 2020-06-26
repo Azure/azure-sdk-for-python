@@ -271,7 +271,7 @@ class StorageTableTest(TableTestCase):
         table = self._create_table(ts)
         try:
             # Act
-            acl = ts.get_table_access_policy(table_name=table.table_name)
+            acl = table.get_table_access_policy()
             # acl = table.get_table_access_policy()
 
             # Assert
@@ -293,10 +293,10 @@ class StorageTableTest(TableTestCase):
         table = self._create_table(ts)
         try:
             # Act
-            ts.set_table_access_policy(table_name=table.table_name, signed_identifiers={})
+            table.set_table_access_policy(signed_identifiers={})
 
             # Assert
-            acl = ts.get_table_access_policy(table_name=table.table_name)
+            acl = table.get_table_access_policy()
             self.assertIsNotNone(acl)
             self.assertEqual(len(acl), 0)
         finally:
@@ -315,9 +315,9 @@ class StorageTableTest(TableTestCase):
         table = self._create_table(ts)
         try:
             # Act
-            ts.set_table_access_policy(table_name=table.table_name, signed_identifiers={'empty': None})
+            table.set_table_access_policy(signed_identifiers={'empty': None})
             # Assert
-            acl = ts.get_table_access_policy(table_name=table.table_name)
+            acl = table.get_table_access_policy()
             self.assertIsNotNone(acl)
             self.assertEqual(len(acl), 1)
             self.assertIsNotNone(acl['empty'])
@@ -374,7 +374,7 @@ class StorageTableTest(TableTestCase):
             # Assert
             with self.assertRaisesRegex(ValueError,
                                         'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'):
-                ts.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
+                table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
         finally:
             ts.delete_table(table.table_name)
 

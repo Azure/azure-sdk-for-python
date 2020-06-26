@@ -44,7 +44,7 @@ def _bool_to_str(value):
         return None
 
     if isinstance(value, bool):
-        if value:
+        if value:        # pylint: disable=R1705
             return 'true'
         else:
             return 'false'

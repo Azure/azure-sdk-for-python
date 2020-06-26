@@ -9,13 +9,11 @@ from typing import Any
 from urllib.parse import urlparse
 
 from azure.table._generated import AzureTable
-from azure.table._generated.models import TableProperties, TableServiceProperties, \
-    AccessPolicy, SignedIdentifier
+from azure.table._generated.models import TableProperties, TableServiceProperties
 from azure.table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from azure.table._shared.models import LocationMode
-from azure.table._shared.request_handlers import serialize_iso
-from azure.table._shared.response_handlers import process_storage_error, return_headers_and_deserialized
+from azure.table._shared.response_handlers import process_storage_error
 from azure.table._version import VERSION
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
@@ -87,66 +85,8 @@ class TableServiceClient(StorageAccountHostsMixin):
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
-    def get_table_access_policy(
-            self,
-            table_name,  # type: str
-            **kwargs  # type: Any
-    ):
-        """Retrieves details about any stored access policies specified on the table that may be
-        used with Shared Access Signatures.
-
-                :param table_name: The name of the table.
-                :type table_name: str
-                :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: list of SignedIdentifier, or the result of cls(response)
-                :rtype: list[~azure.table.models.SignedIdentifier]
-                :raises: ~azure.core.exceptions.HttpResponseError
-                """
-        timeout = kwargs.pop('timeout', None)
-        try:
-            _, identifiers = self._client.table.get_access_policy(
-                table=table_name,
-                timeout=timeout,
-                cls=return_headers_and_deserialized,
-                **kwargs)
-        except HttpResponseError as error:
-            process_storage_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
-
-    @distributed_trace
-    def set_table_access_policy(self, table_name, signed_identifiers, **kwargs):
-        """Sets stored access policies for the table that may be used with Shared Access Signatures.
-
-                :param signed_identifiers:
-                :type signed_identifiers: {id,AccessPolicy}
-                :param table_name: The name of the table.
-                :type table_name: str
-                :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: None, or the result of cls(response)
-                :rtype: None
-                :raises: ~azure.core.exceptions.HttpResponseError
-                """
-        if len(signed_identifiers) > 5:
-            raise ValueError(
-                'Too many access policies provided. The server does not support setting '
-                'more than 5 access policies on a single resource.')
-        identifiers = []
-        for key, value in signed_identifiers.items():
-            if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        signed_identifiers = identifiers  # type: ignore
-        try:
-            self._client.table.set_access_policy(
-                table=table_name,
-                table_acl=signed_identifiers or None,
-                **kwargs)
-        except HttpResponseError as error:
-            process_storage_error(error)
-
-    @distributed_trace
     def get_service_stats(self, **kwargs):
+        # type: (...) -> "models.TableServiceStats"
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
@@ -165,6 +105,7 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
+        # type: (...) -> "models.TableServiceProperties"
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -188,6 +129,7 @@ class TableServiceClient(StorageAccountHostsMixin):
             cors=None,
             **kwargs
     ):
+        # type: (...) -> None
         """Sets properties for an account's Table service endpoint,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -219,6 +161,7 @@ class TableServiceClient(StorageAccountHostsMixin):
             headers=None,
             **kwargs
     ):
+        # type: (...) -> TableClient
         """Creates a new table under the given account.
 
                 :param headers:
@@ -240,6 +183,7 @@ class TableServiceClient(StorageAccountHostsMixin):
             request_id_parameter=None,
             **kwargs
     ):
+        # type: (...) -> None
         """Creates a new table under the given account.
 
                         :param request_id_parameter: Request Id parameter
@@ -261,7 +205,7 @@ class TableServiceClient(StorageAccountHostsMixin):
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs
     ):
-        # type: (...) -> "ItemPaged"
+        # type: (...) -> ItemPaged
         """Queries tables under the given account.
 
         :param query_options: Parameter group.
@@ -285,7 +229,7 @@ class TableServiceClient(StorageAccountHostsMixin):
             query_options=None,
             **kwargs
     ):
-        # type: (...) -> "ItemPaged"
+        # type: (...) -> ItemPaged
         """Queries tables under the given account.
 
         :param query_options: Parameter group.
