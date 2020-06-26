@@ -7,11 +7,10 @@
 import base64
 import hashlib
 import hmac
-import sys
 from io import (SEEK_SET)
 
+from azure.table._shared.parser import _str
 from dateutil.tz import tzutc
-from pyparsing import unicode
 
 from ._error import (
     _ERROR_VALUE_SHOULD_BE_BYTES_OR_STREAM,
@@ -20,16 +19,6 @@ from ._error import (
 from .models import (
     _unicode_type,
 )
-
-if sys.version_info < (3,):
-    def _str(value):
-        if isinstance(value, unicode):
-            return value.encode('utf-8')
-
-        return str(value)
-else:
-    _str = str
-
 
 def _to_str(value):
     return _str(value) if value is not None else None
