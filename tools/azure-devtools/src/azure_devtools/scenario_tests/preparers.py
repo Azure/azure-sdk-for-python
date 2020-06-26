@@ -129,7 +129,7 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
             if test_class_instance.is_live:
                 test_class_instance.scrubber.register_name_pair(
                     resource_name,
-                    self.resource_moniker
+                    self.moniker
                 )
 
             # We shouldn't trim the same kwargs that we use for deletion, 
