@@ -172,7 +172,7 @@ def test_default_http_logging_policy():
     config = Configuration()
     pipeline_client = ARMPipelineClient(base_url="test", config=config)
     http_logging_policy = pipeline_client._default_policies(config=config)[-1]
-    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
+    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST
 
 def test_pass_in_http_logging_policy():
     config = Configuration()
@@ -184,4 +184,4 @@ def test_pass_in_http_logging_policy():
 
     pipeline_client = ARMPipelineClient(base_url="test", config=config)
     http_logging_policy = pipeline_client._default_policies(config=config)[-1]
-    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
+    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.union({"x-ms-added-header"})

@@ -32,7 +32,7 @@ class ARMHttpLoggingPolicy(HttpLoggingPolicy):
     """HttpLoggingPolicy with ARM specific safe headers fopr loggers.
     """
 
-    DEFAULT_HEADERS_WHITELIST = HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST | set([
+    DEFAULT_HEADERS_ALLOWLIST = HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST | set([
         # https://docs.microsoft.com/azure/azure-resource-manager/management/request-limits-and-throttling#remaining-requests
         "x-ms-ratelimit-remaining-subscription-reads",
         "x-ms-ratelimit-remaining-subscription-writes",
@@ -47,9 +47,12 @@ class ARMHttpLoggingPolicy(HttpLoggingPolicy):
         "x-ms-request-charge",
     ])
 
+    # Deprecated
+    DEFAULT_HEADERS_WHITELIST = DEFAULT_HEADERS_ALLOWLIST
+
     def __init__(self, logger=None, **kwargs):
         super(ARMHttpLoggingPolicy, self).__init__(logger=None, **kwargs)
-        self.allowed_header_names = set(ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST)
+        self.allowed_header_names = set(ARMHttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST)
 
 
 __all__ = ["ARMAutoResourceProviderRegistrationPolicy", "ARMHttpLoggingPolicy"]
