@@ -339,7 +339,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
     """The Pipeline policy that handles logging of HTTP requests and responses.
     """
 
-    DEFAULT_HEADERS_ALLOWLIST = set([
+    DEFAULT_HEADERS_WHITELIST = set([
         "x-ms-request-id",
         "x-ms-client-request-id",
         "x-ms-return-client-request-id",
@@ -364,10 +364,6 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         "Transfer-Encoding",
         "User-Agent",
     ])
-
-    # Deprecated
-    DEFAULT_HEADERS_WHITELIST = DEFAULT_HEADERS_ALLOWLIST
-
     REDACTED_PLACEHOLDER = "REDACTED"
 
     def __init__(self, logger=None, **kwargs):  # pylint: disable=unused-argument
@@ -375,7 +371,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             "azure.core.pipeline.policies.http_logging_policy"
         )
         self.allowed_query_params = set()
-        self.allowed_header_names = set(self.DEFAULT_HEADERS_ALLOWLIST)
+        self.allowed_header_names = set(self.DEFAULT_HEADERS_WHITELIST)
 
     def _redact_query_param(self, key, value):
         lower_case_allowed_query_params = [
