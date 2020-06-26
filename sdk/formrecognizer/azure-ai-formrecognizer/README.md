@@ -241,8 +241,10 @@ for receipt in result:
 
 ### Train a model
 Train a machine-learned model on your own form type. The resulting model will be able to recognize values from the types of forms it was trained on.
-Provide a container SAS url to your Azure Storage Blob container where you're storing the training documents. See details on setting this up
-in the [service quickstart documentation][quickstart_training].
+Provide a container SAS url to your Azure Storage Blob container where you're storing the training documents. 
+If training files are within a subfolder in the container, use the [prefix][prefix_ref_docs] keyword argument to specify under which folder to train.
+
+More details on setting up a container and required file structure can be found in the [service quickstart documentation][quickstart_training].
 
 ```python
 from azure.ai.formrecognizer import FormTrainingClient
@@ -253,7 +255,7 @@ credential = AzureKeyCredential("<api_key>")
 
 form_training_client = FormTrainingClient(endpoint, credential)
 
-container_sas_url = "xxx"  # training documents uploaded to blob storage
+container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
 poller = form_training_client.begin_training(container_sas_url, use_training_labels=False)
 model = poller.result()
 
@@ -417,6 +419,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [fr-labeling-tool]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/label-tool
 [fr-train-without-labels]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview#train-without-labels
 [fr-train-with-labels]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview#train-with-labels
+[prefix_ref_docs]: https://aka.ms/azsdk/python/formrecognizer/docs#azure.ai.formrecognizer.FormTrainingClient.begin_training
 
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
