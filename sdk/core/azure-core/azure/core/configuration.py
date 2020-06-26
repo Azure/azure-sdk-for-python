@@ -40,6 +40,7 @@ class Configuration(object):
     :keyword retry_policy: Provides configuration parameters for retries in the pipeline.
     :keyword custom_hook_policy: Provides configuration parameters for a custom hook.
     :keyword logging_policy: Provides configuration parameters for logging.
+    :keyword http_logging_policy: Provides configuration parameters for HTTP specific logging.
     :keyword user_agent_policy: Provides configuration parameters to append custom values to the
      User-Agent header.
     :keyword authentication_policy: Provides configuration parameters for adding a bearer token Authorization
@@ -73,6 +74,9 @@ class Configuration(object):
 
         # Logger configuration
         self.logging_policy = None
+
+        # Http logger configuration
+        self.http_logging_policy = None
 
         # User Agent configuration
         self.user_agent_policy = None
