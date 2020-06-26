@@ -14,6 +14,7 @@ import time
 from datetime import datetime, timedelta
 
 from azure.table import ResourceTypes, AccountSasPermissions
+from azure.table._shared.table_shared_access_signature import generate_account_shared_access_signature
 
 try:
     import unittest.mock as mock
@@ -252,7 +253,7 @@ class TableTestCase(AzureMgmtTestCase):
     def generate_sas_token(self):
         fake_key = 'a'*30 + 'b'*30
 
-        return '?' + generate_account_sas(
+        return '?' + generate_account_shared_access_signature(
             account_name = 'test', # name of the storage account
             account_key = fake_key, # key for the storage account
             resource_types = ResourceTypes(object=True),
