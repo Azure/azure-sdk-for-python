@@ -60,8 +60,7 @@ class AccessPolicy(GenAccessPolicy):
     :type start: ~datetime.datetime or str
     """
 
-    def __init__(self, permission=None, expiry=None, start=None, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, permission=None, expiry=None, start=None, **kwargs):  # pylint:disable=W0231
         self.start = start
         self.expiry = expiry
         self.permission = permission
@@ -80,8 +79,7 @@ class TableAnalyticsLogging(GeneratedLogging):
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, **kwargs):  # pylint:disable=W0231
         self.version = kwargs.get('version', u'1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
@@ -97,7 +95,7 @@ class TableAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy) # pylint:disable=W0212
+            retention_policy=RetentionPolicy.from_generated(generated.retention_policy) # pylint:disable=W0212
             # pylint: disable=protected-access
         )
 
@@ -115,8 +113,7 @@ class Metrics(GeneratedMetrics):
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, **kwargs):  # pylint:disable=W0231
         self.version = kwargs.get('version', u'1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
@@ -148,8 +145,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         be deleted.
     """
 
-    def __init__(self, enabled=False, days=None, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, enabled=False, days=None, **kwargs):  # pylint:disable=W0231
         self.enabled = enabled
         self.days = days
         if self.enabled and (self.days is None):
@@ -195,8 +191,7 @@ class CorsRule(GeneratedCorsRule):
         headers. Each header can be up to 256 characters.
     """
 
-    def __init__(self, allowed_origins, allowed_methods, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, allowed_origins, allowed_methods, **kwargs):  # pylint:disable=W0231
         self.allowed_origins = ','.join(allowed_origins)
         self.allowed_methods = ','.join(allowed_methods)
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
