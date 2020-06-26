@@ -10,9 +10,8 @@ import unittest
 import pytest
 from datetime import datetime
 
-from azure.ai.textanalytics._generated.models import Entity
 from azure.common import AzureException
-from azure.table._entity import EntityProperty, EdmType
+from azure.table._entity import EntityProperty, EdmType, Entity
 from azure.table._models import TablePayloadFormat, AccessPolicy, TableSasPermissions
 from azure.table._shared.encryption import _dict_to_encryption_data, _generate_AES_CBC_cipher
 from dateutil.tz import tzutc

@@ -23,10 +23,7 @@ from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
-    ResourceExistsError,
-    ClientAuthenticationError)
-
-from azure.table._shared.shared_access_signature import TableSharedAccessSignature, generate_table_sas
+    ResourceExistsError)
 
 # from azure.tables import (
 #     AccessPolicy,
