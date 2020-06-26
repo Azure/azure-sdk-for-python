@@ -1,0 +1,49 @@
+interactions:
+- request:
+    body: '{"TableName": "\u554a\u9f44\u4e02\u72db\u72dc"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '47'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 26 Jun 2020 19:41:52 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 26 Jun 2020 19:41:52 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://storagename.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.error":{"code":"InvalidResourceName","message":{"lang":"en-US","value":"The
+        specifed resource name contains invalid characters.\nRequestId:43788f1b-c002-0042-6bf1-4be3e3000000\nTime:2020-06-26T19:41:52.5960677Z"}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Fri, 26 Jun 2020 19:41:51 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

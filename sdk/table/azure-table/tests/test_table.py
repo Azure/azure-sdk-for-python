@@ -16,8 +16,8 @@ from datetime import (
 )
 
 from azure.table._generated.models import AccessPolicy, QueryOptions
-from azure.table._models import TableSasPermissions, TableServices
-from azure.table._shared.models import ResourceTypes, AccountSasPermissions
+from azure.table._models import TableSasPermissions
+from azure.table._shared.models import ResourceTypes
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     HeadersPolicy,
@@ -33,7 +33,7 @@ from azure.core.exceptions import (
     ResourceExistsError)
 
 # ------------------------------------------------------------------------------
-from azure.table._shared.shared_access_signature import generate_account_sas
+from azure.table._shared.table_shared_access_signature import generate_account_shared_access_signature
 
 TEST_TABLE_PREFIX = 'pytablesync'
 
@@ -386,13 +386,11 @@ class StorageTableTest(TableTestCase):
             entity['RowKey'] = 'test2'
             table.upsert_insert_update_entity(table_entity_properties=entity)
 
-            token = generate_account_sas(
-                storage_account.name,
-                storage_account_key,
-                resource_types=ResourceTypes(object=True),
-                permission=AccountSasPermissions(update=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1)
+            token = generate_account_shared_access_signature(
+                storage_account.name, storage_account_key,
+                ResourceTypes(object=True),
+                TableSasPermissions(update=True),
+                datetime.utcnow() + timedelta(hours=1),
             )
 
             # Act
@@ -400,6 +398,7 @@ class StorageTableTest(TableTestCase):
                 self.account_url(storage_account, "table"),
                 credential=token,
             )
+
             sas_table = service.get_table_client(table.table_name)
             # this works to here - authenticate up to here and gets table client
             entity['text'] = 'meow'
