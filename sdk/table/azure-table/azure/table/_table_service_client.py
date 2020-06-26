@@ -269,6 +269,8 @@ class TableServiceClient(StorageAccountHostsMixin):
         except AttributeError:
             table_name = table
 
+        #TODO: transport wrapper for pipeline
+
         return TableClient(
             self.url, table_name=table_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,

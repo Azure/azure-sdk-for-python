@@ -17,6 +17,8 @@ from typing import (  # pylint: disable=unused-import
 )
 import logging
 
+
+
 try:
     from urllib.parse import parse_qs, quote
 except ImportError:
@@ -24,7 +26,7 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 import six
-
+from azure.table._shared.shared_access_signature import QueryStringConstants
 from azure.core.configuration import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
@@ -42,7 +44,6 @@ from azure.core.pipeline.policies import (
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
-from .shared_access_signature import QueryStringConstants
 from .policies import (
     StorageHeadersPolicy,
     StorageContentValidation,

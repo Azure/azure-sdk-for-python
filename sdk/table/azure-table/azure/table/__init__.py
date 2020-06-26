@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.table._shared.shared_access_signature import generate_account_sas
 from azure.table._shared.table_shared_access_signature import generate_table_sas
 from azure.table._table_client import TableClient
 from azure.table._table_service_client import TableServiceClient
@@ -50,6 +49,5 @@ __all__ = [
     'Metrics',
     'CorsRule',
     'RetentionPolicy',
-    'generate_account_sas',
     'generate_table_sas'
 ]
