@@ -17,7 +17,7 @@ interactions:
       api-key:
       - 2012A83AD519035A878754DF20535EC1
     method: POST
-    uri: https://search504f1054.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    uri: https://search504f1054.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"@search.score":0.48248714,"hotelId":"10","hotelName":"Countryside
@@ -110,7 +110,7 @@ interactions:
       api-key:
       - 2012A83AD519035A878754DF20535EC1
     method: POST
-    uri: https://search504f1054.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    uri: https://search504f1054.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
       string: '{"@search.coverage":100.0,"value":[{"@search.score":0.48248714,"hotelId":"10","hotelName":"Countryside
