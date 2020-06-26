@@ -3,18 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import sys
 from enum import Enum
-
-from pytz import unicode
-
-if sys.version_info < (3,):
-
-    _unicode_type = unicode
-else:
-
-    _unicode_type = str
-
 
 def get_enum_value(value):
     if value is None or value in ["None", ""]:

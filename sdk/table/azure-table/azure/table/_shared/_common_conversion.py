@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import base64
 import hashlib
 import hmac
 from io import (SEEK_SET)
+import six
 from dateutil.tz import tzutc
 from azure.table._shared.parser import _str
 
@@ -15,9 +15,6 @@ from azure.table._shared.parser import _str
 from ._error import (
     _ERROR_VALUE_SHOULD_BE_BYTES_OR_STREAM,
     _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM,
-)
-from .models import (
-    _unicode_type,
 )
 
 
@@ -60,14 +57,14 @@ def _datetime_to_utc_string(value):
 
 
 def _encode_base64(data):
-    if isinstance(data, _unicode_type):
+    if isinstance(data, six.text_type):
         data = data.encode('utf-8')
     encoded = base64.b64encode(data)
     return encoded.decode('utf-8')
 
 
 def _decode_base64_to_bytes(data):
-    if isinstance(data, _unicode_type):
+    if isinstance(data, six.text_type):
         data = data.encode('utf-8')
     return base64.b64decode(data)
 
@@ -81,9 +78,9 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     if key_is_base64:
         key = _decode_base64_to_bytes(key)
     else:
-        if isinstance(key, _unicode_type):
+        if isinstance(key, six.text_type):
             key = key.encode('utf-8')
-    if isinstance(string_to_sign, _unicode_type):
+    if isinstance(string_to_sign, six.text_type):
         string_to_sign = string_to_sign.encode('utf-8')
     signed_hmac_sha256 = hmac.HMAC(key, string_to_sign, hashlib.sha256)
     digest = signed_hmac_sha256.digest()
