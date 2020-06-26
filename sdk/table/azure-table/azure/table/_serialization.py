@@ -20,13 +20,13 @@ from datetime import datetime
 from math import (
     isnan,
 )
+
 from azure.table._entity import EdmType, EntityProperty
 from azure.table._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED, \
     _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY
 from azure.table._models import TablePayloadFormat
 from azure.table._shared._common_conversion import _encode_base64, _to_str
 from azure.table._shared.parser import _to_utc_datetime
-from pytoml.writer import long
 
 if sys.version_info < (3,):
     def _new_boundary():
@@ -84,7 +84,7 @@ def _to_entity_guid(value):
 
 def _to_entity_int32(value):
     if sys.version_info < (3,):
-        value = long(value)
+        value = int(value)
     else:
         value = int(value)
     if value >= 2 ** 31 or value < -(2 ** 31):
@@ -94,7 +94,7 @@ def _to_entity_int32(value):
 
 def _to_entity_int64(value):
     if sys.version_info < (3,):
-        ivalue = long(value)
+        ivalue = int(value)
     else:
         ivalue = int(value)
     if ivalue >= 2 ** 63 or ivalue < -(2 ** 63):
