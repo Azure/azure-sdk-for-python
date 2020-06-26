@@ -19,7 +19,7 @@ interactions:
       api-key:
       - 1C5B43C52D408683A88B701C2E27EDD2
     method: POST
-    uri: https://search51a9106a.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search51a9106a.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search51a9106a.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC94A414B210\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -39,7 +39,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search51a9106a.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      - https://search51a9106a.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -67,7 +67,7 @@ interactions:
       api-key:
       - 1C5B43C52D408683A88B701C2E27EDD2
     method: GET
-    uri: https://search51a9106a.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search51a9106a.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search51a9106a.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D7EC94A414B210\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}]}'
@@ -115,7 +115,7 @@ interactions:
       api-key:
       - 1C5B43C52D408683A88B701C2E27EDD2
     method: DELETE
-    uri: https://search51a9106a.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+    uri: https://search51a9106a.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
     body:
       string: ''
@@ -151,7 +151,7 @@ interactions:
       api-key:
       - 1C5B43C52D408683A88B701C2E27EDD2
     method: GET
-    uri: https://search51a9106a.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search51a9106a.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search51a9106a.search.windows.net/$metadata#datasources","value":[]}'

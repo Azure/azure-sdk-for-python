@@ -9,7 +9,7 @@ interactions:
       api-key:
       - A4B33DCE35FD438DFDF33E31096E8B8A
     method: GET
-    uri: https://search24f71524.search.windows.net/servicestats?api-version=2019-05-06-Preview
+    uri: https://search24f71524.search.windows.net/servicestats?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search24f71524.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.ServiceStatistics","counters":{"documentCount":{"usage":0,"quota":null},"indexesCount":{"usage":0,"quota":3},"indexersCount":{"usage":0,"quota":3},"dataSourcesCount":{"usage":0,"quota":3},"storageSize":{"usage":0,"quota":52428800},"synonymMaps":{"usage":0,"quota":3},"skillsetCount":{"usage":0,"quota":3}},"limits":{"maxFieldsPerIndex":1000,"maxFieldNestingDepthPerIndex":10,"maxComplexCollectionFieldsPerIndex":40,"maxComplexObjectsInCollectionsPerDocument":3000}}'
@@ -30,5 +30,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search24f71524.search.windows.net/servicestats?api-version=2019-05-06-Preview
+    url: https://search24f71524.search.windows.net/servicestats?api-version=2020-06-30
 version: 1
