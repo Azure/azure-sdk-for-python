@@ -4560,7 +4560,7 @@ class ServiceCounters(msrest.serialization.Model):
     :type storage_size_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :param synonym_map_counter: Required. Total number of synonym maps.
     :type synonym_map_counter: ~azure.search.documents.indexes.models.ResourceCounter
-    :param skillset_counter: Required. Total number of skillsets.
+    :param skillset_counter: Total number of skillsets.
     :type skillset_counter: ~azure.search.documents.indexes.models.ResourceCounter
     """
 
@@ -4571,7 +4571,6 @@ class ServiceCounters(msrest.serialization.Model):
         'data_source_counter': {'required': True},
         'storage_size_counter': {'required': True},
         'synonym_map_counter': {'required': True},
-        'skillset_counter': {'required': True},
     }
 
     _attribute_map = {
@@ -4593,7 +4592,7 @@ class ServiceCounters(msrest.serialization.Model):
         data_source_counter: "ResourceCounter",
         storage_size_counter: "ResourceCounter",
         synonym_map_counter: "ResourceCounter",
-        skillset_counter: "ResourceCounter",
+        skillset_counter: Optional["ResourceCounter"] = None,
         **kwargs
     ):
         super(ServiceCounters, self).__init__(**kwargs)
