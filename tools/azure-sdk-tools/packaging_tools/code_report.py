@@ -150,20 +150,21 @@ def merge_report(report_paths):
     return merged_report
 
 def filter_track2_versions(package_name, versions):
+    from packaging import version
     track2_versions = {
-        'azure-mgmt-appconfiguration': '1.0.0',
-        'azure-mgmt-compute':'17.0.0',
-        'azure-mgmt-eventhub':'8.0.0',
-        'azure-mgmt-keyvault':'7.0.0',
-        'azure-mgmt-monitor':'1.0.0',
-        'azure-mgmt-network':'16.0.0',
-        'azure-mgmt-resource':'15.0.0',
-        'azure-mgmt-storage':'16.0.0',
+        'azure-mgmt-appconfiguration': '1.0.0b1',
+        'azure-mgmt-compute':'17.0.0b1',
+        'azure-mgmt-eventhub':'8.0.0b1',
+        'azure-mgmt-keyvault':'7.0.0b1',
+        'azure-mgmt-monitor':'1.0.0b1',
+        'azure-mgmt-network':'16.0.0b1',
+        'azure-mgmt-resource':'15.0.0b1',
+        'azure-mgmt-storage':'16.0.0b1',
     }
     upbound = track2_versions.get(package_name)
     if not upbound:
         return versions
-    return list(filter(lambda x: x < upbound, versions))
+    return list(filter(lambda x: version.parse(x) < version.parse(upbound), versions))
 
 def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = False, pypi: bool = False, last_pypi: bool = False, output: str = None):
     package_name, module_name = parse_input(input_parameter)
