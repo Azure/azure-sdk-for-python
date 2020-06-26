@@ -99,7 +99,7 @@ class MsalCredential(ABC):
             else:
                 self._cache = msal.TokenCache()
 
-        self._client = kwargs.pop("msal_adapter", None) or MsalClient(**kwargs)
+        self._client = MsalClient(**kwargs)
 
         # postpone creating the wrapped application because its initializer uses the network
         self._msal_app = None  # type: Optional[msal.ClientApplication]
