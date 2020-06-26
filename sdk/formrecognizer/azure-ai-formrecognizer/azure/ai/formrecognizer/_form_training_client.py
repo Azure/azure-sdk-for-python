@@ -93,11 +93,13 @@ class FormTrainingClient(object):
     def begin_training(self, training_files_url, use_training_labels, **kwargs):
         # type: (str, bool, Any) -> LROPoller[CustomFormModel]
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
-        externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
+        externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri). Note that
+        a container uri is accepted only when the container is public.
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
-        :param str training_files_url: An Azure Storage blob container's SAS URI.
+        :param str training_files_url: An Azure Storage blob container's SAS URI. A container uri can be used if the
+            container is public.
         :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for

@@ -263,6 +263,7 @@ If training files are within a subfolder in the container, use the [prefix][pref
 More details on setting up a container and required file structure can be found in the [service quickstart documentation][quickstart_training].
 
 To train a model, you will need Azure Blob storage container's shared access signature (SAS) URL. See [here][train-a-model-using-labeled-data] for more detailed descriptions on how to get it.
+Alternatively, a container uri can be used instead if the container is public.
 
 ```python
 from azure.ai.formrecognizer import FormTrainingClient
