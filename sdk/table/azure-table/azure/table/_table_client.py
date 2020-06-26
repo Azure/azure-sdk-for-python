@@ -6,7 +6,12 @@
 
 import functools
 from typing import Optional, Any
-from urllib.parse import urlparse, unquote
+try:
+    from urllib.parse import urlparse, unquote
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+    from urllib2 import unquote  # type: ignore
+
 
 from azure.core.paging import ItemPaged
 from azure.table._deserialization import _convert_to_entity
@@ -23,6 +28,7 @@ from azure.table._shared.response_handlers import process_storage_error
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.table._version import VERSION
 from azure.core.tracing.decorator import distributed_trace
+
 from ._models import TableEntityPropertiesPaged
 
 from ._shared.response_handlers import return_headers_and_deserialized
