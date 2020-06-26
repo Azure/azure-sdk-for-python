@@ -21,9 +21,10 @@ from datetime import datetime
 from math import (
     isnan,
 )
+
+
 from cffi.backend_ctypes import long
 from dateutil.parser import parse
-from numpy import int64
 from azure.table._entity import EdmType, EntityProperty
 from azure.table._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED, \
     _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY
@@ -63,24 +64,12 @@ def _to_entity_binary(value):
     return EdmType.BINARY, _encode_base64(value)
 
 
-def _string_to_binary(value):
-    return base64.b64decode(value)
-
-
 def _to_entity_bool(value):
     return None, value
 
 
-def _string_to_bool(value):
-    return bool(value)
-
-
 def _to_entity_datetime(value):
     return EdmType.DATETIME, _to_utc_datetime(value)
-
-
-def _string_to_datetime(value):
-    return parse(value)
 
 
 def _to_entity_float(value):
@@ -93,16 +82,9 @@ def _to_entity_float(value):
     return None, value
 
 
-def _string_to_float(value):
-    return float(value)
-
-
 def _to_entity_guid(value):
     return EdmType.GUID, str(value)
 
-
-def _string_to_guid(value):
-    return value
 
 def _to_entity_int32(value):
     if sys.version_info < (3,):
@@ -114,9 +96,6 @@ def _to_entity_int32(value):
     return None, value
 
 
-def _string_to_int32(value):
-    return int(value)
-
 
 def _to_entity_int64(value):
     if sys.version_info < (3,):
@@ -126,10 +105,6 @@ def _to_entity_int64(value):
     if ivalue >= 2 ** 63 or ivalue < -(2 ** 63):
         raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT64))
     return EdmType.INT64, str(value)
-
-
-def _string_to_int64(value):
-    return int64(value)
 
 
 def _to_entity_str(value):
@@ -162,17 +137,6 @@ _EDM_TO_ENTITY_CONVERSIONS = {
     EdmType.GUID: _to_entity_guid,
     EdmType.INT32: _to_entity_int32,
     EdmType.INT64: _to_entity_int64,
-    EdmType.STRING: _to_entity_str,
-}
-
-_EDM_TO_TYPE_CONVERSIONS = {
-    EdmType.BINARY: _string_to_binary,
-    EdmType.BOOLEAN: _string_to_bool,
-    EdmType.DATETIME: _string_to_datetime,
-    EdmType.DOUBLE: _string_to_float,
-    EdmType.GUID: _string_to_guid,
-    EdmType.INT32: _string_to_int32,
-    EdmType.INT64: _string_to_int64,
     EdmType.STRING: _to_entity_str,
 }
 
@@ -226,24 +190,6 @@ def _add_entity_properties(source):
 
     # generate the entity_body
     return properties
-
-
-def _convert_entity_to_properties(source):
-    properties = {}
-
-    # set properties type for types we know if value has no type info.
-    # if value has type info, then set the type to value.type
-    for name, value in source.items():
-        ntype = name + '@odata.type'
-        if ntype in source:
-            conv = _EDM_TO_TYPE_CONVERSIONS.get(source[ntype])
-            new_value = conv(value)
-            properties[name] = new_value
-        else:  # form the property node
-            properties[name] = value
-
-    return properties
-
 
 def _convert_table_to_json(table_name):
     '''
