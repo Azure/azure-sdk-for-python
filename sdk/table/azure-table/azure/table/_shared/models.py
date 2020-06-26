@@ -6,7 +6,7 @@
 import sys
 from enum import Enum
 
-from idna import unicode
+from pytz import unicode
 
 if sys.version_info < (3,):
 
