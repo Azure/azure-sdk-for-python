@@ -36,8 +36,6 @@ from ._failover_groups_operations import FailoverGroupsOperations
 from ._operations import Operations
 from ._server_keys_operations import ServerKeysOperations
 from ._sync_agents_operations import SyncAgentsOperations
-from ._sync_groups_operations import SyncGroupsOperations
-from ._sync_members_operations import SyncMembersOperations
 from ._subscription_usages_operations import SubscriptionUsagesOperations
 from ._virtual_clusters_operations import VirtualClustersOperations
 from ._virtual_network_rules_operations import VirtualNetworkRulesOperations
@@ -100,6 +98,8 @@ from ._managed_database_restore_details_operations import ManagedDatabaseRestore
 from ._managed_databases_operations import ManagedDatabasesOperations
 from ._server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from ._managed_instance_operations import ManagedInstanceOperations
+from ._sync_groups_operations import SyncGroupsOperations
+from ._sync_members_operations import SyncMembersOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -129,8 +129,6 @@ __all__ = [
     'Operations',
     'ServerKeysOperations',
     'SyncAgentsOperations',
-    'SyncGroupsOperations',
-    'SyncMembersOperations',
     'SubscriptionUsagesOperations',
     'VirtualClustersOperations',
     'VirtualNetworkRulesOperations',
@@ -193,4 +191,6 @@ __all__ = [
     'ManagedDatabasesOperations',
     'ServerAzureADAdministratorsOperations',
     'ManagedInstanceOperations',
+    'SyncGroupsOperations',
+    'SyncMembersOperations',
 ]
