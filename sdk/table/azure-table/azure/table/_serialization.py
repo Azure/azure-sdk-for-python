@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # --------------------------------------------------------------------------
-import base64
 import sys
 import uuid
 from uuid import UUID
@@ -22,16 +21,13 @@ from math import (
     isnan,
 )
 
-
 from cffi.backend_ctypes import long
-from dateutil.parser import parse
 from azure.table._entity import EdmType, EntityProperty
 from azure.table._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED, \
     _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY
 from azure.table._models import TablePayloadFormat
 from azure.table._shared._common_conversion import _encode_base64, _to_str
 from azure.table._shared.parser import _to_utc_datetime
-
 
 if sys.version_info < (3,):
     def _new_boundary():
@@ -59,6 +55,7 @@ def _update_storage_table_header(request):
     # set service version
     request.headers['DataServiceVersion'] = '3.0;NetFx'
     request.headers['MaxDataServiceVersion'] = '3.0'
+
 
 def _to_entity_binary(value):
     return EdmType.BINARY, _encode_base64(value)
@@ -94,7 +91,6 @@ def _to_entity_int32(value):
     if value >= 2 ** 31 or value < -(2 ** 31):
         raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT32))
     return None, value
-
 
 
 def _to_entity_int64(value):
@@ -190,6 +186,7 @@ def _add_entity_properties(source):
 
     # generate the entity_body
     return properties
+
 
 def _convert_table_to_json(table_name):
     '''
