@@ -518,7 +518,7 @@ class CustomFormModel(object):
         :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
     :ivar ~datetime.datetime training_started_on:
-        The date and time (UTC) when model training was requested.
+        The date and time (UTC) when model training was started.
     :ivar ~datetime.datetime training_completed_on:
         Date and time (UTC) when model training completed.
     :ivar list[~azure.ai.formrecognizer.CustomFormSubmodel] submodels:
@@ -698,7 +698,7 @@ class CustomFormModelInfo(object):
         The status of the model, :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
     :ivar ~datetime.datetime training_started_on:
-        Date and time (UTC) when model training was requested.
+        Date and time (UTC) when model training was started.
     :ivar ~datetime.datetime training_completed_on:
         Date and time (UTC) when model training completed.
     """
