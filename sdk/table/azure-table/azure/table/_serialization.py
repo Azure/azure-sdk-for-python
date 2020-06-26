@@ -20,14 +20,13 @@ from datetime import datetime
 from math import (
     isnan,
 )
-
-from cffi.backend_ctypes import long
 from azure.table._entity import EdmType, EntityProperty
 from azure.table._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED, \
     _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY
 from azure.table._models import TablePayloadFormat
 from azure.table._shared._common_conversion import _encode_base64, _to_str
 from azure.table._shared.parser import _to_utc_datetime
+from pytoml.writer import long
 
 if sys.version_info < (3,):
     def _new_boundary():

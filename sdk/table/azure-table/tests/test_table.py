@@ -5,14 +5,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import kwargs
 import pytest
 import sys
 import locale
 import os
 from azure.table import TableServiceClient
-from time import time
-from wsgiref.handlers import format_date_time
 from datetime import (
     datetime,
     timedelta,
@@ -34,17 +31,6 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError)
-
-# from azure.tables import (
-#     TableServiceClient,
-#     TableClient,
-#     TableSasPermissions,
-#     AccessPolicy,
-#     ResourceTypes,
-#     AccountSasPermissions,
-#     generate_account_sas,
-#     generate_table_sas
-# )
 
 # ------------------------------------------------------------------------------
 from azure.table._shared.shared_access_signature import generate_account_sas

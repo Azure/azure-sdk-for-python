@@ -10,24 +10,12 @@ import unittest
 import pytest
 
 import uuid
-from base64 import b64encode
 from datetime import datetime
 from dateutil.tz import tzutc
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceExistsError,
-    ClientAuthenticationError)
-# from azure.tables import (
-#     Entity,
-#     EntityProperty,
-#     TableServiceClient,
-#     TableBatchClient,
-#     EdmType,
-#     PartialBatchErrorException
-# )
+    ResourceExistsError)
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
