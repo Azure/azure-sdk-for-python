@@ -260,8 +260,8 @@ model = poller.result()
 # Custom model information
 print("Model ID: {}".format(model.model_id))
 print("Status: {}".format(model.status))
-print("Requested on: {}".format(model.requested_on))
-print("Completed on: {}".format(model.completed_on))
+print("Training started on: {}".format(model.training_started_on))
+print("Training completed on: {}".format(model.training_completed_on))
 
 print("Recognized fields:")
 # looping through the submodels, which contains the fields they were trained on
@@ -309,8 +309,8 @@ model_id = "<model id from the Train a Model sample>"
 custom_model = form_training_client.get_custom_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
 print("Status: {}".format(custom_model.status))
-print("Requested on: {}".format(custom_model.requested_on))
-print("Completed on: {}".format(custom_model.completed_on))
+print("Training started on: {}".format(custom_model.training_started_on))
+print("Training completed on: {}".format(custom_model.training_completed_on))
 
 # Finally, we will delete this model by ID
 form_training_client.delete_model(model_id=custom_model.model_id)
