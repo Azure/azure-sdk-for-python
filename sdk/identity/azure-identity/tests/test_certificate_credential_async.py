@@ -9,6 +9,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import CertificateCredential
+from azure.identity._constants import DEFAULT_REFRESH_OFFSET
 
 from msal import TokenCache
 import pytest
@@ -233,3 +234,8 @@ async def test_persistent_cache_multiple_clients(cert_path, cert_password):
     token_b = await credential_b.get_token(scope)
     assert token_b.token == access_token_b
     assert transport_b.send.call_count == 1
+
+@pytest.mark.asyncio
+async def test_token_refresh_offset():
+    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH)
+    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET

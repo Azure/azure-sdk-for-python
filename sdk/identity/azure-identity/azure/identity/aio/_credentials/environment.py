@@ -6,7 +6,7 @@ import os
 from typing import TYPE_CHECKING
 
 from ... import CredentialUnavailableError
-from ..._constants import EnvironmentVariables
+from ..._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET
 from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
 from .base import AsyncCredentialBase
@@ -78,3 +78,8 @@ class EnvironmentCredential(AsyncCredentialBase):
             )
             raise CredentialUnavailableError(message=message)
         return await self._credential.get_token(*scopes, **kwargs)
+
+    @property
+    def token_refresh_offset(self):
+        # type: (None) -> int
+        return self._credential.token_refresh_offset

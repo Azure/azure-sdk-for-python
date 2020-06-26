@@ -5,6 +5,7 @@
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import UsernamePasswordCredential
 from azure.identity._internal.user_agent import USER_AGENT
+from azure.identity._constants import DEFAULT_REFRESH_OFFSET
 import pytest
 
 from helpers import (
@@ -134,3 +135,18 @@ def test_authenticate():
     # credential should have a cached access token for the scope passed to authenticate
     token = credential.get_token(scope)
     assert token.token == access_token
+
+def test_token_refresh_offset():
+    client_id = "client-id"
+    environment = "localhost"
+    issuer = "https://" + environment
+    tenant_id = "some-tenant"
+    username = "me@work.com"
+    credential = UsernamePasswordCredential(
+        username=username,
+        password="1234",
+        authority=environment,
+        client_id=client_id,
+        tenant_id=tenant_id,
+    )
+    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET

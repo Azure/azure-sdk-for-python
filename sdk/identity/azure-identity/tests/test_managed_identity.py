@@ -11,7 +11,7 @@ except ImportError:  # python < 3.3
 
 from azure.core.credentials import AccessToken
 from azure.identity import ManagedIdentityCredential
-from azure.identity._constants import Endpoints, EnvironmentVariables
+from azure.identity._constants import Endpoints, EnvironmentVariables, DEFAULT_REFRESH_OFFSET
 from azure.identity._internal.user_agent import USER_AGENT
 
 from helpers import validating_transport, mock_response, Request
@@ -298,3 +298,7 @@ def test_imds_user_assigned_identity():
     with mock.patch.dict("os.environ", clear=True):
         token = ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
     assert token == expected_token
+
+def test_token_refresh_offset():
+    credential = ManagedIdentityCredential()
+    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET

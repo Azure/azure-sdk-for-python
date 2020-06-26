@@ -74,6 +74,10 @@ class ManagedIdentityCredential(object):
             raise CredentialUnavailableError(message="No managed identity endpoint found.")
         return self._credential.get_token(*scopes, **kwargs)
 
+    @property
+    def token_refresh_offset(self):
+        # type: (None) -> int
+        return self._credential.token_refresh_offset
 
 class _ManagedIdentityBase(object):
     def __init__(self, endpoint, client_cls, config=None, client_id=None, **kwargs):
@@ -129,6 +133,11 @@ class _ManagedIdentityBase(object):
         "retry_backoff_max": 60,
         "retry_on_status_codes": [404, 429] + list(range(500, 600)),
     }
+
+    @property
+    def token_refresh_offset(self):
+        # type: (None) -> int
+        return self._client.token_refresh_offset
 
 
 class ImdsCredential(_ManagedIdentityBase):

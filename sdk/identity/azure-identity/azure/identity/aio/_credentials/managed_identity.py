@@ -69,6 +69,10 @@ class ManagedIdentityCredential(AsyncCredentialBase):
             raise CredentialUnavailableError(message="No managed identity endpoint found.")
         return await self._credential.get_token(*scopes, **kwargs)
 
+    @property
+    def token_refresh_offset(self):
+        # type: (None) -> int
+        return self._credential.token_refresh_offset
 
 class _AsyncManagedIdentityBase(_ManagedIdentityBase, AsyncCredentialBase):
     def __init__(self, endpoint: str, **kwargs: "Any") -> None:
@@ -227,3 +231,4 @@ class MsiCredential(_AsyncManagedIdentityBase):
     async def _request_legacy_token(self, scopes, resource):
         form_data = {"resource": resource, **self._identity_config}
         return await self._client.request_token(scopes, method="POST", form_data=form_data)
+

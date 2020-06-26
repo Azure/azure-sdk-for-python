@@ -9,6 +9,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import CertificateCredential
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
+from azure.identity._constants import DEFAULT_REFRESH_OFFSET
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
@@ -240,3 +241,7 @@ def test_persistent_cache_multiple_clients(cert_path, cert_password):
     token_b = credential_b.get_token(scope)
     assert token_b.token == access_token_b
     assert transport_b.send.call_count == 1
+
+def test_token_refresh_offset():
+    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH)
+    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET

@@ -19,7 +19,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from .exception_wrapper import wrap_exceptions
 from .msal_transport_adapter import MsalTransportAdapter
 from .persistent_cache import load_user_cache
-from .._constants import KnownAuthorities
+from .._constants import KnownAuthorities, DEFAULT_REFRESH_OFFSET
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from .._internal import get_default_authority, normalize_authority
 from .._auth_record import AuthenticationRecord
@@ -136,6 +136,11 @@ class MsalCredential(ABC):
         app.client.session = self._adapter
 
         return app
+
+    @property
+    def token_refresh_offset(self):
+        # type: (None) -> int
+        return DEFAULT_REFRESH_OFFSET
 
 
 class ConfidentialClientCredential(MsalCredential):

@@ -7,7 +7,7 @@ from unittest import mock
 
 from azure.core.credentials import AccessToken
 from azure.identity.aio import ManagedIdentityCredential
-from azure.identity._constants import Endpoints, EnvironmentVariables
+from azure.identity._constants import Endpoints, EnvironmentVariables, DEFAULT_REFRESH_OFFSET
 from azure.identity._internal.user_agent import USER_AGENT
 
 import pytest
@@ -304,3 +304,8 @@ async def test_imds_user_assigned_identity():
     with mock.patch.dict("os.environ", clear=True):
         token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
     assert token == expected_token
+
+@pytest.mark.asyncio
+async def test_token_refresh_offset():
+    credential = ManagedIdentityCredential()
+    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET

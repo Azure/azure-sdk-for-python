@@ -9,6 +9,7 @@ from azure.identity import CredentialUnavailableError, VSCodeCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity._credentials.vscode_credential import get_credentials
+from azure.identity._constants import DEFAULT_REFRESH_OFFSET
 import pytest
 
 from helpers import build_aad_response, mock_response, Request, validating_transport
@@ -128,3 +129,8 @@ def test_mac_keychain_error():
         credential = VSCodeCredential()
         with pytest.raises(CredentialUnavailableError):
             token = credential.get_token("scope")
+
+
+def test_token_refresh_offset():
+    credential = VSCodeCredential()
+    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET

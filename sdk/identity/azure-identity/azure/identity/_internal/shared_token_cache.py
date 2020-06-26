@@ -11,7 +11,7 @@ from six.moves.urllib_parse import urlparse
 
 from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
-from .._constants import KnownAuthorities
+from .._constants import KnownAuthorities, DEFAULT_REFRESH_OFFSET
 from .._internal import get_default_authority, normalize_authority, wrap_exceptions
 from .._internal.persistent_cache import load_user_cache
 
@@ -228,6 +228,11 @@ class SharedTokenCacheBase(ABC):
         except Exception as ex:  # pylint:disable=broad-except
             message = "Error accessing cached data: {}".format(ex)
             six.raise_from(CredentialUnavailableError(message=message), ex)
+
+    @property
+    def token_refresh_offset(self):
+        # type: (None) -> int
+        return DEFAULT_REFRESH_OFFSET
 
     @staticmethod
     def supported():

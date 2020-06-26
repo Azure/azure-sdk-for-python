@@ -9,11 +9,11 @@ from .._constants import AZURE_VSCODE_CLIENT_ID
 from .._internal.aad_client import AadClient
 
 if sys.platform.startswith("win"):
-    from .win_vscode_adapter import get_credentials
+    from .._internal.win_vscode_adapter import get_credentials
 elif sys.platform.startswith("darwin"):
-    from .macos_vscode_adapter import get_credentials
+    from .._internal.macos_vscode_adapter import get_credentials
 else:
-    from .linux_vscode_adapter import get_credentials
+    from .._internal.linux_vscode_adapter import get_credentials
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -73,3 +73,8 @@ class VSCodeCredential(object):
 
         token = self._client.obtain_token_by_refresh_token(scopes, self._refresh_token, **kwargs)
         return token
+
+    @property
+    def token_refresh_offset(self):
+        # type: (None) -> int
+        return self._client.token_refresh_offset

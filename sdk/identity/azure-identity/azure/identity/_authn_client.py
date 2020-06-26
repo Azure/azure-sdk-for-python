@@ -86,6 +86,11 @@ class AuthnClientBase(ABC):
             return False
         return True
 
+    @property
+    def token_refresh_offset(self):
+        # type: (None) -> int
+        return self._token_refresh_offset
+
     def get_cached_token(self, scopes):
         # type: (Iterable[str]) -> Optional[AccessToken]
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes))

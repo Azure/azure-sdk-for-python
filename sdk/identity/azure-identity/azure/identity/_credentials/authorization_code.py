@@ -94,3 +94,8 @@ class AuthorizationCodeCredential(object):
             if token:
                 return token
         return None
+
+    @property
+    def token_refresh_offset(self):
+        # type: (None) -> int
+        return self._client.token_refresh_offset

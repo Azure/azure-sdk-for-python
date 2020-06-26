@@ -101,6 +101,11 @@ class AadClientBase(ABC):
     def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
         pass
 
+    @property
+    def token_refresh_offset(self):
+        # type: (None) -> int
+        return self._token_refresh_offset
+
     def _process_response(self, response, request_time):
         # type: (PipelineResponse, int) -> AccessToken
         self._last_refresh_time = int(time.time())   # no matter succeed or not, update the last refresh time

@@ -17,6 +17,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource
+from .._constants import DEFAULT_REFRESH_OFFSET
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
@@ -61,6 +62,10 @@ class AzureCliCredential(object):
 
         return token
 
+    @property
+    def token_refresh_offset(self):
+        # type: (None) -> int
+        return DEFAULT_REFRESH_OFFSET
 
 def parse_token(output):
     """Parse output of 'az account get-access-token' to an AccessToken.

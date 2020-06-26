@@ -45,3 +45,8 @@ class ClientSecretCredentialBase(ABC):
     @abc.abstractmethod
     def _get_auth_client(self, tenant_id, client_id, **kwargs):
         pass
+
+    @property
+    def token_refresh_offset(self):
+        # type: (None) -> int
+        return self._client.token_refresh_offset

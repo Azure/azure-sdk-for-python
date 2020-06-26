@@ -6,7 +6,7 @@ import time
 from unittest import mock
 
 from azure.core.credentials import AccessToken
-from azure.identity._constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio._credentials.managed_identity import MsiCredential
 import pytest
@@ -139,3 +139,11 @@ async def test_identity_config_cloud_shell():
         token = await credential.get_token(scope)
 
     assert token == expected_token
+
+async def test_token_refresh_offset():
+    endpoint = "http://localhost:42/token"
+    with mock.patch.dict(
+            MsiCredential.__module__ + ".os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint}, clear=True
+    ):
+        credential = MsiCredential()
+        assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET

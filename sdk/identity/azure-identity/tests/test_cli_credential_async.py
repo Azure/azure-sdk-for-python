@@ -11,6 +11,7 @@ from azure.identity import CredentialUnavailableError
 from azure.identity.aio import AzureCliCredential
 from azure.identity._credentials.azure_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
 from azure.core.exceptions import ClientAuthenticationError
+from azure.identity._constants import DEFAULT_REFRESH_OFFSET
 import pytest
 
 from helpers_async import get_completed_future
@@ -169,3 +170,8 @@ async def test_subprocess_error_does_not_expose_token(output):
 
     assert "secret value" not in str(ex.value)
     assert "secret value" not in repr(ex.value)
+
+
+async def test_token_refresh_offset():
+    credential = AzureCliCredential()
+    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET

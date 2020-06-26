@@ -10,6 +10,7 @@ from azure.identity import CredentialUnavailableError
 from azure.identity.aio import VSCodeCredential
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.identity._constants import DEFAULT_REFRESH_OFFSET
 import pytest
 
 from helpers import build_aad_response, mock_response, Request
@@ -110,3 +111,9 @@ async def test_no_obtain_token_if_cached():
         credential = VSCodeCredential(_client=mock_client)
         token = await credential.get_token("scope")
         assert token_by_refresh_token.call_count == 0
+
+
+@pytest.mark.asyncio
+async def test_token_refresh_offset():
+    credential = VSCodeCredential()
+    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET
