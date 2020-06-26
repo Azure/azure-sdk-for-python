@@ -433,7 +433,7 @@ class StorageTableClientTest(TableTestCase):
         finally:
             service.delete_table(name)
 
-    #@pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_response_callback(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -450,7 +450,7 @@ class StorageTableClientTest(TableTestCase):
         #exists = queue.get_queue_properties(raw_response_hook=callback)
         #self.assertTrue(exists)
 
-    #@pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_user_agent_default(self, resource_group, location, storage_account, storage_account_key):
         service = TableServiceClient(self.account_url(storage_account, "table"), credential=storage_account_key)
@@ -467,7 +467,7 @@ class StorageTableClientTest(TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback))
         self.assertIsInstance(tables, list)
 
-    #@pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_user_agent_custom(self, resource_group, location, storage_account, storage_account_key):
         custom_app = "TestApp/v1.0"
