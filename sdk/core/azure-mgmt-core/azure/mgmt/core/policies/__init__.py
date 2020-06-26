@@ -47,6 +47,10 @@ class ARMHttpLoggingPolicy(HttpLoggingPolicy):
         "x-ms-request-charge",
     ])
 
+    def __init__(self, logger=None, **kwargs):
+        super(ARMHttpLoggingPolicy, self).__init__(logger=None, **kwargs)
+        self.allowed_header_names = set(ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST)
+
 
 __all__ = ["ARMAutoResourceProviderRegistrationPolicy", "ARMHttpLoggingPolicy"]
 
