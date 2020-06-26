@@ -22,11 +22,10 @@ from math import (
 )
 
 from azure.table._entity import EdmType, EntityProperty
+from azure.table._models import TablePayloadFormat
+from azure.table._shared._common_conversion import _to_str, _encode_base64, _to_utc_datetime
 from azure.table._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED, \
     _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY
-from azure.table._models import TablePayloadFormat
-from azure.table._shared._common_conversion import _encode_base64, _to_str
-from azure.table._shared.parser import _to_utc_datetime
 
 if sys.version_info < (3,):
     def _new_boundary():
@@ -106,7 +105,7 @@ def _to_entity_str(value):
     return None, value
 
 
-def _to_entity_none():
+def _to_entity_none(value):  # pylint:disable=W0613
     return None, None
 
 
@@ -135,9 +134,8 @@ _EDM_TO_ENTITY_CONVERSIONS = {
     EdmType.STRING: _to_entity_str,
 }
 
-
 def _add_entity_properties(source):
-    ''' Adds entity properties to entity to send.
+    ''' Converts an entity object to json to send.
     The entity format is:
     {
        "Address":"Mountain View",
@@ -185,64 +183,3 @@ def _add_entity_properties(source):
 
     # generate the entity_body
     return properties
-
-
-def _convert_table_to_json(table_name):
-    '''
-    Create json to send for a given table name. Since json format for table is
-    the same as entity and the only difference is that table has only one
-    property 'TableName', so we just call _convert_entity_to_json.
-
-    table_name:
-        the name of the table
-    '''
-    return _add_entity_properties({'TableName': table_name})
-
-
-def _convert_batch_to_json(batch_requests):
-    '''
-    Create json to send for an array of batch requests.
-
-    batch_requests:
-        an array of requests
-    '''
-    batch_boundary = b'batch_' + _new_boundary()
-    changeset_boundary = b'changeset_' + _new_boundary()
-
-    body = [b'--' + batch_boundary + b'\n',
-            b'Content-Type: multipart/mixed; boundary=',
-            changeset_boundary + b'\n\n']
-
-    content_id = 1
-
-    # Adds each request body to the POST data.
-    for _, request in batch_requests:
-        body.append(b'--' + changeset_boundary + b'\n')
-        body.append(b'Content-Type: application/http\n')
-        body.append(b'Content-Transfer-Encoding: binary\n\n')
-        body.append(request.method.encode('utf-8'))
-        body.append(b' ')
-        body.append(request.path.encode('utf-8'))
-        body.append(b' HTTP/1.1\n')
-        body.append(b'Content-ID: ')
-        body.append(str(content_id).encode('utf-8') + b'\n')
-        content_id += 1
-
-        for name, value in request.headers.items():
-            if name in _SUB_HEADERS:
-                body.append(name.encode('utf-8') + b': ')
-                body.append(value.encode('utf-8') + b'\n')
-
-        # Add different headers for different request types.
-        if not request.method == 'DELETE':
-            body.append(b'Content-Length: ')
-            body.append(str(len(request.body)).encode('utf-8'))
-            body.append(b'\n\n')
-            body.append(request.body + b'\n')
-
-        body.append(b'\n')
-
-    body.append(b'--' + changeset_boundary + b'--' + b'\n')
-    body.append(b'--' + batch_boundary + b'--')
-
-    return b''.join(body), 'multipart/mixed; boundary=' + batch_boundary.decode('utf-8')

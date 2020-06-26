@@ -6,12 +6,12 @@
 
 import functools
 from typing import Optional, Any
+
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import unquote  # type: ignore
-
 
 from azure.core.paging import ItemPaged
 from azure.table._deserialization import _convert_to_entity
@@ -272,11 +272,14 @@ class TableClient(StorageAccountHostsMixin):
             headers=None,
             table_entity_properties=None,
             query_options=None,
+            response_hook=None,  # pylint:disable=W0613
             **kwargs
     ):
         # type: (...) -> Dict[str, object]
         """Insert entity in a table.
 
+        :param response_hook:
+        :type response_hook:
         :param headers: Headers for service request
         :type headers: HttpResponse Headers
         :param table_entity_properties: The properties for the table entity.
@@ -315,12 +318,14 @@ class TableClient(StorageAccountHostsMixin):
             row_key=None,
             etag=None,
             match_condition=None,
+            response_hook=None,  # pylint:disable=W0613
             table_entity_properties=None,
             **kwargs
     ):
         # type: (...) -> None
         """Update entity in a table.
 
+        :param response_hook:
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
         :param match_condition: MatchCondition
@@ -434,11 +439,14 @@ class TableClient(StorageAccountHostsMixin):
             row_key,
             headers=None,
             query_options=None,
+            response_hook=None,  # pylint:disable=W0613
             **kwargs
     ):
         # type: (...) -> "models.TableEntityQueryResponse"
         """Queries entities in a table.
 
+        :param response_hook:
+        :type response_hook:
         :param headers: Headers for service request
         :type headers: HttpResponse Headers
         :param partition_key: The partition key of the entity.

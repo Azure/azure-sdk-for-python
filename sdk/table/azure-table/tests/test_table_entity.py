@@ -766,8 +766,9 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.update_entity(
-                table_entity_properties=sent_entity, etag=etag, match_condition=MatchConditions.IfNotModified, response_hook=lambda e, h: h)
+            self.table.update_entity(
+                table_entity_properties=sent_entity, etag=etag,
+                match_condition=MatchConditions.IfNotModified, response_hook=lambda e, h: h)
 
             # Assert
             #self.assertTrue(resp)

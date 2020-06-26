@@ -297,7 +297,6 @@ class TableEntityPropertiesPaged(PageIterator):
         self.location_mode = None
 
     def _get_next_cb(self, continuation_token):
-        print(continuation_token)
         row_key = None
         partition_key = None
         if continuation_token:

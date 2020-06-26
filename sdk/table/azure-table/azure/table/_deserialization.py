@@ -14,9 +14,11 @@
 # --------------------------------------------------------------------------
 from uuid import UUID
 from dateutil import parser
-from azure.table._entity import EntityProperty, EdmType, Entity
 from azure.table._shared import url_quote
+from azure.table._entity import EntityProperty, EdmType, Entity
 from azure.table._shared._common_conversion import _decode_base64_to_bytes
+
+
 
 def _get_continuation_from_response_headers(response):
     marker = {}
@@ -63,7 +65,6 @@ _ENTITY_TO_PYTHON_CONVERSIONS = {
 
 def _convert_to_entity(entry_element):
     ''' Convert json response to entity.
-
     The entity format is:
     {
        "Address":"Mountain View",
@@ -113,7 +114,7 @@ def _convert_to_entity(entry_element):
         mtype = edmtypes.get(name)
 
         # Add type for Int32
-        if isinstance(value) is int:
+        if type(value) is int:  # pylint:disable=C0123
             mtype = EdmType.INT32
 
         # no type info, property should parse automatically
