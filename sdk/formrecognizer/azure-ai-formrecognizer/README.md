@@ -145,6 +145,13 @@ The client exposes a `begin_<method-name>` method that returns an `LROPoller` or
 for the operation to complete by calling `result()` on the operation returned from the `begin_<method-name>` method. 
 Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
 
+### Async APIs
+This library also includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+for more information.
+
 
 ## Examples
 
@@ -182,6 +189,15 @@ for recognized_form in result:
         print("Field '{}' has value '{}' with a confidence score of {}".format(
             label, field.value, field.confidence
         ))
+```
+
+Alternatively, a form url can also be used to recognize custom forms using the `begin_recognize_custom_forms_from_url` method.
+
+
+```
+form_url_jpg = "<url_of_the_form>"
+poller = form_recognizer_client.begin_recognize_custom_forms_from_url(model_id=model_id, form_url=form_url)
+result = poller.result()
 ```
 
 ### Recognize Content
@@ -245,6 +261,8 @@ Provide a container SAS url to your Azure Storage Blob container where you're st
 If training files are within a subfolder in the container, use the [prefix][prefix_ref_docs] keyword argument to specify under which folder to train.
 
 More details on setting up a container and required file structure can be found in the [service quickstart documentation][quickstart_training].
+
+To train a model, you will need Azure Blob storage container's shared access signature (SAS) URL. See [here][train-a-model-using-labeled-data] for more detailed descriptions on how to get it.
 
 ```python
 from azure.ai.formrecognizer import FormTrainingClient
@@ -407,6 +425,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-fr-product-docs]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview
 [python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [python-fr-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples
+[train-a-model-using-labeled-data]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/python-labeled-data#train-a-model-using-labeled-data
 
 
 [quickstart_training]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/curl-train-extract#train-a-form-recognizer-model
