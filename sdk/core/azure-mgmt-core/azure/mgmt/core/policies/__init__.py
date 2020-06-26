@@ -50,10 +50,6 @@ class ARMHttpLoggingPolicy(HttpLoggingPolicy):
     # Deprecated
     DEFAULT_HEADERS_WHITELIST = DEFAULT_HEADERS_ALLOWLIST
 
-    def __init__(self, logger=None, **kwargs):
-        super(ARMHttpLoggingPolicy, self).__init__(logger=None, **kwargs)
-        self.allowed_header_names = set(ARMHttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST)
-
 
 __all__ = ["ARMAutoResourceProviderRegistrationPolicy", "ARMHttpLoggingPolicy"]
 
