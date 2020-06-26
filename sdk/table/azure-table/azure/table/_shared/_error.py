@@ -5,8 +5,7 @@
 # --------------------------------------------------------------------------
 from sys import version_info
 
-from pyparsing import unicode
-
+from appdirs import unicode
 from azure.common import (
     AzureHttpError,
     AzureConflictHttpError,
