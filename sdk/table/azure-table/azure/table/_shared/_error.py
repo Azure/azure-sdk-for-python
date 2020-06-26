@@ -5,25 +5,18 @@
 # --------------------------------------------------------------------------
 from sys import version_info
 
-from appdirs import unicode
 from azure.common import (
     AzureHttpError,
     AzureConflictHttpError,
     AzureMissingResourceHttpError,
     AzureException,
 )
+from azure.table._shared.parser import _str
+
 from ._constants import (
     _ENCRYPTION_PROTOCOL_V1,
 )
 
-if version_info < (3,):
-    def _str(value):
-        if isinstance(value, unicode):
-            return value.encode('utf-8')
-
-        return str(value)
-else:
-    _str = str
 
 
 def _to_str(value):
