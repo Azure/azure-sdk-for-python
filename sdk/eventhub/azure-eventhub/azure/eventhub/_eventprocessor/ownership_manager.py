@@ -8,6 +8,7 @@ import random
 from collections import Counter, defaultdict
 from typing import List, Iterable, Optional, Dict, Any, Union, TYPE_CHECKING
 
+from .common import LoadBalancingStrategy
 if TYPE_CHECKING:
     from .checkpoint_store import CheckpointStore
     from .._consumer_client import EventHubConsumerClient
@@ -32,6 +33,7 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         owner_id,  # type: str
         checkpoint_store,  # type: Optional[CheckpointStore]
         ownership_timeout,  # type: float
+        load_balancing_strategy,  # type: LoadBalancingStrategy
         partition_id,  # type: Optional[str]
     ):
         self.cached_parition_ids = []  # type: List[str]
@@ -45,8 +47,8 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         self.owner_id = owner_id
         self.checkpoint_store = checkpoint_store
         self.ownership_timeout = ownership_timeout
+        self.load_balancing_strategy = load_balancing_strategy
         self.partition_id = partition_id
-        self._initializing = True
 
     def claim_ownership(self):
         # type: () -> List[str]
@@ -123,8 +125,8 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         ]
 
         if (
-            self._initializing
-        ):  # greedily claim all available partitions when an EventProcessor is started.
+            LoadBalancingStrategy.GREEDY is self.load_balancing_strategy
+        ):  # claim all available partitions if load balancing strategy is greedy.
             to_claim = released_partitions
             for to_claim_item in to_claim:
                 to_claim_item["owner_id"] = self.owner_id
@@ -138,12 +140,13 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
                         "owner_id": self.owner_id,
                     }
                 )
-            self._initializing = False
             if (
                 to_claim
             ):  # if no expired, released or unclaimed partitions, go ahead with balancing
                 return to_claim
 
+        # If greedy strategy is not used or doesn't find any partitions to claim
+        # load balance tries to steal at most one partition.
         released_partition_ids = [
             ownership["partition_id"] for ownership in released_partitions
         ]

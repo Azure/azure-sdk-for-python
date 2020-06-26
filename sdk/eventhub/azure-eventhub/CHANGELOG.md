@@ -1,7 +1,13 @@
 # Release History
 
-## 5.1.1 (Unreleased)
+## 5.2.0b1 (2020-07-06)
 
+**New Features**
+
+- `EventHubConsumerClient` constructor accepts two new parameters:
+    - `load_balancing_strategy`, which can be "greedy" or "balanced".
+    - `partition_ownership_expiration_interval`, which allows you to customize the partition ownership expiration for load balancing.
+- Added enum class `azure.eventhub.LoadBalancingStrategy`.
 
 ## 5.1.0 (2020-05-04)
 

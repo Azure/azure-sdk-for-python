@@ -18,5 +18,5 @@ class CloseReason(Enum):
 
 
 class LoadBalancingStrategy(Enum):
-    GREEDY = 0
-    BALANCED = 1
+    GREEDY = "greedy"
+    BALANCED = "balanced"
