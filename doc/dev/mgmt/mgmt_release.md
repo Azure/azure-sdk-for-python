@@ -28,7 +28,7 @@ a virtual environment loaded with at least `tools/azure-sdk-tools` installed.
 generate_sdk -v -m ..\azure-rest-api-specs\specification\compute\resource-manager\readme.md
 
 # Forcing Track1 generation
-generate_sdk -v -c eng\swagger_to_sdk_config_track1.json -m ..\azure-rest-api-specs\specification\cognitiveservices\data-plane\Face\readme.md
+generate_sdk -v -c eng\swagger_to_sdk_config_v4.json -m ..\azure-rest-api-specs\specification\cognitiveservices\data-plane\Face\readme.md
 
 # For more details about the available options
 generate_sdk --help
