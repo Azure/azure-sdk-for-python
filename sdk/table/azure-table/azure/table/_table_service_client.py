@@ -6,7 +6,11 @@
 
 import functools
 from typing import Any
-from urllib.parse import urlparse
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+
 
 from azure.table._generated import AzureTable
 from azure.table._generated.models import TableProperties, TableServiceProperties
