@@ -115,13 +115,13 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                         await sender.send(message)
 
                 count = 0
-                messages = await receiver.receive()
+                messages = await receiver.receive_messages()
                 while messages:
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
                         await message.dead_letter(reason="Testing reason", description="Testing description")
-                    messages = await receiver.receive()
+                    messages = await receiver.receive_messages()
 
                 assert count == 10
 

@@ -150,7 +150,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 ### Receive a message from a queue
 
-To receive from a queue, you can either perform a one-off receive via "receiver.receive()" or receive persistently as follows:
+To receive from a queue, you can either perform a one-off receive via "receiver.receive_messages()" or receive persistently as follows:
 
 ```Python
 from azure.servicebus import ServiceBusClient
@@ -231,7 +231,7 @@ be transparent to a user, but if you notice a reconnect occuring after such a du
 link will extend this timeout.
 - idle_timeout: Provided on creation of a receiver, the time after which the underlying UAMQP link will be closed after no traffic.  This primarily dictates the length
 a generator-style receive will run for before exiting if there are no messages.  Passing None (default) will wait forever, up until the 10 minute threshold if no other action is taken.
-- max_wait_time: Provided when calling receive() to fetch a batch of messages.  Dictates how long the receive() will wait for more messages before returning, similarly up to the aformentioned limits.
+- max_wait_time: Provided when calling `receive_messages()` to fetch a batch of messages.  Dictates how long the `receive_messages()` will wait for more messages before returning, similarly up to the aformentioned limits.
 
 ### AutoLockRenew
 

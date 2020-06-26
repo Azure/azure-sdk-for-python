@@ -267,7 +267,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
         return cls(**constructor_args)
 
-    async def receive(self, max_batch_size=None, max_wait_time=None):
+    async def receive_messages(self, max_batch_size=None, max_wait_time=None):
         # type: (int, float) -> List[ReceivedMessage]
         """Receive a batch of messages at once.
 
@@ -353,7 +353,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             m._receiver = self  # pylint: disable=protected-access
         return messages
 
-    async def peek(self, message_count=1, sequence_number=0):
+    async def peek_messages(self, message_count=1, sequence_number=0):
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,

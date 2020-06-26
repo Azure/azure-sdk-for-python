@@ -135,13 +135,13 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                         sender.send(message)
 
                 count = 0
-                messages = receiver.receive()
+                messages = receiver.receive_messages()
                 while messages:
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
                         message.dead_letter(reason="Testing reason", description="Testing description")
-                    messages = receiver.receive()
+                    messages = receiver.receive_messages()
 
             assert count == 10
 

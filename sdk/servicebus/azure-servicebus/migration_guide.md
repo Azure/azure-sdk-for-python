@@ -25,8 +25,8 @@ As a user this will be largely transparent to you, as initialization will still 
 the primary difference will be that rather than creating a queue_client, for instance, and then a sender off of that, you would simply
 create a servicebus queue sender off of your ServiceBusClient instance via the "get_queue_sender" method.
 
-It should also be noted that many of the helper methods that previously existed on the intermediary client (e.g. QueueClient and Peek) now
-exist on the receiver (in the case of peek) or sender itself.  This is to better consolidate functionality and align messaging link lifetime
+It should also be noted that many of the helper methods that previously existed on the intermediary client (e.g. QueueClient and `peek()`) now
+exist on the receiver (in the case of `peek()`) or sender itself.  This is to better consolidate functionality and align messaging link lifetime
 semantics with the sender or receiver lifetime.
 
 ### Client constructors
@@ -40,7 +40,8 @@ semantics with the sender or receiver lifetime.
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `QueueClient.from_connection_string().get_receiver().fetch_next()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().fetch_next()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive()`| [Get a receiver and receive a single batch of messages](./samples/sync_samples/receive_queue.py) |
+| `QueueClient.from_connection_string().get_receiver().fetch_next()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().fetch_next()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive_messages()`| [Get a receiver and receive a single batch of messages](./samples/sync_samples/receive_queue.py) |
+| `QueueClient.from_connection_string().get_receiver().peek()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().peek()`| `ServiceBusClient.from_connection_string().get_queue_receiver().peek_messages()`| [Get a receiver and receive a single batch of messages](./samples/sync_samples/receive_queue.py) |
 
 ### Sending messages
 
@@ -118,7 +119,7 @@ Becomes this in v7:
 with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
 
     with client.get_queue_receiver(queue_name=QUEUE_NAME) as receiver:
-        batch = receiver.receive(max_batch_size=10, max_wait_time=5)
+        batch = receiver.receive_messages(max_batch_size=10, max_wait_time=5)
         for message in batch:
             print("Message: {}".format(message))
             message.complete()

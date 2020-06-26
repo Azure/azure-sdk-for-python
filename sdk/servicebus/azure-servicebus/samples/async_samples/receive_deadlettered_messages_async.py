@@ -25,7 +25,7 @@ async def main():
     async with servicebus_client:
         receiver = servicebus_client.get_queue_deadletter_receiver(queue_name=QUEUE_NAME, prefetch=10)
         async with receiver:
-            received_msgs = await receiver.receive(max_batch_size=10, max_wait_time=5)
+            received_msgs = await receiver.receive_messages(max_batch_size=10, max_wait_time=5)
             for msg in received_msgs:
                 print(str(msg))
                 await msg.complete()

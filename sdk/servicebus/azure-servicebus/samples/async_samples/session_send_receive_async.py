@@ -45,7 +45,7 @@ async def receive_batch_messages(receiver):
     session = receiver.session
     await session.set_session_state("START")
     print("Session state:", await session.get_session_state())
-    received_msgs = await receiver.receive(max_batch_size=10, max_wait_time=5)
+    received_msgs = await receiver.receive_messages(max_batch_size=10, max_wait_time=5)
     for msg in received_msgs:
         print(str(msg))
         await msg.complete()

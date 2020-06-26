@@ -204,14 +204,14 @@ async def example_send_and_receive_async():
 
     # [START peek_messages_async]
     async with servicebus_receiver:
-        messages = await servicebus_receiver.peek()
+        messages = await servicebus_receiver.peek_messages()
         for message in messages:
             print(message)
     # [END peek_messages_async]
 
     # [START receive_async]
     async with servicebus_receiver:
-        messages = await servicebus_receiver.receive(max_wait_time=5)
+        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             print(message)
             await message.complete()
@@ -237,7 +237,7 @@ async def example_receive_deferred_async():
     # [START receive_defer_async]
     async with servicebus_receiver:
         deferred_sequenced_numbers = []
-        messages = await servicebus_receiver.receive(max_wait_time=5)
+        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
             print(message)

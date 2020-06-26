@@ -144,7 +144,7 @@ class StressTestRunner:
         with receiver:
             while end_time > datetime.utcnow():
                 if self.receive_type == ReceiveType.pull:
-                    batch = receiver.receive()
+                    batch = receiver.receive_messages()
                 elif self.receive_type == ReceiveType.push:
                     batch = receiver
 
