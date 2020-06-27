@@ -28,7 +28,6 @@ async def renew_lock_on_message_received_from_non_sessionful_entity():
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
 
     async with servicebus_client:
-
         async with servicebus_client.get_queue_sender(queue_name=QUEUE_NAME) as sender:
             msgs_to_send = [Message("session message: {}".format(i)) for i in range(10)]
             await sender.send(msgs_to_send)

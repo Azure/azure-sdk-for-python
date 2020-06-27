@@ -739,7 +739,7 @@ class ReceivedMessage(PeekMessage):
 
         This will maintain the lock on the message to ensure it is not returned to the queue
         to be reprocessed.
-        
+
         In order to complete (or otherwise settle) the message, the lock must be maintained,
         and cannot already have expired; an expired lock cannot be renewed.
 

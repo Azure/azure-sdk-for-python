@@ -25,8 +25,8 @@ SESSION_QUEUE_NAME = os.environ['SERVICE_BUS_SESSION_QUEUE_NAME']
 
 def renew_lock_on_message_received_from_non_sessionful_entity():
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
-    with servicebus_client:
 
+    with servicebus_client:
         with servicebus_client.get_queue_sender(queue_name=QUEUE_NAME) as sender:
             msgs_to_send = [Message("message: {}".format(i)) for i in range(10)]
             sender.send(msgs_to_send)
@@ -46,7 +46,7 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
             time.sleep(100)  # message handling for long period (E.g. application logic)
 
             for msg in received_msgs:
-                msg.complete()
+                msg.complete() # Settling the message deregisters it from the AutoLockRenewer
             print('Complete messages.')
 
         renewer.shutdown()
