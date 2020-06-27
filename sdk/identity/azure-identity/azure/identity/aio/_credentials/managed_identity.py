@@ -231,4 +231,3 @@ class MsiCredential(_AsyncManagedIdentityBase):
     async def _request_legacy_token(self, scopes, resource):
         form_data = {"resource": resource, **self._identity_config}
         return await self._client.request_token(scopes, method="POST", form_data=form_data)
-
