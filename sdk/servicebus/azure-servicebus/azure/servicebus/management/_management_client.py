@@ -7,19 +7,19 @@ from copy import copy
 from typing import TYPE_CHECKING, Dict, Any, Union, cast
 from xml.etree.ElementTree import ElementTree
 
-import six
 from azure.core.paging import ItemPaged
+
 from ._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
     QueueDescriptionEntry, SubscriptionDescriptionFeed, SubscriptionDescriptionEntry, RuleDescriptionEntry, \
     RuleDescriptionFeed, NamespacePropertiesEntry, CreateTopicBody, CreateTopicBodyContent, \
     TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, \
     CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, \
     QueueDescription as InternalQueueDescription, TopicDescription as InternalTopicDescription, \
-    SubscriptionDescription as InternalSubscriptionDescription, RuleDescription as InternalRuleDescription
+    SubscriptionDescription as InternalSubscriptionDescription, RuleDescription as InternalRuleDescription, \
+    NamespaceProperties
 from ._utils import extract_data_template, get_next_template
 from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
-from msrest.exceptions import ValidationError
-from azure.core.exceptions import raise_with_traceback, ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
     RequestIdPolicy, BearerTokenCredentialPolicy
@@ -186,23 +186,13 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        try:
-            with _handle_response_error():
-                entry_ele = cast(
-                    ElementTree,
-                    self._impl.entity.put(
-                        queue_name,  # type: ignore
-                        request_body, api_version=constants.API_VERSION, **kwargs)
-                )
-        except ValidationError:
-            # post-hoc try to give a somewhat-justifiable failure reason.
-            if isinstance(queue, (six.string_types, QueueDescription)):
-                raise_with_traceback(
-                    ValueError,
-                    message="queue must be a non-empty str or a QueueDescription with non-empty str name")
-            raise_with_traceback(
-                TypeError,
-                message="queue must be a non-empty str or a QueueDescription with non-empty str name")
+        with _handle_response_error():
+            entry_ele = cast(
+                ElementTree,
+                self._impl.entity.put(
+                    queue_name,  # type: ignore
+                    request_body, api_version=constants.API_VERSION, **kwargs)
+            )
 
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         result = QueueDescription._from_internal_entity(entry.content.queue_description)
@@ -213,19 +203,20 @@ class ServiceBusManagementClient:
         # type: (QueueDescription, Any) -> None
         """Update a queue.
 
-        :param queue_description: The properties of this `QueueDescription` will be applied to the queue in
-         ServiceBus. Only a portion of properties can be updated.
-         Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
+        Before calling this method, you should use `get_queue` to get a `QueueDescription` instance, then use the
+        keyword arguments to update the properties you want to update.
+        Only a portion of properties can be updated.
+        Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
+
+        :param queue_description: The queue to be updated.
         :type queue_description: ~azure.servicebus.management.QueueDescription
-        :keyword timedelta default_message_time_to_live
-        :keyword timedelta lock_duration
-        :keyword bool dead_lettering_on_message_expiration
-        :keyword timedelta duplicate_detection_history_time_window
-        :keyword int max_delivery_count
+        :keyword timedelta default_message_time_to_live: The value you want to update to.
+        :keyword timedelta lock_duration: The value you want to update to.
+        :keyword bool dead_lettering_on_message_expiration: The value you want to update to.
+        :keyword timedelta duplicate_detection_history_time_window: The value you want to update to.
+        :keyword int max_delivery_count: The value you want to update to.
         :rtype: ~azure.servicebus.management.QueueDescription
         """
-
-        # TODO: validate whether a queue_description has enough information
 
         if not isinstance(queue_description, QueueDescription):
             raise TypeError("queue_description must be of type QueueDescription")
@@ -252,26 +243,20 @@ class ServiceBusManagementClient:
         )
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
-            try:
-                self._impl.entity.put(
-                    queue_description.name,  # type: ignore
-                    request_body,
-                    api_version=constants.API_VERSION,
-                    if_match="*",
-                    **kwargs
-                )
-            except ValidationError:
-                # post-hoc try to give a somewhat-justifiable failure reason.
-                raise_with_traceback(
-                    ValueError,
-                    message="queue_description must be a QueueDescription with valid fields, "
-                                "including non-empty string name")
+            self._impl.entity.put(
+                queue_description.name,  # type: ignore
+                request_body,
+                api_version=constants.API_VERSION,
+                if_match="*",
+                **kwargs
+            )
 
     def delete_queue(self, queue, **kwargs):
         # type: (Union[str, QueueDescription], Any) -> None
         """Delete a queue.
 
-        :param Union[str, azure.servicebus.management.QueueDescription] queue: The name of the queue.
+        :param Union[str, azure.servicebus.management.QueueDescription] queue: The name of the queue or
+         a `QueueDescription` with name.
         :rtype: None
         """
         try:
@@ -288,8 +273,7 @@ class ServiceBusManagementClient:
         """List the queues of a ServiceBus namespace.
 
         :keyword int start_index: skip this number of queues.
-        :keyword int max_page_size: return at most this number of queues if there are more than this number in
-         the ServiceBus namespace.
+        :keyword int max_page_size: max number of entities per page.
         :rtype: ItemPaged[~azure.servicebus.management.QueueDescription]
         """
 
@@ -312,7 +296,7 @@ class ServiceBusManagementClient:
         """List the runtime info of the queues in a ServiceBus namespace.
 
         :keyword int start_index: skip this number of queues.
-        :keyword int max_page_size: return at most this number of queues if there are more than this number in
+        :keyword int max_page_size: max number of entities per page.
          the ServiceBus namespace.
         :rtype: ItemPaged[~azure.servicebus.management.QueueRuntimeInfo]
         """
@@ -335,7 +319,7 @@ class ServiceBusManagementClient:
         # type: (str, Any) -> TopicDescription
         """Get a TopicDescription.
 
-        :param str topic_name: The name of the queue.
+        :param str topic_name: The name of the topic.
         :rtype: ~azure.servicebus.management.TopicDescription
         """
         entry_ele = self._get_entity_element(topic_name, **kwargs)
@@ -350,7 +334,7 @@ class ServiceBusManagementClient:
         # type: (str, Any) -> TopicRuntimeInfo
         """Get a TopicRuntimeInfo
 
-        :param str topic_name:
+        :param str topic_name: The name of the topic.
         :rtype: ~azure.servicebus.management.TopicRuntimeInfo
         """
         entry_ele = self._get_entity_element(topic_name, **kwargs)
@@ -363,9 +347,12 @@ class ServiceBusManagementClient:
 
     def create_topic(self, topic, **kwargs):
         # type: (Union[str, TopicDescription], Any) -> TopicDescription
-        """
+        """Create a topic.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic:
+        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic name or a `TopicDescription`
+         instance. When it's a str, it will be the name of the created topic. Other properties of the created topic
+         will have default values decided by the ServiceBus.
+         Use a `TopicDescription` if you want to set queue properties other than the queue name.
         :rtype: ~azure.servicebus.management.TopicDescription
         """
         try:
@@ -381,24 +368,13 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        try:
-            with _handle_response_error():
-                entry_ele = cast(
-                    ElementTree,
-                    self._impl.entity.put(
-                        topic_name,  # type: ignore
-                        request_body, api_version=constants.API_VERSION, **kwargs)
-                )
-        except ValidationError as e:
-            # post-hoc try to give a somewhat-justifiable failure reason.
-            if isinstance(topic, (six.string_types, TopicDescription)):
-                raise_with_traceback(
-                    ValueError,
-                    message="topic must be a non-empty str or a QueueDescription with non-empty str name")
-            raise_with_traceback(
-                TypeError,
-                message="topic must be a non-empty str or a QueueDescription with non-empty str name")
-
+        with _handle_response_error():
+            entry_ele = cast(
+                ElementTree,
+                self._impl.entity.put(
+                    topic_name,  # type: ignore
+                    request_body, api_version=constants.API_VERSION, **kwargs)
+            )
         entry = TopicDescriptionEntry.deserialize(entry_ele)
         result = TopicDescription._from_internal_entity(entry.content.topic_description)
         result.name = topic_name
@@ -406,15 +382,19 @@ class ServiceBusManagementClient:
 
     def update_topic(self, topic_description, **kwargs):
         # type: (TopicDescription, Any) -> None
-        """
+        """Update a topic.
 
-        :param ~azure.servicebus.management.TopicDescription topic_description:
-        :keyword timedelta default_message_time_to_live:
-        :keyword timedelta duplicate_detection_history_time_window:
+        Before calling this method, you should use `get_topic` to get a `TopicDescription` instance, then use the
+        keyword arguments to update the properties you want to update.
+        Only a portion of properties can be updated.
+        Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-topic.
+
+        :param ~azure.servicebus.management.TopicDescription topic_description: The topic to be updated.
+        :keyword timedelta default_message_time_to_live: The value you want to update to.
+        :keyword timedelta duplicate_detection_history_time_window: The value you want to update to.
         :rtype： None
         """
 
-        # TODO: validate whether topic_description has enough information (refer to the create_topic response)
         if not isinstance(topic_description, TopicDescription):
             raise TypeError("topic_description must be of type TopicDescription")
 
@@ -434,24 +414,17 @@ class ServiceBusManagementClient:
         )
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
-            try:
-                self._impl.entity.put(
-                    topic_description.name,  # type: ignore
-                    request_body,
-                    api_version=constants.API_VERSION,
-                    if_match="*",
-                    **kwargs
-                )
-            except ValidationError:
-                # post-hoc try to give a somewhat-justifiable failure reason.
-                raise_with_traceback(
-                    ValueError,
-                    message="topic_description must be a TopicDescription with valid fields, "
-                            "including non-empty string topic name")
+            self._impl.entity.put(
+                topic_description.name,  # type: ignore
+                request_body,
+                api_version=constants.API_VERSION,
+                if_match="*",
+                **kwargs
+            )
 
     def delete_topic(self, topic, **kwargs):
         # type: (Union[str, TopicDescription], Any) -> None
-        """
+        """Delete a topic.
 
         :param Union[str, TopicDescription] topic:
         :rtype: None
@@ -464,10 +437,10 @@ class ServiceBusManagementClient:
 
     def list_topics(self, **kwargs):
         # type: (Any) -> ItemPaged[TopicDescription]
-        """
-        :keyword int start_index: skip this number of queues.
-        :keyword int max_page_size: return at most this number of queues if there are more than this number in
-         the ServiceBus namespace.
+        """List the topics of a ServiceBus namespace.
+
+        :keyword int start_index: skip this number of topics.
+        :keyword int max_page_size: max number of entities per page.
         :rtype: ItemPaged[~azure.servicebus.management.TopicDescription]
         """
         def entry_to_topic(entry):
@@ -486,10 +459,10 @@ class ServiceBusManagementClient:
 
     def list_topics_runtime_info(self, **kwargs):
         # type: (Any) -> ItemPaged[TopicRuntimeInfo]
-        """
+        """List the topics runtime info of a ServiceBus namespace.
+
         :keyword int start_index: skip this number of queues.
-        :keyword int max_page_size: return at most this number of queues if there are more than this number in
-         the ServiceBus namespace.
+        :keyword int max_page_size: max number of entities per page.
         :rtype: ItemPaged[~azure.servicebus.management.TopicRuntimeInfo]
         """
         def entry_to_topic(entry):
@@ -508,10 +481,10 @@ class ServiceBusManagementClient:
 
     def get_subscription(self, topic, subscription_name, **kwargs):
         # type: (Union[str, TopicDescription], str, Any) -> SubscriptionDescription
-        """
+        """Get a topic subscription.
 
-        :param Union[str, TopicDescription] topic:
-        :param str subscription_name:
+        :param Union[str, TopicDescription] topic: The topic that owns the subscription.
+        :param str subscription_name: name of the subscription.
         :rtype: ~azure.servicebus.management.SubscriptionDescription
         """
         try:
@@ -529,10 +502,10 @@ class ServiceBusManagementClient:
 
     def get_subscription_runtime_info(self, topic, subscription_name, **kwargs):
         # type: (Union[str, TopicDescription], str, Any) -> SubscriptionRuntimeInfo
-        """
+        """Get a topic subscription runtime info.
 
-        :param Union[str, TopicDescription] topic:
-        :param str subscription_name:
+        :param Union[str, TopicDescription] topic: The topic that owns the subscription.
+        :param str subscription_name: name of the subscription.
         :rtype: ~azure.servicebus.management.SubscriptionRuntimeInfo
         """
         try:
@@ -549,10 +522,13 @@ class ServiceBusManagementClient:
         return subscription
 
     def create_subscription(self, topic, subscription, **kwargs):
-        """
+        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], Any) -> SubscriptionDescription
+        """Create a topic subscription.
 
-        :param Union[str, TopicDescription] topic:
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription:
+        :param Union[str, TopicDescription] topic: The topic that will own the to-be-created subscription.
+        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription name or a
+        `SubscriptionDescription` instance. When it's a str, it will be the name of the created subscription.
+         Other properties of the created subscription will have default values decided by the ServiceBus.
         :rtype:  ~azure.servicebus.management.SubscriptionDescription
         """
         try:
@@ -572,25 +548,14 @@ class ServiceBusManagementClient:
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
-        try:
-            with _handle_response_error():
-                entry_ele = cast(
-                    ElementTree,
-                    self._impl.subscription.put(
-                        topic_name,
-                        subscription_name,  # type: ignore
-                        request_body, api_version=constants.API_VERSION, **kwargs)
-                )
-        except ValidationError:
-            # post-hoc try to give a somewhat-justifiable failure reason.
-            # TODO: validate param topic
-            if isinstance(subscription, (six.string_types, SubscriptionDescription)):
-                raise_with_traceback(
-                    ValueError,
-                    message="subscription must be a non-empty str or a SubscriptionDescription with non-empty str name")
-            raise_with_traceback(
-                TypeError,
-                message="subscription must be a non-empty str or a SubscriptionDescription with non-empty str name")
+        with _handle_response_error():
+            entry_ele = cast(
+                ElementTree,
+                self._impl.subscription.put(
+                    topic_name,
+                    subscription_name,  # type: ignore
+                    request_body, api_version=constants.API_VERSION, **kwargs)
+            )
 
         entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
         result = SubscriptionDescription._from_internal_entity(entry.content.subscription_description)
@@ -598,13 +563,18 @@ class ServiceBusManagementClient:
         return result
 
     def update_subscription(self, topic, subscription_description, **kwargs):
-        """
+        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], Any) -> None
+        """Update a subscription.
 
-        :param Union[str, TopicDescription] topic:
-        :param ~azure.servicebus.management.SubscriptionDescription subscription:
+        Before calling this method, you should use `get_subscription` to get a `SubscriptionDescription` instance,
+        then update the related attributes and call this method.
+        Only a portion of properties can be updated.
+        Refer to TODO: to add the doc link that describes what can be updated.
+
+        :param Union[str, TopicDescription] topic: The topic that owns the subscription.
+        :param ~azure.servicebus.management.SubscriptionDescription subscription: The subscription to be updated.
         :rtype: None
         """
-        # TODO: validate param topic and whether subscription_description has enough properties.
         try:
             topic_name = topic.name
         except AttributeError:
@@ -635,9 +605,11 @@ class ServiceBusManagementClient:
             )
 
     def delete_subscription(self, topic, subscription, **kwargs):
-        """
-        :param Union[str, TopicDescription] topic:
-        :param Union[str, SubscriptionDescription] subscription:
+        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], Any) -> None
+        """Delete a topic subscription.
+
+        :param Union[str, TopicDescription] topic: The topic that owns the subscription.
+        :param Union[str, SubscriptionDescription] subscription: The subscription to be deleted.
         :rtype: None
         """
         try:
@@ -651,12 +623,12 @@ class ServiceBusManagementClient:
         self._impl.subscription.delete(topic_name, subscription_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_subscriptions(self, topic, **kwargs):
+        # type: (Union[str, TopicDescription], Any) -> ItemPaged[SubscriptionDescription]
         """List the subscriptions of a ServiceBus Topic.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic:
+        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
         :keyword int start_index: skip this number of queues.
-        :keyword int max_page_size: return at most this number of subscriptions if there are more than this number in
-         the ServiceBus Topic.
+        :keyword int max_page_size: max number of entities per page.
         :rtype: ItemPaged[~azure.servicebus.management.SubscriptionDescription]
         """
         try:
@@ -679,12 +651,12 @@ class ServiceBusManagementClient:
             get_next, extract_data)
 
     def list_subscriptions_runtime_info(self, topic, **kwargs):
+        # type: (Union[str, TopicDescription], Any) -> ItemPaged[SubscriptionRuntimeInfo]
         """List the subscriptions of a ServiceBus Topic Runtime Information.
 
-        :param Union[str, TopicDescription] topic:
+        :param Union[str, TopicDescription] topic: The topic that owns the subscription.
         :keyword int start_index: skip this number of queues.
-        :keyword int max_page_size: return at most this number of subscriptions if there are more than this number in
-         the ServiceBus Topic.
+        :keyword int max_page_size: max number of entities per page.
         :rtype: ItemPaged[~azure.servicebus.management.SubscriptionRuntimeInfo]
         """
         try:
@@ -707,11 +679,12 @@ class ServiceBusManagementClient:
             get_next, extract_data)
 
     def get_rule(self, topic, subscription, rule_name, **kwargs):
-        """
+        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], str, Any) -> RuleDescription
+        """Get a topic subscription rule
 
-        :param Union[str, TopicDescription] topic:
-        :param Union[str, SubscriptionDescription] subscription:
-        :param str rule_name:
+        :param Union[str, TopicDescription] topic: The topic that owns the subscription.
+        :param Union[str, SubscriptionDescription] subscription: The subscription that owns the rule.
+        :param str rule_name: Name of the rule.
         :rtype: ~azure.servicebus.management.RuleDescription
         """
         try:
@@ -731,13 +704,16 @@ class ServiceBusManagementClient:
         return rule_description
 
     def create_rule(self, topic, subscription, rule, **kwargs):
-        """
-        :param Union[str, TopicDescription] topic:
-        :param Union[str, SubscriptionDescription] subscription:
-        :param Union[str, ~azure.servicebus.management.RuleDescription] rule:
+        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], str, Union[str, RuleDescription]) -> RuleDescription
+        """Create a subscription of a topic.
+
+        :param Union[str, TopicDescription] topic: The topic that will own the to-be-created subscription rule.
+        :param Union[str, SubscriptionDescription] subscription: The subscription that will own the to-be-created rule.
+        :param Union[str, ~azure.servicebus.management.RuleDescription] rule: The rule name or a
+        `RuleDescription` instance. When it's a str, it will be the name of the created rule.
+         Other properties of the created rule will have default values decided by the ServiceBus
         :rtype: ~azure.servicebus.management.RuleDescription
         """
-        # TODO: validate param topic, subscription and rule.
         try:
             topic_name = topic.name
         except AttributeError:
@@ -770,14 +746,20 @@ class ServiceBusManagementClient:
         return result
 
     def update_rule(self, topic, subscription, rule_description, **kwargs):
-        """
+        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], RuleDescription, Any) -> None
+        """Update a rule.
 
-        :param Union[str, TopicDescription] topic:
-        :param Union[str, SubscriptionDescription] subscription:
-        :param ~azure.servicebus.management.RuleDescription rule_description:
+        Before calling this method, you should use `get_rule` to get a `RuleDescription` instance,
+        then update the related attributes and call this method.
+        Only a portion of properties can be updated.
+        Refer to TODO: to add the doc link that describes what can be updated.
+
+        :param Union[str, TopicDescription] topic: The topic that owns the subscription.
+        :param Union[str, SubscriptionDescription] subscription: The subscription that owns this rule.
+        :param ~azure.servicebus.management.RuleDescription rule_description: The rule to be updated.
         :rtype: None
         """
-        # TODO: validate param topic, subscription and rule_description.
+
         try:
             topic_name = topic.name
         except AttributeError:
@@ -808,11 +790,12 @@ class ServiceBusManagementClient:
             )
 
     def delete_rule(self, topic, subscription, rule, **kwargs):
-        """
+        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], Union[str, RuleDescription], Any) -> None
+        """Delete a topic subscription rule.
 
-        :param Union[str, TopicDescription] topic:
-        :param Union[str, SubscriptionDescription] subscription:
-        :param Union[str, RuleDescription] subscription:
+        :param Union[str, TopicDescription] topic: The topic that owns the subscription.
+        :param Union[str, SubscriptionDescription] subscription: The subscription that owns the topic.
+        :param Union[str, RuleDescription] rule: The to-be-deleted rule.
         :rtype: None
         """
         try:
@@ -830,12 +813,13 @@ class ServiceBusManagementClient:
         self._impl.rule.delete(topic_name, subscription_name, rule_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_rules(self, topic, subscription, **kwargs):
-        """
+        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], Any) -> ItemPaged[RuleDescription]
+        """List the rules of a topic subscription.
 
-        :param Union[str, TopicDescription] topic:
-        :param Union[str, SubscriptionDescription] subscription:
-        :keyword int start_index:
-        :keyword int max_page_size:
+        :param Union[str, TopicDescription] topic: The topic that owns the subscription.
+        :param Union[str, SubscriptionDescription] subscription: The subscription that owns the rules.
+        :keyword int start_index: skip this number of rules.
+        :keyword int max_page_size: max number of entities per page.
         :rtype: ItemPaged[~azure.servicebus.management.RuleDescription]
         """
         try:
@@ -861,7 +845,8 @@ class ServiceBusManagementClient:
             get_next, extract_data)
 
     def get_namespace_properties(self, **kwargs):
-        """
+        # type: (Any) -> NamespaceProperties
+        """Get the namespace properties
 
         :rtype: NamespaceProperties
         """
