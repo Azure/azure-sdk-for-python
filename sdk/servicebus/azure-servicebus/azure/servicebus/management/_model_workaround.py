@@ -21,7 +21,7 @@ MODEL_CLASS_ATTRIBUTES = {
     NamespaceProperties: ("alias", "created_time", "messaging_sku", "messaging_units", "modified_time", "name", "namespace_type"),
     NamespacePropertiesEntry: ("id", "title", "updated", "author", "link", "content"),
     NamespacePropertiesEntryContent: ("type", "namespace_properties"),
-    QueueDescription: ("lock_duration", "max_size_in_megabytes", "requires_duplicate_detection", "requires_session", "default_message_time_to_live", "dead_lettering_on_message_expiration", "duplicate_detection_history_time_window", "max_delivery_count", "enable_batched_operations", "size_in_bytes", "message_count", "is_anonymous_accessible", "authorization_rules", "status", "created_at", "updated_at", "accessed_at", "support_ordering", "message_count_details", "auto_delete_on_idle", "enable_partitioning", "entity_availability_status", "enable_express"),
+    QueueDescription: ("lock_duration", "max_size_in_megabytes", "requires_duplicate_detection", "requires_session", "default_message_time_to_live", "dead_lettering_on_message_expiration", "duplicate_detection_history_time_window", "max_delivery_count", "enable_batched_operations", "size_in_bytes", "message_count", "is_anonymous_accessible", "authorization_rules", "status", "created_at", "updated_at", "accessed_at", "support_ordering", "message_count_details", "auto_delete_on_idle", "enable_partitioning", "entity_availability_status", "enable_express", "forward_to", "user_metadata", "forward_dead_lettered_messages_to"),
     QueueDescriptionEntry: ("base", "id", "title", "published", "updated", "author", "link", "content"),
     QueueDescriptionEntryContent: ("type", "queue_description"),
     QueueDescriptionFeed: ("id", "title", "updated", "link", "entry"),
@@ -33,7 +33,7 @@ MODEL_CLASS_ATTRIBUTES = {
     ServiceBusManagementError: ("code", "detail"),
     SqlFilter: ("type", "sql_expression"),
     SqlRuleAction: ("type", "sql_expression"),
-    SubscriptionDescription: ("lock_duration", "requires_session", "default_message_time_to_live", "dead_lettering_on_message_expiration", "dead_lettering_on_filter_evaluation_exceptions", "message_count", "max_delivery_count", "enable_batched_operations", "status", "forward_to", "created_at", "updated_at", "accessed_at", "message_count_details", "auto_delete_on_idle", "entity_availability_status"),
+    SubscriptionDescription: ("lock_duration", "requires_session", "default_message_time_to_live", "dead_lettering_on_message_expiration", "dead_lettering_on_filter_evaluation_exceptions", "message_count", "max_delivery_count", "enable_batched_operations", "status", "forward_to", "created_at", "updated_at", "accessed_at", "message_count_details", "auto_delete_on_idle", "entity_availability_status", "user_metadata", "forward_dead_lettered_messages_to"),
     SubscriptionDescriptionEntry: ("id", "title", "published", "updated", "link", "content"),
     SubscriptionDescriptionEntryContent: ("type", "subscription_description"),
     SubscriptionDescriptionFeed: ("id", "title", "updated", "link", "entry"),
@@ -82,6 +82,8 @@ def adjust_attribute_map():
             class_._attribute_map,
             attributes
         )
+
+        # For the "title" workaround. Need to discuss with Java whether we should use "string" in the swagger file.
         if "title" in class_._attribute_map:
             class_._attribute_map["title"] = {
                 'key': 'title',

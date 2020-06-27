@@ -84,8 +84,18 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
          "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
         :type status: str or ~azure.servicebus.management.EntityStatus
+        :keyword forward_to: The name of the recipient entity to which all the messages sent to the queue
+         are forwarded to.
+        :type forward_to: str
+        :keyword user_metadata: Custom metdata that user can associate with the description. Max length
+         is 1024 chars.
+        :type user_metadata: str
         :keyword support_ordering: A value that indicates whether the queue supports ordering.
         :type support_ordering: bool
+        :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
+         dead-lettered messages of this subscription are forwarded to.
+        :type forward_dead_lettered_messages_to: str
+
 
         :rtype: None
         """
@@ -109,6 +119,10 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         self.requires_session = kwargs.get('requires_session', None)
         self.status = kwargs.get('status', None)
         self.support_ordering = kwargs.get('support_ordering', None)
+        self.forward_to = kwargs.get('forward_to', None)
+        self.user_metadata = kwargs.get('user_metadata', None)
+        self.forward_dead_lettered_messages_to = kwargs.get('forward_dead_lettered_messages_to', None)
+
 
     @classmethod
     def _from_internal_entity(cls, internal_qd):
@@ -133,6 +147,9 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         qd.requires_session = internal_qd.requires_session
         qd.status = internal_qd.status
         qd.support_ordering = internal_qd.support_ordering
+        qd.forward_to = internal_qd.forward_to
+        qd.forward_dead_lettered_messages_to = internal_qd.forward_dead_lettered_messages_to
+        qd.user_metadata = internal_qd.user_metadata
 
         return qd
 
@@ -158,6 +175,9 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         self._internal_qd.requires_session = self.requires_session
         self._internal_qd.status = self.status
         self._internal_qd.support_ordering = self.support_ordering
+        self._internal_qd.forward_to = self.forward_to
+        self._internal_qd.forward_dead_lettered_messages_to = self.forward_dead_lettered_messages_to
+        self._internal_qd.user_metadata = self.user_metadata
 
         return self._internal_qd
 
@@ -185,7 +205,7 @@ class QueueRuntimeInfo(object):
         :type size_in_bytes: int
         :keyword message_count: The number of messages in the queue.
         :type message_count: int
-        :keyword message_count_details: Details about the message counts in queue.
+        :keyword message_count_details: Details about the message counts in entity.
         :type message_count_details: ~azure.servicebus.management.MessageCountDetails
 
         :rtype: None
@@ -225,7 +245,6 @@ class TopicDescription(object):
         **kwargs
     ):
         """
-        :keyword str name:
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
@@ -242,8 +261,10 @@ class TopicDescription(object):
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
         :type enable_batched_operations: bool
-        :keyword size_in_bytes: The size of the queue, in bytes.
+        :keyword size_in_bytes: The size of the topic, in bytes.
         :type size_in_bytes: int
+        :keyword filtering_messages_before_publishing: Filter messages before publishing.
+        :type filtering_messages_before_publishing: bool
         :keyword is_anonymous_accessible: A value indicating if the resource can be accessed without
          authorization.
         :type is_anonymous_accessible: bool
@@ -401,7 +422,6 @@ class SubscriptionDescription(object):
     def __init__(self, **kwargs):
         """
 
-        :keyword str name:
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
@@ -413,14 +433,12 @@ class SubscriptionDescription(object):
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
         :type default_message_time_to_live: ~datetime.timedelta
-        :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
-         letter support when a message expires.
+        :keyword dead_lettering_on_message_expiration: A value that indicates whether this subscription
+         has dead letter support when a message expires.
         :type dead_lettering_on_message_expiration: bool
         :keyword dead_lettering_on_filter_evaluation_exceptions: A value that indicates whether this
-         queue has dead letter support when a message expires.
+         subscription has dead letter support when a message expires.
         :type dead_lettering_on_filter_evaluation_exceptions: bool
-        :keyword message_count: The number of messages in the queue.
-        :type message_count: int
         :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
          after this number of deliveries. Default value is 10.
         :type max_delivery_count: int
@@ -430,19 +448,22 @@ class SubscriptionDescription(object):
         :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
          "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
         :type status: str or ~azure.servicebus.management._generated.models.EntityStatus
-        :keyword forward_to: .. raw:: html
-
-            <to add>.
+        :keyword forward_to: The name of the recipient entity to which all the messages sent to the
+         subscription are forwarded to.
         :type forward_to: str
-        :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
+        :keyword user_metadata: Metadata associated with the subscription. Maximum number of characters
+         is 1024.
+        :type user_metadata: str
+        :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
+         messages sent to the subscription are forwarded to.
+        :type forward_dead_lettered_messages_to: str
+        :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
          automatically deleted. The minimum duration is 5 minutes.
         :type auto_delete_on_idle: ~datetime.timedelta
         :keyword entity_availability_status: Availability status of the entity. Possible values include:
          "Available", "Limited", "Renaming", "Restoring", "Unknown".
         :type entity_availability_status: str or
          ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
-
-        :rtype: None
         """
         super(SubscriptionDescription, self).__init__(**kwargs)
         self.name = kwargs.get("name")
@@ -458,6 +479,8 @@ class SubscriptionDescription(object):
         self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
         self.status = kwargs.get('status', None)
         self.forward_to = kwargs.get('forward_to', None)
+        self.user_metadata = kwargs.get('user_metadata', None)
+        self.forward_dead_lettered_messages_to = kwargs.get('forward_dead_lettered_messages_to', None)
         self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
         self.entity_availability_status = kwargs.get('entity_availability_status', None)
 
@@ -475,6 +498,8 @@ class SubscriptionDescription(object):
         subscription.enable_batched_operations = internal_subscription.enable_batched_operations
         subscription.status = internal_subscription.status
         subscription.forward_to = internal_subscription.forward_to
+        subscription.user_metadata = internal_subscription.user_metadata
+        subscription.forward_dead_lettered_messages_to = internal_subscription.forward_dead_lettered_messages_to
         subscription.auto_delete_on_idle = internal_subscription.auto_delete_on_idle
         subscription.entity_availability_status = internal_subscription.entity_availability_status
 
@@ -493,6 +518,8 @@ class SubscriptionDescription(object):
         self._internal_sd.enable_batched_operations = self.enable_batched_operations
         self._internal_sd.status = self.status
         self._internal_sd.forward_to = self.forward_to
+        self._internal_sd.user_metadata = self.user_metadata
+        self._internal_sd.forward_dead_lettered_messages_to = self.forward_dead_lettered_messages_to
         self._internal_sd.auto_delete_on_idle = self.auto_delete_on_idle
         self._internal_sd.entity_availability_status = self.entity_availability_status
 
@@ -514,6 +541,8 @@ class SubscriptionRuntimeInfo(object):
         :keyword accessed_at: Last time a message was sent, or the last time there was a receive request
          to this queue.
         :type accessed_at: ~datetime.datetime
+        :keyword message_count: The number of messages in the subscription.
+        :type message_count: int
         :keyword message_count_details: Details about the message counts in queue.
         :type message_count_details: ~azure.servicebus.management._generated.models.MessageCountDetails
 
@@ -554,7 +583,7 @@ class RuleDescription(object):
         :type filter: ~azure.servicebus.management._generated.models.RuleFilter
         :keyword action:
         :type action: ~azure.servicebus.management._generated.models.RuleAction
-        :keyword created_at: The exact time the queue was created.
+        :keyword created_at: The exact time the rule was created.
         :type created_at: ~datetime.datetime
         :keyword name:
         :type name: str
