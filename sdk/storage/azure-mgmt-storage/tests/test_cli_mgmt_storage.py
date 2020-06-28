@@ -700,8 +700,8 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result = self.mgmt_client.storage_accounts.update(resource_group.name, STORAGE_ACCOUNT_NAME, BODY)
 
         # StorageAccountFailover
-        result = self.mgmt_client.storage_accounts.failover(resource_group.name, STORAGE_ACCOUNT_NAME)
-        result = result.result()
+        # result = self.mgmt_client.storage_accounts.failover(resource_group.name, STORAGE_ACCOUNT_NAME)
+        # result = result.result()
 
         # LockImmutabilityPolicy[post]
         result = self.mgmt_client.blob_containers.lock_immutability_policy(resource_group.name, STORAGE_ACCOUNT_NAME, CONTAINER_NAME, ETAG)

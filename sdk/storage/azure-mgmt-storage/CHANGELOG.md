@@ -1,5 +1,16 @@
 # Release History
 
+## 11.1.0 (2020-6-22)
+
+**Features**
+
+  - Model StorageAccount has a new parameter allow_blob_public_access
+  - Model StorageAccount has a new parameter minimum_tls_version
+  - Model StorageAccountCreateParameters has a new parameter allow_blob_public_access
+  - Model StorageAccountCreateParameters has a new parameter minimum_tls_version
+  - Model StorageAccountUpdateParameters has a new parameter allow_blob_public_access
+  - Model StorageAccountUpdateParameters has a new parameter minimum_tls_version
+
 ## 11.0.0 (2020-05-30)
 
 **Features**
