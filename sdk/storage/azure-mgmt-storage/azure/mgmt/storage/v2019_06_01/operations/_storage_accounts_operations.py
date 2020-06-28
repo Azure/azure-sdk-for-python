@@ -894,52 +894,52 @@ class StorageAccountsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    # def failover(
-    #         self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
-    #     """Failover request can be triggered for a storage account in case of
-    #     availability issues. The failover occurs from the storage account's
-    #     primary cluster to secondary cluster for RA-GRS accounts. The secondary
-    #     cluster will become primary after failover.
+    def failover(
+            self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Failover request can be triggered for a storage account in case of
+        availability issues. The failover occurs from the storage account's
+        primary cluster to secondary cluster for RA-GRS accounts. The secondary
+        cluster will become primary after failover.
 
-    #     :param resource_group_name: The name of the resource group within the
-    #      user's subscription. The name is case insensitive.
-    #     :type resource_group_name: str
-    #     :param account_name: The name of the storage account within the
-    #      specified resource group. Storage account names must be between 3 and
-    #      24 characters in length and use numbers and lower-case letters only.
-    #     :type account_name: str
-    #     :param dict custom_headers: headers that will be added to the request
-    #     :param bool raw: The poller return type is ClientRawResponse, the
-    #      direct response alongside the deserialized response
-    #     :param polling: True for ARMPolling, False for no polling, or a
-    #      polling object for personal polling strategy
-    #     :return: An instance of LROPoller that returns None or
-    #      ClientRawResponse<None> if raw==True
-    #     :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-    #      ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-    #     :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-    #     """
-    #     raw_result = self._failover_initial(
-    #         resource_group_name=resource_group_name,
-    #         account_name=account_name,
-    #         custom_headers=custom_headers,
-    #         raw=True,
-    #         **operation_config
-    #     )
+        :param resource_group_name: The name of the resource group within the
+         user's subscription. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the
+         specified resource group. Storage account names must be between 3 and
+         24 characters in length and use numbers and lower-case letters only.
+        :type account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._failover_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
 
-    #     def get_long_running_output(response):
-    #         if raw:
-    #             client_raw_response = ClientRawResponse(None, response)
-    #             return client_raw_response
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
 
-    #     lro_delay = operation_config.get(
-    #         'long_running_operation_timeout',
-    #         self.config.long_running_operation_timeout)
-    #     if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
-    #     elif polling is False: polling_method = NoPolling()
-    #     else: polling_method = polling
-    #     return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    # failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/failover'}
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/failover'}
 
 
     def _restore_blob_ranges_initial(
