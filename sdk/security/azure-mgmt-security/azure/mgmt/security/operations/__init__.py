@@ -19,6 +19,8 @@ from ._iot_security_solution_operations import IotSecuritySolutionOperations
 from ._iot_security_solution_analytics_operations import IotSecuritySolutionAnalyticsOperations
 from ._iot_security_solutions_analytics_aggregated_alert_operations import IotSecuritySolutionsAnalyticsAggregatedAlertOperations
 from ._iot_security_solutions_analytics_recommendation_operations import IotSecuritySolutionsAnalyticsRecommendationOperations
+from ._iot_alert_types_operations import IotAlertTypesOperations
+from ._iot_alerts_operations import IotAlertsOperations
 from ._locations_operations import LocationsOperations
 from ._operations import Operations
 from ._tasks_operations import TasksOperations
@@ -46,6 +48,7 @@ from ._external_security_solutions_operations import ExternalSecuritySolutionsOp
 from ._secure_scores_operations import SecureScoresOperations
 from ._secure_score_controls_operations import SecureScoreControlsOperations
 from ._secure_score_control_definitions_operations import SecureScoreControlDefinitionsOperations
+from ._connectors_operations import ConnectorsOperations
 
 __all__ = [
     'ComplianceResultsOperations',
@@ -58,6 +61,8 @@ __all__ = [
     'IotSecuritySolutionAnalyticsOperations',
     'IotSecuritySolutionsAnalyticsAggregatedAlertOperations',
     'IotSecuritySolutionsAnalyticsRecommendationOperations',
+    'IotAlertTypesOperations',
+    'IotAlertsOperations',
     'LocationsOperations',
     'Operations',
     'TasksOperations',
@@ -85,4 +90,5 @@ __all__ = [
     'SecureScoresOperations',
     'SecureScoreControlsOperations',
     'SecureScoreControlDefinitionsOperations',
+    'ConnectorsOperations',
 ]

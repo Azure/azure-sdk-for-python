@@ -23,6 +23,8 @@ from .operations import IotSecuritySolutionOperations
 from .operations import IotSecuritySolutionAnalyticsOperations
 from .operations import IotSecuritySolutionsAnalyticsAggregatedAlertOperations
 from .operations import IotSecuritySolutionsAnalyticsRecommendationOperations
+from .operations import IotAlertTypesOperations
+from .operations import IotAlertsOperations
 from .operations import LocationsOperations
 from .operations import Operations
 from .operations import TasksOperations
@@ -50,6 +52,7 @@ from .operations import ExternalSecuritySolutionsOperations
 from .operations import SecureScoresOperations
 from .operations import SecureScoreControlsOperations
 from .operations import SecureScoreControlDefinitionsOperations
+from .operations import ConnectorsOperations
 from . import models
 
 
@@ -79,6 +82,10 @@ class SecurityCenter(SDKClient):
     :vartype iot_security_solutions_analytics_aggregated_alert: azure.mgmt.security.operations.IotSecuritySolutionsAnalyticsAggregatedAlertOperations
     :ivar iot_security_solutions_analytics_recommendation: IotSecuritySolutionsAnalyticsRecommendation operations
     :vartype iot_security_solutions_analytics_recommendation: azure.mgmt.security.operations.IotSecuritySolutionsAnalyticsRecommendationOperations
+    :ivar iot_alert_types: IotAlertTypes operations
+    :vartype iot_alert_types: azure.mgmt.security.operations.IotAlertTypesOperations
+    :ivar iot_alerts: IotAlerts operations
+    :vartype iot_alerts: azure.mgmt.security.operations.IotAlertsOperations
     :ivar locations: Locations operations
     :vartype locations: azure.mgmt.security.operations.LocationsOperations
     :ivar operations: Operations operations
@@ -133,6 +140,8 @@ class SecurityCenter(SDKClient):
     :vartype secure_score_controls: azure.mgmt.security.operations.SecureScoreControlsOperations
     :ivar secure_score_control_definitions: SecureScoreControlDefinitions operations
     :vartype secure_score_control_definitions: azure.mgmt.security.operations.SecureScoreControlDefinitionsOperations
+    :ivar connectors: Connectors operations
+    :vartype connectors: azure.mgmt.security.operations.ConnectorsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -174,6 +183,10 @@ class SecurityCenter(SDKClient):
         self.iot_security_solutions_analytics_aggregated_alert = IotSecuritySolutionsAnalyticsAggregatedAlertOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.iot_security_solutions_analytics_recommendation = IotSecuritySolutionsAnalyticsRecommendationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.iot_alert_types = IotAlertTypesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.iot_alerts = IotAlertsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.locations = LocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -228,4 +241,6 @@ class SecurityCenter(SDKClient):
         self.secure_score_controls = SecureScoreControlsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.secure_score_control_definitions = SecureScoreControlDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.connectors = ConnectorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
