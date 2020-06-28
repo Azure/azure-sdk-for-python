@@ -3423,6 +3423,15 @@ class StorageAccount(TrackedResource):
     :ivar blob_restore_status: Blob restore status
     :vartype blob_restore_status:
      ~azure.mgmt.storage.v2019_06_01.models.BlobRestoreStatus
+    :param allow_blob_public_access: Allow or disallow public access to all
+     blobs or containers in the storage account. The default interpretation is
+     true for this property.
+    :type allow_blob_public_access: bool
+    :param minimum_tls_version: Set the minimum TLS version to be permitted on
+     requests to storage. The default interpretation is TLS 1.0 for this
+     property. Possible values include: 'TLS1_0', 'TLS1_1', 'TLS1_2'
+    :type minimum_tls_version: str or
+     ~azure.mgmt.storage.v2019_06_01.models.MinimumTlsVersion
     """
 
     _validation = {
@@ -3482,9 +3491,11 @@ class StorageAccount(TrackedResource):
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
         'blob_restore_status': {'key': 'properties.blobRestoreStatus', 'type': 'BlobRestoreStatus'},
+        'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, large_file_shares_state=None, routing_preference=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, large_file_shares_state=None, routing_preference=None, allow_blob_public_access: bool=None, minimum_tls_version=None, **kwargs) -> None:
         super(StorageAccount, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = None
         self.kind = None
@@ -3511,6 +3522,8 @@ class StorageAccount(TrackedResource):
         self.private_endpoint_connections = None
         self.routing_preference = routing_preference
         self.blob_restore_status = None
+        self.allow_blob_public_access = allow_blob_public_access
+        self.minimum_tls_version = minimum_tls_version
 
 
 class StorageAccountCheckNameAvailabilityParameters(Model):
@@ -3607,6 +3620,15 @@ class StorageAccountCreateParameters(Model):
      choice opted by the user for data transfer
     :type routing_preference:
      ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
+    :param allow_blob_public_access: Allow or disallow public access to all
+     blobs or containers in the storage account. The default interpretation is
+     true for this property.
+    :type allow_blob_public_access: bool
+    :param minimum_tls_version: Set the minimum TLS version to be permitted on
+     requests to storage. The default interpretation is TLS 1.0 for this
+     property. Possible values include: 'TLS1_0', 'TLS1_1', 'TLS1_2'
+    :type minimum_tls_version: str or
+     ~azure.mgmt.storage.v2019_06_01.models.MinimumTlsVersion
     """
 
     _validation = {
@@ -3630,9 +3652,11 @@ class StorageAccountCreateParameters(Model):
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
+        'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
     }
 
-    def __init__(self, *, sku, kind, location: str, tags=None, identity=None, custom_domain=None, encryption=None, network_rule_set=None, access_tier=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, large_file_shares_state=None, routing_preference=None, **kwargs) -> None:
+    def __init__(self, *, sku, kind, location: str, tags=None, identity=None, custom_domain=None, encryption=None, network_rule_set=None, access_tier=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, large_file_shares_state=None, routing_preference=None, allow_blob_public_access: bool=None, minimum_tls_version=None, **kwargs) -> None:
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
         self.sku = sku
         self.kind = kind
@@ -3648,6 +3672,8 @@ class StorageAccountCreateParameters(Model):
         self.is_hns_enabled = is_hns_enabled
         self.large_file_shares_state = large_file_shares_state
         self.routing_preference = routing_preference
+        self.allow_blob_public_access = allow_blob_public_access
+        self.minimum_tls_version = minimum_tls_version
 
 
 class StorageAccountInternetEndpoints(Model):
@@ -3869,6 +3895,15 @@ class StorageAccountUpdateParameters(Model):
      choice opted by the user for data transfer
     :type routing_preference:
      ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
+    :param allow_blob_public_access: Allow or disallow public access to all
+     blobs or containers in the storage account. The default interpretation is
+     true for this property.
+    :type allow_blob_public_access: bool
+    :param minimum_tls_version: Set the minimum TLS version to be permitted on
+     requests to storage. The default interpretation is TLS 1.0 for this
+     property. Possible values include: 'TLS1_0', 'TLS1_1', 'TLS1_2'
+    :type minimum_tls_version: str or
+     ~azure.mgmt.storage.v2019_06_01.models.MinimumTlsVersion
     :param kind: Optional. Indicates the type of storage account. Currently
      only StorageV2 value supported by server. Possible values include:
      'Storage', 'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'
@@ -3887,10 +3922,12 @@ class StorageAccountUpdateParameters(Model):
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
+        'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, *, sku=None, tags=None, identity=None, custom_domain=None, encryption=None, access_tier=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, network_rule_set=None, large_file_shares_state=None, routing_preference=None, kind=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, tags=None, identity=None, custom_domain=None, encryption=None, access_tier=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, network_rule_set=None, large_file_shares_state=None, routing_preference=None, allow_blob_public_access: bool=None, minimum_tls_version=None, kind=None, **kwargs) -> None:
         super(StorageAccountUpdateParameters, self).__init__(**kwargs)
         self.sku = sku
         self.tags = tags
@@ -3903,6 +3940,8 @@ class StorageAccountUpdateParameters(Model):
         self.network_rule_set = network_rule_set
         self.large_file_shares_state = large_file_shares_state
         self.routing_preference = routing_preference
+        self.allow_blob_public_access = allow_blob_public_access
+        self.minimum_tls_version = minimum_tls_version
         self.kind = kind
 
 
