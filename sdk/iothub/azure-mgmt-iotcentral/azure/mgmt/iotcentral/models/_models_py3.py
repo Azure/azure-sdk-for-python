@@ -164,6 +164,8 @@ class AppPatch(Model):
 
     :param tags: Instance tags
     :type tags: dict[str, str]
+    :param sku: A valid instance SKU.
+    :type sku: ~azure.mgmt.iotcentral.models.AppSkuInfo
     :ivar application_id: The ID of the application.
     :vartype application_id: str
     :param display_name: The display name of the application.
@@ -183,15 +185,17 @@ class AppPatch(Model):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'AppSkuInfo'},
         'application_id': {'key': 'properties.applicationId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'subdomain': {'key': 'properties.subdomain', 'type': 'str'},
         'template': {'key': 'properties.template', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, display_name: str=None, subdomain: str=None, template: str=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, sku=None, display_name: str=None, subdomain: str=None, template: str=None, **kwargs) -> None:
         super(AppPatch, self).__init__(**kwargs)
         self.tags = tags
+        self.sku = sku
         self.application_id = None
         self.display_name = display_name
         self.subdomain = subdomain
