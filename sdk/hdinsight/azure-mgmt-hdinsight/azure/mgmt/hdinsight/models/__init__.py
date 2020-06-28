@@ -54,6 +54,7 @@ try:
     from ._models_py3 import KafkaRestProperties
     from ._models_py3 import LinuxOperatingSystemProfile
     from ._models_py3 import LocalizedName
+    from ._models_py3 import NetworkSettings
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationResource
@@ -130,6 +131,7 @@ except (SyntaxError, ImportError):
     from ._models import KafkaRestProperties
     from ._models import LinuxOperatingSystemProfile
     from ._models import LocalizedName
+    from ._models import NetworkSettings
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import OperationResource
@@ -168,6 +170,8 @@ from ._paged_models import RuntimeScriptActionDetailPaged
 from ._hd_insight_management_client_enums import (
     DirectoryType,
     DaysOfWeek,
+    PublicNetworkAccess,
+    OutboundOnlyPublicNetworkAccessType,
     OSType,
     Tier,
     JsonWebKeyEncryptionAlgorithm,
@@ -222,6 +226,7 @@ __all__ = [
     'KafkaRestProperties',
     'LinuxOperatingSystemProfile',
     'LocalizedName',
+    'NetworkSettings',
     'Operation',
     'OperationDisplay',
     'OperationResource',
@@ -259,6 +264,8 @@ __all__ = [
     'OperationPaged',
     'DirectoryType',
     'DaysOfWeek',
+    'PublicNetworkAccess',
+    'OutboundOnlyPublicNetworkAccessType',
     'OSType',
     'Tier',
     'JsonWebKeyEncryptionAlgorithm',
