@@ -18,9 +18,7 @@ class Entity(dict):
 
     def __getattr__(self, name):
         try:
-            if name is not None:
-                return self[name]
-            return name
+            return self[name]
         except KeyError:
             raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
 

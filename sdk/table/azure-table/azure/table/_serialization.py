@@ -106,7 +106,7 @@ def _to_entity_str(value):
 
 
 def _to_entity_none(value):  # pylint:disable=W0613
-    return None, None
+    return None,None
 
 
 # Conversion from Python type to a function which returns a tuple of the
@@ -169,12 +169,8 @@ def _add_entity_properties(source):
             mtype, value = conv(value.value)
         else:
             conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
-            if conv is None and sys.version_info >= (3,) and value is None:
+            if conv is None and value is None:
                 conv = _to_entity_none  # something with this
-            if conv is None:
-                raise TypeError(
-                    _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY.format(
-                        type(value).__name__))
 
             mtype, value = conv(value)
 
