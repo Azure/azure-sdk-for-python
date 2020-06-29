@@ -389,7 +389,7 @@ def service_properties_deserialize(generated):
     }
 
 
-class TableServices(Services):
+class TableServices():
     def __init__(self):
         """
         :param bool table:
@@ -397,8 +397,7 @@ class TableServices(Services):
         :param str _str:
             A string representing the services.
         """
-
-        super(Services).__init__()
+        super().__init__()
         self.table = True
 
     def __str__(self):
