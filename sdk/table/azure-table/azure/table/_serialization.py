@@ -168,7 +168,7 @@ def _add_entity_properties(source):
                     _ERROR_TYPE_NOT_SUPPORTED.format(value.type))
             mtype, value = conv(value.value)
         else:
-            if type(value) is not None:
+            if isinstance(value) is not None:
                 conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
             if conv is None and sys.version_info >= (3,) and value is None:
                 conv = _to_entity_none

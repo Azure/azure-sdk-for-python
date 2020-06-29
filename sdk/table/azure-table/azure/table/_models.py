@@ -14,7 +14,7 @@ from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
-from ._shared.models import Services
+
 
 
 class AccessPolicy(GenAccessPolicy):
