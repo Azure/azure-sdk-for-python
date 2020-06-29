@@ -233,7 +233,7 @@ class FormRecognizerTest(AzureTestCase):
                 self.assertEqual(b[label].value, a.value_time)
             if read_results:
                 self.assertTextContentTransformCorrect(
-                    b[label].value_data.text_content,
+                    b[label].value_data.field_element,
                     a.elements,
                     read_results
                 )
@@ -247,7 +247,7 @@ class FormRecognizerTest(AzureTestCase):
             self.assertBoundingBoxTransformCorrect(form_fields["field-"+str(idx)].label_data.bounding_box, a.key.bounding_box)
             if read_results:
                 self.assertTextContentTransformCorrect(
-                    form_fields["field-"+str(idx)].label_data.text_content,
+                    form_fields["field-"+str(idx)].label_data.field_element,
                     a.key.elements,
                     read_results
                 )
@@ -255,7 +255,7 @@ class FormRecognizerTest(AzureTestCase):
             self.assertBoundingBoxTransformCorrect(form_fields["field-" + str(idx)].value_data.bounding_box, a.value.bounding_box)
             if read_results:
                 self.assertTextContentTransformCorrect(
-                    form_fields["field-"+str(idx)].value_data.text_content,
+                    form_fields["field-"+str(idx)].value_data.field_element,
                     a.value.elements,
                     read_results
                 )
@@ -282,7 +282,7 @@ class FormRecognizerTest(AzureTestCase):
         self.assertEqual(receipt_field.confidence, actual_field.confidence if actual_field.confidence is not None else 1.0)
         if read_results:
             self.assertTextContentTransformCorrect(
-                receipt_field.value_data.text_content,
+                receipt_field.value_data.field_element,
                 actual_field.elements,
                 read_results
             )
@@ -311,9 +311,9 @@ class FormRecognizerTest(AzureTestCase):
                 self.assertEqual(cell.is_header, actual_cell.is_header if actual_cell.is_header is not None else False)
                 self.assertEqual(cell.is_footer, actual_cell.is_footer if actual_cell.is_footer is not None else False)
                 self.assertBoundingBoxTransformCorrect(cell.bounding_box, actual_cell.bounding_box)
-                self.assertTextContentTransformCorrect(cell.text_content, actual_cell.elements, read_results)
+                self.assertTextContentTransformCorrect(cell.field_element, actual_cell.elements, read_results)
 
-    def assertReceiptItemsHasValues(self, items, page_number, include_text_content):
+    def assertReceiptItemsHasValues(self, items, page_number, include_field_elements):
         for item in items:
             self.assertBoundingBoxHasPoints(item.value.get("Name").value_data.bounding_box)
             self.assertIsNotNone(item.value.get("Name").confidence)
@@ -325,14 +325,14 @@ class FormRecognizerTest(AzureTestCase):
             self.assertIsNotNone(item.value.get("TotalPrice").confidence)
             self.assertIsNotNone(item.value.get("TotalPrice").value_data.text)
 
-            if include_text_content:
-                self.assertTextContentHasValues(item.value.get("Name").value_data.text_content, page_number)
-                self.assertTextContentHasValues(item.value.get("Name").value_data.text_content, page_number)
-                self.assertTextContentHasValues(item.value.get("Name").value_data.text_content, page_number)
+            if include_field_elements:
+                self.assertTextContentHasValues(item.value.get("Name").value_data.field_element, page_number)
+                self.assertTextContentHasValues(item.value.get("Name").value_data.field_element, page_number)
+                self.assertTextContentHasValues(item.value.get("Name").value_data.field_element, page_number)
             else:
-                self.assertIsNone(item.value.get("Name").value_data.text_content)
-                self.assertIsNone(item.value.get("Name").value_data.text_content)
-                self.assertIsNone(item.value.get("Name").value_data.text_content)
+                self.assertIsNone(item.value.get("Name").value_data.field_element)
+                self.assertIsNone(item.value.get("Name").value_data.field_element)
+                self.assertIsNone(item.value.get("Name").value_data.field_element)
 
     def assertBoundingBoxHasPoints(self, box):
         if box is None:
@@ -373,7 +373,7 @@ class FormRecognizerTest(AzureTestCase):
                         self.assertIsNotNone(cell.row_span)
                         self.assertIsNotNone(cell.column_span)
                         self.assertBoundingBoxHasPoints(cell.bounding_box)
-                        self.assertTextContentHasValues(cell.text_content, page.page_number)
+                        self.assertTextContentHasValues(cell.field_element, page.page_number)
 
     def assertFormWordHasValues(self, word, page_number):
         self.assertIsNotNone(word.confidence)

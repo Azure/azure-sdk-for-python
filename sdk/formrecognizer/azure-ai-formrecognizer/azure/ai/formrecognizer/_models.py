@@ -180,9 +180,9 @@ class RecognizedForm(object):
 class FormField(object):
     """Represents a field recognized in an input form.
 
-    :ivar ~azure.ai.formrecognizer.FieldText label_data:
+    :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and text content of the field label.
-    :ivar ~azure.ai.formrecognizer.FieldText value_data:
+    :ivar ~azure.ai.formrecognizer.FieldData value_data:
         Contains the text, bounding box, and text content of the field value.
     :ivar str name: The unique name of the field or label.
     :ivar value:
@@ -204,8 +204,8 @@ class FormField(object):
     @classmethod
     def _from_generated(cls, field, value, read_result):
         return cls(
-            label_data=FieldText._from_generated(field, read_result),
-            value_data=FieldText._from_generated(value, read_result),
+            label_data=FieldData._from_generated(field, read_result),
+            value_data=FieldData._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
             name=field,
             confidence=adjust_confidence(value.confidence) if value else None,
@@ -214,8 +214,8 @@ class FormField(object):
     @classmethod
     def _from_generated_unlabeled(cls, field, idx, page, read_result):
         return cls(
-            label_data=FieldText._from_generated_unlabeled(field.key, page, read_result),
-            value_data=FieldText._from_generated_unlabeled(field.value, page, read_result),
+            label_data=FieldData._from_generated_unlabeled(field.key, page, read_result),
+            value_data=FieldData._from_generated_unlabeled(field.value, page, read_result),
             value=field.value.text,
             name="field-" + str(idx),
             confidence=adjust_confidence(field.confidence),
@@ -227,7 +227,7 @@ class FormField(object):
         )[:1024]
 
 
-class FieldText(FormContent):
+class FieldData(FormContent):
     """Represents the text that is part of a form field. This includes
     the location of the text in the form and a collection of the
     elements that make up the text.
@@ -240,15 +240,15 @@ class FieldText(FormContent):
         that outlines the text. The points are listed in clockwise
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
-    :ivar text_content:
-        When `include_text_content` is set to true, a list of text
+    :ivar field_element:
+        When `include_field_element` is set to true, a list of text
         elements constituting this field or value is returned.
-    :vartype text_content: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
+    :vartype field_element: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
 
     def __init__(self, **kwargs):
-        super(FieldText, self).__init__(**kwargs)
-        self.text_content = kwargs.get("text_content", None)
+        super(FieldData, self).__init__(**kwargs)
+        self.field_element = kwargs.get("field_element", None)
 
     @classmethod
     def _from_generated(cls, field, read_result):
@@ -263,7 +263,7 @@ class FieldText(FormContent):
                 Point(x=field.bounding_box[4], y=field.bounding_box[5]),
                 Point(x=field.bounding_box[6], y=field.bounding_box[7])
             ] if field.bounding_box else None,
-            text_content=get_elements(field, read_result) if field.elements else None
+            field_element=get_elements(field, read_result) if field.elements else None
         )
 
     @classmethod
@@ -277,12 +277,12 @@ class FieldText(FormContent):
                 Point(x=field.bounding_box[4], y=field.bounding_box[5]),
                 Point(x=field.bounding_box[6], y=field.bounding_box[7])
             ] if field.bounding_box else None,
-            text_content=get_elements(field, read_result) if field.elements else None
+            field_element=get_elements(field, read_result) if field.elements else None
         )
 
     def __repr__(self):
-        return "FieldText(page_number={}, text={}, bounding_box={}, text_content={})".format(
-            self.page_number, self.text, self.bounding_box, repr(self.text_content)
+        return "FieldData(page_number={}, text={}, bounding_box={}, field_element={})".format(
+            self.page_number, self.text, self.bounding_box, repr(self.field_element)
         )[:1024]
 
 
@@ -306,7 +306,7 @@ class FormPage(object):
     :ivar list[~azure.ai.formrecognizer.FormTable] tables:
         A list of extracted tables contained in a page.
     :ivar list[~azure.ai.formrecognizer.FormLine] lines:
-        When `include_text_content` is set to true, a list of recognized text lines is returned.
+        When `include_field_element` is set to true, a list of recognized text lines is returned.
         For calls to recognize content, this list is always populated. The maximum number of lines
         returned is 300 per page. The lines are sorted top to bottom, left to right, although in
         certain cases proximity is treated with higher priority. As the sorting order depends on
@@ -462,11 +462,11 @@ class FormTableCell(FormContent):
     :ivar bool is_footer: Whether the current cell is a footer cell.
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
-    :ivar text_content:
-        When `include_text_content` is set to true, a list of text
+    :ivar field_element:
+        When `include_field_element` is set to true, a list of text
         elements constituting this cell is returned.
         For calls to recognize content, this list is always populated.
-    :vartype text_content: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
+    :vartype field_element: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
 
     def __init__(self, **kwargs):
@@ -478,7 +478,7 @@ class FormTableCell(FormContent):
         self.confidence = kwargs.get("confidence", None)
         self.is_header = kwargs.get("is_header", False)
         self.is_footer = kwargs.get("is_footer", False)
-        self.text_content = kwargs.get("text_content", None)
+        self.field_element = kwargs.get("field_element", None)
 
     @classmethod
     def _from_generated(cls, cell, page, read_result):
@@ -498,14 +498,14 @@ class FormTableCell(FormContent):
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
             page_number=page,
-            text_content=get_elements(cell, read_result) if cell.elements else None
+            field_element=get_elements(cell, read_result) if cell.elements else None
         )
 
     def __repr__(self):
         return "FormTableCell(text={}, row_index={}, column_index={}, row_span={}, column_span={}, " \
-                "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, text_content={})".format(
+                "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, field_element={})".format(
                     self.text, self.row_index, self.column_index, self.row_span, self.column_span, self.bounding_box,
-                    self.confidence, self.is_header, self.is_footer, self.page_number, repr(self.text_content)
+                    self.confidence, self.is_header, self.is_footer, self.page_number, repr(self.field_element)
                 )[:1024]
 
 

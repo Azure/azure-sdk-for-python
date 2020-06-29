@@ -101,7 +101,7 @@ class FormRecognizerClient(object):
         :param receipt: JPEG, PNG, PDF and TIFF type file stream or bytes.
             Currently only supports US sales receipts.
         :type receipt: bytes or IO[bytes]
-        :keyword bool include_text_content:
+        :keyword bool include_field_elements:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
@@ -131,7 +131,7 @@ class FormRecognizerClient(object):
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a url.")
 
-        include_text_content = kwargs.pop("include_text_content", False)
+        include_field_elements = kwargs.pop("include_field_elements", False)
 
         if content_type is None:
             content_type = get_content_type(receipt)
@@ -139,7 +139,7 @@ class FormRecognizerClient(object):
         return await self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=receipt,
             content_type=content_type,
-            include_text_details=include_text_content,
+            include_text_details=include_field_elements,
             cls=kwargs.pop("cls", self._receipt_callback),
             polling=AsyncLROBasePolling(
                 timeout=polling_interval,
@@ -165,7 +165,7 @@ class FormRecognizerClient(object):
         :param str receipt_url: The url of the receipt to analyze. The input must be a valid, encoded url
             of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
             US sales receipts.
-        :keyword bool include_text_content:
+        :keyword bool include_field_elements:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
@@ -187,11 +187,11 @@ class FormRecognizerClient(object):
 
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
-        include_text_content = kwargs.pop("include_text_content", False)
+        include_field_elements = kwargs.pop("include_field_elements", False)
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
-            include_text_details=include_text_content,
+            include_text_details=include_field_elements,
             cls=kwargs.pop("cls", self._receipt_callback),
             polling=AsyncLROBasePolling(
                 timeout=polling_interval,
@@ -307,7 +307,7 @@ class FormRecognizerClient(object):
         :param str model_id: Custom model identifier.
         :param form: JPEG, PNG, PDF and TIFF type file stream or bytes.
         :type form: bytes or IO[bytes]
-        :keyword bool include_text_content:
+        :keyword bool include_field_elements:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
@@ -341,7 +341,7 @@ class FormRecognizerClient(object):
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a url.")
 
-        include_text_content = kwargs.pop("include_text_content", False)
+        include_field_elements = kwargs.pop("include_field_elements", False)
 
         if content_type is None:
             content_type = get_content_type(form)
@@ -354,7 +354,7 @@ class FormRecognizerClient(object):
         return await self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream=form,
             model_id=model_id,
-            include_text_details=include_text_content,
+            include_text_details=include_field_elements,
             content_type=content_type,
             cls=deserialization_callback,
             polling=AsyncLROBasePolling(
@@ -381,7 +381,7 @@ class FormRecognizerClient(object):
         :param str model_id: Custom model identifier.
         :param str form_url: The url of the form to analyze. The input must be a valid, encoded url
             of one of the supported formats: JPEG, PNG, PDF and TIFF.
-        :keyword bool include_text_content:
+        :keyword bool include_field_elements:
             Whether or not to include text elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
@@ -398,7 +398,7 @@ class FormRecognizerClient(object):
         cls = kwargs.pop("cls", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
-        include_text_content = kwargs.pop("include_text_content", False)
+        include_field_elements = kwargs.pop("include_field_elements", False)
 
         def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
@@ -408,7 +408,7 @@ class FormRecognizerClient(object):
         return await self._client.begin_analyze_with_custom_model(  # type: ignore
             file_stream={"source": form_url},
             model_id=model_id,
-            include_text_details=include_text_content,
+            include_text_details=include_field_elements,
             cls=deserialization_callback,
             polling=AsyncLROBasePolling(
                 timeout=polling_interval,
