@@ -118,8 +118,7 @@ _PYTHON_TO_ENTITY_CONVERSIONS = {
     float: _to_entity_float,
     str: _to_entity_str,
     bytes: _to_entity_binary,
-    UUID: _to_entity_guid,
-    None: _to_entity_none
+    UUID: _to_entity_guid
 }
 
 # Conversion from Edm type to a function which returns a tuple of the
@@ -134,6 +133,7 @@ _EDM_TO_ENTITY_CONVERSIONS = {
     EdmType.INT64: _to_entity_int64,
     EdmType.STRING: _to_entity_str,
 }
+
 
 def _add_entity_properties(source):
     ''' Converts an entity object to json to send.
@@ -168,10 +168,9 @@ def _add_entity_properties(source):
                     _ERROR_TYPE_NOT_SUPPORTED.format(value.type))
             mtype, value = conv(value.value)
         else:
-            if isinstance(value) is not None:
-                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
+            conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
             if conv is None and sys.version_info >= (3,) and value is None:
-                conv = _to_entity_none
+                conv = _to_entity_none  # something with this
             if conv is None:
                 raise TypeError(
                     _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY.format(

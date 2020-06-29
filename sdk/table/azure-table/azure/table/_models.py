@@ -390,16 +390,6 @@ def service_properties_deserialize(generated):
 
 
 class TableServices():
-    def __init__(self):
-        """
-        :param bool table:
-            Access to the `.TableService`
-        :param str _str:
-            A string representing the services.
-        """
-        super().__init__()
-        self.table = True
-
     def __str__(self):
         return 't'
 
