@@ -66,11 +66,10 @@ class MgmtStorageTest(AzureMgmtTestCase):
               az_network.NetworkManagementClient
             )
 
-    # TODO: update to track 2 version later
     def create_endpoint(self, group_name, location, vnet_name, sub_net, endpoint_name, resource_id):
         if self.is_live:
             # Create VNet
-            async_vnet_creation = self.network_client.virtual_networks.create_or_update(
+            async_vnet_creation = self.network_client.virtual_networks.begin_create_or_update(
                 group_name,
                 vnet_name,
                 {
@@ -83,7 +82,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             async_vnet_creation.result()
 
             # Create Subnet
-            async_subnet_creation = self.network_client.subnets.create_or_update(
+            async_subnet_creation = self.network_client.subnets.begin_create_or_update(
                 group_name,
                 vnet_name,
                 sub_net,
@@ -112,7 +111,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
                 }
               }
             }
-            result = self.network_client.private_endpoints.create_or_update(group_name, endpoint_name, BODY)
+            result = self.network_client.private_endpoints.begin_create_or_update(group_name, endpoint_name, BODY)
 
             return result.result().id
         else:
