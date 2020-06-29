@@ -8,11 +8,30 @@ products:
 urlFragment: identity-samples
 ---
 
-# Azure Identity Client Library Python Samples
+# Azure Identity Library Python Samples
 
-* [user_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity/samples/user_authentication.py) -
- demonstrates user authentication API for applications
- 
- * [control_interactive_prompts.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity/samples/control_interactive_prompts.py) -
- demonstrates controlling when interactive credentials such as
- `InteractiveBrowserCredential` prompt for user interaction
+## Prerequisites
+
+You must have an [Azure subscription](https://azure.microsoft.com/free) and an
+[Azure Key Vault](https://azure.microsoft.com/en-us/services/key-vault/) to run
+these samples. You can create a Key Vault in the
+[Azure Portal](https://portal.azure.com/#create/Microsoft.KeyVault) or with the
+[Azure CLI](https://docs.microsoft.com/en-us/azure/key-vault/secrets/quick-create-cli).
+
+Azure Key Vault is used only to demonstrate authentication. Azure Identity has
+the same API for all compatible client libraries.
+
+## Setup
+
+To run these samples, first install the Azure Identity and Key Vault Secrets
+client libraries:
+
+```commandline
+pip install azure-identity azure-keyvault-secrets
+```
+
+## Contents
+| File | Description |
+|-------------|-------------|
+| control_interactive_prompts.py | demonstrates controlling when interactive credentials prompt for user interaction |
+| user_authentication.py | demonstrates user authentication API for applications |
