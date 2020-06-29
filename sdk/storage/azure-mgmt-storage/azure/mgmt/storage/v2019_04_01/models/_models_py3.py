@@ -2595,6 +2595,13 @@ class StorageAccount(TrackedResource):
      disabled once it is enabled. Possible values include: "Disabled", "Enabled".
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
+    :param allow_blob_public_access: Allow or disallow public access to all blobs or containers in
+     the storage account. The default interpretation is true for this property.
+    :type allow_blob_public_access: bool
+    :param minimum_tls_version: Set the minimum TLS version to be permitted on requests to storage.
+     The default interpretation is TLS 1.0 for this property. Possible values include: "TLS1_0",
+     "TLS1_1", "TLS1_2".
+    :type minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
     """
 
     _validation = {
@@ -2649,6 +2656,8 @@ class StorageAccount(TrackedResource):
         'geo_replication_stats': {'key': 'properties.geoReplicationStats', 'type': 'GeoReplicationStats'},
         'failover_in_progress': {'key': 'properties.failoverInProgress', 'type': 'bool'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
+        'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -2661,6 +2670,8 @@ class StorageAccount(TrackedResource):
         enable_https_traffic_only: Optional[bool] = None,
         is_hns_enabled: Optional[bool] = None,
         large_file_shares_state: Optional[Union[str, "LargeFileSharesState"]] = None,
+        allow_blob_public_access: Optional[bool] = None,
+        minimum_tls_version: Optional[Union[str, "MinimumTlsVersion"]] = None,
         **kwargs
     ):
         super(StorageAccount, self).__init__(tags=tags, location=location, **kwargs)
@@ -2686,6 +2697,8 @@ class StorageAccount(TrackedResource):
         self.geo_replication_stats = None
         self.failover_in_progress = None
         self.large_file_shares_state = large_file_shares_state
+        self.allow_blob_public_access = allow_blob_public_access
+        self.minimum_tls_version = minimum_tls_version
 
 
 class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
@@ -2771,6 +2784,13 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
      disabled once it is enabled. Possible values include: "Disabled", "Enabled".
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
+    :param allow_blob_public_access: Allow or disallow public access to all blobs or containers in
+     the storage account. The default interpretation is true for this property.
+    :type allow_blob_public_access: bool
+    :param minimum_tls_version: Set the minimum TLS version to be permitted on requests to storage.
+     The default interpretation is TLS 1.0 for this property. Possible values include: "TLS1_0",
+     "TLS1_1", "TLS1_2".
+    :type minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
     """
 
     _validation = {
@@ -2793,6 +2813,8 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
+        'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -2811,6 +2833,8 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         enable_https_traffic_only: Optional[bool] = None,
         is_hns_enabled: Optional[bool] = None,
         large_file_shares_state: Optional[Union[str, "LargeFileSharesState"]] = None,
+        allow_blob_public_access: Optional[bool] = None,
+        minimum_tls_version: Optional[Union[str, "MinimumTlsVersion"]] = None,
         **kwargs
     ):
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
@@ -2827,6 +2851,8 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         self.enable_https_traffic_only = enable_https_traffic_only
         self.is_hns_enabled = is_hns_enabled
         self.large_file_shares_state = large_file_shares_state
+        self.allow_blob_public_access = allow_blob_public_access
+        self.minimum_tls_version = minimum_tls_version
 
 
 class StorageAccountKey(msrest.serialization.Model):
@@ -2990,6 +3016,13 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
      disabled once it is enabled. Possible values include: "Disabled", "Enabled".
     :type large_file_shares_state: str or
      ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
+    :param allow_blob_public_access: Allow or disallow public access to all blobs or containers in
+     the storage account. The default interpretation is true for this property.
+    :type allow_blob_public_access: bool
+    :param minimum_tls_version: Set the minimum TLS version to be permitted on requests to storage.
+     The default interpretation is TLS 1.0 for this property. Possible values include: "TLS1_0",
+     "TLS1_1", "TLS1_2".
+    :type minimum_tls_version: str or ~azure.mgmt.storage.v2019_04_01.models.MinimumTlsVersion
     """
 
     _attribute_map = {
@@ -3004,6 +3037,8 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
+        'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -3020,6 +3055,8 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         enable_https_traffic_only: Optional[bool] = None,
         network_rule_set: Optional["NetworkRuleSet"] = None,
         large_file_shares_state: Optional[Union[str, "LargeFileSharesState"]] = None,
+        allow_blob_public_access: Optional[bool] = None,
+        minimum_tls_version: Optional[Union[str, "MinimumTlsVersion"]] = None,
         **kwargs
     ):
         super(StorageAccountUpdateParameters, self).__init__(**kwargs)
@@ -3034,6 +3071,8 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         self.enable_https_traffic_only = enable_https_traffic_only
         self.network_rule_set = network_rule_set
         self.large_file_shares_state = large_file_shares_state
+        self.allow_blob_public_access = allow_blob_public_access
+        self.minimum_tls_version = minimum_tls_version
 
 
 class StorageSkuListResult(msrest.serialization.Model):
