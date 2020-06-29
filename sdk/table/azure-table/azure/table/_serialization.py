@@ -175,12 +175,14 @@ def _add_entity_properties(source):
                 raise TypeError(
                     _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY.format(
                         type(value).__name__))
+
             mtype, value = conv(value)
 
         # form the property node
-        properties[name] = value
-        if mtype:
-            properties[name + '@odata.type'] = mtype
+        if value is not None:
+            properties[name] = value
+            if mtype:
+                properties[name + '@odata.type'] = mtype
 
     # generate the entity_body
     return properties

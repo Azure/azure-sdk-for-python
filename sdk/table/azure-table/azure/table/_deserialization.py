@@ -19,7 +19,6 @@ from azure.table._entity import EntityProperty, EdmType, Entity
 from azure.table._shared._common_conversion import _decode_base64_to_bytes
 
 
-
 def _get_continuation_from_response_headers(response):
     marker = {}
     for name, value in response.headers.items():
