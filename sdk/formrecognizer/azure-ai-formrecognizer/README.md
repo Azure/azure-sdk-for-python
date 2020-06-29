@@ -145,13 +145,6 @@ The client exposes a `begin_<method-name>` method that returns an `LROPoller` or
 for the operation to complete by calling `result()` on the operation returned from the `begin_<method-name>` method. 
 Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
 
-### Async APIs
-This library also includes a complete async API supported on Python 3.5+. To use it, you must
-first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
-See
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
-for more information.
-
 
 ## Examples
 
@@ -191,7 +184,8 @@ for recognized_form in result:
         ))
 ```
 
-Alternatively, a form url can also be used to recognize custom forms using the `begin_recognize_custom_forms_from_url` method.
+Alternatively, a form url can also be used to recognize custom forms using the `begin_recognize_custom_forms_from_url` method. The `_from_url` methods exist for
+all the recognize methods.
 
 
 ```
@@ -341,6 +335,14 @@ try:
 except ResourceNotFoundError:
     print("Successfully deleted model with id {}".format(custom_model.model_id))
 ```
+
+## Async APIs
+This library also includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+for more information.
+
 
 ## Optional Configuration
 
