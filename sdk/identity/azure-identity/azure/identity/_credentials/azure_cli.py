@@ -17,7 +17,6 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource
-from .._constants import DEFAULT_REFRESH_OFFSET
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports

@@ -8,7 +8,6 @@ import sys
 from azure.core.exceptions import ClientAuthenticationError
 from .._credentials.base import AsyncCredentialBase
 from ... import CredentialUnavailableError
-from ..._constants import DEFAULT_REFRESH_OFFSET
 from ..._credentials.azure_cli import (
     AzureCliCredential as _SyncAzureCliCredential,
     CLI_NOT_FOUND,
