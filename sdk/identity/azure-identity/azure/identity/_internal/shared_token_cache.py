@@ -11,7 +11,7 @@ from six.moves.urllib_parse import urlparse
 
 from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
-from .._constants import KnownAuthorities, DEFAULT_REFRESH_OFFSET
+from .._constants import KnownAuthorities
 from .._internal import get_default_authority, normalize_authority, wrap_exceptions
 from .._internal.persistent_cache import load_user_cache
 
