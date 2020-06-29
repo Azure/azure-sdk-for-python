@@ -8,7 +8,6 @@ from ._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
     AnalyzeRequest,
-    CustomAnalyzer as _CustomAnalyzer,
 )
 
 

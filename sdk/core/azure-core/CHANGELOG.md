@@ -3,6 +3,11 @@
 
 ## 1.6.1 (Unreleased)
 
+### Bug fixes
+
+- `AzureKeyCredentialPolicy` will now accept (and ignore) passed in kwargs  #11963
+- Better error messages if passed endpoint is incorrect  #12106
+- Do not JSON encore a string if content type is "text"  #12137
 
 ## 1.6.0 (2020-06-03)
 

@@ -13,8 +13,7 @@ from ._models import (
     FormTable,
     FormTableCell,
     FormPageRange,
-    RecognizedForm,
-    RecognizedReceipt
+    RecognizedForm
 )
 
 
@@ -26,14 +25,14 @@ def prepare_receipt(response):
 
     for page in document_result:
         if page.fields is None:
-            receipt = RecognizedReceipt(
+            receipt = RecognizedForm(
                 page_range=FormPageRange(first_page_number=page.page_range[0], last_page_number=page.page_range[1]),
                 pages=form_page[page.page_range[0]-1:page.page_range[1]],
                 form_type=page.doc_type,
             )
             receipts.append(receipt)
             continue
-        receipt = RecognizedReceipt(
+        receipt = RecognizedForm(
             page_range=FormPageRange(
                 first_page_number=page.page_range[0], last_page_number=page.page_range[1]
             ),

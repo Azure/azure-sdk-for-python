@@ -7,37 +7,37 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 6c92c1e4-74e2-492e-83fb-4984b57e3c46
+      apim-request-id: a3578187-5113-4d85-903c-bdd7cd37121a
       content-length: '0'
-      date: Tue, 09 Jun 2020 21:14:35 GMT
-      operation-location: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/6c92c1e4-74e2-492e-83fb-4984b57e3c46
+      date: Thu, 11 Jun 2020 15:44:33 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/a3578187-5113-4d85-903c-bdd7cd37121a
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '639'
+      x-envoy-upstream-service-time: '348'
     status:
       code: 202
       message: Accepted
-    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/6c92c1e4-74e2-492e-83fb-4984b57e3c46
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/a3578187-5113-4d85-903c-bdd7cd37121a
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-06-09T21:14:35Z",
-        "lastUpdatedDateTime": "2020-06-09T21:14:37Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T15:44:33Z",
+        "lastUpdatedDateTime": "2020-06-11T15:44:35Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0.2511, "width": 1688, "height":
         3000, "unit": "pixel", "language": "en"}], "documentResults": [{"docType":
         "prebuilt:receipt", "pageRange": [1, 1], "fields": {"ReceiptType": {"type":
@@ -75,15 +75,15 @@ interactions:
         1203.39, "text": "1203.39", "boundingBox": [955, 2593.9, 1123, 2611, 1116.2,
         2678.1, 948.2, 2661], "page": 1, "confidence": 0.774}}}]}}'
     headers:
-      apim-request-id: d5729fa3-0a75-45c6-a757-52ada9682599
+      apim-request-id: cc1485cd-df96-4198-9653-addcdaa39df6
       content-type: application/json; charset=utf-8
-      date: Tue, 09 Jun 2020 21:14:40 GMT
+      date: Thu, 11 Jun 2020 15:44:38 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '11'
+      x-envoy-upstream-service-time: '12'
     status:
       code: 200
       message: OK
-    url: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/6c92c1e4-74e2-492e-83fb-4984b57e3c46
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/a3578187-5113-4d85-903c-bdd7cd37121a
 version: 1

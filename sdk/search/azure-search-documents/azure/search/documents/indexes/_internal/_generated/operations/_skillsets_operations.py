@@ -69,7 +69,7 @@ class SkillsetsOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SearchIndexerSkillset or the result of cls(response)
+        :return: SearchIndexerSkillset, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -81,7 +81,7 @@ class SkillsetsOperations(object):
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         prefer = "return=representation"
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -108,7 +108,6 @@ class SkillsetsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(skillset, 'SearchIndexerSkillset')
         body_content_kwargs['content'] = body_content
@@ -122,7 +121,6 @@ class SkillsetsOperations(object):
             error = self._deserialize(models.SearchError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
 
@@ -130,7 +128,7 @@ class SkillsetsOperations(object):
             deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create_or_update.metadata = {'url': '/skillsets(\'{skillsetName}\')'}  # type: ignore
@@ -157,7 +155,7 @@ class SkillsetsOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -168,7 +166,7 @@ class SkillsetsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -191,7 +189,6 @@ class SkillsetsOperations(object):
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -202,7 +199,7 @@ class SkillsetsOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/skillsets(\'{skillsetName}\')'}  # type: ignore
 
@@ -220,7 +217,7 @@ class SkillsetsOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SearchIndexerSkillset or the result of cls(response)
+        :return: SearchIndexerSkillset, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -231,7 +228,7 @@ class SkillsetsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -251,7 +248,6 @@ class SkillsetsOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -264,7 +260,7 @@ class SkillsetsOperations(object):
         deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/skillsets(\'{skillsetName}\')'}  # type: ignore
@@ -285,7 +281,7 @@ class SkillsetsOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListSkillsetsResult or the result of cls(response)
+        :return: ListSkillsetsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.ListSkillsetsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -296,7 +292,7 @@ class SkillsetsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
 
         # Construct URL
         url = self.list.metadata['url']  # type: ignore
@@ -317,7 +313,6 @@ class SkillsetsOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -330,7 +325,7 @@ class SkillsetsOperations(object):
         deserialized = self._deserialize('ListSkillsetsResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     list.metadata = {'url': '/skillsets'}  # type: ignore
@@ -349,7 +344,7 @@ class SkillsetsOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SearchIndexerSkillset or the result of cls(response)
+        :return: SearchIndexerSkillset, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -360,7 +355,7 @@ class SkillsetsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -381,7 +376,6 @@ class SkillsetsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(skillset, 'SearchIndexerSkillset')
         body_content_kwargs['content'] = body_content
@@ -398,7 +392,7 @@ class SkillsetsOperations(object):
         deserialized = self._deserialize('SearchIndexerSkillset', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create.metadata = {'url': '/skillsets'}  # type: ignore

@@ -1,7 +1,11 @@
 # Release History
 
 ## 4.2.0b2 (Unreleased)
-
+- Values of `x-ms-keyvault-region` and `x-ms-keyvault-service-version` headers
+  are no longer redacted in logging output.
+- Updated minimum `azure-core` version to 1.4.0
+- `CryptographyClient` will no longer perform encrypt or wrap operations when
+  its key has expired or is not yet valid.
 
 ## 4.2.0b1 (2020-03-10)
 - Support for Key Vault API version 7.1-preview

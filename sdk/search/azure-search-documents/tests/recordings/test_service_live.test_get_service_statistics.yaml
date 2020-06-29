@@ -13,7 +13,7 @@ interactions:
       api-key:
       - 9099402AA5DD674D2F4AB5E4CFAE0073
     method: GET
-    uri: https://searchabe712a7.search.windows.net/servicestats?api-version=2019-05-06-Preview
+    uri: https://searchabe712a7.search.windows.net/servicestats?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchabe712a7.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.ServiceStatistics","counters":{"documentCount":{"usage":0,"quota":null},"indexesCount":{"usage":0,"quota":3},"indexersCount":{"usage":0,"quota":3},"dataSourcesCount":{"usage":0,"quota":3},"storageSize":{"usage":0,"quota":52428800},"synonymMaps":{"usage":0,"quota":3},"skillsetCount":{"usage":0,"quota":3}},"limits":{"maxFieldsPerIndex":1000,"maxFieldNestingDepthPerIndex":10,"maxComplexCollectionFieldsPerIndex":40,"maxComplexObjectsInCollectionsPerDocument":3000}}'

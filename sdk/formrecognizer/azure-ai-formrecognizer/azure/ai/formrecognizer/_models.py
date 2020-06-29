@@ -176,29 +176,6 @@ class RecognizedForm(object):
             self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages)
         )[:1024]
 
-class RecognizedReceipt(RecognizedForm):
-    """Represents a receipt that has been recognized by a trained model.
-
-    :ivar str form_type:
-        The type of form the model identified the submitted form to be.
-    :ivar fields:
-        A dictionary of the fields found on the form. The fields dictionary
-        keys are the `name` of the field. For models trained with labels,
-        this is the training-time label of the field. For models trained
-        without labels, a unique name is generated for each field.
-    :vartype fields: dict[str, ~azure.ai.formrecognizer.FormField]
-    :ivar ~azure.ai.formrecognizer.FormPageRange page_range:
-        The first and last page number of the input form.
-    :ivar list[~azure.ai.formrecognizer.FormPage] pages:
-        A list of pages recognized from the input document. Contains lines,
-        words, tables and page metadata.
-    """
-
-    def __repr__(self):
-        return "RecognizedReceipt(form_type={}, fields={}, page_range={}, pages={})".format(
-            self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages)
-        )[:1024]
-
 
 class FormField(object):
     """Represents a field recognized in an input form.
@@ -540,9 +517,9 @@ class CustomFormModel(object):
         Status indicating the model's readiness for use,
         :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
-    :ivar ~datetime.datetime requested_on:
-        The date and time (UTC) when model training was requested.
-    :ivar ~datetime.datetime completed_on:
+    :ivar ~datetime.datetime training_started_on:
+        The date and time (UTC) when model training was started.
+    :ivar ~datetime.datetime training_completed_on:
         Date and time (UTC) when model training completed.
     :ivar list[~azure.ai.formrecognizer.CustomFormSubmodel] submodels:
         A list of submodels that are part of this model, each of
@@ -556,8 +533,8 @@ class CustomFormModel(object):
     def __init__(self, **kwargs):
         self.model_id = kwargs.get("model_id", None)
         self.status = kwargs.get("status", None)
-        self.requested_on = kwargs.get("requested_on", None)
-        self.completed_on = kwargs.get("completed_on", None)
+        self.training_started_on = kwargs.get("training_started_on", None)
+        self.training_completed_on = kwargs.get("training_completed_on", None)
         self.submodels = kwargs.get("submodels", None)
         self.errors = kwargs.get("errors", None)
         self.training_documents = kwargs.get("training_documents", [])
@@ -567,8 +544,8 @@ class CustomFormModel(object):
         return cls(
             model_id=model.model_info.model_id,
             status=model.model_info.status,
-            requested_on=model.model_info.created_date_time,
-            completed_on=model.model_info.last_updated_date_time,
+            training_started_on=model.model_info.created_date_time,
+            training_completed_on=model.model_info.last_updated_date_time,
             submodels=CustomFormSubmodel._from_generated_unlabeled(model)
             if model.keys else CustomFormSubmodel._from_generated_labeled(model),
             errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
@@ -577,11 +554,10 @@ class CustomFormModel(object):
         )
 
     def __repr__(self):
-        return "CustomFormModel(model_id={}, status={}, requested_on={}, completed_on={}, submodels={}, " \
-                "errors={}, training_documents={})".format(
-                    self.model_id, self.status, self.requested_on, self.completed_on, repr(self.submodels),
-                    repr(self.errors), repr(self.training_documents)
-                )[:1024]
+        return "CustomFormModel(model_id={}, status={}, training_started_on={}, training_completed_on={}, " \
+               "submodels={}, errors={}, training_documents={})".format(
+                    self.model_id, self.status, self.training_started_on, self.training_completed_on,
+                    repr(self.submodels), repr(self.errors), repr(self.training_documents))[:1024]
 
 
 class CustomFormSubmodel(object):
@@ -721,17 +697,17 @@ class CustomFormModelInfo(object):
     :ivar str status:
         The status of the model, :class:`~azure.ai.formrecognizer.CustomFormModelStatus`.
         Possible values include: 'creating', 'ready', 'invalid'.
-    :ivar ~datetime.datetime requested_on:
-        Date and time (UTC) when model training was requested.
-    :ivar ~datetime.datetime completed_on:
+    :ivar ~datetime.datetime training_started_on:
+        Date and time (UTC) when model training was started.
+    :ivar ~datetime.datetime training_completed_on:
         Date and time (UTC) when model training completed.
     """
 
     def __init__(self, **kwargs):
         self.model_id = kwargs.get("model_id", None)
         self.status = kwargs.get("status", None)
-        self.requested_on = kwargs.get("requested_on", None)
-        self.completed_on = kwargs.get("completed_on", None)
+        self.training_started_on = kwargs.get("training_started_on", None)
+        self.training_completed_on = kwargs.get("training_completed_on", None)
 
     @classmethod
     def _from_generated(cls, model, model_id=None):
@@ -740,13 +716,13 @@ class CustomFormModelInfo(object):
         return cls(
             model_id=model_id if model_id else model.model_id,
             status=model.status,
-            requested_on=model.created_date_time,
-            completed_on=model.last_updated_date_time
+            training_started_on=model.created_date_time,
+            training_completed_on=model.last_updated_date_time
         )
 
     def __repr__(self):
-        return "CustomFormModelInfo(model_id={}, status={}, requested_on={}, completed_on={})".format(
-            self.model_id, self.status, self.requested_on, self.completed_on
+        return "CustomFormModelInfo(model_id={}, status={}, training_started_on={}, training_completed_on={})".format(
+            self.model_id, self.status, self.training_started_on, self.training_completed_on
         )[:1024]
 
 

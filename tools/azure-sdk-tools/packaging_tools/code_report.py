@@ -149,6 +149,22 @@ def merge_report(report_paths):
         merged_report["operations"].update(report_json["operations"])
     return merged_report
 
+def filter_track2_versions(package_name, versions):
+    track2_versions = {
+        'azure-mgmt-appconfiguration': '1.0.0',
+        'azure-mgmt-compute':'17.0.0',
+        'azure-mgmt-eventhub':'8.0.0',
+        'azure-mgmt-keyvault':'7.0.0',
+        'azure-mgmt-monitor':'1.0.0',
+        'azure-mgmt-network':'16.0.0',
+        'azure-mgmt-resource':'15.0.0',
+        'azure-mgmt-storage':'16.0.0',
+    }
+    upbound = track2_versions.get(package_name)
+    if not upbound:
+        return versions
+    return list(filter(lambda x: x < upbound, versions))
+
 def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = False, pypi: bool = False, last_pypi: bool = False, output: str = None):
     package_name, module_name = parse_input(input_parameter)
     path_to_package = resolve_package_directory(package_name)
@@ -164,6 +180,7 @@ def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = Fa
             _LOGGER.info(f"Got {versions}")
             if last_pypi:
                 _LOGGER.info(f"Only keep last PyPI version")
+                versions = filter_track2_versions(package_name, versions)
                 versions = [versions[-1]]
 
         for version in versions:

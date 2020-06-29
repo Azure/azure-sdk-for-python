@@ -19,7 +19,7 @@ interactions:
       api-key:
       - 0E3774E832B8584D0AC648C5FAA3D77C
     method: POST
-    uri: https://search51c7106b.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search51c7106b.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search51c7106b.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC9494AD4705\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -39,7 +39,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search51c7106b.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      - https://search51c7106b.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:

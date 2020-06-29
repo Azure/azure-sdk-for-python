@@ -317,8 +317,12 @@ def pack_search_indexer_data_source(search_indexer_data_source):
     # type: (SearchIndexerDataSourceConnection) -> _SearchIndexerDataSource
     if not search_indexer_data_source:
         return None
+    if search_indexer_data_source.connection_string is None or search_indexer_data_source.connection_string == "":
+        connection_string = "<unchanged>"
+    else:
+        connection_string = search_indexer_data_source.connection_string
     credentials = DataSourceCredentials(
-        connection_string=search_indexer_data_source.connection_string
+        connection_string=connection_string
     )
     return _SearchIndexerDataSource(
         name=search_indexer_data_source.name,
@@ -423,11 +427,12 @@ def pack_search_field(search_field):
         )
     fields = [pack_search_field(x) for x in search_field.fields] \
         if search_field.fields else None
+    retrievable = not search_field.hidden if search_field.hidden is not None else None
     return _SearchField(
         name=search_field.name,
         type=search_field.type,
         key=search_field.key,
-        retrievable=not search_field.hidden,
+        retrievable=retrievable,
         searchable=search_field.searchable,
         filterable=search_field.filterable,
         sortable=search_field.sortable,
@@ -446,11 +451,12 @@ def unpack_search_field(search_field):
         return None
     fields = [unpack_search_field(x) for x in search_field.fields] \
         if search_field.fields else None
+    hidden = not search_field.retrievable if search_field.retrievable is not None else None
     return _SearchField(
         name=search_field.name,
         type=search_field.type,
         key=search_field.key,
-        hidden=not search_field.retrievable,
+        hidden=hidden,
         searchable=search_field.searchable,
         filterable=search_field.filterable,
         sortable=search_field.sortable,

@@ -26,7 +26,12 @@ connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes.models import (
-    SearchIndexerDataContainer, SearchIndex, SearchIndexer, SimpleField, SearchFieldDataType
+    SearchIndexerDataContainer,
+    SearchIndexerDataSourceConnection,
+    SearchIndex,
+    SearchIndexer,
+    SimpleField,
+    SearchFieldDataType
 )
 from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 
@@ -46,15 +51,20 @@ def create_indexer():
     # [START create_indexer]
     # create a datasource
     container = SearchIndexerDataContainer(name='searchcontainer')
-    data_source = indexers_client.create_datasource(
+    data_source_connection = SearchIndexerDataSourceConnection(
         name="indexer-datasource",
         type="azureblob",
         connection_string=connection_string,
         container=container
     )
+    data_source = indexers_client.create_data_source_connection(data_source_connection)
 
     # create an indexer
-    indexer = SearchIndexer(name="sample-indexer", data_source_name="indexer-datasource", target_index_name="hotels")
+    indexer = SearchIndexer(
+        name="sample-indexer",
+        data_source_name="indexer-datasource",
+        target_index_name="indexer-hotels"
+    )
     result = indexers_client.create_indexer(indexer)
     print("Create new Indexer - sample-indexer")
     # [END create_indexer]

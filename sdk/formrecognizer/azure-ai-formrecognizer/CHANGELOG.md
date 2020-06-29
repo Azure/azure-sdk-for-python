@@ -1,7 +1,12 @@
 # Change Log azure-ai-formrecognizer
 
 ## 1.0.0b4 (Unreleased)
+**Breaking Changes**
 
+- Remove `RecognizedReceipts` Class.
+- `begin_recognize_receipts` and `begin_recognize_receipts_from_url` now return `RecognizedForm`.
+- `requested_on` renamed to `training_started_on` and `completed_on` renamed to `training_completed_on` on `CustomFormModel`
+and `CustomFormModelInfo`
 
 ## 1.0.0b3 (2020-06-10)
 

@@ -56,7 +56,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: "Any") -> None:
         authority = kwargs.pop("authority", None)
         authority = normalize_authority(authority) if authority else get_default_authority()
 

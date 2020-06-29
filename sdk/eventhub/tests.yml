@@ -1,12 +1,5 @@
 trigger: none
 
-resources:
-  repositories:
-    - repository: azure-sdk-tools
-      type: github
-      name: Azure/azure-sdk-tools
-      endpoint: azure
-
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
@@ -14,19 +7,15 @@ jobs:
       ServiceDirectory: eventhub
       Matrix:
         Linux_Python35:
-          OSName: 'Linux'
           OSVmImage: 'ubuntu-18.04'
           PythonVersion: '3.5'
         Linux_Python38:
-          OSName: 'Linux'
           OSVmImage: 'ubuntu-18.04'
           PythonVersion: '3.8'
         Windows_Python27:
-          OSName: 'Windows'
           OSVmImage: 'windows-2019'
           PythonVersion: '2.7'
         MacOs_Python37:
-          OSName: 'MacOS'
           OSVmImage: 'macOS-10.15'
           PythonVersion: '3.7'
       EnvVars:

@@ -25,7 +25,7 @@ def convert_search_result(result):
 
 
 def pack_continuation_token(response):
-    api_version = "2019-05-06-Preview"
+    api_version = "2020-06-30"
     if response.next_page_parameters is not None:
         token = {
             "apiVersion": api_version,

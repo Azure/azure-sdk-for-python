@@ -19,7 +19,7 @@ interactions:
       api-key:
       - 0DBCB3E23D05E4915AB588A0A3E6A929
     method: POST
-    uri: https://search3c8b19c7.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search3c8b19c7.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search3c8b19c7.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7ED71775A7B36\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -39,7 +39,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search3c8b19c7.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      - https://search3c8b19c7.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -75,7 +75,7 @@ interactions:
       api-key:
       - 0DBCB3E23D05E4915AB588A0A3E6A929
     method: PUT
-    uri: https://search3c8b19c7.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+    uri: https://search3c8b19c7.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search3c8b19c7.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7ED717773D43C\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -133,7 +133,7 @@ interactions:
       api-key:
       - 0DBCB3E23D05E4915AB588A0A3E6A929
     method: PUT
-    uri: https://search3c8b19c7.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+    uri: https://search3c8b19c7.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the

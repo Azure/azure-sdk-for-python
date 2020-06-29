@@ -1,7 +1,14 @@
 # Release History
 
-## 12.0.2 (Unreleased)
+## 12.0.3 (Unreleased)
 
+
+## 12.0.2 (2020-6-12)
+**Fixes**
+- Improve the performance of upload when using max_concurrency
+
+**Notes**
+- Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.6.0
 
 ## 12.0.1 (2020-04-29)
 **Fixes**
