@@ -6,6 +6,7 @@
 
 from azure.table._deserialization import _convert_to_entity
 from azure.table._entity import Entity
+from azure.table._shared.models import Services
 from azure.table._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
@@ -389,7 +390,7 @@ def service_properties_deserialize(generated):
     }
 
 
-class TableServices():
+class TableServices(Services):
     def __str__(self):
         return 't'
 
