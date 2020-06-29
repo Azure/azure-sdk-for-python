@@ -19,7 +19,7 @@ interactions:
       api-key:
       - 371E8B1C08DCB8B5AEF87D7E375D42AE
     method: POST
-    uri: https://searchf0dc189a.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://searchf0dc189a.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchf0dc189a.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EE1DB1EEB45B\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -39,7 +39,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://searchf0dc189a.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      - https://searchf0dc189a.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -75,7 +75,7 @@ interactions:
       api-key:
       - 371E8B1C08DCB8B5AEF87D7E375D42AE
     method: PUT
-    uri: https://searchf0dc189a.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+    uri: https://searchf0dc189a.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchf0dc189a.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EE1DB20218D0\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'

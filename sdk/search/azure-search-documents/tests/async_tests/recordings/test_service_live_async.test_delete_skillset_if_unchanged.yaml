@@ -15,7 +15,7 @@ interactions:
       api-key:
       - 657C58F25F5510BEB3AB19482A2E8DD3
     method: POST
-    uri: https://searcha9e81761.search.windows.net/skillsets?api-version=2019-05-06-Preview
+    uri: https://searcha9e81761.search.windows.net/skillsets?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searcha9e81761.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D7ED71D4C7EB65\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null}'
@@ -27,7 +27,7 @@ interactions:
       elapsed-time: '46'
       etag: W/"0x8D7ED71D4C7EB65"
       expires: '-1'
-      location: https://searcha9e81761.search.windows.net/skillsets('test-ss')?api-version=2019-05-06-Preview
+      location: https://searcha9e81761.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -42,7 +42,7 @@ interactions:
         - https
         - searcha9e81761.search.windows.net
         - /skillsets
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: '{"name": "test-ss", "description": "updated", "skills": [{"@odata.type":
@@ -63,7 +63,7 @@ interactions:
       api-key:
       - 657C58F25F5510BEB3AB19482A2E8DD3
     method: PUT
-    uri: https://searcha9e81761.search.windows.net/skillsets('test-ss')?api-version=2019-05-06-Preview
+    uri: https://searcha9e81761.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searcha9e81761.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D7ED71D4DADAA4\"","name":"test-ss","description":"updated","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null}'
@@ -91,7 +91,7 @@ interactions:
         - https
         - searcha9e81761.search.windows.net
         - /skillsets('test-ss')
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: null
@@ -105,7 +105,7 @@ interactions:
       api-key:
       - 657C58F25F5510BEB3AB19482A2E8DD3
     method: DELETE
-    uri: https://searcha9e81761.search.windows.net/skillsets('test-ss')?api-version=2019-05-06-Preview
+    uri: https://searcha9e81761.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the
@@ -133,6 +133,6 @@ interactions:
         - https
         - searcha9e81761.search.windows.net
         - /skillsets('test-ss')
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 version: 1

@@ -14,7 +14,7 @@ interactions:
       api-key:
       - B14D2D6E7CAFAD9A092431020450EC29
     method: POST
-    uri: https://search7658115b.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search7658115b.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search7658115b.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7ED527A604F84\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -26,7 +26,7 @@ interactions:
       elapsed-time: '28'
       etag: W/"0x8D7ED527A604F84"
       expires: '-1'
-      location: https://search7658115b.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      location: https://search7658115b.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -41,7 +41,7 @@ interactions:
         - https
         - search7658115b.search.windows.net
         - /datasources
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: '{"name": "hotels", "fields": [{"name": "hotelId", "type": "Edm.String",
@@ -58,7 +58,7 @@ interactions:
       api-key:
       - B14D2D6E7CAFAD9A092431020450EC29
     method: POST
-    uri: https://search7658115b.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://search7658115b.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search7658115b.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7ED527AF1D480\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
@@ -70,7 +70,7 @@ interactions:
       elapsed-time: '825'
       etag: W/"0x8D7ED527AF1D480"
       expires: '-1'
-      location: https://search7658115b.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+      location: https://search7658115b.search.windows.net/indexes('hotels')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -85,7 +85,7 @@ interactions:
         - https
         - search7658115b.search.windows.net
         - /indexes
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: '{"name": "sample-indexer", "dataSourceName": "sample-datasource", "targetIndexName":
@@ -102,7 +102,7 @@ interactions:
       api-key:
       - B14D2D6E7CAFAD9A092431020450EC29
     method: POST
-    uri: https://search7658115b.search.windows.net/indexers?api-version=2019-05-06-Preview
+    uri: https://search7658115b.search.windows.net/indexers?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search7658115b.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D7ED527B299070\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null}'
@@ -114,7 +114,7 @@ interactions:
       elapsed-time: '215'
       etag: W/"0x8D7ED527B299070"
       expires: '-1'
-      location: https://search7658115b.search.windows.net/indexers('sample-indexer')?api-version=2019-05-06-Preview
+      location: https://search7658115b.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -129,7 +129,7 @@ interactions:
         - https
         - search7658115b.search.windows.net
         - /indexers
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: null
@@ -141,7 +141,7 @@ interactions:
       api-key:
       - B14D2D6E7CAFAD9A092431020450EC29
     method: GET
-    uri: https://search7658115b.search.windows.net/indexers?api-version=2019-05-06-Preview
+    uri: https://search7658115b.search.windows.net/indexers?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search7658115b.search.windows.net/$metadata#indexers","value":[{"@odata.etag":"\"0x8D7ED527B299070\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null}]}'
@@ -168,7 +168,7 @@ interactions:
         - https
         - search7658115b.search.windows.net
         - /indexers
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: null
@@ -180,7 +180,7 @@ interactions:
       api-key:
       - B14D2D6E7CAFAD9A092431020450EC29
     method: POST
-    uri: https://search7658115b.search.windows.net/indexers('sample-indexer')/search.reset?api-version=2019-05-06-Preview
+    uri: https://search7658115b.search.windows.net/indexers('sample-indexer')/search.reset?api-version=2020-06-30
   response:
     body:
       string: ''
@@ -201,7 +201,7 @@ interactions:
         - https
         - search7658115b.search.windows.net
         - /indexers('sample-indexer')/search.reset
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: null
@@ -213,7 +213,7 @@ interactions:
       api-key:
       - B14D2D6E7CAFAD9A092431020450EC29
     method: GET
-    uri: https://search7658115b.search.windows.net/indexers('sample-indexer')/search.status?api-version=2019-05-06-Preview
+    uri: https://search7658115b.search.windows.net/indexers('sample-indexer')/search.status?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search7658115b.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.IndexerExecutionInfo","name":"sample-indexer","status":"running","lastResult":{"status":"reset","errorMessage":null,"startTime":"2020-04-30T22:04:40.722Z","endTime":"2020-04-30T22:04:40.722Z","itemsProcessed":0,"itemsFailed":0,"initialTrackingState":null,"finalTrackingState":null,"errors":[],"warnings":[],"metrics":null},"executionHistory":[{"status":"reset","errorMessage":null,"startTime":"2020-04-30T22:04:40.722Z","endTime":"2020-04-30T22:04:40.722Z","itemsProcessed":0,"itemsFailed":0,"initialTrackingState":null,"finalTrackingState":null,"errors":[],"warnings":[],"metrics":null}],"limits":null}'
@@ -240,6 +240,6 @@ interactions:
         - https
         - search7658115b.search.windows.net
         - /indexers('sample-indexer')/search.status
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 version: 1

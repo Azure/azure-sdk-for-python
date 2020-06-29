@@ -15,7 +15,7 @@ interactions:
       api-key:
       - A4A43DF80FCD8A1D7FC1AEE02327E6B9
     method: POST
-    uri: https://search386b1565.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search386b1565.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search386b1565.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC95A74EC6BF\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -27,7 +27,7 @@ interactions:
       elapsed-time: '32'
       etag: W/"0x8D7EC95A74EC6BF"
       expires: '-1'
-      location: https://search386b1565.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      location: https://search386b1565.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -36,5 +36,5 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://search386b1565.search.windows.net/datasources?api-version=2019-05-06-Preview
+    url: https://search386b1565.search.windows.net/datasources?api-version=2020-06-30
 version: 1
