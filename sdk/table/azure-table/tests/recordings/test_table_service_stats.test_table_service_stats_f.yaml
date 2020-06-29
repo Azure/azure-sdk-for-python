@@ -9,11 +9,11 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 29 Jun 2020 16:16:45 GMT
+      - Mon, 29 Jun 2020 16:16:22 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 29 Jun 2020 16:16:45 GMT
+      - Mon, 29 Jun 2020 16:16:22 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Mon, 29 Jun 2020 16:16:44 GMT
+      - Mon, 29 Jun 2020 16:16:22 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
