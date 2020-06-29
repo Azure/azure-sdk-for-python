@@ -114,9 +114,6 @@ class SharedTokenCacheBase(ABC):
         self._initialized = False
 
     def _initialize(self):
-        if self._initialized:
-            return
-
         if not self._cache and self.supported():
             allow_unencrypted = self._client_kwargs.pop("allow_unencrypted_cache", False)
             try:
