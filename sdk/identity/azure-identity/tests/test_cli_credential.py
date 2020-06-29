@@ -138,8 +138,3 @@ def test_subprocess_error_does_not_expose_token(output):
 
     assert "secret value" not in str(ex.value)
     assert "secret value" not in repr(ex.value)
-
-
-def test_token_refresh_offset():
-    credential = AzureCliCredential()
-    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET

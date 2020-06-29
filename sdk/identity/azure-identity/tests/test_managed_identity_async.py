@@ -309,3 +309,6 @@ async def test_imds_user_assigned_identity():
 async def test_token_refresh_offset():
     credential = ManagedIdentityCredential()
     assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET
+
+    credential = ManagedIdentityCredential(token_refresh_offset=100)
+    assert credential.token_refresh_offset == 100

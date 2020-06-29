@@ -88,7 +88,7 @@ class AuthnClientBase(ABC):
 
     @property
     def token_refresh_offset(self):
-        # type: (None) -> int
+        # type: () -> int
         return self._token_refresh_offset
 
     def get_cached_token(self, scopes):

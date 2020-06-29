@@ -60,5 +60,5 @@ class CertificateCredentialBase(ABC):
 
     @property
     def token_refresh_offset(self):
-        # type: (None) -> int
+        # type: () -> int
         return self._client.token_refresh_offset

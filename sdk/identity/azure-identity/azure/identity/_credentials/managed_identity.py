@@ -76,7 +76,7 @@ class ManagedIdentityCredential(object):
 
     @property
     def token_refresh_offset(self):
-        # type: (None) -> int
+        # type: () -> int
         return self._credential.token_refresh_offset
 
 class _ManagedIdentityBase(object):
@@ -136,7 +136,7 @@ class _ManagedIdentityBase(object):
 
     @property
     def token_refresh_offset(self):
-        # type: (None) -> int
+        # type: () -> int
         return self._client.token_refresh_offset
 
 

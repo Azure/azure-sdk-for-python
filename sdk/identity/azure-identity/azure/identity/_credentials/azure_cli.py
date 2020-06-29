@@ -62,10 +62,6 @@ class AzureCliCredential(object):
 
         return token
 
-    @property
-    def token_refresh_offset(self):
-        # type: (None) -> int
-        return DEFAULT_REFRESH_OFFSET
 
 def parse_token(output):
     """Parse output of 'az account get-access-token' to an AccessToken.

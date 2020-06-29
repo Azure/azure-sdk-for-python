@@ -231,8 +231,8 @@ class SharedTokenCacheBase(ABC):
 
     @property
     def token_refresh_offset(self):
-        # type: (None) -> int
-        return DEFAULT_REFRESH_OFFSET
+        # type: () -> int
+        return 300
 
     @staticmethod
     def supported():

@@ -265,3 +265,6 @@ async def test_persistent_cache_multiple_clients():
 async def test_token_refresh_offset():
     credential = ClientSecretCredential("tenant-id", "client-id", "client-secret")
     assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET
+
+    credential = ClientSecretCredential("tenant-id", "client-id", "client-secret", token_refresh_offset=100)
+    assert credential.token_refresh_offset == 100

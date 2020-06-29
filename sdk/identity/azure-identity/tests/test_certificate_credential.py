@@ -245,3 +245,6 @@ def test_persistent_cache_multiple_clients(cert_path, cert_password):
 def test_token_refresh_offset():
     credential = CertificateCredential("tenant-id", "client-id", CERT_PATH)
     assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET
+
+    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH, token_refresh_offset=100)
+    assert credential.token_refresh_offset == 100

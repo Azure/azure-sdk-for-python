@@ -139,7 +139,7 @@ class MsalCredential(ABC):
 
     @property
     def token_refresh_offset(self):
-        # type: (None) -> int
+        # type: () -> int
         return DEFAULT_REFRESH_OFFSET
 
 

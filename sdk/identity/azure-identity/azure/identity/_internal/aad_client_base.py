@@ -103,7 +103,7 @@ class AadClientBase(ABC):
 
     @property
     def token_refresh_offset(self):
-        # type: (None) -> int
+        # type: () -> int
         return self._token_refresh_offset
 
     def _process_response(self, response, request_time):

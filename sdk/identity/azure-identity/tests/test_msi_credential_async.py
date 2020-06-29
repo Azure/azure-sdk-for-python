@@ -147,3 +147,6 @@ async def test_token_refresh_offset():
     ):
         credential = MsiCredential()
         assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET
+
+        credential = MsiCredential(token_refresh_offset=100)
+        assert credential.token_refresh_offset == 100
