@@ -21,7 +21,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
     while utilizing a session for FIFO and ownership semantics.
 
     The two primary channels for message receipt are `receive()` to make a single request for messages,
-    and `for message in receiver:` to continuously receive incoming messages in an ongoing fashion.
+    and `async for message in receiver:` to continuously receive incoming messages in an ongoing fashion.
 
     :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.

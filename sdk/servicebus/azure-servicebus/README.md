@@ -124,6 +124,7 @@ The following sections provide several code snippets covering some of the most c
 * [Send messages to a queue](#send-messages-to-a-queue)
 * [Receive messages from a queue](#receive-messages-from-a-queue)
 * [Send and receive a message from a session enabled subscription](#sending-and-receiving-a-message-from-a-session-enabled-subscription)
+* [Working with topics and subscriptions](#working-with-topics-and-subscriptions)
 * [Settle a message after receipt](#settle-a-message-after-receipt)
 
 To perform management tasks such as creating and deleting queues/topics/subscriptions, please utilize the azure-mgmt-servicebus library, available [here][servicebus_management_repository].
@@ -263,8 +264,8 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 When receiving from a queue, you have multiple actions you can take on the messages you receive.
 
-> **NOTE**: You can only settle `ReceivedMessage` objects having been returned from `ServiceBusReceiver.receive()` and `ServiceBusReceive.__iter__()` in `ReceiveSettleMode.PeekLock` mode
-> (this is the default).  `ReceiveSettleMode.ReceiveAndDelete` mode removes the message from the queue on receipt.  `PeekMessage` messages
+> **NOTE**: You can only settle `ReceivedMessage` objects which are received in `ReceiveSettleMode.PeekLock` mode (this is the default).
+> `ReceiveSettleMode.ReceiveAndDelete` mode removes the message from the queue on receipt.  `PeekMessage` messages
 > returned from `peek()` cannot be settled, as the message lock is not taken like it is in the aforementioned receive methods.  Sessionful messages have a similar limitation.
 
 If the message has a lock as mentioned above, settlement will fail if the message lock has expired.  
@@ -361,7 +362,7 @@ be transparent to a user, but if you notice a reconnect occurring after such a d
 link will extend this timeout.
 - idle_timeout: Provided on creation of a receiver, the time after which the underlying UAMQP link will be closed after no traffic.  This primarily dictates the length
 a generator-style receive will run for before exiting if there are no messages.  Passing None (default) will wait forever, up until the 10 minute threshold if no other action is taken.
-- max_wait_time: Provided when calling receive() to fetch a list of messages.  Dictates how long the receive() will wait for more messages before returning, similarly up to the aformentioned limits.
+- max_wait_time: Provided when calling receive() to fetch a list of messages.  Dictates an upper bound for how long the receive() will wait for more messages before returning, similarly up to the aformentioned limits.  The "receive()" will return as soon as at least one message is received within the max_wait_time.
 
 > **NOTE:** If processing of a message or session is sufficiently long as to cause timeouts, as an alternative to calling `renew_lock()` manually, one can
 > leverage the `AutoLockRenew` functionality detailed below.
