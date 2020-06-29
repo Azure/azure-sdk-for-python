@@ -17,7 +17,7 @@ from datetime import (
 
 from azure.table._generated.models import AccessPolicy, QueryOptions
 from azure.table._models import TableSasPermissions
-from azure.table._shared.models import ResourceTypes
+from azure.table._shared.models import ResourceTypes, AccountSasPermissions
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     HeadersPolicy,
@@ -381,16 +381,18 @@ class StorageTableTest(TableTestCase):
                 'RowKey': 'test1',
                 'text': 'hello',
             }
-            table.upsert_insert_update_entity(table_entity_properties=entity)
+            table.upsert_insert_merge_entity(table_entity_properties=entity)
 
             entity['RowKey'] = 'test2'
-            table.upsert_insert_update_entity(table_entity_properties=entity)
+            table.upsert_insert_merge_entity(table_entity_properties=entity)
 
             token = generate_account_shared_access_signature(
-                storage_account.name, storage_account_key,
-                ResourceTypes(object=True),
-                TableSasPermissions(update=True),
-                datetime.utcnow() + timedelta(hours=1),
+                storage_account.name,
+                storage_account_key,
+                resource_types=ResourceTypes(object=True),
+                permission=AccountSasPermissions(read=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+                start=datetime.utcnow() - timedelta(minutes=1),
             )
 
             # Act
@@ -398,18 +400,16 @@ class StorageTableTest(TableTestCase):
                 self.account_url(storage_account, "table"),
                 credential=token,
             )
-
             sas_table = service.get_table_client(table.table_name)
-            # this works to here - authenticate up to here and gets table client
-            entity['text'] = 'meow'
-            entities = (sas_table.update_entity(table_entity_properties=entity))
+            entities = list(sas_table.query_entities())
 
             # Assert
             self.assertEqual(len(entities), 2)
             self.assertEqual(entities[0].text, 'hello')
             self.assertEqual(entities[1].text, 'hello')
         finally:
-            tsc.delete_table(table.table_name)
+            self._delete_table(table=table,ts=tsc)
+
 
     @pytest.mark.skip("msrest fails deserialization: https://github.com/Azure/msrest-for-python/issues/192")
     @GlobalStorageAccountPreparer()
