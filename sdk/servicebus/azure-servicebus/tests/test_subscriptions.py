@@ -42,7 +42,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
         ) as sb_client:
             with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
                 message = Message(b"Sample topic message")
-                sender.send(message)
+                sender.send_messages(message)
 
             with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
@@ -74,7 +74,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
 
             with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
                 message = Message(b"Sample topic message")
-                sender.send(message)
+                sender.send_messages(message)
 
             with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
@@ -132,7 +132,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                     for i in range(10):
                         message = Message("Dead lettered message no. {}".format(i))
-                        sender.send(message)
+                        sender.send_messages(message)
 
                 count = 0
                 messages = receiver.receive_messages()

@@ -47,21 +47,21 @@ semantics with the sender or receiver lifetime.
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `QueueClient.from_connection_string().send()  and ServiceBusClient.from_connection_string().get_queue().get_sender().send()`| `ServiceBusClient.from_connection_string().get_queue_sender().send()`| [Get a sender and send a message](./samples/sync_samples/send_queue.py) |
-| `queue_client.send(BatchMessage(["data 1", "data 2", ...]))`| `batch = queue_sender.create_batch()  batch.add(Message("data 1"))  queue_sender.send(batch)`| [Create and send a batch of messages](./samples/sync_samples/send_queue.py) |
+| `QueueClient.from_connection_string().send()  and ServiceBusClient.from_connection_string().get_queue().get_sender().send()`| `ServiceBusClient.from_connection_string().get_queue_sender().send_messages()`| [Get a sender and send a message](./samples/sync_samples/send_queue.py) |
+| `queue_client.send(BatchMessage(["data 1", "data 2", ...]))`| `batch = queue_sender.create_batch()  batch.add(Message("data 1"))  queue_sender.send_messages(batch)`| [Create and send a batch of messages](./samples/sync_samples/send_queue.py) |
 
 ### Scheduling messages and cancelling scheduled messages 
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `queue_client.get_sender().schedule(schedule_time_utc, message1, message2)` | `sb_client.get_queue_sender().schedule([message1, message2], schedule_time_utc)` | [Schedule messages](./samples/sync_samples/schedule_messages_and_cancellation.py) |
+| `queue_client.get_sender().schedule(schedule_time_utc, message1, message2)` | `sb_client.get_queue_sender().schedule_messages([message1, message2], schedule_time_utc)` | [Schedule messages](./samples/sync_samples/schedule_messages_and_cancellation.py) |
 | `queue_client.get_sender().cancel_scheduled_messages(sequence_number1, sequence_number2)`| `sb_client.get_queue_sender().cancel_scheduled_messages([sequence_number1, sequence_number2])` | [Cancel scheduled messages](./samples/sync_samples/schedule_messages_and_cancellation.py)|
 
 ### Working with sessions
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send(Message('body', session_id='foo'))`| [Send a message to a session](./samples/sync_samples/session_send_receive.py) |
+| `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send_messages(Message('body', session_id='foo'))`| [Send a message to a session](./samples/sync_samples/session_send_receive.py) |
 | `AutoLockRenew().register(queue_client.get_receiver(session='foo'))`| `AutoLockRenew().register(sb_client.get_queue_session_receiver(session_id='foo').session)`| [Access a session and ensure its lock is auto-renewed](./samples/sync_samples/session_send_receive.py) |
 | `receiver.get_session_state()` | `receiver.session.get_session_state()` | [Perform session specific operations on a receiver](./samples/sync_samples/session_send_receive.py)
 
@@ -149,12 +149,12 @@ with queue_client.get_sender() as sender:
     # Send one at a time.
     for i in range(100):
         message = Message("Sample message no. {}".format(i))
-        sender.send(message)
+        sender.schedule_messages(message)
 
     # Send as a batch.
     messages_to_batch = [Message("Batch message no. {}".format(i)) for i in range(10)]
     batch = BatchMessage(messages_to_batch)
-    sender.send(batch)
+    sender.schedule_messages(batch)
 ```
 
 In v7:
@@ -165,11 +165,11 @@ with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
         # Sending one at a time.
         for i in range(100):
             message = Message("Sample message no. {}".format(i))
-            sender.send(message)
+            sender.schedule_messages(message)
 
         # Send as a batch
         batch = new BatchMessage()
         for i in range(10):
             batch.add(Message("Batch message no. {}".format(i)))
-        sender.send(batch)
+        sender.schedule_messages(batch)
 ```

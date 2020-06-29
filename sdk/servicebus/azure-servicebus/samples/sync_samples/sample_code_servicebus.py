@@ -189,7 +189,7 @@ def example_send_and_receive_sync():
     # [START send_sync]
     with servicebus_sender:
         message = Message("Hello World")
-        servicebus_sender.send(message)
+        servicebus_sender.send_messages(message)
     # [END send_sync]
 
     # [START create_batch_sync]
@@ -256,7 +256,7 @@ def example_receive_deferred_sync():
     servicebus_sender = example_create_servicebus_sender_sync()
     servicebus_receiver = example_create_servicebus_receiver_sync()
     with servicebus_sender:
-        servicebus_sender.send(Message("Hello World"))
+        servicebus_sender.send_messages(Message("Hello World"))
     # [START receive_defer_sync]
     with servicebus_receiver:
         deferred_sequenced_numbers = []
@@ -325,7 +325,7 @@ def example_schedule_ops_sync():
     with servicebus_sender:
         scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
         scheduled_messages = [Message("Scheduled message") for _ in range(10)]
-        sequence_nums = servicebus_sender.schedule(scheduled_messages, scheduled_time_utc)
+        sequence_nums = servicebus_sender.schedule_messages(scheduled_messages, scheduled_time_utc)
     # [END scheduling_messages]
 
     # [START cancel_scheduled_messages]

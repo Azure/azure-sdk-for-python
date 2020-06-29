@@ -145,7 +145,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_sender(queue_name) as sender:
 
         message = Message("Single message")
-        sender.send(message)
+        sender.send_messages(message)
 ```
 
 ### Receive a message from a queue
@@ -181,7 +181,7 @@ session_id = os.environ.get('SERVICE_BUS_SESSION_ID')
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_topic_sender(topic_name) as sender:
-        sender.send(Message("Session Enabled Message", session_id=session_id))
+        sender.send_messages(Message("Session Enabled Message", session_id=session_id))
 
     # If session_id is null here, will receive from the first available session.
     with client.get_subscription_session_receiver(topic_name, subscription_name, session_id) as receiver:
