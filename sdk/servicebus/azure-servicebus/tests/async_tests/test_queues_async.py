@@ -1137,3 +1137,30 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
         with pytest.raises(ServiceBusError):
             auto_lock_renew.register(renewable=MockReceivedMessage())
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    async def test_async_queue_receive_batch_without_setting_prefetch(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            def message_content():
+                for i in range(20):
+                    yield Message("Message no. {}".format(i))
+
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = BatchMessage()
+                for each in message_content():
+                    message.add(each)
+                await sender.send(message)
+
+            async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                messages = await receiver.receive(max_batch_size=20, max_wait_time=5)
+
+                assert len(messages) == 20
+                for m in messages:
+                    print_message(_logger, m)
+                    await m.complete()

@@ -7,6 +7,10 @@
 * Fixed bug where sync AutoLockRenew does not shutdown itself timely.
 * Fixed bug where async AutoLockRenew does not support context manager.
 
+**Breaking Changes**
+
+* `ServiceBusReceiver.receive` now supports receiving a batch of messages without the need to adjust prefetch value when creating `ServiceBusReceiver` and it won't raise `ValueError` anymore if `max_batch_size` value is less than `prefetch` value.
+
 ## 7.0.0b3 (2020-06-08)
 
 **New Features**

@@ -44,6 +44,10 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         if int(prefetch) < 0 or int(prefetch) > 50000:
             raise ValueError("Prefetch must be an integer between 0 and 50000 inclusive.")
         self._prefetch = prefetch + 1
+        # The relationship between the amount can be received and the time interval is linear: amount ~= perf * interval
+        # In large max_batch_size case, like 5000, the pull receive would always return hundreds of messages limited by
+        # the perf and time.
+        self._further_pull_receive_timeout_ms = 200
         self._idle_timeout = kwargs.get("idle_timeout", None)
 
     def _build_message(self, received, message_type=ReceivedMessage):

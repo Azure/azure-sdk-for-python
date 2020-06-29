@@ -6,7 +6,7 @@ import asyncio
 import collections
 import functools
 import logging
-from typing import Any, TYPE_CHECKING, List
+from typing import Any, TYPE_CHECKING, List, Optional
 
 from uamqp import ReceiveClientAsync, types
 from uamqp.constants import SenderSettleMode
@@ -174,14 +174,46 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise
 
     async def _receive(self, max_batch_size=None, timeout=None):
+        # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
+        # pylint: disable=protected-access
         await self._open()
-        max_batch_size = max_batch_size or self._handler._prefetch  # pylint: disable=protected-access
 
+        amqp_receive_client = self._handler
+        received_messages_queue = amqp_receive_client._received_messages
+        max_batch_size = max_batch_size or self._prefetch
         timeout_ms = 1000 * (timeout or self._idle_timeout) if (timeout or self._idle_timeout) else 0
-        batch = await self._handler.receive_message_batch_async(
-            max_batch_size=max_batch_size,
-            timeout=timeout_ms
-        )
+        abs_timeout_ms = amqp_receive_client._counter.get_current_ms() + timeout_ms if timeout_ms else 0
+
+        batch = []
+        while not received_messages_queue.empty() and len(batch) < max_batch_size:
+            batch.append(received_messages_queue.get())
+            received_messages_queue.task_done()
+        if len(batch) >= max_batch_size:
+            return batch
+
+        # Dynamically issue link credit if max_batch_size > 1 when the prefetch is the default value 1
+        if max_batch_size and self._prefetch == 1 and max_batch_size > 1:
+            link_credit_needed = max_batch_size - len(batch)
+            await amqp_receive_client.message_handler.reset_link_credit_async(link_credit_needed)
+
+        first_message_received = expired = False
+        receiving = True
+        while receiving and not expired and len(batch) < max_batch_size:
+            while receiving and received_messages_queue.qsize() < max_batch_size:
+                if abs_timeout_ms and amqp_receive_client._counter.get_current_ms() > abs_timeout_ms:
+                    expired = True
+                    break
+                before = received_messages_queue.qsize()
+                receiving = await amqp_receive_client.do_work_async()
+                received = received_messages_queue.qsize() - before
+                if not first_message_received and received_messages_queue.qsize() > 0 and received > 0:
+                    # first message(s) received, continue receiving for some time
+                    first_message_received = True
+                    abs_timeout_ms = amqp_receive_client._counter.get_current_ms() + \
+                                     self._further_pull_receive_timeout_ms
+            while not received_messages_queue.empty() and len(batch) < max_batch_size:
+                batch.append(received_messages_queue.get())
+                received_messages_queue.task_done()
 
         return [self._build_message(message, ReceivedMessage) for message in batch]
 
@@ -297,9 +329,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         """
         self._check_live()
-        if max_batch_size and self._prefetch < max_batch_size:
-            raise ValueError("max_batch_size should be less than or equal to prefetch of ServiceBusReceiver, or you "
-                             "could set a larger prefetch value when you're constructing the ServiceBusReceiver.")
         return await self._do_retryable_operation(
             self._receive,
             max_batch_size=max_batch_size,
