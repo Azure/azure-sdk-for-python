@@ -264,13 +264,15 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
         try:
-            queue_name = queue.name
+            queue_name = queue.name  # type: ignore
         except AttributeError:
             queue_name = queue
         if not queue_name:
             raise ValueError("queue_name must not be None or empty")
         with _handle_response_error():
-            self._impl.entity.delete(queue_name, api_version=constants.API_VERSION, **kwargs)
+            self._impl.entity.delete(
+                queue_name,   # type: ignore
+                api_version=constants.API_VERSION, **kwargs)
 
     def list_queues(self, **kwargs):
         # type: (Any) -> ItemPaged[QueueDescription]
@@ -396,7 +398,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :param ~azure.servicebus.management.TopicDescription topic_description: The topic to be updated.
         :keyword timedelta default_message_time_to_live: The value you want to update to.
         :keyword timedelta duplicate_detection_history_time_window: The value you want to update to.
-        :rtype： None
+        :rtype: None
         """
 
         if not isinstance(topic_description, TopicDescription):
@@ -436,7 +438,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
         self._impl.entity.delete(topic_name, api_version=constants.API_VERSION, **kwargs)
@@ -494,7 +496,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: ~azure.servicebus.management.SubscriptionDescription
         """
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
         entry_ele = self._get_subscription_element(topic_name, subscription_name, **kwargs)
@@ -515,7 +517,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: ~azure.servicebus.management.SubscriptionRuntimeInfo
         """
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
         entry_ele = self._get_subscription_element(topic_name, subscription_name, **kwargs)
@@ -538,7 +540,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype:  ~azure.servicebus.management.SubscriptionDescription
         """
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
         try:
@@ -582,7 +584,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
         if not isinstance(subscription_description, SubscriptionDescription):
@@ -619,11 +621,11 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
         try:
-            subscription_name = subscription.name
+            subscription_name = subscription.name  # type: ignore
         except AttributeError:
             subscription_name = subscription
         self._impl.subscription.delete(topic_name, subscription_name, api_version=constants.API_VERSION, **kwargs)
@@ -638,7 +640,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: ItemPaged[~azure.servicebus.management.SubscriptionDescription]
         """
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
 
@@ -666,7 +668,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: ItemPaged[~azure.servicebus.management.SubscriptionRuntimeInfo]
         """
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
 
@@ -694,11 +696,11 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: ~azure.servicebus.management.RuleDescription
         """
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
         try:
-            subscription_name = subscription.name
+            subscription_name = subscription.name  # type: ignore
         except AttributeError:
             subscription_name = subscription
         entry_ele = self._get_rule_element(topic_name, subscription_name, rule_name, **kwargs)
@@ -711,7 +713,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         return rule_description
 
     def create_rule(self, topic, subscription, rule, **kwargs):
-        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], str, Union[str, RuleDescription]) -> RuleDescription  # pylint:disable=line-too-long
+        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], Union[str, RuleDescription], Any) -> RuleDescription  # pylint:disable=line-too-long
         """Create a subscription of a topic.
 
         :param Union[str, TopicDescription] topic: The topic that will own the to-be-created subscription rule.
@@ -722,15 +724,15 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: ~azure.servicebus.management.RuleDescription
         """
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
         try:
-            subscription_name = subscription.name
+            subscription_name = subscription.name  # type: ignore
         except AttributeError:
             subscription_name = subscription
         try:
-            rule_name = rule.name
+            rule_name = rule.name  # type: ignore
             to_create = rule._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
         except AttributeError:
             rule_name = rule
@@ -768,11 +770,11 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         """
 
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
         try:
-            subscription_name = subscription.name
+            subscription_name = subscription.name  # type: ignore
         except AttributeError:
             subscription_name = subscription
 
@@ -806,15 +808,15 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
         try:
-            subscription_name = subscription.name
+            subscription_name = subscription.name  # type: ignore
         except AttributeError:
             subscription_name = subscription
         try:
-            rule_name = rule.name
+            rule_name = rule.name  # type: ignore
         except AttributeError:
             rule_name = rule
         self._impl.rule.delete(topic_name, subscription_name, rule_name, api_version=constants.API_VERSION, **kwargs)
@@ -830,11 +832,11 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: ItemPaged[~azure.servicebus.management.RuleDescription]
         """
         try:
-            topic_name = topic.name
+            topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
         try:
-            subscription_name = subscription.name
+            subscription_name = subscription.name  # type: ignore
         except AttributeError:
             subscription_name = subscription
 

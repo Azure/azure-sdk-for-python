@@ -5,8 +5,8 @@
 # pylint:disable=protected-access
 from collections import OrderedDict
 from copy import deepcopy
-
-from azure.servicebus.management._generated.models import KeyValue
+from typing import Type, Dict
+from msrest.serialization import Model
 
 from ._generated.models import QueueDescription as InternalQueueDescription, \
     TopicDescription as InternalTopicDescription, \
@@ -15,7 +15,8 @@ from ._generated.models import QueueDescription as InternalQueueDescription, \
     SqlRuleAction as InternalSqlRuleAction, \
     EmptyRuleAction as InternalEmptyRuleAction, \
     CorrelationFilter as InternalCorrelationFilter, \
-    SqlFilter as InternalSqlFilter, TrueFilter as InternalTrueFilter, FalseFilter as InternalFalseFilter
+    SqlFilter as InternalSqlFilter, TrueFilter as InternalTrueFilter, FalseFilter as InternalFalseFilter, \
+    KeyValue
 
 from ._model_workaround import adjust_attribute_map
 
@@ -608,9 +609,10 @@ class RuleDescription(object):
         rule = cls()
         rule._internal_rule = internal_rule
 
-        rule.filter = RULE_CLASS_MAPPING[type(internal_rule.filter)]._from_internal_entity(internal_rule.filter)
+        rule.filter = RULE_CLASS_MAPPING[type(internal_rule.filter)]._from_internal_entity(internal_rule.filter) \
+            if internal_rule.filter and internal_rule.filter in RULE_CLASS_MAPPING else None
         rule.action = RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity(internal_rule.action) \
-            if internal_rule.action and not isinstance(internal_rule.action, InternalEmptyRuleAction) else None
+            if internal_rule.action and internal_rule.action in RULE_CLASS_MAPPING else None
         rule.created_at = internal_rule.created_at
         rule.name = internal_rule.name
 
@@ -723,11 +725,11 @@ class SqlRuleAction(object):
 
 RULE_CLASS_MAPPING = {
     InternalSqlRuleAction: SqlRuleAction,
-    InternalEmptyRuleAction: None,
+    # InternalEmptyRuleAction: None,
     InternalCorrelationFilter: CorrelationRuleFilter,
     InternalSqlFilter: SqlRuleFilter,
     InternalTrueFilter: TrueRuleFilter,
     InternalFalseFilter: FalseRuleFilter,
-}
+}  # type: Dict[Type[Model], Type]
 EMPTY_RULE_ACTION = InternalEmptyRuleAction()
 TRUE_FILTER = TrueRuleFilter()

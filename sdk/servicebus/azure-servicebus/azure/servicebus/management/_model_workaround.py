@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Dict, Iterable, Any, Optional
+from typing import Dict, Iterable, Any, Optional, Tuple, Type
 from collections import OrderedDict
 from datetime import timedelta
+from msrest.serialization import Model
 from azure.servicebus.management._generated.models import (
     AuthorizationRule,
     CorrelationFilter,
@@ -205,7 +206,7 @@ MODEL_CLASS_ATTRIBUTES = {
     TopicDescriptionEntryContent: ("type", "topic_description"),
     TopicDescriptionFeed: ("id", "title", "updated", "link", "entry"),
     TrueFilter: ("type", "sql_expression"),
-}
+}  # type: Dict[Type[Model], Tuple[str, ...]]
 
 
 def avoid_timedelta_overflow(td):

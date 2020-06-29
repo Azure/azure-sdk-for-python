@@ -6,10 +6,7 @@ from typing import cast
 from xml.etree.ElementTree import ElementTree
 
 
-try:
-    import urllib.parse as urlparse
-except ImportError:
-    import urlparse  # python 2.7
+import urllib.parse as urlparse
 
 from azure.servicebus.management import _constants as constants
 from ...management._handle_response_error import _handle_response_error
