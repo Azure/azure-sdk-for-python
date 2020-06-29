@@ -123,7 +123,7 @@ The following sections provide several code snippets covering some of the most c
 
 * [Send messages to a queue](#send-messages-to-a-queue)
 * [Receive messages from a queue](#receive-messages-from-a-queue)
-* [Send and receive a message from a session enabled subscription](#sending-and-receiving-a-message-from-a-session-enabled-subscription)
+* [Send and receive a message from a session enabled queue](#sending-and-receiving-a-message-from-a-session-enabled-queue)
 * [Settle a message after receipt](#settle-a-message-after-receipt)
 
 To perform management tasks such as creating and deleting queues/topics/subscriptions, please utilize the azure-mgmt-servicebus library, available [here][servicebus_management_repository].
@@ -210,7 +210,7 @@ In this example, max_batch_size (and prefetch, as required by max_batch_size) de
 > **NOTE:** It should also be noted that `ServiceBusReceiver.peek()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
 
 
-### [Sending][session_send_reference] and [receiving][session_receive_reference] a message from a session enabled subscription
+### [Sending][session_send_reference] and [receiving][session_receive_reference] a message from a session enabled queue
 
 Sessions provide first-in-first-out and single-receiver semantics on top of a queue or subscription.  While the actual receive syntax is the same, initialization differs slightly.
 
@@ -310,7 +310,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 #### [DeadLetter][deadletter_reference]
 
-Transfer the message from the primary queue and into a special "dead-letter sub-queue" where it can be accessed using the `ServiceBusClient.get_queue_deadletter_receiver` function and consumed from like any other queue receiver. (see sample [here](./samples/sync_samples/receive_deadlettered_messages.py))
+Transfer the message from the primary queue into a special "dead-letter sub-queue" where it can be accessed using the `ServiceBusClient.get_<queue|subscription>_deadletter_receiver` function and consumed from like any other receiver. (see sample [here](./samples/sync_samples/receive_deadlettered_messages.py))
 
 ```Python
 from azure.servicebus import ServiceBusClient
