@@ -34,15 +34,16 @@ class Configuration(object):
     Configuration to construct the pipeline correctly, as well as inserting any
     unexposed/non-configurable policies.
 
-    :keyword headers_policy: Provides parameters for custom or additional headers to be sent with the request.
-    :keyword proxy_policy: Provides configuration parameters for proxy.
-    :keyword redirect_policy: Provides configuration parameters for redirects.
-    :keyword retry_policy: Provides configuration parameters for retries in the pipeline.
-    :keyword custom_hook_policy: Provides configuration parameters for a custom hook.
-    :keyword logging_policy: Provides configuration parameters for logging.
-    :keyword user_agent_policy: Provides configuration parameters to append custom values to the
+    :ivar headers_policy: Provides parameters for custom or additional headers to be sent with the request.
+    :ivar proxy_policy: Provides configuration parameters for proxy.
+    :ivar redirect_policy: Provides configuration parameters for redirects.
+    :ivar retry_policy: Provides configuration parameters for retries in the pipeline.
+    :ivar custom_hook_policy: Provides configuration parameters for a custom hook.
+    :ivar logging_policy: Provides configuration parameters for logging.
+    :ivar http_logging_policy: Provides configuration parameters for HTTP specific logging.
+    :ivar user_agent_policy: Provides configuration parameters to append custom values to the
      User-Agent header.
-    :keyword authentication_policy: Provides configuration parameters for adding a bearer token Authorization
+    :ivar authentication_policy: Provides configuration parameters for adding a bearer token Authorization
      header to requests.
     :keyword polling_interval: Polling interval while doing LRO operations, if Retry-After is not set.
 
@@ -73,6 +74,9 @@ class Configuration(object):
 
         # Logger configuration
         self.logging_policy = None
+
+        # Http logger configuration
+        self.http_logging_policy = None
 
         # User Agent configuration
         self.user_agent_policy = None
