@@ -24,8 +24,7 @@ from math import (
 from azure.table._entity import EdmType, EntityProperty
 from azure.table._models import TablePayloadFormat
 from azure.table._shared._common_conversion import _to_str, _encode_base64, _to_utc_datetime
-from azure.table._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED, \
-    _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY
+from azure.table._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
 if sys.version_info < (3,):
     def _new_boundary():
@@ -106,7 +105,7 @@ def _to_entity_str(value):
 
 
 def _to_entity_none(value):  # pylint:disable=W0613
-    return None,None
+    return None, None
 
 
 # Conversion from Python type to a function which returns a tuple of the
