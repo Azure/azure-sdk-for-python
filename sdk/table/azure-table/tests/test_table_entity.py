@@ -371,7 +371,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_with_large_int32_value_throws(self, resource_group, location, storage_account,
                                                          storage_account_key):
@@ -394,7 +394,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_insert_entity_with_large_int64_value_throws(self, resource_group, location, storage_account,
                                                          storage_account_key):
@@ -406,12 +406,12 @@ class StorageTableEntityTest(TableTestCase):
             dict64['large'] = EntityProperty(EdmType.INT64, 2 ** 63)
 
             # Assert
-            with self.assertRaisesRegex(TypeError,
+            with self.assertRaises(TypeError,
                                         '{0} is too large to be cast to type Edm.Int64.'.format(2 ** 63)):
                 self.table.insert_entity(table_entity_properties=dict64)
 
             dict64['large'] = EntityProperty(EdmType.INT64, -(2 ** 63 + 1))
-            with self.assertRaisesRegex(TypeError,
+            with self.assertRaises(TypeError,
                                         '{0} is too large to be cast to type Edm.Int64.'.format(-(2 ** 63 + 1))):
                 self.table.insert_entity(table_entity_properties=dict64)
         finally:

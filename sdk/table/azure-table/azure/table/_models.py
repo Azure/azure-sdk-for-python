@@ -398,7 +398,7 @@ class TableServices(Services):
             A string representing the services.
         """
 
-        super().__init__()
+        super(Services).__init__()
         self.table = True
 
     def __str__(self):

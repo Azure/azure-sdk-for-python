@@ -118,7 +118,8 @@ _PYTHON_TO_ENTITY_CONVERSIONS = {
     float: _to_entity_float,
     str: _to_entity_str,
     bytes: _to_entity_binary,
-    UUID: _to_entity_guid
+    UUID: _to_entity_guid,
+    None: _to_entity_none
 }
 
 # Conversion from Edm type to a function which returns a tuple of the
@@ -167,7 +168,8 @@ def _add_entity_properties(source):
                     _ERROR_TYPE_NOT_SUPPORTED.format(value.type))
             mtype, value = conv(value.value)
         else:
-            conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
+            if type(value) is not None:
+                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
             if conv is None and sys.version_info >= (3,) and value is None:
                 conv = _to_entity_none
             if conv is None:
