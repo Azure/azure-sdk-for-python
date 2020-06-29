@@ -11,10 +11,6 @@ class ServiceBusXMLWorkaroundPolicy(SansIOHTTPPolicy):
     """A policy that mutates serialized XML to workaround ServiceBus requirement
 
     """
-    def __init__(self):
-        # type: () -> None
-        super(ServiceBusXMLWorkaroundPolicy, self).__init__()
-
     def on_request(self, request):
         # type: (PipelineRequest) -> None
         """Mutate serialized (QueueDescription, TopicDescription, SubscriptionDescription, RuleDescription)

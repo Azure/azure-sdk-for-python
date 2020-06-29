@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+# pylint:disable=protected-access
+# pylint:disable=specify-parameter-names-in-call
 import functools
 from copy import copy
 from typing import TYPE_CHECKING, Dict, Any, Union, cast
@@ -43,7 +45,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential  # pylint:disable=ungrouped-imports
 
 
-class ServiceBusManagementClient:
+class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
     """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
@@ -123,7 +125,8 @@ class ServiceBusManagementClient:
         with _handle_response_error():
             element = cast(
                 ElementTree,
-                await self._impl.subscription.get(topic_name, subscription_name, enrich=enrich, api_version=constants.API_VERSION, **kwargs)
+                await self._impl.subscription.get(
+                    topic_name, subscription_name, enrich=enrich, api_version=constants.API_VERSION, **kwargs)
             )
         return element
 
@@ -133,7 +136,8 @@ class ServiceBusManagementClient:
         with _handle_response_error():
             element = cast(
                 ElementTree,
-                await self._impl.rule.get(topic_name, subscription_name, rule_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
+                await self._impl.rule.get(
+                    topic_name, subscription_name, rule_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
             )
         return element
 
@@ -147,7 +151,8 @@ class ServiceBusManagementClient:
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
-        queue_description = QueueDescription._from_internal_entity(entry.content.queue_description)
+        queue_description = QueueDescription._from_internal_entity(
+            entry.content.queue_description)
         queue_description.name = queue_name
         return queue_description
 
@@ -161,7 +166,8 @@ class ServiceBusManagementClient:
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Queue {} does not exist".format(queue_name))
-        runtime_info = QueueRuntimeInfo._from_internal_entity(entry.content.queue_description)
+        runtime_info = QueueRuntimeInfo._from_internal_entity(
+            entry.content.queue_description)
         runtime_info.name = queue_name
         return runtime_info
 
@@ -176,7 +182,7 @@ class ServiceBusManagementClient:
         """
         try:
             queue_name = queue.name  # type: ignore
-            to_create = queue._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
+            to_create = queue._to_internal_entity()  # type: ignore
         except AttributeError:
             queue_name = queue  # type: ignore
             to_create = InternalQueueDescription()  # Use an empty queue description.
@@ -196,7 +202,8 @@ class ServiceBusManagementClient:
             )
 
         entry = QueueDescriptionEntry.deserialize(entry_ele)
-        result = QueueDescription._from_internal_entity(entry.content.queue_description)
+        result = QueueDescription._from_internal_entity(
+            entry.content.queue_description)
         result.name = queue_name
         return result
 
@@ -219,7 +226,7 @@ class ServiceBusManagementClient:
             raise TypeError("queue_description must be of type QueueDescription")
 
         internal_description = queue_description._to_internal_entity()
-        to_update = copy(internal_description)  # pylint:disable=protected-access
+        to_update = copy(internal_description)
 
         to_update.default_message_time_to_live = kwargs.get(
             "default_message_time_to_live") or queue_description.default_message_time_to_live
@@ -309,7 +316,7 @@ class ServiceBusManagementClient:
         return AsyncItemPaged(
             get_next, extract_data)
 
-    async def get_topic(self, topic_name, **kwargs) -> TopicDescription:
+    async def get_topic(self, topic_name: str, **kwargs) -> TopicDescription:
         """Get a TopicDescription.
 
         :param str topic_name: The name of the topic.
@@ -348,8 +355,8 @@ class ServiceBusManagementClient:
         """
         try:
             topic_name = topic.name  # type: ignore
-            to_create = topic._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
-        except AttributeError as e:
+            to_create = topic._to_internal_entity()  # type: ignore
+        except AttributeError:
             topic_name = topic  # type: ignore
             to_create = InternalTopicDescription()  # Use an empty topic description.
 
@@ -389,10 +396,12 @@ class ServiceBusManagementClient:
             raise TypeError("topic_description must be of type TopicDescription")
 
         internal_description = topic_description._to_internal_entity()
-        to_update = copy(internal_description)  # pylint:disable=protected-access
+        to_update = copy(internal_description)
 
-        to_update.default_message_time_to_live = kwargs.get("default_message_time_to_live") or topic_description.default_message_time_to_live
-        to_update.duplicate_detection_history_time_window = kwargs.get("duplicate_detection_history_time_window") or topic_description.duplicate_detection_history_time_window
+        to_update.default_message_time_to_live = kwargs.get(
+            "default_message_time_to_live") or topic_description.default_message_time_to_live
+        to_update.duplicate_detection_history_time_window = kwargs.get(
+            "duplicate_detection_history_time_window") or topic_description.duplicate_detection_history_time_window
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
@@ -527,7 +536,7 @@ class ServiceBusManagementClient:
             topic_name = topic
         try:
             subscription_name = subscription.name  # type: ignore
-            to_create = subscription._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
+            to_create = subscription._to_internal_entity()  # type: ignore
         except AttributeError:
             subscription_name = subscription  # type: ignore
             to_create = InternalSubscriptionDescription()  # Use an empty queue description.
@@ -574,7 +583,7 @@ class ServiceBusManagementClient:
             raise TypeError("subscription_description must be of type SubscriptionDescription")
 
         internal_description = subscription_description._to_internal_entity()
-        to_update = copy(internal_description)  # pylint:disable=protected-access
+        to_update = copy(internal_description)
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
@@ -692,7 +701,8 @@ class ServiceBusManagementClient:
         entry = RuleDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError(
-                "Rule('Topic: {}, Subscription: {}, Rule {}') does not exist".format(subscription_name, topic_name, rule_name))
+                "Rule('Topic: {}, Subscription: {}, Rule {}') does not exist".format(
+                    subscription_name, topic_name, rule_name))
         rule_description = RuleDescription._from_internal_entity(entry.content.rule_description)
         return rule_description
 
@@ -718,7 +728,7 @@ class ServiceBusManagementClient:
             subscription_name = subscription
         try:
             rule_name = rule.name
-            to_create = rule._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
+            to_create = rule._to_internal_entity()  # type: ignore
         except AttributeError:
             rule_name = rule
             to_create = InternalRuleDescription()  # Use an empty queue description.
@@ -765,7 +775,7 @@ class ServiceBusManagementClient:
             subscription_name = subscription
 
         internal_description = rule_description._to_internal_entity()
-        to_update = copy(internal_description)  # pylint:disable=protected-access
+        to_update = copy(internal_description)
 
         create_entity_body = CreateRuleBody(
             content=CreateRuleBodyContent(
@@ -806,7 +816,8 @@ class ServiceBusManagementClient:
             rule_name = rule.name
         except AttributeError:
             rule_name = rule
-        await self._impl.rule.delete(topic_name, subscription_name, rule_name, api_version=constants.API_VERSION, **kwargs)
+        await self._impl.rule.delete(
+            topic_name, subscription_name, rule_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_rules(
             self, topic: Union[str, TopicDescription], subscription: Union[str, RuleDescription], **kwargs

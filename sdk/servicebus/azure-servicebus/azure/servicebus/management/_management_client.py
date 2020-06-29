@@ -2,12 +2,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+# pylint:disable=protected-access
+# pylint:disable=specify-parameter-names-in-call
 import functools
 from copy import copy
 from typing import TYPE_CHECKING, Dict, Any, Union, cast
 from xml.etree.ElementTree import ElementTree
 
 from azure.core.paging import ItemPaged
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
+    RequestIdPolicy, BearerTokenCredentialPolicy
+from azure.core.pipeline.transport import RequestsTransport
 
 from ._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
     QueueDescriptionEntry, SubscriptionDescriptionFeed, SubscriptionDescriptionEntry, RuleDescriptionEntry, \
@@ -19,11 +26,6 @@ from ._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
     NamespaceProperties
 from ._utils import extract_data_template, get_next_template
 from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
-from azure.core.exceptions import ResourceNotFoundError
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
-    RequestIdPolicy, BearerTokenCredentialPolicy
-from azure.core.pipeline.transport import RequestsTransport
 
 from .._common.constants import JWT_TOKEN_SCOPE
 from .._common.utils import parse_conn_str
@@ -41,7 +43,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential  # pylint:disable=ungrouped-imports
 
 
-class ServiceBusManagementClient:
+class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
     """Use this client to create, update, list, and delete resources of a ServiceBus namespace.
 
     :param str fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
@@ -119,7 +121,8 @@ class ServiceBusManagementClient:
         with _handle_response_error():
             element = cast(
                 ElementTree,
-                self._impl.subscription.get(topic_name, subscription_name, enrich=enrich, api_version=constants.API_VERSION, **kwargs)
+                self._impl.subscription.get(
+                    topic_name, subscription_name, enrich=enrich, api_version=constants.API_VERSION, **kwargs)
             )
         return element
 
@@ -129,7 +132,8 @@ class ServiceBusManagementClient:
         with _handle_response_error():
             element = cast(
                 ElementTree,
-                self._impl.rule.get(topic_name, subscription_name, rule_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
+                self._impl.rule.get(
+                    topic_name, subscription_name, rule_name, enrich=False, api_version=constants.API_VERSION, **kwargs)
             )
         return element
 
@@ -358,7 +362,7 @@ class ServiceBusManagementClient:
         try:
             topic_name = topic.name  # type: ignore
             to_create = topic._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
-        except AttributeError as e:
+        except AttributeError:
             topic_name = topic  # type: ignore
             to_create = InternalTopicDescription()  # Use an empty topic description.
 
@@ -401,8 +405,10 @@ class ServiceBusManagementClient:
         internal_description = topic_description._to_internal_entity()
         to_update = copy(internal_description)  # pylint:disable=protected-access
 
-        to_update.default_message_time_to_live = kwargs.get("default_message_time_to_live") or topic_description.default_message_time_to_live
-        to_update.duplicate_detection_history_time_window = kwargs.get("duplicate_detection_history_time_window") or topic_description.duplicate_detection_history_time_window
+        to_update.default_message_time_to_live = kwargs.get(
+            "default_message_time_to_live") or topic_description.default_message_time_to_live
+        to_update.duplicate_detection_history_time_window = kwargs.get(
+            "duplicate_detection_history_time_window") or topic_description.duplicate_detection_history_time_window
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
@@ -699,12 +705,13 @@ class ServiceBusManagementClient:
         entry = RuleDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError(
-                "Rule('Topic: {}, Subscription: {}, Rule {}') does not exist".format(subscription_name, topic_name, rule_name))
+                "Rule('Topic: {}, Subscription: {}, Rule {}') does not exist".format(
+                    subscription_name, topic_name, rule_name))
         rule_description = RuleDescription._from_internal_entity(entry.content.rule_description)
         return rule_description
 
     def create_rule(self, topic, subscription, rule, **kwargs):
-        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], str, Union[str, RuleDescription]) -> RuleDescription
+        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], str, Union[str, RuleDescription]) -> RuleDescription  # pylint:disable=line-too-long
         """Create a subscription of a topic.
 
         :param Union[str, TopicDescription] topic: The topic that will own the to-be-created subscription rule.
@@ -790,7 +797,7 @@ class ServiceBusManagementClient:
             )
 
     def delete_rule(self, topic, subscription, rule, **kwargs):
-        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], Union[str, RuleDescription], Any) -> None
+        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], Union[str, RuleDescription], Any) -> None  # pylint:disable=line-too-long
         """Delete a topic subscription rule.
 
         :param Union[str, TopicDescription] topic: The topic that owns the subscription.

@@ -1,4 +1,8 @@
-from typing import cast, Union
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+from typing import cast
 from xml.etree.ElementTree import ElementTree
 
 
@@ -21,7 +25,7 @@ async def extract_data_template(feed_class, convert, feed_element):
 
 
 async def get_next_template(list_func, *args, **kwargs):
-    if len(args) > 0:
+    if args:
         next_link = args[0]
     else:
         next_link = kwargs.pop("next_link")

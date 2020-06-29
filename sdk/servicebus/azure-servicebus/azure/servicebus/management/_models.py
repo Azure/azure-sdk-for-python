@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+# pylint:disable=protected-access
 from collections import OrderedDict
 from copy import deepcopy
 
@@ -236,7 +237,7 @@ class QueueRuntimeInfo(object):
         return qr
 
 
-class TopicDescription(object):
+class TopicDescription(object):  # pylint:disable=too-many-instance-attributes
     """Description of a Service Bus topic resource.
 
     """
@@ -415,7 +416,7 @@ class TopicRuntimeInfo(object):
         return qd
 
 
-class SubscriptionDescription(object):
+class SubscriptionDescription(object):  # pylint:disable=too-many-instance-attributes
     """Description of a Service Bus queue resource.
 
     """
@@ -493,7 +494,8 @@ class SubscriptionDescription(object):
         subscription.requires_session = internal_subscription.requires_session
         subscription.default_message_time_to_live = internal_subscription.default_message_time_to_live
         subscription.dead_lettering_on_message_expiration = internal_subscription.dead_lettering_on_message_expiration
-        subscription.dead_lettering_on_filter_evaluation_exceptions = internal_subscription.dead_lettering_on_filter_evaluation_exceptions
+        subscription.dead_lettering_on_filter_evaluation_exceptions = \
+            internal_subscription.dead_lettering_on_filter_evaluation_exceptions
         subscription.max_delivery_count = internal_subscription.max_delivery_count
         subscription.enable_batched_operations = internal_subscription.enable_batched_operations
         subscription.status = internal_subscription.status
@@ -513,7 +515,8 @@ class SubscriptionDescription(object):
         self._internal_sd.requires_session = self.requires_session
         self._internal_sd.default_message_time_to_live = self.default_message_time_to_live
         self._internal_sd.dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration
-        self._internal_sd.dead_lettering_on_filter_evaluation_exceptions = self.dead_lettering_on_filter_evaluation_exceptions
+        self._internal_sd.dead_lettering_on_filter_evaluation_exceptions = \
+            self.dead_lettering_on_filter_evaluation_exceptions
         self._internal_sd.max_delivery_count = self.max_delivery_count
         self._internal_sd.enable_batched_operations = self.enable_batched_operations
         self._internal_sd.status = self.status
@@ -549,6 +552,7 @@ class SubscriptionRuntimeInfo(object):
         :rtype: None
         """
         super(SubscriptionRuntimeInfo, self).__init__(**kwargs)
+        self._internal_sd = None
         self.name = kwargs.get("name")
 
         self.message_count = kwargs.get('message_count', None)
@@ -606,7 +610,7 @@ class RuleDescription(object):
 
         rule.filter = RULE_CLASS_MAPPING[type(internal_rule.filter)]._from_internal_entity(internal_rule.filter)
         rule.action = RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity(internal_rule.action) \
-            if internal_rule.action and type(internal_rule.action) != InternalEmptyRuleAction else None
+            if internal_rule.action and not isinstance(internal_rule.action, InternalEmptyRuleAction) else None
         rule.created_at = internal_rule.created_at
         rule.name = internal_rule.name
 
