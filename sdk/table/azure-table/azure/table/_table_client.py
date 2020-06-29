@@ -307,7 +307,7 @@ class TableClient(StorageAccountHostsMixin):
                 **dict(kwargs, headers=headers)
             )
             properties = _convert_to_entity(inserted_entity)
-            return properties
+            return Entity(properties)
         except ValueError as error:
             process_storage_error(error)
 
@@ -482,7 +482,7 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,
             **kwargs
     ):
-        # type: (...) -> None
+        # type: (...) -> Entity
         """Merge or Insert entity into table.
 
 
@@ -534,7 +534,7 @@ class TableClient(StorageAccountHostsMixin):
             table_entity_properties=None,
             **kwargs
     ):
-        # type: (...) -> None
+        # type: (...) -> Entity
         """Update or Insert entity into table.
 
 
@@ -570,4 +570,4 @@ class TableClient(StorageAccountHostsMixin):
                 row_key=row_key,
                 table_entity_properties=table_entity_properties
             )
-            return insert_entity
+            return Entity(insert_entity)

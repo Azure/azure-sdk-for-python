@@ -18,7 +18,9 @@ class Entity(dict):
 
     def __getattr__(self, name):
         try:
-            return self[name]
+            if name is not None:
+                return self[name]
+            return name
         except KeyError:
             raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
 
@@ -26,7 +28,8 @@ class Entity(dict):
 
     def __delattr__(self, name):
         try:
-            del self[name]
+            if name is not None:
+                del self[name]
         except KeyError:
             raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
 
