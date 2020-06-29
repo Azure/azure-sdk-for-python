@@ -69,7 +69,8 @@ async def _run_command(command):
 
     try:
         proc = await asyncio.create_subprocess_exec(
-            *args, stdout=asyncio.subprocess.PIPE,
+            *args,
+            stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
             cwd=working_directory,
             env=dict(os.environ, AZURE_CORE_NO_COLOR="true")
