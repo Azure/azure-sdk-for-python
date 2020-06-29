@@ -25,22 +25,8 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError)
 
-# from azure.tables import (
-#     AccessPolicy,
-#     TableSasPermissions,
-#     TableServiceClient,
-#     EdmType,
-#     Entity,
-#     EntityProperty,
-#     generate_table_sas
-# )
-
 from azure.table._entity import Entity, EntityProperty, EdmType
 from azure.table._models import TableSasPermissions
-
-# from azure.storage.table import (
-#     TableBatch,
-# )
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
