@@ -241,7 +241,7 @@ class FieldData(FormContent):
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar field_element:
-        When `include_field_element` is set to true, a list of text
+        When `include_field_elements` is set to true, a list of
         elements constituting this field or value is returned.
     :vartype field_element: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
@@ -306,7 +306,7 @@ class FormPage(object):
     :ivar list[~azure.ai.formrecognizer.FormTable] tables:
         A list of extracted tables contained in a page.
     :ivar list[~azure.ai.formrecognizer.FormLine] lines:
-        When `include_field_element` is set to true, a list of recognized text lines is returned.
+        When `include_field_elements` is set to true, a list of recognized text lines is returned.
         For calls to recognize content, this list is always populated. The maximum number of lines
         returned is 300 per page. The lines are sorted top to bottom, left to right, although in
         certain cases proximity is treated with higher priority. As the sorting order depends on
@@ -463,9 +463,9 @@ class FormTableCell(FormContent):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar field_element:
-        When `include_field_element` is set to true, a list of text
+        When `include_field_elements` is set to true, a list of
         elements constituting this cell is returned.
-        For calls to recognize content, this list is always populated.
+        For calls to begin_recognize_content(), this list is always populated.
     :vartype field_element: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
 
