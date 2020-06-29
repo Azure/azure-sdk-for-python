@@ -164,7 +164,7 @@ class FormRecognizerTest(AzureTestCase):
             if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
                 page = page.pages[0]
             self.assertEqual(page.page_number, actual_page.page)
-            if actual_page.angle < 180:
+            if actual_page.angle <= 180:
                 self.assertEqual(page.text_angle, actual_page.angle)
             if actual_page.angle > 180:
                 self.assertEqual(page.text_angle, actual_page.angle - 360)
