@@ -243,8 +243,7 @@ class FieldText(FormContent):
     :ivar text_content:
         When `include_text_content` is set to true, a list of text
         elements constituting this field or value is returned. The list
-        constitutes of text elements such as lines and words in addition
-        to form fields.
+        constitutes of text elements such as lines and words.
     :vartype text_content: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
 
@@ -467,8 +466,7 @@ class FormTableCell(FormContent):
     :ivar text_content:
         When `include_text_content` is set to true, a list of text
         elements constituting this cell is returned. The list
-        constitutes of text elements such as lines and words in addition
-        to form fields.
+        constitutes of text elements such as lines and words.
         For calls to recognize content, this list is always populated.
     :vartype text_content: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
