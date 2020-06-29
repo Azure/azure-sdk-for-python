@@ -588,9 +588,9 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
 
-        create_entity_body = CreateTopicBody(
-            content=CreateTopicBodyContent(
-                topic_description=to_update,
+        create_entity_body = CreateSubscriptionBody(
+            content=CreateSubscriptionBodyContent(
+                subscription_description=to_update,
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
@@ -860,3 +860,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         entry_el = await self._impl.namespace.get(api_version=constants.API_VERSION, **kwargs)
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
         return namespace_entry.content.namespace_properties
+
+    async def close(self) -> None:
+        await self._impl.close()
