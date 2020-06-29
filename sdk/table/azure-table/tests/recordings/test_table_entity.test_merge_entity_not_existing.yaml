@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 29 Jun 2020 20:42:25 GMT
+      - Mon, 29 Jun 2020 20:58:40 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 29 Jun 2020 20:42:25 GMT
+      - Mon, 29 Jun 2020 20:58:40 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Mon, 29 Jun 2020 20:42:25 GMT
+      - Mon, 29 Jun 2020 20:58:40 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttablee64a13f7')
       server:
@@ -65,13 +65,13 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 29 Jun 2020 20:42:25 GMT
+      - Mon, 29 Jun 2020 20:58:41 GMT
       If-Match:
       - '*'
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 29 Jun 2020 20:42:25 GMT
+      - Mon, 29 Jun 2020 20:58:41 GMT
       x-ms-version:
       - '2019-07-07'
     method: PATCH
@@ -81,16 +81,16 @@ interactions:
       string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>ResourceNotFound</code><message
         xml:lang="en-US">The specified resource does not exist.
 
-        RequestId:8cdfdd3f-f002-0026-7455-4e45d5000000
+        RequestId:d22b8074-9002-0022-4858-4e9f99000000
 
-        Time:2020-06-29T20:42:26.0677341Z</message></error>'
+        Time:2020-06-29T20:58:41.2565487Z</message></error>'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/xml;charset=utf-8
       date:
-      - Mon, 29 Jun 2020 20:42:26 GMT
+      - Mon, 29 Jun 2020 20:58:40 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -114,11 +114,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 29 Jun 2020 20:42:26 GMT
+      - Mon, 29 Jun 2020 20:58:41 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 29 Jun 2020 20:42:26 GMT
+      - Mon, 29 Jun 2020 20:58:41 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -132,7 +132,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 29 Jun 2020 20:42:26 GMT
+      - Mon, 29 Jun 2020 20:58:40 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

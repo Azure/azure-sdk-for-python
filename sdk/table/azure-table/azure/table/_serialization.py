@@ -168,7 +168,7 @@ def _add_entity_properties(source):
             mtype, value = conv(value.value)
         else:
             conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
-            if conv is None and value is None:
+            if conv is None or value is None:
                 conv = _to_entity_none  # something with this
 
             mtype, value = conv(value)

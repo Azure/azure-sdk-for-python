@@ -357,8 +357,7 @@ class StorageTableTest(TableTestCase):
                 identifiers['id{}'.format(i)] = None
 
             # Assert
-            with self.assertRaisesRegex(ValueError,
-                                        'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'):
+            with self.assertRaises(ValueError):
                 table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
         finally:
             ts.delete_table(table.table_name)

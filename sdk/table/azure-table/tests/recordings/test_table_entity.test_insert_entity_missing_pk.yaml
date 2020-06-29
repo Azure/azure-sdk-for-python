@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 29 Jun 2020 20:42:16 GMT
+      - Mon, 29 Jun 2020 20:58:32 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 29 Jun 2020 20:42:16 GMT
+      - Mon, 29 Jun 2020 20:58:32 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Mon, 29 Jun 2020 20:42:16 GMT
+      - Mon, 29 Jun 2020 20:58:32 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttabled41f1395')
       server:
@@ -59,11 +59,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 29 Jun 2020 20:42:17 GMT
+      - Mon, 29 Jun 2020 20:58:33 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 29 Jun 2020 20:42:17 GMT
+      - Mon, 29 Jun 2020 20:58:33 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -77,7 +77,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 29 Jun 2020 20:42:16 GMT
+      - Mon, 29 Jun 2020 20:58:33 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
