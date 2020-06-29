@@ -63,9 +63,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      specified Topic the client connects to.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-     lock period before they will be removed from the queue. Messages received with ReceiveAndDelete 
-     will be immediately removed from the queue, and cannot be subsequently abandoned or re-received 
-     if the client fails to process the message. 
+     lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+     will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
+     if the client fails to process the message.
      The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
     :keyword int prefetch: The maximum number of messages to cache with each request to the service.
@@ -228,9 +228,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          specified Topic the client connects to.
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete 
-         will be immediately removed from the queue, and cannot be subsequently abandoned or re-received 
-         if the client fails to process the message. 
+         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+         will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
+         if the client fails to process the message.
          The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
