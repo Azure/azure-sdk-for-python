@@ -62,25 +62,29 @@ class CustomVisionError(Model):
      'BadRequestProjectUnknownDomain',
      'BadRequestProjectUnknownClassification',
      'BadRequestProjectUnsupportedDomainTypeChange',
-     'BadRequestProjectUnsupportedExportPlatform', 'BadRequestIterationName',
+     'BadRequestProjectUnsupportedExportPlatform',
+     'BadRequestProjectImagePreprocessingSettings',
+     'BadRequestProjectDuplicated', 'BadRequestIterationName',
      'BadRequestIterationNameNotUnique', 'BadRequestIterationDescription',
-     'BadRequestIterationIsNotTrained', 'BadRequestWorkspaceCannotBeModified',
-     'BadRequestWorkspaceNotDeletable', 'BadRequestTagName',
-     'BadRequestTagNameNotUnique', 'BadRequestTagDescription',
-     'BadRequestTagType', 'BadRequestMultipleNegativeTag',
+     'BadRequestIterationIsNotTrained', 'BadRequestIterationValidationFailed',
+     'BadRequestWorkspaceCannotBeModified', 'BadRequestWorkspaceNotDeletable',
+     'BadRequestTagName', 'BadRequestTagNameNotUnique',
+     'BadRequestTagDescription', 'BadRequestTagType',
+     'BadRequestMultipleNegativeTag', 'BadRequestMultipleGeneralProductTag',
      'BadRequestImageTags', 'BadRequestImageRegions',
      'BadRequestNegativeAndRegularTagOnSameImage',
-     'BadRequestRequiredParamIsNull', 'BadRequestIterationIsPublished',
-     'BadRequestInvalidPublishName', 'BadRequestInvalidPublishTarget',
-     'BadRequestUnpublishFailed', 'BadRequestSubscriptionApi',
+     'BadRequestUnsupportedDomain', 'BadRequestRequiredParamIsNull',
+     'BadRequestIterationIsPublished', 'BadRequestInvalidPublishName',
+     'BadRequestInvalidPublishTarget', 'BadRequestUnpublishFailed',
+     'BadRequestIterationNotPublished', 'BadRequestSubscriptionApi',
      'BadRequestExceedProjectLimit',
      'BadRequestExceedIterationPerProjectLimit',
      'BadRequestExceedTagPerProjectLimit', 'BadRequestExceedTagPerImageLimit',
      'BadRequestExceededQuota', 'BadRequestCannotMigrateProjectWithName',
      'BadRequestNotLimitedTrial', 'BadRequestImageBatch',
      'BadRequestImageStream', 'BadRequestImageUrl', 'BadRequestImageFormat',
-     'BadRequestImageSizeBytes', 'BadRequestImageExceededCount',
-     'BadRequestTrainingNotNeeded',
+     'BadRequestImageSizeBytes', 'BadRequestImageDimensions',
+     'BadRequestImageExceededCount', 'BadRequestTrainingNotNeeded',
      'BadRequestTrainingNotNeededButTrainingPipelineUpdated',
      'BadRequestTrainingValidationFailed',
      'BadRequestClassificationTrainingValidationFailed',
@@ -98,7 +102,11 @@ class CustomVisionError(Model):
      'BadRequestPredictionTagsExceededCount',
      'BadRequestPredictionResultsExceededCount',
      'BadRequestPredictionInvalidApplicationName',
-     'BadRequestPredictionInvalidQueryParameters', 'BadRequestInvalid',
+     'BadRequestPredictionInvalidQueryParameters',
+     'BadRequestInvalidImportToken', 'BadRequestExportWhileTraining',
+     'BadRequestImageMetadataKey', 'BadRequestImageMetadataValue',
+     'BadRequestOperationNotSupported', 'BadRequestInvalidArtifactUri',
+     'BadRequestCustomerManagedKeyRevoked', 'BadRequestInvalid',
      'UnsupportedMediaType', 'Forbidden', 'ForbiddenUser',
      'ForbiddenUserResource', 'ForbiddenUserSignupDisabled',
      'ForbiddenUserSignupAllowanceExceeded', 'ForbiddenUserDoesNotExist',
@@ -107,19 +115,20 @@ class CustomVisionError(Model):
      'NotFoundProject', 'NotFoundProjectDefaultIteration', 'NotFoundIteration',
      'NotFoundIterationPerformance', 'NotFoundTag', 'NotFoundImage',
      'NotFoundDomain', 'NotFoundApimSubscription', 'NotFoundInvalid',
-     'Conflict', 'ConflictInvalid', 'ErrorUnknown',
-     'ErrorProjectInvalidWorkspace',
+     'Conflict', 'ConflictInvalid', 'ErrorUnknown', 'ErrorIterationCopyFailed',
+     'ErrorPreparePerformanceMigrationFailed', 'ErrorProjectInvalidWorkspace',
      'ErrorProjectInvalidPipelineConfiguration', 'ErrorProjectInvalidDomain',
-     'ErrorProjectTrainingRequestFailed', 'ErrorProjectExportRequestFailed',
-     'ErrorFeaturizationServiceUnavailable', 'ErrorFeaturizationQueueTimeout',
-     'ErrorFeaturizationInvalidFeaturizer',
+     'ErrorProjectTrainingRequestFailed', 'ErrorProjectImportRequestFailed',
+     'ErrorProjectExportRequestFailed', 'ErrorFeaturizationServiceUnavailable',
+     'ErrorFeaturizationQueueTimeout', 'ErrorFeaturizationInvalidFeaturizer',
      'ErrorFeaturizationAugmentationUnavailable',
      'ErrorFeaturizationUnrecognizedJob',
      'ErrorFeaturizationAugmentationError', 'ErrorExporterInvalidPlatform',
      'ErrorExporterInvalidFeaturizer', 'ErrorExporterInvalidClassifier',
      'ErrorPredictionServiceUnavailable', 'ErrorPredictionModelNotFound',
      'ErrorPredictionModelNotCached', 'ErrorPrediction',
-     'ErrorPredictionStorage', 'ErrorRegionProposal', 'ErrorInvalid'
+     'ErrorPredictionStorage', 'ErrorRegionProposal', 'ErrorUnknownBaseModel',
+     'ErrorInvalid'
     :type code: str or
      ~azure.cognitiveservices.vision.customvision.prediction.models.CustomVisionErrorCodes
     :param message: Required. A message explaining the error reported by the
@@ -236,6 +245,10 @@ class Prediction(Model):
     :ivar bounding_box: Bounding box of the prediction.
     :vartype bounding_box:
      ~azure.cognitiveservices.vision.customvision.prediction.models.BoundingBox
+    :ivar tag_type: Type of the predicted tag. Possible values include:
+     'Regular', 'Negative', 'GeneralProduct'
+    :vartype tag_type: str or
+     ~azure.cognitiveservices.vision.customvision.prediction.models.TagType
     """
 
     _validation = {
@@ -243,6 +256,7 @@ class Prediction(Model):
         'tag_id': {'readonly': True},
         'tag_name': {'readonly': True},
         'bounding_box': {'readonly': True},
+        'tag_type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -250,6 +264,7 @@ class Prediction(Model):
         'tag_id': {'key': 'tagId', 'type': 'str'},
         'tag_name': {'key': 'tagName', 'type': 'str'},
         'bounding_box': {'key': 'boundingBox', 'type': 'BoundingBox'},
+        'tag_type': {'key': 'tagType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -258,3 +273,4 @@ class Prediction(Model):
         self.tag_id = None
         self.tag_name = None
         self.bounding_box = None
+        self.tag_type = None

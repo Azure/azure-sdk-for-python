@@ -14,7 +14,7 @@ from ._models import (
     FormTableCell,
     FormPageRange,
     RecognizedForm,
-    RecognizedReceipt
+    adjust_text_angle
 )
 
 
@@ -26,14 +26,14 @@ def prepare_receipt(response):
 
     for page in document_result:
         if page.fields is None:
-            receipt = RecognizedReceipt(
+            receipt = RecognizedForm(
                 page_range=FormPageRange(first_page_number=page.page_range[0], last_page_number=page.page_range[1]),
                 pages=form_page[page.page_range[0]-1:page.page_range[1]],
                 form_type=page.doc_type,
             )
             receipts.append(receipt)
             continue
-        receipt = RecognizedReceipt(
+        receipt = RecognizedForm(
             page_range=FormPageRange(
                 first_page_number=page.page_range[0], last_page_number=page.page_range[1]
             ),
@@ -71,7 +71,7 @@ def prepare_content_result(response):
     for idx, page in enumerate(read_result):
         form_page = FormPage(
             page_number=page.page,
-            text_angle=page.angle,
+            text_angle=adjust_text_angle(page.angle),
             width=page.width,
             height=page.height,
             unit=page.unit,

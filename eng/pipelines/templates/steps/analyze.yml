@@ -41,7 +41,7 @@ steps:
       python find_invalid_versions.py --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
 
-  - template: eng/pipelines/templates/scripts/verify-path-length.yml@azure-sdk-tools
+  - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
     parameters:
       SourceDirectory: $(Build.SourcesDirectory)
 
@@ -79,6 +79,12 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
   - template: run_pylint.yml
+    parameters: 
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
+  - template: ../steps/run_apistub.yml
     parameters: 
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       BuildTargetingString: ${{ parameters.BuildTargetingString }}

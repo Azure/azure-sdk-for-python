@@ -15,7 +15,7 @@ interactions:
       api-key:
       - 4047D6344BEF3D3392D3F9E3C29654B1
     method: DELETE
-    uri: https://search21c20f2f.search.windows.net/indexes('drgqefsg')?api-version=2019-05-06-Preview
+    uri: https://search21c20f2f.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30
   response:
     body:
       string: ''
@@ -51,7 +51,7 @@ interactions:
       api-key:
       - 4047D6344BEF3D3392D3F9E3C29654B1
     method: GET
-    uri: https://search21c20f2f.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://search21c20f2f.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search21c20f2f.search.windows.net/$metadata#indexes","value":[]}'

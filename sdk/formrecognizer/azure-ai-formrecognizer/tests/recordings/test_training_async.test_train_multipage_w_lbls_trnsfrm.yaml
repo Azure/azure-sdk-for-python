@@ -8,38 +8,38 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: e8a67db3-14f8-4f5c-9df5-a86b560412a2
+      apim-request-id: 8ce89369-0cda-416d-a7e8-acc1a039f8f1
       content-length: '0'
-      date: Tue, 09 Jun 2020 21:14:57 GMT
-      location: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/c4cf199e-dc44-4c66-964e-f941bd614d23
+      date: Thu, 11 Jun 2020 15:44:51 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b61b0ec1-d42c-48c2-b5c2-f046a34b30f0
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '48'
+      x-envoy-upstream-service-time: '63'
     status:
       code: 201
       message: Created
-    url: https://westcentralus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/c4cf199e-dc44-4c66-964e-f941bd614d23?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b61b0ec1-d42c-48c2-b5c2-f046a34b30f0?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "c4cf199e-dc44-4c66-964e-f941bd614d23", "status":
-        "ready", "createdDateTime": "2020-06-09T21:14:57Z", "lastUpdatedDateTime":
-        "2020-06-09T21:14:58Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
+      string: '{"modelInfo": {"modelId": "b61b0ec1-d42c-48c2-b5c2-f046a34b30f0", "status":
+        "ready", "createdDateTime": "2020-06-11T15:44:51Z", "lastUpdatedDateTime":
+        "2020-06-11T15:44:54Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
         [{"documentName": "multipage_invoice1.pdf", "pages": 3, "status": "succeeded"},
         {"documentName": "multipage_invoice2.pdf", "pages": 3, "status": "succeeded"},
         {"documentName": "multipage_invoice3.pdf", "pages": 3, "status": "succeeded"},
@@ -57,15 +57,15 @@ interactions:
         1.0}, {"fieldName": "Tip", "accuracy": 1.0}, {"fieldName": "Total", "accuracy":
         1.0}, {"fieldName": "Total2", "accuracy": 1.0}], "errors": []}}'
     headers:
-      apim-request-id: 8c5b8d6f-aae7-452c-9ef3-ef940975daf7
+      apim-request-id: 9b9f6000-c8d5-4753-a16b-e3ff43fe6e24
       content-type: application/json; charset=utf-8
-      date: Tue, 09 Jun 2020 21:15:02 GMT
+      date: Thu, 11 Jun 2020 15:44:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '18'
+      x-envoy-upstream-service-time: '17'
     status:
       code: 200
       message: OK
-    url: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/c4cf199e-dc44-4c66-964e-f941bd614d23?includeKeys=true
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/b61b0ec1-d42c-48c2-b5c2-f046a34b30f0?includeKeys=true
 version: 1

@@ -2599,28 +2599,28 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 6753aaed-e8d2-4498-8aee-d9bb97fb294e
+      - d818509b-eeb3-4d59-b821-f4f0d524c9d2
       content-length:
       - '0'
       date:
-      - Tue, 09 Jun 2020 21:11:35 GMT
+      - Thu, 11 Jun 2020 15:40:41 GMT
       operation-location:
-      - https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/6753aaed-e8d2-4498-8aee-d9bb97fb294e
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/d818509b-eeb3-4d59-b821-f4f0d524c9d2
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '77'
+      - '85'
     status:
       code: 202
       message: Accepted
@@ -2634,14 +2634,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westcentralus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/6753aaed-e8d2-4498-8aee-d9bb97fb294e
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/d818509b-eeb3-4d59-b821-f4f0d524c9d2
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-06-09T21:11:35Z",
-        "lastUpdatedDateTime": "2020-06-09T21:11:39Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T15:40:42Z",
+        "lastUpdatedDateTime": "2020-06-11T15:40:47Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "language": "en", "angle": 0, "width":
         8.5, "height": 11, "unit": "inch", "lines": [{"boundingBox": [0.5384, 1.1583,
         1.4466, 1.1583, 1.4466, 1.3534, 0.5384, 1.3534], "text": "Contoso", "words":
@@ -2748,11 +2748,11 @@ interactions:
         3.859], "elements": ["#/readResults/0/lines/17/words/0"]}]}]}]}}'
     headers:
       apim-request-id:
-      - 57a41fe0-455d-42ab-9904-6409fe2d2d6c
+      - 452b8a5e-0ac9-455e-8a76-1240f528705c
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 09 Jun 2020 21:11:40 GMT
+      - Thu, 11 Jun 2020 15:40:46 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -2760,7 +2760,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '69'
+      - '41'
     status:
       code: 200
       message: OK

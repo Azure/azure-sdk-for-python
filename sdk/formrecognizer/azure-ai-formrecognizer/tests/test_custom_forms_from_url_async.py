@@ -12,13 +12,25 @@ from azure.ai.formrecognizer.aio import FormRecognizerClient, FormTrainingClient
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from testcase import GlobalFormRecognizerAccountPreparer
-from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
+from testcase import GlobalClientPreparer as _GlobalClientPreparer
 
-GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormTrainingClient)
+
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
+
+    @GlobalFormRecognizerAccountPreparer()
+    async def test_custom_forms_encoded_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        try:
+            poller = await client.begin_recognize_custom_forms_from_url(
+                model_id="00000000-0000-0000-0000-000000000000",
+                form_url="https://fakeuri.com/blank%20space"
+            )
+        except HttpResponseError as e:
+            self.assertIn("https://fakeuri.com/blank%20space", e.response.request.body)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_custom_form_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -67,7 +79,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
                 result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_form_bad_url(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -82,7 +94,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_form_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -102,7 +114,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertIsNotNone(field.label_data.text)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
+    @GlobalClientPreparer(training=True, multipage=True, blob_sas_url=True)
     async def test_custom_form_multipage_unlabeled(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -128,7 +140,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
                 self.assertIsNotNone(field.label_data.text)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_form_labeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -147,7 +159,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertIsNotNone(field.value_data.bounding_box)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
+    @GlobalClientPreparer(training=True, multipage=True, blob_sas_url=True)
     async def test_form_multipage_labeled(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -173,7 +185,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
                 self.assertIsNotNone(field.value_data.bounding_box)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_form_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -208,7 +220,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
+    @GlobalClientPreparer(training=True, multipage=True, blob_sas_url=True)
     async def test_multipage_unlabeled_transform(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -236,15 +248,15 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         read_results = actual.analyze_result.read_results
         page_results = actual.analyze_result.page_results
 
-        self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results, bug_skip_text_content=True)
+        self.assertFormPagesTransformCorrect(recognized_form, read_results, page_results)
 
         for form, actual in zip(recognized_form, page_results):
             self.assertEqual(form.page_range.first_page_number, actual.page)
             self.assertEqual(form.page_range.last_page_number, actual.page)
-            self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results, bug_skip_text_content=True)
+            self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_form_labeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -279,7 +291,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         self.assertLabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage=True, blob_sas_url=True)
+    @GlobalClientPreparer(training=True, multipage=True, blob_sas_url=True)
     async def test_multipage_labeled_transform(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -316,7 +328,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     @pytest.mark.live_test_only
     async def test_custom_form_continuation_token(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
@@ -339,7 +351,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage2=True, blob_sas_url=True)
+    @GlobalClientPreparer(training=True, multipage2=True, blob_sas_url=True)
     async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 
@@ -375,7 +387,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(multipage2=True, blob_sas_url=True)
+    @GlobalClientPreparer(training=True, multipage2=True, blob_sas_url=True)
     async def test_custom_form_multipage_vendor_set_labeled_transform(self, client, container_sas_url, blob_sas_url):
         fr_client = client.get_form_recognizer_client()
 

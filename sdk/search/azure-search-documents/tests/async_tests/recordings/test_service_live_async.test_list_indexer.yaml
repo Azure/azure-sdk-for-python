@@ -14,7 +14,7 @@ interactions:
       api-key:
       - E2F9A0F43525EBB186C916380F592AD1
     method: POST
-    uri: https://search651610f4.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search651610f4.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search651610f4.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7ED52C4646503\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -26,7 +26,7 @@ interactions:
       elapsed-time: '29'
       etag: W/"0x8D7ED52C4646503"
       expires: '-1'
-      location: https://search651610f4.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      location: https://search651610f4.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -41,7 +41,7 @@ interactions:
         - https
         - search651610f4.search.windows.net
         - /datasources
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: '{"name": "hotels", "fields": [{"name": "hotelId", "type": "Edm.String",
@@ -58,7 +58,7 @@ interactions:
       api-key:
       - E2F9A0F43525EBB186C916380F592AD1
     method: POST
-    uri: https://search651610f4.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://search651610f4.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search651610f4.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7ED52C4C9C8F3\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
@@ -70,7 +70,7 @@ interactions:
       elapsed-time: '501'
       etag: W/"0x8D7ED52C4C9C8F3"
       expires: '-1'
-      location: https://search651610f4.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+      location: https://search651610f4.search.windows.net/indexes('hotels')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -85,7 +85,7 @@ interactions:
         - https
         - search651610f4.search.windows.net
         - /indexes
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: 'b''{"name": "another-datasource", "type": "azureblob", "credentials": {"connectionString":
@@ -102,7 +102,7 @@ interactions:
       api-key:
       - E2F9A0F43525EBB186C916380F592AD1
     method: POST
-    uri: https://search651610f4.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search651610f4.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search651610f4.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7ED52C4FA097A\"","name":"another-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -114,7 +114,7 @@ interactions:
       elapsed-time: '32'
       etag: W/"0x8D7ED52C4FA097A"
       expires: '-1'
-      location: https://search651610f4.search.windows.net/datasources('another-datasource')?api-version=2019-05-06-Preview
+      location: https://search651610f4.search.windows.net/datasources('another-datasource')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -129,7 +129,7 @@ interactions:
         - https
         - search651610f4.search.windows.net
         - /datasources
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: '{"name": "another-index", "fields": [{"name": "hotelId", "type": "Edm.String",
@@ -146,7 +146,7 @@ interactions:
       api-key:
       - E2F9A0F43525EBB186C916380F592AD1
     method: POST
-    uri: https://search651610f4.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://search651610f4.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search651610f4.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7ED52C57E1E8D\"","name":"another-index","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
@@ -158,7 +158,7 @@ interactions:
       elapsed-time: '730'
       etag: W/"0x8D7ED52C57E1E8D"
       expires: '-1'
-      location: https://search651610f4.search.windows.net/indexes('another-index')?api-version=2019-05-06-Preview
+      location: https://search651610f4.search.windows.net/indexes('another-index')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -173,7 +173,7 @@ interactions:
         - https
         - search651610f4.search.windows.net
         - /indexes
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: '{"name": "sample-indexer", "dataSourceName": "sample-datasource", "targetIndexName":
@@ -190,7 +190,7 @@ interactions:
       api-key:
       - E2F9A0F43525EBB186C916380F592AD1
     method: POST
-    uri: https://search651610f4.search.windows.net/indexers?api-version=2019-05-06-Preview
+    uri: https://search651610f4.search.windows.net/indexers?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search651610f4.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D7ED52C5DC2E27\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null}'
@@ -202,7 +202,7 @@ interactions:
       elapsed-time: '540'
       etag: W/"0x8D7ED52C5DC2E27"
       expires: '-1'
-      location: https://search651610f4.search.windows.net/indexers('sample-indexer')?api-version=2019-05-06-Preview
+      location: https://search651610f4.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -217,7 +217,7 @@ interactions:
         - https
         - search651610f4.search.windows.net
         - /indexers
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: '{"name": "another-indexer", "dataSourceName": "another-datasource", "targetIndexName":
@@ -234,7 +234,7 @@ interactions:
       api-key:
       - E2F9A0F43525EBB186C916380F592AD1
     method: POST
-    uri: https://search651610f4.search.windows.net/indexers?api-version=2019-05-06-Preview
+    uri: https://search651610f4.search.windows.net/indexers?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search651610f4.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D7ED52C60A4B66\"","name":"another-indexer","description":null,"dataSourceName":"another-datasource","skillsetName":null,"targetIndexName":"another-index","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null}'
@@ -246,7 +246,7 @@ interactions:
       elapsed-time: '191'
       etag: W/"0x8D7ED52C60A4B66"
       expires: '-1'
-      location: https://search651610f4.search.windows.net/indexers('another-indexer')?api-version=2019-05-06-Preview
+      location: https://search651610f4.search.windows.net/indexers('another-indexer')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -261,7 +261,7 @@ interactions:
         - https
         - search651610f4.search.windows.net
         - /indexers
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: null
@@ -273,7 +273,7 @@ interactions:
       api-key:
       - E2F9A0F43525EBB186C916380F592AD1
     method: GET
-    uri: https://search651610f4.search.windows.net/indexers?api-version=2019-05-06-Preview
+    uri: https://search651610f4.search.windows.net/indexers?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search651610f4.search.windows.net/$metadata#indexers","value":[{"@odata.etag":"\"0x8D7ED52C60A4B66\"","name":"another-indexer","description":null,"dataSourceName":"another-datasource","skillsetName":null,"targetIndexName":"another-index","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null},{"@odata.etag":"\"0x8D7ED52C5DC2E27\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null}]}'
@@ -300,6 +300,6 @@ interactions:
         - https
         - search651610f4.search.windows.net
         - /indexers
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 version: 1

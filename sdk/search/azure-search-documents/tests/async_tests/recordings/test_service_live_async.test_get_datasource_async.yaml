@@ -15,7 +15,7 @@ interactions:
       api-key:
       - 3C11009E981E0448385CCC14CFCA14D8
     method: POST
-    uri: https://searchfa0d1431.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://searchfa0d1431.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchfa0d1431.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC95BD275436\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -27,7 +27,7 @@ interactions:
       elapsed-time: '52'
       etag: W/"0x8D7EC95BD275436"
       expires: '-1'
-      location: https://searchfa0d1431.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      location: https://searchfa0d1431.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -36,7 +36,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://searchfa0d1431.search.windows.net/datasources?api-version=2019-05-06-Preview
+    url: https://searchfa0d1431.search.windows.net/datasources?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -47,7 +47,7 @@ interactions:
       api-key:
       - 3C11009E981E0448385CCC14CFCA14D8
     method: GET
-    uri: https://searchfa0d1431.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+    uri: https://searchfa0d1431.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchfa0d1431.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC95BD275436\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -69,5 +69,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://searchfa0d1431.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+    url: https://searchfa0d1431.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
 version: 1

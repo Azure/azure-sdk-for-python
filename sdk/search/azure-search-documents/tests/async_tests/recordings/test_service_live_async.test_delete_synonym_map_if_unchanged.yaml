@@ -14,7 +14,7 @@ interactions:
       api-key:
       - 379F6C259E39EFF08F01F8D2429FF657
     method: POST
-    uri: https://searchf4b018b0.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://searchf4b018b0.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchf4b018b0.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7ED71BA2FE792\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -27,7 +27,7 @@ interactions:
       elapsed-time: '23'
       etag: W/"0x8D7ED71BA2FE792"
       expires: '-1'
-      location: https://searchf4b018b0.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+      location: https://searchf4b018b0.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -42,7 +42,7 @@ interactions:
         - https
         - searchf4b018b0.search.windows.net
         - /synonymmaps
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: '{"name": "test-syn-map", "format": "solr", "synonyms": "Washington, Wash.
@@ -61,7 +61,7 @@ interactions:
       api-key:
       - 379F6C259E39EFF08F01F8D2429FF657
     method: PUT
-    uri: https://searchf4b018b0.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+    uri: https://searchf4b018b0.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchf4b018b0.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7ED71BA3AE613\"","name":"test-syn-map","format":"solr","synonyms":"Washington,
@@ -90,7 +90,7 @@ interactions:
         - https
         - searchf4b018b0.search.windows.net
         - /synonymmaps('test-syn-map')
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 - request:
     body: null
@@ -104,7 +104,7 @@ interactions:
       api-key:
       - 379F6C259E39EFF08F01F8D2429FF657
     method: DELETE
-    uri: https://searchf4b018b0.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+    uri: https://searchf4b018b0.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the
@@ -132,6 +132,6 @@ interactions:
         - https
         - searchf4b018b0.search.windows.net
         - /synonymmaps('test-syn-map')
-        - api-version=2019-05-06-Preview
+        - api-version=2020-06-30
         - ''
 version: 1

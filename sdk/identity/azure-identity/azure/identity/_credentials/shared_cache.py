@@ -4,7 +4,7 @@
 # ------------------------------------
 from .. import CredentialUnavailableError
 from .._constants import AZURE_CLI_CLIENT_ID
-from .._internal import AadClient, wrap_exceptions
+from .._internal import AadClient
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 
 try:
@@ -36,7 +36,6 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         is unavailable. Defaults to False.
     """
 
-    @wrap_exceptions
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type (*str, **Any) -> AccessToken
         """Get an access token for `scopes` from the shared cache.
@@ -55,6 +54,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         """
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
+
+        if not self._initialized:
+            self._initialize()
 
         if not self._client:
             raise CredentialUnavailableError(message="Shared token cache unavailable")

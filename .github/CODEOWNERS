@@ -25,7 +25,7 @@
 /sdk/containerinstance/                                              @samkreter @xizhamsft
 /sdk/containerregistry/                                              @djyou
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
-/sdk/cosmos/                                                         @shurd
+/sdk/cosmos/                                                         @southpolesteve @zfoster
 /sdk/datafactory/                                                    @hvermis
 /sdk/datalake/                                                       @ro-joowan
 /sdk/datadatamigration/                                              @vchske
@@ -33,6 +33,7 @@
 /sdk/hdinsight/                                                      @idear1203
 /sdk/machinelearningcompute/                                         @shutchings
 /sdk/recoveryservices/                                               @DheerendraRathor
+/sdk/search/                                                         @xiangyan99
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
 /sql/sql/                                                            @jaredmoo
 /sdk/servicebus/                                                     @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee

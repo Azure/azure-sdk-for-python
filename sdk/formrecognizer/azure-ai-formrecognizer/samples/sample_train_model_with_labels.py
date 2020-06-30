@@ -46,8 +46,8 @@ class TrainModelWithLabelsSample(object):
         # Custom model information
         print("Model ID: {}".format(model.model_id))
         print("Status: {}".format(model.status))
-        print("Requested on: {}".format(model.requested_on))
-        print("Completed on: {}".format(model.completed_on))
+        print("Training started on: {}".format(model.training_started_on))
+        print("Training completed on: {}".format(model.training_completed_on))
 
         print("Recognized fields:")
         # looping through the submodels, which contains the fields they were trained on

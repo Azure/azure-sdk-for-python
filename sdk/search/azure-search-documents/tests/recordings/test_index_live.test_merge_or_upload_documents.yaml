@@ -18,7 +18,7 @@ interactions:
       api-key:
       - 8AAFBCAFAC7EBBE2BEB172384549698B
     method: POST
-    uri: https://searchbc7412f9.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2019-05-06-Preview
+    uri: https://searchbc7412f9.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"key":"1000","status":true,"errorMessage":null,"statusCode":201},{"key":"4","status":true,"errorMessage":null,"statusCode":200}]}'
@@ -64,7 +64,7 @@ interactions:
       api-key:
       - 8AAFBCAFAC7EBBE2BEB172384549698B
     method: GET
-    uri: https://searchbc7412f9.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
+    uri: https://searchbc7412f9.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
   response:
     body:
       string: "\uFEFF11"
@@ -110,7 +110,7 @@ interactions:
       api-key:
       - 8AAFBCAFAC7EBBE2BEB172384549698B
     method: GET
-    uri: https://searchbc7412f9.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
+    uri: https://searchbc7412f9.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"1000","hotelName":null,"description":null,"descriptionFr":null,"category":null,"tags":[],"parkingIncluded":null,"smokingAllowed":null,"lastRenovationDate":null,"rating":1,"location":null,"address":null,"rooms":[]}'
@@ -156,7 +156,7 @@ interactions:
       api-key:
       - 8AAFBCAFAC7EBBE2BEB172384549698B
     method: GET
-    uri: https://searchbc7412f9.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
+    uri: https://searchbc7412f9.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"4","hotelName":"Express Rooms","description":"Pretty good

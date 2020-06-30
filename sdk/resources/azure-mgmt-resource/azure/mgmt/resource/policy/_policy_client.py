@@ -9,45 +9,45 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import PolicyClientConfiguration
 
+class _SDKClient(object):
+    def __init__(self, *args, **kwargs):
+        """This is a fake class to support current implemetation of MultiApiClientMixin."
+        Will be removed in final version of multiapi azure-core based client
+        """
+        pass
 
-
-class PolicyClient(MultiApiClientMixin, SDKClient):
+class PolicyClient(MultiApiClientMixin, _SDKClient):
     """To manage and control access to your resources, you can define customized policies and assign them at a scope.
 
-    This ready contains multiple API versions, to help you deal with all Azure clouds
+    This ready contains multiple API versions, to help you deal with all of the Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
-    By default, uses latest API version available on public Azure.
-    For production, you should stick a particular api-version and/or profile.
-    The profile sets a mapping between the operation group and an API version.
+    By default, it uses the latest API version available on public Azure.
+    For production, you should stick to a particular api-version and/or profile.
+    The profile sets a mapping between an operation group and its API version.
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :ivar config: Configuration for client.
-    :vartype config: PolicyClientConfiguration
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = '2019-09-01'
-    _PROFILE_TAG = "azure.mgmt.resource.policy.PolicyClient"
+    _PROFILE_TAG = "azure.mgmt.resource.PolicyClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -55,11 +55,22 @@ class PolicyClient(MultiApiClientMixin, SDKClient):
         _PROFILE_TAG + " latest"
     )
 
-    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
-        self.config = PolicyClientConfiguration(credentials, subscription_id, base_url)
+    def __init__(
+        self,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        api_version=None,
+        base_url=None,
+        profile=KnownProfiles.default,
+        **kwargs  # type: Any
+    ):
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = PolicyClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(PolicyClient, self).__init__(
-            credentials,
-            self.config,
+            credential,
+            self._config,
             api_version=api_version,
             profile=profile
         )
@@ -72,15 +83,15 @@ class PolicyClient(MultiApiClientMixin, SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2015-10-01-preview: :mod:`v2015_10_01_preview.models<azure.mgmt.resource.policy.v2015_10_01_preview.models>`
-           * 2016-04-01: :mod:`v2016_04_01.models<azure.mgmt.resource.policy.v2016_04_01.models>`
-           * 2016-12-01: :mod:`v2016_12_01.models<azure.mgmt.resource.policy.v2016_12_01.models>`
-           * 2017-06-01-preview: :mod:`v2017_06_01_preview.models<azure.mgmt.resource.policy.v2017_06_01_preview.models>`
-           * 2018-03-01: :mod:`v2018_03_01.models<azure.mgmt.resource.policy.v2018_03_01.models>`
-           * 2018-05-01: :mod:`v2018_05_01.models<azure.mgmt.resource.policy.v2018_05_01.models>`
-           * 2019-01-01: :mod:`v2019_01_01.models<azure.mgmt.resource.policy.v2019_01_01.models>`
-           * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.resource.policy.v2019_06_01.models>`
-           * 2019-09-01: :mod:`v2019_09_01.models<azure.mgmt.resource.policy.v2019_09_01.models>`
+           * 2015-10-01-preview: :mod:`v2015_10_01_preview.models<azure.mgmt.resource.v2015_10_01_preview.models>`
+           * 2016-04-01: :mod:`v2016_04_01.models<azure.mgmt.resource.v2016_04_01.models>`
+           * 2016-12-01: :mod:`v2016_12_01.models<azure.mgmt.resource.v2016_12_01.models>`
+           * 2017-06-01-preview: :mod:`v2017_06_01_preview.models<azure.mgmt.resource.v2017_06_01_preview.models>`
+           * 2018-03-01: :mod:`v2018_03_01.models<azure.mgmt.resource.v2018_03_01.models>`
+           * 2018-05-01: :mod:`v2018_05_01.models<azure.mgmt.resource.v2018_05_01.models>`
+           * 2019-01-01: :mod:`v2019_01_01.models<azure.mgmt.resource.v2019_01_01.models>`
+           * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.resource.v2019_06_01.models>`
+           * 2019-09-01: :mod:`v2019_09_01.models<azure.mgmt.resource.v2019_09_01.models>`
         """
         if api_version == '2015-10-01-preview':
             from .v2015_10_01_preview import models
@@ -115,15 +126,15 @@ class PolicyClient(MultiApiClientMixin, SDKClient):
     def policy_assignments(self):
         """Instance depends on the API version:
 
-           * 2015-10-01-preview: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2015_10_01_preview.operations.PolicyAssignmentsOperations>`
-           * 2016-04-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2016_04_01.operations.PolicyAssignmentsOperations>`
-           * 2016-12-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations>`
-           * 2017-06-01-preview: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicyAssignmentsOperations>`
-           * 2018-03-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2018_03_01.operations.PolicyAssignmentsOperations>`
-           * 2018-05-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2018_05_01.operations.PolicyAssignmentsOperations>`
-           * 2019-01-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2019_01_01.operations.PolicyAssignmentsOperations>`
-           * 2019-06-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2019_06_01.operations.PolicyAssignmentsOperations>`
-           * 2019-09-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2019_09_01.operations.PolicyAssignmentsOperations>`
+           * 2015-10-01-preview: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.v2015_10_01_preview.operations.PolicyAssignmentsOperations>`
+           * 2016-04-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.v2016_04_01.operations.PolicyAssignmentsOperations>`
+           * 2016-12-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.v2016_12_01.operations.PolicyAssignmentsOperations>`
+           * 2017-06-01-preview: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.v2017_06_01_preview.operations.PolicyAssignmentsOperations>`
+           * 2018-03-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.v2018_03_01.operations.PolicyAssignmentsOperations>`
+           * 2018-05-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.v2018_05_01.operations.PolicyAssignmentsOperations>`
+           * 2019-01-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.v2019_01_01.operations.PolicyAssignmentsOperations>`
+           * 2019-06-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.v2019_06_01.operations.PolicyAssignmentsOperations>`
+           * 2019-09-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.v2019_09_01.operations.PolicyAssignmentsOperations>`
         """
         api_version = self._get_api_version('policy_assignments')
         if api_version == '2015-10-01-preview':
@@ -146,21 +157,21 @@ class PolicyClient(MultiApiClientMixin, SDKClient):
             from .v2019_09_01.operations import PolicyAssignmentsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def policy_definitions(self):
         """Instance depends on the API version:
 
-           * 2015-10-01-preview: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2015_10_01_preview.operations.PolicyDefinitionsOperations>`
-           * 2016-04-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2016_04_01.operations.PolicyDefinitionsOperations>`
-           * 2016-12-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2016_12_01.operations.PolicyDefinitionsOperations>`
-           * 2017-06-01-preview: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicyDefinitionsOperations>`
-           * 2018-03-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2018_03_01.operations.PolicyDefinitionsOperations>`
-           * 2018-05-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2018_05_01.operations.PolicyDefinitionsOperations>`
-           * 2019-01-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2019_01_01.operations.PolicyDefinitionsOperations>`
-           * 2019-06-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2019_06_01.operations.PolicyDefinitionsOperations>`
-           * 2019-09-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2019_09_01.operations.PolicyDefinitionsOperations>`
+           * 2015-10-01-preview: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.v2015_10_01_preview.operations.PolicyDefinitionsOperations>`
+           * 2016-04-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.v2016_04_01.operations.PolicyDefinitionsOperations>`
+           * 2016-12-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.v2016_12_01.operations.PolicyDefinitionsOperations>`
+           * 2017-06-01-preview: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.v2017_06_01_preview.operations.PolicyDefinitionsOperations>`
+           * 2018-03-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.v2018_03_01.operations.PolicyDefinitionsOperations>`
+           * 2018-05-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.v2018_05_01.operations.PolicyDefinitionsOperations>`
+           * 2019-01-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.v2019_01_01.operations.PolicyDefinitionsOperations>`
+           * 2019-06-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.v2019_06_01.operations.PolicyDefinitionsOperations>`
+           * 2019-09-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.v2019_09_01.operations.PolicyDefinitionsOperations>`
         """
         api_version = self._get_api_version('policy_definitions')
         if api_version == '2015-10-01-preview':
@@ -183,18 +194,18 @@ class PolicyClient(MultiApiClientMixin, SDKClient):
             from .v2019_09_01.operations import PolicyDefinitionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def policy_set_definitions(self):
         """Instance depends on the API version:
 
-           * 2017-06-01-preview: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2017_06_01_preview.operations.PolicySetDefinitionsOperations>`
-           * 2018-03-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2018_03_01.operations.PolicySetDefinitionsOperations>`
-           * 2018-05-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2018_05_01.operations.PolicySetDefinitionsOperations>`
-           * 2019-01-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2019_01_01.operations.PolicySetDefinitionsOperations>`
-           * 2019-06-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2019_06_01.operations.PolicySetDefinitionsOperations>`
-           * 2019-09-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.policy.v2019_09_01.operations.PolicySetDefinitionsOperations>`
+           * 2017-06-01-preview: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.v2017_06_01_preview.operations.PolicySetDefinitionsOperations>`
+           * 2018-03-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.v2018_03_01.operations.PolicySetDefinitionsOperations>`
+           * 2018-05-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.v2018_05_01.operations.PolicySetDefinitionsOperations>`
+           * 2019-01-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.v2019_01_01.operations.PolicySetDefinitionsOperations>`
+           * 2019-06-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.v2019_06_01.operations.PolicySetDefinitionsOperations>`
+           * 2019-09-01: :class:`PolicySetDefinitionsOperations<azure.mgmt.resource.v2019_09_01.operations.PolicySetDefinitionsOperations>`
         """
         api_version = self._get_api_version('policy_set_definitions')
         if api_version == '2017-06-01-preview':
@@ -211,4 +222,12 @@ class PolicyClient(MultiApiClientMixin, SDKClient):
             from .v2019_09_01.operations import PolicySetDefinitionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)

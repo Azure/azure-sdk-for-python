@@ -207,7 +207,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(0, len(databases), 'Unexpected number of query results.')
 
         # query with a string.
-        databases = list(self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))   #nosec
+        databases = list(self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))   # nosec
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
         self.client.delete_database(db1.id)
         self.client.delete_database(db2.id)
@@ -507,7 +507,7 @@ class CRUDTests(unittest.TestCase):
         # query document on the partition key specified in the predicate will pass even without setting enableCrossPartitionQuery or passing in the partitionKey value
         documentlist = list(created_collection.query_items(
             {
-                'query': 'SELECT * FROM root r WHERE r.id=\'' + replaced_document.get('id') + '\''  #nosec
+                'query': 'SELECT * FROM root r WHERE r.id=\'' + replaced_document.get('id') + '\''  # nosec
             }))
         self.assertEqual(1, len(documentlist))
 
@@ -515,14 +515,14 @@ class CRUDTests(unittest.TestCase):
         try:
             list(created_collection.query_items(
                 {
-                    'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''    #nosec
+                    'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''    # nosec
                 }))
         except Exception:
             pass
 
         # cross partition query
         documentlist = list(created_collection.query_items(
-            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',  #nosec
+            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',  # nosec
             enable_cross_partition_query=True
         ))
 
@@ -530,7 +530,7 @@ class CRUDTests(unittest.TestCase):
 
         # query document by providing the partitionKey value
         documentlist = list(created_collection.query_items(
-            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',  #nosec
+            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',  # nosec
             partition_key=replaced_document.get('id')
         ))
 
@@ -746,14 +746,14 @@ class CRUDTests(unittest.TestCase):
         # query conflicts on any property other than partitionKey will fail without setting enableCrossPartitionQuery or passing in the partitionKey value
         try:
             list(created_collection.query_conflicts(
-                    query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get( #nosec
+                    query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get( # nosec
                         'resourceType') + '\''
                 ))
         except Exception:
             pass
 
         conflictlist = list(created_collection.query_conflicts(
-                query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',  #nosec
+                query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',  # nosec
                 enable_cross_partition_query=True
         ))
 
@@ -762,7 +762,7 @@ class CRUDTests(unittest.TestCase):
         # query conflicts by providing the partitionKey value
         options = {'partitionKey': conflict_definition.get('id')}
         conflictlist = list(created_collection.query_conflicts(
-            query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',  #nosec
+            query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',  # nosec
             partition_key=conflict_definition['id']
         ))
 

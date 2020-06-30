@@ -34,7 +34,7 @@ class SearchServiceClientOperationsMixin(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ServiceStatistics or the result of cls(response)
+        :return: ServiceStatistics, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.ServiceStatistics
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -45,7 +45,7 @@ class SearchServiceClientOperationsMixin(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
 
         # Construct URL
         url = self.get_service_statistics.metadata['url']  # type: ignore
@@ -64,7 +64,6 @@ class SearchServiceClientOperationsMixin(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -77,7 +76,7 @@ class SearchServiceClientOperationsMixin(object):
         deserialized = self._deserialize('ServiceStatistics', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_service_statistics.metadata = {'url': '/servicestats'}  # type: ignore

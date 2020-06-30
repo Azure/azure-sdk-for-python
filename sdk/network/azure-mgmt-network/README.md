@@ -7,7 +7,7 @@ For a more complete view of Azure libraries, see the [Github repo](https://githu
 
 # Usage
 
-For code examples, see [Network Management](https://docs.microsoft.com/python/api/overview/azure/network)
+For code examples, see [Network Management](https://docs.microsoft.com/python/api/overview/azure/network?view=azure-python-preview)
 on docs.microsoft.com.
 
 

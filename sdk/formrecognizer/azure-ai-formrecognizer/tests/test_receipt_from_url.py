@@ -5,6 +5,7 @@
 # ------------------------------------
 
 import pytest
+import functools
 from datetime import date, time
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -12,9 +13,25 @@ from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_receipt
 from azure.ai.formrecognizer import FormRecognizerClient
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
+from testcase import GlobalClientPreparer as _GlobalClientPreparer
+
+
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
 class TestReceiptFromUrl(FormRecognizerTest):
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_polling_interval(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key), polling_interval=7)
+        self.assertEqual(client._client._config.polling_interval, 7)
+
+        poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg, polling_interval=6)
+        poller.wait()
+        self.assertEqual(poller._polling_method._timeout, 6)
+        poller2 = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
+        poller2.wait()
+        self.assertEqual(poller2._polling_method._timeout, 7)  # goes back to client default
 
     @pytest.mark.live_test_only
     def test_active_directory_auth(self):
@@ -26,14 +43,22 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertIsNotNone(result)
 
     @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_receipts_encoded_url(self, client):
+        try:
+            poller = client.begin_recognize_receipts_from_url("https://fakeuri.com/blank%20space")
+        except HttpResponseError as e:
+            self.assertIn("https://fakeuri.com/blank%20space", e.response.request.body)
+
+    @GlobalFormRecognizerAccountPreparer()
     def test_receipt_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
             poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_receipt_url_auth_successful_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_receipt_url_auth_successful_key(self, client):
         poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
         result = poller.result()
 
@@ -44,23 +69,21 @@ class TestReceiptFromUrl(FormRecognizerTest):
             poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_receipt_bad_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-
+    @GlobalClientPreparer()
+    def test_receipt_bad_url(self, client):
         with self.assertRaises(HttpResponseError):
             poller = client.begin_recognize_receipts_from_url("https://badurl.jpg")
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_receipt_url_pass_stream(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_receipt_url_pass_stream(self, client):
         with open(self.receipt_png, "rb") as receipt:
             with self.assertRaises(HttpResponseError):
                 poller = client.begin_recognize_receipts_from_url(receipt)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_receipt_url_transform_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-
+    @GlobalClientPreparer()
+    def test_receipt_url_transform_jpg(self, client):
         responses = []
 
         def callback(raw_response, _, headers):
@@ -110,8 +133,8 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertFormPagesTransformCorrect(receipt.pages, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_receipt_url_transform_png(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_receipt_url_transform_png(self, client):
 
         responses = []
 
@@ -162,8 +185,8 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertFormPagesTransformCorrect(receipt.pages, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_receipt_url_include_text_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_receipt_url_include_text_content(self, client):
 
         poller = client.begin_recognize_receipts_from_url(
             self.receipt_url_jpg,
@@ -184,8 +207,8 @@ class TestReceiptFromUrl(FormRecognizerTest):
             self.assertTextContentHasValues(value.value_data.text_content, receipt.page_range.first_page_number)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_receipt_url_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_receipt_url_jpg(self, client):
 
         poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
 
@@ -210,8 +233,8 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertReceiptItemsHasValues(receipt.fields["Items"].value, receipt.page_range.first_page_number, False)
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_receipt_url_png(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_receipt_url_png(self, client):
 
         poller = client.begin_recognize_receipts_from_url(self.receipt_url_png)
 
@@ -233,8 +256,8 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertEqual(receipt_type.value, 'Itemized')
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_receipt_multipage_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_receipt_multipage_url(self, client):
 
         poller = client.begin_recognize_receipts_from_url(self.multipage_url_pdf, include_text_content=True)
         result = poller.result()
@@ -266,8 +289,8 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertEqual(receipt_type.value, 'Itemized')
 
     @GlobalFormRecognizerAccountPreparer()
-    def test_receipt_multipage_transform_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    def test_receipt_multipage_transform_url(self, client):
 
         responses = []
 
@@ -293,7 +316,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
 
         # check hardcoded values
         for receipt, actual in zip(returned_model, actual):
-            if actual.fields is None:  # second page is blank
+            if not actual.fields:  # second page is blank
                 continue
 
             # check dict values
@@ -323,9 +346,9 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertFormPagesTransformCorrect(returned_model, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
     @pytest.mark.live_test_only
-    def test_receipt_continuation_token(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    def test_receipt_continuation_token(self, client):
 
         initial_poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
         cont_token = initial_poller.continuation_token()

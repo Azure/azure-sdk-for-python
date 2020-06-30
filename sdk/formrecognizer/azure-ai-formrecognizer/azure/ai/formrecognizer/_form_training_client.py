@@ -17,6 +17,7 @@ from typing import (
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
+from azure.core.pipeline import Pipeline
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
 from ._generated.models import (
     TrainRequest,
@@ -26,7 +27,7 @@ from ._generated.models import (
     CopyOperationResult,
     CopyAuthorizationResult
 )
-from ._helpers import error_map, get_authentication_policy, POLLING_INTERVAL
+from ._helpers import error_map, get_authentication_policy, POLLING_INTERVAL, TransportWrapper
 from ._models import (
     CustomFormModelInfo,
     AccountProperties,
@@ -78,11 +79,13 @@ class FormTrainingClient(object):
         self._endpoint = endpoint
         self._credential = credential
         authentication_policy = get_authentication_policy(credential)
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         self._client = FormRecognizer(
             endpoint=self._endpoint,
             credential=self._credential,  # type: ignore
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
+            polling_interval=polling_interval,
             **kwargs
         )
 
@@ -90,19 +93,21 @@ class FormTrainingClient(object):
     def begin_training(self, training_files_url, use_training_labels, **kwargs):
         # type: (str, bool, Any) -> LROPoller[CustomFormModel]
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
-        externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
+        externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri). Note that
+        a container uri is accepted only when the container is public.
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
-        :param str training_files_url: An Azure Storage blob container's SAS URI.
+        :param str training_files_url: An Azure Storage blob container's SAS URI. A container uri can be used if the
+            container is public.
         :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
-        :keyword str prefix: A case-sensitive prefix string to filter documents for training.
-            Use `prefix` to filter documents themselves, or to restrict sub folders for training
-            when `include_sub_folders` is set to True. Not supported if training with labels.
-        :keyword bool include_sub_folders: A flag to indicate if sub folders
-            will also need to be included when searching for content to be preprocessed.
-            Use with `prefix` to filter for only certain sub folders. Not supported if training with labels.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
+            training. For example, when using a Azure storage blob Uri, use the prefix to restrict sub
+            folders for training.
+        :keyword bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
+            will also need to be included when searching for content to be preprocessed. Not supported if
+            training with labels.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -129,7 +134,7 @@ class FormTrainingClient(object):
 
         cls = kwargs.pop("cls", None)
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         deserialization_callback = cls if cls else callback
 
         if continuation_token:
@@ -275,7 +280,9 @@ class FormTrainingClient(object):
         :param str resource_id: Azure Resource Id of the target Form Recognizer resource
             where the model will be copied to.
         :param str resource_region: Location of the target Form Recognizer resource. A valid Azure
-            region name supported by Cognitive Services.
+            region name supported by Cognitive Services. For example, 'westus', 'eastus' etc.
+            See https://azure.microsoft.com/global-infrastructure/services/?products=cognitive-services
+            for the regional availability of Cognitive Services
         :return: A dictionary with values for the copy authorization -
             "modelId", "accessToken", "resourceId", "resourceRegion", and "expirationDateTimeTicks".
         :rtype: Dict[str, Union[str, int]]
@@ -339,7 +346,7 @@ class FormTrainingClient(object):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
@@ -371,11 +378,20 @@ class FormTrainingClient(object):
         :rtype: ~azure.ai.formrecognizer.FormRecognizerClient
         :return: A FormRecognizerClient
         """
-        return FormRecognizerClient(
+
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._client._client._pipeline._transport),
+            policies=self._client._client._pipeline._impl_policies
+        )  # type: Pipeline
+        client = FormRecognizerClient(
             endpoint=self._endpoint,
             credential=self._credential,
+            pipeline=_pipeline,
             **kwargs
         )
+        # need to share config, but can't pass as a keyword into client
+        client._client._config = self._client._client._config
+        return client
 
     def close(self):
         # type: () -> None
