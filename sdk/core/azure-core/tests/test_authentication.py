@@ -190,3 +190,34 @@ def test_azure_key_credential_updates():
     api_key = "new"
     credential.update(api_key)
     assert credential.key == api_key
+
+
+def test_bearer_policy_refresh_option():
+    def get_token_refresh_options():
+        return {"token_refresh_offset": 100}
+    credential = Mock(get_token_refresh_options=get_token_refresh_options)
+    policy = BearerTokenCredentialPolicy(credential, "scope")
+    assert policy._token_refresh_offset == 100
+
+
+def test_bearer_policy_no_refresh_option_method():
+    policy = BearerTokenCredentialPolicy(AzureKeyCredential("test"), "scope")
+    assert policy._token_refresh_offset == 300
+
+
+def test_bearer_policy_refresh_option_method_return_none():
+    def get_token_refresh_options():
+        return None
+
+    credential = Mock(get_token_refresh_options=get_token_refresh_options)
+    policy = BearerTokenCredentialPolicy(credential, "scope")
+    assert policy._token_refresh_offset == 300
+
+
+def test_bearer_policy_refresh_option_method_return_empty():
+    def get_token_refresh_options():
+        return dict()
+
+    credential = Mock(get_token_refresh_options=get_token_refresh_options)
+    policy = BearerTokenCredentialPolicy(credential, "scope")
+    assert policy._token_refresh_offset == 300

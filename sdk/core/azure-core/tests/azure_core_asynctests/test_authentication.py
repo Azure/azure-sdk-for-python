@@ -7,7 +7,7 @@ import asyncio
 import time
 from unittest.mock import Mock
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.exceptions import AzureError, ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, SansIOHTTPPolicy
@@ -160,3 +160,47 @@ def get_completed_future(result=None):
     fut = asyncio.Future()
     fut.set_result(result)
     return fut
+
+
+@pytest.mark.asyncio
+async def test_bearer_policy_refresh_option():
+    def get_token_refresh_options():
+        return {"token_refresh_offset": 100}
+    credential = Mock(get_token_refresh_options=get_token_refresh_options)
+    policy = AsyncBearerTokenCredentialPolicy(credential, "scope")
+    assert policy._token_refresh_offset == 100
+
+
+@pytest.mark.asyncio
+async def test_bearer_policy_refresh_option():
+    def get_token_refresh_options():
+        return {"token_refresh_offset": 100}
+    credential = Mock(get_token_refresh_options=get_token_refresh_options)
+    policy = AsyncBearerTokenCredentialPolicy(credential, "scope")
+    assert policy._token_refresh_offset == 100
+
+
+@pytest.mark.asyncio
+async def test_bearer_policy_no_refresh_option_method():
+    policy = AsyncBearerTokenCredentialPolicy(AzureKeyCredential("test"), "scope")
+    assert policy._token_refresh_offset == 300
+
+
+@pytest.mark.asyncio
+async def test_bearer_policy_refresh_option_method_return_none():
+    def get_token_refresh_options():
+        return None
+
+    credential = Mock(get_token_refresh_options=get_token_refresh_options)
+    policy = AsyncBearerTokenCredentialPolicy(credential, "scope")
+    assert policy._token_refresh_offset == 300
+
+
+@pytest.mark.asyncio
+async def test_bearer_policy_refresh_option_method_return_empty():
+    def get_token_refresh_options():
+        return dict()
+
+    credential = Mock(get_token_refresh_options=get_token_refresh_options)
+    policy = AsyncBearerTokenCredentialPolicy(credential, "scope")
+    assert policy._token_refresh_offset == 300

@@ -36,6 +36,7 @@ class _BearerTokenCredentialPolicyBase(object):
         self._scopes = scopes
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]
+        self._load_token_refresh_options()
 
     @staticmethod
     def _enforce_https(request):
@@ -68,8 +69,14 @@ class _BearerTokenCredentialPolicyBase(object):
     @property
     def _need_new_token(self):
         # type: () -> bool
-        return not self._token or self._token.expires_on - time.time() < 300
+        return not self._token or self._token.expires_on - time.time() < self._token_refresh_offset
 
+    def _load_token_refresh_options(self):
+        try:
+            token_refresh_options = self._credential.get_token_refresh_options()
+            self._token_refresh_offset = token_refresh_options.get("token_refresh_offset", 300)
+        except Exception:  # pylint: disable=broad-except
+            self._token_refresh_offset = 300
 
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPolicy):
     """Adds a bearer token Authorization header to requests.
