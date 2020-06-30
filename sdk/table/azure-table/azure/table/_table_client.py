@@ -267,7 +267,7 @@ class TableClient(StorageAccountHostsMixin):
             raise ResourceNotFoundError
 
     @distributed_trace
-    def insert_entity(
+    def create_entity(
             self,
             headers=None,
             table_entity_properties=None,
@@ -519,7 +519,7 @@ class TableClient(StorageAccountHostsMixin):
             )
             return merged_entity
         except ResourceNotFoundError:
-            insert_entity = self.insert_entity(
+            insert_entity = self.create_entity(
                 partition_key=partition_key,
                 row_key=row_key,
                 table_entity_properties=table_entity_properties,
@@ -567,7 +567,7 @@ class TableClient(StorageAccountHostsMixin):
                 **kwargs)
             return update_entity
         except ResourceNotFoundError:
-            insert_entity = self.insert_entity(
+            insert_entity = self.create_entity(
                 partition_key=partition_key,
                 row_key=row_key,
                 table_entity_properties=table_entity_properties
