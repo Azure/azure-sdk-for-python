@@ -184,6 +184,16 @@ for recognized_form in result:
         ))
 ```
 
+Alternatively, a form url can also be used to recognize custom forms using the `begin_recognize_custom_forms_from_url` method. The `_from_url` methods exist for
+all the recognize methods.
+
+
+```
+form_url_jpg = "<url_of_the_form>"
+poller = form_recognizer_client.begin_recognize_custom_forms_from_url(model_id=model_id, form_url=form_url)
+result = poller.result()
+```
+
 ### Recognize Content
 Recognize text and table structures, along with their bounding box coordinates, from documents.
 
@@ -323,6 +333,14 @@ except ResourceNotFoundError:
     print("Successfully deleted model with id {}".format(custom_model.model_id))
 ```
 
+## Async APIs
+This library also includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+for more information.
+
+
 ## Optional Configuration
 
 Optional keyword arguments can be passed in at the client and per-operation level.
@@ -407,6 +425,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-fr-product-docs]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview
 [python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [python-fr-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples
+[train-a-model-using-labeled-data]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/python-labeled-data#train-a-model-using-labeled-data
 
 
 [quickstart_training]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/curl-train-extract#train-a-form-recognizer-model
