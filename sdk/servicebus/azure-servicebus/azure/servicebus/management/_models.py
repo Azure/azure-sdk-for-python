@@ -247,6 +247,8 @@ class TopicDescription(object):  # pylint:disable=too-many-instance-attributes
         **kwargs
     ):
         """
+        :keyword name: Name of the topic.
+        :type name: str
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
@@ -299,7 +301,6 @@ class TopicDescription(object):  # pylint:disable=too-many-instance-attributes
 
         :rtype: None
         """
-        super(TopicDescription, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self._internal_td = None
 
@@ -393,7 +394,6 @@ class TopicRuntimeInfo(object):
 
         :rtype: None
         """
-        super(TopicRuntimeInfo, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self._internal_td = None
         self.created_at = kwargs.get('created_at', None)
@@ -423,7 +423,8 @@ class SubscriptionDescription(object):  # pylint:disable=too-many-instance-attri
     """
     def __init__(self, **kwargs):
         """
-
+        :keyword name: Name of the subscription.
+        :type name: str
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
@@ -467,7 +468,6 @@ class SubscriptionDescription(object):  # pylint:disable=too-many-instance-attri
         :type entity_availability_status: str or
          ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
         """
-        super(SubscriptionDescription, self).__init__(**kwargs)
         self.name = kwargs.get("name")
         self._internal_sd = None
 
@@ -552,7 +552,6 @@ class SubscriptionRuntimeInfo(object):
 
         :rtype: None
         """
-        super(SubscriptionRuntimeInfo, self).__init__(**kwargs)
         self._internal_sd = None
         self.name = kwargs.get("name")
 
@@ -595,7 +594,6 @@ class RuleDescription(object):
 
         :rtype: None
         """
-        super(RuleDescription, self).__init__(**kwargs)
         self.filter = kwargs.get('filter', None)
         self.action = kwargs.get('action', None)
         self.created_at = kwargs.get('created_at', None)
@@ -610,9 +608,9 @@ class RuleDescription(object):
         rule._internal_rule = internal_rule
 
         rule.filter = RULE_CLASS_MAPPING[type(internal_rule.filter)]._from_internal_entity(internal_rule.filter) \
-            if internal_rule.filter and internal_rule.filter in RULE_CLASS_MAPPING else None
+            if internal_rule.filter and type(internal_rule.filter) in RULE_CLASS_MAPPING else None
         rule.action = RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity(internal_rule.action) \
-            if internal_rule.action and internal_rule.action in RULE_CLASS_MAPPING else None
+            if internal_rule.action and type(internal_rule.action) in RULE_CLASS_MAPPING else None
         rule.created_at = internal_rule.created_at
         rule.name = internal_rule.name
 

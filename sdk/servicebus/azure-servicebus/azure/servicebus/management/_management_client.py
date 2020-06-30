@@ -769,6 +769,9 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :rtype: None
         """
 
+        if not isinstance(rule_description, RuleDescription):
+            raise TypeError("rule_description must be of type RuleDescription")
+
         try:
             topic_name = topic.name  # type: ignore
         except AttributeError:

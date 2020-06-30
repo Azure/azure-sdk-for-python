@@ -336,7 +336,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :param str topic_name: The name of the topic.
         :rtype: ~azure.servicebus.management.TopicRuntimeInfo
         """
-        entry_ele = self._get_entity_element(topic_name, **kwargs)
+        entry_ele = await self._get_entity_element(topic_name, **kwargs)
         entry = TopicDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Topic {} does not exist".format(topic_name))
@@ -488,7 +488,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
-        entry_ele = self._get_subscription_element(topic_name, subscription_name, **kwargs)
+        entry_ele = await self._get_subscription_element(topic_name, subscription_name, **kwargs)
         entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError(
@@ -510,7 +510,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
-        entry_ele = self._get_subscription_element(topic_name, subscription_name, **kwargs)
+        entry_ele = await self._get_subscription_element(topic_name, subscription_name, **kwargs)
         entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError(
@@ -764,6 +764,9 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :param ~azure.servicebus.management.RuleDescription rule_description: The rule to be updated.
         :rtype: None
         """
+
+        if not isinstance(rule_description, RuleDescription):
+            raise TypeError("rule_description must be of type RuleDescription")
 
         try:
             topic_name = topic.name  # type: ignore
