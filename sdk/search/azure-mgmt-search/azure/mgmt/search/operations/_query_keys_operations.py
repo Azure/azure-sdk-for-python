@@ -19,11 +19,13 @@ from .. import models
 class QueryKeysOperations(object):
     """QueryKeysOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for each request. The current version is 2015-08-19. Constant value: "2015-08-19".
+    :ivar api_version: The API version to use for each request. The current version is 2019-10-01-Preview. Constant value: "2020-03-13".
     """
 
     models = models
@@ -33,7 +35,7 @@ class QueryKeysOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-08-19"
+        self.api_version = "2020-03-13"
 
         self.config = config
 
@@ -46,8 +48,8 @@ class QueryKeysOperations(object):
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service
-         associated with the specified resource group.
+        :param search_service_name: The name of the Azure Cognitive Search
+         service associated with the specified resource group.
         :type search_service_name: str
         :param name: The name of the new query API key.
         :type name: str
@@ -105,7 +107,6 @@ class QueryKeysOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('QueryKey', response)
 
@@ -118,14 +119,15 @@ class QueryKeysOperations(object):
 
     def list_by_search_service(
             self, resource_group_name, search_service_name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
-        """Returns the list of query API keys for the given Azure Search service.
+        """Returns the list of query API keys for the given Azure Cognitive Search
+        service.
 
         :param resource_group_name: The name of the resource group within the
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service
-         associated with the specified resource group.
+        :param search_service_name: The name of the Azure Cognitive Search
+         service associated with the specified resource group.
         :type search_service_name: str
         :param search_management_request_options: Additional parameters for
          the operation
@@ -145,8 +147,7 @@ class QueryKeysOperations(object):
         if search_management_request_options is not None:
             client_request_id = search_management_request_options.client_request_id
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_search_service.metadata['url']
@@ -178,7 +179,12 @@ class QueryKeysOperations(object):
                 header_parameters['x-ms-client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+            request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -189,12 +195,10 @@ class QueryKeysOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.QueryKeyPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.QueryKeyPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.QueryKeyPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_search_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/listQueryKeys'}
@@ -209,8 +213,8 @@ class QueryKeysOperations(object):
          current subscription. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Search service
-         associated with the specified resource group.
+        :param search_service_name: The name of the Azure Cognitive Search
+         service associated with the specified resource group.
         :type search_service_name: str
         :param key: The query key to be deleted. Query keys are identified by
          value, not by name.

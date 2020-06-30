@@ -29,10 +29,33 @@ class SkuName(str, Enum):
     storage_optimized_l2 = "storage_optimized_l2"
 
 
+class PrivateLinkServiceConnectionStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+
+
+class SharedPrivateLinkResourceStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+    timeout = "Timeout"
+
+
 class HostingMode(str, Enum):
 
     default = "default"
     high_density = "highDensity"
+
+
+class PublicNetworkAccess(str, Enum):
+
+    enabled = "enabled"
+    disabled = "disabled"
 
 
 class SearchServiceStatus(str, Enum):

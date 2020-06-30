@@ -19,11 +19,13 @@ from .. import models
 class Operations(object):
     """Operations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for each request. The current version is 2015-08-19. Constant value: "2015-08-19".
+    :ivar api_version: The API version to use for each request. The current version is 2019-10-01-Preview. Constant value: "2020-03-13".
     """
 
     models = models
@@ -33,7 +35,7 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-08-19"
+        self.api_version = "2020-03-13"
 
         self.config = config
 
@@ -52,8 +54,7 @@ class Operations(object):
          ~azure.mgmt.search.models.OperationPaged[~azure.mgmt.search.models.Operation]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -78,6 +79,11 @@ class Operations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -88,12 +94,10 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/providers/Microsoft.Search/operations'}

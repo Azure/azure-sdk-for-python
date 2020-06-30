@@ -11,51 +11,20 @@
 
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.operations import Operations
-from .operations.admin_keys_operations import AdminKeysOperations
-from .operations.query_keys_operations import QueryKeysOperations
-from .operations.services_operations import ServicesOperations
+
+from ._configuration import SearchManagementClientConfiguration
+from .operations import Operations
+from .operations import AdminKeysOperations
+from .operations import QueryKeysOperations
+from .operations import ServicesOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import SharedPrivateLinkResourcesOperations
 from . import models
 
 
-class SearchManagementClientConfiguration(AzureConfiguration):
-    """Configuration for SearchManagementClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: The unique identifier for a Microsoft Azure
-     subscription. You can obtain this value from the Azure Resource Manager
-     API or the portal.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(SearchManagementClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-search/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
-
-
 class SearchManagementClient(SDKClient):
-    """Client that can be used to manage Azure Search services and API keys.
+    """Client that can be used to manage Azure Cognitive Search services and API keys.
 
     :ivar config: Configuration for client.
     :vartype config: SearchManagementClientConfiguration
@@ -68,6 +37,12 @@ class SearchManagementClient(SDKClient):
     :vartype query_keys: azure.mgmt.search.operations.QueryKeysOperations
     :ivar services: Services operations
     :vartype services: azure.mgmt.search.operations.ServicesOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.search.operations.PrivateLinkResourcesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.search.operations.PrivateEndpointConnectionsOperations
+    :ivar shared_private_link_resources: SharedPrivateLinkResources operations
+    :vartype shared_private_link_resources: azure.mgmt.search.operations.SharedPrivateLinkResourcesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -86,7 +61,7 @@ class SearchManagementClient(SDKClient):
         super(SearchManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2015-08-19'
+        self.api_version = '2020-03-13'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -97,4 +72,10 @@ class SearchManagementClient(SDKClient):
         self.query_keys = QueryKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.services = ServicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.shared_private_link_resources = SharedPrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
