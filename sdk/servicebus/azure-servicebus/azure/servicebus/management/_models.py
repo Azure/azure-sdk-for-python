@@ -608,9 +608,9 @@ class RuleDescription(object):
         rule._internal_rule = internal_rule
 
         rule.filter = RULE_CLASS_MAPPING[type(internal_rule.filter)]._from_internal_entity(internal_rule.filter) \
-            if internal_rule.filter and type(internal_rule.filter) in RULE_CLASS_MAPPING else None
+            if internal_rule.filter and isinstance(internal_rule.filter, tuple(RULE_CLASS_MAPPING.keys())) else None
         rule.action = RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity(internal_rule.action) \
-            if internal_rule.action and type(internal_rule.action) in RULE_CLASS_MAPPING else None
+            if internal_rule.action and isinstance(internal_rule.action, tuple(RULE_CLASS_MAPPING.keys())) else None
         rule.created_at = internal_rule.created_at
         rule.name = internal_rule.name
 
