@@ -20,6 +20,14 @@ def adjust_confidence(score):
     return score
 
 
+def adjust_text_angle(text_angle):
+    """Adjust to (-180, 180]
+    """
+    if text_angle > 180:
+        text_angle -= 360
+    return text_angle
+
+
 def get_elements(field, read_result):
     text_elements = []
 
@@ -327,7 +335,7 @@ class FormPage(object):
     def _from_generated(cls, read_result):
         return [cls(
             page_number=page.page,
-            text_angle=page.angle,
+            text_angle=adjust_text_angle(page.angle),
             width=page.width,
             height=page.height,
             unit=page.unit,
