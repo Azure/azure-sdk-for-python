@@ -237,8 +237,8 @@ async def test_persistent_cache_multiple_clients(cert_path, cert_password):
 
 @pytest.mark.asyncio
 async def test_token_refresh_offset():
-    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH)
-    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET
+    token_refresh_options = CertificateCredential("tenant-id", "client-id", CERT_PATH).get_token_refresh_options()
+    assert token_refresh_options.get("token_refresh_offset") == DEFAULT_REFRESH_OFFSET
 
-    credential = CertificateCredential("tenant-id", "client-id", CERT_PATH, token_refresh_offset=100)
-    assert credential.token_refresh_offset == 100
+    token_refresh_options = CertificateCredential("tenant-id", "client-id", CERT_PATH, token_refresh_offset=100).get_token_refresh_options()
+    assert token_refresh_options.get("token_refresh_offset") == 100

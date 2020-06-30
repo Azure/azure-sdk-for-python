@@ -117,8 +117,8 @@ def test_token_refresh_offset():
     with mock.patch.dict(
             MsiCredential.__module__ + ".os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint}, clear=True
     ):
-        credential = MsiCredential()
-        assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET
+        token_refresh_options = MsiCredential().get_token_refresh_options()
+        assert token_refresh_options.get("token_refresh_offset") == DEFAULT_REFRESH_OFFSET
 
-        credential = MsiCredential(token_refresh_offset=100)
-        assert credential.token_refresh_offset == 100
+        token_refresh_options = MsiCredential(token_refresh_offset=100).get_token_refresh_options()
+        assert token_refresh_options.get("token_refresh_offset") == 100

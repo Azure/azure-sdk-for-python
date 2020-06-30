@@ -115,8 +115,8 @@ async def test_no_obtain_token_if_cached():
 
 @pytest.mark.asyncio
 async def test_token_refresh_offset():
-    credential = VSCodeCredential()
-    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET
+    token_refresh_options = VSCodeCredential().get_token_refresh_options()
+    assert token_refresh_options.get("token_refresh_offset") == DEFAULT_REFRESH_OFFSET
 
-    credential = VSCodeCredential(token_refresh_offset=100)
-    assert credential.token_refresh_offset == 100
+    token_refresh_options = VSCodeCredential(token_refresh_offset=100).get_token_refresh_options()
+    assert token_refresh_options.get("token_refresh_offset") == 100

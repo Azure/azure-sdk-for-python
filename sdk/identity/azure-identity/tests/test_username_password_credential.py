@@ -142,11 +142,11 @@ def test_token_refresh_offset():
     issuer = "https://" + environment
     tenant_id = "some-tenant"
     username = "me@work.com"
-    credential = UsernamePasswordCredential(
+    token_refresh_options = UsernamePasswordCredential(
         username=username,
         password="1234",
         authority=environment,
         client_id=client_id,
         tenant_id=tenant_id,
-    )
-    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET
+    ).get_token_refresh_options()
+    assert "token_refresh_offset" not in token_refresh_options

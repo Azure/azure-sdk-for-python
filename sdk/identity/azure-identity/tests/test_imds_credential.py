@@ -175,8 +175,8 @@ def test_identity_config():
     assert token == expected_token
 
 def test_token_refresh_offset():
-    credential = ImdsCredential()
-    assert credential.token_refresh_offset == DEFAULT_REFRESH_OFFSET
+    token_refresh_options = ImdsCredential().get_token_refresh_options()
+    assert token_refresh_options.get("token_refresh_offset") == DEFAULT_REFRESH_OFFSET
 
-    credential = ImdsCredential(token_refresh_offset=100)
-    assert credential.token_refresh_offset == 100
+    token_refresh_options = ImdsCredential(token_refresh_offset=100).get_token_refresh_options()
+    assert token_refresh_options.get("token_refresh_offset") == 100

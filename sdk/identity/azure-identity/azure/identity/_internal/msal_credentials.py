@@ -137,10 +137,9 @@ class MsalCredential(ABC):
 
         return app
 
-    @property
-    def token_refresh_offset(self):
-        # type: () -> int
-        return DEFAULT_REFRESH_OFFSET
+    def get_token_refresh_options(self):
+        # type: () -> dict
+        return dict()
 
 
 class ConfidentialClientCredential(MsalCredential):

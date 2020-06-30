@@ -76,7 +76,6 @@ class VSCodeCredential(AsyncCredentialBase):
         token = await self._client.obtain_token_by_refresh_token(scopes, self._refresh_token, **kwargs)
         return token
 
-    @property
-    def token_refresh_offset(self):
-        # type: () -> int
-        return self._client.token_refresh_offset
+    def get_token_refresh_options(self):
+        # type: () -> dict
+        return {"token_refresh_offset": self._client.token_refresh_offset}
