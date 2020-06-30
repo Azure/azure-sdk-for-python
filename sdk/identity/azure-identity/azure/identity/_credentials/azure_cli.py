@@ -104,7 +104,12 @@ def _run_command(command):
     try:
         working_directory = get_safe_working_dir()
 
-        kwargs = {"stderr": subprocess.STDOUT, "cwd": working_directory, "universal_newlines": True}
+        kwargs = {
+            "stderr": subprocess.STDOUT,
+            "cwd": working_directory,
+            "universal_newlines": True,
+            "env": dict(os.environ, AZURE_CORE_NO_COLOR="true"),
+        }
         if platform.python_version() >= "3.3":
             kwargs["timeout"] = 10
 

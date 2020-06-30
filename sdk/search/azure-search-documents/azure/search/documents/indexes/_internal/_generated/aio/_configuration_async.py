@@ -33,7 +33,7 @@ class SearchServiceClientConfiguration(Configuration):
         super(SearchServiceClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2019-05-06-Preview"
+        self.api_version = "2020-06-30"
         kwargs.setdefault('sdk_moniker', 'searchserviceclient/{}'.format(VERSION))
         self._configure(**kwargs)
 

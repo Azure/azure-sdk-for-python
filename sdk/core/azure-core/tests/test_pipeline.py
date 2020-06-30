@@ -46,10 +46,12 @@ import pytest
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
+from azure.core import PipelineClient
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
     RedirectPolicy,
+    HttpLoggingPolicy
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
@@ -59,6 +61,26 @@ from azure.core.pipeline.transport import (
 )
 
 from azure.core.exceptions import AzureError
+
+def test_default_http_logging_policy():
+    config = Configuration()
+    pipeline_client = PipelineClient(base_url="test")
+    pipeline = pipeline_client._build_pipeline(config)
+    http_logging_policy = pipeline._impl_policies[-1]._policy
+    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
+
+def test_pass_in_http_logging_policy():
+    config = Configuration()
+    http_logging_policy = HttpLoggingPolicy()
+    http_logging_policy.allowed_header_names.update(
+        {"x-ms-added-header"}
+    )
+    config.http_logging_policy = http_logging_policy
+
+    pipeline_client = PipelineClient(base_url="test")
+    pipeline = pipeline_client._build_pipeline(config)
+    http_logging_policy = pipeline._impl_policies[-1]._policy
+    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
 
 
 def test_sans_io_exception():

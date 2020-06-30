@@ -100,12 +100,12 @@ class FormTrainingClient(object):
         :param str training_files_url: An Azure Storage blob container's SAS URI.
         :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
-        :keyword str prefix: A case-sensitive prefix string to filter documents for training.
-            Use `prefix` to filter documents themselves, or to restrict sub folders for training
-            when `include_sub_folders` is set to True. Not supported if training with labels.
-        :keyword bool include_sub_folders: A flag to indicate if sub folders
-            will also need to be included when searching for content to be preprocessed.
-            Use with `prefix` to filter for only certain sub folders. Not supported if training with labels.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
+            training. For example, when using a Azure storage blob Uri, use the prefix to restrict sub
+            folders for training.
+        :keyword bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
+            will also need to be included when searching for content to be preprocessed. Not supported if
+            training with labels.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.

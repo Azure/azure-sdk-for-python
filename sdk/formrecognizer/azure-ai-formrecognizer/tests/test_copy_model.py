@@ -46,8 +46,8 @@ class TestCopyModel(FormRecognizerTest):
         copied_model = client.get_custom_model(copy.model_id)
 
         self.assertEqual(copy.status, "ready")
-        self.assertIsNotNone(copy.requested_on)
-        self.assertIsNotNone(copy.completed_on)
+        self.assertIsNotNone(copy.training_started_on)
+        self.assertIsNotNone(copy.training_completed_on)
         self.assertEqual(target["modelId"], copy.model_id)
         self.assertNotEqual(target["modelId"], model.model_id)
         self.assertIsNotNone(copied_model)
@@ -103,9 +103,9 @@ class TestCopyModel(FormRecognizerTest):
 
         actual = raw_response[0]
         copy = raw_response[1]
-        self.assertEqual(copy.requested_on, actual.created_date_time)
+        self.assertEqual(copy.training_started_on, actual.created_date_time)
         self.assertEqual(copy.status, actual.status)
-        self.assertEqual(copy.completed_on, actual.last_updated_date_time)
+        self.assertEqual(copy.training_completed_on, actual.last_updated_date_time)
         self.assertEqual(copy.model_id, target["modelId"])
 
     @GlobalFormRecognizerAccountPreparer()

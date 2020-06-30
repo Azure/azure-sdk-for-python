@@ -9,7 +9,7 @@ interactions:
       api-key:
       - 0CF3302F0AB74F3241C00534746EFD38
     method: GET
-    uri: https://searchd1281368.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
+    uri: https://searchd1281368.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
   response:
     body:
       string: ''
@@ -25,5 +25,5 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://searchd1281368.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
+    url: https://searchd1281368.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
 version: 1

@@ -31,10 +31,10 @@ were incorrectly visible/importable and have been renamed. This fixed
 several issues caused by usage of classes that were not supposed to be
 used in the first place.
 
-  - CustomVisionPredictionClient cannot be imported from `azure.cognitiveservices.vision.customvision.prediction`
-    anymore (import from `azure.cognitiveservices.vision.customvision` works like before)
+  - CustomVisionPredictionClient cannot be imported from `azure.cognitiveservices.vision.customvision.prediction.custom_vision_prediction_client`
+    anymore (import from `azure.cognitiveservices.vision.customvision.prediction` works like before)
   - CustomVisionPredictionClientConfiguration import has been moved from
-    `azure.cognitiveservices.vision.customvision.prediction` to `azure.cognitiveservices.vision.customvision.prediction`
+    `azure.cognitiveservices.vision.customvision.prediction.custom_vision_prediction_client` to `azure.cognitiveservices.vision.customvision.prediction`
   - A model `MyClass` from a "models" sub-module cannot be imported
     anymore using `azure.cognitiveservices.vision.customvision.prediction.models.my_class` (import from
     `azure.cognitiveservices.vision.customvision.prediction.models` works like before)
@@ -42,10 +42,10 @@ used in the first place.
     sub-module cannot be imported anymore using
     `azure.cognitiveservices.vision.customvision.operations.prediction.my_class_operations` (import
     from `azure.cognitiveservices.vision.customvision.prediction.operations` works like before)
-  - CustomVisionTrainingClient cannot be imported from `azure.cognitiveservices.vision.customvision.training`
-    anymore (import from `azure.cognitiveservices.vision.customvision` works like before)
+  - CustomVisionTrainingClient cannot be imported from `azure.cognitiveservices.vision.customvision.training.custom_vision_training_client`
+    anymore (import from `azure.cognitiveservices.vision.customvision.training` works like before)
   - CustomVisionTrainingClientConfiguration import has been moved from
-    `azure.cognitiveservices.vision.customvision.training` to `azure.cognitiveservices.vision.customvision.training`
+    `azure.cognitiveservices.vision.customvision.training.custom_vision_training_client` to `azure.cognitiveservices.vision.customvision.training`
   - A model `MyClass` from a "models" sub-module cannot be imported
     anymore using `azure.cognitiveservices.vision.customvision.training.models.my_class` (import from
     `azure.cognitiveservices.vision.customvision.training.models` works like before)
