@@ -218,10 +218,10 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         for field, value in receipt.__dict__.items():
             if field not in ["page_range", "pages", "fields", "form_type"]:
                 field = getattr(receipt, field)
-                self.assertTextContentHasValues(field.value_datafield_elements, receipt.page_range.first_page_number)
+                self.assertTextContentHasValues(field.value_data.field_elements, receipt.page_range.first_page_number)
 
         for field, value in receipt.fields.items():
-            self.assertTextContentHasValues(value.value_datafield_elements, receipt.page_range.first_page_number)
+            self.assertTextContentHasValues(value.value_data.field_elements, receipt.page_range.first_page_number)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
