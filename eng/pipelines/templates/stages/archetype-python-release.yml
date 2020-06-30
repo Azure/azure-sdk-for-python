@@ -28,6 +28,11 @@ stages:
                 deploy:
                   steps:
                     - checkout: self
+                    - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
+                      parameters:
+                        PackageName: ${{artifact.name}}
+                        ServiceName: ${{parameters.ServiceDirectory}}
+                        ForRelease: true
                     - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                       parameters:
                         SourceFolder: ${{parameters.ArtifactName}} 
