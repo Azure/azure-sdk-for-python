@@ -31,6 +31,11 @@ except ImportError:  # python < 3.3
 from helpers import build_aad_response, build_id_token, mock_response, Request, validating_transport
 
 
+def test_supported():
+    """the cache is supported on Linux, macOS, Windows, so this should pass unless you're developing on e.g. FreeBSD"""
+    assert SharedTokenCacheCredential.supported()
+
+
 def test_no_scopes():
     """The credential should raise when get_token is called with no scopes"""
 
@@ -717,6 +722,21 @@ def test_access_token_caching():
     )
 
 
+def test_initialization():
+    """the credential should attempt to load the cache only once, when it's first needed"""
+
+    with patch("azure.identity._internal.persistent_cache._load_persistent_cache") as mock_cache_loader:
+        mock_cache_loader.side_effect = Exception("it didn't work")
+
+        credential = SharedTokenCacheCredential()
+        assert mock_cache_loader.call_count == 0
+
+        for _ in range(2):
+            with pytest.raises(CredentialUnavailableError):
+                credential.get_token("scope")
+            assert mock_cache_loader.call_count == 1
+
+
 def test_authentication_record_authenticating_tenant():
     """when given a record and 'tenant_id', the credential should authenticate in the latter"""
 
@@ -724,7 +744,12 @@ def test_authentication_record_authenticating_tenant():
     record = AuthenticationRecord("not- " + expected_tenant_id, "...", "...", "...", "...")
 
     with patch.object(SharedTokenCacheCredential, "_get_auth_client") as get_auth_client:
-        SharedTokenCacheCredential(authentication_record=record, _cache=TokenCache(), tenant_id=expected_tenant_id)
+        credential = SharedTokenCacheCredential(
+            authentication_record=record, _cache=TokenCache(), tenant_id=expected_tenant_id
+        )
+        with pytest.raises(CredentialUnavailableError):
+            # this raises because the cache is empty
+            credential.get_token("scope")
 
     assert get_auth_client.call_count == 1
     _, kwargs = get_auth_client.call_args

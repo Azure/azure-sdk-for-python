@@ -26,6 +26,11 @@ from helpers_async import async_validating_transport, AsyncMockTransport
 from test_shared_cache_credential import get_account_event, populated_cache
 
 
+def test_supported():
+    """the cache is supported on Linux, macOS, Windows, so this should pass unless you're developing on e.g. FreeBSD"""
+    assert SharedTokenCacheCredential.supported()
+
+
 @pytest.mark.asyncio
 async def test_no_scopes():
     """The credential should raise when get_token is called with no scopes"""
@@ -37,10 +42,16 @@ async def test_no_scopes():
 
 @pytest.mark.asyncio
 async def test_close():
-    transport = AsyncMockTransport()
+    async def send(*_, **__):
+        return mock_response(json_payload=build_aad_response(access_token="**"))
+
+    transport = AsyncMockTransport(send=send)
     credential = SharedTokenCacheCredential(
         _cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
     )
+
+    # the credential doesn't open a transport session before one is needed, so we send a request
+    await credential.get_token("scope")
 
     await credential.close()
 
@@ -49,16 +60,26 @@ async def test_close():
 
 @pytest.mark.asyncio
 async def test_context_manager():
-    transport = AsyncMockTransport()
+    async def send(*_, **__):
+        return mock_response(json_payload=build_aad_response(access_token="**"))
+
+    transport = AsyncMockTransport(send=send)
     credential = SharedTokenCacheCredential(
         _cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
     )
 
+    # async with before initialization: credential should call aexit but not aenter
     async with credential:
-        assert transport.__aenter__.call_count == 1
+        await credential.get_token("scope")
 
-    assert transport.__aenter__.call_count == 1
+    assert transport.__aenter__.call_count == 0
     assert transport.__aexit__.call_count == 1
+
+    # async with after initialization: credential should call aenter and aexit
+    async with credential:
+        await credential.get_token("scope")
+        assert transport.__aenter__.call_count == 1
+    assert transport.__aexit__.call_count == 2
 
 
 @pytest.mark.asyncio
@@ -67,9 +88,7 @@ async def test_context_manager_no_cache():
 
     transport = AsyncMockTransport()
 
-    with patch(
-        "azure.identity._internal.shared_token_cache.load_user_cache", Mock(side_effect=NotImplementedError)
-    ):
+    with patch("azure.identity._internal.shared_token_cache.load_user_cache", Mock(side_effect=NotImplementedError)):
         credential = SharedTokenCacheCredential(transport=transport)
 
     async with credential:
@@ -666,14 +685,20 @@ async def test_auth_record_multiple_accounts_for_username():
     assert token.token == expected_access_token
 
 
-def test_authentication_record_authenticating_tenant():
+@pytest.mark.asyncio
+async def test_authentication_record_authenticating_tenant():
     """when given a record and 'tenant_id', the credential should authenticate in the latter"""
 
     expected_tenant_id = "tenant-id"
     record = AuthenticationRecord("not- " + expected_tenant_id, "...", "...", "...", "...")
 
     with patch.object(SharedTokenCacheCredential, "_get_auth_client") as get_auth_client:
-        SharedTokenCacheCredential(authentication_record=record, _cache=TokenCache(), tenant_id=expected_tenant_id)
+        credential = SharedTokenCacheCredential(
+            authentication_record=record, _cache=TokenCache(), tenant_id=expected_tenant_id
+        )
+        with pytest.raises(CredentialUnavailableError):
+            # this raises because the cache is empty
+            await credential.get_token("scope")
 
     assert get_auth_client.call_count == 1
     _, kwargs = get_auth_client.call_args
@@ -713,3 +738,20 @@ async def test_allow_unencrypted_cache():
 
     msal_extensions_patch.stop()
     platform_patch.stop()
+
+
+@pytest.mark.asyncio
+async def test_initialization():
+    """the credential should attempt to load the cache only once, when it's first needed"""
+
+    with patch("azure.identity._internal.persistent_cache._load_persistent_cache") as mock_cache_loader:
+        mock_cache_loader.side_effect = Exception("it didn't work")
+
+        credential = SharedTokenCacheCredential()
+        assert mock_cache_loader.call_count == 0
+
+        for _ in range(2):
+            with pytest.raises(CredentialUnavailableError):
+                await credential.get_token("scope")
+            assert mock_cache_loader.call_count == 1
+

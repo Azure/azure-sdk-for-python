@@ -16,6 +16,7 @@ from .._utils import (
     pack_search_indexer_data_source,
     unpack_search_indexer_data_source,
 )
+from ...._api_versions import validate_api_version
 from ...._headers_mixin import HeadersMixin
 from ...._version import SDK_MONIKER
 
@@ -29,6 +30,12 @@ if TYPE_CHECKING:
 class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
     """A client to interact with Azure search service Indexers.
 
+    :param endpoint: The URL endpoint of an Azure search service
+    :type endpoint: str
+    :param credential: A credential to authorize search client requests
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword str api_version: The Search API version to use for requests.
+
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
@@ -36,6 +43,8 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
 
+        api_version = kwargs.pop('api_version', None)
+        validate_api_version(api_version)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential  # type: AzureKeyCredential
         self._client = _SearchServiceClient(

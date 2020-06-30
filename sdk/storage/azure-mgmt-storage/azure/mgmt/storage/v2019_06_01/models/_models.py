@@ -3560,6 +3560,13 @@ class StorageAccount(TrackedResource):
     :type routing_preference: ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
     :ivar blob_restore_status: Blob restore status.
     :vartype blob_restore_status: ~azure.mgmt.storage.v2019_06_01.models.BlobRestoreStatus
+    :param allow_blob_public_access: Allow or disallow public access to all blobs or containers in
+     the storage account. The default interpretation is true for this property.
+    :type allow_blob_public_access: bool
+    :param minimum_tls_version: Set the minimum TLS version to be permitted on requests to storage.
+     The default interpretation is TLS 1.0 for this property. Possible values include: "TLS1_0",
+     "TLS1_1", "TLS1_2".
+    :type minimum_tls_version: str or ~azure.mgmt.storage.v2019_06_01.models.MinimumTlsVersion
     """
 
     _validation = {
@@ -3619,6 +3626,8 @@ class StorageAccount(TrackedResource):
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
         'blob_restore_status': {'key': 'properties.blobRestoreStatus', 'type': 'BlobRestoreStatus'},
+        'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -3651,6 +3660,8 @@ class StorageAccount(TrackedResource):
         self.private_endpoint_connections = None
         self.routing_preference = kwargs.get('routing_preference', None)
         self.blob_restore_status = None
+        self.allow_blob_public_access = kwargs.get('allow_blob_public_access', None)
+        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
 
 
 class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
@@ -3737,6 +3748,13 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
     :param routing_preference: Maintains information about the network routing choice opted by the
      user for data transfer.
     :type routing_preference: ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
+    :param allow_blob_public_access: Allow or disallow public access to all blobs or containers in
+     the storage account. The default interpretation is true for this property.
+    :type allow_blob_public_access: bool
+    :param minimum_tls_version: Set the minimum TLS version to be permitted on requests to storage.
+     The default interpretation is TLS 1.0 for this property. Possible values include: "TLS1_0",
+     "TLS1_1", "TLS1_2".
+    :type minimum_tls_version: str or ~azure.mgmt.storage.v2019_06_01.models.MinimumTlsVersion
     """
 
     _validation = {
@@ -3760,6 +3778,8 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
+        'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -3781,6 +3801,8 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         self.is_hns_enabled = kwargs.get('is_hns_enabled', None)
         self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
         self.routing_preference = kwargs.get('routing_preference', None)
+        self.allow_blob_public_access = kwargs.get('allow_blob_public_access', None)
+        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
 
 
 class StorageAccountInternetEndpoints(msrest.serialization.Model):
@@ -4035,6 +4057,13 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
     :param routing_preference: Maintains information about the network routing choice opted by the
      user for data transfer.
     :type routing_preference: ~azure.mgmt.storage.v2019_06_01.models.RoutingPreference
+    :param allow_blob_public_access: Allow or disallow public access to all blobs or containers in
+     the storage account. The default interpretation is true for this property.
+    :type allow_blob_public_access: bool
+    :param minimum_tls_version: Set the minimum TLS version to be permitted on requests to storage.
+     The default interpretation is TLS 1.0 for this property. Possible values include: "TLS1_0",
+     "TLS1_1", "TLS1_2".
+    :type minimum_tls_version: str or ~azure.mgmt.storage.v2019_06_01.models.MinimumTlsVersion
     """
 
     _attribute_map = {
@@ -4050,6 +4079,8 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'routing_preference': {'key': 'properties.routingPreference', 'type': 'RoutingPreference'},
+        'allow_blob_public_access': {'key': 'properties.allowBlobPublicAccess', 'type': 'bool'},
+        'minimum_tls_version': {'key': 'properties.minimumTlsVersion', 'type': 'str'},
     }
 
     def __init__(
@@ -4069,6 +4100,8 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         self.network_rule_set = kwargs.get('network_rule_set', None)
         self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
         self.routing_preference = kwargs.get('routing_preference', None)
+        self.allow_blob_public_access = kwargs.get('allow_blob_public_access', None)
+        self.minimum_tls_version = kwargs.get('minimum_tls_version', None)
 
 
 class StorageQueue(Resource):

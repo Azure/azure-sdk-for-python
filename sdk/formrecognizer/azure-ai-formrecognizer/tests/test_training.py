@@ -61,8 +61,8 @@ class TestTraining(FormRecognizerTest):
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.requested_on)
-        self.assertIsNotNone(model.completed_on)
+        self.assertIsNotNone(model.training_started_on)
+        self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
@@ -84,8 +84,8 @@ class TestTraining(FormRecognizerTest):
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.requested_on)
-        self.assertIsNotNone(model.completed_on)
+        self.assertIsNotNone(model.training_started_on)
+        self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
@@ -145,8 +145,8 @@ class TestTraining(FormRecognizerTest):
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.requested_on)
-        self.assertIsNotNone(model.completed_on)
+        self.assertIsNotNone(model.training_started_on)
+        self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
@@ -169,8 +169,8 @@ class TestTraining(FormRecognizerTest):
         model = poller.result()
 
         self.assertIsNotNone(model.model_id)
-        self.assertIsNotNone(model.requested_on)
-        self.assertIsNotNone(model.completed_on)
+        self.assertIsNotNone(model.training_started_on)
+        self.assertIsNotNone(model.training_completed_on)
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:

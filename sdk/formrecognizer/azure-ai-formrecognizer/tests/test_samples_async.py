@@ -108,3 +108,7 @@ class TestSamplesAsync(FormRecognizerTest):
         os.environ['CONTAINER_SAS_URL'] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
         _test_file('sample_train_model_without_labels_async.py', form_recognizer_account, form_recognizer_account_key)
 
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_strongly_typing_recognized_form_async(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        _test_file('sample_strongly_typing_recognized_form_async.py', form_recognizer_account, form_recognizer_account_key)
