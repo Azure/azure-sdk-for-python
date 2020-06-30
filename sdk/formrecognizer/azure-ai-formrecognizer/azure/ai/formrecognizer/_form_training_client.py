@@ -281,7 +281,7 @@ class FormTrainingClient(object):
             where the model will be copied to.
         :param str resource_region: Location of the target Form Recognizer resource. A valid Azure
             region name supported by Cognitive Services. For example, 'westus', 'eastus' etc.
-            See https://azure.microsoft.com/en-us/global-infrastructure/services/?products=cognitive-services
+            See https://azure.microsoft.com/global-infrastructure/services/?products=cognitive-services
             for the regional availability of Cognitive Services
         :return: A dictionary with values for the copy authorization -
             "modelId", "accessToken", "resourceId", "resourceRegion", and "expirationDateTimeTicks".
