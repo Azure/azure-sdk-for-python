@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 30 Jun 2020 17:35:58 GMT
+      - Tue, 30 Jun 2020 17:42:24 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 30 Jun 2020 17:35:58 GMT
+      - Tue, 30 Jun 2020 17:42:24 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 30 Jun 2020 17:35:57 GMT
+      - Tue, 30 Jun 2020 17:42:24 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttable973c1208')
       server:
@@ -69,26 +69,26 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 30 Jun 2020 17:35:58 GMT
+      - Tue, 30 Jun 2020 17:42:25 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 30 Jun 2020 17:35:58 GMT
+      - Tue, 30 Jun 2020 17:42:25 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://storagename.table.core.windows.net/uttable973c1208?se=2020-06-30T18%3A35%3A58Z&sp=a&sv=2019-07-07&tn=uttable973c1208&spk=test&srk=test1&epk=test&erk=test1&sig=z2Ls0ftzICJAJ9sVy3ThnXlNfiqhSk5h%2FT3HHC7JEAQ%3D
+    uri: https://storagename.table.core.windows.net/uttable973c1208?se=2020-06-30T18%3A42%3A25Z&sp=a&sv=2019-07-07&tn=uttable973c1208&spk=test&srk=test1&epk=test&erk=test1&sig=41oKMat7ZyPaIDhHc%2BeDgAEzgPqDRJGCYGF5iEjOTLs%3D
   response:
     body:
       string: '{"odata.error":{"code":"AuthorizationFailure","message":{"lang":"en-US","value":"This
-        request is not authorized to perform this operation.\nRequestId:03c3e647-8002-0071-7404-4fdbc0000000\nTime:2020-06-30T17:35:58.7667356Z"}}}'
+        request is not authorized to perform this operation.\nRequestId:39532203-0002-0021-6705-4f39c2000000\nTime:2020-06-30T17:42:24.9397720Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 30 Jun 2020 17:35:58 GMT
+      - Tue, 30 Jun 2020 17:42:24 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -112,11 +112,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 30 Jun 2020 17:35:59 GMT
+      - Tue, 30 Jun 2020 17:42:25 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 30 Jun 2020 17:35:59 GMT
+      - Tue, 30 Jun 2020 17:42:25 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -130,7 +130,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 30 Jun 2020 17:35:58 GMT
+      - Tue, 30 Jun 2020 17:42:24 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

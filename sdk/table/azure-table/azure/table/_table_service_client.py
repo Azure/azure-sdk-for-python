@@ -207,6 +207,7 @@ class TableServiceClient(StorageAccountHostsMixin):
     def list_tables(
             self,
             query_options=None,  # type: Optional[QueryOptions]
+            headers=None,
             **kwargs
     ):
         # type: (...) -> ItemPaged
@@ -221,7 +222,7 @@ class TableServiceClient(StorageAccountHostsMixin):
         """
         command = functools.partial(
             self._client.table.query,
-            **kwargs)
+            **dict(kwargs, headers=headers))
         return ItemPaged(
             command, results_per_page=query_options,
             page_iterator_class=TablePropertiesPaged
