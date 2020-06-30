@@ -41,6 +41,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
+    The two primary channels for message receipt are `receive()` to make a single request for messages,
+    and `for message in receiver:` to continuously receive incoming messages in an ongoing fashion.
+
     :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :vartype fully_qualified_namespace: str
@@ -67,8 +70,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
      lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-     will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-     the client fails to process the message. The default mode is PeekLock.
+     will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
+     if the client fails to process the message.
+     The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
@@ -237,8 +241,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-         will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-         the client fails to process the message. The default mode is PeekLock.
+         will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
+         if the client fails to process the message.
+         The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
          The default value is 0, meaning messages will be received from the service and processed
@@ -283,8 +288,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         # type: (int, float) -> List[ReceivedMessage]
         """Receive a batch of messages at once.
 
-        This approach it optimal if you wish to process multiple messages simultaneously. Note that the
-        number of messages retrieved in a single batch will be dependent on
+        This approach is optimal if you wish to process multiple messages simultaneously, or
+        perform an ad-hoc receive as a single call.
+
+        Note that the number of messages retrieved in a single batch will be dependent on
         whether `prefetch` was set for the receiver. This call will prioritize returning
         quickly over meeting a specified batch size, and so will return as soon as at least
         one message is received and there is a gap in incoming messages regardless
@@ -296,7 +303,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, an no messages arrive within the
          timeout period, an empty list will be returned.
-        :rtype: list[~azure.servicebus.Message]
+        :rtype: list[~azure.servicebus.ReceivedMessage]
 
         .. admonition:: Example:
 
