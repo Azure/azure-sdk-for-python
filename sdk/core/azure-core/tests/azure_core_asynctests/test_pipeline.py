@@ -31,7 +31,9 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
     AsyncRedirectPolicy,
     AsyncHTTPPolicy,
-    AsyncRetryPolicy)
+    AsyncRetryPolicy,
+    HttpLoggingPolicy
+)
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
     HttpRequest,
@@ -39,6 +41,9 @@ from azure.core.pipeline.transport import (
     TrioRequestsTransport,
     AioHttpTransport
 )
+
+from azure.core.configuration import Configuration
+from azure.core import AsyncPipelineClient
 from azure.core.exceptions import AzureError
 
 import aiohttp
@@ -142,6 +147,26 @@ def test_async_trio_transport_sleep():
             await transport.sleep(1)
 
     response = trio.run(do)
+
+def test_default_http_logging_policy():
+    config = Configuration()
+    pipeline_client = AsyncPipelineClient(base_url="test")
+    pipeline = pipeline_client._build_pipeline(config)
+    http_logging_policy = pipeline._impl_policies[-1]._policy
+    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
+
+def test_pass_in_http_logging_policy():
+    config = Configuration()
+    http_logging_policy = HttpLoggingPolicy()
+    http_logging_policy.allowed_header_names.update(
+        {"x-ms-added-header"}
+    )
+    config.http_logging_policy = http_logging_policy
+
+    pipeline_client = AsyncPipelineClient(base_url="test")
+    pipeline = pipeline_client._build_pipeline(config)
+    http_logging_policy = pipeline._impl_policies[-1]._policy
+    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
 
 @pytest.mark.asyncio
 async def test_conf_async_requests():

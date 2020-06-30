@@ -19,7 +19,7 @@ interactions:
       api-key:
       - 9715B5769069781F16C928BBC2605D8E
     method: POST
-    uri: https://search31bf0faa.search.windows.net/skillsets?api-version=2019-05-06-Preview
+    uri: https://search31bf0faa.search.windows.net/skillsets?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search31bf0faa.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D7EC9474EB318F\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null}'
@@ -39,7 +39,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search31bf0faa.search.windows.net/skillsets('test-ss')?api-version=2019-05-06-Preview
+      - https://search31bf0faa.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -67,7 +67,7 @@ interactions:
       api-key:
       - 9715B5769069781F16C928BBC2605D8E
     method: GET
-    uri: https://search31bf0faa.search.windows.net/skillsets?api-version=2019-05-06-Preview
+    uri: https://search31bf0faa.search.windows.net/skillsets?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search31bf0faa.search.windows.net/$metadata#skillsets","value":[{"@odata.etag":"\"0x8D7EC9474EB318F\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"#1","description":null,"context":"/document","categories":["Person","Quantity","Organization","URL","Email","Location","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null}]}'
@@ -115,7 +115,7 @@ interactions:
       api-key:
       - 9715B5769069781F16C928BBC2605D8E
     method: DELETE
-    uri: https://search31bf0faa.search.windows.net/skillsets('test-ss')?api-version=2019-05-06-Preview
+    uri: https://search31bf0faa.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
   response:
     body:
       string: ''
@@ -151,7 +151,7 @@ interactions:
       api-key:
       - 9715B5769069781F16C928BBC2605D8E
     method: GET
-    uri: https://search31bf0faa.search.windows.net/skillsets?api-version=2019-05-06-Preview
+    uri: https://search31bf0faa.search.windows.net/skillsets?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search31bf0faa.search.windows.net/$metadata#skillsets","value":[]}'

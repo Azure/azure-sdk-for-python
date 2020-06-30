@@ -1,5 +1,10 @@
 # Release History
 
+## 16.0.0b2 (2020-06-29)
+
+This is beta preview version.
+For detailed changelog please refer to equivalent stable version 11.1.0 (https://pypi.org/project/azure-mgmt-storage/11.1.0/)
+
 ## 16.0.0b1 (2020-06-17)
 
 This is beta preview version.

@@ -18,7 +18,7 @@ interactions:
       api-key:
       - EC1F64A6D07AB016456D278C08E0D3A0
     method: POST
-    uri: https://search2351151c.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://search2351151c.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search2351151c.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC94379003F5\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -39,7 +39,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search2351151c.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+      - https://search2351151c.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -67,7 +67,7 @@ interactions:
       api-key:
       - EC1F64A6D07AB016456D278C08E0D3A0
     method: GET
-    uri: https://search2351151c.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://search2351151c.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search2351151c.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D7EC94379003F5\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -121,7 +121,7 @@ interactions:
       api-key:
       - EC1F64A6D07AB016456D278C08E0D3A0
     method: PUT
-    uri: https://search2351151c.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+    uri: https://search2351151c.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search2351151c.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC9437A3416B\"","name":"test-syn-map","format":"solr","synonyms":"Washington,
@@ -170,7 +170,7 @@ interactions:
       api-key:
       - EC1F64A6D07AB016456D278C08E0D3A0
     method: GET
-    uri: https://search2351151c.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://search2351151c.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search2351151c.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D7EC9437A3416B\"","name":"test-syn-map","format":"solr","synonyms":"Washington,
@@ -217,7 +217,7 @@ interactions:
       api-key:
       - EC1F64A6D07AB016456D278C08E0D3A0
     method: GET
-    uri: https://search2351151c.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+    uri: https://search2351151c.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search2351151c.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC9437A3416B\"","name":"test-syn-map","format":"solr","synonyms":"Washington,

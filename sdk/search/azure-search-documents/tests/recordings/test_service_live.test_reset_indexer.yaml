@@ -18,7 +18,7 @@ interactions:
       api-key:
       - 7F271F32C4D5BFC55396C3FF580E49E7
     method: POST
-    uri: https://search13bc0ede.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search13bc0ede.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search13bc0ede.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7ED51B1466EFF\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -38,7 +38,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search13bc0ede.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      - https://search13bc0ede.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -71,7 +71,7 @@ interactions:
       api-key:
       - 7F271F32C4D5BFC55396C3FF580E49E7
     method: POST
-    uri: https://search13bc0ede.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://search13bc0ede.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search13bc0ede.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7ED51B2085B9F\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
@@ -91,7 +91,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search13bc0ede.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+      - https://search13bc0ede.search.windows.net/indexes('hotels')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -124,7 +124,7 @@ interactions:
       api-key:
       - 7F271F32C4D5BFC55396C3FF580E49E7
     method: POST
-    uri: https://search13bc0ede.search.windows.net/indexers?api-version=2019-05-06-Preview
+    uri: https://search13bc0ede.search.windows.net/indexers?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search13bc0ede.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D7ED51B275D75A\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null}'
@@ -144,7 +144,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search13bc0ede.search.windows.net/indexers('sample-indexer')?api-version=2019-05-06-Preview
+      - https://search13bc0ede.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -172,7 +172,7 @@ interactions:
       api-key:
       - 7F271F32C4D5BFC55396C3FF580E49E7
     method: GET
-    uri: https://search13bc0ede.search.windows.net/indexers?api-version=2019-05-06-Preview
+    uri: https://search13bc0ede.search.windows.net/indexers?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search13bc0ede.search.windows.net/$metadata#indexers","value":[{"@odata.etag":"\"0x8D7ED51B275D75A\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null}]}'
@@ -220,7 +220,7 @@ interactions:
       api-key:
       - 7F271F32C4D5BFC55396C3FF580E49E7
     method: POST
-    uri: https://search13bc0ede.search.windows.net/indexers('sample-indexer')/search.reset?api-version=2019-05-06-Preview
+    uri: https://search13bc0ede.search.windows.net/indexers('sample-indexer')/search.reset?api-version=2020-06-30
   response:
     body:
       string: ''
@@ -256,7 +256,7 @@ interactions:
       api-key:
       - 7F271F32C4D5BFC55396C3FF580E49E7
     method: GET
-    uri: https://search13bc0ede.search.windows.net/indexers('sample-indexer')/search.status?api-version=2019-05-06-Preview
+    uri: https://search13bc0ede.search.windows.net/indexers('sample-indexer')/search.status?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search13bc0ede.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.IndexerExecutionInfo","name":"sample-indexer","status":"running","lastResult":{"status":"reset","errorMessage":null,"startTime":"2020-04-30T21:59:04.132Z","endTime":"2020-04-30T21:59:04.132Z","itemsProcessed":0,"itemsFailed":0,"initialTrackingState":null,"finalTrackingState":null,"errors":[],"warnings":[],"metrics":null},"executionHistory":[{"status":"reset","errorMessage":null,"startTime":"2020-04-30T21:59:04.132Z","endTime":"2020-04-30T21:59:04.132Z","itemsProcessed":0,"itemsFailed":0,"initialTrackingState":null,"finalTrackingState":null,"errors":[],"warnings":[],"metrics":null}],"limits":null}'

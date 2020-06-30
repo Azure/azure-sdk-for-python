@@ -26,27 +26,28 @@ steps:
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
 
   - script: |
-      python -m pip install -r eng/ci_tools.txt
-      mkdir $(Build.SourcesDirectory)/env
-      python -m virtualenv $(Build.SourcesDirectory)/env 
+      python -m pip install pip==20.1
+      pip install -r eng/ci_tools.txt
+      pip --version
+      pip freeze
     displayName: 'Prep Environment'
 
   - ${{ parameters.BeforeTestSteps }}
 
-  - pwsh: |
-      $env:Path = "$(Build.SourcesDirectory)/env;" + $env:Path
-      python -m pip install pip==20.1
-      python -m pip install -r eng/ci_tools.txt
-      python -m pip --version
-
-      $env:PYTHON_HOME = ""
-      $env:VIRTUAL_ENV = "$(Build.SourcesDirectory)/env"
-
-      Write-Host 'python ./scripts/devops_tasks/setup_execute_tests.py "${{ parameters.BuildTargetingString }}" ${{ parameters.AdditionalTestArgs }} ${{ parameters.CoverageArg }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}" --toxenv="${{ parameters.ToxTestEnv }}" --injected-packages="${{ parameters.InjectedPackages }}" ${{ parameters.ToxEnvParallel }}"'
-      python ./scripts/devops_tasks/setup_execute_tests.py "${{ parameters.BuildTargetingString }}" ${{ parameters.AdditionalTestArgs }} ${{ parameters.CoverageArg }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}" --toxenv="${{ parameters.ToxTestEnv }}" --injected-packages="${{ parameters.InjectedPackages }}" ${{ parameters.ToxEnvParallel }}
-      
-    env: ${{ parameters.EnvVars }}
+  - task: PythonScript@0
     displayName: 'Run Tests'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}"
+        ${{ parameters.AdditionalTestArgs }}
+        ${{ parameters.CoverageArg }}
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --toxenv="${{ parameters.ToxTestEnv }}"
+        --injected-packages="${{ parameters.InjectedPackages }}"
+        ${{ parameters.ToxEnvParallel }}
+    env: ${{ parameters.EnvVars }}
 
   - ${{ parameters.AfterTestSteps }}
 
