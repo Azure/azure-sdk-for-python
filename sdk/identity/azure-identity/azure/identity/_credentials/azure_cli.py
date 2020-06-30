@@ -61,7 +61,7 @@ class AzureCliCredential(object):
 
         return token
 
-    def get_token_refresh_options(self):
+    def get_token_refresh_options(self):    #pylint disable=no-self-use
         # type: () -> dict
         return dict()
 

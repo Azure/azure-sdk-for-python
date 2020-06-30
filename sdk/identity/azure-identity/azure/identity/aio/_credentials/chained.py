@@ -67,6 +67,6 @@ class ChainedTokenCredential(AsyncCredentialBase):
         message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts
         raise ClientAuthenticationError(message=message)
 
-    def get_token_refresh_options(self):
+    def get_token_refresh_options(self):    #pylint disable=no-self-use
         # type: () -> dict
         return dict()

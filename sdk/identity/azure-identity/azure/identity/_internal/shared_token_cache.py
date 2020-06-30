@@ -229,7 +229,7 @@ class SharedTokenCacheBase(ABC):
             message = "Error accessing cached data: {}".format(ex)
             six.raise_from(CredentialUnavailableError(message=message), ex)
 
-    def get_token_refresh_options(self):
+    def get_token_refresh_options(self):    #pylint disable=no-self-use
         # type: () -> dict
         return dict()
 
