@@ -1061,7 +1061,7 @@ class ContainerSasPermissions(object):
     :param bool tag:
         Set or get tags on the blobs in the container.
     """
-    def __init__(self, read=False, write=False, delete=False, list=False,  delete_previous_version=False, tag=False):  # pylint: disable=redefined-builtin
+    def __init__(self, read=False, write=False, delete=False, list=False, delete_previous_version=False, tag=False):  # pylint: disable=redefined-builtin
         self.read = read
         self.write = write
         self.delete = delete
