@@ -1,0 +1,112 @@
+interactions:
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><TopicDescription><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><MaxSizeInMegabytes>3072</MaxSizeInMegabytes><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><IsAnonymousAccessible>true</IsAnonymousAccessible><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EnableSubscriptionPartitioning>true</EnableSubscriptionPartitioning><EnableExpress>true</EnableExpress></TopicDescription></ns0:content></ns0:entry>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '745'
+      Content-Type:
+      - application/atom+xml
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+    method: PUT
+    uri: https://servicebustestsbname.servicebus.windows.net/iweidk?api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestuom474eqek.servicebus.windows.net/iweidk?api-version=2017-04</id><title
+        type="text">iweidk</title><published>2020-06-30T18:56:07Z</published><updated>2020-06-30T18:56:07Z</updated><author><name>servicebustestuom474eqek</name></author><link
+        rel="self" href="https://servicebustestuom474eqek.servicebus.windows.net/iweidk?api-version=2017-04"/><content
+        type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><MaxSizeInMegabytes>356352</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>true</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-30T18:56:07.8Z</CreatedAt><UpdatedAt>2020-06-30T18:56:07.923Z</UpdatedAt><SupportOrdering>false</SupportOrdering><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>true</EnableSubscriptionPartitioning><EnableExpress>true</EnableExpress></TopicDescription></content></entry>
+    headers:
+      content-type:
+      - application/atom+xml;type=entry;charset=utf-8
+      date:
+      - Tue, 30 Jun 2020 18:56:07 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://servicebustestsbname.servicebus.windows.net/iweidk?enrich=false&api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestuom474eqek.servicebus.windows.net/iweidk?enrich=false&amp;api-version=2017-04</id><title
+        type="text">iweidk</title><published>2020-06-30T18:56:07Z</published><updated>2020-06-30T18:56:07Z</updated><author><name>servicebustestuom474eqek</name></author><link
+        rel="self" href="https://servicebustestuom474eqek.servicebus.windows.net/iweidk?enrich=false&amp;api-version=2017-04"/><content
+        type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><MaxSizeInMegabytes>356352</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT12M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>true</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-30T18:56:07.8Z</CreatedAt><UpdatedAt>2020-06-30T18:56:07.923Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>false</SupportOrdering><CountDetails
+        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><SubscriptionCount>0</SubscriptionCount><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>true</EnableSubscriptionPartitioning><EnableExpress>true</EnableExpress></TopicDescription></content></entry>
+    headers:
+      content-type:
+      - application/atom+xml;type=entry;charset=utf-8
+      date:
+      - Tue, 30 Jun 2020 18:56:07 GMT
+      etag:
+      - '637291401679230000'
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+    method: DELETE
+    uri: https://servicebustestsbname.servicebus.windows.net/iweidk?api-version=2017-04
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 30 Jun 2020 18:56:08 GMT
+      etag:
+      - '637291401679230000'
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+    status:
+      code: 200
+      message: OK
+version: 1

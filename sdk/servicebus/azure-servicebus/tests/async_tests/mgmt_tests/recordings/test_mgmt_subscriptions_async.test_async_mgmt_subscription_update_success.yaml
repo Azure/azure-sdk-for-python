@@ -1,0 +1,242 @@
+interactions:
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><TopicDescription /></ns0:content></ns0:entry>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '248'
+      Content-Type:
+      - application/atom+xml
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+    method: PUT
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui?api-version=2017-04</id><title
+        type="text">fjrui</title><published>2020-06-30T19:01:34Z</published><updated>2020-06-30T19:01:34Z</updated><author><name>servicebusteste7tnsy7rev</name></author><link
+        rel="self" href="https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui?api-version=2017-04"/><content
+        type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-30T19:01:34.153Z</CreatedAt><UpdatedAt>2020-06-30T19:01:34.203Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
+    headers:
+      content-type: application/atom+xml;type=entry;charset=utf-8
+      date: Tue, 30 Jun 2020 19:01:34 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Created
+    url: https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui?api-version=2017-04
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><SubscriptionDescription /></ns0:content></ns0:entry>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '255'
+      Content-Type:
+      - application/atom+xml
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+    method: PUT
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04</id><title
+        type="text">eqkovc</title><published>2020-06-30T19:01:34Z</published><updated>2020-06-30T19:01:34Z</updated><link
+        rel="self" href="https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04"/><content
+        type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-06-30T19:01:34.6853135Z</CreatedAt><UpdatedAt>2020-06-30T19:01:34.6853135Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+    headers:
+      content-type: application/atom+xml;type=entry;charset=utf-8
+      date: Tue, 30 Jun 2020 19:01:34 GMT
+      etag: '637291404942030000'
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Created
+    url: https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><SubscriptionDescription><LockDuration>PT2M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-06-30T19:01:34.685313Z</CreatedAt><UpdatedAt>2020-06-30T19:01:34.685313Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00.000Z</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></ns0:content></ns0:entry>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '1015'
+      Content-Type:
+      - application/atom+xml
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+    method: PUT
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04</id><title
+        type="text">eqkovc</title><published>2020-06-30T19:01:34Z</published><updated>2020-06-30T19:01:34Z</updated><link
+        rel="self" href="https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04"/><content
+        type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT2M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-06-30T19:01:34.9978247Z</CreatedAt><UpdatedAt>2020-06-30T19:01:34.9978247Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+    headers:
+      content-type: application/atom+xml;type=entry;charset=utf-8
+      date: Tue, 30 Jun 2020 19:01:34 GMT
+      etag: '637291404942030000'
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc?enrich=false&api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?enrich=false&amp;api-version=2017-04</id><title
+        type="text">eqkovc</title><published>2020-06-30T19:01:34Z</published><updated>2020-06-30T19:01:35Z</updated><link
+        rel="self" href="sb://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?enrich=false&amp;api-version=2017-04"/><content
+        type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT2M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.477539S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-06-30T19:01:34.6885475Z</CreatedAt><UpdatedAt>2020-06-30T19:01:35.0010351Z</UpdatedAt><AccessedAt>2020-06-30T19:01:34.69Z</AccessedAt><CountDetails
+        xmlns:d3p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d3p1:ActiveMessageCount>0</d3p1:ActiveMessageCount><d3p1:DeadLetterMessageCount>0</d3p1:DeadLetterMessageCount><d3p1:ScheduledMessageCount>0</d3p1:ScheduledMessageCount><d3p1:TransferMessageCount>0</d3p1:TransferMessageCount><d3p1:TransferDeadLetterMessageCount>0</d3p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.477539S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+    headers:
+      content-type: application/atom+xml;type=entry;charset=utf-8
+      date: Tue, 30 Jun 2020 19:01:34 GMT
+      etag: '637291404942030000'
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?enrich=false&api-version=2017-04
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <ns0:entry xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"
+      xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><SubscriptionDescription><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-06-30T19:01:34.688547Z</CreatedAt><UpdatedAt>2020-06-30T19:01:35.001035Z</UpdatedAt><AccessedAt>2020-06-30T19:01:34.690Z</AccessedAt><CountDetails><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount></CountDetails><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></ns0:content></ns0:entry>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '1379'
+      Content-Type:
+      - application/atom+xml
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+    method: PUT
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04</id><title
+        type="text">eqkovc</title><published>2020-06-30T19:01:35Z</published><updated>2020-06-30T19:01:35Z</updated><link
+        rel="self" href="https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04"/><content
+        type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-06-30T19:01:35.0915968Z</CreatedAt><UpdatedAt>2020-06-30T19:01:35.0915968Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+    headers:
+      content-type: application/atom+xml;type=entry;charset=utf-8
+      date: Tue, 30 Jun 2020 19:01:34 GMT
+      etag: '637291404942030000'
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc?enrich=false&api-version=2017-04
+  response:
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?enrich=false&amp;api-version=2017-04</id><title
+        type="text">eqkovc</title><published>2020-06-30T19:01:34Z</published><updated>2020-06-30T19:01:35Z</updated><link
+        rel="self" href="sb://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?enrich=false&amp;api-version=2017-04"/><content
+        type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT12S</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-06-30T19:01:34.6885475Z</CreatedAt><UpdatedAt>2020-06-30T19:01:35.1260519Z</UpdatedAt><AccessedAt>2020-06-30T19:01:34.69Z</AccessedAt><CountDetails
+        xmlns:d3p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d3p1:ActiveMessageCount>0</d3p1:ActiveMessageCount><d3p1:DeadLetterMessageCount>0</d3p1:DeadLetterMessageCount><d3p1:ScheduledMessageCount>0</d3p1:ScheduledMessageCount><d3p1:TransferMessageCount>0</d3p1:TransferMessageCount><d3p1:TransferDeadLetterMessageCount>0</d3p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+    headers:
+      content-type: application/atom+xml;type=entry;charset=utf-8
+      date: Tue, 30 Jun 2020 19:01:34 GMT
+      etag: '637291404942030000'
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000
+      transfer-encoding: chunked
+    status:
+      code: 200
+      message: OK
+    url: https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?enrich=false&api-version=2017-04
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+    method: DELETE
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 30 Jun 2020 19:01:35 GMT
+      etag: '637291404942030000'
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000
+    status:
+      code: 200
+      message: OK
+    url: https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui/subscriptions/eqkovc?api-version=2017-04
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+    method: DELETE
+    uri: https://servicebustestsbname.servicebus.windows.net/fjrui?api-version=2017-04
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 30 Jun 2020 19:01:35 GMT
+      etag: '637291404942030000'
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000
+    status:
+      code: 200
+      message: OK
+    url: https://servicebusteste7tnsy7rev.servicebus.windows.net/fjrui?api-version=2017-04
+version: 1

@@ -78,8 +78,8 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @pytest.mark.skip("start_idx and max_count are currently removed, they might come back in the future.")
     def test_mgmt_queue_list_with_parameters(self, servicebus_namespace_connection_string):
+        pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         run_test_mgmt_list_with_parameters(MgmtQueueListTestHelper(mgmt_service))
 
@@ -116,8 +116,8 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @pytest.mark.skip("start_idx and max_count are currently removed, they might come back in the future.")
     def test_mgmt_queue_list_with_negative_parameters(self, servicebus_namespace_connection_string):
+        pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         run_test_mgmt_list_with_negative_parameters(MgmtQueueListTestHelper(mgmt_service))
 
@@ -416,15 +416,15 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @pytest.mark.skip("start_idx and max_count are currently removed, they might come back in the future.")
     def test_mgmt_queue_list_runtime_info_with_negative_parameters(self, servicebus_namespace_connection_string):
+        pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         run_test_mgmt_list_with_negative_parameters(MgmtQueueListRuntimeInfoTestHelper(mgmt_service))
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @pytest.mark.skip("start_idx and max_count are currently removed, they might come back in the future.")
     def test_mgmt_queue_list_runtime_info_with_parameters(self, servicebus_namespace_connection_string):
+        pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         run_test_mgmt_list_with_parameters(MgmtQueueListRuntimeInfoTestHelper(mgmt_service))
 

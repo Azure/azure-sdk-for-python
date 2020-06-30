@@ -2,8 +2,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><QueueDescription /></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -12,25 +12,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '256'
+      - '248'
       Content-Type:
-      - application/xml
+      - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/rtofdk?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestsbname.servicebus.windows.net/rtofdk?api-version=2017-04</id><title
-        type="text">rtofdk</title><published>2020-06-05T23:08:53Z</published><updated>2020-06-05T23:08:53Z</updated><author><name>servicebustestsbname</name></author><link
-        rel="self" href="https://servicebustestsbname.servicebus.windows.net/rtofdk?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestb4vslijheu.servicebus.windows.net/rtofdk?api-version=2017-04</id><title
+        type="text">rtofdk</title><published>2020-06-30T18:48:13Z</published><updated>2020-06-30T18:48:13Z</updated><author><name>servicebustestb4vslijheu</name></author><link
+        rel="self" href="https://servicebustestb4vslijheu.servicebus.windows.net/rtofdk?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:08:53.623Z</CreatedAt><UpdatedAt>2020-06-05T23:08:53.687Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-30T18:48:13.843Z</CreatedAt><UpdatedAt>2020-06-30T18:48:13.907Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Fri, 05 Jun 2020 23:08:53 GMT
+      - Tue, 30 Jun 2020 18:48:13 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -43,8 +43,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><QueueDescription /></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -53,26 +53,26 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '256'
+      - '248'
       Content-Type:
-      - application/xml
+      - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/rtofdk?api-version=2017-04
   response:
     body:
       string: <Error><Code>409</Code><Detail>SubCode=40900. Conflict. You're requesting
         an operation that isn't allowed in the resource's current state. To know more
-        visit https://aka.ms/sbResourceMgrExceptions. . TrackingId:b5d99a39-e42e-42eb-8086-04b12cf5054e_G7,
-        SystemTracker:servicebustestsbname.servicebus.windows.net:rtofdk, Timestamp:2020-06-05T23:08:54</Detail></Error>
+        visit https://aka.ms/sbResourceMgrExceptions. . TrackingId:77af2fb1-166e-499b-8380-5e1078a05ed7_G12,
+        SystemTracker:servicebustestsbname.servicebus.windows.net:rtofdk, Timestamp:2020-06-30T18:48:14</Detail></Error>
     headers:
       content-type:
       - application/xml; charset=utf-8
       date:
-      - Fri, 05 Jun 2020 23:08:53 GMT
+      - Tue, 30 Jun 2020 18:48:13 GMT
       etag:
-      - '637269953336870000'
+      - '637291396939070000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -82,4 +82,36 @@ interactions:
     status:
       code: 409
       message: Conflict
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+    method: DELETE
+    uri: https://servicebustestsbname.servicebus.windows.net/rtofdk?api-version=2017-04
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Tue, 30 Jun 2020 18:48:14 GMT
+      etag:
+      - '637291396939070000'
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+    status:
+      code: 200
+      message: OK
 version: 1
