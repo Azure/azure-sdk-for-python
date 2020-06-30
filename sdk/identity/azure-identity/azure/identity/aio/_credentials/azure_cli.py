@@ -57,7 +57,8 @@ class AzureCliCredential(AsyncCredentialBase):
     async def close(self):
         """Calling this method is unnecessary"""
 
-    def get_token_refresh_options(self):    #pylint disable=no-self-use
+    @classmethod
+    def get_token_refresh_options(cls):
         # type: () -> dict
         return dict()
 

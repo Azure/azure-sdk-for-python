@@ -137,7 +137,8 @@ class MsalCredential(ABC):
 
         return app
 
-    def get_token_refresh_options(self):    #pylint disable=no-self-use
+    @classmethod
+    def get_token_refresh_options(cls):
         # type: () -> dict
         return dict()
 
