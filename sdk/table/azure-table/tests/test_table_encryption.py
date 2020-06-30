@@ -12,6 +12,7 @@ import pytest
 from datetime import datetime
 
 from azure.common import AzureException
+from azure.core.exceptions import ResourceExistsError
 from azure.table import TableServiceClient
 from azure.table._entity import EntityProperty, EdmType, Entity
 from azure.table._models import TablePayloadFormat, AccessPolicy, TableSasPermissions, TableServices
@@ -23,12 +24,11 @@ from json import loads
 from copy import deepcopy
 
 from encryption_test_helper import KeyWrapper, KeyResolver, RSAKeyWrapper
-from _shared.testcase import storage_account
 from testutils.common_recordingtestcase import TestMode
 
 pytestmark = pytest.mark.skip
 
-#from testcase import (
+# from testcase import (
 #     TableTestCase,
 #     TestMode,
 #     record,
@@ -52,14 +52,14 @@ pytestmark = pytest.mark.skip
 #     TablePayloadFormat,
 #     TablePermissions,
 # )
-from azure.table._shared._error import(
-     _ERROR_UNSUPPORTED_TYPE_FOR_ENCRYPTION,
- )
-from azure.table._shared._error import(
-     _ERROR_OBJECT_INVALID,
-     _ERROR_DECRYPTION_FAILURE,
-     AzureException,
- )
+from azure.table._shared._error import (
+    _ERROR_UNSUPPORTED_TYPE_FOR_ENCRYPTION,
+)
+from azure.table._shared._error import (
+    _ERROR_OBJECT_INVALID,
+    _ERROR_DECRYPTION_FAILURE,
+    AzureException,
+)
 # from azure.storage._encryption import(
 #      _dict_to_encryption_data,
 #     _generate_AES_CBC_cipher,
@@ -73,7 +73,7 @@ from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
 from cryptography.hazmat.primitives.ciphers import Cipher
-from cryptography.hazmat.primitives.hashes import(
+from cryptography.hazmat.primitives.hashes import (
     Hash,
     SHA256,
 )
@@ -83,35 +83,20 @@ from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCap
 
 class StorageTableEncryptionTest(TableTestCase):
 
-    def setUp(self):
-        super(StorageTableEncryptionTest, self).setUp()
-
-        self.tsc = self._create_storage_service(TableServiceClient, self.settings)
-
-
+    def _set_up(self, storage_account, storage_account_key):
+        self.ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         self.table_name = self.get_resource_name('uttable')
-
-        if not self.is_playback():
-            self.ts = self.tsc.create_table(self.table_name)
+        self.table = self.ts.get_table_client(self.table_name)
+        if self.is_live:
+            try:
+                self.ts.create_table(table_name=self.table_name)
+            except ResourceExistsError:
+                pass
 
         self.query_tables = []
 
-    def _create_storage_service(self, service_class, settings):
-        if settings.CONNECTION_STRING:
-            service = service_class.from_connection_string(connection_string=settings.CONNECTION_STRING)
-        elif settings.IS_EMULATED:
-            service = service_class(is_emulated=True)
-        else:
-            service = service_class(
-                settings.STORAGE_ACCOUNT_NAME,
-                settings.STORAGE_ACCOUNT_KEY,
-                protocol=settings.PROTOCOL,
-            )
-        self._set_test_proxy(service, settings)
-        return service
-
-    def tearDown(self):
-        if not self.is_playback():
+    def _tear_down(self):
+        if self.is_live:
             try:
                 self.ts.delete_table(self.table_name)
             except:
@@ -123,9 +108,7 @@ class StorageTableEncryptionTest(TableTestCase):
                 except:
                     pass
 
-        return super(StorageTableEncryptionTest, self).tearDown()
-
-    #--Helpers-----------------------------------------------------------------
+    # --Helpers-----------------------------------------------------------------
 
     def _create_query_table_encrypted(self, entity_count):
         '''
@@ -140,10 +123,11 @@ class StorageTableEncryptionTest(TableTestCase):
         self.ts.require_encryption = True
 
         entity = self._create_default_entity_for_encryption()
-        with self.ts.batch(table_name) as batch:
-            for i in range(1, entity_count + 1):
-                entity['RowKey'] = entity['RowKey'] + str(i)
-                batch.insert_entity(entity)
+        self.table.create_entity(table_entity_properties=entity)
+       # with self.ts.batch(table_name) as batch:
+        #    for i in range(1, entity_count + 1):
+       #         entity['RowKey'] = entity['RowKey'] + str(i)
+        #        batch.insert_entity(entity)
         return table_name
 
     def _create_random_base_entity_class(self):
@@ -281,42 +265,47 @@ class StorageTableEncryptionTest(TableTestCase):
         self.assertIsInstance(entity.Timestamp, datetime)
         self.assertIsNotNone(entity.etag)
 
-    def _default_encryption_resolver(self, x,y,property):
-        return (property=='sex' or property=='name')
+    def _default_encryption_resolver(self, x, y, property):
+        return (property == 'sex' or property == 'name')
 
-    #@record
-    def test_get_encrypted_dict(self):
+    # @record
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
+    def test_get_encrypted_dict(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self.ts.require_encryption = True
         entity = self._create_default_entity_dict()
         entity['sex'] = EntityProperty(EdmType.STRING, entity['sex'], True)
         self.ts.key_encryption_key = KeyWrapper('key1')
-        self.ts.create_entity(table_entity_properties=entity)
+        self.table.create_entity(table_entity_properties=entity)
 
         # Act
-        new_entity = self.ts.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
+        new_entity = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
 
         # Assert
         self._assert_default_entity(new_entity)
 
-    #@record
+    # @record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_encrypted_entity(self):
         # Arrange
         self.ts.require_encryption = True
         entity = self._create_default_entity_for_encryption()
         # Only want to encrypt one property in this test
-        entity['name'] = 'John Doe' 
+        entity['name'] = 'John Doe'
         self.ts.key_encryption_key = KeyWrapper('key1')
-        self.ts.insert_entity(self.table_name, entity)
+        self.table.insert_entity(self.table_name, entity)
 
         # Act
-        new_entity = self.ts.get_entity(self.table_name, entity['PartitionKey'], entity['RowKey'])
-
+        new_entity = self.table.get_entity(self.table_name, entity['PartitionKey'], entity['RowKey'])
 
         # Assert
         self._assert_default_entity(new_entity)
 
-    #@record
+    # @record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_encrypt_multiple_properties(self):
         # Arrange
         self.ts.require_encryption = True
@@ -327,11 +316,12 @@ class StorageTableEncryptionTest(TableTestCase):
         # Act
         new_entity = self.ts.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
 
-
         # Assert
         self._assert_default_entity(new_entity)
 
-    #@record
+    # @record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_encrypted_entity_key_resolver(self):
         # Arrange
         self.ts.require_encryption = True
@@ -346,11 +336,12 @@ class StorageTableEncryptionTest(TableTestCase):
         self.ts.key_encryption_key = None
         new_entity = self.ts.get_entity(self.table_name, entity['PartitionKey'], entity['RowKey'])
 
-
         # Assert
         self._assert_default_entity(new_entity)
 
-    #@record
+    # @record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_encrypted_entity_encryption_resolver(self):
         # Arrange
         self.ts.require_encryption = True
@@ -361,18 +352,19 @@ class StorageTableEncryptionTest(TableTestCase):
 
         # Act
         new_entity = self.ts.get_entity(self.table_name, entity['PartitionKey'], entity['RowKey'])
-        self.ts.key_encryption_key = None 
+        self.ts.key_encryption_key = None
         self.ts.require_encryption = False
         # Retrive a second copy without decrypting to ensure properties were encrypted.
         new_entity2 = self.ts.get_entity(self.table_name, entity['PartitionKey'], entity['RowKey'])
-
 
         # Assert
         self._assert_default_entity(new_entity)
         self.assertEqual(EdmType.BINARY, new_entity2['sex'].type)
         self.assertEqual(EdmType.BINARY, new_entity2['name'].type)
 
-    #@record 
+    # @record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_encrypted_entity_properties_and_resolver(self):
         # Arrange
         self.ts.require_encryption = True
@@ -405,7 +397,8 @@ class StorageTableEncryptionTest(TableTestCase):
         else:
             self._assert_default_entity(new_entity)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_payload_formats(self):
         self._get_with_payload_format(TablePayloadFormat.JSON_FULL_METADATA)
         self._get_with_payload_format(TablePayloadFormat.JSON_MINIMAL_METADATA)
@@ -415,9 +408,9 @@ class StorageTableEncryptionTest(TableTestCase):
         # We can only generate random RSA keys, so this must be run live or 
         # the playback test will fail due to a change in kek values.
         if TestMode.need_recording_file(self.test_mode):
-            return 
+            return
 
-        # Arrange
+            # Arrange
         self.ts.require_encryption = True
         entity = self._create_default_entity_for_encryption()
         self.ts.key_encryption_key = RSAKeyWrapper('key2')
@@ -429,7 +422,8 @@ class StorageTableEncryptionTest(TableTestCase):
         # Assert
         self._assert_default_entity(new_entity)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_entity_nonmatching_kid(self):
         # Arrange
         self.ts.require_encryption = True
@@ -448,7 +442,8 @@ class StorageTableEncryptionTest(TableTestCase):
         except AzureException as e:
             self.assertEqual(str(e), _ERROR_DECRYPTION_FAILURE)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_entity_invalid_value_kek_wrap(self):
         # Arrange
         self.ts.require_encryption = True
@@ -474,7 +469,8 @@ class StorageTableEncryptionTest(TableTestCase):
         with self.assertRaises(AttributeError):
             self.ts.insert_entity(self.table_name, entity)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_entity_invalid_value_kek_unwrap(self):
         # Arrange
         self.ts.require_encryption = True
@@ -495,7 +491,8 @@ class StorageTableEncryptionTest(TableTestCase):
         with self.assertRaises(AzureException):
             self.ts.get_entity(self.table_name, entity['PartitionKey'], entity['RowKey'])
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_insert_entity_missing_attribute_kek_wrap(self):
         # Arrange
         self.ts.require_encryption = True
@@ -503,31 +500,32 @@ class StorageTableEncryptionTest(TableTestCase):
         valid_key = KeyWrapper('key1')
 
         # Act
-        invalid_key_1 = lambda: None #functions are objects, so this effectively creates an empty object
+        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
         invalid_key_1.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_1.get_kid = valid_key.get_kid
-        #No attribute wrap_key
+        # No attribute wrap_key
         self.ts.key_encryption_key = invalid_key_1
         with self.assertRaises(AttributeError):
             self.ts.insert_entity(self.table_name, entity)
 
-        invalid_key_2 = lambda: None #functions are objects, so this effectively creates an empty object
+        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
         invalid_key_2.wrap_key = valid_key.wrap_key
         invalid_key_2.get_kid = valid_key.get_kid
-        #No attribute get_key_wrap_algorithm
+        # No attribute get_key_wrap_algorithm
         self.ts.key_encryption_key = invalid_key_2
         with self.assertRaises(AttributeError):
             self.ts.insert_entity(self.table_name, entity)
 
-        invalid_key_3 = lambda: None #functions are objects, so this effectively creates an empty object
+        invalid_key_3 = lambda: None  # functions are objects, so this effectively creates an empty object
         invalid_key_3.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_3.wrap_key = valid_key.wrap_key
-        #No attribute get_kid
+        # No attribute get_kid
         self.ts.key_encryption_key = invalid_key_3
         with self.assertRaises(AttributeError):
             self.ts.insert_entity(self.table_name, entity)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_entity_missing_attribute_kek_unwrap(self):
         # Arrange
         self.ts.require_encryption = True
@@ -537,21 +535,22 @@ class StorageTableEncryptionTest(TableTestCase):
         self.ts.insert_entity(self.table_name, entity)
 
         # Act
-        invalid_key_1 = lambda: None #functions are objects, so this effectively creates an empty object
+        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
         invalid_key_1.get_kid = valid_key.get_kid
-        #No attribute unwrap_key
+        # No attribute unwrap_key
         self.ts.key_encryption_key = invalid_key_1
         with self.assertRaises(AzureException):
             self.ts.get_entity(self.table_name, entity['PartitionKey'], entity['RowKey'])
 
-        invalid_key_2 = lambda: None #functions are objects, so this effectively creates an empty object
+        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
         invalid_key_2.unwrap_key = valid_key.unwrap_key
-        #No attribute get_kid
+        # No attribute get_kid
         self.ts.key_encryption_key = invalid_key_2
         with self.assertRaises(AzureException):
             self.ts.get_entity(self.table_name, entity['PartitionKey'], entity['RowKey'])
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_entity_no_decryption(self):
         # Arrange
         entity = self._create_default_entity_for_encryption()
@@ -562,7 +561,6 @@ class StorageTableEncryptionTest(TableTestCase):
         self.ts.key_encryption_key = None
         new_entity = self.ts.get_entity(self.table_name, entity['PartitionKey'], entity['RowKey'])
 
-
         # Assert
         # Access the properties to ensure they are still on the entity
         new_entity['_ClientEncryptionMetadata1']
@@ -571,7 +569,8 @@ class StorageTableEncryptionTest(TableTestCase):
         value = new_entity['sex']
         self.assertEqual(value.type, EdmType.BINARY)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_replace_entity(self):
         # Arrange
         entity = self._create_random_entity_class()
@@ -587,7 +586,8 @@ class StorageTableEncryptionTest(TableTestCase):
         # Assert
         self.assertEqual(new_entity['sex'], entity['sex'].value)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_insert_strict_mode(self):
         # Arrange
         entity = self._create_default_entity_for_encryption()
@@ -597,7 +597,8 @@ class StorageTableEncryptionTest(TableTestCase):
         with self.assertRaises(ValueError):
             self.ts.insert_entity(self.table_name, entity)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_strict_mode_policy_no_encrypted_properties(self):
         # Arrange
         entity = self._create_random_entity_class()
@@ -613,7 +614,8 @@ class StorageTableEncryptionTest(TableTestCase):
         # Assert
         self._assert_default_entity(new_entity)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_strict_mode_no_key(self):
         # Arrange
         entity = self._create_default_entity_for_encryption()
@@ -628,7 +630,8 @@ class StorageTableEncryptionTest(TableTestCase):
         with self.assertRaises(AzureException):
             self.ts.get_entity(self.table_name, entity['PartitionKey'], entity['RowKey'])
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_get_strict_mode_unencrypted_entity(self):
         # Arrange
         entity = self._create_random_base_entity_class()
@@ -642,7 +645,7 @@ class StorageTableEncryptionTest(TableTestCase):
         with self.assertRaises(AzureException):
             self.ts.get_entity(self.table_name, entity['PartitionKey'], entity['RowKey'])
 
-    #@record
+    # @record
     @pytest.mark.skip("pending")
     def test_batch_entity_inserts_context_manager(self):
         # Arrange
@@ -673,13 +676,13 @@ class StorageTableEncryptionTest(TableTestCase):
         self.assertEqual(new_entity2['sex'], entity2['sex'])
         self.assertEqual(new_entity3['sex'], entity3['sex'])
 
-    #@record
+    # @record
     @pytest.mark.skip("pending")
     def test_batch_strict_mode(self):
         # Arrange
         self.ts.require_encryption = True
         entity = self._create_default_entity_for_encryption()
-        
+
         # Act
         batch = TableBatch(require_encryption=True)
 
@@ -687,7 +690,8 @@ class StorageTableEncryptionTest(TableTestCase):
         with self.assertRaises(ValueError):
             batch.insert_entity(entity)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_property_resolver_decrypt_conflict(self):
         # Tests that the encrypted properties list is given priorty 
         # over the property resolver when deserializng (i.e. the 
@@ -699,19 +703,19 @@ class StorageTableEncryptionTest(TableTestCase):
         self.ts.key_encryption_key = KeyWrapper('key1')
         self.ts.insert_entity(self.table_name, entity)
 
-        property_resolver = lambda x,y,name,a,b:EdmType.STRING if name=='sex' else None
+        property_resolver = lambda x, y, name, a, b: EdmType.STRING if name == 'sex' else None
 
         # Act
         new_entity = self.ts.get_entity(self.table_name, entity['PartitionKey'], entity['RowKey'],
                                         property_resolver=property_resolver)
-
 
         # Assert
         # If the encrypted property list correctly took priority, this field will have been
         # properly decrypted
         self.assertEqual(new_entity['sex'], 'male')
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_validate_encryption(self):
         # Arrange 
         entity = self._create_default_entity_for_encryption()
@@ -731,11 +735,11 @@ class StorageTableEncryptionTest(TableTestCase):
         encryption_data = _dict_to_encryption_data(loads(encryption_data))
 
         content_encryption_key = key_encryption_key.unwrap_key(encryption_data.wrapped_content_key.encrypted_key,
-                                                           encryption_data.wrapped_content_key.algorithm)
+                                                               encryption_data.wrapped_content_key.algorithm)
 
         digest = Hash(SHA256(), default_backend())
         digest.update(encryption_data.content_encryption_IV +
-                        (entity['RowKey'] + entity['PartitionKey'] + '_ClientEncryptionMetadata2').encode('utf-8'))
+                      (entity['RowKey'] + entity['PartitionKey'] + '_ClientEncryptionMetadata2').encode('utf-8'))
         metadataIV = digest.finalize()
         metadataIV = metadataIV[:16]
 
@@ -764,7 +768,7 @@ class StorageTableEncryptionTest(TableTestCase):
 
             digest = Hash(SHA256(), default_backend())
             digest.update(entity_iv +
-                            (entity['RowKey'] + entity['PartitionKey'] + property).encode('utf-8'))
+                          (entity['RowKey'] + entity['PartitionKey'] + property).encode('utf-8'))
             propertyIV = digest.finalize()
             propertyIV = propertyIV[:16]
 
@@ -774,23 +778,23 @@ class StorageTableEncryptionTest(TableTestCase):
             # Decrypt the property.
             decryptor = cipher.decryptor()
             decrypted_data = (decryptor.update(value.value) + decryptor.finalize())
-        
+
             # Unpad the data.
             unpadder = PKCS7(128).unpadder()
             decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize())
 
             decrypted_data = decrypted_data.decode('utf-8')
-        
+
             decrypted_entity[property] = decrypted_data
 
         decrypted_entity.pop('_ClientEncryptionMetadata1')
         decrypted_entity.pop('_ClientEncryptionMetadata2')
 
-        
         # Assert
         self.assertEqual(decrypted_entity['sex'], 'male')
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_insert_encrypt_invalid_types(self):
         # Arrange 
         self.ts.require_encryption = True
@@ -835,7 +839,8 @@ class StorageTableEncryptionTest(TableTestCase):
         with self.assertRaises(ValueError):
             self.ts.insert_entity(self.table_name, entity_none_str)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_invalid_encryption_operations_fail(self):
         # Arrange
         entity = self._create_default_entity_for_encryption()
@@ -858,7 +863,8 @@ class StorageTableEncryptionTest(TableTestCase):
         with self.assertRaises(ValueError):
             self.ts.insert_or_merge_entity(self.table_name, entity)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     @pytest.mark.skip("pending")
     def test_invalid_encryption_operations_fail_batch(self):
         # Arrange
@@ -875,16 +881,16 @@ class StorageTableEncryptionTest(TableTestCase):
 
         with self.assertRaises(ValueError):
             batch.insert_or_merge_entity(entity)
-    
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_query_entities_all_properties(self):
         # Arrange
         self.ts.require_encryption = True
         self.ts.key_encryption_key = KeyWrapper('key1')
         table_name = self._create_query_table_encrypted(5)
         default_entity = self._create_random_entity_class()
-        
+
         # Act
         resp = self.ts.query_entities(table_name, num_results=5)
 
@@ -893,14 +899,15 @@ class StorageTableEncryptionTest(TableTestCase):
         for entity in resp.items:
             self.assertEqual(default_entity['sex'], entity['sex'])
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_query_entities_projection(self):
         # Arrange
         self.ts.require_encryption = True
         self.ts.key_encryption_key = KeyWrapper('key1')
         table_name = self._create_query_table_encrypted(5)
         default_entity = self._create_random_entity_class()
-        
+
         # Act
         resp = self.ts.query_entities(table_name, num_results=5, select='PartitionKey,RowKey,sex')
 
@@ -910,7 +917,8 @@ class StorageTableEncryptionTest(TableTestCase):
             self.assertFalse(hasattr(entity, '_ClientEncryptionMetadata1'))
             self.assertFalse(hasattr(entity, '_ClientEncryptionMetadata2'))
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_query_entities_mixed_mode(self):
         # Arrange
         entity = self._create_random_entity_class(rk='unencrypted')
@@ -930,9 +938,9 @@ class StorageTableEncryptionTest(TableTestCase):
         self.ts.require_encryption = True
         with self.assertRaises(AzureException):
             self.ts.query_entities(self.table_name)
-        
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_insert_entity_too_many_properties(self):
         # Arrange
         self.ts.require_encryption = True
@@ -945,7 +953,8 @@ class StorageTableEncryptionTest(TableTestCase):
         with self.assertRaises(ValueError):
             resp = self.ts.insert_entity(self.table_name, entity)
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_validate_swapping_properties_fails(self):
         # Arrange
         entity1 = self._create_random_entity_class(rk='entity1')
@@ -969,7 +978,8 @@ class StorageTableEncryptionTest(TableTestCase):
         with self.assertRaises(AzureException):
             self.ts.get_entity(self.table_name, new_entity2['PartitionKey'], new_entity2['RowKey'])
 
-    #@record
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer
     def test_table_ops_ignore_encryption(self):
         table_name = self.get_resource_name('EncryptionTableOps')
         try:
@@ -990,7 +1000,7 @@ class StorageTableEncryptionTest(TableTestCase):
             self.assertTrue(test_table_exists)
 
             permissions = self.ts.get_table_acl(table_name)
-            new_policy = AccessPolicy(TableSasPermissions(_str='r'), expiry=datetime(2017,9,9))
+            new_policy = AccessPolicy(TableSasPermissions(_str='r'), expiry=datetime(2017, 9, 9))
             permissions['samplePolicy'] = new_policy
             self.ts.set_table_acl(table_name, permissions)
             permissions = self.ts.get_table_acl(table_name)
@@ -1004,6 +1014,7 @@ class StorageTableEncryptionTest(TableTestCase):
         finally:
             self.ts.delete_table(table_name)
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
