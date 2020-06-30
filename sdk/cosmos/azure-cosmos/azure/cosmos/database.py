@@ -25,6 +25,7 @@
 from typing import Any, List, Dict, Mapping, Union, cast, Iterable, Optional
 
 import six
+import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
@@ -201,6 +202,11 @@ class DatabaseProxy(object):
         if partition_key is not None:
             definition["partitionKey"] = partition_key
         if indexing_policy is not None:
+            if indexing_policy.indexingMode == "lazy"
+                warnings.warn(
+                    "Lazy indexing mode has been deprecated. Containers created with this option will be set to consistent indexing",
+                    DeprecationWarning
+                )
             definition["indexingPolicy"] = indexing_policy
         if default_ttl is not None:
             definition["defaultTtl"] = default_ttl

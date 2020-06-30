@@ -246,14 +246,14 @@ class CRUDTests(unittest.TestCase):
                     {'name': '@id', 'value': collection_id}
                 ]
             }))
-        # Replacing indexing policy is allowed.
+        # Replacing indexing policy is allowed. Lazy policies will become consistent automatically
         lazy_policy = {'indexingMode': 'lazy'}
         created_properties = created_collection.read()
         replaced_collection = created_db.replace_container(created_collection,
                                                            partition_key=created_properties['partitionKey'],
                                                            indexing_policy=lazy_policy)
         replaced_properties = replaced_collection.read()                                                   
-        self.assertEqual('lazy', replaced_properties['indexingPolicy']['indexingMode'])
+        self.assertEqual('consistent', replaced_properties['indexingPolicy']['indexingMode'])
 
         self.assertTrue(collections)
         # delete collection
@@ -1677,6 +1677,7 @@ class CRUDTests(unittest.TestCase):
 
         db.delete_container(container=collection)
 
+        # Lazy indexing has been deprecated by the service. Containers created with this indexing will be returned as "consistent"
         lazy_collection = db.create_container(
             id='test_collection_indexing_policy lazy collection ' + str(uuid.uuid4()),
             indexing_policy={
@@ -1687,7 +1688,7 @@ class CRUDTests(unittest.TestCase):
 
         lazy_collection_properties = lazy_collection.read()
         self.assertEqual(lazy_collection_properties['indexingPolicy']['indexingMode'],
-                         documents.IndexingMode.Lazy,
+                         documents.IndexingMode.Consistent,
                          'indexing mode should be lazy')
 
         db.delete_container(container=lazy_collection)
@@ -1711,7 +1712,7 @@ class CRUDTests(unittest.TestCase):
             id='CollectionWithIndexingPolicy ' + str(uuid.uuid4()),
             indexing_policy={
                 'automatic': True,
-                'indexingMode': documents.IndexingMode.Lazy,
+                'indexingMode': documents.IndexingMode.Consistent,
                 'includedPaths': [
                     {
                         'path': '/',
@@ -1759,7 +1760,7 @@ class CRUDTests(unittest.TestCase):
         collection = db.create_container(
             id='test_create_default_indexing_policy TestCreateDefaultPolicy01' + str(uuid.uuid4()),
             indexing_policy={
-                    'indexingMode': documents.IndexingMode.Lazy, 'automatic': True
+                    'indexingMode': documents.IndexingMode.Consistent, 'automatic': True
                 },
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
@@ -2376,16 +2377,6 @@ class CRUDTests(unittest.TestCase):
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
-        lazy_coll = created_db.create_container(
-            id='test_index_progress_headers lazy_coll ' + str(uuid.uuid4()),
-            indexing_policy={'indexingMode': documents.IndexingMode.Lazy},
-            partition_key=PartitionKey(path="/id", kind='Hash')
-        )
-        created_container = created_db.get_container_client(container=lazy_coll)
-        created_container.read(populate_quota_info=True)
-        self.assertTrue(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
-        self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
-
         none_coll = created_db.create_container(
             id='test_index_progress_headers none_coll ' + str(uuid.uuid4()),
             indexing_policy={
@@ -2400,7 +2391,6 @@ class CRUDTests(unittest.TestCase):
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
         created_db.delete_container(consistent_coll)
-        created_db.delete_container(lazy_coll)
         created_db.delete_container(none_coll)
 
     def test_id_validation(self):
