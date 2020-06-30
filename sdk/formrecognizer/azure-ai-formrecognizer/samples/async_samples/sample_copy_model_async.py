@@ -11,7 +11,8 @@ FILE: sample_copy_model_async.py
 
 DESCRIPTION:
     This sample demonstrates how to copy a custom model from a source Form Recognizer resource
-    to a target Form Recognizer resource.
+    to a target Form Recognizer resource. The resource id and the resource region can be found
+    in the azure portal.
 
 USAGE:
     python sample_copy_model_async.py
