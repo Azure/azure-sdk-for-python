@@ -203,7 +203,7 @@ class DatabaseProxy(object):
         if partition_key is not None:
             definition["partitionKey"] = partition_key
         if indexing_policy is not None:
-            if indexing_policy.indexingMode is "lazy":
+            if indexing_policy.indexingMode is IndexingMode.Lazy:
                 warnings.warn(
                     "Lazy indexing mode has been deprecated. Mode will be set to consistent indexing by the backend.",
                     DeprecationWarning
