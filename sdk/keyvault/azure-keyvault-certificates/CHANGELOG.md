@@ -4,6 +4,7 @@
 - Values of `x-ms-keyvault-region` and `x-ms-keyvault-service-version` headers
   are no longer redacted in logging output.
 - Updated minimum `azure-core` version to 1.4.0
+- Fixed bug so users can now not pass in `policy` when calling `import_certificate`
 
 ## 4.2.0b1 (2020-03-10)
 - Support for Key Vault API version 7.1-preview
