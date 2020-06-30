@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 23 Jun 2020 20:03:05 GMT
+      - Tue, 30 Jun 2020 14:15:32 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 23 Jun 2020 20:03:05 GMT
+      - Tue, 30 Jun 2020 14:15:32 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 23 Jun 2020 20:03:05 GMT
+      - Tue, 30 Jun 2020 14:15:31 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttablebfd90c40')
       server:
@@ -49,11 +49,11 @@ interactions:
       message: Created
 - request:
     body: '{"PartitionKey": "pkbfd90c40", "RowKey": "rkbfd90c40", "age": "39", "age@odata.type":
-      "Edm.Int64", "sex": "male", "married": true, "deceased": false, "optional":
-      null, "ratio": 3.1, "evenratio": 3.0, "large": "933311100", "large@odata.type":
-      "Edm.Int64", "Birthday": "1973-10-04T00:00:00Z", "Birthday@odata.type": "Edm.DateTime",
-      "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type": "Edm.DateTime", "binary":
-      "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other": 20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
+      "Edm.Int64", "sex": "male", "married": true, "deceased": false, "ratio": 3.1,
+      "evenratio": 3.0, "large": "933311100", "large@odata.type": "Edm.Int64", "Birthday":
+      "1973-10-04T00:00:00Z", "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z",
+      "birthday@odata.type": "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type":
+      "Edm.Binary", "other": 20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
       "clsid@odata.type": "Edm.Guid"}'
     headers:
       Accept:
@@ -63,41 +63,90 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '555'
+      - '537'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 23 Jun 2020 20:03:06 GMT
+      - Tue, 30 Jun 2020 14:15:32 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 23 Jun 2020 20:03:06 GMT
+      - Tue, 30 Jun 2020 14:15:32 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://storagename.table.core.windows.net/uttablebfd90c40
+    uri: https://storagename.table.core.windows.net/uttablebfd90c40?st=2020-06-30T14%3A14%3A32Z&se=2020-06-30T15%3A15%3A32Z&sp=a&sv=2019-07-07&tn=uttablebfd90c40&sig=23R3I03fj7CPBdddLn%2BiV4R9PsVYf05z7g9LN6khXJw%3D
   response:
     body:
-      string: '{"odata.error":{"code":"AuthenticationFailed","message":{"lang":"en-US","value":"Server
-        failed to authenticate the request. Make sure the value of Authorization header
-        is formed correctly including the signature.\nRequestId:379145c3-8002-002e-6899-499f58000000\nTime:2020-06-23T20:03:06.2776781Z"}}}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablebfd90c40/@Element","odata.etag":"W/\"datetime''2020-06-30T14%3A15%3A32.3042603Z''\"","PartitionKey":"pkbfd90c40","RowKey":"rkbfd90c40","Timestamp":"2020-06-30T14:15:32.3042603Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
     headers:
-      content-length:
-      - '299'
+      cache-control:
+      - no-cache
       content-type:
-      - application/json
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 23 Jun 2020 20:03:05 GMT
+      - Tue, 30 Jun 2020 14:15:31 GMT
+      etag:
+      - W/"datetime'2020-06-30T14%3A15%3A32.3042603Z'"
+      location:
+      - https://storagename.table.core.windows.net/uttablebfd90c40(PartitionKey='pkbfd90c40',RowKey='rkbfd90c40')
       server:
-      - Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - AuthenticationFailed
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
     status:
-      code: 403
-      message: Server failed to authenticate the request. Make sure the value of Authorization
-        header is formed correctly including the signature.
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 30 Jun 2020 14:15:32 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 30 Jun 2020 14:15:32 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: GET
+    uri: https://storagename.table.core.windows.net/uttablebfd90c40(PartitionKey='pkbfd90c40',RowKey='rkbfd90c40')
+  response:
+    body:
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablebfd90c40/@Element","odata.etag":"W/\"datetime''2020-06-30T14%3A15%3A32.3042603Z''\"","PartitionKey":"pkbfd90c40","RowKey":"rkbfd90c40","Timestamp":"2020-06-30T14:15:32.3042603Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Tue, 30 Jun 2020 14:15:32 GMT
+      etag:
+      - W/"datetime'2020-06-30T14%3A15%3A32.3042603Z'"
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
@@ -110,11 +159,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 23 Jun 2020 20:03:06 GMT
+      - Tue, 30 Jun 2020 14:15:32 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 23 Jun 2020 20:03:06 GMT
+      - Tue, 30 Jun 2020 14:15:32 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -128,7 +177,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 23 Jun 2020 20:03:05 GMT
+      - Tue, 30 Jun 2020 14:15:32 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

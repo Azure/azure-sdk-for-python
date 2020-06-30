@@ -70,7 +70,7 @@ class TableClient(StorageAccountHostsMixin):
         """Format the endpoint URL according to the current location
         mode hostname.
         """
-        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(

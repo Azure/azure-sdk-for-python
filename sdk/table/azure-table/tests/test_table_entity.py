@@ -14,7 +14,7 @@ import uuid
 from base64 import b64encode
 from datetime import datetime, timedelta
 
-from azure.table import TableServiceClient, TableClient
+from azure.table import TableServiceClient, TableClient, generate_table_sas
 from azure.table._generated.models import QueryOptions
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
@@ -26,7 +26,7 @@ from azure.core.exceptions import (
     ResourceExistsError)
 
 from azure.table._entity import Entity, EntityProperty, EdmType
-from azure.table._models import TableSasPermissions
+from azure.table._models import TableSasPermissions, AccessPolicy
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
@@ -1394,7 +1394,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_sas_query(self, resource_group, location, storage_account, storage_account_key):
@@ -1407,7 +1407,7 @@ class StorageTableEntityTest(TableTestCase):
         try:
             # Arrange
             entity, _ = self._insert_random_entity()
-            token = self.ts.generate_table_shared_access_signature(
+            token = generate_table_sas(
                 storage_account.name,
                 storage_account_key,
                 self.table_name,
@@ -1431,7 +1431,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
@@ -1442,10 +1442,10 @@ class StorageTableEntityTest(TableTestCase):
         self._set_up(storage_account, storage_account_key)
         try:
             # Arrange
-            token = self.table._generate_table_sas(
+            token = generate_table_sas(
                 storage_account.name,
-                self.table_name,
                 storage_account_key,
+                self.table_name,
                 permission=TableSasPermissions(add=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
                 start=datetime.utcnow() - timedelta(minutes=1),
@@ -1468,7 +1468,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_sas_add_inside_range(self, resource_group, location, storage_account, storage_account_key):
@@ -1481,8 +1481,8 @@ class StorageTableEntityTest(TableTestCase):
             # Arrange
             token = generate_table_sas(
                 storage_account.name,
-                self.table_name,
                 storage_account_key,
+                self.table_name,
                 permission=TableSasPermissions(add=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
                 start_pk='test', start_rk='test1',
@@ -1499,12 +1499,12 @@ class StorageTableEntityTest(TableTestCase):
             table.insert_entity(table_entity_properties=entity)
 
             # Assert
-            resp = list(self.table.query_entities(query_options=QueryOptions(select='test,test1')))
+            resp = self.table.query_entities_with_partition_and_row_key('test', 'test1')
             self._assert_default_entity(resp)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_sas_add_outside_range(self, resource_group, location, storage_account, storage_account_key):
@@ -1517,8 +1517,8 @@ class StorageTableEntityTest(TableTestCase):
             # Arrange
             token = generate_table_sas(
                 storage_account.name,
-                self.table_name,
                 storage_account_key,
+                self.table_name,
                 permission=TableSasPermissions(add=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
                 start_pk='test', start_rk='test1',
@@ -1533,13 +1533,13 @@ class StorageTableEntityTest(TableTestCase):
             table = service.get_table_client(self.table_name)
             with self.assertRaises(HttpResponseError):
                 entity = self._create_random_entity_dict()
-                table.create_item(entity)
+                table.insert_entity(table_entity_properties=entity)
 
             # Assert
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
@@ -1553,8 +1553,8 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
             token = generate_table_sas(
                 storage_account.name,
-                self.table_name,
                 storage_account_key,
+                self.table_name,
                 permission=TableSasPermissions(update=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
             )
@@ -1566,15 +1566,15 @@ class StorageTableEntityTest(TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             updated_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = table.update_item(updated_entity)
+            table.update_entity(table_entity_properties=updated_entity)
 
             # Assert
-            received_entity = self.table.read_item(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_sas_delete(self, resource_group, location, storage_account, storage_account_key):
@@ -1588,8 +1588,8 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
             token = generate_table_sas(
                 storage_account.name,
-                self.table_name,
                 storage_account_key,
+                self.table_name,
                 permission=TableSasPermissions(delete=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
             )
@@ -1600,15 +1600,15 @@ class StorageTableEntityTest(TableTestCase):
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
-            table.delete_item(entity.PartitionKey, entity.RowKey)
+            table.delete_entity(entity.PartitionKey, entity.RowKey)
 
             # Assert
             with self.assertRaises(ResourceNotFoundError):
-                self.table.read_item(entity.PartitionKey, entity.RowKey)
+                self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_sas_upper_case_table_name(self, resource_group, location, storage_account, storage_account_key):
@@ -1624,8 +1624,8 @@ class StorageTableEntityTest(TableTestCase):
             # Table names are case insensitive, so simply upper case our existing table name to test
             token = generate_table_sas(
                 storage_account.name,
-                self.table_name.upper(),
                 storage_account_key,
+                self.table_name.upper(),
                 permission=TableSasPermissions(query=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
                 start=datetime.utcnow() - timedelta(minutes=1),
@@ -1637,7 +1637,8 @@ class StorageTableEntityTest(TableTestCase):
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
-            entities = list(table.query_items("PartitionKey eq '{}'".format(entity['PartitionKey'])))
+            entities = list(table.query_entities(
+                query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity['PartitionKey']))))
 
             # Assert
             self.assertEqual(len(entities), 1)
@@ -1645,7 +1646,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
@@ -1668,8 +1669,8 @@ class StorageTableEntityTest(TableTestCase):
 
             token = generate_table_sas(
                 storage_account.name,
-                self.table_name,
                 storage_account_key,
+                self.table_name,
                 policy_id='testid',
             )
 
@@ -1679,7 +1680,8 @@ class StorageTableEntityTest(TableTestCase):
                 credential=token,
             )
             table = service.get_table_client(self.table_name)
-            entities = list(table.query_items("PartitionKey eq '{}'".format(entity.PartitionKey)))
+            entities = list(table.query_entities(
+                query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity.PartitionKey))))
 
             # Assert
             self.assertEqual(len(entities), 1)

@@ -362,7 +362,7 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_account_sas(self, resource_group, location, storage_account, storage_account_key):

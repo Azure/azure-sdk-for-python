@@ -3,12 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.storage.common.sharedaccesssignature import _QueryStringConstants, SharedAccessSignature
 from azure.table._models import TableServices
 from azure.table._shared._common_conversion import _sign_string
 from azure.table._shared.constants import X_MS_VERSION
 from azure.table._shared.encryption import _validate_not_none
-from azure.table._shared.shared_access_signature import _SharedAccessHelper
+from azure.table._shared.shared_access_signature import _SharedAccessHelper, SharedAccessSignature, QueryStringConstants
 
 
 def generate_account_shared_access_signature(account_name, account_key, resource_types, permission,
@@ -71,7 +70,7 @@ def generate_table_sas(
         permission=None,
         expiry=None,
         start=None,
-        i_d=None,
+        policy_id=None,
         ip=None,
         protocol=None,
         start_pk=None,
@@ -86,7 +85,7 @@ def generate_table_sas(
         permission=permission,
         expiry=expiry,
         start=start,
-        i_d=i_d,
+        policy_id=policy_id,
         ip=ip,
         protocol=protocol,
         start_pk=start_pk,
@@ -114,7 +113,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
         super(TableSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
 
     def generate_table(self, table_name, permission=None,
-                       expiry=None, start=None, i_d=None,
+                       expiry=None, start=None, policy_id=None,
                        ip=None, protocol=None,
                        start_pk=None, start_rk=None,
                        end_pk=None, end_rk=None):
@@ -180,7 +179,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
         """
         sas = _TableSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, X_MS_VERSION)
-        sas.add_id(i_d)
+        sas.add_id(policy_id)
         sas.add_table_access_ranges(table_name, start_pk, start_rk, end_pk, end_rk)
 
         # Table names must be signed lower case
@@ -190,7 +189,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
         return sas.get_token()
 
 
-class _TableQueryStringConstants(_QueryStringConstants):
+class _TableQueryStringConstants(QueryStringConstants):
     TABLE_NAME = 'tn'
 
 
@@ -221,24 +220,24 @@ class _TableSharedAccessHelper(_SharedAccessHelper):
         # Form the string to sign from shared_access_policy and canonicalized
         # resource. The order of values is important.
         string_to_sign = \
-            (get_value_to_append(_QueryStringConstants.SIGNED_PERMISSION) +
-             get_value_to_append(_QueryStringConstants.SIGNED_START) +
-             get_value_to_append(_QueryStringConstants.SIGNED_EXPIRY) +
+            (get_value_to_append(QueryStringConstants.SIGNED_PERMISSION) +
+             get_value_to_append(QueryStringConstants.SIGNED_START) +
+             get_value_to_append(QueryStringConstants.SIGNED_EXPIRY) +
              canonicalized_resource +
-             get_value_to_append(_QueryStringConstants.SIGNED_IDENTIFIER) +
-             get_value_to_append(_QueryStringConstants.SIGNED_IP) +
-             get_value_to_append(_QueryStringConstants.SIGNED_PROTOCOL) +
-             get_value_to_append(_QueryStringConstants.SIGNED_VERSION))
+             get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER) +
+             get_value_to_append(QueryStringConstants.SIGNED_IP) +
+             get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
+             get_value_to_append(QueryStringConstants.SIGNED_VERSION))
 
         string_to_sign += \
-            (get_value_to_append(_QueryStringConstants.START_PK) +
-             get_value_to_append(_QueryStringConstants.START_RK) +
-             get_value_to_append(_QueryStringConstants.END_PK) +
-             get_value_to_append(_QueryStringConstants.END_RK))
+            (get_value_to_append(QueryStringConstants.START_PK) +
+             get_value_to_append(QueryStringConstants.START_RK) +
+             get_value_to_append(QueryStringConstants.END_PK) +
+             get_value_to_append(QueryStringConstants.END_RK))
 
         # remove the trailing newline
         if string_to_sign[-1] == '\n':
             string_to_sign = string_to_sign[:-1]
 
-        self._add_query(_QueryStringConstants.SIGNED_SIGNATURE,
+        self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
                         _sign_string(account_key, string_to_sign))
