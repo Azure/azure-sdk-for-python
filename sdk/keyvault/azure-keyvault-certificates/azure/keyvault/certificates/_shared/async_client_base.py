@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
-
+from azure.core.pipeline.policies import HttpLoggingPolicy
 from . import AsyncChallengeAuthPolicy
 from .client_base import ApiVersion
 from .._sdk_moniker import SDK_MONIKER
@@ -43,6 +43,15 @@ class AsyncKeyVaultClientBase(object):
 
         pipeline = kwargs.pop("pipeline", None)
         transport = kwargs.pop("transport", None)
+        http_logging_policy = HttpLoggingPolicy(**kwargs)
+        http_logging_policy.allowed_header_names.update(
+            {
+                "x-ms-keyvault-network-info",
+                "x-ms-keyvault-region",
+                "x-ms-keyvault-service-version"
+            }
+        )
+
         if not transport:
             from azure.core.pipeline.transport import AioHttpTransport
             transport = AioHttpTransport(**kwargs)
@@ -54,6 +63,7 @@ class AsyncKeyVaultClientBase(object):
                 transport=transport,
                 authentication_policy=AsyncChallengeAuthPolicy(credential),
                 sdk_moniker=SDK_MONIKER,
+                http_logging_policy=http_logging_policy,
                 **kwargs
             )
             self._models = _KeyVaultClient.models(api_version=api_version)
