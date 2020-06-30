@@ -346,8 +346,8 @@ class TableClient(StorageAccountHostsMixin):
                                                     etag_param='etag', match_param='match_condition')
 
         if table_entity_properties:
-            partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
-            row_key = table_entity_properties['RowKey'] if row_key is None else row_key
+            partition_key = table_entity_properties['PartitionKey']
+            row_key = table_entity_properties['RowKey']
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
         try:
@@ -393,8 +393,8 @@ class TableClient(StorageAccountHostsMixin):
                                                     etag_param='etag', match_param='match_condition')
 
         if table_entity_properties:
-            partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
-            row_key = table_entity_properties['RowKey'] if row_key is None else row_key
+            partition_key = table_entity_properties['PartitionKey']
+            row_key = table_entity_properties['RowKey']
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
         try:
@@ -462,13 +462,14 @@ class TableClient(StorageAccountHostsMixin):
         """
 
         try:
-
             entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
                                                                                   partition_key=partition_key,
                                                                                   row_key=row_key,
                                                                                   query_options=query_options,
                                                                                   **dict(kwargs, headers=headers))
+
             properties = _convert_to_entity(entity.additional_properties)
+
             return Entity(properties)
         except ResourceNotFoundError:
             raise ResourceNotFoundError
@@ -502,8 +503,9 @@ class TableClient(StorageAccountHostsMixin):
 
         # Insert or Merge
         if table_entity_properties:
-            partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
-            row_key = table_entity_properties['RowKey'] if row_key is None else row_key
+            # Losing a key here
+            partition_key = table_entity_properties['PartitionKey']
+            row_key = table_entity_properties['RowKey']
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
         try:
@@ -552,8 +554,8 @@ class TableClient(StorageAccountHostsMixin):
 
         # Insert or Update
         if table_entity_properties:
-            partition_key = table_entity_properties['PartitionKey'] if partition_key is None else partition_key
-            row_key = table_entity_properties['RowKey'] if row_key is None else row_key
+            partition_key = table_entity_properties['PartitionKey']
+            row_key = table_entity_properties['RowKey']
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
         try:
