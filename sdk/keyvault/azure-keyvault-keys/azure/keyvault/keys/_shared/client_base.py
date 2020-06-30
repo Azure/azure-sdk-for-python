@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from enum import Enum
 
 from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.policies import HttpLoggingPolicy
 
 from . import ChallengeAuthPolicy
 from .._generated import KeyVaultClient as _KeyVaultClient
@@ -25,7 +26,6 @@ class ApiVersion(str, Enum):
     V7_1_preview = "7.1-preview"
     V7_0 = "7.0"
     V2016_10_01 = "2016-10-01"
-
 
 DEFAULT_VERSION = ApiVersion.V7_1_preview
 
@@ -52,6 +52,14 @@ class KeyVaultClientBase(object):
 
         pipeline = kwargs.pop("pipeline", None)
         transport = kwargs.pop("transport", RequestsTransport(**kwargs))
+        http_logging_policy = HttpLoggingPolicy(**kwargs)
+        http_logging_policy.allowed_header_names.update(
+            {
+                "x-ms-keyvault-network-info",
+                "x-ms-keyvault-region",
+                "x-ms-keyvault-service-version"
+            }
+        )
         try:
             self._client = _KeyVaultClient(
                 api_version=api_version,
@@ -59,6 +67,7 @@ class KeyVaultClientBase(object):
                 transport=transport,
                 authentication_policy=ChallengeAuthPolicy(credential),
                 sdk_moniker=SDK_MONIKER,
+                http_logging_policy=http_logging_policy,
                 **kwargs
             )
             self._models = _KeyVaultClient.models(api_version=api_version)
