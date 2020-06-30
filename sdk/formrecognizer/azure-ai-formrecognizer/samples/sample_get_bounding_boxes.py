@@ -76,9 +76,9 @@ class GetBoundingBoxesSample(object):
                         print("...Cell[{}][{}] has text '{}' with confidence {} based on the following words: ".format(
                             cell.row_index, cell.column_index, cell.text, cell.confidence
                         ))
-                        # field_element is only populated if you set include_field_elements to True in your function call to recognize_custom_forms
+                        # field_elements is only populated if you set include_field_elements to True in your function call to recognize_custom_forms
                         # It is a heterogeneous list of FormWord and FormLine.
-                        for content in cell.field_element:
+                        for content in cell.field_elements:
                             if isinstance(content, FormWord):
                                 print("......Word '{}' within bounding box '{}' has a confidence of {}".format(
                                     content.text,

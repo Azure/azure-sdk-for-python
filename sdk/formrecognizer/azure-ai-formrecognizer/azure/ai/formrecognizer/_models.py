@@ -248,11 +248,11 @@ class FieldData(FormContent):
         that outlines the text. The points are listed in clockwise
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
-    :ivar field_element:
+    :ivar field_elements:
         When `include_field_elements` is set to true, a list of
         elements constituting this field or value is returned. The list
         constitutes of elements such as lines and words.
-    :vartype field_element: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
+    :vartype field_elements: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
 
     def __init__(self, **kwargs):
@@ -272,7 +272,7 @@ class FieldData(FormContent):
                 Point(x=field.bounding_box[4], y=field.bounding_box[5]),
                 Point(x=field.bounding_box[6], y=field.bounding_box[7])
             ] if field.bounding_box else None,
-            field_element=get_elements(field, read_result) if field.elements else None
+            field_elements=get_elements(field, read_result) if field.elements else None
         )
 
     @classmethod
@@ -286,11 +286,11 @@ class FieldData(FormContent):
                 Point(x=field.bounding_box[4], y=field.bounding_box[5]),
                 Point(x=field.bounding_box[6], y=field.bounding_box[7])
             ] if field.bounding_box else None,
-            field_element=get_elements(field, read_result) if field.elements else None
+            field_elements=get_elements(field, read_result) if field.elements else None
         )
 
     def __repr__(self):
-        return "FieldData(page_number={}, text={}, bounding_box={}, field_element={})".format(
+        return "FieldData(page_number={}, text={}, bounding_box={}, field_elements={})".format(
             self.page_number, self.text, self.bounding_box, repr(self.field_element)
         )[:1024]
 
@@ -471,12 +471,12 @@ class FormTableCell(FormContent):
     :ivar bool is_footer: Whether the current cell is a footer cell.
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
-    :ivar field_element:
+    :ivar field_elements:
         When `include_field_elements` is set to true, a list of
         elements constituting this cell is returned. The list
         constitutes of elements such as lines and words.
         For calls to begin_recognize_content(), this list is always populated.
-    :vartype field_element: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
+    :vartype field_elements: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
 
     def __init__(self, **kwargs):
@@ -508,12 +508,12 @@ class FormTableCell(FormContent):
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
             page_number=page,
-            field_element=get_elements(cell, read_result) if cell.elements else None
+            field_elements=get_elements(cell, read_result) if cell.elements else None
         )
 
     def __repr__(self):
         return "FormTableCell(text={}, row_index={}, column_index={}, row_span={}, column_span={}, " \
-                "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, field_element={})".format(
+                "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, field_elements={})".format(
                     self.text, self.row_index, self.column_index, self.row_span, self.column_span, self.bounding_box,
                     self.confidence, self.is_header, self.is_footer, self.page_number, repr(self.field_element)
                 )[:1024]

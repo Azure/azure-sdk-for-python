@@ -10,7 +10,7 @@
 and `CustomFormModelInfo`
 - `FieldText` has been renamed to `FieldData`
 - Parameter `include_text_content` has been renamed to `include_field_elements`
-- `text_content` has been renamed to `field_element`
+- `text_content` has been renamed to `field_elements`
 
 **Fixes and improvements**
 
