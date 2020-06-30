@@ -5,53 +5,85 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
+from typing import Union, Iterable, IO  # pylint: disable=unused-import
 
 from ._shared.avro.datafile import DataFileReader
 from ._shared.avro.avro_io import DatumReader
 
-from ._models import QuickQueryError
+from ._models import BlobQueryError
 
 
-class QuickQueryReader(object):  # pylint: disable=too-many-instance-attributes
-    """A streaming object to read quick query result.
+class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
+    """A streaming object to read query results.
 
     :ivar str name:
-        The name of the blob for the quick query request.
+        The name of the blob being quered.
     :ivar str container:
         The name of the container where the blob is.
     :ivar dict response_headers:
         The response_headers of the quick query request.
-    :ivar int total_bytes:
-        The size of the total data in the stream.
+    :ivar bytes record_delimiter:
+        The delimiter used to separate lines, or records with the data. The `records`
+        method will return these lines via a generator.
     """
 
     def __init__(
         self,
-        client=None,
         name=None,
         container=None,
-        progress_callback=None,
+        errors=None,
+        record_delimiter='\n',
         encoding=None,
-        **kwargs
+        headers=None,
+        response=None
     ):
         self.name = name
         self.container = container
-        self.response_headers = None
-        self.total_bytes = None
-        self.bytes_processed = 0
-        self._progress_callback = progress_callback
-        self._client = client
-        self._request_options = kwargs
+        self.response_headers = headers
+        self.record_delimiter = record_delimiter
+        self._size = 0
+        self._bytes_processed = 0
+        self._errors = errors
         self._encoding = encoding
+        self._parsed_results = DataFileReader(QuickQueryStreamer(response), DatumReader())
+        self._first_result = self._process_record(next(self._parsed_results))
 
     def __len__(self):
-        return self.total_bytes
+        return self._size
+
+    def _process_record(self, result):
+        self._size = result.get('totalBytes', self._size)
+        self._bytes_processed = result.get('bytesScanned', self._bytes_processed)
+        if 'data' in result:
+            return result.get('data')
+        if 'fatal' in result:
+            error = BlobQueryError(
+                error=result['name'],
+                is_fatal=result['fatal'],
+                description=result['description'],
+                position=result['position']
+            )
+            if self._errors:
+                self._errors(error)
+        return None
+
+    def _iter_stream(self):
+        if self._first_result is not None:
+            yield self._first_result
+        for next_result in self._parsed_results:
+            processed_result = self._process_record(next_result)
+            if processed_result is not None:
+                yield processed_result
 
     def readall(self):
-        """Return all quick query results.
+        # type: () -> Union[bytes, str]
+        """Return all query results.
 
         This operation is blocking until all data is downloaded.
-        :rtype: bytes
+        If encoding has been configured - this will be used to decode individual
+        records are they are received.
+
+        :rtype: Union[bytes, str]
         """
         stream = BytesIO()
         self.readinto(stream)
@@ -61,32 +93,35 @@ class QuickQueryReader(object):  # pylint: disable=too-many-instance-attributes
         return data
 
     def readinto(self, stream):
-        """Download the quick query result to a stream.
+        # type: (IO) -> None
+        """Download the query result to a stream.
 
         :param stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream.
         :returns: None
         """
-        headers, raw_response_body = self._client.blob.query(**self._request_options)
-        self.response_headers = headers
-        self._parse_quick_query_result(raw_response_body, stream, progress_callback=self._progress_callback)
+        for record in self._iter_stream():
+            stream.write(record)
 
-    def _parse_quick_query_result(self, raw_response_body, stream, progress_callback=None):
-        parsed_results = DataFileReader(QuickQueryStreamer(raw_response_body), DatumReader())
-        for parsed_result in parsed_results:
-            if 'data' in parsed_result:
-                stream.write(parsed_result.get('data'))
-                continue
+    def records(self):
+        # type: () -> Iterable[Union[bytes, str]]
+        """Returns a record generator for the query result.
 
-            self.bytes_processed = parsed_result.get('bytesScanned')
-            self.total_bytes = parsed_result.get('totalBytes')
-            fatal = QuickQueryError(parsed_result['name'],
-                                    parsed_result['fatal'],
-                                    parsed_result['description'],
-                                    parsed_result['position']) if 'fatal' in parsed_result else None
-            if progress_callback:
-                progress_callback(fatal, self.bytes_processed, self.total_bytes)
+        Records will be returned line by line.
+        If encoding has been configured - this will be used to decode individual
+        records are they are received.
+
+        :rtype: Iterable[Union[bytes, str]]
+        """
+        delimiter = self.record_delimiter.encode('utf-8')
+        for record_chunk in self._iter_stream():
+            for record in record_chunk.split(delimiter):
+                if self._encoding:
+                    yield record.decode(self._encoding)
+                else:
+                    yield record
+
 
 
 class QuickQueryStreamer(object):

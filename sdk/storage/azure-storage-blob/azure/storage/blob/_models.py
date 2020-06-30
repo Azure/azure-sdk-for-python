@@ -23,7 +23,6 @@ from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import StorageErrorException
 from ._generated.models import BlobPrefix as GenBlobPrefix
 from ._generated.models import BlobItemInternal
-from ._generated.models import DelimitedTextConfiguration as GenDelimitedTextConfiguration
 
 
 class BlobType(str, Enum):
@@ -1214,28 +1213,38 @@ class ContainerEncryptionScope(object):
         return None
 
 
-class DelimitedTextConfiguration(GenDelimitedTextConfiguration):
-    """Defines the input or output delimited (CSV) serialization for a blob quick query request.
+class DelimitedJSON(object):
+    """Defines the input or output JSON serialization for a blob data query.
 
-    :keyword str column_separator: column separator, defaults to ','
-    :keyword str field_quote: field quote, defaults to '"'
-    :keyword str record_separator: record separator, defaults to '\n'
-    :keyword str escape_char: escape char, defaults to empty
-    :keyword bool headers_present: has headers, defaults to False
+    :keyword str delimiter: The line separator character, default value is '\n'
+    """
+
+    def __init__(self, **kwargs):
+        self.delimiter = kwargs.pop('delimiter', '\n')
+
+
+class DelimitedTextDialect(object):
+    """Defines the input or output delimited (CSV) serialization for a blob query request.
+
+    :keyword str delimiter:
+        Column separator, defaults to ','.
+    :keyword str quotechar:
+        Field quote, defaults to '"'.
+    :keyword str lineterminator:
+        Record separator, defaults to '\n'.
+    :keyword str escapechar:
+        Escape char, defaults to empty.
+    :keyword bool has_header:
+        Whether the blob data includes headers in the first line. The default value is False, meaning that the
+        data will be returned inclusive of the first line. If set to True, the data will be returned exclusive
+        of the first line.
     """
     def __init__(self, **kwargs):
-        column_separator = kwargs.pop('column_separator', ',')
-        field_quote = kwargs.pop('field_quote', '"')
-        record_separator = kwargs.pop('record_separator', '\n')
-        escape_char = kwargs.pop('escape_char', "")
-        headers_present = kwargs.pop('headers_present', False)
-
-        super(DelimitedTextConfiguration, self).__init__(
-            column_separator=column_separator,
-            field_quote=field_quote,
-            record_separator=record_separator,
-            escape_char=escape_char,
-            headers_present=headers_present)
+        self.delimiter = kwargs.pop('delimiter', ',')
+        self.quotechar = kwargs.pop('quotechar', '"')
+        self.lineterminator = kwargs.pop('lineterminator', '\n')
+        self.escapechar = kwargs.pop('escapechar', "")
+        self.has_header = kwargs.pop('has_header', False)
 
 
 class ObjectReplicationPolicy(DictMixin):
@@ -1267,10 +1276,10 @@ class ObjectReplicationRule(DictMixin):
         self.status = kwargs.pop('status', None)
 
 
-class QuickQueryError(object):
+class BlobQueryError(Exception):
     """The error happened during quick query operation.
 
-    :ivar str name:
+    :ivar str error:
         The name of the error.
     :ivar bool is_fatal:
         If true, this error prevents further query processing. More result data may be returned,
@@ -1281,8 +1290,12 @@ class QuickQueryError(object):
     :ivar int position:
         The blob offset at which the error occurred.
     """
-    def __init__(self, name=None, is_fatal=False, description=None, position=None):
-        self.name = name
+    def __init__(self, error=None, is_fatal=False, description=None, position=None):
+        self.error = error
         self.is_fatal = is_fatal
         self.description = description
         self.position = position
+        message = self.error
+        if self.description:
+            message += ": {}".format(self.description)
+        super(BlobQueryError, self).__init__(message)

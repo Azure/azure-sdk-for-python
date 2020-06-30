@@ -12,7 +12,7 @@ from ._container_client import ContainerClient
 from ._blob_service_client import BlobServiceClient
 from ._lease import BlobLeaseClient
 from ._download import StorageStreamDownloader
-from ._quick_query_helper import QuickQueryReader
+from ._quick_query_helper import BlobQueryReader
 from ._shared_access_signature import generate_account_sas, generate_container_sas, generate_blob_sas
 from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.response_handlers import PartialBatchErrorException
@@ -51,8 +51,9 @@ from ._models import (
     BlobSasPermissions,
     CustomerProvidedEncryptionKey,
     ContainerEncryptionScope,
-    QuickQueryError,
-    DelimitedTextConfiguration,
+    BlobQueryError,
+    DelimitedJSON,
+    DelimitedTextDialect,
     ObjectReplicationPolicy,
     ObjectReplicationRule
 )
@@ -213,9 +214,10 @@ __all__ = [
     'generate_blob_sas',
     'PartialBatchErrorException',
     'ContainerEncryptionScope',
-    'QuickQueryError',
-    'DelimitedTextConfiguration',
-    'QuickQueryReader',
+    'BlobQueryError',
+    'DelimitedJSON',
+    'DelimitedTextDialect',
+    'BlobQueryReader',
     'ObjectReplicationPolicy',
     'ObjectReplicationRule'
 ]

@@ -37,10 +37,17 @@ from ._generated.models import ( # pylint: disable=unused-import
     StorageErrorException,
     QueryRequest,
     CpkInfo)
-from ._serialize import get_modify_conditions, get_source_conditions, get_cpk_scope_info, get_api_version, \
-    serialize_blob_tags_header, serialize_blob_tags, get_quick_query_serialization_info
+from ._serialize import (
+    get_modify_conditions,
+    get_source_conditions,
+    get_cpk_scope_info,
+    get_api_version,
+    serialize_blob_tags_header,
+    serialize_blob_tags,
+    serialize_query_format
+)
 from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
-from ._quick_query_helper import QuickQueryReader
+from ._quick_query_helper import BlobQueryReader
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
@@ -637,11 +644,24 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _quick_query_options(self, query_expression,
                              **kwargs):
         # type: (str, **Any) -> Dict[str, Any]
-        input_serialization = kwargs.pop('input_serialization', None)
-        output_serialization = kwargs.pop('output_serialization', None)
-        query_request = QueryRequest(expression=query_expression,
-                                     input_serialization=get_quick_query_serialization_info(input_serialization),
-                                     output_serialization=get_quick_query_serialization_info(output_serialization))
+        delimiter = '\n'
+        input_format = kwargs.pop('blob_format', None)
+        if input_format:
+            try:
+                delimiter = input_format.lineterminator
+            except AttributeError:
+                delimiter = input_format.delimiter
+        output_format = kwargs.pop('output_format', None)
+        if output_format:
+            try:
+                delimiter = output_format.lineterminator
+            except AttributeError:
+                delimiter = output_format.delimiter
+        query_request = QueryRequest(
+            expression=query_expression,
+            input_serialization=serialize_query_format(input_format),
+            output_serialization=serialize_query_format(output_format)
+        )
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
 
@@ -650,44 +670,43 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if cpk:
             if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
+            cpk_info = CpkInfo(
+                encryption_key=cpk.key_value,
+                encryption_key_sha256=cpk.key_hash,
+                encryption_algorithm=cpk.algorithm
+            )
         options = {
             'query_request': query_request,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cpk_info': cpk_info,
-            'progress_callback': kwargs.pop('progress_callback', None),
             'snapshot': self.snapshot,
             'timeout': kwargs.pop('timeout', None),
             'cls': return_headers_and_deserialized,
-            'client': self._client,
-            'name': self.blob_name,
-            'container': self.container_name}
+        }
         options.update(kwargs)
-        return options
+        return options, delimiter
 
     @distributed_trace
-    def query(self, query_expression,  # type: str
-              **kwargs):
-        # type: (str, **Any) -> QuickQueryReader
+    def query_blob(self, query_expression, **kwargs):
+        # type: (str, **Any) -> BlobQueryReader
         """Enables users to select/project on blob/or blob snapshot data by providing simple query expressions.
-        This operations returns a QuickQueryReader, users need to use readall() or readinto() to get query data.
+        This operations returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
 
         :param str query_expression:
             Required. a query statement.
-        :keyword func(~azure.storage.blob.QuickQueryError, int, int) progress_callback:
-            Callback where the caller can track progress of the operation as well as the quick query failures.
-        :keyword input_serialization:
-            Optional. Defines the input serialization for a blob quick query request.
-            This keyword arg could be set for delimited (CSV) serialization or JSON serialization.
-            When the input_serialization is set for JSON records, only a record separator in str format is needed.
-        :paramtype input_serialization: ~azure.storage.blob.DelimitedTextConfiguration or str
-        :keyword output_serialization:
-            Optional. Defines the output serialization for a blob quick query request.
-            This keyword arg could be set for delimited (CSV) serialization or JSON serialization.
-            When the input_serialization is set for JSON records, only a record separator in str format is needed.
-        :paramtype output_serialization: ~azure.storage.blob.DelimitedTextConfiguration or str.
+        :keyword Callable[Exception] on_error:
+            A function to be called on any processing errors returned by the service.
+        :keyword blob_format:
+            Optional. Defines the serialization of the data currently stored in the blob. The default is to
+            treat the blob data as CSV data formatted in the default dialect. This can be overridden with
+            a custom DelimitedTextDialect, or alternatively a DelimitedJSON.
+        :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJSON
+        :keyword output_format:
+            Optional. Defines the output serialization for the data stream. By default the data will be returned
+            as it is represented in the blob. By providing an output format, the blob data will be reformatted
+            according to that profile. This value can be a DelimitedTextDialect or a DelimitedJSON.
+        :paramtype output_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJSON
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -716,8 +735,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             a secure connection must be established to transfer the key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: A streaming object (QuickQueryReader)
-        :rtype: ~azure.storage.blob.QuickQueryReader
+        :returns: A streaming object (BlobQueryReader)
+        :rtype: ~azure.storage.blob.BlobQueryReader
 
         .. admonition:: Example:
 
@@ -728,8 +747,21 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :dedent: 4
                 :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
         """
-        options = self._quick_query_options(query_expression, **kwargs)
-        return QuickQueryReader(**options)
+        errors = kwargs.pop("on_error", None)
+        encoding = kwargs.pop("encoding", None)
+        options, delimiter = self._quick_query_options(query_expression, **kwargs)
+        try:
+            headers, raw_response_body = self._client.blob.query(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+        return BlobQueryReader(
+            name=self.blob_name,
+            container=self.container_name,
+            errors=errors,
+            record_delimiter=delimiter,
+            encoding=encoding,
+            headers=headers,
+            response=raw_response_body)
 
     @staticmethod
     def _generic_delete_blob_options(delete_snapshots=False, **kwargs):
