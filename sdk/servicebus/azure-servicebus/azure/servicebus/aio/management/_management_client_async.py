@@ -274,8 +274,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
     def list_queues(self, **kwargs) -> AsyncItemPaged[QueueDescription]:
         """List the queues of a ServiceBus namespace.
 
-        :keyword int start_index: skip this number of queues.
-        :keyword int max_page_size: max number of entities per page.
         :rtype: ItemPaged[~azure.servicebus.management.QueueDescription]
         """
 
@@ -296,9 +294,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
     def list_queues_runtime_info(self, **kwargs) -> AsyncItemPaged[QueueRuntimeInfo]:
         """List the runtime info of the queues in a ServiceBus namespace.
 
-        :keyword int start_index: skip this number of queues.
-        :keyword int max_page_size: max number of entities per page.
-         the ServiceBus namespace.
         :rtype: ItemPaged[~azure.servicebus.management.QueueRuntimeInfo]
         """
 
@@ -436,8 +431,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
     def list_topics(self, **kwargs) -> AsyncItemPaged[TopicDescription]:
         """List the topics of a ServiceBus namespace.
 
-        :keyword int start_index: skip this number of topics.
-        :keyword int max_page_size: max number of entities per page.
         :rtype: ItemPaged[~azure.servicebus.management.TopicDescription]
         """
         def entry_to_topic(entry):
@@ -457,8 +450,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
     def list_topics_runtime_info(self, **kwargs) -> AsyncItemPaged[TopicRuntimeInfo]:
         """List the topics runtime info of a ServiceBus namespace.
 
-        :keyword int start_index: skip this number of queues.
-        :keyword int max_page_size: max number of entities per page.
         :rtype: ItemPaged[~azure.servicebus.management.TopicRuntimeInfo]
         """
         def entry_to_topic(entry):
@@ -628,8 +619,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         """List the subscriptions of a ServiceBus Topic.
 
         :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :keyword int start_index: skip this number of queues.
-        :keyword int max_page_size: max number of entities per page.
         :rtype: ItemPaged[~azure.servicebus.management.SubscriptionDescription]
         """
         try:
@@ -656,8 +645,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         """List the subscriptions of a ServiceBus Topic Runtime Information.
 
         :param Union[str, TopicDescription] topic: The topic that owns the subscription.
-        :keyword int start_index: skip this number of queues.
-        :keyword int max_page_size: max number of entities per page.
         :rtype: ItemPaged[~azure.servicebus.management.SubscriptionRuntimeInfo]
         """
         try:
@@ -826,8 +813,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
 
         :param Union[str, TopicDescription] topic: The topic that owns the subscription.
         :param Union[str, SubscriptionDescription] subscription: The subscription that owns the rules.
-        :keyword int start_index: skip this number of rules.
-        :keyword int max_page_size: max number of entities per page.
         :rtype: ItemPaged[~azure.servicebus.management.RuleDescription]
         """
         try:
