@@ -13,7 +13,8 @@ from ._models import (
     FormTable,
     FormTableCell,
     FormPageRange,
-    RecognizedForm
+    RecognizedForm,
+    adjust_text_angle
 )
 
 
@@ -70,7 +71,7 @@ def prepare_content_result(response):
     for idx, page in enumerate(read_result):
         form_page = FormPage(
             page_number=page.page,
-            text_angle=page.angle,
+            text_angle=adjust_text_angle(page.angle),
             width=page.width,
             height=page.height,
             unit=page.unit,
