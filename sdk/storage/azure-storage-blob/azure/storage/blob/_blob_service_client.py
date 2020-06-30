@@ -383,12 +383,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param bool include_metadata:
             Specifies that container metadata to be returned in the response.
             The default value is `False`.
-        :keyword bool include_deleted:
-            Specifies that deleted containers to be returned in the response. This is for container restore enabled
-            account. The default value is `False`.
-
-            .. versionadded:: 12.4.0
-
         :keyword int results_per_page:
             The maximum number of container names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
@@ -407,9 +401,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Listing the containers in the blob service.
         """
         include = ['metadata'] if include_metadata else []
-        include_deleted = kwargs.pop('include_deleted', None)
-        if include_deleted:
-            include.append("deleted")
 
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
@@ -566,7 +557,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             **kwargs)
 
     @distributed_trace
-    def undelete_container(self, deleted_container_name, deleted_container_version, new_name=None, **kwargs):
+    def _undelete_container(self, deleted_container_name, deleted_container_version, new_name=None, **kwargs):
         # type: (str, str, str, **Any) -> ContainerClient
         """Restores soft-deleted container.
 

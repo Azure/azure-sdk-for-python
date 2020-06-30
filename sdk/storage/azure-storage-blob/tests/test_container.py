@@ -740,8 +740,8 @@ class StorageContainerTest(StorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc.undelete_container(container.name, container.version,
-                                                             new_name="restored" + str(restored_version))
+                restored_ctn_client = bsc._undelete_container(container.name, container.version,
+                                                              new_name="restored" + str(restored_version))
                 restored_version += 1
 
                 # to make sure the deleted container is restored
@@ -771,8 +771,8 @@ class StorageContainerTest(StorageTestCase):
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
                 with self.assertRaises(HttpResponseError):
-                    bsc.undelete_container(container.name, container.version,
-                                           new_name=existing_container_client.container_name)
+                    bsc._undelete_container(container.name, container.version,
+                                            new_name=existing_container_client.container_name)
 
     @pytest.mark.live_test_only  # sas token is dynamically generated
     @pytest.mark.playback_test_only  # we need container soft delete enabled account
@@ -800,8 +800,8 @@ class StorageContainerTest(StorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc.undelete_container(container.name, container.version,
-                                                             new_name="restored" + str(restored_version))
+                restored_ctn_client = bsc._undelete_container(container.name, container.version,
+                                                              new_name="restored" + str(restored_version))
                 restored_version += 1
 
                 # to make sure the deleted container is restored
