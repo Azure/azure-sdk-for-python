@@ -324,10 +324,15 @@ class AccountSasPermissions(object):
         Valid for the following Object resource types only: queue messages.
     :param bool process:
         Valid for the following Object resource type only: queue messages.
+    :param bool tag:
+        To enable set or get tags on the blobs in the container.
+    :param bool filter_by_tags:
+        To enable get blobs by tags, this should be used together with list permission.
     """
     def __init__(self, read=False, write=False, delete=False,
                  list=False,  # pylint: disable=redefined-builtin
-                 add=False, create=False, update=False, process=False, delete_previous_version=False):
+                 add=False, create=False, update=False, process=False, delete_previous_version=False, tag=False,
+                 filter_by_tags=False):
         self.read = read
         self.write = write
         self.delete = delete
@@ -337,6 +342,8 @@ class AccountSasPermissions(object):
         self.create = create
         self.update = update
         self.process = process
+        self.tag = tag
+        self.filter_by_tags = filter_by_tags
         self._str = (('r' if self.read else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
@@ -345,7 +352,10 @@ class AccountSasPermissions(object):
                      ('a' if self.add else '') +
                      ('c' if self.create else '') +
                      ('u' if self.update else '') +
-                     ('p' if self.process else ''))
+                     ('p' if self.process else '') +
+                     ('f' if self.filter_by_tags else '') +
+                     ('t' if self.tag else '')
+                     )
 
     def __str__(self):
         return self._str
@@ -360,7 +370,7 @@ class AccountSasPermissions(object):
 
         :param str permission: Specify permissions in
             the string with the first letter of the word.
-        :return: A AccountSasPermissions object
+        :return: An AccountSasPermissions object
         :rtype: ~azure.storage.queue.AccountSasPermissions
         """
         p_read = 'r' in permission
@@ -372,8 +382,11 @@ class AccountSasPermissions(object):
         p_create = 'c' in permission
         p_update = 'u' in permission
         p_process = 'p' in permission
-
-        parsed = cls(p_read, p_write, p_delete, p_delete_previous_version, p_list, p_add, p_create, p_update, p_process)
+        p_tag = 't' in permission
+        p_filter_by_tags = 'f' in permission
+        parsed = cls(read=p_read, write=p_write, delete=p_delete, delete_previous_version=p_delete_previous_version,
+                     list=p_list, add=p_add, create=p_create, update=p_update, process=p_process, tag=p_tag,
+                     filter_by_tags=p_filter_by_tags)
         parsed._str = permission # pylint: disable = protected-access
         return parsed
 

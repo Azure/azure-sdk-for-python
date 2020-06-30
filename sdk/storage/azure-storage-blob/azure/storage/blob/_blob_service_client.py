@@ -436,8 +436,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         :param str filter_expression:
             The expression to find blobs whose tags matches the specified condition.
-            eg. "yourtagname='firsttag' and yourtagname2='secondtag'"
-            To specify a container, eg. "@container=’containerName’ and Name = ‘C’"
+            eg. "\"yourtagname\"='firsttag' and \"yourtagname2\"='secondtag'"
+            To specify a container, eg. "@container=’containerName’ and \"Name\"=‘C’"
         :keyword int results_per_page:
             The max result per page when paginating.
         :keyword int timeout:
