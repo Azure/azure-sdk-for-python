@@ -415,3 +415,16 @@ class KeyVaultKeyTest(KeyVaultTestCase):
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    async def test_allowed_headers_passed_to_http_logging_policy(self, client, **kwargs):
+        passed_in_allowed_headers = {
+            "x-ms-keyvault-network-info",
+            "x-ms-keyvault-region",
+            "x-ms-keyvault-service-version"
+        }
+        assert passed_in_allowed_headers.issubset(
+            client._client._config.http_logging_policy.allowed_header_names
+        )
