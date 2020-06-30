@@ -257,7 +257,7 @@ class FieldData(FormContent):
 
     def __init__(self, **kwargs):
         super(FieldData, self).__init__(**kwargs)
-        self.field_element = kwargs.get("field_element", None)
+        self.field_elements = kwargs.get("field_elements", None)
 
     @classmethod
     def _from_generated(cls, field, read_result):
