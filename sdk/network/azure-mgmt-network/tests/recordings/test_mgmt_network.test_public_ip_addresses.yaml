@@ -14,19 +14,19 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.16 msrest_azure/0.4.34 azure-mgmt-network/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f?api-version=2020-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"pyipname773e115f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f\"\
-        ,\r\n  \"etag\": \"W/\\\"a5cdaec7-b2d7-4fda-876e-fe2f52d8d0b6\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"2527d1d1-7739-4f14-aab2-af7de1513bb8\\\"\",\r\n \
         \ \"location\": \"westus\",\r\n  \"tags\": {\r\n    \"key\": \"value\"\r\n\
         \  },\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\
-        \n    \"resourceGuid\": \"eaeb1e71-4b13-4d3b-bcbd-9533577a0a2b\",\r\n    \"\
+        \n    \"resourceGuid\": \"faf0aa85-cc99-492b-9e55-968ec43b5e4d\",\r\n    \"\
         publicIPAddressVersion\": \"IPv4\",\r\n    \"publicIPAllocationMethod\": \"\
         Dynamic\",\r\n    \"idleTimeoutInMinutes\": 4,\r\n    \"ipTags\": []\r\n \
         \ },\r\n  \"type\": \"Microsoft.Network/publicIPAddresses\",\r\n  \"sku\"\
@@ -35,7 +35,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/634700fa-035e-458d-ac68-36ddc8531df4?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c7b5b863-7d71-4b42-9aac-acf84b8e844b?api-version=2020-05-01
       cache-control:
       - no-cache
       content-length:
@@ -43,7 +43,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 13 May 2020 05:08:22 GMT
+      - Mon, 22 Jun 2020 05:04:56 GMT
       expires:
       - '-1'
       pragma:
@@ -56,9 +56,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 633851bf-6f90-40a2-8d5a-f3eb40bb5cde
+      - e86ee8bf-365f-476a-b48b-1de9db7be4ec
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1197'
     status:
       code: 201
       message: Created
@@ -72,10 +72,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.16 msrest_azure/0.4.34 azure-mgmt-network/11.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/634700fa-035e-458d-ac68-36ddc8531df4?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/c7b5b863-7d71-4b42-9aac-acf84b8e844b?api-version=2020-05-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -87,7 +87,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 13 May 2020 05:08:24 GMT
+      - Mon, 22 Jun 2020 05:04:58 GMT
       expires:
       - '-1'
       pragma:
@@ -104,7 +104,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 7fc7adf0-24d0-45bb-8d81-e73f27d3bc8d
+      - 47481abe-1960-418c-8dd7-6cec3bbfca97
     status:
       code: 200
       message: OK
@@ -118,17 +118,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.16 msrest_azure/0.4.34 azure-mgmt-network/11.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f?api-version=2020-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"pyipname773e115f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f\"\
-        ,\r\n  \"etag\": \"W/\\\"3efc0083-686c-4a0c-94b7-f638f6833258\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"1954ae08-5130-49e0-bd3b-39934ad05ea5\\\"\",\r\n \
         \ \"location\": \"westus\",\r\n  \"tags\": {\r\n    \"key\": \"value\"\r\n\
         \  },\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\
-        \n    \"resourceGuid\": \"eaeb1e71-4b13-4d3b-bcbd-9533577a0a2b\",\r\n    \"\
+        \n    \"resourceGuid\": \"faf0aa85-cc99-492b-9e55-968ec43b5e4d\",\r\n    \"\
         publicIPAddressVersion\": \"IPv4\",\r\n    \"publicIPAllocationMethod\": \"\
         Dynamic\",\r\n    \"idleTimeoutInMinutes\": 4,\r\n    \"ipTags\": []\r\n \
         \ },\r\n  \"type\": \"Microsoft.Network/publicIPAddresses\",\r\n  \"sku\"\
@@ -141,9 +141,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 13 May 2020 05:08:24 GMT
+      - Mon, 22 Jun 2020 05:04:59 GMT
       etag:
-      - W/"3efc0083-686c-4a0c-94b7-f638f6833258"
+      - W/"1954ae08-5130-49e0-bd3b-39934ad05ea5"
       expires:
       - '-1'
       pragma:
@@ -160,7 +160,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 6915ddb4-4331-468c-8378-54eddcfdb0d3
+      - 48079691-8be6-4567-9ebf-b11245281c66
     status:
       code: 200
       message: OK
@@ -174,19 +174,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.16 msrest_azure/0.4.34 azure-mgmt-network/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f?api-version=2020-05-01
   response:
     body:
       string: "{\r\n  \"name\": \"pyipname773e115f\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f\"\
-        ,\r\n  \"etag\": \"W/\\\"3efc0083-686c-4a0c-94b7-f638f6833258\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"1954ae08-5130-49e0-bd3b-39934ad05ea5\\\"\",\r\n \
         \ \"location\": \"westus\",\r\n  \"tags\": {\r\n    \"key\": \"value\"\r\n\
         \  },\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\
-        \n    \"resourceGuid\": \"eaeb1e71-4b13-4d3b-bcbd-9533577a0a2b\",\r\n    \"\
+        \n    \"resourceGuid\": \"faf0aa85-cc99-492b-9e55-968ec43b5e4d\",\r\n    \"\
         publicIPAddressVersion\": \"IPv4\",\r\n    \"publicIPAllocationMethod\": \"\
         Dynamic\",\r\n    \"idleTimeoutInMinutes\": 4,\r\n    \"ipTags\": []\r\n \
         \ },\r\n  \"type\": \"Microsoft.Network/publicIPAddresses\",\r\n  \"sku\"\
@@ -199,9 +199,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 13 May 2020 05:08:23 GMT
+      - Mon, 22 Jun 2020 05:04:59 GMT
       etag:
-      - W/"3efc0083-686c-4a0c-94b7-f638f6833258"
+      - W/"1954ae08-5130-49e0-bd3b-39934ad05ea5"
       expires:
       - '-1'
       pragma:
@@ -218,7 +218,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 6a6b287f-15c0-4135-846c-774d78ee5ac1
+      - 7e0b09f1-61f5-48e6-b466-1d286d18707e
     status:
       code: 200
       message: OK
@@ -232,20 +232,20 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.16 msrest_azure/0.4.34 azure-mgmt-network/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses?api-version=2020-05-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyipname773e115f\"\
         ,\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f\"\
-        ,\r\n      \"etag\": \"W/\\\"3efc0083-686c-4a0c-94b7-f638f6833258\\\"\",\r\
+        ,\r\n      \"etag\": \"W/\\\"1954ae08-5130-49e0-bd3b-39934ad05ea5\\\"\",\r\
         \n      \"location\": \"westus\",\r\n      \"tags\": {\r\n        \"key\"\
         : \"value\"\r\n      },\r\n      \"properties\": {\r\n        \"provisioningState\"\
-        : \"Succeeded\",\r\n        \"resourceGuid\": \"eaeb1e71-4b13-4d3b-bcbd-9533577a0a2b\"\
+        : \"Succeeded\",\r\n        \"resourceGuid\": \"faf0aa85-cc99-492b-9e55-968ec43b5e4d\"\
         ,\r\n        \"publicIPAddressVersion\": \"IPv4\",\r\n        \"publicIPAllocationMethod\"\
         : \"Dynamic\",\r\n        \"idleTimeoutInMinutes\": 4,\r\n        \"ipTags\"\
         : []\r\n      },\r\n      \"type\": \"Microsoft.Network/publicIPAddresses\"\
@@ -259,7 +259,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 13 May 2020 05:08:23 GMT
+      - Mon, 22 Jun 2020 05:04:59 GMT
       expires:
       - '-1'
       pragma:
@@ -276,7 +276,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 94215365-73a4-40ad-af21-92270b428c64
+      - c48c71a0-8d28-46ac-8b5a-5184c233b3eb
     status:
       code: 200
       message: OK
@@ -290,24 +290,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.16 msrest_azure/0.4.34 azure-mgmt-network/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/publicIPAddresses?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/publicIPAddresses?api-version=2020-05-01
   response:
     body:
-      string: '{"value":[{"name":"msi-test-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-for-node/providers/Microsoft.Network/publicIPAddresses/msi-test-ip","etag":"W/\"a2d9d491-0ef3-4f13-af7b-0c091352ff4a\"","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"9a0d5991-619a-4925-906a-82db9fde20e4","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-for-node/providers/Microsoft.Network/networkInterfaces/msi-test962/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"msi-test-win-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-for-node/providers/Microsoft.Network/publicIPAddresses/msi-test-win-ip","etag":"W/\"264139f7-21d1-44bf-be37-3623df5e79aa\"","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"1565a13e-80cd-41fd-a7d0-c15566568f67","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-for-node/providers/Microsoft.Network/networkInterfaces/msi-test-win435/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"dev-box-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dev-box/providers/Microsoft.Network/publicIPAddresses/dev-box-ip","etag":"W/\"7597a22b-1aaa-4bc0-bf42-3efc06bdaf10\"","location":"westus","properties":{"provisioningState":"Succeeded","resourceGuid":"5c1fe54e-8cec-4f5a-916a-dd2878f5fffa","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dev-box/providers/Microsoft.Network/networkInterfaces/dev-box323/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"pyipname239e0f35","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/publicIPAddresses/pyipname239e0f35","etag":"W/\"b38b8ae0-ddd8-4519-a1bd-8d349eda35fe\"","location":"westus","properties":{"provisioningState":"Deleting","resourceGuid":"31ddeeb6-faaf-45fb-97a5-9982e8d60124","ipAddress":"138.91.189.235","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Static","idleTimeoutInMinutes":4,"ipTags":[]},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"pyipname773e115f","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f","etag":"W/\"3efc0083-686c-4a0c-94b7-f638f6833258\"","location":"westus","tags":{"key":"value"},"properties":{"provisioningState":"Succeeded","resourceGuid":"eaeb1e71-4b13-4d3b-bcbd-9533577a0a2b","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[]},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"MyVmPublicIP","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qiaozhatest/providers/Microsoft.Network/publicIPAddresses/MyVmPublicIP","etag":"W/\"43070cb4-0556-4432-8bcc-d4bcf0d94bcd\"","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"37c2e34b-a902-4771-9e40-5329447aec9c","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qiaozhatest/providers/Microsoft.Network/networkInterfaces/MyVmVMNic/ipConfigurations/ipconfigMyVm"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"testps-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qiaozhatest/providers/Microsoft.Network/publicIPAddresses/testps-ip","etag":"W/\"a92b0944-4947-4660-be1b-6a45454c1408\"","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"a0aa325e-ca1f-4897-8daf-5609d854933c","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qiaozhatest/providers/Microsoft.Network/networkInterfaces/testps637/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"pythonVM-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/arm-python-RG/providers/Microsoft.Network/publicIPAddresses/pythonVM-ip","etag":"W/\"c55ceb9f-8f82-4013-9f35-011af2f328ed\"","location":"westeurope","properties":{"provisioningState":"Succeeded","resourceGuid":"3c516a35-c558-42e3-b3c3-b1df011c469d","ipAddress":"52.166.37.239","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/arm-python-RG/providers/Microsoft.Network/networkInterfaces/pythonvm887/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"vpn-lon-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vpn-lon/providers/Microsoft.Network/publicIPAddresses/vpn-lon-ip","etag":"W/\"775af337-1ab0-4e58-b993-a435500f9c7b\"","location":"ukwest","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"0809db4f-f47f-4527-aa38-06bebe6300ea","ipAddress":"51.141.93.86","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vpn-lon/providers/Microsoft.Network/networkInterfaces/vpn-lon393/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}}]}'
+      string: '{"value":[{"name":"yu-pip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rgz4klgzigjb4qdda7edqreq7jkn35rst5polu74x4rcxihstm45kwn2yisgtkr7ae3/providers/Microsoft.Network/publicIPAddresses/yu-pip","etag":"W/\"94e3de3f-e45d-4d49-95ea-6ebb423ec002\"","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"1633e615-6af9-46c8-8526-53c7df63dbec","ipAddress":"52.180.97.95","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Static","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rgz4klgzigjb4qdda7edqreq7jkn35rst5polu74x4rcxihstm45kwn2yisgtkr7ae3/providers/Microsoft.Network/azureFirewalls/yu-test-firewall/azureFirewallIpConfigurations/yu-pip"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Standard"}},{"name":"vm1PublicIP","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest2/providers/Microsoft.Network/publicIPAddresses/vm1PublicIP","etag":"W/\"6994eba2-3cdd-4c79-b618-ad6cdc6ec66b\"","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"623fc302-890b-4a5b-b1fa-7ed47fb5f163","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest2/providers/Microsoft.Network/networkInterfaces/vm1VMNic/ipConfigurations/ipconfigvm1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"vmss1LBPublicIP","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest2/providers/Microsoft.Network/publicIPAddresses/vmss1LBPublicIP","etag":"W/\"f5af6c4a-27fb-4bd5-b91e-f32f25050daa\"","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"a1eb3b36-4cfb-4e3e-932e-405c8e87bce7","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest2/providers/Microsoft.Network/loadBalancers/vmss1LB/frontendIPConfigurations/loadBalancerFrontEnd"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"vm1PublicIP","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest3/providers/Microsoft.Network/publicIPAddresses/vm1PublicIP","etag":"W/\"25053589-295f-464e-84ba-56e38a6a6ca7\"","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"d5a0e1de-ec83-4da3-bd59-8cdb71ac34ac","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest3/providers/Microsoft.Network/networkInterfaces/vm1VMNic/ipConfigurations/ipconfigvm1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"pyipname773e115f","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f","etag":"W/\"1954ae08-5130-49e0-bd3b-39934ad05ea5\"","location":"westus","tags":{"key":"value"},"properties":{"provisioningState":"Succeeded","resourceGuid":"faf0aa85-cc99-492b-9e55-968ec43b5e4d","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[]},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"zhoxing-test-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zhoxing-test/providers/Microsoft.Network/publicIPAddresses/zhoxing-test-ip","etag":"W/\"320e6ae0-2928-40ec-be20-690ce7df4f38\"","location":"westus","properties":{"provisioningState":"Succeeded","resourceGuid":"e494987b-629e-4af3-95ca-5672ce1594ca","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[]},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"bim-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.Network/publicIPAddresses/bim-ip","etag":"W/\"1c3c932c-110c-4fae-9da5-b45e2d1be17a\"","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"502f843e-9113-4b7f-8751-614674af8498","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim_pl_test_rg/providers/Microsoft.Network/networkInterfaces/bim547/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"ip01","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/harold/providers/Microsoft.Network/publicIPAddresses/ip01","etag":"W/\"c5983015-8fdc-46ab-846b-e969e46658ea\"","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"c1efc199-d47b-45b8-9d56-a0b90a29e3db","ipAddress":"40.71.233.2","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Static","idleTimeoutInMinutes":4,"ipTags":[]},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Standard"}},{"name":"myPublicIpAddress","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.Network/publicIPAddresses/myPublicIpAddress","etag":"W/\"b07f1296-f755-4ed3-8657-d8d8b3fb1d5e\"","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"3bb671eb-ad2b-4b4f-be29-9d4fefef36e5","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[]},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"qianwen-nfs-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qianwens/providers/Microsoft.Network/publicIPAddresses/qianwen-nfs-ip","etag":"W/\"72aa8208-72c3-4575-8ee8-684ca2cba563\"","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"56f335bb-ad98-44ec-ba5a-ab2b6c2a8831","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qianwens/providers/Microsoft.Network/networkInterfaces/qianwen-nfs346/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"qianwen-windows-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qianwens/providers/Microsoft.Network/publicIPAddresses/qianwen-windows-ip","etag":"W/\"47408649-5aa3-4335-a492-128b6473748a\"","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"893f0ecd-3bc9-481b-adbc-dcd6e967547c","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qianwens/providers/Microsoft.Network/networkInterfaces/qianwen-windows228/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"aadds-27b3f5458ee54c5c9ddfbe05db581b74-pip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zuh/providers/Microsoft.Network/publicIPAddresses/aadds-27b3f5458ee54c5c9ddfbe05db581b74-pip","etag":"W/\"62400b30-1ebe-4312-840f-b2b8ec3b7f9a\"","location":"eastus","properties":{"provisioningState":"Succeeded","resourceGuid":"75a1eaf5-3c99-490c-9136-935b8700b04e","ipAddress":"52.154.73.218","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Static","idleTimeoutInMinutes":4,"dnsSettings":{"domainNameLabel":"cust-a-z-u-r-e-s-d-k-t-e-a-27b3f545-8ee5-4c5c-9ddf-be05db581b74","fqdn":"cust-a-z-u-r-e-s-d-k-t-e-a-27b3f545-8ee5-4c5c-9ddf-be05db581b74.eastus.cloudapp.azure.com"},"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zuh/providers/Microsoft.Network/loadBalancers/aadds-27b3f5458ee54c5c9ddfbe05db581b74-lb/frontendIPConfigurations/WN8B27H-H4P2VLEFe"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"xxj-eastasia-centos-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/publicIPAddresses/xxj-eastasia-centos-ip","etag":"W/\"3ec635cd-e0b1-4253-8856-24c509ca6e54\"","location":"eastasia","properties":{"provisioningState":"Succeeded","resourceGuid":"55d9345b-5fb6-4131-8ade-c57721ef6068","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/networkInterfaces/xxj-eastasia-centos368/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"xxj-eastasia-centos-vnet-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/publicIPAddresses/xxj-eastasia-centos-vnet-ip","etag":"W/\"b22f766b-191f-4fe8-ad49-0e07f54d3930\"","location":"eastasia","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"85413080-f287-4886-90fd-723d61d002c0","ipAddress":"52.184.76.82","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Static","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/bastionHosts/xxj-eastasia-centos-vnet-bastion/bastionHostIpConfigurations/IpConf"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Standard"}},{"name":"xxj-vmss-1-lbPublicIP","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/publicIPAddresses/xxj-vmss-1-lbPublicIP","etag":"W/\"cfa108df-6be5-41da-a0f8-8ebddaf62623\"","location":"eastasia","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"517f7e23-d6bd-41cd-9e68-f61384222ac5","ipAddress":"52.184.75.166","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Static","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/loadBalancers/xxj-vmss-1-lb/frontendIPConfigurations/loadBalancerFrontEnd"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Standard"}},{"name":"xxj-win-1-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/publicIPAddresses/xxj-win-1-ip","etag":"W/\"e37090c4-068f-43ba-b22b-a03c37b40c84\"","location":"eastasia","properties":{"provisioningState":"Succeeded","resourceGuid":"ad7474d0-a013-419a-8259-637d22b2ad42","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/networkInterfaces/xxj-win-1177/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"jlvm2-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jlvm2rg/providers/Microsoft.Network/publicIPAddresses/jlvm2-ip","etag":"W/\"5498dee2-f48f-48fd-9afd-afa5a63a9744\"","location":"southeastasia","properties":{"provisioningState":"Succeeded","resourceGuid":"ca456293-959e-462a-b87b-2efb66595ccc","ipAddress":"13.76.168.185","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Static","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jlvm2rg/providers/Microsoft.Network/networkInterfaces/jlvm2952/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"qianwen-ubuntu-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qianwens/providers/Microsoft.Network/publicIPAddresses/qianwen-ubuntu-ip","etag":"W/\"7b203c4d-c5a8-42b2-8714-754dbbdd7e70\"","location":"southeastasia","properties":{"provisioningState":"Succeeded","resourceGuid":"97d47184-a205-41f4-b9ac-748fa4967096","ipAddress":"138.91.43.107","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qianwens/providers/Microsoft.Network/networkInterfaces/qianwen-ubuntu473/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"bim-vm-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim-rg/providers/Microsoft.Network/publicIPAddresses/bim-vm-ip","etag":"W/\"9f5a6240-f1e2-48bc-a372-af249b158cb7\"","location":"japaneast","properties":{"provisioningState":"Succeeded","resourceGuid":"a4febb10-7dec-4a3e-8a66-f74d2991028b","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bim-rg/providers/Microsoft.Network/networkInterfaces/bim-vm830/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"ruby-release-vm-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fanqiu-vm/providers/Microsoft.Network/publicIPAddresses/ruby-release-vm-ip","etag":"W/\"664ed735-a587-4559-96ee-72f7bdc811ee\"","location":"japaneast","properties":{"provisioningState":"Succeeded","resourceGuid":"630066a9-1af3-4766-889a-01973f0ac7ad","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fanqiu-vm/providers/Microsoft.Network/networkInterfaces/ruby-release-vm126/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"jlruby-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jlrubyrg/providers/Microsoft.Network/publicIPAddresses/jlruby-ip","etag":"W/\"d68c7a09-3b6d-4205-b450-087539309d09\"","location":"westus2","properties":{"provisioningState":"Succeeded","resourceGuid":"092781dd-220b-4b63-81d3-6c5763f89830","ipAddress":"51.141.175.148","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jlrubyrg/providers/Microsoft.Network/networkInterfaces/jlruby427/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"jlwinPublicIP","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jlwinrg/providers/Microsoft.Network/publicIPAddresses/jlwinPublicIP","etag":"W/\"bdd15255-8268-418d-8bab-d791863d1fae\"","location":"westus2","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"5419518b-2686-41da-a9fb-7a21decb9639","ipAddress":"13.66.156.151","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jlwinrg/providers/Microsoft.Network/networkInterfaces/jlwinVMNic/ipConfigurations/ipconfigjlwin"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"xxj-bastion-ubuntu-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/publicIPAddresses/xxj-bastion-ubuntu-ip","etag":"W/\"04d6a674-813b-4fb0-bbb7-c14df6660f6e\"","location":"westus2","properties":{"provisioningState":"Succeeded","resourceGuid":"7ad8c3da-1aac-4681-a36e-93fcbd818341","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/networkInterfaces/xxj-bastion-ubuntu182/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"xxj-bastion-vnet-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/publicIPAddresses/xxj-bastion-vnet-ip","etag":"W/\"324d2c98-060c-4e6b-9026-fded9a620e5d\"","location":"westus2","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"a48bc36f-8cf9-430d-9bad-0a46db30c4c0","ipAddress":"52.137.96.0","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Static","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/bastionHosts/xxj-bastion-vnet-bastion/bastionHostIpConfigurations/IpConf"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Standard"}},{"name":"xxj-westus2-redhat-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/publicIPAddresses/xxj-westus2-redhat-ip","etag":"W/\"78ab8347-da07-4a53-8f34-8ccc8a722fb5\"","location":"westus2","properties":{"provisioningState":"Succeeded","resourceGuid":"5077b353-b35f-4a8f-885b-acf3fef3a1c8","ipAddress":"52.183.5.202","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/networkInterfaces/xxj-westus2-redhat546/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"xxj-westus2-ubuntu-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/publicIPAddresses/xxj-westus2-ubuntu-ip","etag":"W/\"ea1839de-7cf5-4398-8ed0-86333f16da01\"","location":"westus2","properties":{"provisioningState":"Succeeded","resourceGuid":"1ccd68a8-01a1-4c1e-8f15-b4ea0db51671","ipAddress":"52.229.22.41","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/networkInterfaces/xxj-westus2-ubuntu656/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"xxj-westus2-ubuntu18-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/publicIPAddresses/xxj-westus2-ubuntu18-ip","etag":"W/\"381b730e-6229-461c-96ff-527a26efb0b4\"","location":"westus2","properties":{"provisioningState":"Succeeded","resourceGuid":"ea416bd6-4598-4e34-8a16-8dc9aca2c77f","ipAddress":"52.250.2.195","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/xiaojianxu/providers/Microsoft.Network/networkInterfaces/xxj-westus2-ubuntu18535/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"fanqiu-ruby-vm-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fanqiu-vm/providers/Microsoft.Network/publicIPAddresses/fanqiu-ruby-vm-ip","etag":"W/\"9ad21282-c30f-4d38-8ac8-c5fa740eba89\"","location":"koreacentral","properties":{"provisioningState":"Succeeded","resourceGuid":"8a267a47-7ad6-4239-bb1b-3c1fa4224bc5","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fanqiu-vm/providers/Microsoft.Network/networkInterfaces/fanqiu-ruby-vm633/ipConfigurations/ipconfig1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}},{"name":"fanqiu-ruby-vnet-bastion-ip","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fanqiu-vm/providers/Microsoft.Network/publicIPAddresses/fanqiu-ruby-vnet-bastion-ip","etag":"W/\"8342819b-44f4-4a9f-a0b8-36df15e32994\"","location":"koreacentral","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"7e61a4f4-8c17-4dff-8d65-19303e51f3ae","ipAddress":"52.231.110.4","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Static","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fanqiu-vm/providers/Microsoft.Network/bastionHosts/fanqiu-vm-vnet-bastion/bastionHostIpConfigurations/IpConf"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Standard"}},{"name":"vm1PublicIP","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Network/publicIPAddresses/vm1PublicIP","etag":"W/\"fa264ac6-f458-4701-8f6f-8ff9a178c61c\"","location":"centraluseuap","tags":{},"properties":{"provisioningState":"Succeeded","resourceGuid":"88c6d2dd-fc38-4bd1-ab71-2747011eee08","publicIPAddressVersion":"IPv4","publicIPAllocationMethod":"Dynamic","idleTimeoutInMinutes":4,"ipTags":[],"ipConfiguration":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest/providers/Microsoft.Network/networkInterfaces/vm1VMNic/ipConfigurations/ipconfigvm1"}},"type":"Microsoft.Network/publicIPAddresses","sku":{"name":"Basic"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '6235'
+      - '21738'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 13 May 2020 05:08:24 GMT
+      - Mon, 22 Jun 2020 05:04:59 GMT
       expires:
       - '-1'
       pragma:
@@ -319,10 +319,14 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-original-request-ids:
-      - f8b03e40-ff91-469f-9150-ce5940d615b1
-      - 27b7b00b-93b4-41e8-9ab3-ef6e022e2d29
-      - 58dd7047-286c-4c43-93b8-aff825e7b988
-      - 7aecda5a-0e9f-4778-99f6-7258dd49a4db
+      - 25eb202f-6702-4ee6-86d8-759b6f777d36
+      - 1d30c0ef-b2dc-4c99-a76f-afc410f7854c
+      - 4567ba70-6fc6-47c8-98b4-bcfbf5079789
+      - acf37c1c-8476-4e20-8ae6-88312093fb91
+      - 2778f26c-cea9-4531-8d7c-c7c78b1085b0
+      - 13ee2444-ceeb-48a0-9ba1-48023307fc53
+      - baeebf60-4bb7-42b6-8558-70760689e3b0
+      - ef4c7d41-0ed2-4799-b33d-27436b43d254
     status:
       code: 200
       message: OK
@@ -338,12 +342,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.16 msrest_azure/0.4.34 azure-mgmt-network/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses/pyipname773e115f?api-version=2020-05-01
   response:
     body:
       string: ''
@@ -351,17 +355,17 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/0d22dbab-127e-47dd-adba-02db63ad1900?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/d711d3c0-d98d-4ac6-ab54-a177fb832ba2?api-version=2020-05-01
       cache-control:
       - no-cache
       content-length:
       - '0'
       date:
-      - Wed, 13 May 2020 05:08:24 GMT
+      - Mon, 22 Jun 2020 05:05:00 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/0d22dbab-127e-47dd-adba-02db63ad1900?api-version=2020-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/d711d3c0-d98d-4ac6-ab54-a177fb832ba2?api-version=2020-05-01
       pragma:
       - no-cache
       server:
@@ -372,9 +376,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 0d7b1bc1-8b95-42a7-b6fa-c58ff719fbcc
+      - c602e48d-7468-4302-8580-f3795b8e1ad0
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
     status:
       code: 202
       message: Accepted
@@ -388,10 +392,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.16 msrest_azure/0.4.34 azure-mgmt-network/11.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/0d22dbab-127e-47dd-adba-02db63ad1900?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/d711d3c0-d98d-4ac6-ab54-a177fb832ba2?api-version=2020-05-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -403,7 +407,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 13 May 2020 05:08:35 GMT
+      - Mon, 22 Jun 2020 05:05:11 GMT
       expires:
       - '-1'
       pragma:
@@ -420,7 +424,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - ef72f018-ca12-4826-a1c0-5edf2a5619aa
+      - a6cc888f-dd13-4398-919a-80dd1529aa0f
     status:
       code: 200
       message: OK
@@ -434,12 +438,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-network/10.2.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.19.104-microsoft-standard-x86_64-with-Ubuntu-18.04-bionic)
+        msrest/0.6.16 msrest_azure/0.4.34 azure-mgmt-network/11.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses?api-version=2020-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_public_ip_addresses773e115f/providers/Microsoft.Network/publicIPAddresses?api-version=2020-05-01
   response:
     body:
       string: '{"value":[]}'
@@ -451,7 +455,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 13 May 2020 05:08:34 GMT
+      - Mon, 22 Jun 2020 05:05:11 GMT
       expires:
       - '-1'
       pragma:

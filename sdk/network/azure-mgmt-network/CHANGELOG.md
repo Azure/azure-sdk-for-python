@@ -1,5 +1,52 @@
 # Release History
 
+## 11.0.0 (2020-06-19)
+
+**Features**
+
+  - Model ConnectivityHop has a new parameter previous_hop_ids
+  - Model ConnectivityHop has a new parameter previous_links
+  - Model ConnectivityHop has a new parameter links
+  - Model HubIPAddresses has a new parameter public_ips
+  - Model FirewallPolicy has a new parameter rule_collection_groups
+  - Model FirewallPolicy has a new parameter dns_settings
+  - Model VirtualHub has a new parameter routing_state
+  - Model VirtualHub has a new parameter ip_configurations
+  - Model VirtualHub has a new parameter bgp_connections
+  - Model VirtualHub has a new parameter virtual_router_ips
+  - Model VirtualHub has a new parameter virtual_router_asn
+  - Model ApplicationGatewayFrontendIPConfiguration has a new parameter private_link_configuration
+  - Model ApplicationGateway has a new parameter private_endpoint_connections
+  - Model ApplicationGateway has a new parameter private_link_configurations
+  - Model P2SVpnGateway has a new parameter custom_dns_servers
+  - Model FirewallPolicyRule has a new parameter description
+  - Model NetworkVirtualAppliance has a new parameter virtual_appliance_sites
+  - Model NetworkVirtualAppliance has a new parameter boot_strap_configuration_blobs
+  - Model NetworkVirtualAppliance has a new parameter cloud_init_configuration
+  - Model NetworkVirtualAppliance has a new parameter cloud_init_configuration_blobs
+  - Model NetworkVirtualAppliance has a new parameter nva_sku
+  - Added operation VirtualHubsOperations.get_effective_virtual_hub_routes
+  - Added operation HubVirtualNetworkConnectionsOperations.delete
+  - Added operation HubVirtualNetworkConnectionsOperations.create_or_update
+  - Added operation group VirtualHubBgpConnectionsOperations
+  - Added operation group VirtualApplianceSkusOperations
+  - Added operation group VirtualHubIpConfigurationOperations
+  - Added operation group ApplicationGatewayPrivateLinkResourcesOperations
+  - Added operation group VirtualApplianceSitesOperations
+  - Added operation group ApplicationGatewayPrivateEndpointConnectionsOperations
+  - Added operation group FirewallPolicyRuleCollectionGroupsOperations
+  - Added operation group VirtualHubBgpConnectionOperations
+
+**Breaking changes**
+
+  - Model HubIPAddresses no longer has parameter public_ip_addresses
+  - Model FirewallPolicy no longer has parameter rule_groups
+  - Model VirtualHub no longer has parameter virtual_network_connections
+  - Model FirewallPolicyRule no longer has parameter priority
+  - Model NetworkVirtualAppliance no longer has parameter cloud_init_configuration_blob
+  - Model NetworkVirtualAppliance no longer has parameter boot_strap_configuration_blob
+  - Model NetworkVirtualAppliance no longer has parameter sku
+
 ## 10.2.0 (2020-04-10)
 
 **Features**
