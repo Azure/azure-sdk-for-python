@@ -1,6 +1,7 @@
 # Change Log azure-ai-formrecognizer
 
 ## 1.0.0b4 (Unreleased)
+
 **Breaking Changes**
 
 - Remove `RecognizedReceipts` Class.
@@ -10,6 +11,10 @@ and `CustomFormModelInfo`
 - `FieldText` has been renamed to `FieldData`
 - Parameter `include_text_content` has been renamed to `include_field_elements`
 - `text_content` has been renamed to `field_element`
+
+**Fixes and improvements**
+
+- Fixes a bug where `text_angle` was being returned out of the specified interval (-180, 180] 
 
 ## 1.0.0b3 (2020-06-10)
 
