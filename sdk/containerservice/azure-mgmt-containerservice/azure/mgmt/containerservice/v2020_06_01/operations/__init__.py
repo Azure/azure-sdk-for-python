@@ -9,4 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "9.2.0"
+from ._operations import Operations
+from ._managed_clusters_operations import ManagedClustersOperations
+from ._agent_pools_operations import AgentPoolsOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+
+__all__ = [
+    'Operations',
+    'ManagedClustersOperations',
+    'AgentPoolsOperations',
+    'PrivateEndpointConnectionsOperations',
+]
