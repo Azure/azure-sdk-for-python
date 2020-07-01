@@ -89,6 +89,8 @@ class FormTrainingClient(object):
         self._credential = credential
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        api_version = kwargs.pop('api_version', None)
+        validate_api_version(api_version)
         self._client = FormRecognizer(
             endpoint=self._endpoint,
             credential=self._credential,  # type: ignore
