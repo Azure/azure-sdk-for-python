@@ -138,8 +138,8 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
         return super(FormPageRange, cls).__new__(cls, first_page_number, last_page_number)
 
 
-class FormContent(object):
-    """Base type which includes properties for text.
+class FormElement(object):
+    """Base type which includes properties for a form element.
 
     :ivar str text: The text content of the line.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
@@ -235,7 +235,7 @@ class FormField(object):
         )[:1024]
 
 
-class FieldData(FormContent):
+class FieldData(FormElement):
     """Represents the text that is part of a form field. This includes
     the location of the text in the form and a collection of the
     elements that make up the text.
@@ -349,7 +349,7 @@ class FormPage(object):
         )[:1024]
 
 
-class FormLine(FormContent):
+class FormLine(FormElement):
     """An object representing an extracted line of text.
 
     :ivar str text: The text content of the line.
@@ -388,7 +388,7 @@ class FormLine(FormContent):
         )[:1024]
 
 
-class FormWord(FormContent):
+class FormWord(FormElement):
     """Represents a word recognized from the input document.
 
     :ivar str text: The text content of the word.
@@ -452,7 +452,7 @@ class FormTable(object):
         )[:1024]
 
 
-class FormTableCell(FormContent):
+class FormTableCell(FormElement):
     """Represents a cell contained in a table recognized from the input document.
 
     :ivar str text: Text content of the cell.

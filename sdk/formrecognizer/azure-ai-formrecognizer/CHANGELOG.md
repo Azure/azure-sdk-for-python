@@ -9,6 +9,7 @@
 - `requested_on` renamed to `training_started_on` and `completed_on` renamed to `training_completed_on` on `CustomFormModel`
 and `CustomFormModelInfo`
 - `FieldText` has been renamed to `FieldData`
+- `FormContent` has been renamed to `FormElement`
 - Parameter `include_text_content` has been renamed to `include_field_elements`
 - `text_content` has been renamed to `field_elements`
 
