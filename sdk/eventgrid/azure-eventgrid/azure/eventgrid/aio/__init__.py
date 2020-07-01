@@ -6,12 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._event_grid_publisher_client import EventGridPublisherClient
-from ._event_grid_consumer import EventGridConsumer
-__all__ = ['EventGridPublisherClient', 'EventGridConsumer']
-
-try:
-    from ._patch import patch_sdk
-    patch_sdk()
-except ImportError:
-    pass
+from ._event_grid_publisher_client_async import EventGridPublisherClient
+__all__ = ['EventGridPublisherClient']

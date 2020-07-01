@@ -6,12 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._event_grid_publisher_client import EventGridPublisherClient
-from ._event_grid_consumer import EventGridConsumer
-__all__ = ['EventGridPublisherClient', 'EventGridConsumer']
+from ._event_grid_publisher_client_operations import EventGridPublisherClientOperationsMixin
+from ._event_grid_consumer_operations import EventGridConsumerOperationsMixin
 
-try:
-    from ._patch import patch_sdk
-    patch_sdk()
-except ImportError:
-    pass
+__all__ = [
+    'EventGridPublisherClientOperationsMixin',
+    'EventGridConsumerOperationsMixin',
+]
