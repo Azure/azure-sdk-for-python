@@ -75,7 +75,6 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
            * 2016-10-01: :mod:`v2016_10_01.models<azure.keyvault.v2016_10_01.models>`
            * 7.0: :mod:`v7_0.models<azure.keyvault.v7_0.models>`
            * 7.1-preview: :mod:`v7_1_preview.models<azure.keyvault.v7_1_preview.models>`
-           * 7.2-preview: :mod:`v7_2_preview.models<azure.keyvault.v7_2_preview.models>`
         """
         if api_version == '2016-10-01':
             from .v2016_10_01 import models
@@ -85,9 +84,6 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
             return models
         elif api_version == '7.1-preview':
             from .v7_1_preview import models
-            return models
-        elif api_version == '7.2-preview':
-            from .v7_2_preview import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
