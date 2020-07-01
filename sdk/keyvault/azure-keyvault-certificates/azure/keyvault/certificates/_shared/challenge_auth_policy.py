@@ -136,5 +136,5 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
             scope = challenge.get_scope() or challenge.get_resource() + "/.default"
             self._token = self._credential.get_token(scope)
 
-        # ignore mypy's warning because although self._token is Optional, get_token raises when it fails to get a token
-        request.http_request.headers["Authorization"] = "Bearer {}".format(self._token.token)  # type: ignore
+        answer = "Bearer {}".format(self._token.token)
+        request.http_request.headers["Authorization"] = answer  # type: ignore
