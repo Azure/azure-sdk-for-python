@@ -6,8 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._synapse_client import SynapseClient
-from ._version import VERSION
+from ._monitoring_operations import MonitoringOperations
+from ._spark_batch_operations import SparkBatchOperations
+from ._spark_session_operations import SparkSessionOperations
+from ._workspace_acl_operations import WorkspaceAclOperations
 
-__version__ = VERSION
-__all__ = ['SynapseClient']
+__all__ = [
+    'MonitoringOperations',
+    'SparkBatchOperations',
+    'SparkSessionOperations',
+    'WorkspaceAclOperations',
+]

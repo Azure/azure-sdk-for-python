@@ -6,8 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._synapse_client import SynapseClient
-from ._version import VERSION
-
-__version__ = VERSION
+from ._synapse_client_async import SynapseClient
 __all__ = ['SynapseClient']
