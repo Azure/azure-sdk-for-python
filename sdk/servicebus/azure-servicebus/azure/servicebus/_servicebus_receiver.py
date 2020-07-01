@@ -62,6 +62,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      The default value is 0, meaning messages will be received from the service and processed
      one at a time. Increasing this value will improve message throughput performance but increase
      the change that messages will expire while they are cached if they're not processed fast enough.
+     In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+     within its request to the service.
     :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
@@ -275,6 +277,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          The default value is 0, meaning messages will be received from the service and processed
          one at a time. Increasing this value will improve message throughput performance but increase
          the change that messages will expire while they are cached if they're not processed fast enough.
+         In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+         within its request to the service.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -316,9 +320,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         This approach it optimal if you wish to process multiple messages simultaneously. Note that the
         number of messages retrieved in a single batch will be dependent on
-        whether `prefetch` was set for the receiver. This call will prioritize returning
-        quickly over meeting a specified batch size, and so will return as soon as at least
-        one message is received and there is a gap in incoming messages regardless
+        the `prefetch` value set for the receiver. If `prefetch` is not set for the receiver, the receiver would
+        try to cache max_batch_size (if provided) messages within the request to the service.
+        This call will prioritize returning quickly over meeting a specified batch size, and so will
+        return as soon as at least one message is received and there is a gap in incoming messages regardless
         of the specified batch size.
 
         :param int max_batch_size: Maximum number of messages in the batch. Actual number

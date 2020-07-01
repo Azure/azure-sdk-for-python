@@ -41,7 +41,7 @@ def receive_batch_message(receiver):
     session = receiver.session
     session.set_session_state("START")
     print("Session state:", session.get_session_state())
-    received_msgs = receiver.receive(max_batch_size=10, max_wait_time=5)
+    received_msgs = receiver.receive(max_wait_time=5)
     for msg in received_msgs:
         print(str(msg))
         msg.complete()
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
         print("Send message is done.")
 
-        receiver = servicebus_client.get_queue_session_receiver(queue_name=QUEUE_NAME, session_id=SESSION_ID, prefetch=10)
+        receiver = servicebus_client.get_queue_session_receiver(queue_name=QUEUE_NAME, session_id=SESSION_ID)
         with receiver:
             receive_batch_message(receiver)
 
