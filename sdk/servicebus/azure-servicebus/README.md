@@ -146,19 +146,19 @@ with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_sender(queue_name) as sender:
         # Sending a single message
         single_message = Message("Single message")
-        sender.send(single_message)
+        sender.send_messages(single_message)
 
         # Sending a list of messages
         messages = [Message("First message"), Message("Second message")]
-        sender.send(messages)
+        sender.send_messages(messages)
 ```
 
-> **NOTE:** A message may be scheduled for delayed delivery using the `ServiceBusSender.schedule()` method, or by specifying `Message.scheduled_enqueue_time_utc` before calling `ServiceBusSender.send()`
+> **NOTE:** A message may be scheduled for delayed delivery using the `ServiceBusSender.schedule_messages()` method, or by specifying `Message.scheduled_enqueue_time_utc` before calling `ServiceBusSender.send_messages()`
 > For more detail on scheduling and schedule cancellation please see a sample [here](./samples/sync_samples/schedule_messages_and_cancellation.py).
 
 ### Receive messages from a queue
 
-To receive from a queue, you can either perform an ad-hoc receive via "receiver.receive()" or receive persistently through the receiver itself.
+To receive from a queue, you can either perform an ad-hoc receive via "receiver.receive_messages()" or receive persistently through the receiver itself.
 
 #### Receive messages from a queue through iterating over ServiceBusReceiver
 
@@ -183,9 +183,9 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 > See [AutoLockRenewer](#autolockrenew) for a helper to perform this in the background automatically.
 > Lock duration is set in Azure on the queue or topic itself.
 
-#### [Receive messages from a queue through `ServiceBusReceiver.receive()`][receive_reference]
+#### [Receive messages from a queue through `ServiceBusReceiver.receive_messages()`][receive_reference]
 
-> **NOTE:** `ServiceBusReceiver.receive()` receives a single or constrained list of messages through an ad-hoc method call, as opposed to receiving perpetually from the generator. It always returns a list.
+> **NOTE:** `ServiceBusReceiver.receive_messages()` receives a single or constrained list of messages through an ad-hoc method call, as opposed to receiving perpetually from the generator. It always returns a list.
 
 ```Python
 from azure.servicebus import ServiceBusClient
@@ -196,19 +196,19 @@ queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
-        received_message_array = receiver.receive(max_wait_time=10)  # try to receive a single message within 10 seconds
+        received_message_array = receiver.receive_messages(max_wait_time=10)  # try to receive a single message within 10 seconds
         if received_message_array:
             print(str(received_message_array[0]))
 
     with client.get_queue_receiver(queue_name, prefetch=5) as receiver:
-        received_message_array = receiver.receive(max_batch_size=5, max_wait_time=10)  # try to receive maximum 5 messages in a batch within 10 seconds
+        received_message_array = receiver.receive_messages(max_batch_size=5, max_wait_time=10)  # try to receive maximum 5 messages in a batch within 10 seconds
         for message in received_message_array:
             print(str(message))
 ```
 
 In this example, max_batch_size (and prefetch, as required by max_batch_size) declares the maximum number of messages to attempt receiving before hitting a max_wait_time as specified in seconds.
 
-> **NOTE:** It should also be noted that `ServiceBusReceiver.peek()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
+> **NOTE:** It should also be noted that `ServiceBusReceiver.peek_messages()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
 
 
 ### [Sending][session_send_reference] and [receiving][session_receive_reference] a message from a session enabled queue
@@ -225,7 +225,7 @@ session_id = os.environ['SERVICE_BUS_SESSION_ID']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_sender(queue_name) as sender:
-        sender.send(Message("Session Enabled Message", session_id=session_id))
+        sender.send_messages(Message("Session Enabled Message", session_id=session_id))
 
     # If session_id is null here, will receive from the first available session.
     with client.get_queue_session_receiver(queue_name, session_id) as receiver:
@@ -252,7 +252,7 @@ subscription_name = os.environ['SERVICE_BUS_SUBSCRIPTION_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_topic_sender(topic_name) as sender:
-        sender.send(Message("Data"))
+        sender.send_messages(Message("Data"))
 
     # If session_id is null here, will receive from the first available session.
     with client.get_subscription_receiver(topic_name, subscription_name) as receiver:
@@ -386,7 +386,7 @@ renewer = AutoLockRenew()
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_session_receiver(queue_name, session_id=session_id) as receiver:
         renewer.register(receiver.session, timeout=300) # Timeout for how long to maintain the lock for, in seconds.
-        for msg in receiver.receive():
+        for msg in receiver.receive_messages():
             renewer.register(msg, timeout=60)
             # Do your application logic here
             msg.complete()

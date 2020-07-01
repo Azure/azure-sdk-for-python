@@ -22,7 +22,7 @@ QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 async def send_single_message(sender):
     message = Message("DATA" * 64)
-    await sender.send(message)
+    await sender.send_messages(message)
 
 
 async def send_batch_message(sender):
@@ -34,7 +34,7 @@ async def send_batch_message(sender):
             # BatchMessage object reaches max_size.
             # New BatchMessage object can be created here to send more data.
             break
-    await sender.send(batch_message)
+    await sender.send_messages(batch_message)
 
 
 async def main():
