@@ -92,7 +92,6 @@ class VirtualMachinesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -130,6 +129,10 @@ class VirtualMachinesOperations(object):
         api_version = "2017-03-30"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_location.metadata['url']  # type: ignore
@@ -142,15 +145,11 @@ class VirtualMachinesOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -184,8 +183,8 @@ class VirtualMachinesOperations(object):
         parameters,  # type: "models.VirtualMachineCaptureParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualMachineCaptureResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineCaptureResult"]
+        # type: (...) -> Optional["models.VirtualMachineCaptureResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VirtualMachineCaptureResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
@@ -209,7 +208,6 @@ class VirtualMachinesOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'VirtualMachineCaptureParameters')
         body_content_kwargs['content'] = body_content
@@ -239,7 +237,7 @@ class VirtualMachinesOperations(object):
         parameters,  # type: "models.VirtualMachineCaptureParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VirtualMachineCaptureResult"]
         """Captures the VM by copying virtual hard disks of the VM and outputs a template that can be used
     to create similar VMs.
 
@@ -331,7 +329,6 @@ class VirtualMachinesOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'VirtualMachine')
         body_content_kwargs['content'] = body_content
@@ -344,7 +341,6 @@ class VirtualMachinesOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachine', pipeline_response)
 
@@ -364,7 +360,7 @@ class VirtualMachinesOperations(object):
         parameters,  # type: "models.VirtualMachine"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VirtualMachine"]
         """The operation to create or update a virtual machine.
 
         :param resource_group_name: The name of the resource group.
@@ -429,8 +425,8 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
@@ -452,7 +448,6 @@ class VirtualMachinesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -477,7 +472,7 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """The operation to delete a virtual machine.
 
         :param resource_group_name: The name of the resource group.
@@ -578,7 +573,6 @@ class VirtualMachinesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -635,7 +629,6 @@ class VirtualMachinesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -658,8 +651,8 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
@@ -681,7 +674,6 @@ class VirtualMachinesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -706,7 +698,7 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Converts virtual machine disks from blob-based to managed disks. Virtual machine must be stop-
     deallocated before invoking this operation.
 
@@ -769,8 +761,8 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
@@ -792,7 +784,6 @@ class VirtualMachinesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -817,7 +808,7 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Shuts down the virtual machine and releases the compute resources. You are not billed for the
     compute resources that this virtual machine uses.
 
@@ -914,7 +905,6 @@ class VirtualMachinesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -953,6 +943,10 @@ class VirtualMachinesOperations(object):
         api_version = "2017-03-30"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -965,15 +959,11 @@ class VirtualMachinesOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -1019,6 +1009,10 @@ class VirtualMachinesOperations(object):
         api_version = "2017-03-30"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_all.metadata['url']  # type: ignore
@@ -1030,15 +1024,11 @@ class VirtualMachinesOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -1090,6 +1080,10 @@ class VirtualMachinesOperations(object):
         api_version = "2017-03-30"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_available_sizes.metadata['url']  # type: ignore
@@ -1103,15 +1097,11 @@ class VirtualMachinesOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -1144,8 +1134,8 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
@@ -1167,7 +1157,6 @@ class VirtualMachinesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1192,7 +1181,7 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """The operation to power off (stop) a virtual machine. The virtual machine can be restarted with
     the same provisioned resources. You are still charged for this virtual machine.
 
@@ -1255,8 +1244,8 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
@@ -1278,7 +1267,6 @@ class VirtualMachinesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1303,7 +1291,7 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """The operation to restart a virtual machine.
 
         :param resource_group_name: The name of the resource group.
@@ -1365,8 +1353,8 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
@@ -1388,7 +1376,6 @@ class VirtualMachinesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1413,7 +1400,7 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """The operation to start a virtual machine.
 
         :param resource_group_name: The name of the resource group.
@@ -1475,8 +1462,8 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
@@ -1498,7 +1485,6 @@ class VirtualMachinesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1523,7 +1509,7 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Shuts down the virtual machine, moves it to a new node, and powers it back on.
 
         :param resource_group_name: The name of the resource group.
@@ -1585,8 +1571,8 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
@@ -1608,7 +1594,6 @@ class VirtualMachinesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1633,7 +1618,7 @@ class VirtualMachinesOperations(object):
         vm_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """The operation to perform maintenance on a virtual machine.
 
         :param resource_group_name: The name of the resource group.
@@ -1696,8 +1681,8 @@ class VirtualMachinesOperations(object):
         parameters,  # type: "models.RunCommandInput"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RunCommandResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RunCommandResult"]
+        # type: (...) -> Optional["models.RunCommandResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.RunCommandResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-03-30"
@@ -1721,7 +1706,6 @@ class VirtualMachinesOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'RunCommandInput')
         body_content_kwargs['content'] = body_content
@@ -1751,7 +1735,7 @@ class VirtualMachinesOperations(object):
         parameters,  # type: "models.RunCommandInput"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.RunCommandResult"]
         """Run command on the VM.
 
         :param resource_group_name: The name of the resource group.
