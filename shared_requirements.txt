@@ -84,6 +84,7 @@ azure-nspkg
 azure-keyvault-nspkg
 azure-search-nspkg
 azure-security-nspkg
+azure-synapse-nspkg
 azure-servicebus~=0.21.1
 azure-servicefabric~=6.3.0.0
 azure-servicemanagement-legacy~=0.20.6
