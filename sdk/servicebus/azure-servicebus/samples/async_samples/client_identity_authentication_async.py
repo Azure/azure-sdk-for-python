@@ -39,7 +39,7 @@ from azure.servicebus.aio import ServiceBusClient
 from azure.identity.aio import EnvironmentCredential
 
 
-FULLY_QUALIFIED_NAMESPACE = 't1sbtest.servicebus.windows.net' #os.environ['SERVICE_BUS_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_NAMESPACE']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 
