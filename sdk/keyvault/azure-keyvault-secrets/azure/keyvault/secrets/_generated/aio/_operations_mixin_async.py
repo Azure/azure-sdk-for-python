@@ -113,7 +113,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupSecretResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.BackupSecretResult
+        :rtype: ~azure.keyvault.v7_1.models.BackupSecretResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('backup_secret')
@@ -123,8 +123,6 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1-preview':
             from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -509,7 +507,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedSecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v7_1.models.DeletedSecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('delete_secret')
@@ -519,8 +517,6 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1-preview':
             from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -1129,7 +1125,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedSecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v7_1.models.DeletedSecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_secret')
@@ -1139,8 +1135,6 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1-preview':
             from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -1168,7 +1162,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedSecretListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.DeletedSecretListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.DeletedSecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_secrets')
@@ -1178,8 +1172,6 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1-preview':
             from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -1459,7 +1451,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_secret')
@@ -1469,8 +1461,6 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1-preview':
             from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -1501,7 +1491,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecretListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.SecretListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.SecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_secret_versions')
@@ -1511,8 +1501,6 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1-preview':
             from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -1541,7 +1529,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecretListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_2.models.SecretListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.SecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_secrets')
@@ -1551,8 +1539,6 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1-preview':
             from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -1840,8 +1826,6 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1-preview':
             from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -2009,7 +1993,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('recover_deleted_secret')
@@ -2019,8 +2003,6 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1-preview':
             from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -2186,10 +2168,10 @@ class KeyVaultClientOperationsMixin(object):
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param parameters: The parameters to restore the secret.
-        :type parameters: ~azure.keyvault.v7_2.models.SecretRestoreParameters
+        :type parameters: ~azure.keyvault.v7_1.models.SecretRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('restore_secret')
@@ -2199,8 +2181,6 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1-preview':
             from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -2369,10 +2349,10 @@ class KeyVaultClientOperationsMixin(object):
         :param secret_name: The name of the secret.
         :type secret_name: str
         :param parameters: The parameters for setting the secret.
-        :type parameters: ~azure.keyvault.v7_2.models.SecretSetParameters
+        :type parameters: ~azure.keyvault.v7_1.models.SecretSetParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('set_secret')
@@ -2382,8 +2362,6 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1-preview':
             from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -2762,10 +2740,10 @@ class KeyVaultClientOperationsMixin(object):
         :param secret_version: The version of the secret.
         :type secret_version: str
         :param parameters: The parameters for update secret operation.
-        :type parameters: ~azure.keyvault.v7_2.models.SecretUpdateParameters
+        :type parameters: ~azure.keyvault.v7_1.models.SecretUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_1.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('update_secret')
@@ -2775,8 +2753,6 @@ class KeyVaultClientOperationsMixin(object):
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1-preview':
             from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from ..v7_2_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
