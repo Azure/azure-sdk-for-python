@@ -74,7 +74,6 @@ class SnapshotsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(snapshot, 'Snapshot')
         body_content_kwargs['content'] = body_content
@@ -87,7 +86,6 @@ class SnapshotsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('Snapshot', pipeline_response)
 
@@ -106,7 +104,7 @@ class SnapshotsOperations:
         snapshot_name: str,
         snapshot: "models.Snapshot",
         **kwargs
-    ) -> "models.Snapshot":
+    ) -> AsyncLROPoller["models.Snapshot"]:
         """Creates or updates a snapshot.
 
         :param resource_group_name: The name of the resource group.
@@ -122,8 +120,8 @@ class SnapshotsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: Snapshot, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot
+        :return: An instance of AsyncLROPoller that returns either Snapshot or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -197,7 +195,6 @@ class SnapshotsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(snapshot, 'SnapshotUpdate')
         body_content_kwargs['content'] = body_content
@@ -210,7 +207,6 @@ class SnapshotsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('Snapshot', pipeline_response)
 
@@ -229,7 +225,7 @@ class SnapshotsOperations:
         snapshot_name: str,
         snapshot: "models.SnapshotUpdate",
         **kwargs
-    ) -> "models.Snapshot":
+    ) -> AsyncLROPoller["models.Snapshot"]:
         """Updates (patches) a snapshot.
 
         :param resource_group_name: The name of the resource group.
@@ -245,8 +241,8 @@ class SnapshotsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: Snapshot, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot
+        :return: An instance of AsyncLROPoller that returns either Snapshot or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -329,7 +325,6 @@ class SnapshotsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -351,8 +346,8 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         **kwargs
-    ) -> "models.OperationStatusResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+    ) -> Optional["models.OperationStatusResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-04-30-preview"
@@ -374,7 +369,6 @@ class SnapshotsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -398,7 +392,7 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         **kwargs
-    ) -> "models.OperationStatusResponse":
+    ) -> AsyncLROPoller["models.OperationStatusResponse"]:
         """Deletes a snapshot.
 
         :param resource_group_name: The name of the resource group.
@@ -412,8 +406,8 @@ class SnapshotsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: OperationStatusResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -475,6 +469,10 @@ class SnapshotsOperations:
         api_version = "2016-04-30-preview"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -487,15 +485,11 @@ class SnapshotsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -539,6 +533,10 @@ class SnapshotsOperations:
         api_version = "2016-04-30-preview"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -550,15 +548,11 @@ class SnapshotsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -591,8 +585,8 @@ class SnapshotsOperations:
         snapshot_name: str,
         grant_access_data: "models.GrantAccessData",
         **kwargs
-    ) -> "models.AccessUri":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessUri"]
+    ) -> Optional["models.AccessUri"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.AccessUri"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-04-30-preview"
@@ -616,7 +610,6 @@ class SnapshotsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(grant_access_data, 'GrantAccessData')
         body_content_kwargs['content'] = body_content
@@ -645,7 +638,7 @@ class SnapshotsOperations:
         snapshot_name: str,
         grant_access_data: "models.GrantAccessData",
         **kwargs
-    ) -> "models.AccessUri":
+    ) -> AsyncLROPoller["models.AccessUri"]:
         """Grants access to a snapshot.
 
         :param resource_group_name: The name of the resource group.
@@ -662,8 +655,8 @@ class SnapshotsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: AccessUri, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.AccessUri
+        :return: An instance of AsyncLROPoller that returns either AccessUri or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_04_30_preview.models.AccessUri]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -711,8 +704,8 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         **kwargs
-    ) -> "models.OperationStatusResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+    ) -> Optional["models.OperationStatusResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-04-30-preview"
@@ -734,7 +727,6 @@ class SnapshotsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -758,7 +750,7 @@ class SnapshotsOperations:
         resource_group_name: str,
         snapshot_name: str,
         **kwargs
-    ) -> "models.OperationStatusResponse":
+    ) -> AsyncLROPoller["models.OperationStatusResponse"]:
         """Revokes access to a snapshot.
 
         :param resource_group_name: The name of the resource group.
@@ -772,8 +764,8 @@ class SnapshotsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: OperationStatusResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_04_30_preview.models.OperationStatusResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]

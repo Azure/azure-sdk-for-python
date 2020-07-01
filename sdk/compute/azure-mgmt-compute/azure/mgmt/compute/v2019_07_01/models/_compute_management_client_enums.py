@@ -213,7 +213,7 @@ class OperatingSystemStateTypes(str, Enum):
     specialized = "Specialized"  #: Specialized image. Contains already provisioned OS Disk.
 
 class OperatingSystemTypes(str, Enum):
-    """The Operating System type.
+    """The operating system of the osDiskImage.
     """
 
     windows = "Windows"
