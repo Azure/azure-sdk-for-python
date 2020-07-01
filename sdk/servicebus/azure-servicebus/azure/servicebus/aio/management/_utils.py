@@ -72,29 +72,29 @@ from ...management._handle_response_error import _handle_response_error
 
 async def extract_data_template(feed_class, convert, feed_element):
     """A function that will be partialized to build a function used by AsyncItemPaged.
-    
+
     It deserializes the ElementTree returned from function `get_next_template`, returns data in an iterator and
     the link to next page.
-    
-    azure.core.async_paging.AsyncItemPaged will use the returned next page to call a partial function created 
+
+    azure.core.async_paging.AsyncItemPaged will use the returned next page to call a partial function created
     from `get_next_template` to fetch data of next page.
-    
+
     """
     deserialized = feed_class.deserialize(feed_element)
     list_of_qd = [convert(x) if convert else x for x in deserialized.entry]
     next_link = None
     # when the response xml has two <link> tags, the 2nd if the next-page link.
-    if deserialized.link and len(deserialized.link) == 2:   
+    if deserialized.link and len(deserialized.link) == 2:
         next_link = deserialized.link[1].href
     return next_link, iter(list_of_qd)  # when next_page is None, AsyncPagedItem will stop fetch next page data.
 
 
 async def get_next_template(list_func, *args, start_index=0, max_page_size=100, **kwargs):
     """Call list_func to get the XML data and deserialize it to XML ElementTree.
-    
+
     azure.core.async_paging.AsyncItemPaged will call `extract_data_template` and use the returned
     XML ElementTree to call a partial function created from `extrat_data_template`.
-    
+
     """
     api_version = constants.API_VERSION
     if args[0]:  # It's next link. It's None for the first page.

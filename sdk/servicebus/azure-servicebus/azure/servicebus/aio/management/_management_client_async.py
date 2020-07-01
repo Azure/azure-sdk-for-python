@@ -24,7 +24,7 @@ from ...management._generated.models import QueueDescriptionFeed, TopicDescripti
     TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, \
     CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, \
     QueueDescription as InternalQueueDescription, TopicDescription as InternalTopicDescription, \
-    SubscriptionDescription as InternalSubscriptionDescription, RuleDescription as InternalRuleDescription, \
+    SubscriptionDescription as InternalSubscriptionDescription, \
     NamespaceProperties
 
 from ..._common.utils import parse_conn_str
@@ -488,7 +488,8 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         if not entry.content:
             raise ResourceNotFoundError(
                 "Subscription('Topic: {}, Subscription: {}') does not exist".format(subscription_name, topic_name))
-        subscription = SubscriptionDescription._from_internal_entity(entry.title, entry.content.subscription_description)
+        subscription = SubscriptionDescription._from_internal_entity(
+            entry.title, entry.content.subscription_description)
         return subscription
 
     async def get_subscription_runtime_info(
@@ -509,7 +510,8 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         if not entry.content:
             raise ResourceNotFoundError(
                 "Subscription('Topic: {}, Subscription: {}') does not exist".format(subscription_name, topic_name))
-        subscription = SubscriptionRuntimeInfo._from_internal_entity(entry.title, entry.content.subscription_description)
+        subscription = SubscriptionRuntimeInfo._from_internal_entity(
+            entry.title, entry.content.subscription_description)
         return subscription
 
     async def create_subscription(

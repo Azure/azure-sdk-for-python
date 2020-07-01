@@ -483,7 +483,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         if not entry.content:
             raise ResourceNotFoundError(
                 "Subscription('Topic: {}, Subscription: {}') does not exist".format(subscription_name, topic_name))
-        subscription = SubscriptionDescription._from_internal_entity(entry.title, entry.content.subscription_description)
+        subscription = SubscriptionDescription._from_internal_entity(
+            entry.title, entry.content.subscription_description)
         return subscription
 
     def get_subscription_runtime_info(self, topic, subscription_name, **kwargs):
@@ -503,14 +504,16 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         if not entry.content:
             raise ResourceNotFoundError(
                 "Subscription('Topic: {}, Subscription: {}') does not exist".format(subscription_name, topic_name))
-        subscription = SubscriptionRuntimeInfo._from_internal_entity(entry.title, entry.content.subscription_description)
+        subscription = SubscriptionRuntimeInfo._from_internal_entity(
+            entry.title, entry.content.subscription_description)
         return subscription
 
     def create_subscription(self, topic, subscription, **kwargs):
         # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], Any) -> SubscriptionDescription
         """Create a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that will own the to-be-created subscription.
+        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that will own the
+         to-be-created subscription.
         :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription name or a
         `SubscriptionDescription` instance. When it's a str, it will be the name of the created subscription.
          Other properties of the created subscription will have default values as defined by the service.
@@ -548,7 +551,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         return result
 
     def update_subscription(self, topic, subscription, **kwargs):
-        # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], Any) -> None
+        # type: (Union[str, TopicDescription], SubscriptionDescription, Any) -> None
         """Update a subscription.
 
         Before calling this method, you should use `get_subscription` to get a `SubscriptionDescription` instance,
@@ -591,7 +594,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         """Delete a topic subscription.
 
         :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription to be deleted.
+        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription to
+         be deleted.
         :rtype: None
         """
         try:
@@ -663,7 +667,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         """Get the properties of a topic subscription rule.
 
         :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that owns the rule.
+        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that
+         owns the rule.
         :param str rule_name: Name of the rule.
         :rtype: ~azure.servicebus.management.RuleDescription
         """
@@ -688,8 +693,10 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         # type: (Union[str, TopicDescription], Union[str, SubscriptionDescription], RuleDescription, Any) -> RuleDescription  # pylint:disable=line-too-long
         """Create a rule for a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that will own the to-be-created subscription rule.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that will own the to-be-created rule.
+        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that will own the
+         to-be-created subscription rule.
+        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that
+         will own the to-be-created rule.
         :param azure.servicebus.management.RuleDescription rule: The rule to be created.
         :rtype: ~azure.servicebus.management.RuleDescription
         """
@@ -729,7 +736,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         Only a portion of properties can be updated.
 
         :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that owns this rule.
+        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that
+         owns this rule.
         :param ~azure.servicebus.management.RuleDescription rule: The rule to be updated.
         :rtype: None
         """
@@ -768,7 +776,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         """Delete a topic subscription rule.
 
         :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that owns the topic.
+        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that
+         owns the topic.
         :param Union[str, ~azure.servicebus.management.RuleDescription] rule: The to-be-deleted rule.
         :rtype: None
         """
@@ -791,7 +800,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         """List the rules of a topic subscription.
 
         :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that owns the rules.
+        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that
+         owns the rules.
         :returns: An iterable (auto-paging) response of RuleDescription.
         :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.RuleDescription]
         """
