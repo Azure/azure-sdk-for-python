@@ -229,6 +229,7 @@ class StorageCommonBlobTest(StorageTestCase):
             data = blob.download_blob(encoding='utf-8')
             self.assertEqual(data.readall(), blob_data)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_and_download_blob_with_vid(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -614,6 +615,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
 
+    @pytest.mark.playback_test_only
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_set_blob_metadata_returns_vid(self, resource_group, location, storage_account, storage_account_key):
@@ -648,6 +650,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_delete_specific_blob_version(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -668,6 +671,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNone(resp)
         self.assertTrue(len(blob_list) > 0)
 
+    @pytest.mark.playback_test_only
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     def test_delete_blob_version_with_blob_sas(self, resource_group, location, storage_account, storage_account_key):
@@ -750,6 +754,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(len(blobs), 1)
         self.assertIsNone(blobs[0].snapshot)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_create_blob_snapshot_returns_vid(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1020,6 +1025,7 @@ class StorageCommonBlobTest(StorageTestCase):
         copy_content = copyblob.download_blob().readall()
         self.assertEqual(copy_content, self.byte_data)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_copy_blob_returns_vid(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)

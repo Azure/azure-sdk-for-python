@@ -109,6 +109,7 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.etag, create_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_get_blob_properties_using_vid(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
