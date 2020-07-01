@@ -84,8 +84,9 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
         # Find a specific labeled field. Substitute "Merchant" with your specific training-time label
         try:
             print("\nValue for a specific labeled field using the training-time label:")
+            training_time_label = "Merchant"
             for labeled_form in forms_with_labeled_model:
-                print("The Merchant is {}\n".format(labeled_form.fields["Merchant"].value))
+                print("The Merchant is {}\n".format(labeled_form.fields[training_time_label].value))
         except KeyError:
             print("'Merchant' training-time label does not exist. Substitute with your own training-time label.")
 
@@ -112,9 +113,10 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
 
         # Find the value of a specific unlabeled field. Will only be found if sample training forms used
         print("\nValue for a specific unlabeled field:")
+        field_label = "Vendor Name:"
         for unlabeled_form in forms_with_unlabeled_model:
             for name, field in unlabeled_form.fields.items():
-                if field.label_data.text == "Vendor Name:":
+                if field.label_data.text == field_label:
                     print("The Vendor Name is {}\n".format(field.value))
 
 
