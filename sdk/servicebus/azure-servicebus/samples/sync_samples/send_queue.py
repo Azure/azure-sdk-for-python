@@ -14,20 +14,28 @@ Example to show sending message(s) to a Service Bus Queue.
 import os
 from azure.servicebus import ServiceBusClient, Message
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 
 def send_single_message(sender):
-    message = Message("DATA" * 64)
+    message = Message("Single Message")
     sender.send(message)
+
+
+def send_a_list_of_messages(sender):
+    messages = [Message("Message in list") for _ in range(10)]
+    sender.send(messages)
 
 
 def send_batch_message(sender):
     batch_message = sender.create_batch()
-    while True:
+    for _ in range(10):
         try:
-            batch_message.add(Message("DATA" * 256))
+            batch_message.add(Message("Message inside a BatchMessage"))
         except ValueError:
             # BatchMessage object reaches max_size.
             # New BatchMessage object can be created here to send more data.
@@ -40,6 +48,7 @@ with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
         send_single_message(sender)
+        send_a_list_of_messages(sender)
         send_batch_message(sender)
 
 print("Send message is done.")

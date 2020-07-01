@@ -13,7 +13,9 @@ Example to show receiving deferred message from a Service Bus Queue asynchronous
 
 import os
 import asyncio
+from azure.servicebus import Message
 from azure.servicebus.aio import ServiceBusClient
+
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
@@ -23,6 +25,11 @@ async def main():
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
 
     async with servicebus_client:
+        sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
+        messages = [Message("Message to be deferred") for _ in range(10)]
+        async with sender:
+            await sender.send(messages)
+
         receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch=10)
 
         async with receiver:

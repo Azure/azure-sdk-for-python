@@ -13,7 +13,7 @@ from azure.servicebus.exceptions import NoActiveSession
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 # Note: This must be a session-enabled queue.
-QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
+SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
 
 
 def message_processing(sb_client, queue_name, messages):
@@ -66,4 +66,4 @@ def sample_session_send_receive_with_pool(connection_string, queue_name):
 
 
 if __name__ == '__main__':
-    sample_session_send_receive_with_pool(CONNECTION_STR, QUEUE_NAME)
+    sample_session_send_receive_with_pool(CONNECTION_STR, SESSION_QUEUE_NAME)

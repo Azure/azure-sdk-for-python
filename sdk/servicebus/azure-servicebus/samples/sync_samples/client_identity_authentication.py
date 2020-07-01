@@ -57,7 +57,7 @@ servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
-        sender.send(Message("DATA" * 64))
+        sender.send(Message('Single Message'))
 
 
 print("Send message is done.")

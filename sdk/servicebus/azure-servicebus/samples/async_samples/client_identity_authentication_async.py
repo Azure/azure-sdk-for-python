@@ -39,25 +39,26 @@ from azure.servicebus.aio import ServiceBusClient
 from azure.identity.aio import EnvironmentCredential
 
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICE_BUS_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = 't1sbtest.servicebus.windows.net' #os.environ['SERVICE_BUS_NAMESPACE']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
-
-credential = EnvironmentCredential()
-
-# Note: One has other options to specify the credential.  For instance, DefaultAzureCredential.
-# Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
-# For example user to be logged in can be specified by the environment variable AZURE_USERNAME, consumed via the ManagedIdentityCredential
-# Alternately, one can specify the AZURE_TENANT_ID, AZURE_CLIENT_ID, and AZURE_CLIENT_SECRET to use the EnvironmentCredentialClass.
-# The docs above specify all mechanisms which the defaultCredential internally support.
-# credential = DefaultAzureCredential()
 
 
 async def run():
+    credential = EnvironmentCredential()
+    # Note: One has other options to specify the credential.  For instance, DefaultAzureCredential.
+    # Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
+    # For example user to be logged in can be specified by the environment variable AZURE_USERNAME, consumed via the ManagedIdentityCredential
+    # Alternately, one can specify the AZURE_TENANT_ID, AZURE_CLIENT_ID, and AZURE_CLIENT_SECRET to use the EnvironmentCredentialClass.
+    # The docs above specify all mechanisms which the defaultCredential internally support.
+    # credential = DefaultAzureCredential()
+
     servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
     async with servicebus_client:
         sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
         async with sender:
-            await sender.send(Message("DATA" * 64))
+            await sender.send(Message('Single Message'))
+
+    await credential.close()
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(run())
