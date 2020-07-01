@@ -4,6 +4,7 @@
 # ------------------------------------
 from unittest import mock
 
+import sys
 from azure.core.credentials import AccessToken
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import VSCodeCredential

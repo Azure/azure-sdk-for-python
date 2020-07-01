@@ -126,7 +126,7 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
         if six.PY3:
             json_repr = json_repr.encode("utf-8")
 
-        hash_object = hashlib.sha1(json_repr)
+        hash_object = hashlib.sha1(json_repr)   # nosec
         hashed_result = hash_object.hexdigest()
 
         while hashed_result in self.last_result:
@@ -135,7 +135,7 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
             if six.PY3:
                 json_repr = json_repr.encode("utf-8")
 
-            hash_object = hashlib.sha1(json_repr)
+            hash_object = hashlib.sha1(json_repr)   # nosec
             hashed_result = hash_object.hexdigest()
         self.last_result.add(hashed_result)
         return res

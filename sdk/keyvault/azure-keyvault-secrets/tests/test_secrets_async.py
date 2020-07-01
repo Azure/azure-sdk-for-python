@@ -71,7 +71,6 @@ class KeyVaultSecretTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_secret_crud_operations(self, client, **kwargs):
         secret_name = "crud-secret"
         secret_value = self.get_resource_name("crud_secret_value")
@@ -135,7 +134,6 @@ class KeyVaultSecretTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_secret_list(self, client, **kwargs):
         max_secrets = self.list_test_size
         expected = {}
@@ -156,7 +154,6 @@ class KeyVaultSecretTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_list_deleted_secrets(self, client, **kwargs):
         expected = {}
 
@@ -181,7 +178,6 @@ class KeyVaultSecretTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_list_versions(self, client, **kwargs):
         secret_name = self.get_resource_name("sec")
         secret_value = self.get_resource_name("secVal")
@@ -210,7 +206,6 @@ class KeyVaultSecretTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=False)
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, client, **kwargs):
         secret_name = self.get_resource_name("secbak")
         secret_value = self.get_resource_name("secVal")
@@ -233,7 +228,6 @@ class KeyVaultSecretTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_recover(self, client, **kwargs):
         secrets = {}
 
@@ -263,7 +257,6 @@ class KeyVaultSecretTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_purge(self, client, **kwargs):
         secrets = {}
 
@@ -288,7 +281,6 @@ class KeyVaultSecretTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer(client_kwargs={"logging_enable": True})
-    @KeyVaultTestCase.await_prepared_test
     async def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
@@ -313,7 +305,6 @@ class KeyVaultSecretTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 

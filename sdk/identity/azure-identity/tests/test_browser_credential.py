@@ -284,8 +284,8 @@ def test_redirect_server():
     thread.start()
 
     # send a request, verify the server exposes the query
-    url = "http://127.0.0.1:{}/?{}={}".format(port, expected_param, expected_value) #nosec
-    response = urllib.request.urlopen(url)  #nosec
+    url = "http://127.0.0.1:{}/?{}={}".format(port, expected_param, expected_value) # nosec
+    response = urllib.request.urlopen(url)  # nosec
 
     assert response.code == 200
     assert server.query_params[expected_param] == [expected_value]

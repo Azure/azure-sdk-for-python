@@ -1,16 +1,9 @@
 trigger: none
 
-resources:
-  repositories:
-    - repository: azure-sdk-tools
-      type: github
-      name: Azure/azure-sdk-tools
-      endpoint: azure
-
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
-      BuildTargetingString: $(BuildTargetingString)
+      BuildTargetingString: azure-ai-formrecognizer
       ServiceDirectory: formrecognizer
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)

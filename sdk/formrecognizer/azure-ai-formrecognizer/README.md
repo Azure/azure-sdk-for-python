@@ -122,8 +122,8 @@ See the full details regarding [authentication][cognitive_authentication] of cog
 `FormRecognizerClient` provides operations for:
 
  - Recognizing form fields and content using custom models trained to recognize your custom forms. These values are returned in a collection of `RecognizedForm` objects.
+ - Recognizing common fields from US receipts, using a pre-trained receipt model on the Form Recognizer service. These fields and meta-data are returned in a collection of `RecognizedForm` objects.
  - Recognizing form content, including tables, lines and words, without the need to train a model. Form content is returned in a collection of `FormPage` objects.
- - Recognizing common fields from US receipts, using a pre-trained receipt model on the Form Recognizer service. These fields and meta-data are returned in a collection of `RecognizedReceipt` objects.
 
 ### FormTrainingClient
 `FormTrainingClient` provides operations for:
@@ -241,8 +241,10 @@ for receipt in result:
 
 ### Train a model
 Train a machine-learned model on your own form type. The resulting model will be able to recognize values from the types of forms it was trained on.
-Provide a container SAS url to your Azure Storage Blob container where you're storing the training documents. See details on setting this up
-in the [service quickstart documentation][quickstart_training].
+Provide a container SAS url to your Azure Storage Blob container where you're storing the training documents. 
+If training files are within a subfolder in the container, use the [prefix][prefix_ref_docs] keyword argument to specify under which folder to train.
+
+More details on setting up a container and required file structure can be found in the [service quickstart documentation][quickstart_training].
 
 ```python
 from azure.ai.formrecognizer import FormTrainingClient
@@ -253,15 +255,15 @@ credential = AzureKeyCredential("<api_key>")
 
 form_training_client = FormTrainingClient(endpoint, credential)
 
-container_sas_url = "xxx"  # training documents uploaded to blob storage
-poller = form_training_client.begin_training(container_sas_url)
+container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
+poller = form_training_client.begin_training(container_sas_url, use_training_labels=False)
 model = poller.result()
 
 # Custom model information
 print("Model ID: {}".format(model.model_id))
 print("Status: {}".format(model.status))
-print("Requested on: {}".format(model.requested_on))
-print("Completed on: {}".format(model.completed_on))
+print("Training started on: {}".format(model.training_started_on))
+print("Training completed on: {}".format(model.training_completed_on))
 
 print("Recognized fields:")
 # looping through the submodels, which contains the fields they were trained on
@@ -309,8 +311,8 @@ model_id = "<model id from the Train a Model sample>"
 custom_model = form_training_client.get_custom_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
 print("Status: {}".format(custom_model.status))
-print("Requested on: {}".format(custom_model.requested_on))
-print("Completed on: {}".format(custom_model.completed_on))
+print("Training started on: {}".format(custom_model.training_started_on))
+print("Training completed on: {}".format(custom_model.training_completed_on))
 
 # Finally, we will delete this model by ID
 form_training_client.delete_model(model_id=custom_model.model_id)
@@ -403,7 +405,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-fr-src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer
 [python-fr-pypi]: https://pypi.org/project/azure-ai-formrecognizer/
 [python-fr-product-docs]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview
-[python-fr-ref-docs]: https://aka.ms/azsdk-python-formrecognizer-ref-docs
+[python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [python-fr-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples
 
 
@@ -413,13 +415,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [pip]: https://pypi.org/project/pip/
 [azure_portal_create_FR_resource]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
 [azure_cli_create_FR_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
-[azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
+[azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [fr-labeling-tool]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/label-tool
 [fr-train-without-labels]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview#train-without-labels
 [fr-train-with-labels]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview#train-with-labels
+[prefix_ref_docs]: https://aka.ms/azsdk/python/formrecognizer/docs#azure.ai.formrecognizer.FormTrainingClient.begin_training
 
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
-[azure_core_ref_docs]: https://aka.ms/azsdk-python-azure-core
+[azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [python_logging]: https://docs.python.org/3/library/logging.html
 [multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show

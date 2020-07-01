@@ -20,7 +20,7 @@ interactions:
       api-key:
       - 1C166A5AB3A98880F52DC59909AC7CD1
     method: POST
-    uri: https://search3f00e58.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://search3f00e58.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search3f00e58.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7EC94044D5005\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
@@ -40,7 +40,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search3f00e58.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+      - https://search3f00e58.search.windows.net/indexes('hotels')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:

@@ -11,28 +11,29 @@ from azure.ai.formrecognizer._generated.models import CopyOperationResult
 from azure.ai.formrecognizer import CustomFormModelInfo
 from azure.ai.formrecognizer.aio import FormTrainingClient
 from testcase import GlobalFormRecognizerAccountPreparer
-from testcase import GlobalTrainingAccountPreparer as _GlobalTrainingAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
+from testcase import GlobalClientPreparer as _GlobalClientPreparer
 
-GlobalTrainingAccountPreparer = functools.partial(_GlobalTrainingAccountPreparer, FormTrainingClient)
+
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_copy_model_none_model_id(self, client, container_sas_url):
         with self.assertRaises(ValueError):
             await client.begin_copy_model(model_id=None, target={})
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer()
+    @GlobalClientPreparer(training=True)
     async def test_copy_model_empty_model_id(self, client, container_sas_url):
         with self.assertRaises(ValueError):
             await client.begin_copy_model(model_id="", target={})
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(copy=True)
+    @GlobalClientPreparer(training=True, copy=True)
     async def test_copy_model_successful(self, client, container_sas_url, location, resource_id):
 
         training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
@@ -46,14 +47,14 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         copied_model = await client.get_custom_model(copy.model_id)
 
         self.assertEqual(copy.status, "ready")
-        self.assertIsNotNone(copy.requested_on)
-        self.assertIsNotNone(copy.completed_on)
+        self.assertIsNotNone(copy.training_started_on)
+        self.assertIsNotNone(copy.training_completed_on)
         self.assertEqual(target["modelId"], copy.model_id)
         self.assertNotEqual(target["modelId"], model.model_id)
         self.assertIsNotNone(copied_model)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(copy=True)
+    @GlobalClientPreparer(training=True, copy=True)
     async def test_copy_model_fail(self, client, container_sas_url, location, resource_id):
 
         training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
@@ -67,7 +68,22 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             copy = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(copy=True)
+    @GlobalClientPreparer(training=True, copy=True)
+    async def test_copy_model_fail_bad_model_id(self, client, container_sas_url, location, resource_id):
+        pytest.skip("service team will tell us when to enable this test")
+
+        poller = await client.begin_training(container_sas_url, use_training_labels=False)
+        model = await poller.result()
+
+        target = await client.get_copy_authorization(resource_region=location, resource_id=resource_id)
+
+        with self.assertRaises(HttpResponseError):
+            # give bad model_id
+            poller = await client.begin_copy_model("00000000-0000-0000-0000-000000000000", target=target)
+            copy = await poller.result()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True, copy=True)
     async def test_copy_model_transform(self, client, container_sas_url, location, resource_id):
 
         training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
@@ -88,13 +104,13 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
         actual = raw_response[0]
         copy = raw_response[1]
-        self.assertEqual(copy.requested_on, actual.created_date_time)
+        self.assertEqual(copy.training_started_on, actual.created_date_time)
         self.assertEqual(copy.status, actual.status)
-        self.assertEqual(copy.completed_on, actual.last_updated_date_time)
+        self.assertEqual(copy.training_completed_on, actual.last_updated_date_time)
         self.assertEqual(copy.model_id, target["modelId"])
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(copy=True)
+    @GlobalClientPreparer(training=True, copy=True)
     async def test_copy_authorization(self, client, container_sas_url, location, resource_id):
 
         target = await client.get_copy_authorization(resource_region="eastus", resource_id=resource_id)
@@ -106,7 +122,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         self.assertEqual(target["resourceId"], resource_id)
 
     @GlobalFormRecognizerAccountPreparer()
-    @GlobalTrainingAccountPreparer(copy=True)
+    @GlobalClientPreparer(training=True, copy=True)
     @pytest.mark.live_test_only
     async def test_copy_continuation_token(self, client, container_sas_url, location, resource_id):
 

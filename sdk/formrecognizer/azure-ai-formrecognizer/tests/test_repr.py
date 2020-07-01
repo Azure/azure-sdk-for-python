@@ -134,28 +134,19 @@ class TestRepr():
         )[:1024]
         assert repr(model) == model_repr
 
-    def test_recognized_receipt(self, form_field_one, page_range, form_page):
-        model = _models.RecognizedReceipt(
-            form_type="receipt", fields={"one": form_field_one[0]}, page_range=page_range[0], pages=[form_page[0]])
-        model_repr = "RecognizedReceipt(form_type=receipt, fields={{'one': {}}}, page_range={}, pages=[{}])".format(
-            form_field_one[1], page_range[1], form_page[1]
-        )[:1024]
-        assert repr(model) == model_repr
-
-
     def test_custom_form_model(self, custom_form_sub_model, form_recognizer_error, training_document_info):
         model = _models.CustomFormModel(
             model_id=1,
             status=_models.CustomFormModelStatus.creating,
-            requested_on=datetime.datetime(1, 1, 1),
-            completed_on=datetime.datetime(1, 1, 1),
+            training_started_on=datetime.datetime(1, 1, 1),
+            training_completed_on=datetime.datetime(1, 1, 1),
             submodels=[custom_form_sub_model[0], custom_form_sub_model[0]],
             errors=[form_recognizer_error[0]],
             training_documents=[training_document_info[0], training_document_info[0]]
         )
 
-        model_repr = "CustomFormModel(model_id=1, status=creating, requested_on=0001-01-01 00:00:00, " \
-            "completed_on=0001-01-01 00:00:00, submodels=[{}, {}], errors=[{}], training_documents=[{}, {}])".format(
+        model_repr = "CustomFormModel(model_id=1, status=creating, training_started_on=0001-01-01 00:00:00, " \
+            "training_completed_on=0001-01-01 00:00:00, submodels=[{}, {}], errors=[{}], training_documents=[{}, {}])".format(
                 custom_form_sub_model[1], custom_form_sub_model[1], form_recognizer_error[1], training_document_info[1], training_document_info[1]
             )[:1024]
 
@@ -163,9 +154,9 @@ class TestRepr():
 
     def test_custom_form_model_info(self):
         model = _models.CustomFormModelInfo(
-            model_id=1, status=_models.CustomFormModelStatus.ready, requested_on=datetime.datetime(1, 1, 1), completed_on=datetime.datetime(1, 1, 1)
+            model_id=1, status=_models.CustomFormModelStatus.ready, training_started_on=datetime.datetime(1, 1, 1), training_completed_on=datetime.datetime(1, 1, 1)
         )
-        model_repr = "CustomFormModelInfo(model_id=1, status=ready, requested_on=0001-01-01 00:00:00, completed_on=0001-01-01 00:00:00)"[:1024]
+        model_repr = "CustomFormModelInfo(model_id=1, status=ready, training_started_on=0001-01-01 00:00:00, training_completed_on=0001-01-01 00:00:00)"[:1024]
         assert repr(model) == model_repr
 
     def test_account_properties(self):

@@ -15,10 +15,12 @@ from typing import (
     TYPE_CHECKING,
 )
 from azure.core.polling import AsyncLROPoller
+from azure.core.pipeline import AsyncPipeline
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._form_recognizer_client_async import FormRecognizerClient
+from ._helpers_async import AsyncTransportWrapper
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._generated.models import (
     TrainRequest,
@@ -81,13 +83,14 @@ class FormTrainingClient(object):
     ) -> None:
         self._endpoint = endpoint
         self._credential = credential
-
         authentication_policy = get_authentication_policy(credential)
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         self._client = FormRecognizer(
             endpoint=self._endpoint,
             credential=self._credential,  # type: ignore
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
+            polling_interval=polling_interval,
             **kwargs
         )
 
@@ -106,12 +109,12 @@ class FormTrainingClient(object):
         :param str training_files_url: An Azure Storage blob container's SAS URI.
         :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
-        :keyword str prefix: A case-sensitive prefix string to filter documents for training.
-            Use `prefix` to filter documents themselves, or to restrict sub folders for training
-            when `include_sub_folders` is set to True. Not supported if training with labels.
-        :keyword bool include_sub_folders: A flag to indicate if sub folders
-            will also need to be included when searching for content to be preprocessed.
-            Use with `prefix` to filter for only certain sub folders. Not supported if training with labels.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
+            training. For example, when using a Azure storage blob Uri, use the prefix to restrict sub
+            folders for training.
+        :keyword bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
+            will also need to be included when searching for content to be preprocessed. Not supported if
+            training with labels.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -138,7 +141,7 @@ class FormTrainingClient(object):
 
         cls = kwargs.pop("cls", None)
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         deserialization_callback = cls if cls else callback
 
         if continuation_token:
@@ -225,7 +228,7 @@ class FormTrainingClient(object):
                 :dedent: 12
                 :caption: List model information for each model on the account.
         """
-        return self._client.list_custom_models(
+        return self._client.list_custom_models(  # type: ignore
             cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
             error_map=error_map,
             **kwargs
@@ -361,7 +364,7 @@ class FormTrainingClient(object):
             raise ValueError("model_id cannot be None or empty.")
 
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._client._deserialize(CopyOperationResult, raw_response)
@@ -395,11 +398,19 @@ class FormTrainingClient(object):
         :rtype: ~azure.ai.formrecognizer.aio.FormRecognizerClient
         :return: A FormRecognizerClient
         """
-        return FormRecognizerClient(
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._client._client._pipeline._transport),
+            policies=self._client._client._pipeline._impl_policies
+        )  # type: AsyncPipeline
+        client = FormRecognizerClient(
             endpoint=self._endpoint,
             credential=self._credential,
+            pipeline=_pipeline,
             **kwargs
         )
+        # need to share config, but can't pass as a keyword into client
+        client._client._config = self._client._client._config
+        return client
 
     async def __aenter__(self) -> "FormTrainingClient":
         await self._client.__aenter__()

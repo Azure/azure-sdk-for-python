@@ -35,7 +35,7 @@ def test_no_scopes():
     """The credential should raise when get_token is called with no scopes"""
 
     credential = SharedTokenCacheCredential(_cache=TokenCache())
-    with pytest.raises(ClientAuthenticationError):
+    with pytest.raises(ValueError):
         credential.get_token()
 
 

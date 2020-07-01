@@ -37,8 +37,7 @@ from .aadclient_certificate import AadClientCertificate
 from .certificate_credential_base import CertificateCredentialBase
 from .client_secret_credential_base import ClientSecretCredentialBase
 from .exception_wrapper import wrap_exceptions
-from .msal_credentials import ConfidentialClientCredential, InteractiveCredential, PublicClientCredential
-from .msal_transport_adapter import MsalTransportAdapter, MsalTransportResponse
+from .msal_credentials import InteractiveCredential, PublicClientCredential
 
 
 def _scopes_to_resource(*scopes):
@@ -62,11 +61,8 @@ __all__ = [
     "AadClientCertificate",
     "CertificateCredentialBase",
     "ClientSecretCredentialBase",
-    "ConfidentialClientCredential",
     "get_default_authority",
     "InteractiveCredential",
-    "MsalTransportAdapter",
-    "MsalTransportResponse",
     "normalize_authority",
     "PublicClientCredential",
     "wrap_exceptions",

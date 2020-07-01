@@ -1214,3 +1214,39 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 receiver._handler.message_handler.destroy()  # destroy the underlying receiver link
                 assert len(messages) == 1
                 messages[0].complete()
+
+    def test_queue_mock_no_reusing_auto_lock_renew(self):
+        class MockReceivedMessage:
+            def __init__(self):
+                self.received_timestamp_utc = utc_now()
+                self.locked_until_utc = self.received_timestamp_utc + timedelta(seconds=10)
+
+            def renew_lock(self):
+                self.locked_until_utc = self.locked_until_utc + timedelta(seconds=10)
+
+        auto_lock_renew = AutoLockRenew()
+        with auto_lock_renew:
+            auto_lock_renew.register(renewable=MockReceivedMessage())
+            time.sleep(12)
+
+        with pytest.raises(ServiceBusError):
+            with auto_lock_renew:
+                pass
+
+        with pytest.raises(ServiceBusError):
+            auto_lock_renew.register(renewable=MockReceivedMessage())
+
+        auto_lock_renew = AutoLockRenew()
+
+        with auto_lock_renew:
+            auto_lock_renew.register(renewable=MockReceivedMessage())
+            time.sleep(12)
+
+        auto_lock_renew.shutdown()
+
+        with pytest.raises(ServiceBusError):
+            with auto_lock_renew:
+                pass
+
+        with pytest.raises(ServiceBusError):
+            auto_lock_renew.register(renewable=MockReceivedMessage())
