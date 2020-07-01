@@ -657,6 +657,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 delimiter = output_format.lineterminator
             except AttributeError:
                 delimiter = output_format.delimiter
+        else:
+            output_format = input_format
         query_request = QueryRequest(
             expression=query_expression,
             input_serialization=serialize_query_format(input_format),

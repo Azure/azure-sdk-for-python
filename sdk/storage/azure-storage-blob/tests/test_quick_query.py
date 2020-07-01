@@ -838,4 +838,41 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(listdata, [b'{"name":"owner"}',b'{}',b'{"name":"owner"}', b''])
         self._teardown(bsc)
 
+    @GlobalStorageAccountPreparer()
+    def test_quick_query_with_only_input_json_serialization_setting(self, resource_group, location, storage_account,
+                                                                    storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"),
+            credential=storage_account_key)
+        self._setup(bsc)
+
+        data1 = b'{\"name\": \"owner\", \"id\": 1}'
+        data2 = b'{\"name2\": \"owner2\"}'
+        data = data1 + data2 + data1
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        blob_client.upload_blob(data, overwrite=True)
+
+        errors = []
+        def on_error(error):
+            errors.append(error)
+
+        input_format = DelimitedJSON(delimiter='\n')
+        output_format = None
+
+        resp = blob_client.query_blob(
+            "SELECT name from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format)
+        query_result = resp.readall()
+
+        self.assertEqual(len(errors), 0)
+        self.assertEqual(resp._size, len(data))
+        self.assertEqual(query_result, b'{"name":"owner"}\n{}\n{"name":"owner"}\n')
+        self._teardown(bsc)
+
 # ------------------------------------------------------------------------------
