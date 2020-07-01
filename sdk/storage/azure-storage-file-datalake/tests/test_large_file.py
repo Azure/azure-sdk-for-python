@@ -95,7 +95,7 @@ class LargeFileTest(StorageTestCase):
         data = LargeStream(length)
 
         # Act
-        response = file_client.upload_data(data, length, overwrite=True, chunk_size = LARGEST_BLOCK_SIZE)
+        response = file_client.upload_data(data, length, overwrite=True, chunk_size=LARGEST_BLOCK_SIZE)
 
         self.assertIsNotNone(response)
         self.assertEqual(self.payload_dropping_policy.append_counter, 2)
