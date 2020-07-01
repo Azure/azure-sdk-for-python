@@ -125,7 +125,7 @@ See the full details regarding [authentication][cognitive_authentication] of cog
  - Recognizing common fields from US receipts, using a pre-trained receipt model on the Form Recognizer service. These fields and meta-data are returned in a collection of `RecognizedForm` objects.
  - Recognizing form content, including tables, lines and words, without the need to train a model. Form content is returned in a collection of `FormPage` objects.
 
-Sample code snippets are provided to illustrate using a FormRecognizerClient [here](#recognize-content "Recognize Content").
+Sample code snippets are provided to illustrate using a FormRecognizerClient [here](#recognize-forms-using-a-custom-model "Recognize Forms Using a Custom Model").
 
 ### FormTrainingClient
 `FormTrainingClient` provides operations for:
