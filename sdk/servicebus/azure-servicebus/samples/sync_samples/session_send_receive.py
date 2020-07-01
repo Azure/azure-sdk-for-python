@@ -15,7 +15,7 @@ import os
 from azure.servicebus import ServiceBusClient, Message
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
+QUEUE_NAME = 'testsqueue'#os.environ["SERVICE_BUS_QUEUE_NAME"]
 SESSION_ID = "<your session id>"
 
 
@@ -41,7 +41,7 @@ def receive_batch_message(receiver):
     session = receiver.session
     session.set_session_state("START")
     print("Session state:", session.get_session_state())
-    received_msgs = receiver.receive(max_wait_time=5)
+    received_msgs = receiver.receive(max_batch_size=10, max_wait_time=5)
     for msg in received_msgs:
         print(str(msg))
         msg.complete()

@@ -198,7 +198,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             batch.append(received_messages_queue.get())
             received_messages_queue.task_done()
         if len(batch) >= max_batch_size:
-            return batch
+            return [self._build_message(message) for message in batch]
 
         # Dynamically issue link credit if max_batch_size > 1 when the prefetch is the default value 1
         if max_batch_size and self._prefetch == 1 and max_batch_size > 1:
