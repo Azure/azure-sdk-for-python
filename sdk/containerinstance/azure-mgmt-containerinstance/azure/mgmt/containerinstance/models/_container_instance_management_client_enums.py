@@ -25,6 +25,12 @@ class GpuSku(str, Enum):
     v100 = "V100"
 
 
+class Scheme(str, Enum):
+
+    http = "http"
+    https = "https"
+
+
 class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
@@ -62,6 +68,12 @@ class LogAnalyticsLogType(str, Enum):
 
     container_insights = "ContainerInsights"
     container_instance_logs = "ContainerInstanceLogs"
+
+
+class ContainerGroupSku(str, Enum):
+
+    standard = "Standard"
+    dedicated = "Dedicated"
 
 
 class ContainerInstanceOperationsOrigin(str, Enum):

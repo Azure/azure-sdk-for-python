@@ -125,12 +125,12 @@ class MgmtContainerInstanceTest(AzureMgmtTestCase):
             "cols": 80
         }
         command = "/bin/bash"
-        containerExecResponse = self.client.container.execute_command(resource_group.name, container_group.name, container_group.containers[0].name, command, terminal_size)
+        containerExecResponse = self.client.containers.execute_command(resource_group.name, container_group.name, container_group.containers[0].name, command, terminal_size)
         self.assertNotEqual(containerExecResponse.web_socket_uri, None)
         self.assertNotEqual(containerExecResponse.password, None)
 
         # Testing Container_List_Logs
-        containerLogResponse = self.client.container.list_logs(resource_group.name, container_group.name, container_group.containers[0].name)
+        containerLogResponse = self.client.containers.list_logs(resource_group.name, container_group.name, container_group.containers[0].name)
 
         # Testing Restart Container Group
         poller = self.client.container_groups.restart(resource_group.name, container_group_name)
