@@ -74,7 +74,6 @@ class VirtualMachineScaleSetsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'VirtualMachineScaleSet')
         body_content_kwargs['content'] = body_content
@@ -87,7 +86,6 @@ class VirtualMachineScaleSetsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachineScaleSet', pipeline_response)
 
@@ -106,7 +104,7 @@ class VirtualMachineScaleSetsOperations:
         name: str,
         parameters: "models.VirtualMachineScaleSet",
         **kwargs
-    ) -> "models.VirtualMachineScaleSet":
+    ) -> AsyncLROPoller["models.VirtualMachineScaleSet"]:
         """Create or update a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -121,8 +119,8 @@ class VirtualMachineScaleSetsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VirtualMachineScaleSet, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_03_30.models.VirtualMachineScaleSet
+        :return: An instance of AsyncLROPoller that returns either VirtualMachineScaleSet or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_03_30.models.VirtualMachineScaleSet]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -170,8 +168,8 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         **kwargs
-    ) -> "models.OperationStatusResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+    ) -> Optional["models.OperationStatusResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-03-30"
@@ -193,7 +191,6 @@ class VirtualMachineScaleSetsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -217,7 +214,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         **kwargs
-    ) -> "models.OperationStatusResponse":
+    ) -> AsyncLROPoller["models.OperationStatusResponse"]:
         """Deletes a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -230,8 +227,8 @@ class VirtualMachineScaleSetsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: OperationStatusResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -312,7 +309,6 @@ class VirtualMachineScaleSetsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -335,8 +331,8 @@ class VirtualMachineScaleSetsOperations:
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["models.VirtualMachineScaleSetVMInstanceIDs"] = None,
         **kwargs
-    ) -> "models.OperationStatusResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+    ) -> Optional["models.OperationStatusResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-03-30"
@@ -360,7 +356,6 @@ class VirtualMachineScaleSetsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if vm_instance_i_ds is not None:
             body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceIDs')
@@ -392,7 +387,7 @@ class VirtualMachineScaleSetsOperations:
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["models.VirtualMachineScaleSetVMInstanceIDs"] = None,
         **kwargs
-    ) -> "models.OperationStatusResponse":
+    ) -> AsyncLROPoller["models.OperationStatusResponse"]:
         """Deallocates specific virtual machines in a VM scale set. Shuts down the virtual machines and
     releases the compute resources. You are not billed for the compute resources that this virtual
     machine scale set deallocates.
@@ -409,8 +404,8 @@ class VirtualMachineScaleSetsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: OperationStatusResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -459,8 +454,8 @@ class VirtualMachineScaleSetsOperations:
         vm_scale_set_name: str,
         vm_instance_i_ds: "models.VirtualMachineScaleSetVMInstanceRequiredIDs",
         **kwargs
-    ) -> "models.OperationStatusResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+    ) -> Optional["models.OperationStatusResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-03-30"
@@ -484,7 +479,6 @@ class VirtualMachineScaleSetsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceRequiredIDs')
         body_content_kwargs['content'] = body_content
@@ -513,7 +507,7 @@ class VirtualMachineScaleSetsOperations:
         vm_scale_set_name: str,
         vm_instance_i_ds: "models.VirtualMachineScaleSetVMInstanceRequiredIDs",
         **kwargs
-    ) -> "models.OperationStatusResponse":
+    ) -> AsyncLROPoller["models.OperationStatusResponse"]:
         """Deletes virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -528,8 +522,8 @@ class VirtualMachineScaleSetsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: OperationStatusResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -611,7 +605,6 @@ class VirtualMachineScaleSetsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -648,6 +641,10 @@ class VirtualMachineScaleSetsOperations:
         api_version = "2016-03-30"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -660,15 +657,11 @@ class VirtualMachineScaleSetsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -714,6 +707,10 @@ class VirtualMachineScaleSetsOperations:
         api_version = "2016-03-30"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_all.metadata['url']  # type: ignore
@@ -725,15 +722,11 @@ class VirtualMachineScaleSetsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -784,6 +777,10 @@ class VirtualMachineScaleSetsOperations:
         api_version = "2016-03-30"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_skus.metadata['url']  # type: ignore
@@ -797,15 +794,11 @@ class VirtualMachineScaleSetsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -838,8 +831,8 @@ class VirtualMachineScaleSetsOperations:
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["models.VirtualMachineScaleSetVMInstanceIDs"] = None,
         **kwargs
-    ) -> "models.OperationStatusResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+    ) -> Optional["models.OperationStatusResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-03-30"
@@ -863,7 +856,6 @@ class VirtualMachineScaleSetsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if vm_instance_i_ds is not None:
             body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceIDs')
@@ -895,7 +887,7 @@ class VirtualMachineScaleSetsOperations:
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["models.VirtualMachineScaleSetVMInstanceIDs"] = None,
         **kwargs
-    ) -> "models.OperationStatusResponse":
+    ) -> AsyncLROPoller["models.OperationStatusResponse"]:
         """Power off (stop) one or more virtual machines in a VM scale set. Note that resources are still
     attached and you are getting charged for the resources. Instead, use deallocate to release
     resources and avoid charges.
@@ -912,8 +904,8 @@ class VirtualMachineScaleSetsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: OperationStatusResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -962,8 +954,8 @@ class VirtualMachineScaleSetsOperations:
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["models.VirtualMachineScaleSetVMInstanceIDs"] = None,
         **kwargs
-    ) -> "models.OperationStatusResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+    ) -> Optional["models.OperationStatusResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-03-30"
@@ -987,7 +979,6 @@ class VirtualMachineScaleSetsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if vm_instance_i_ds is not None:
             body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceIDs')
@@ -1019,7 +1010,7 @@ class VirtualMachineScaleSetsOperations:
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["models.VirtualMachineScaleSetVMInstanceIDs"] = None,
         **kwargs
-    ) -> "models.OperationStatusResponse":
+    ) -> AsyncLROPoller["models.OperationStatusResponse"]:
         """Restarts one or more virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -1034,8 +1025,8 @@ class VirtualMachineScaleSetsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: OperationStatusResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1084,8 +1075,8 @@ class VirtualMachineScaleSetsOperations:
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["models.VirtualMachineScaleSetVMInstanceIDs"] = None,
         **kwargs
-    ) -> "models.OperationStatusResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+    ) -> Optional["models.OperationStatusResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-03-30"
@@ -1109,7 +1100,6 @@ class VirtualMachineScaleSetsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if vm_instance_i_ds is not None:
             body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceIDs')
@@ -1141,7 +1131,7 @@ class VirtualMachineScaleSetsOperations:
         vm_scale_set_name: str,
         vm_instance_i_ds: Optional["models.VirtualMachineScaleSetVMInstanceIDs"] = None,
         **kwargs
-    ) -> "models.OperationStatusResponse":
+    ) -> AsyncLROPoller["models.OperationStatusResponse"]:
         """Starts one or more virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -1156,8 +1146,8 @@ class VirtualMachineScaleSetsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: OperationStatusResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1206,8 +1196,8 @@ class VirtualMachineScaleSetsOperations:
         vm_scale_set_name: str,
         vm_instance_i_ds: "models.VirtualMachineScaleSetVMInstanceRequiredIDs",
         **kwargs
-    ) -> "models.OperationStatusResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+    ) -> Optional["models.OperationStatusResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-03-30"
@@ -1231,7 +1221,6 @@ class VirtualMachineScaleSetsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(vm_instance_i_ds, 'VirtualMachineScaleSetVMInstanceRequiredIDs')
         body_content_kwargs['content'] = body_content
@@ -1260,7 +1249,7 @@ class VirtualMachineScaleSetsOperations:
         vm_scale_set_name: str,
         vm_instance_i_ds: "models.VirtualMachineScaleSetVMInstanceRequiredIDs",
         **kwargs
-    ) -> "models.OperationStatusResponse":
+    ) -> AsyncLROPoller["models.OperationStatusResponse"]:
         """Upgrades one or more virtual machines to the latest SKU set in the VM scale set model.
 
         :param resource_group_name: The name of the resource group.
@@ -1275,8 +1264,8 @@ class VirtualMachineScaleSetsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: OperationStatusResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1324,8 +1313,8 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         **kwargs
-    ) -> "models.OperationStatusResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+    ) -> Optional["models.OperationStatusResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2016-03-30"
@@ -1347,7 +1336,6 @@ class VirtualMachineScaleSetsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1371,7 +1359,7 @@ class VirtualMachineScaleSetsOperations:
         resource_group_name: str,
         vm_scale_set_name: str,
         **kwargs
-    ) -> "models.OperationStatusResponse":
+    ) -> AsyncLROPoller["models.OperationStatusResponse"]:
         """Reimages (upgrade the operating system) one or more virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -1384,8 +1372,8 @@ class VirtualMachineScaleSetsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: OperationStatusResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2016_03_30.models.OperationStatusResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]

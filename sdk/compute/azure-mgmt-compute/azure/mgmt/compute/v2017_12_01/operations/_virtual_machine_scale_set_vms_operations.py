@@ -54,8 +54,8 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
@@ -78,7 +78,6 @@ class VirtualMachineScaleSetVMsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -104,7 +103,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Reimages (upgrade the operating system) a specific virtual machine in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -170,8 +169,8 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
@@ -194,7 +193,6 @@ class VirtualMachineScaleSetVMsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -220,7 +218,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Allows you to re-image all the disks ( including data disks ) in the a VM scale set instance.
     This operation is only supported for managed disks.
 
@@ -287,8 +285,8 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
@@ -311,7 +309,6 @@ class VirtualMachineScaleSetVMsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -337,7 +334,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Deallocates a specific virtual machine in a VM scale set. Shuts down the virtual machine and
     releases the compute resources it uses. You are not billed for the compute resources of this
     virtual machine once it is deallocated.
@@ -432,7 +429,6 @@ class VirtualMachineScaleSetVMsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'VirtualMachineScaleSetVM')
         body_content_kwargs['content'] = body_content
@@ -445,7 +441,6 @@ class VirtualMachineScaleSetVMsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachineScaleSetVM', pipeline_response)
 
@@ -466,7 +461,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         parameters,  # type: "models.VirtualMachineScaleSetVM"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VirtualMachineScaleSetVM"]
         """Updates a virtual machine of a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -536,8 +531,8 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
@@ -560,7 +555,6 @@ class VirtualMachineScaleSetVMsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -586,7 +580,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Deletes a virtual machine from a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -689,7 +683,6 @@ class VirtualMachineScaleSetVMsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -750,7 +743,6 @@ class VirtualMachineScaleSetVMsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -783,11 +775,14 @@ class VirtualMachineScaleSetVMsOperations(object):
         :type resource_group_name: str
         :param virtual_machine_scale_set_name: The name of the VM scale set.
         :type virtual_machine_scale_set_name: str
-        :param filter: The filter to apply to the operation.
+        :param filter: The filter to apply to the operation. Allowed values are
+     'startswith(instanceView/statuses/code, 'PowerState') eq true', 'properties/latestModelApplied
+     eq true', 'properties/latestModelApplied eq false'.
         :type filter: str
-        :param select: The list parameters.
+        :param select: The list parameters. Allowed values are 'instanceView', 'instanceView/statuses'.
         :type select: str
-        :param expand: The expand expression to apply to the operation.
+        :param expand: The expand expression to apply to the operation. Allowed values are
+     'instanceView'.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualMachineScaleSetVMListResult or the result of cls(response)
@@ -800,6 +795,10 @@ class VirtualMachineScaleSetVMsOperations(object):
         api_version = "2017-12-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -819,15 +818,11 @@ class VirtualMachineScaleSetVMsOperations(object):
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -861,8 +856,8 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
@@ -885,7 +880,6 @@ class VirtualMachineScaleSetVMsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -911,7 +905,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Power off (stop) a virtual machine in a VM scale set. Note that resources are still attached
     and you are getting charged for the resources. Instead, use deallocate to release resources and
     avoid charges.
@@ -979,8 +973,8 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
@@ -1003,7 +997,6 @@ class VirtualMachineScaleSetVMsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1029,7 +1022,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Restarts a virtual machine in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -1095,8 +1088,8 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
@@ -1119,7 +1112,6 @@ class VirtualMachineScaleSetVMsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1145,7 +1137,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Starts a virtual machine in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
@@ -1211,8 +1203,8 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
@@ -1235,7 +1227,6 @@ class VirtualMachineScaleSetVMsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1261,7 +1252,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Shuts down the virtual machine in the virtual machine scale set, moves it to a new node, and
     powers it back on.
 
@@ -1328,8 +1319,8 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
@@ -1352,7 +1343,6 @@ class VirtualMachineScaleSetVMsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1378,7 +1368,7 @@ class VirtualMachineScaleSetVMsOperations(object):
         instance_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Performs maintenance on a virtual machine in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
