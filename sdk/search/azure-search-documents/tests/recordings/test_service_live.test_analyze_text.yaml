@@ -17,7 +17,7 @@ interactions:
       api-key:
       - 980E4A06562888E4EC5397BE01F2DE38
     method: POST
-    uri: https://search4d10e85.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2019-05-06-Preview
+    uri: https://search4d10e85.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search4d10e85.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.AnalyzeResult","tokens":[{"token":"one''s","startOffset":0,"endOffset":5,"position":0},{"token":"two","startOffset":7,"endOffset":10,"position":1}]}'

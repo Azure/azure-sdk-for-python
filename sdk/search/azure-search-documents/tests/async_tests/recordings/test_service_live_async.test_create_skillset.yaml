@@ -15,7 +15,7 @@ interactions:
       api-key:
       - 3A944C60AD0CFDB46ACAB43B837B1D1A
     method: POST
-    uri: https://search99711228.search.windows.net/skillsets?api-version=2019-05-06-Preview
+    uri: https://search99711228.search.windows.net/skillsets?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search99711228.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D7E24A5315AC9C\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null}'
@@ -129,7 +129,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://search99711228.search.windows.net/skillsets?api-version=2019-05-06-Preview
+    url: https://search99711228.search.windows.net/skillsets?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -140,7 +140,7 @@ interactions:
       api-key:
       - 3A944C60AD0CFDB46ACAB43B837B1D1A
     method: GET
-    uri: https://search99711228.search.windows.net/skillsets?api-version=2019-05-06-Preview
+    uri: https://search99711228.search.windows.net/skillsets?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search99711228.search.windows.net/$metadata#skillsets","value":[{"@odata.etag":"\"0x8D7E24A5315AC9C\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":"#1","description":null,"context":"/document","categories":["Person","Quantity","Organization","URL","Email","Location","DateTime"],"defaultLanguageCode":"en","minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null}]}'
@@ -161,5 +161,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search99711228.search.windows.net/skillsets?api-version=2019-05-06-Preview
+    url: https://search99711228.search.windows.net/skillsets?api-version=2020-06-30
 version: 1

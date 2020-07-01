@@ -13,7 +13,7 @@ interactions:
       api-key:
       - 7AB8FFBA7B9EDE0DF1F968DDEDB0DE83
     method: POST
-    uri: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    uri: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"@search.score":0.48248714,"hotelId":"10","hotelName":"Countryside
@@ -77,7 +77,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    url: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
 - request:
     body: '{"search": "motel"}'
     headers:
@@ -92,7 +92,7 @@ interactions:
       api-key:
       - 7AB8FFBA7B9EDE0DF1F968DDEDB0DE83
     method: POST
-    uri: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    uri: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"@search.score":1.2368374,"hotelId":"2","hotelName":"Roach
@@ -132,5 +132,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    url: https://search97bd120f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
 version: 1

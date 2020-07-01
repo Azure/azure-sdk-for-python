@@ -35,13 +35,18 @@ import pytest
 import requests
 import httpretty
 
+from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
     HttpRequest,
     RequestsTransport,
 )
 
-from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import (
+    ARMAutoResourceProviderRegistrationPolicy,
+    ARMHttpLoggingPolicy
+)
 
 @pytest.fixture
 def sleepless(monkeypatch):
@@ -162,3 +167,21 @@ def test_register_failed_policy():
         response = pipeline.run(request)
 
     assert response.http_response.status_code == 409
+
+def test_default_http_logging_policy():
+    config = Configuration()
+    pipeline_client = ARMPipelineClient(base_url="test", config=config)
+    http_logging_policy = pipeline_client._default_policies(config=config)[-1]
+    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
+
+def test_pass_in_http_logging_policy():
+    config = Configuration()
+    http_logging_policy = ARMHttpLoggingPolicy()
+    http_logging_policy.allowed_header_names.update(
+        {"x-ms-added-header"}
+    )
+    config.http_logging_policy = http_logging_policy
+
+    pipeline_client = ARMPipelineClient(base_url="test", config=config)
+    http_logging_policy = pipeline_client._default_policies(config=config)[-1]
+    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})

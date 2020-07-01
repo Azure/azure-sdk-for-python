@@ -58,18 +58,18 @@ class IndexesOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SearchIndex or the result of cls(response)
+        :return: SearchIndex, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndex"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -90,7 +90,6 @@ class IndexesOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(index, 'SearchIndex')
         body_content_kwargs['content'] = body_content
@@ -107,7 +106,7 @@ class IndexesOperations(object):
         deserialized = self._deserialize('SearchIndex', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create.metadata = {'url': '/indexes'}  # type: ignore
@@ -122,26 +121,32 @@ class IndexesOperations(object):
         """Lists all indexes available for a search service.
 
         :param select: Selects which top-level properties of the index definitions to retrieve.
-     Specified as a comma-separated list of JSON property names, or '*' for all properties. The
-     default is all properties.
+         Specified as a comma-separated list of JSON property names, or '*' for all properties. The
+         default is all properties.
         :type select: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of ListIndexesResult or the result of cls(response)
+        :return: An iterator like instance of either ListIndexesResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.ListIndexesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ListIndexesResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            if _x_ms_client_request_id is not None:
+                header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -155,6 +160,7 @@ class IndexesOperations(object):
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
@@ -162,14 +168,7 @@ class IndexesOperations(object):
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            if _x_ms_client_request_id is not None:
-                header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -229,19 +228,19 @@ class IndexesOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SearchIndex or the result of cls(response)
+        :return: SearchIndex, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndex"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         prefer = "return=representation"
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -270,7 +269,6 @@ class IndexesOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(index, 'SearchIndex')
         body_content_kwargs['content'] = body_content
@@ -284,7 +282,6 @@ class IndexesOperations(object):
             error = self._deserialize(models.SearchError, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('SearchIndex', pipeline_response)
 
@@ -292,7 +289,7 @@ class IndexesOperations(object):
             deserialized = self._deserialize('SearchIndex', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     create_or_update.metadata = {'url': '/indexes(\'{indexName}\')'}  # type: ignore
@@ -306,7 +303,9 @@ class IndexesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Deletes a search index and all the documents it contains. This operation is permanent, with no recovery option. Make sure you have a master copy of your index definition, data ingestion code, and a backup of the primary data source in case you need to re-build the index.
+        """Deletes a search index and all the documents it contains. This operation is permanent, with no
+        recovery option. Make sure you have a master copy of your index definition, data ingestion
+        code, and a backup of the primary data source in case you need to re-build the index.
 
         :param index_name: The name of the index to delete.
         :type index_name: str
@@ -319,18 +318,18 @@ class IndexesOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -353,7 +352,6 @@ class IndexesOperations(object):
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -364,7 +362,7 @@ class IndexesOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-          return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/indexes(\'{indexName}\')'}  # type: ignore
 
@@ -382,18 +380,18 @@ class IndexesOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SearchIndex or the result of cls(response)
+        :return: SearchIndex, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndex"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -413,7 +411,6 @@ class IndexesOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -426,7 +423,7 @@ class IndexesOperations(object):
         deserialized = self._deserialize('SearchIndex', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get.metadata = {'url': '/indexes(\'{indexName}\')'}  # type: ignore
@@ -445,18 +442,18 @@ class IndexesOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GetIndexStatisticsResult or the result of cls(response)
+        :return: GetIndexStatisticsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.GetIndexStatisticsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.GetIndexStatisticsResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
 
         # Construct URL
         url = self.get_statistics.metadata['url']  # type: ignore
@@ -476,7 +473,6 @@ class IndexesOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -489,7 +485,7 @@ class IndexesOperations(object):
         deserialized = self._deserialize('GetIndexStatisticsResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     get_statistics.metadata = {'url': '/indexes(\'{indexName}\')/search.stats'}  # type: ignore
@@ -511,18 +507,18 @@ class IndexesOperations(object):
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AnalyzeResult or the result of cls(response)
+        :return: AnalyzeResult, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        api_version = "2019-05-06-Preview"
+        api_version = "2020-06-30"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -544,7 +540,6 @@ class IndexesOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(request, 'AnalyzeRequest')
         body_content_kwargs['content'] = body_content
@@ -561,7 +556,7 @@ class IndexesOperations(object):
         deserialized = self._deserialize('AnalyzeResult', pipeline_response)
 
         if cls:
-          return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
     analyze.metadata = {'url': '/indexes(\'{indexName}\')/search.analyze'}  # type: ignore

@@ -15,7 +15,7 @@ interactions:
       api-key:
       - F19957B5A218B7469E9FA58A5466BFB5
     method: POST
-    uri: https://search251c1987.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search251c1987.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search251c1987.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC95AE9030E5\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -27,7 +27,7 @@ interactions:
       elapsed-time: '63'
       etag: W/"0x8D7EC95AE9030E5"
       expires: '-1'
-      location: https://search251c1987.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      location: https://search251c1987.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -36,7 +36,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://search251c1987.search.windows.net/datasources?api-version=2019-05-06-Preview
+    url: https://search251c1987.search.windows.net/datasources?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -47,7 +47,7 @@ interactions:
       api-key:
       - F19957B5A218B7469E9FA58A5466BFB5
     method: GET
-    uri: https://search251c1987.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search251c1987.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search251c1987.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D7EC95AE9030E5\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}]}'
@@ -68,7 +68,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search251c1987.search.windows.net/datasources?api-version=2019-05-06-Preview
+    url: https://search251c1987.search.windows.net/datasources?api-version=2020-06-30
 - request:
     body: '{"name": "sample-datasource", "description": "updated", "type": "azureblob",
       "credentials": {"connectionString": "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"},
@@ -87,7 +87,7 @@ interactions:
       api-key:
       - F19957B5A218B7469E9FA58A5466BFB5
     method: PUT
-    uri: https://search251c1987.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+    uri: https://search251c1987.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search251c1987.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC95AE9F4EDD\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -109,7 +109,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search251c1987.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+    url: https://search251c1987.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -120,7 +120,7 @@ interactions:
       api-key:
       - F19957B5A218B7469E9FA58A5466BFB5
     method: GET
-    uri: https://search251c1987.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://search251c1987.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search251c1987.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D7EC95AE9F4EDD\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}]}'
@@ -141,7 +141,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search251c1987.search.windows.net/datasources?api-version=2019-05-06-Preview
+    url: https://search251c1987.search.windows.net/datasources?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -152,7 +152,7 @@ interactions:
       api-key:
       - F19957B5A218B7469E9FA58A5466BFB5
     method: GET
-    uri: https://search251c1987.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+    uri: https://search251c1987.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search251c1987.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC95AE9F4EDD\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -174,5 +174,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search251c1987.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+    url: https://search251c1987.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
 version: 1

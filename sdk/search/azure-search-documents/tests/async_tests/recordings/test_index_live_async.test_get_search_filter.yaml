@@ -14,7 +14,7 @@ interactions:
       api-key:
       - E6523D6B24E3D5FF5244EA40EE2C8867
     method: POST
-    uri: https://search9776120b.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    uri: https://search9776120b.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"@search.score":0.19169211,"hotelName":"Express Rooms","description":"Pretty
@@ -41,5 +41,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search9776120b.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    url: https://search9776120b.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
 version: 1

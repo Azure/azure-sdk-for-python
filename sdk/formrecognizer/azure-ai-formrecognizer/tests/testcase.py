@@ -132,8 +132,8 @@ class FormRecognizerTest(AzureTestCase):
 
     def assertModelTransformCorrect(self, model, actual, unlabeled=False):
         self.assertEqual(model.model_id, actual.model_info.model_id)
-        self.assertEqual(model.requested_on, actual.model_info.created_date_time)
-        self.assertEqual(model.completed_on, actual.model_info.last_updated_date_time)
+        self.assertEqual(model.training_started_on, actual.model_info.created_date_time)
+        self.assertEqual(model.training_completed_on, actual.model_info.last_updated_date_time)
         self.assertEqual(model.status, actual.model_info.status)
         self.assertEqual(model.errors, actual.train_result.errors)
         for m, a in zip(model.training_documents, actual.train_result.training_documents):
@@ -164,7 +164,10 @@ class FormRecognizerTest(AzureTestCase):
             if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
                 page = page.pages[0]
             self.assertEqual(page.page_number, actual_page.page)
-            self.assertEqual(page.text_angle, actual_page.angle)
+            if actual_page.angle <= 180:
+                self.assertEqual(page.text_angle, actual_page.angle)
+            if actual_page.angle > 180:
+                self.assertEqual(page.text_angle, actual_page.angle - 360)
             self.assertEqual(page.width, actual_page.width)
             self.assertEqual(page.height, actual_page.height)
             self.assertEqual(page.unit, actual_page.unit)
