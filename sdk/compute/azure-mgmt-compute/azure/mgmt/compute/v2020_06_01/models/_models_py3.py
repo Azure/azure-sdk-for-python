@@ -13,29 +13,6 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class AccessUri(Model):
-    """A disk access SAS uri.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar access_sas: A SAS uri for accessing a disk.
-    :vartype access_sas: str
-    """
-
-    _validation = {
-        'access_sas': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'access_sas': {'key': 'accessSAS', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AccessUri, self).__init__(**kwargs)
-        self.access_sas = None
-
-
 class AdditionalCapabilities(Model):
     """Enables or disables a capability on the virtual machine or virtual machine
     scale set.
@@ -52,9 +29,9 @@ class AdditionalCapabilities(Model):
         'ultra_ssd_enabled': {'key': 'ultraSSDEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, ultra_ssd_enabled: bool=None, **kwargs) -> None:
         super(AdditionalCapabilities, self).__init__(**kwargs)
-        self.ultra_ssd_enabled = kwargs.get('ultra_ssd_enabled', None)
+        self.ultra_ssd_enabled = ultra_ssd_enabled
 
 
 class AdditionalUnattendContent(Model):
@@ -64,17 +41,17 @@ class AdditionalUnattendContent(Model):
 
     :param pass_name: The pass name. Currently, the only allowable value is
      OobeSystem. Possible values include: 'OobeSystem'
-    :type pass_name: str or ~azure.mgmt.compute.v2019_07_01.models.PassNames
+    :type pass_name: str or ~azure.mgmt.compute.v2020_06_01.models.PassNames
     :param component_name: The component name. Currently, the only allowable
      value is Microsoft-Windows-Shell-Setup. Possible values include:
      'Microsoft-Windows-Shell-Setup'
     :type component_name: str or
-     ~azure.mgmt.compute.v2019_07_01.models.ComponentNames
+     ~azure.mgmt.compute.v2020_06_01.models.ComponentNames
     :param setting_name: Specifies the name of the setting to which the
      content applies. Possible values are: FirstLogonCommands and AutoLogon.
      Possible values include: 'AutoLogon', 'FirstLogonCommands'
     :type setting_name: str or
-     ~azure.mgmt.compute.v2019_07_01.models.SettingNames
+     ~azure.mgmt.compute.v2020_06_01.models.SettingNames
     :param content: Specifies the XML formatted content that is added to the
      unattend.xml file for the specified path and component. The XML must be
      less than 4KB and must include the root element for the setting or feature
@@ -89,12 +66,12 @@ class AdditionalUnattendContent(Model):
         'content': {'key': 'content', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, pass_name=None, component_name=None, setting_name=None, content: str=None, **kwargs) -> None:
         super(AdditionalUnattendContent, self).__init__(**kwargs)
-        self.pass_name = kwargs.get('pass_name', None)
-        self.component_name = kwargs.get('component_name', None)
-        self.setting_name = kwargs.get('setting_name', None)
-        self.content = kwargs.get('content', None)
+        self.pass_name = pass_name
+        self.component_name = component_name
+        self.setting_name = setting_name
+        self.content = content
 
 
 class ApiEntityReference(Model):
@@ -109,18 +86,18 @@ class ApiEntityReference(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, **kwargs) -> None:
         super(ApiEntityReference, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = id
 
 
 class ApiError(Model):
     """Api error.
 
     :param details: The Api error details
-    :type details: list[~azure.mgmt.compute.v2019_07_01.models.ApiErrorBase]
+    :type details: list[~azure.mgmt.compute.v2020_06_01.models.ApiErrorBase]
     :param innererror: The Api inner error
-    :type innererror: ~azure.mgmt.compute.v2019_07_01.models.InnerError
+    :type innererror: ~azure.mgmt.compute.v2020_06_01.models.InnerError
     :param code: The error code.
     :type code: str
     :param target: The target of the particular error.
@@ -137,13 +114,13 @@ class ApiError(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, details=None, innererror=None, code: str=None, target: str=None, message: str=None, **kwargs) -> None:
         super(ApiError, self).__init__(**kwargs)
-        self.details = kwargs.get('details', None)
-        self.innererror = kwargs.get('innererror', None)
-        self.code = kwargs.get('code', None)
-        self.target = kwargs.get('target', None)
-        self.message = kwargs.get('message', None)
+        self.details = details
+        self.innererror = innererror
+        self.code = code
+        self.target = target
+        self.message = message
 
 
 class ApiErrorBase(Model):
@@ -163,11 +140,11 @@ class ApiErrorBase(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, code: str=None, target: str=None, message: str=None, **kwargs) -> None:
         super(ApiErrorBase, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.target = kwargs.get('target', None)
-        self.message = kwargs.get('message', None)
+        self.code = code
+        self.target = target
+        self.message = message
 
 
 class AutomaticOSUpgradePolicy(Model):
@@ -190,10 +167,10 @@ class AutomaticOSUpgradePolicy(Model):
         'disable_automatic_rollback': {'key': 'disableAutomaticRollback', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, enable_automatic_os_upgrade: bool=None, disable_automatic_rollback: bool=None, **kwargs) -> None:
         super(AutomaticOSUpgradePolicy, self).__init__(**kwargs)
-        self.enable_automatic_os_upgrade = kwargs.get('enable_automatic_os_upgrade', None)
-        self.disable_automatic_rollback = kwargs.get('disable_automatic_rollback', None)
+        self.enable_automatic_os_upgrade = enable_automatic_os_upgrade
+        self.disable_automatic_rollback = disable_automatic_rollback
 
 
 class AutomaticOSUpgradeProperties(Model):
@@ -214,9 +191,9 @@ class AutomaticOSUpgradeProperties(Model):
         'automatic_os_upgrade_supported': {'key': 'automaticOSUpgradeSupported', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, automatic_os_upgrade_supported: bool, **kwargs) -> None:
         super(AutomaticOSUpgradeProperties, self).__init__(**kwargs)
-        self.automatic_os_upgrade_supported = kwargs.get('automatic_os_upgrade_supported', None)
+        self.automatic_os_upgrade_supported = automatic_os_upgrade_supported
 
 
 class AutomaticRepairsPolicy(Model):
@@ -240,10 +217,10 @@ class AutomaticRepairsPolicy(Model):
         'grace_period': {'key': 'gracePeriod', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, enabled: bool=None, grace_period: str=None, **kwargs) -> None:
         super(AutomaticRepairsPolicy, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.grace_period = kwargs.get('grace_period', None)
+        self.enabled = enabled
+        self.grace_period = grace_period
 
 
 class Resource(Model):
@@ -281,13 +258,13 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+        self.location = location
+        self.tags = tags
 
 
 class AvailabilitySet(Resource):
@@ -325,20 +302,20 @@ class AvailabilitySet(Resource):
     :param virtual_machines: A list of references to all virtual machines in
      the availability set.
     :type virtual_machines:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
     :param proximity_placement_group: Specifies information about the
      proximity placement group that the availability set should be assigned to.
      <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
-     ~azure.mgmt.compute.v2019_07_01.models.SubResource
+     ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :ivar statuses: The resource status information.
     :vartype statuses:
-     list[~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
     :param sku: Sku of the availability set, only name is required to be set.
      See AvailabilitySetSkuTypes for possible set of values. Use 'Aligned' for
      virtual machines with managed disks and 'Classic' for virtual machines
      with unmanaged disks. Default value is 'Classic'.
-    :type sku: ~azure.mgmt.compute.v2019_07_01.models.Sku
+    :type sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
     """
 
     _validation = {
@@ -363,14 +340,14 @@ class AvailabilitySet(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, **kwargs):
-        super(AvailabilitySet, self).__init__(**kwargs)
-        self.platform_update_domain_count = kwargs.get('platform_update_domain_count', None)
-        self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
-        self.virtual_machines = kwargs.get('virtual_machines', None)
-        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
+    def __init__(self, *, location: str, tags=None, platform_update_domain_count: int=None, platform_fault_domain_count: int=None, virtual_machines=None, proximity_placement_group=None, sku=None, **kwargs) -> None:
+        super(AvailabilitySet, self).__init__(location=location, tags=tags, **kwargs)
+        self.platform_update_domain_count = platform_update_domain_count
+        self.platform_fault_domain_count = platform_fault_domain_count
+        self.virtual_machines = virtual_machines
+        self.proximity_placement_group = proximity_placement_group
         self.statuses = None
-        self.sku = kwargs.get('sku', None)
+        self.sku = sku
 
 
 class UpdateResource(Model):
@@ -384,9 +361,9 @@ class UpdateResource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(UpdateResource, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
+        self.tags = tags
 
 
 class AvailabilitySetUpdate(UpdateResource):
@@ -405,17 +382,17 @@ class AvailabilitySetUpdate(UpdateResource):
     :param virtual_machines: A list of references to all virtual machines in
      the availability set.
     :type virtual_machines:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
     :param proximity_placement_group: Specifies information about the
      proximity placement group that the availability set should be assigned to.
      <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
-     ~azure.mgmt.compute.v2019_07_01.models.SubResource
+     ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :ivar statuses: The resource status information.
     :vartype statuses:
-     list[~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
     :param sku: Sku of the availability set
-    :type sku: ~azure.mgmt.compute.v2019_07_01.models.Sku
+    :type sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
     """
 
     _validation = {
@@ -432,14 +409,14 @@ class AvailabilitySetUpdate(UpdateResource):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, **kwargs):
-        super(AvailabilitySetUpdate, self).__init__(**kwargs)
-        self.platform_update_domain_count = kwargs.get('platform_update_domain_count', None)
-        self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
-        self.virtual_machines = kwargs.get('virtual_machines', None)
-        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
+    def __init__(self, *, tags=None, platform_update_domain_count: int=None, platform_fault_domain_count: int=None, virtual_machines=None, proximity_placement_group=None, sku=None, **kwargs) -> None:
+        super(AvailabilitySetUpdate, self).__init__(tags=tags, **kwargs)
+        self.platform_update_domain_count = platform_update_domain_count
+        self.platform_fault_domain_count = platform_fault_domain_count
+        self.virtual_machines = virtual_machines
+        self.proximity_placement_group = proximity_placement_group
         self.statuses = None
-        self.sku = kwargs.get('sku', None)
+        self.sku = sku
 
 
 class BillingProfile(Model):
@@ -466,9 +443,9 @@ class BillingProfile(Model):
         'max_price': {'key': 'maxPrice', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, max_price: float=None, **kwargs) -> None:
         super(BillingProfile, self).__init__(**kwargs)
-        self.max_price = kwargs.get('max_price', None)
+        self.max_price = max_price
 
 
 class BootDiagnostics(Model):
@@ -481,7 +458,8 @@ class BootDiagnostics(Model):
      Machine.
     :type enabled: bool
     :param storage_uri: Uri of the storage account to use for placing the
-     console output and screenshot.
+     console output and screenshot. <br><br>If storageUri is not specified
+     while enabling boot diagnostics, managed storage will be used.
     :type storage_uri: str
     """
 
@@ -490,10 +468,10 @@ class BootDiagnostics(Model):
         'storage_uri': {'key': 'storageUri', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, enabled: bool=None, storage_uri: str=None, **kwargs) -> None:
         super(BootDiagnostics, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.storage_uri = kwargs.get('storage_uri', None)
+        self.enabled = enabled
+        self.storage_uri = storage_uri
 
 
 class BootDiagnosticsInstanceView(Model):
@@ -503,13 +481,17 @@ class BootDiagnosticsInstanceView(Model):
     sending a request.
 
     :ivar console_screenshot_blob_uri: The console screenshot blob URI.
+     <br><br>NOTE: This will **not** be set if boot diagnostics is currently
+     enabled with managed storage.
     :vartype console_screenshot_blob_uri: str
-    :ivar serial_console_log_blob_uri: The Linux serial console log blob Uri.
+    :ivar serial_console_log_blob_uri: The serial console log blob Uri.
+     <br><br>NOTE: This will **not** be set if boot diagnostics is currently
+     enabled with managed storage.
     :vartype serial_console_log_blob_uri: str
     :ivar status: The boot diagnostics status information for the VM. <br><br>
      NOTE: It will be set only if there are errors encountered in enabling boot
      diagnostics.
-    :vartype status: ~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus
+    :vartype status: ~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus
     """
 
     _validation = {
@@ -524,7 +506,7 @@ class BootDiagnosticsInstanceView(Model):
         'status': {'key': 'status', 'type': 'InstanceViewStatus'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(BootDiagnosticsInstanceView, self).__init__(**kwargs)
         self.console_screenshot_blob_uri = None
         self.serial_console_log_blob_uri = None
@@ -535,16 +517,16 @@ class CloudError(Model):
     """An error response from the Compute service.
 
     :param error:
-    :type error: ~azure.mgmt.compute.v2019_07_01.models.ApiError
+    :type error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
     """
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'ApiError'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, error=None, **kwargs) -> None:
         super(CloudError, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = error
 
 
 class CloudErrorException(HttpOperationError):
@@ -597,7 +579,7 @@ class ComputeOperationValue(Model):
         'provider': {'key': 'display.provider', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ComputeOperationValue, self).__init__(**kwargs)
         self.origin = None
         self.name = None
@@ -605,68 +587,6 @@ class ComputeOperationValue(Model):
         self.resource = None
         self.description = None
         self.provider = None
-
-
-class CreationData(Model):
-    """Data used when creating a disk.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param create_option: Required. This enumerates the possible sources of a
-     disk's creation. Possible values include: 'Empty', 'Attach', 'FromImage',
-     'Import', 'Copy', 'Restore', 'Upload'
-    :type create_option: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DiskCreateOption
-    :param storage_account_id: Required if createOption is Import. The Azure
-     Resource Manager identifier of the storage account containing the blob to
-     import as a disk.
-    :type storage_account_id: str
-    :param image_reference: Disk source information.
-    :type image_reference:
-     ~azure.mgmt.compute.v2019_07_01.models.ImageDiskReference
-    :param source_uri: If createOption is Import, this is the URI of a blob to
-     be imported into a managed disk.
-    :type source_uri: str
-    :param source_resource_id: If createOption is Copy, this is the ARM id of
-     the source snapshot or disk.
-    :type source_resource_id: str
-    :ivar source_unique_id: If this field is set, this is the unique id
-     identifying the source of this resource.
-    :vartype source_unique_id: str
-    :param upload_size_bytes: If createOption is Upload, this is the size of
-     the contents of the upload including the VHD footer. This value should be
-     between 20972032 (20 MiB + 512 bytes for the VHD footer) and
-     35183298347520 bytes (32 TiB + 512 bytes for the VHD footer).
-    :type upload_size_bytes: long
-    """
-
-    _validation = {
-        'create_option': {'required': True},
-        'source_unique_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'create_option': {'key': 'createOption', 'type': 'str'},
-        'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
-        'image_reference': {'key': 'imageReference', 'type': 'ImageDiskReference'},
-        'source_uri': {'key': 'sourceUri', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'source_unique_id': {'key': 'sourceUniqueId', 'type': 'str'},
-        'upload_size_bytes': {'key': 'uploadSizeBytes', 'type': 'long'},
-    }
-
-    def __init__(self, **kwargs):
-        super(CreationData, self).__init__(**kwargs)
-        self.create_option = kwargs.get('create_option', None)
-        self.storage_account_id = kwargs.get('storage_account_id', None)
-        self.image_reference = kwargs.get('image_reference', None)
-        self.source_uri = kwargs.get('source_uri', None)
-        self.source_resource_id = kwargs.get('source_resource_id', None)
-        self.source_unique_id = None
-        self.upload_size_bytes = kwargs.get('upload_size_bytes', None)
 
 
 class DataDisk(Model):
@@ -684,17 +604,17 @@ class DataDisk(Model):
     :param name: The disk name.
     :type name: str
     :param vhd: The virtual hard disk.
-    :type vhd: ~azure.mgmt.compute.v2019_07_01.models.VirtualHardDisk
+    :type vhd: ~azure.mgmt.compute.v2020_06_01.models.VirtualHardDisk
     :param image: The source user image virtual hard disk. The virtual hard
      disk will be copied before being attached to the virtual machine. If
      SourceImage is provided, the destination virtual hard drive must not
      exist.
-    :type image: ~azure.mgmt.compute.v2019_07_01.models.VirtualHardDisk
+    :type image: ~azure.mgmt.compute.v2020_06_01.models.VirtualHardDisk
     :param caching: Specifies the caching requirements. <br><br> Possible
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
-    :type caching: str or ~azure.mgmt.compute.v2019_07_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
     :type write_accelerator_enabled: bool
@@ -707,14 +627,14 @@ class DataDisk(Model):
      using a marketplace image, you  also use the plan element previously
      described. Possible values include: 'FromImage', 'Empty', 'Attach'
     :type create_option: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DiskCreateOptionTypes
+     ~azure.mgmt.compute.v2020_06_01.models.DiskCreateOptionTypes
     :param disk_size_gb: Specifies the size of an empty data disk in
      gigabytes. This element can be used to overwrite the size of the disk in a
      virtual machine image. <br><br> This value cannot be larger than 1023 GB
     :type disk_size_gb: int
     :param managed_disk: The managed disk parameters.
     :type managed_disk:
-     ~azure.mgmt.compute.v2019_07_01.models.ManagedDiskParameters
+     ~azure.mgmt.compute.v2020_06_01.models.ManagedDiskParameters
     :param to_be_detached: Specifies whether the data disk is in process of
      detachment from the VirtualMachine/VirtualMachineScaleset
     :type to_be_detached: bool
@@ -752,18 +672,18 @@ class DataDisk(Model):
         'disk_mbps_read_write': {'key': 'diskMBpsReadWrite', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, lun: int, create_option, name: str=None, vhd=None, image=None, caching=None, write_accelerator_enabled: bool=None, disk_size_gb: int=None, managed_disk=None, to_be_detached: bool=None, **kwargs) -> None:
         super(DataDisk, self).__init__(**kwargs)
-        self.lun = kwargs.get('lun', None)
-        self.name = kwargs.get('name', None)
-        self.vhd = kwargs.get('vhd', None)
-        self.image = kwargs.get('image', None)
-        self.caching = kwargs.get('caching', None)
-        self.write_accelerator_enabled = kwargs.get('write_accelerator_enabled', None)
-        self.create_option = kwargs.get('create_option', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.managed_disk = kwargs.get('managed_disk', None)
-        self.to_be_detached = kwargs.get('to_be_detached', None)
+        self.lun = lun
+        self.name = name
+        self.vhd = vhd
+        self.image = image
+        self.caching = caching
+        self.write_accelerator_enabled = write_accelerator_enabled
+        self.create_option = create_option
+        self.disk_size_gb = disk_size_gb
+        self.managed_disk = managed_disk
+        self.to_be_detached = to_be_detached
         self.disk_iops_read_write = None
         self.disk_mbps_read_write = None
 
@@ -788,7 +708,7 @@ class DataDiskImage(Model):
         'lun': {'key': 'lun', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(DataDiskImage, self).__init__(**kwargs)
         self.lun = None
 
@@ -825,14 +745,14 @@ class DedicatedHost(Resource):
     :ivar virtual_machines: A list of references to all virtual machines in
      the Dedicated Host.
     :vartype virtual_machines:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResourceReadOnly]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResourceReadOnly]
     :param license_type: Specifies the software license type that will be
      applied to the VMs deployed on the dedicated host. <br><br> Possible
      values are: <br><br> **None** <br><br> **Windows_Server_Hybrid** <br><br>
      **Windows_Server_Perpetual** <br><br> Default: **None**. Possible values
      include: 'None', 'Windows_Server_Hybrid', 'Windows_Server_Perpetual'
     :type license_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DedicatedHostLicenseTypes
+     ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostLicenseTypes
     :ivar provisioning_time: The date when the host was first provisioned.
     :vartype provisioning_time: datetime
     :ivar provisioning_state: The provisioning state, which only appears in
@@ -840,11 +760,11 @@ class DedicatedHost(Resource):
     :vartype provisioning_state: str
     :ivar instance_view: The dedicated host instance view.
     :vartype instance_view:
-     ~azure.mgmt.compute.v2019_07_01.models.DedicatedHostInstanceView
+     ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostInstanceView
     :param sku: Required. SKU of the dedicated host for Hardware Generation
      and VM family. Only name is required to be set. List Microsoft.Compute
      SKUs for a list of possible values.
-    :type sku: ~azure.mgmt.compute.v2019_07_01.models.Sku
+    :type sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
     """
 
     _validation = {
@@ -878,17 +798,17 @@ class DedicatedHost(Resource):
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, **kwargs):
-        super(DedicatedHost, self).__init__(**kwargs)
-        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
-        self.auto_replace_on_failure = kwargs.get('auto_replace_on_failure', None)
+    def __init__(self, *, location: str, sku, tags=None, platform_fault_domain: int=None, auto_replace_on_failure: bool=None, license_type=None, **kwargs) -> None:
+        super(DedicatedHost, self).__init__(location=location, tags=tags, **kwargs)
+        self.platform_fault_domain = platform_fault_domain
+        self.auto_replace_on_failure = auto_replace_on_failure
         self.host_id = None
         self.virtual_machines = None
-        self.license_type = kwargs.get('license_type', None)
+        self.license_type = license_type
         self.provisioning_time = None
         self.provisioning_state = None
         self.instance_view = None
-        self.sku = kwargs.get('sku', None)
+        self.sku = sku
 
 
 class DedicatedHostAllocatableVM(Model):
@@ -908,10 +828,10 @@ class DedicatedHostAllocatableVM(Model):
         'count': {'key': 'count', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, vm_size: str=None, count: float=None, **kwargs) -> None:
         super(DedicatedHostAllocatableVM, self).__init__(**kwargs)
-        self.vm_size = kwargs.get('vm_size', None)
-        self.count = kwargs.get('count', None)
+        self.vm_size = vm_size
+        self.count = count
 
 
 class DedicatedHostAvailableCapacity(Model):
@@ -921,16 +841,16 @@ class DedicatedHostAvailableCapacity(Model):
      represented in terms of each VM size that is allowed to be deployed to the
      dedicated host.
     :type allocatable_vms:
-     list[~azure.mgmt.compute.v2019_07_01.models.DedicatedHostAllocatableVM]
+     list[~azure.mgmt.compute.v2020_06_01.models.DedicatedHostAllocatableVM]
     """
 
     _attribute_map = {
         'allocatable_vms': {'key': 'allocatableVMs', 'type': '[DedicatedHostAllocatableVM]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, allocatable_vms=None, **kwargs) -> None:
         super(DedicatedHostAvailableCapacity, self).__init__(**kwargs)
-        self.allocatable_vms = kwargs.get('allocatable_vms', None)
+        self.allocatable_vms = allocatable_vms
 
 
 class DedicatedHostGroup(Resource):
@@ -960,7 +880,19 @@ class DedicatedHostGroup(Resource):
     :ivar hosts: A list of references to all dedicated hosts in the dedicated
      host group.
     :vartype hosts:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResourceReadOnly]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResourceReadOnly]
+    :ivar instance_view: The dedicated host group instance view, which has the
+     list of instance view of the dedicated hosts under the dedicated host
+     group.
+    :vartype instance_view:
+     ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostGroupInstanceView
+    :param support_automatic_placement: Specifies whether virtual machines or
+     virtual machine scale sets can be placed automatically on the dedicated
+     host group. Automatic placement means resources are allocated on dedicated
+     hosts, that are chosen by Azure, under the dedicated host group. The value
+     is defaulted to 'true' when not provided. <br><br>Minimum api-version:
+     2020-06-01.
+    :type support_automatic_placement: bool
     :param zones: Availability Zone to use for this host group. Only single
      zone is supported. The zone can be assigned only during creation. If not
      provided, the group supports all zones in the region. If provided,
@@ -975,6 +907,7 @@ class DedicatedHostGroup(Resource):
         'location': {'required': True},
         'platform_fault_domain_count': {'required': True, 'maximum': 3, 'minimum': 1},
         'hosts': {'readonly': True},
+        'instance_view': {'readonly': True},
     }
 
     _attribute_map = {
@@ -985,14 +918,36 @@ class DedicatedHostGroup(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'hosts': {'key': 'properties.hosts', 'type': '[SubResourceReadOnly]'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'DedicatedHostGroupInstanceView'},
+        'support_automatic_placement': {'key': 'properties.supportAutomaticPlacement', 'type': 'bool'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(DedicatedHostGroup, self).__init__(**kwargs)
-        self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
+    def __init__(self, *, location: str, platform_fault_domain_count: int, tags=None, support_automatic_placement: bool=None, zones=None, **kwargs) -> None:
+        super(DedicatedHostGroup, self).__init__(location=location, tags=tags, **kwargs)
+        self.platform_fault_domain_count = platform_fault_domain_count
         self.hosts = None
-        self.zones = kwargs.get('zones', None)
+        self.instance_view = None
+        self.support_automatic_placement = support_automatic_placement
+        self.zones = zones
+
+
+class DedicatedHostGroupInstanceView(Model):
+    """DedicatedHostGroupInstanceView.
+
+    :param hosts: List of instance view of the dedicated hosts under the
+     dedicated host group.
+    :type hosts:
+     list[~azure.mgmt.compute.v2020_06_01.models.DedicatedHostInstanceViewWithName]
+    """
+
+    _attribute_map = {
+        'hosts': {'key': 'hosts', 'type': '[DedicatedHostInstanceViewWithName]'},
+    }
+
+    def __init__(self, *, hosts=None, **kwargs) -> None:
+        super(DedicatedHostGroupInstanceView, self).__init__(**kwargs)
+        self.hosts = hosts
 
 
 class DedicatedHostGroupUpdate(UpdateResource):
@@ -1012,7 +967,19 @@ class DedicatedHostGroupUpdate(UpdateResource):
     :ivar hosts: A list of references to all dedicated hosts in the dedicated
      host group.
     :vartype hosts:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResourceReadOnly]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResourceReadOnly]
+    :ivar instance_view: The dedicated host group instance view, which has the
+     list of instance view of the dedicated hosts under the dedicated host
+     group.
+    :vartype instance_view:
+     ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostGroupInstanceView
+    :param support_automatic_placement: Specifies whether virtual machines or
+     virtual machine scale sets can be placed automatically on the dedicated
+     host group. Automatic placement means resources are allocated on dedicated
+     hosts, that are chosen by Azure, under the dedicated host group. The value
+     is defaulted to 'true' when not provided. <br><br>Minimum api-version:
+     2020-06-01.
+    :type support_automatic_placement: bool
     :param zones: Availability Zone to use for this host group. Only single
      zone is supported. The zone can be assigned only during creation. If not
      provided, the group supports all zones in the region. If provided,
@@ -1023,20 +990,25 @@ class DedicatedHostGroupUpdate(UpdateResource):
     _validation = {
         'platform_fault_domain_count': {'required': True, 'maximum': 3, 'minimum': 1},
         'hosts': {'readonly': True},
+        'instance_view': {'readonly': True},
     }
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'hosts': {'key': 'properties.hosts', 'type': '[SubResourceReadOnly]'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'DedicatedHostGroupInstanceView'},
+        'support_automatic_placement': {'key': 'properties.supportAutomaticPlacement', 'type': 'bool'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(DedicatedHostGroupUpdate, self).__init__(**kwargs)
-        self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
+    def __init__(self, *, platform_fault_domain_count: int, tags=None, support_automatic_placement: bool=None, zones=None, **kwargs) -> None:
+        super(DedicatedHostGroupUpdate, self).__init__(tags=tags, **kwargs)
+        self.platform_fault_domain_count = platform_fault_domain_count
         self.hosts = None
-        self.zones = kwargs.get('zones', None)
+        self.instance_view = None
+        self.support_automatic_placement = support_automatic_placement
+        self.zones = zones
 
 
 class DedicatedHostInstanceView(Model):
@@ -1050,10 +1022,10 @@ class DedicatedHostInstanceView(Model):
     :vartype asset_id: str
     :param available_capacity: Unutilized capacity of the dedicated host.
     :type available_capacity:
-     ~azure.mgmt.compute.v2019_07_01.models.DedicatedHostAvailableCapacity
+     ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostAvailableCapacity
     :param statuses: The resource status information.
     :type statuses:
-     list[~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
     """
 
     _validation = {
@@ -1066,11 +1038,49 @@ class DedicatedHostInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, available_capacity=None, statuses=None, **kwargs) -> None:
         super(DedicatedHostInstanceView, self).__init__(**kwargs)
         self.asset_id = None
-        self.available_capacity = kwargs.get('available_capacity', None)
-        self.statuses = kwargs.get('statuses', None)
+        self.available_capacity = available_capacity
+        self.statuses = statuses
+
+
+class DedicatedHostInstanceViewWithName(DedicatedHostInstanceView):
+    """The instance view of a dedicated host that includes the name of the
+    dedicated host. It is used for the response to the instance view of a
+    dedicated host group.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar asset_id: Specifies the unique id of the dedicated physical machine
+     on which the dedicated host resides.
+    :vartype asset_id: str
+    :param available_capacity: Unutilized capacity of the dedicated host.
+    :type available_capacity:
+     ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostAvailableCapacity
+    :param statuses: The resource status information.
+    :type statuses:
+     list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :ivar name: The name of the dedicated host.
+    :vartype name: str
+    """
+
+    _validation = {
+        'asset_id': {'readonly': True},
+        'name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'asset_id': {'key': 'assetId', 'type': 'str'},
+        'available_capacity': {'key': 'availableCapacity', 'type': 'DedicatedHostAvailableCapacity'},
+        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, *, available_capacity=None, statuses=None, **kwargs) -> None:
+        super(DedicatedHostInstanceViewWithName, self).__init__(available_capacity=available_capacity, statuses=statuses, **kwargs)
+        self.name = None
 
 
 class DedicatedHostUpdate(UpdateResource):
@@ -1096,14 +1106,14 @@ class DedicatedHostUpdate(UpdateResource):
     :ivar virtual_machines: A list of references to all virtual machines in
      the Dedicated Host.
     :vartype virtual_machines:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResourceReadOnly]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResourceReadOnly]
     :param license_type: Specifies the software license type that will be
      applied to the VMs deployed on the dedicated host. <br><br> Possible
      values are: <br><br> **None** <br><br> **Windows_Server_Hybrid** <br><br>
      **Windows_Server_Perpetual** <br><br> Default: **None**. Possible values
      include: 'None', 'Windows_Server_Hybrid', 'Windows_Server_Perpetual'
     :type license_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DedicatedHostLicenseTypes
+     ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostLicenseTypes
     :ivar provisioning_time: The date when the host was first provisioned.
     :vartype provisioning_time: datetime
     :ivar provisioning_state: The provisioning state, which only appears in
@@ -1111,7 +1121,7 @@ class DedicatedHostUpdate(UpdateResource):
     :vartype provisioning_state: str
     :ivar instance_view: The dedicated host instance view.
     :vartype instance_view:
-     ~azure.mgmt.compute.v2019_07_01.models.DedicatedHostInstanceView
+     ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostInstanceView
     """
 
     _validation = {
@@ -1135,13 +1145,13 @@ class DedicatedHostUpdate(UpdateResource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'DedicatedHostInstanceView'},
     }
 
-    def __init__(self, **kwargs):
-        super(DedicatedHostUpdate, self).__init__(**kwargs)
-        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
-        self.auto_replace_on_failure = kwargs.get('auto_replace_on_failure', None)
+    def __init__(self, *, tags=None, platform_fault_domain: int=None, auto_replace_on_failure: bool=None, license_type=None, **kwargs) -> None:
+        super(DedicatedHostUpdate, self).__init__(tags=tags, **kwargs)
+        self.platform_fault_domain = platform_fault_domain
+        self.auto_replace_on_failure = auto_replace_on_failure
         self.host_id = None
         self.virtual_machines = None
-        self.license_type = kwargs.get('license_type', None)
+        self.license_type = license_type
         self.provisioning_time = None
         self.provisioning_state = None
         self.instance_view = None
@@ -1156,16 +1166,16 @@ class DiagnosticsProfile(Model):
      <br><br> You can easily view the output of your console log. <br><br>
      Azure also enables you to see a screenshot of the VM from the hypervisor.
     :type boot_diagnostics:
-     ~azure.mgmt.compute.v2019_07_01.models.BootDiagnostics
+     ~azure.mgmt.compute.v2020_06_01.models.BootDiagnostics
     """
 
     _attribute_map = {
         'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnostics'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, boot_diagnostics=None, **kwargs) -> None:
         super(DiagnosticsProfile, self).__init__(**kwargs)
-        self.boot_diagnostics = kwargs.get('boot_diagnostics', None)
+        self.boot_diagnostics = boot_diagnostics
 
 
 class DiffDiskSettings(Model):
@@ -1176,227 +1186,48 @@ class DiffDiskSettings(Model):
     :param option: Specifies the ephemeral disk settings for operating system
      disk. Possible values include: 'Local'
     :type option: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DiffDiskOptions
+     ~azure.mgmt.compute.v2020_06_01.models.DiffDiskOptions
+    :param placement: Specifies the ephemeral disk placement for operating
+     system disk.<br><br> Possible values are: <br><br> **CacheDisk** <br><br>
+     **ResourceDisk** <br><br> Default: **CacheDisk** if one is configured for
+     the VM size otherwise **ResourceDisk** is used.<br><br> Refer to VM size
+     documentation for Windows VM at
+     https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes and
+     Linux VM at
+     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/sizes to
+     check which VM sizes exposes a cache disk. Possible values include:
+     'CacheDisk', 'ResourceDisk'
+    :type placement: str or
+     ~azure.mgmt.compute.v2020_06_01.models.DiffDiskPlacement
     """
 
     _attribute_map = {
         'option': {'key': 'option', 'type': 'str'},
+        'placement': {'key': 'placement', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, option=None, placement=None, **kwargs) -> None:
         super(DiffDiskSettings, self).__init__(**kwargs)
-        self.option = kwargs.get('option', None)
+        self.option = option
+        self.placement = placement
 
 
-class Disallowed(Model):
-    """Describes the disallowed disk types.
+class DisallowedConfiguration(Model):
+    """Specifies the disallowed configuration for a virtual machine image.
 
-    :param disk_types: A list of disk types.
-    :type disk_types: list[str]
+    :param vm_disk_type: VM disk types which are disallowed. Possible values
+     include: 'None', 'Unmanaged'
+    :type vm_disk_type: str or
+     ~azure.mgmt.compute.v2020_06_01.models.VmDiskTypes
     """
 
     _attribute_map = {
-        'disk_types': {'key': 'diskTypes', 'type': '[str]'},
+        'vm_disk_type': {'key': 'vmDiskType', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Disallowed, self).__init__(**kwargs)
-        self.disk_types = kwargs.get('disk_types', None)
-
-
-class Disk(Resource):
-    """Disk resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :ivar managed_by: A relative URI containing the ID of the VM that has the
-     disk attached.
-    :vartype managed_by: str
-    :param sku:
-    :type sku: ~azure.mgmt.compute.v2019_07_01.models.DiskSku
-    :param zones: The Logical zone list for Disk.
-    :type zones: list[str]
-    :ivar time_created: The time when the disk was created.
-    :vartype time_created: datetime
-    :param os_type: The Operating System type. Possible values include:
-     'Windows', 'Linux'
-    :type os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
-    :param hyper_vgeneration: The hypervisor generation of the Virtual
-     Machine. Applicable to OS disks only. Possible values include: 'V1', 'V2'
-    :type hyper_vgeneration: str or
-     ~azure.mgmt.compute.v2019_07_01.models.HyperVGeneration
-    :param creation_data: Required. Disk source information. CreationData
-     information cannot be changed after the disk has been created.
-    :type creation_data: ~azure.mgmt.compute.v2019_07_01.models.CreationData
-    :param disk_size_gb: If creationData.createOption is Empty, this field is
-     mandatory and it indicates the size of the disk to create. If this field
-     is present for updates or creation with other options, it indicates a
-     resize. Resizes are only allowed if the disk is not attached to a running
-     VM, and can only increase the disk's size.
-    :type disk_size_gb: int
-    :ivar disk_size_bytes: The size of the disk in bytes. This field is read
-     only.
-    :vartype disk_size_bytes: long
-    :ivar unique_id: Unique Guid identifying the resource.
-    :vartype unique_id: str
-    :param encryption_settings_collection: Encryption settings collection used
-     for Azure Disk Encryption, can contain multiple encryption settings per
-     disk or snapshot.
-    :type encryption_settings_collection:
-     ~azure.mgmt.compute.v2019_07_01.models.EncryptionSettingsCollection
-    :ivar provisioning_state: The disk provisioning state.
-    :vartype provisioning_state: str
-    :param disk_iops_read_write: The number of IOPS allowed for this disk;
-     only settable for UltraSSD disks. One operation can transfer between 4k
-     and 256k bytes.
-    :type disk_iops_read_write: long
-    :param disk_mbps_read_write: The bandwidth allowed for this disk; only
-     settable for UltraSSD disks. MBps means millions of bytes per second - MB
-     here uses the ISO notation, of powers of 10.
-    :type disk_mbps_read_write: int
-    :ivar disk_state: The state of the disk. Possible values include:
-     'Unattached', 'Attached', 'Reserved', 'ActiveSAS', 'ReadyToUpload',
-     'ActiveUpload'
-    :vartype disk_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DiskState
-    :param encryption: Encryption property can be used to encrypt data at rest
-     with customer managed keys or platform managed keys.
-    :type encryption: ~azure.mgmt.compute.v2019_07_01.models.Encryption
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'managed_by': {'readonly': True},
-        'time_created': {'readonly': True},
-        'creation_data': {'required': True},
-        'disk_size_bytes': {'readonly': True},
-        'unique_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'disk_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'DiskSku'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
-        'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
-        'hyper_vgeneration': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'creation_data': {'key': 'properties.creationData', 'type': 'CreationData'},
-        'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
-        'disk_size_bytes': {'key': 'properties.diskSizeBytes', 'type': 'long'},
-        'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
-        'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'disk_iops_read_write': {'key': 'properties.diskIOPSReadWrite', 'type': 'long'},
-        'disk_mbps_read_write': {'key': 'properties.diskMBpsReadWrite', 'type': 'int'},
-        'disk_state': {'key': 'properties.diskState', 'type': 'str'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Disk, self).__init__(**kwargs)
-        self.managed_by = None
-        self.sku = kwargs.get('sku', None)
-        self.zones = kwargs.get('zones', None)
-        self.time_created = None
-        self.os_type = kwargs.get('os_type', None)
-        self.hyper_vgeneration = kwargs.get('hyper_vgeneration', None)
-        self.creation_data = kwargs.get('creation_data', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.disk_size_bytes = None
-        self.unique_id = None
-        self.encryption_settings_collection = kwargs.get('encryption_settings_collection', None)
-        self.provisioning_state = None
-        self.disk_iops_read_write = kwargs.get('disk_iops_read_write', None)
-        self.disk_mbps_read_write = kwargs.get('disk_mbps_read_write', None)
-        self.disk_state = None
-        self.encryption = kwargs.get('encryption', None)
-
-
-class DiskEncryptionSet(Resource):
-    """disk encryption set resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param identity:
-    :type identity:
-     ~azure.mgmt.compute.v2019_07_01.models.EncryptionSetIdentity
-    :param active_key: The key vault key which is currently used by this disk
-     encryption set.
-    :type active_key:
-     ~azure.mgmt.compute.v2019_07_01.models.KeyVaultAndKeyReference
-    :ivar previous_keys: A readonly collection of key vault keys previously
-     used by this disk encryption set while a key rotation is in progress. It
-     will be empty if there is no ongoing key rotation.
-    :vartype previous_keys:
-     list[~azure.mgmt.compute.v2019_07_01.models.KeyVaultAndKeyReference]
-    :ivar provisioning_state: The disk encryption set provisioning state.
-    :vartype provisioning_state: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'previous_keys': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'EncryptionSetIdentity'},
-        'active_key': {'key': 'properties.activeKey', 'type': 'KeyVaultAndKeyReference'},
-        'previous_keys': {'key': 'properties.previousKeys', 'type': '[KeyVaultAndKeyReference]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DiskEncryptionSet, self).__init__(**kwargs)
-        self.identity = kwargs.get('identity', None)
-        self.active_key = kwargs.get('active_key', None)
-        self.previous_keys = None
-        self.provisioning_state = None
+    def __init__(self, *, vm_disk_type=None, **kwargs) -> None:
+        super(DisallowedConfiguration, self).__init__(**kwargs)
+        self.vm_disk_type = vm_disk_type
 
 
 class SubResource(Model):
@@ -1410,9 +1241,9 @@ class SubResource(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, id: str=None, **kwargs) -> None:
         super(SubResource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.id = id
 
 
 class DiskEncryptionSetParameters(SubResource):
@@ -1429,8 +1260,8 @@ class DiskEncryptionSetParameters(SubResource):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(DiskEncryptionSetParameters, self).__init__(**kwargs)
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(DiskEncryptionSetParameters, self).__init__(id=id, **kwargs)
 
 
 class DiskEncryptionSettings(Model):
@@ -1439,11 +1270,11 @@ class DiskEncryptionSettings(Model):
     :param disk_encryption_key: Specifies the location of the disk encryption
      key, which is a Key Vault Secret.
     :type disk_encryption_key:
-     ~azure.mgmt.compute.v2019_07_01.models.KeyVaultSecretReference
+     ~azure.mgmt.compute.v2020_06_01.models.KeyVaultSecretReference
     :param key_encryption_key: Specifies the location of the key encryption
      key in Key Vault.
     :type key_encryption_key:
-     ~azure.mgmt.compute.v2019_07_01.models.KeyVaultKeyReference
+     ~azure.mgmt.compute.v2020_06_01.models.KeyVaultKeyReference
     :param enabled: Specifies whether disk encryption should be enabled on the
      virtual machine.
     :type enabled: bool
@@ -1455,32 +1286,11 @@ class DiskEncryptionSettings(Model):
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, disk_encryption_key=None, key_encryption_key=None, enabled: bool=None, **kwargs) -> None:
         super(DiskEncryptionSettings, self).__init__(**kwargs)
-        self.disk_encryption_key = kwargs.get('disk_encryption_key', None)
-        self.key_encryption_key = kwargs.get('key_encryption_key', None)
-        self.enabled = kwargs.get('enabled', None)
-
-
-class DiskEncryptionSetUpdate(Model):
-    """disk encryption set update resource.
-
-    :param active_key:
-    :type active_key:
-     ~azure.mgmt.compute.v2019_07_01.models.KeyVaultAndKeyReference
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        'active_key': {'key': 'properties.activeKey', 'type': 'KeyVaultAndKeyReference'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DiskEncryptionSetUpdate, self).__init__(**kwargs)
-        self.active_key = kwargs.get('active_key', None)
-        self.tags = kwargs.get('tags', None)
+        self.disk_encryption_key = disk_encryption_key
+        self.key_encryption_key = key_encryption_key
+        self.enabled = enabled
 
 
 class DiskInstanceView(Model):
@@ -1491,10 +1301,10 @@ class DiskInstanceView(Model):
     :param encryption_settings: Specifies the encryption settings for the OS
      Disk. <br><br> Minimum api-version: 2015-06-15
     :type encryption_settings:
-     list[~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSettings]
+     list[~azure.mgmt.compute.v2020_06_01.models.DiskEncryptionSettings]
     :param statuses: The resource status information.
     :type statuses:
-     list[~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
     """
 
     _attribute_map = {
@@ -1503,1322 +1313,11 @@ class DiskInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, encryption_settings=None, statuses=None, **kwargs) -> None:
         super(DiskInstanceView, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.encryption_settings = kwargs.get('encryption_settings', None)
-        self.statuses = kwargs.get('statuses', None)
-
-
-class DiskSku(Model):
-    """The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, or
-    UltraSSD_LRS.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param name: The sku name. Possible values include: 'Standard_LRS',
-     'Premium_LRS', 'StandardSSD_LRS', 'UltraSSD_LRS'
-    :type name: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DiskStorageAccountTypes
-    :ivar tier: The sku tier.
-    :vartype tier: str
-    """
-
-    _validation = {
-        'tier': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DiskSku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = None
-
-
-class DiskUpdate(Model):
-    """Disk update resource.
-
-    :param os_type: the Operating System type. Possible values include:
-     'Windows', 'Linux'
-    :type os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
-    :param disk_size_gb: If creationData.createOption is Empty, this field is
-     mandatory and it indicates the size of the disk to create. If this field
-     is present for updates or creation with other options, it indicates a
-     resize. Resizes are only allowed if the disk is not attached to a running
-     VM, and can only increase the disk's size.
-    :type disk_size_gb: int
-    :param encryption_settings_collection: Encryption settings collection used
-     be Azure Disk Encryption, can contain multiple encryption settings per
-     disk or snapshot.
-    :type encryption_settings_collection:
-     ~azure.mgmt.compute.v2019_07_01.models.EncryptionSettingsCollection
-    :param disk_iops_read_write: The number of IOPS allowed for this disk;
-     only settable for UltraSSD disks. One operation can transfer between 4k
-     and 256k bytes.
-    :type disk_iops_read_write: long
-    :param disk_mbps_read_write: The bandwidth allowed for this disk; only
-     settable for UltraSSD disks. MBps means millions of bytes per second - MB
-     here uses the ISO notation, of powers of 10.
-    :type disk_mbps_read_write: int
-    :param encryption: Encryption property can be used to encrypt data at rest
-     with customer managed keys or platform managed keys.
-    :type encryption: ~azure.mgmt.compute.v2019_07_01.models.Encryption
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param sku:
-    :type sku: ~azure.mgmt.compute.v2019_07_01.models.DiskSku
-    """
-
-    _attribute_map = {
-        'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
-        'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
-        'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
-        'disk_iops_read_write': {'key': 'properties.diskIOPSReadWrite', 'type': 'long'},
-        'disk_mbps_read_write': {'key': 'properties.diskMBpsReadWrite', 'type': 'int'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'DiskSku'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DiskUpdate, self).__init__(**kwargs)
-        self.os_type = kwargs.get('os_type', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.encryption_settings_collection = kwargs.get('encryption_settings_collection', None)
-        self.disk_iops_read_write = kwargs.get('disk_iops_read_write', None)
-        self.disk_mbps_read_write = kwargs.get('disk_mbps_read_write', None)
-        self.encryption = kwargs.get('encryption', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-
-
-class Encryption(Model):
-    """Encryption at rest settings for disk or snapshot.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param disk_encryption_set_id: ResourceId of the disk encryption set to
-     use for enabling encryption at rest.
-    :type disk_encryption_set_id: str
-    :param type: Required. The type of key used to encrypt the data of the
-     disk. Possible values include: 'EncryptionAtRestWithPlatformKey',
-     'EncryptionAtRestWithCustomerKey'
-    :type type: str or ~azure.mgmt.compute.v2019_07_01.models.EncryptionType
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Encryption, self).__init__(**kwargs)
-        self.disk_encryption_set_id = kwargs.get('disk_encryption_set_id', None)
-        self.type = kwargs.get('type', None)
-
-
-class EncryptionSetIdentity(Model):
-    """The managed identity for the disk encryption set. It should be given
-    permission on the key vault before it can be used to encrypt disks.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param type: The type of Managed Identity used by the DiskEncryptionSet.
-     Only SystemAssigned is supported. Possible values include:
-     'SystemAssigned'
-    :type type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetIdentityType
-    :ivar principal_id: The object id of the Managed Identity Resource. This
-     will be sent to the RP from ARM via the x-ms-identity-principal-id header
-     in the PUT request if the resource has a systemAssigned(implicit) identity
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant id of the Managed Identity Resource. This will
-     be sent to the RP from ARM via the x-ms-client-tenant-id header in the PUT
-     request if the resource has a systemAssigned(implicit) identity
-    :vartype tenant_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(EncryptionSetIdentity, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.principal_id = None
-        self.tenant_id = None
-
-
-class EncryptionSettingsCollection(Model):
-    """Encryption settings for disk or snapshot.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param enabled: Required. Set this flag to true and provide
-     DiskEncryptionKey and optional KeyEncryptionKey to enable encryption. Set
-     this flag to false and remove DiskEncryptionKey and KeyEncryptionKey to
-     disable encryption. If EncryptionSettings is null in the request object,
-     the existing settings remain unchanged.
-    :type enabled: bool
-    :param encryption_settings: A collection of encryption settings, one for
-     each disk volume.
-    :type encryption_settings:
-     list[~azure.mgmt.compute.v2019_07_01.models.EncryptionSettingsElement]
-    :param encryption_settings_version: Describes what type of encryption is
-     used for the disks. Once this field is set, it cannot be overwritten.
-     '1.0' corresponds to Azure Disk Encryption with AAD app.'1.1' corresponds
-     to Azure Disk Encryption.
-    :type encryption_settings_version: str
-    """
-
-    _validation = {
-        'enabled': {'required': True},
-    }
-
-    _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'encryption_settings': {'key': 'encryptionSettings', 'type': '[EncryptionSettingsElement]'},
-        'encryption_settings_version': {'key': 'encryptionSettingsVersion', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(EncryptionSettingsCollection, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.encryption_settings = kwargs.get('encryption_settings', None)
-        self.encryption_settings_version = kwargs.get('encryption_settings_version', None)
-
-
-class EncryptionSettingsElement(Model):
-    """Encryption settings for one disk volume.
-
-    :param disk_encryption_key: Key Vault Secret Url and vault id of the disk
-     encryption key
-    :type disk_encryption_key:
-     ~azure.mgmt.compute.v2019_07_01.models.KeyVaultAndSecretReference
-    :param key_encryption_key: Key Vault Key Url and vault id of the key
-     encryption key. KeyEncryptionKey is optional and when provided is used to
-     unwrap the disk encryption key.
-    :type key_encryption_key:
-     ~azure.mgmt.compute.v2019_07_01.models.KeyVaultAndKeyReference
-    """
-
-    _attribute_map = {
-        'disk_encryption_key': {'key': 'diskEncryptionKey', 'type': 'KeyVaultAndSecretReference'},
-        'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyVaultAndKeyReference'},
-    }
-
-    def __init__(self, **kwargs):
-        super(EncryptionSettingsElement, self).__init__(**kwargs)
-        self.disk_encryption_key = kwargs.get('disk_encryption_key', None)
-        self.key_encryption_key = kwargs.get('key_encryption_key', None)
-
-
-class Gallery(Resource):
-    """Specifies information about the Shared Image Gallery that you want to
-    create or update.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param description: The description of this Shared Image Gallery resource.
-     This property is updatable.
-    :type description: str
-    :param identifier:
-    :type identifier: ~azure.mgmt.compute.v2019_07_01.models.GalleryIdentifier
-    :ivar provisioning_state: The current state of the gallery. The
-     provisioning state, which only appears in the response. Possible values
-     include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
-     'Migrating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.enum
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryIdentifier'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Gallery, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.identifier = kwargs.get('identifier', None)
-        self.provisioning_state = None
-
-
-class GalleryApplication(Resource):
-    """Specifies information about the gallery Application Definition that you
-    want to create or update.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param description: The description of this gallery Application Definition
-     resource. This property is updatable.
-    :type description: str
-    :param eula: The Eula agreement for the gallery Application Definition.
-    :type eula: str
-    :param privacy_statement_uri: The privacy statement uri.
-    :type privacy_statement_uri: str
-    :param release_note_uri: The release note uri.
-    :type release_note_uri: str
-    :param end_of_life_date: The end of life date of the gallery Application
-     Definition. This property can be used for decommissioning purposes. This
-     property is updatable.
-    :type end_of_life_date: datetime
-    :param supported_os_type: Required. This property allows you to specify
-     the supported type of the OS that application is built for. <br><br>
-     Possible values are: <br><br> **Windows** <br><br> **Linux**. Possible
-     values include: 'Windows', 'Linux'
-    :type supported_os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'supported_os_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'supported_os_type': {'key': 'properties.supportedOSType', 'type': 'OperatingSystemTypes'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryApplication, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.eula = kwargs.get('eula', None)
-        self.privacy_statement_uri = kwargs.get('privacy_statement_uri', None)
-        self.release_note_uri = kwargs.get('release_note_uri', None)
-        self.end_of_life_date = kwargs.get('end_of_life_date', None)
-        self.supported_os_type = kwargs.get('supported_os_type', None)
-
-
-class GalleryApplicationUpdate(UpdateResource):
-    """Specifies information about the gallery Application Definition that you
-    want to update.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param description: The description of this gallery Application Definition
-     resource. This property is updatable.
-    :type description: str
-    :param eula: The Eula agreement for the gallery Application Definition.
-    :type eula: str
-    :param privacy_statement_uri: The privacy statement uri.
-    :type privacy_statement_uri: str
-    :param release_note_uri: The release note uri.
-    :type release_note_uri: str
-    :param end_of_life_date: The end of life date of the gallery Application
-     Definition. This property can be used for decommissioning purposes. This
-     property is updatable.
-    :type end_of_life_date: datetime
-    :param supported_os_type: Required. This property allows you to specify
-     the supported type of the OS that application is built for. <br><br>
-     Possible values are: <br><br> **Windows** <br><br> **Linux**. Possible
-     values include: 'Windows', 'Linux'
-    :type supported_os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
-    """
-
-    _validation = {
-        'supported_os_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'supported_os_type': {'key': 'properties.supportedOSType', 'type': 'OperatingSystemTypes'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryApplicationUpdate, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.eula = kwargs.get('eula', None)
-        self.privacy_statement_uri = kwargs.get('privacy_statement_uri', None)
-        self.release_note_uri = kwargs.get('release_note_uri', None)
-        self.end_of_life_date = kwargs.get('end_of_life_date', None)
-        self.supported_os_type = kwargs.get('supported_os_type', None)
-
-
-class GalleryApplicationVersion(Resource):
-    """Specifies information about the gallery Application Version that you want
-    to create or update.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param publishing_profile: Required.
-    :type publishing_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryApplicationVersionPublishingProfile
-    :ivar provisioning_state: The current state of the gallery Application
-     Version. The provisioning state, which only appears in the response.
-     Possible values include: 'Creating', 'Updating', 'Failed', 'Succeeded',
-     'Deleting', 'Migrating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.enum
-    :ivar replication_status:
-    :vartype replication_status:
-     ~azure.mgmt.compute.v2019_07_01.models.ReplicationStatus
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'publishing_profile': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'replication_status': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryApplicationVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryApplicationVersion, self).__init__(**kwargs)
-        self.publishing_profile = kwargs.get('publishing_profile', None)
-        self.provisioning_state = None
-        self.replication_status = None
-
-
-class GalleryArtifactPublishingProfileBase(Model):
-    """Describes the basic gallery artifact publishing profile.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param target_regions: The target regions where the Image Version is going
-     to be replicated to. This property is updatable.
-    :type target_regions:
-     list[~azure.mgmt.compute.v2019_07_01.models.TargetRegion]
-    :param replica_count: The number of replicas of the Image Version to be
-     created per region. This property would take effect for a region when
-     regionalReplicaCount is not specified. This property is updatable.
-    :type replica_count: int
-    :param exclude_from_latest: If set to true, Virtual Machines deployed from
-     the latest version of the Image Definition won't use this Image Version.
-    :type exclude_from_latest: bool
-    :ivar published_date: The timestamp for when the gallery Image Version is
-     published.
-    :vartype published_date: datetime
-    :param end_of_life_date: The end of life date of the gallery Image
-     Version. This property can be used for decommissioning purposes. This
-     property is updatable.
-    :type end_of_life_date: datetime
-    :param storage_account_type: Specifies the storage account type to be used
-     to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
-    :type storage_account_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.StorageAccountType
-    """
-
-    _validation = {
-        'published_date': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'replica_count': {'key': 'replicaCount', 'type': 'int'},
-        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
-        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryArtifactPublishingProfileBase, self).__init__(**kwargs)
-        self.target_regions = kwargs.get('target_regions', None)
-        self.replica_count = kwargs.get('replica_count', None)
-        self.exclude_from_latest = kwargs.get('exclude_from_latest', None)
-        self.published_date = None
-        self.end_of_life_date = kwargs.get('end_of_life_date', None)
-        self.storage_account_type = kwargs.get('storage_account_type', None)
-
-
-class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
-    """The publishing profile of a gallery Image Version.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param target_regions: The target regions where the Image Version is going
-     to be replicated to. This property is updatable.
-    :type target_regions:
-     list[~azure.mgmt.compute.v2019_07_01.models.TargetRegion]
-    :param replica_count: The number of replicas of the Image Version to be
-     created per region. This property would take effect for a region when
-     regionalReplicaCount is not specified. This property is updatable.
-    :type replica_count: int
-    :param exclude_from_latest: If set to true, Virtual Machines deployed from
-     the latest version of the Image Definition won't use this Image Version.
-    :type exclude_from_latest: bool
-    :ivar published_date: The timestamp for when the gallery Image Version is
-     published.
-    :vartype published_date: datetime
-    :param end_of_life_date: The end of life date of the gallery Image
-     Version. This property can be used for decommissioning purposes. This
-     property is updatable.
-    :type end_of_life_date: datetime
-    :param storage_account_type: Specifies the storage account type to be used
-     to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
-    :type storage_account_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.StorageAccountType
-    :param source: Required.
-    :type source: ~azure.mgmt.compute.v2019_07_01.models.UserArtifactSource
-    :param content_type: Optional. May be used to help process this file. The
-     type of file contained in the source, e.g. zip, json, etc.
-    :type content_type: str
-    :param enable_health_check: Optional. Whether or not this application
-     reports health.
-    :type enable_health_check: bool
-    """
-
-    _validation = {
-        'published_date': {'readonly': True},
-        'source': {'required': True},
-    }
-
-    _attribute_map = {
-        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'replica_count': {'key': 'replicaCount', 'type': 'int'},
-        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
-        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'UserArtifactSource'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'enable_health_check': {'key': 'enableHealthCheck', 'type': 'bool'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryApplicationVersionPublishingProfile, self).__init__(**kwargs)
-        self.source = kwargs.get('source', None)
-        self.content_type = kwargs.get('content_type', None)
-        self.enable_health_check = kwargs.get('enable_health_check', None)
-
-
-class GalleryApplicationVersionUpdate(UpdateResource):
-    """Specifies information about the gallery Application Version that you want
-    to update.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param publishing_profile: Required.
-    :type publishing_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryApplicationVersionPublishingProfile
-    :ivar provisioning_state: The current state of the gallery Application
-     Version. The provisioning state, which only appears in the response.
-     Possible values include: 'Creating', 'Updating', 'Failed', 'Succeeded',
-     'Deleting', 'Migrating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.enum
-    :ivar replication_status:
-    :vartype replication_status:
-     ~azure.mgmt.compute.v2019_07_01.models.ReplicationStatus
-    """
-
-    _validation = {
-        'publishing_profile': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'replication_status': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryApplicationVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryApplicationVersionUpdate, self).__init__(**kwargs)
-        self.publishing_profile = kwargs.get('publishing_profile', None)
-        self.provisioning_state = None
-        self.replication_status = None
-
-
-class GalleryArtifactSource(Model):
-    """The source image from which the Image Version is going to be created.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param managed_image: Required.
-    :type managed_image:
-     ~azure.mgmt.compute.v2019_07_01.models.ManagedArtifact
-    """
-
-    _validation = {
-        'managed_image': {'required': True},
-    }
-
-    _attribute_map = {
-        'managed_image': {'key': 'managedImage', 'type': 'ManagedArtifact'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryArtifactSource, self).__init__(**kwargs)
-        self.managed_image = kwargs.get('managed_image', None)
-
-
-class GalleryArtifactVersionSource(Model):
-    """The gallery artifact version source.
-
-    :param id: The id of the gallery artifact version source. Can specify a
-     disk uri, snapshot uri, or user image.
-    :type id: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryArtifactVersionSource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-
-
-class GalleryDiskImage(Model):
-    """This is the disk image base class.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar size_in_gb: This property indicates the size of the VHD to be
-     created.
-    :vartype size_in_gb: int
-    :param host_caching: The host caching of the disk. Valid values are
-     'None', 'ReadOnly', and 'ReadWrite'. Possible values include: 'None',
-     'ReadOnly', 'ReadWrite'
-    :type host_caching: str or
-     ~azure.mgmt.compute.v2019_07_01.models.HostCaching
-    :param source:
-    :type source:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryArtifactVersionSource
-    """
-
-    _validation = {
-        'size_in_gb': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'size_in_gb': {'key': 'sizeInGB', 'type': 'int'},
-        'host_caching': {'key': 'hostCaching', 'type': 'HostCaching'},
-        'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryDiskImage, self).__init__(**kwargs)
-        self.size_in_gb = None
-        self.host_caching = kwargs.get('host_caching', None)
-        self.source = kwargs.get('source', None)
-
-
-class GalleryDataDiskImage(GalleryDiskImage):
-    """This is the data disk image.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar size_in_gb: This property indicates the size of the VHD to be
-     created.
-    :vartype size_in_gb: int
-    :param host_caching: The host caching of the disk. Valid values are
-     'None', 'ReadOnly', and 'ReadWrite'. Possible values include: 'None',
-     'ReadOnly', 'ReadWrite'
-    :type host_caching: str or
-     ~azure.mgmt.compute.v2019_07_01.models.HostCaching
-    :param source:
-    :type source:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryArtifactVersionSource
-    :param lun: Required. This property specifies the logical unit number of
-     the data disk. This value is used to identify data disks within the
-     Virtual Machine and therefore must be unique for each data disk attached
-     to the Virtual Machine.
-    :type lun: int
-    """
-
-    _validation = {
-        'size_in_gb': {'readonly': True},
-        'lun': {'required': True},
-    }
-
-    _attribute_map = {
-        'size_in_gb': {'key': 'sizeInGB', 'type': 'int'},
-        'host_caching': {'key': 'hostCaching', 'type': 'HostCaching'},
-        'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
-        'lun': {'key': 'lun', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryDataDiskImage, self).__init__(**kwargs)
-        self.lun = kwargs.get('lun', None)
-
-
-class GalleryIdentifier(Model):
-    """Describes the gallery unique name.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar unique_name: The unique name of the Shared Image Gallery. This name
-     is generated automatically by Azure.
-    :vartype unique_name: str
-    """
-
-    _validation = {
-        'unique_name': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'unique_name': {'key': 'uniqueName', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryIdentifier, self).__init__(**kwargs)
-        self.unique_name = None
-
-
-class GalleryImage(Resource):
-    """Specifies information about the gallery Image Definition that you want to
-    create or update.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param description: The description of this gallery Image Definition
-     resource. This property is updatable.
-    :type description: str
-    :param eula: The Eula agreement for the gallery Image Definition.
-    :type eula: str
-    :param privacy_statement_uri: The privacy statement uri.
-    :type privacy_statement_uri: str
-    :param release_note_uri: The release note uri.
-    :type release_note_uri: str
-    :param os_type: Required. This property allows you to specify the type of
-     the OS that is included in the disk when creating a VM from a managed
-     image. <br><br> Possible values are: <br><br> **Windows** <br><br>
-     **Linux**. Possible values include: 'Windows', 'Linux'
-    :type os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
-    :param os_state: Required. This property allows the user to specify
-     whether the virtual machines created under this image are 'Generalized' or
-     'Specialized'. Possible values include: 'Generalized', 'Specialized'
-    :type os_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemStateTypes
-    :param hyper_vgeneration: The hypervisor generation of the Virtual
-     Machine. Applicable to OS disks only. Possible values include: 'V1', 'V2'
-    :type hyper_vgeneration: str or
-     ~azure.mgmt.compute.v2019_07_01.models.HyperVGeneration
-    :param end_of_life_date: The end of life date of the gallery Image
-     Definition. This property can be used for decommissioning purposes. This
-     property is updatable.
-    :type end_of_life_date: datetime
-    :param identifier: Required.
-    :type identifier:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryImageIdentifier
-    :param recommended:
-    :type recommended:
-     ~azure.mgmt.compute.v2019_07_01.models.RecommendedMachineConfiguration
-    :param disallowed:
-    :type disallowed: ~azure.mgmt.compute.v2019_07_01.models.Disallowed
-    :param purchase_plan:
-    :type purchase_plan:
-     ~azure.mgmt.compute.v2019_07_01.models.ImagePurchasePlan
-    :ivar provisioning_state: The current state of the gallery Image
-     Definition. The provisioning state, which only appears in the response.
-     Possible values include: 'Creating', 'Updating', 'Failed', 'Succeeded',
-     'Deleting', 'Migrating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.enum
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'os_type': {'required': True},
-        'os_state': {'required': True},
-        'identifier': {'required': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
-        'os_state': {'key': 'properties.osState', 'type': 'OperatingSystemStateTypes'},
-        'hyper_vgeneration': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
-        'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
-        'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryImage, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.eula = kwargs.get('eula', None)
-        self.privacy_statement_uri = kwargs.get('privacy_statement_uri', None)
-        self.release_note_uri = kwargs.get('release_note_uri', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.os_state = kwargs.get('os_state', None)
-        self.hyper_vgeneration = kwargs.get('hyper_vgeneration', None)
-        self.end_of_life_date = kwargs.get('end_of_life_date', None)
-        self.identifier = kwargs.get('identifier', None)
-        self.recommended = kwargs.get('recommended', None)
-        self.disallowed = kwargs.get('disallowed', None)
-        self.purchase_plan = kwargs.get('purchase_plan', None)
-        self.provisioning_state = None
-
-
-class GalleryImageIdentifier(Model):
-    """This is the gallery Image Definition identifier.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param publisher: Required. The name of the gallery Image Definition
-     publisher.
-    :type publisher: str
-    :param offer: Required. The name of the gallery Image Definition offer.
-    :type offer: str
-    :param sku: Required. The name of the gallery Image Definition SKU.
-    :type sku: str
-    """
-
-    _validation = {
-        'publisher': {'required': True},
-        'offer': {'required': True},
-        'sku': {'required': True},
-    }
-
-    _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryImageIdentifier, self).__init__(**kwargs)
-        self.publisher = kwargs.get('publisher', None)
-        self.offer = kwargs.get('offer', None)
-        self.sku = kwargs.get('sku', None)
-
-
-class GalleryImageUpdate(UpdateResource):
-    """Specifies information about the gallery Image Definition that you want to
-    update.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param description: The description of this gallery Image Definition
-     resource. This property is updatable.
-    :type description: str
-    :param eula: The Eula agreement for the gallery Image Definition.
-    :type eula: str
-    :param privacy_statement_uri: The privacy statement uri.
-    :type privacy_statement_uri: str
-    :param release_note_uri: The release note uri.
-    :type release_note_uri: str
-    :param os_type: Required. This property allows you to specify the type of
-     the OS that is included in the disk when creating a VM from a managed
-     image. <br><br> Possible values are: <br><br> **Windows** <br><br>
-     **Linux**. Possible values include: 'Windows', 'Linux'
-    :type os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
-    :param os_state: Required. This property allows the user to specify
-     whether the virtual machines created under this image are 'Generalized' or
-     'Specialized'. Possible values include: 'Generalized', 'Specialized'
-    :type os_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemStateTypes
-    :param hyper_vgeneration: The hypervisor generation of the Virtual
-     Machine. Applicable to OS disks only. Possible values include: 'V1', 'V2'
-    :type hyper_vgeneration: str or
-     ~azure.mgmt.compute.v2019_07_01.models.HyperVGeneration
-    :param end_of_life_date: The end of life date of the gallery Image
-     Definition. This property can be used for decommissioning purposes. This
-     property is updatable.
-    :type end_of_life_date: datetime
-    :param identifier: Required.
-    :type identifier:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryImageIdentifier
-    :param recommended:
-    :type recommended:
-     ~azure.mgmt.compute.v2019_07_01.models.RecommendedMachineConfiguration
-    :param disallowed:
-    :type disallowed: ~azure.mgmt.compute.v2019_07_01.models.Disallowed
-    :param purchase_plan:
-    :type purchase_plan:
-     ~azure.mgmt.compute.v2019_07_01.models.ImagePurchasePlan
-    :ivar provisioning_state: The current state of the gallery Image
-     Definition. The provisioning state, which only appears in the response.
-     Possible values include: 'Creating', 'Updating', 'Failed', 'Succeeded',
-     'Deleting', 'Migrating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.enum
-    """
-
-    _validation = {
-        'os_type': {'required': True},
-        'os_state': {'required': True},
-        'identifier': {'required': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'eula': {'key': 'properties.eula', 'type': 'str'},
-        'privacy_statement_uri': {'key': 'properties.privacyStatementUri', 'type': 'str'},
-        'release_note_uri': {'key': 'properties.releaseNoteUri', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
-        'os_state': {'key': 'properties.osState', 'type': 'OperatingSystemStateTypes'},
-        'hyper_vgeneration': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'end_of_life_date': {'key': 'properties.endOfLifeDate', 'type': 'iso-8601'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryImageIdentifier'},
-        'recommended': {'key': 'properties.recommended', 'type': 'RecommendedMachineConfiguration'},
-        'disallowed': {'key': 'properties.disallowed', 'type': 'Disallowed'},
-        'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryImageUpdate, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.eula = kwargs.get('eula', None)
-        self.privacy_statement_uri = kwargs.get('privacy_statement_uri', None)
-        self.release_note_uri = kwargs.get('release_note_uri', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.os_state = kwargs.get('os_state', None)
-        self.hyper_vgeneration = kwargs.get('hyper_vgeneration', None)
-        self.end_of_life_date = kwargs.get('end_of_life_date', None)
-        self.identifier = kwargs.get('identifier', None)
-        self.recommended = kwargs.get('recommended', None)
-        self.disallowed = kwargs.get('disallowed', None)
-        self.purchase_plan = kwargs.get('purchase_plan', None)
-        self.provisioning_state = None
-
-
-class GalleryImageVersion(Resource):
-    """Specifies information about the gallery Image Version that you want to
-    create or update.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param publishing_profile:
-    :type publishing_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersionPublishingProfile
-    :ivar provisioning_state: The current state of the gallery Image Version.
-     The provisioning state, which only appears in the response. Possible
-     values include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
-     'Migrating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.enum
-    :param storage_profile: Required.
-    :type storage_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersionStorageProfile
-    :ivar replication_status:
-    :vartype replication_status:
-     ~azure.mgmt.compute.v2019_07_01.models.ReplicationStatus
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'storage_profile': {'required': True},
-        'replication_status': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryImageVersion, self).__init__(**kwargs)
-        self.publishing_profile = kwargs.get('publishing_profile', None)
-        self.provisioning_state = None
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.replication_status = None
-
-
-class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
-    """The publishing profile of a gallery Image Version.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param target_regions: The target regions where the Image Version is going
-     to be replicated to. This property is updatable.
-    :type target_regions:
-     list[~azure.mgmt.compute.v2019_07_01.models.TargetRegion]
-    :param replica_count: The number of replicas of the Image Version to be
-     created per region. This property would take effect for a region when
-     regionalReplicaCount is not specified. This property is updatable.
-    :type replica_count: int
-    :param exclude_from_latest: If set to true, Virtual Machines deployed from
-     the latest version of the Image Definition won't use this Image Version.
-    :type exclude_from_latest: bool
-    :ivar published_date: The timestamp for when the gallery Image Version is
-     published.
-    :vartype published_date: datetime
-    :param end_of_life_date: The end of life date of the gallery Image
-     Version. This property can be used for decommissioning purposes. This
-     property is updatable.
-    :type end_of_life_date: datetime
-    :param storage_account_type: Specifies the storage account type to be used
-     to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
-    :type storage_account_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.StorageAccountType
-    """
-
-    _validation = {
-        'published_date': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'target_regions': {'key': 'targetRegions', 'type': '[TargetRegion]'},
-        'replica_count': {'key': 'replicaCount', 'type': 'int'},
-        'exclude_from_latest': {'key': 'excludeFromLatest', 'type': 'bool'},
-        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
-        'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryImageVersionPublishingProfile, self).__init__(**kwargs)
-
-
-class GalleryImageVersionStorageProfile(Model):
-    """This is the storage profile of a Gallery Image Version.
-
-    :param source:
-    :type source:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryArtifactVersionSource
-    :param os_disk_image:
-    :type os_disk_image:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryOSDiskImage
-    :param data_disk_images: A list of data disk images.
-    :type data_disk_images:
-     list[~azure.mgmt.compute.v2019_07_01.models.GalleryDataDiskImage]
-    """
-
-    _attribute_map = {
-        'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
-        'os_disk_image': {'key': 'osDiskImage', 'type': 'GalleryOSDiskImage'},
-        'data_disk_images': {'key': 'dataDiskImages', 'type': '[GalleryDataDiskImage]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryImageVersionStorageProfile, self).__init__(**kwargs)
-        self.source = kwargs.get('source', None)
-        self.os_disk_image = kwargs.get('os_disk_image', None)
-        self.data_disk_images = kwargs.get('data_disk_images', None)
-
-
-class GalleryImageVersionUpdate(UpdateResource):
-    """Specifies information about the gallery Image Version that you want to
-    update.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param publishing_profile:
-    :type publishing_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersionPublishingProfile
-    :ivar provisioning_state: The current state of the gallery Image Version.
-     The provisioning state, which only appears in the response. Possible
-     values include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
-     'Migrating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.enum
-    :param storage_profile: Required.
-    :type storage_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersionStorageProfile
-    :ivar replication_status:
-    :vartype replication_status:
-     ~azure.mgmt.compute.v2019_07_01.models.ReplicationStatus
-    """
-
-    _validation = {
-        'provisioning_state': {'readonly': True},
-        'storage_profile': {'required': True},
-        'replication_status': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'publishing_profile': {'key': 'properties.publishingProfile', 'type': 'GalleryImageVersionPublishingProfile'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'GalleryImageVersionStorageProfile'},
-        'replication_status': {'key': 'properties.replicationStatus', 'type': 'ReplicationStatus'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryImageVersionUpdate, self).__init__(**kwargs)
-        self.publishing_profile = kwargs.get('publishing_profile', None)
-        self.provisioning_state = None
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.replication_status = None
-
-
-class GalleryOSDiskImage(GalleryDiskImage):
-    """This is the OS disk image.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar size_in_gb: This property indicates the size of the VHD to be
-     created.
-    :vartype size_in_gb: int
-    :param host_caching: The host caching of the disk. Valid values are
-     'None', 'ReadOnly', and 'ReadWrite'. Possible values include: 'None',
-     'ReadOnly', 'ReadWrite'
-    :type host_caching: str or
-     ~azure.mgmt.compute.v2019_07_01.models.HostCaching
-    :param source:
-    :type source:
-     ~azure.mgmt.compute.v2019_07_01.models.GalleryArtifactVersionSource
-    """
-
-    _validation = {
-        'size_in_gb': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'size_in_gb': {'key': 'sizeInGB', 'type': 'int'},
-        'host_caching': {'key': 'hostCaching', 'type': 'HostCaching'},
-        'source': {'key': 'source', 'type': 'GalleryArtifactVersionSource'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryOSDiskImage, self).__init__(**kwargs)
-
-
-class GalleryUpdate(UpdateResource):
-    """Specifies information about the Shared Image Gallery that you want to
-    update.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param description: The description of this Shared Image Gallery resource.
-     This property is updatable.
-    :type description: str
-    :param identifier:
-    :type identifier: ~azure.mgmt.compute.v2019_07_01.models.GalleryIdentifier
-    :ivar provisioning_state: The current state of the gallery. The
-     provisioning state, which only appears in the response. Possible values
-     include: 'Creating', 'Updating', 'Failed', 'Succeeded', 'Deleting',
-     'Migrating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.enum
-    """
-
-    _validation = {
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'identifier': {'key': 'properties.identifier', 'type': 'GalleryIdentifier'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GalleryUpdate, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
-        self.identifier = kwargs.get('identifier', None)
-        self.provisioning_state = None
-
-
-class GrantAccessData(Model):
-    """Data used for requesting a SAS.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param access: Required. Possible values include: 'None', 'Read', 'Write'
-    :type access: str or ~azure.mgmt.compute.v2019_07_01.models.AccessLevel
-    :param duration_in_seconds: Required. Time duration in seconds until the
-     SAS access expires.
-    :type duration_in_seconds: int
-    """
-
-    _validation = {
-        'access': {'required': True},
-        'duration_in_seconds': {'required': True},
-    }
-
-    _attribute_map = {
-        'access': {'key': 'access', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(GrantAccessData, self).__init__(**kwargs)
-        self.access = kwargs.get('access', None)
-        self.duration_in_seconds = kwargs.get('duration_in_seconds', None)
+        self.name = name
+        self.encryption_settings = encryption_settings
+        self.statuses = statuses
 
 
 class HardwareProfile(Model):
@@ -2882,16 +1381,16 @@ class HardwareProfile(Model):
      'Standard_ND12s', 'Standard_ND24s', 'Standard_ND24rs', 'Standard_NV6',
      'Standard_NV12', 'Standard_NV24'
     :type vm_size: str or
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineSizeTypes
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineSizeTypes
     """
 
     _attribute_map = {
         'vm_size': {'key': 'vmSize', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, vm_size=None, **kwargs) -> None:
         super(HardwareProfile, self).__init__(**kwargs)
-        self.vm_size = kwargs.get('vm_size', None)
+        self.vm_size = vm_size
 
 
 class Image(Resource):
@@ -2917,17 +1416,17 @@ class Image(Resource):
     :param source_virtual_machine: The source virtual machine from which Image
      is created.
     :type source_virtual_machine:
-     ~azure.mgmt.compute.v2019_07_01.models.SubResource
+     ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param storage_profile: Specifies the storage settings for the virtual
      machine disks.
     :type storage_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.ImageStorageProfile
+     ~azure.mgmt.compute.v2020_06_01.models.ImageStorageProfile
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
     :param hyper_vgeneration: Gets the HyperVGenerationType of the
      VirtualMachine created from the image. Possible values include: 'V1', 'V2'
     :type hyper_vgeneration: str or
-     ~azure.mgmt.compute.v2019_07_01.models.HyperVGenerationTypes
+     ~azure.mgmt.compute.v2020_06_01.models.HyperVGenerationTypes
     """
 
     _validation = {
@@ -2950,28 +1449,28 @@ class Image(Resource):
         'hyper_vgeneration': {'key': 'properties.hyperVGeneration', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Image, self).__init__(**kwargs)
-        self.source_virtual_machine = kwargs.get('source_virtual_machine', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
+    def __init__(self, *, location: str, tags=None, source_virtual_machine=None, storage_profile=None, hyper_vgeneration=None, **kwargs) -> None:
+        super(Image, self).__init__(location=location, tags=tags, **kwargs)
+        self.source_virtual_machine = source_virtual_machine
+        self.storage_profile = storage_profile
         self.provisioning_state = None
-        self.hyper_vgeneration = kwargs.get('hyper_vgeneration', None)
+        self.hyper_vgeneration = hyper_vgeneration
 
 
 class ImageDisk(Model):
     """Describes a image disk.
 
     :param snapshot: The snapshot.
-    :type snapshot: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type snapshot: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param managed_disk: The managedDisk.
-    :type managed_disk: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type managed_disk: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param blob_uri: The Virtual Hard Disk.
     :type blob_uri: str
     :param caching: Specifies the caching requirements. <br><br> Possible
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
-    :type caching: str or ~azure.mgmt.compute.v2019_07_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
     :param disk_size_gb: Specifies the size of empty data disks in gigabytes.
      This element can be used to overwrite the name of the disk in a virtual
      machine image. <br><br> This value cannot be larger than 1023 GB
@@ -2981,11 +1480,11 @@ class ImageDisk(Model):
      cannot be used with OS Disk. Possible values include: 'Standard_LRS',
      'Premium_LRS', 'StandardSSD_LRS', 'UltraSSD_LRS'
     :type storage_account_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.StorageAccountTypes
+     ~azure.mgmt.compute.v2020_06_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption
      set resource id for the managed image disk.
     :type disk_encryption_set:
-     ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetParameters
+     ~azure.mgmt.compute.v2020_06_01.models.DiskEncryptionSetParameters
     """
 
     _attribute_map = {
@@ -2998,15 +1497,15 @@ class ImageDisk(Model):
         'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, snapshot=None, managed_disk=None, blob_uri: str=None, caching=None, disk_size_gb: int=None, storage_account_type=None, disk_encryption_set=None, **kwargs) -> None:
         super(ImageDisk, self).__init__(**kwargs)
-        self.snapshot = kwargs.get('snapshot', None)
-        self.managed_disk = kwargs.get('managed_disk', None)
-        self.blob_uri = kwargs.get('blob_uri', None)
-        self.caching = kwargs.get('caching', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.storage_account_type = kwargs.get('storage_account_type', None)
-        self.disk_encryption_set = kwargs.get('disk_encryption_set', None)
+        self.snapshot = snapshot
+        self.managed_disk = managed_disk
+        self.blob_uri = blob_uri
+        self.caching = caching
+        self.disk_size_gb = disk_size_gb
+        self.storage_account_type = storage_account_type
+        self.disk_encryption_set = disk_encryption_set
 
 
 class ImageDataDisk(ImageDisk):
@@ -3015,16 +1514,16 @@ class ImageDataDisk(ImageDisk):
     All required parameters must be populated in order to send to Azure.
 
     :param snapshot: The snapshot.
-    :type snapshot: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type snapshot: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param managed_disk: The managedDisk.
-    :type managed_disk: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type managed_disk: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param blob_uri: The Virtual Hard Disk.
     :type blob_uri: str
     :param caching: Specifies the caching requirements. <br><br> Possible
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
-    :type caching: str or ~azure.mgmt.compute.v2019_07_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
     :param disk_size_gb: Specifies the size of empty data disks in gigabytes.
      This element can be used to overwrite the name of the disk in a virtual
      machine image. <br><br> This value cannot be larger than 1023 GB
@@ -3034,11 +1533,11 @@ class ImageDataDisk(ImageDisk):
      cannot be used with OS Disk. Possible values include: 'Standard_LRS',
      'Premium_LRS', 'StandardSSD_LRS', 'UltraSSD_LRS'
     :type storage_account_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.StorageAccountTypes
+     ~azure.mgmt.compute.v2020_06_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption
      set resource id for the managed image disk.
     :type disk_encryption_set:
-     ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetParameters
+     ~azure.mgmt.compute.v2020_06_01.models.DiskEncryptionSetParameters
     :param lun: Required. Specifies the logical unit number of the data disk.
      This value is used to identify data disks within the VM and therefore must
      be unique for each data disk attached to a VM.
@@ -3060,38 +1559,9 @@ class ImageDataDisk(ImageDisk):
         'lun': {'key': 'lun', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
-        super(ImageDataDisk, self).__init__(**kwargs)
-        self.lun = kwargs.get('lun', None)
-
-
-class ImageDiskReference(Model):
-    """The source image used for creating the disk.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. A relative uri containing either a Platform Image
-     Repository or user image reference.
-    :type id: str
-    :param lun: If the disk is created from an image's data disk, this is an
-     index that indicates which of the data disks in the image to use. For OS
-     disks, this field is null.
-    :type lun: int
-    """
-
-    _validation = {
-        'id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'lun': {'key': 'lun', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ImageDiskReference, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.lun = kwargs.get('lun', None)
+    def __init__(self, *, lun: int, snapshot=None, managed_disk=None, blob_uri: str=None, caching=None, disk_size_gb: int=None, storage_account_type=None, disk_encryption_set=None, **kwargs) -> None:
+        super(ImageDataDisk, self).__init__(snapshot=snapshot, managed_disk=managed_disk, blob_uri=blob_uri, caching=caching, disk_size_gb=disk_size_gb, storage_account_type=storage_account_type, disk_encryption_set=disk_encryption_set, **kwargs)
+        self.lun = lun
 
 
 class ImageOSDisk(ImageDisk):
@@ -3100,16 +1570,16 @@ class ImageOSDisk(ImageDisk):
     All required parameters must be populated in order to send to Azure.
 
     :param snapshot: The snapshot.
-    :type snapshot: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type snapshot: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param managed_disk: The managedDisk.
-    :type managed_disk: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type managed_disk: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param blob_uri: The Virtual Hard Disk.
     :type blob_uri: str
     :param caching: Specifies the caching requirements. <br><br> Possible
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
-    :type caching: str or ~azure.mgmt.compute.v2019_07_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
     :param disk_size_gb: Specifies the size of empty data disks in gigabytes.
      This element can be used to overwrite the name of the disk in a virtual
      machine image. <br><br> This value cannot be larger than 1023 GB
@@ -3119,21 +1589,21 @@ class ImageOSDisk(ImageDisk):
      cannot be used with OS Disk. Possible values include: 'Standard_LRS',
      'Premium_LRS', 'StandardSSD_LRS', 'UltraSSD_LRS'
     :type storage_account_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.StorageAccountTypes
+     ~azure.mgmt.compute.v2020_06_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption
      set resource id for the managed image disk.
     :type disk_encryption_set:
-     ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetParameters
+     ~azure.mgmt.compute.v2020_06_01.models.DiskEncryptionSetParameters
     :param os_type: Required. This property allows you to specify the type of
      the OS that is included in the disk if creating a VM from a custom image.
      <br><br> Possible values are: <br><br> **Windows** <br><br> **Linux**.
      Possible values include: 'Windows', 'Linux'
     :type os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
+     ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemTypes
     :param os_state: Required. The OS State. Possible values include:
      'Generalized', 'Specialized'
     :type os_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemStateTypes
+     ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemStateTypes
     """
 
     _validation = {
@@ -3153,35 +1623,10 @@ class ImageOSDisk(ImageDisk):
         'os_state': {'key': 'osState', 'type': 'OperatingSystemStateTypes'},
     }
 
-    def __init__(self, **kwargs):
-        super(ImageOSDisk, self).__init__(**kwargs)
-        self.os_type = kwargs.get('os_type', None)
-        self.os_state = kwargs.get('os_state', None)
-
-
-class ImagePurchasePlan(Model):
-    """Describes the gallery Image Definition purchase plan. This is used by
-    marketplace images.
-
-    :param name: The plan ID.
-    :type name: str
-    :param publisher: The publisher ID.
-    :type publisher: str
-    :param product: The product ID.
-    :type product: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ImagePurchasePlan, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.product = kwargs.get('product', None)
+    def __init__(self, *, os_type, os_state, snapshot=None, managed_disk=None, blob_uri: str=None, caching=None, disk_size_gb: int=None, storage_account_type=None, disk_encryption_set=None, **kwargs) -> None:
+        super(ImageOSDisk, self).__init__(snapshot=snapshot, managed_disk=managed_disk, blob_uri=blob_uri, caching=caching, disk_size_gb=disk_size_gb, storage_account_type=storage_account_type, disk_encryption_set=disk_encryption_set, **kwargs)
+        self.os_type = os_type
+        self.os_state = os_state
 
 
 class ImageReference(SubResource):
@@ -3232,12 +1677,12 @@ class ImageReference(SubResource):
         'exact_version': {'key': 'exactVersion', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ImageReference, self).__init__(**kwargs)
-        self.publisher = kwargs.get('publisher', None)
-        self.offer = kwargs.get('offer', None)
-        self.sku = kwargs.get('sku', None)
-        self.version = kwargs.get('version', None)
+    def __init__(self, *, id: str=None, publisher: str=None, offer: str=None, sku: str=None, version: str=None, **kwargs) -> None:
+        super(ImageReference, self).__init__(id=id, **kwargs)
+        self.publisher = publisher
+        self.offer = offer
+        self.sku = sku
+        self.version = version
         self.exact_version = None
 
 
@@ -3248,13 +1693,13 @@ class ImageStorageProfile(Model):
      by the virtual machine. <br><br> For more information about disks, see
      [About disks and VHDs for Azure virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
-    :type os_disk: ~azure.mgmt.compute.v2019_07_01.models.ImageOSDisk
+    :type os_disk: ~azure.mgmt.compute.v2020_06_01.models.ImageOSDisk
     :param data_disks: Specifies the parameters that are used to add a data
      disk to a virtual machine. <br><br> For more information about disks, see
      [About disks and VHDs for Azure virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
     :type data_disks:
-     list[~azure.mgmt.compute.v2019_07_01.models.ImageDataDisk]
+     list[~azure.mgmt.compute.v2020_06_01.models.ImageDataDisk]
     :param zone_resilient: Specifies whether an image is zone resilient or
      not. Default is false. Zone resilient images can be created only in
      regions that provide Zone Redundant Storage (ZRS).
@@ -3267,11 +1712,11 @@ class ImageStorageProfile(Model):
         'zone_resilient': {'key': 'zoneResilient', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, os_disk=None, data_disks=None, zone_resilient: bool=None, **kwargs) -> None:
         super(ImageStorageProfile, self).__init__(**kwargs)
-        self.os_disk = kwargs.get('os_disk', None)
-        self.data_disks = kwargs.get('data_disks', None)
-        self.zone_resilient = kwargs.get('zone_resilient', None)
+        self.os_disk = os_disk
+        self.data_disks = data_disks
+        self.zone_resilient = zone_resilient
 
 
 class ImageUpdate(UpdateResource):
@@ -3285,17 +1730,17 @@ class ImageUpdate(UpdateResource):
     :param source_virtual_machine: The source virtual machine from which Image
      is created.
     :type source_virtual_machine:
-     ~azure.mgmt.compute.v2019_07_01.models.SubResource
+     ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param storage_profile: Specifies the storage settings for the virtual
      machine disks.
     :type storage_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.ImageStorageProfile
+     ~azure.mgmt.compute.v2020_06_01.models.ImageStorageProfile
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
     :param hyper_vgeneration: Gets the HyperVGenerationType of the
      VirtualMachine created from the image. Possible values include: 'V1', 'V2'
     :type hyper_vgeneration: str or
-     ~azure.mgmt.compute.v2019_07_01.models.HyperVGenerationTypes
+     ~azure.mgmt.compute.v2020_06_01.models.HyperVGenerationTypes
     """
 
     _validation = {
@@ -3310,12 +1755,12 @@ class ImageUpdate(UpdateResource):
         'hyper_vgeneration': {'key': 'properties.hyperVGeneration', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ImageUpdate, self).__init__(**kwargs)
-        self.source_virtual_machine = kwargs.get('source_virtual_machine', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
+    def __init__(self, *, tags=None, source_virtual_machine=None, storage_profile=None, hyper_vgeneration=None, **kwargs) -> None:
+        super(ImageUpdate, self).__init__(tags=tags, **kwargs)
+        self.source_virtual_machine = source_virtual_machine
+        self.storage_profile = storage_profile
         self.provisioning_state = None
-        self.hyper_vgeneration = kwargs.get('hyper_vgeneration', None)
+        self.hyper_vgeneration = hyper_vgeneration
 
 
 class InnerError(Model):
@@ -3332,10 +1777,10 @@ class InnerError(Model):
         'errordetail': {'key': 'errordetail', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, exceptiontype: str=None, errordetail: str=None, **kwargs) -> None:
         super(InnerError, self).__init__(**kwargs)
-        self.exceptiontype = kwargs.get('exceptiontype', None)
-        self.errordetail = kwargs.get('errordetail', None)
+        self.exceptiontype = exceptiontype
+        self.errordetail = errordetail
 
 
 class InstanceViewStatus(Model):
@@ -3346,7 +1791,7 @@ class InstanceViewStatus(Model):
     :param level: The level code. Possible values include: 'Info', 'Warning',
      'Error'
     :type level: str or
-     ~azure.mgmt.compute.v2019_07_01.models.StatusLevelTypes
+     ~azure.mgmt.compute.v2020_06_01.models.StatusLevelTypes
     :param display_status: The short localizable label for the status.
     :type display_status: str
     :param message: The detailed status message, including for alerts and
@@ -3364,70 +1809,13 @@ class InstanceViewStatus(Model):
         'time': {'key': 'time', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, code: str=None, level=None, display_status: str=None, message: str=None, time=None, **kwargs) -> None:
         super(InstanceViewStatus, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.level = kwargs.get('level', None)
-        self.display_status = kwargs.get('display_status', None)
-        self.message = kwargs.get('message', None)
-        self.time = kwargs.get('time', None)
-
-
-class KeyVaultAndKeyReference(Model):
-    """Key Vault Key Url and vault id of KeK, KeK is optional and when provided is
-    used to unwrap the encryptionKey.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param source_vault: Required. Resource id of the KeyVault containing the
-     key or secret
-    :type source_vault: ~azure.mgmt.compute.v2019_07_01.models.SourceVault
-    :param key_url: Required. Url pointing to a key or secret in KeyVault
-    :type key_url: str
-    """
-
-    _validation = {
-        'source_vault': {'required': True},
-        'key_url': {'required': True},
-    }
-
-    _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SourceVault'},
-        'key_url': {'key': 'keyUrl', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(KeyVaultAndKeyReference, self).__init__(**kwargs)
-        self.source_vault = kwargs.get('source_vault', None)
-        self.key_url = kwargs.get('key_url', None)
-
-
-class KeyVaultAndSecretReference(Model):
-    """Key Vault Secret Url and vault id of the encryption key .
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param source_vault: Required. Resource id of the KeyVault containing the
-     key or secret
-    :type source_vault: ~azure.mgmt.compute.v2019_07_01.models.SourceVault
-    :param secret_url: Required. Url pointing to a key or secret in KeyVault
-    :type secret_url: str
-    """
-
-    _validation = {
-        'source_vault': {'required': True},
-        'secret_url': {'required': True},
-    }
-
-    _attribute_map = {
-        'source_vault': {'key': 'sourceVault', 'type': 'SourceVault'},
-        'secret_url': {'key': 'secretUrl', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(KeyVaultAndSecretReference, self).__init__(**kwargs)
-        self.source_vault = kwargs.get('source_vault', None)
-        self.secret_url = kwargs.get('secret_url', None)
+        self.code = code
+        self.level = level
+        self.display_status = display_status
+        self.message = message
+        self.time = time
 
 
 class KeyVaultKeyReference(Model):
@@ -3440,7 +1828,7 @@ class KeyVaultKeyReference(Model):
     :type key_url: str
     :param source_vault: Required. The relative URL of the Key Vault
      containing the key.
-    :type source_vault: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type source_vault: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     """
 
     _validation = {
@@ -3453,10 +1841,10 @@ class KeyVaultKeyReference(Model):
         'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, key_url: str, source_vault, **kwargs) -> None:
         super(KeyVaultKeyReference, self).__init__(**kwargs)
-        self.key_url = kwargs.get('key_url', None)
-        self.source_vault = kwargs.get('source_vault', None)
+        self.key_url = key_url
+        self.source_vault = source_vault
 
 
 class KeyVaultSecretReference(Model):
@@ -3468,7 +1856,7 @@ class KeyVaultSecretReference(Model):
     :type secret_url: str
     :param source_vault: Required. The relative URL of the Key Vault
      containing the secret.
-    :type source_vault: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type source_vault: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     """
 
     _validation = {
@@ -3481,10 +1869,10 @@ class KeyVaultSecretReference(Model):
         'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, secret_url: str, source_vault, **kwargs) -> None:
         super(KeyVaultSecretReference, self).__init__(**kwargs)
-        self.secret_url = kwargs.get('secret_url', None)
-        self.source_vault = kwargs.get('source_vault', None)
+        self.secret_url = secret_url
+        self.source_vault = source_vault
 
 
 class LinuxConfiguration(Model):
@@ -3500,7 +1888,7 @@ class LinuxConfiguration(Model):
      authentication should be disabled.
     :type disable_password_authentication: bool
     :param ssh: Specifies the ssh key configuration for a Linux OS.
-    :type ssh: ~azure.mgmt.compute.v2019_07_01.models.SshConfiguration
+    :type ssh: ~azure.mgmt.compute.v2020_06_01.models.SshConfiguration
     :param provision_vm_agent: Indicates whether virtual machine agent should
      be provisioned on the virtual machine. <br><br> When this property is not
      specified in the request body, default behavior is to set it to true.
@@ -3515,11 +1903,11 @@ class LinuxConfiguration(Model):
         'provision_vm_agent': {'key': 'provisionVMAgent', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, disable_password_authentication: bool=None, ssh=None, provision_vm_agent: bool=None, **kwargs) -> None:
         super(LinuxConfiguration, self).__init__(**kwargs)
-        self.disable_password_authentication = kwargs.get('disable_password_authentication', None)
-        self.ssh = kwargs.get('ssh', None)
-        self.provision_vm_agent = kwargs.get('provision_vm_agent', None)
+        self.disable_password_authentication = disable_password_authentication
+        self.ssh = ssh
+        self.provision_vm_agent = provision_vm_agent
 
 
 class LogAnalyticsInputBase(Model):
@@ -3558,14 +1946,14 @@ class LogAnalyticsInputBase(Model):
         'group_by_resource_name': {'key': 'groupByResourceName', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, blob_container_sas_uri: str, from_time, to_time, group_by_throttle_policy: bool=None, group_by_operation_name: bool=None, group_by_resource_name: bool=None, **kwargs) -> None:
         super(LogAnalyticsInputBase, self).__init__(**kwargs)
-        self.blob_container_sas_uri = kwargs.get('blob_container_sas_uri', None)
-        self.from_time = kwargs.get('from_time', None)
-        self.to_time = kwargs.get('to_time', None)
-        self.group_by_throttle_policy = kwargs.get('group_by_throttle_policy', None)
-        self.group_by_operation_name = kwargs.get('group_by_operation_name', None)
-        self.group_by_resource_name = kwargs.get('group_by_resource_name', None)
+        self.blob_container_sas_uri = blob_container_sas_uri
+        self.from_time = from_time
+        self.to_time = to_time
+        self.group_by_throttle_policy = group_by_throttle_policy
+        self.group_by_operation_name = group_by_operation_name
+        self.group_by_resource_name = group_by_resource_name
 
 
 class LogAnalyticsOperationResult(Model):
@@ -3576,7 +1964,7 @@ class LogAnalyticsOperationResult(Model):
 
     :ivar properties: LogAnalyticsOutput
     :vartype properties:
-     ~azure.mgmt.compute.v2019_07_01.models.LogAnalyticsOutput
+     ~azure.mgmt.compute.v2020_06_01.models.LogAnalyticsOutput
     """
 
     _validation = {
@@ -3587,7 +1975,7 @@ class LogAnalyticsOperationResult(Model):
         'properties': {'key': 'properties', 'type': 'LogAnalyticsOutput'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(LogAnalyticsOperationResult, self).__init__(**kwargs)
         self.properties = None
 
@@ -3610,7 +1998,7 @@ class LogAnalyticsOutput(Model):
         'output': {'key': 'output', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(LogAnalyticsOutput, self).__init__(**kwargs)
         self.output = None
 
@@ -3636,7 +2024,7 @@ class MaintenanceRedeployStatus(Model):
      Code. Possible values include: 'None', 'RetryLater', 'MaintenanceAborted',
      'MaintenanceCompleted'
     :type last_operation_result_code: str or
-     ~azure.mgmt.compute.v2019_07_01.models.MaintenanceOperationResultCodeTypes
+     ~azure.mgmt.compute.v2020_06_01.models.MaintenanceOperationResultCodeTypes
     :param last_operation_message: Message returned for the last Maintenance
      Operation.
     :type last_operation_message: str
@@ -3652,37 +2040,15 @@ class MaintenanceRedeployStatus(Model):
         'last_operation_message': {'key': 'lastOperationMessage', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, is_customer_initiated_maintenance_allowed: bool=None, pre_maintenance_window_start_time=None, pre_maintenance_window_end_time=None, maintenance_window_start_time=None, maintenance_window_end_time=None, last_operation_result_code=None, last_operation_message: str=None, **kwargs) -> None:
         super(MaintenanceRedeployStatus, self).__init__(**kwargs)
-        self.is_customer_initiated_maintenance_allowed = kwargs.get('is_customer_initiated_maintenance_allowed', None)
-        self.pre_maintenance_window_start_time = kwargs.get('pre_maintenance_window_start_time', None)
-        self.pre_maintenance_window_end_time = kwargs.get('pre_maintenance_window_end_time', None)
-        self.maintenance_window_start_time = kwargs.get('maintenance_window_start_time', None)
-        self.maintenance_window_end_time = kwargs.get('maintenance_window_end_time', None)
-        self.last_operation_result_code = kwargs.get('last_operation_result_code', None)
-        self.last_operation_message = kwargs.get('last_operation_message', None)
-
-
-class ManagedArtifact(Model):
-    """The managed artifact.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. The managed artifact id.
-    :type id: str
-    """
-
-    _validation = {
-        'id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ManagedArtifact, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.is_customer_initiated_maintenance_allowed = is_customer_initiated_maintenance_allowed
+        self.pre_maintenance_window_start_time = pre_maintenance_window_start_time
+        self.pre_maintenance_window_end_time = pre_maintenance_window_end_time
+        self.maintenance_window_start_time = maintenance_window_start_time
+        self.maintenance_window_end_time = maintenance_window_end_time
+        self.last_operation_result_code = last_operation_result_code
+        self.last_operation_message = last_operation_message
 
 
 class ManagedDiskParameters(SubResource):
@@ -3695,11 +2061,11 @@ class ManagedDiskParameters(SubResource):
      cannot be used with OS Disk. Possible values include: 'Standard_LRS',
      'Premium_LRS', 'StandardSSD_LRS', 'UltraSSD_LRS'
     :type storage_account_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.StorageAccountTypes
+     ~azure.mgmt.compute.v2020_06_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption
      set resource id for the managed disk.
     :type disk_encryption_set:
-     ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetParameters
+     ~azure.mgmt.compute.v2020_06_01.models.DiskEncryptionSetParameters
     """
 
     _attribute_map = {
@@ -3708,10 +2074,10 @@ class ManagedDiskParameters(SubResource):
         'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
     }
 
-    def __init__(self, **kwargs):
-        super(ManagedDiskParameters, self).__init__(**kwargs)
-        self.storage_account_type = kwargs.get('storage_account_type', None)
-        self.disk_encryption_set = kwargs.get('disk_encryption_set', None)
+    def __init__(self, *, id: str=None, storage_account_type=None, disk_encryption_set=None, **kwargs) -> None:
+        super(ManagedDiskParameters, self).__init__(id=id, **kwargs)
+        self.storage_account_type = storage_account_type
+        self.disk_encryption_set = disk_encryption_set
 
 
 class NetworkInterfaceReference(SubResource):
@@ -3729,9 +2095,9 @@ class NetworkInterfaceReference(SubResource):
         'primary': {'key': 'properties.primary', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(NetworkInterfaceReference, self).__init__(**kwargs)
-        self.primary = kwargs.get('primary', None)
+    def __init__(self, *, id: str=None, primary: bool=None, **kwargs) -> None:
+        super(NetworkInterfaceReference, self).__init__(id=id, **kwargs)
+        self.primary = primary
 
 
 class NetworkProfile(Model):
@@ -3740,16 +2106,82 @@ class NetworkProfile(Model):
     :param network_interfaces: Specifies the list of resource Ids for the
      network interfaces associated with the virtual machine.
     :type network_interfaces:
-     list[~azure.mgmt.compute.v2019_07_01.models.NetworkInterfaceReference]
+     list[~azure.mgmt.compute.v2020_06_01.models.NetworkInterfaceReference]
     """
 
     _attribute_map = {
         'network_interfaces': {'key': 'networkInterfaces', 'type': '[NetworkInterfaceReference]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, network_interfaces=None, **kwargs) -> None:
         super(NetworkProfile, self).__init__(**kwargs)
-        self.network_interfaces = kwargs.get('network_interfaces', None)
+        self.network_interfaces = network_interfaces
+
+
+class OrchestrationServiceStateInput(Model):
+    """The input for OrchestrationServiceState.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar service_name: Required. The name of the service. Default value:
+     "AutomaticRepairs" .
+    :vartype service_name: str
+    :param action: Required. The action to be performed. Possible values
+     include: 'Resume', 'Suspend'
+    :type action: str or
+     ~azure.mgmt.compute.v2020_06_01.models.OrchestrationServiceStateAction
+    """
+
+    _validation = {
+        'service_name': {'required': True, 'constant': True},
+        'action': {'required': True},
+    }
+
+    _attribute_map = {
+        'service_name': {'key': 'serviceName', 'type': 'str'},
+        'action': {'key': 'action', 'type': 'str'},
+    }
+
+    service_name = "AutomaticRepairs"
+
+    def __init__(self, *, action, **kwargs) -> None:
+        super(OrchestrationServiceStateInput, self).__init__(**kwargs)
+        self.action = action
+
+
+class OrchestrationServiceSummary(Model):
+    """Summary for an orchestration service of a virtual machine scale set.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar service_name: The name of the service. Possible values include:
+     'AutomaticRepairs'
+    :vartype service_name: str or
+     ~azure.mgmt.compute.v2020_06_01.models.OrchestrationServiceNames
+    :ivar service_state: The current state of the service. Possible values
+     include: 'NotRunning', 'Running', 'Suspended'
+    :vartype service_state: str or
+     ~azure.mgmt.compute.v2020_06_01.models.OrchestrationServiceState
+    """
+
+    _validation = {
+        'service_name': {'readonly': True},
+        'service_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'service_name': {'key': 'serviceName', 'type': 'str'},
+        'service_state': {'key': 'serviceState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(OrchestrationServiceSummary, self).__init__(**kwargs)
+        self.service_name = None
+        self.service_state = None
 
 
 class OSDisk(Model):
@@ -3765,32 +2197,32 @@ class OSDisk(Model):
      specialized VHD. <br><br> Possible values are: <br><br> **Windows**
      <br><br> **Linux**. Possible values include: 'Windows', 'Linux'
     :type os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
+     ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemTypes
     :param encryption_settings: Specifies the encryption settings for the OS
      Disk. <br><br> Minimum api-version: 2015-06-15
     :type encryption_settings:
-     ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSettings
+     ~azure.mgmt.compute.v2020_06_01.models.DiskEncryptionSettings
     :param name: The disk name.
     :type name: str
     :param vhd: The virtual hard disk.
-    :type vhd: ~azure.mgmt.compute.v2019_07_01.models.VirtualHardDisk
+    :type vhd: ~azure.mgmt.compute.v2020_06_01.models.VirtualHardDisk
     :param image: The source user image virtual hard disk. The virtual hard
      disk will be copied before being attached to the virtual machine. If
      SourceImage is provided, the destination virtual hard drive must not
      exist.
-    :type image: ~azure.mgmt.compute.v2019_07_01.models.VirtualHardDisk
+    :type image: ~azure.mgmt.compute.v2020_06_01.models.VirtualHardDisk
     :param caching: Specifies the caching requirements. <br><br> Possible
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
-     <br><br> Default: **None for Standard storage. ReadOnly for Premium
-     storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
-    :type caching: str or ~azure.mgmt.compute.v2019_07_01.models.CachingTypes
+     <br><br> Default: **None** for Standard storage. **ReadOnly** for Premium
+     storage. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
+    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
     :type write_accelerator_enabled: bool
     :param diff_disk_settings: Specifies the ephemeral Disk Settings for the
      operating system disk used by the virtual machine.
     :type diff_disk_settings:
-     ~azure.mgmt.compute.v2019_07_01.models.DiffDiskSettings
+     ~azure.mgmt.compute.v2020_06_01.models.DiffDiskSettings
     :param create_option: Required. Specifies how the virtual machine should
      be created.<br><br> Possible values are:<br><br> **Attach** \\u2013 This
      value is used when you are using a specialized disk to create the virtual
@@ -3800,14 +2232,14 @@ class OSDisk(Model):
      using a marketplace image, you  also use the plan element previously
      described. Possible values include: 'FromImage', 'Empty', 'Attach'
     :type create_option: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DiskCreateOptionTypes
+     ~azure.mgmt.compute.v2020_06_01.models.DiskCreateOptionTypes
     :param disk_size_gb: Specifies the size of an empty data disk in
      gigabytes. This element can be used to overwrite the size of the disk in a
      virtual machine image. <br><br> This value cannot be larger than 1023 GB
     :type disk_size_gb: int
     :param managed_disk: The managed disk parameters.
     :type managed_disk:
-     ~azure.mgmt.compute.v2019_07_01.models.ManagedDiskParameters
+     ~azure.mgmt.compute.v2020_06_01.models.ManagedDiskParameters
     """
 
     _validation = {
@@ -3828,19 +2260,19 @@ class OSDisk(Model):
         'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDiskParameters'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, create_option, os_type=None, encryption_settings=None, name: str=None, vhd=None, image=None, caching=None, write_accelerator_enabled: bool=None, diff_disk_settings=None, disk_size_gb: int=None, managed_disk=None, **kwargs) -> None:
         super(OSDisk, self).__init__(**kwargs)
-        self.os_type = kwargs.get('os_type', None)
-        self.encryption_settings = kwargs.get('encryption_settings', None)
-        self.name = kwargs.get('name', None)
-        self.vhd = kwargs.get('vhd', None)
-        self.image = kwargs.get('image', None)
-        self.caching = kwargs.get('caching', None)
-        self.write_accelerator_enabled = kwargs.get('write_accelerator_enabled', None)
-        self.diff_disk_settings = kwargs.get('diff_disk_settings', None)
-        self.create_option = kwargs.get('create_option', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.managed_disk = kwargs.get('managed_disk', None)
+        self.os_type = os_type
+        self.encryption_settings = encryption_settings
+        self.name = name
+        self.vhd = vhd
+        self.image = image
+        self.caching = caching
+        self.write_accelerator_enabled = write_accelerator_enabled
+        self.diff_disk_settings = diff_disk_settings
+        self.create_option = create_option
+        self.disk_size_gb = disk_size_gb
+        self.managed_disk = managed_disk
 
 
 class OSDiskImage(Model):
@@ -3851,7 +2283,7 @@ class OSDiskImage(Model):
     :param operating_system: Required. The operating system of the
      osDiskImage. Possible values include: 'Windows', 'Linux'
     :type operating_system: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
+     ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemTypes
     """
 
     _validation = {
@@ -3862,9 +2294,9 @@ class OSDiskImage(Model):
         'operating_system': {'key': 'operatingSystem', 'type': 'OperatingSystemTypes'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, operating_system, **kwargs) -> None:
         super(OSDiskImage, self).__init__(**kwargs)
-        self.operating_system = kwargs.get('operating_system', None)
+        self.operating_system = operating_system
 
 
 class OSProfile(Model):
@@ -3917,7 +2349,7 @@ class OSProfile(Model):
      customData property** <br><br> This property cannot be updated after the
      VM is created. <br><br> customData is passed to the VM to be saved as a
      file, for more information see [Custom Data on Azure
-     VMs](https://docs.microsoft.com/azure/virtual-machines/custom-data)
+     VMs](https://azure.microsoft.com/en-us/blog/custom-data-and-cloud-init-on-windows-azure/)
      <br><br> For using cloud-init for your Linux VM, see [Using cloud-init to
      customize a Linux VM during
      creation](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json)
@@ -3925,7 +2357,7 @@ class OSProfile(Model):
     :param windows_configuration: Specifies Windows operating system settings
      on the virtual machine.
     :type windows_configuration:
-     ~azure.mgmt.compute.v2019_07_01.models.WindowsConfiguration
+     ~azure.mgmt.compute.v2020_06_01.models.WindowsConfiguration
     :param linux_configuration: Specifies the Linux operating system settings
      on the virtual machine. <br><br>For a list of supported Linux
      distributions, see [Linux on Azure-Endorsed
@@ -3934,11 +2366,11 @@ class OSProfile(Model):
      Non-Endorsed
      Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json).
     :type linux_configuration:
-     ~azure.mgmt.compute.v2019_07_01.models.LinuxConfiguration
+     ~azure.mgmt.compute.v2020_06_01.models.LinuxConfiguration
     :param secrets: Specifies set of certificates that should be installed
      onto the virtual machine.
     :type secrets:
-     list[~azure.mgmt.compute.v2019_07_01.models.VaultSecretGroup]
+     list[~azure.mgmt.compute.v2020_06_01.models.VaultSecretGroup]
     :param allow_extension_operations: Specifies whether extension operations
      should be allowed on the virtual machine. <br><br>This may only be set to
      False when no extensions are present on the virtual machine.
@@ -3961,17 +2393,45 @@ class OSProfile(Model):
         'require_guest_provision_signal': {'key': 'requireGuestProvisionSignal', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, computer_name: str=None, admin_username: str=None, admin_password: str=None, custom_data: str=None, windows_configuration=None, linux_configuration=None, secrets=None, allow_extension_operations: bool=None, require_guest_provision_signal: bool=None, **kwargs) -> None:
         super(OSProfile, self).__init__(**kwargs)
-        self.computer_name = kwargs.get('computer_name', None)
-        self.admin_username = kwargs.get('admin_username', None)
-        self.admin_password = kwargs.get('admin_password', None)
-        self.custom_data = kwargs.get('custom_data', None)
-        self.windows_configuration = kwargs.get('windows_configuration', None)
-        self.linux_configuration = kwargs.get('linux_configuration', None)
-        self.secrets = kwargs.get('secrets', None)
-        self.allow_extension_operations = kwargs.get('allow_extension_operations', None)
-        self.require_guest_provision_signal = kwargs.get('require_guest_provision_signal', None)
+        self.computer_name = computer_name
+        self.admin_username = admin_username
+        self.admin_password = admin_password
+        self.custom_data = custom_data
+        self.windows_configuration = windows_configuration
+        self.linux_configuration = linux_configuration
+        self.secrets = secrets
+        self.allow_extension_operations = allow_extension_operations
+        self.require_guest_provision_signal = require_guest_provision_signal
+
+
+class PatchSettings(Model):
+    """PatchSettings.
+
+    :param patch_mode: Specifies the mode of in-guest patching to IaaS virtual
+     machine.<br /><br /> Possible values are:<br /><br /> **Manual** - You
+     control the application of patches to a virtual machine. You do this by
+     applying patches manually inside the VM. In this mode, automatic updates
+     are disabled; the property WindowsConfiguration.enableAutomaticUpdates
+     must be false<br /><br /> **AutomaticByOS** - The virtual machine will
+     automatically be updated by the OS. The property
+     WindowsConfiguration.enableAutomaticUpdates must be true. <br /><br /> **
+     AutomaticByPlatform** - the virtual machine will automatically updated by
+     the OS. The properties provisionVMAgent and
+     WindowsConfiguration.enableAutomaticUpdates must be true. Possible values
+     include: 'Manual', 'AutomaticByOS', 'AutomaticByPlatform'
+    :type patch_mode: str or
+     ~azure.mgmt.compute.v2020_06_01.models.InGuestPatchMode
+    """
+
+    _attribute_map = {
+        'patch_mode': {'key': 'patchMode', 'type': 'str'},
+    }
+
+    def __init__(self, *, patch_mode=None, **kwargs) -> None:
+        super(PatchSettings, self).__init__(**kwargs)
+        self.patch_mode = patch_mode
 
 
 class Plan(Model):
@@ -4000,12 +2460,12 @@ class Plan(Model):
         'promotion_code': {'key': 'promotionCode', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, publisher: str=None, product: str=None, promotion_code: str=None, **kwargs) -> None:
         super(Plan, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.product = kwargs.get('product', None)
-        self.promotion_code = kwargs.get('promotion_code', None)
+        self.name = name
+        self.publisher = publisher
+        self.product = product
+        self.promotion_code = promotion_code
 
 
 class ProximityPlacementGroup(Resource):
@@ -4031,23 +2491,23 @@ class ProximityPlacementGroup(Resource):
      Co-locate resources within an Azure region or Availability Zone. <br><br>
      **Ultra** : For future use. Possible values include: 'Standard', 'Ultra'
     :type proximity_placement_group_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.ProximityPlacementGroupType
+     ~azure.mgmt.compute.v2020_06_01.models.ProximityPlacementGroupType
     :ivar virtual_machines: A list of references to all virtual machines in
      the proximity placement group.
     :vartype virtual_machines:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResourceWithColocationStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResourceWithColocationStatus]
     :ivar virtual_machine_scale_sets: A list of references to all virtual
      machine scale sets in the proximity placement group.
     :vartype virtual_machine_scale_sets:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResourceWithColocationStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResourceWithColocationStatus]
     :ivar availability_sets: A list of references to all availability sets in
      the proximity placement group.
     :vartype availability_sets:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResourceWithColocationStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResourceWithColocationStatus]
     :param colocation_status: Describes colocation status of the Proximity
      Placement Group.
     :type colocation_status:
-     ~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus
+     ~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus
     """
 
     _validation = {
@@ -4073,13 +2533,13 @@ class ProximityPlacementGroup(Resource):
         'colocation_status': {'key': 'properties.colocationStatus', 'type': 'InstanceViewStatus'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProximityPlacementGroup, self).__init__(**kwargs)
-        self.proximity_placement_group_type = kwargs.get('proximity_placement_group_type', None)
+    def __init__(self, *, location: str, tags=None, proximity_placement_group_type=None, colocation_status=None, **kwargs) -> None:
+        super(ProximityPlacementGroup, self).__init__(location=location, tags=tags, **kwargs)
+        self.proximity_placement_group_type = proximity_placement_group_type
         self.virtual_machines = None
         self.virtual_machine_scale_sets = None
         self.availability_sets = None
-        self.colocation_status = kwargs.get('colocation_status', None)
+        self.colocation_status = colocation_status
 
 
 class ProximityPlacementGroupUpdate(UpdateResource):
@@ -4093,8 +2553,8 @@ class ProximityPlacementGroupUpdate(UpdateResource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(ProximityPlacementGroupUpdate, self).__init__(**kwargs)
+    def __init__(self, *, tags=None, **kwargs) -> None:
+        super(ProximityPlacementGroupUpdate, self).__init__(tags=tags, **kwargs)
 
 
 class PurchasePlan(Model):
@@ -4125,32 +2585,11 @@ class PurchasePlan(Model):
         'product': {'key': 'product', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, publisher: str, name: str, product: str, **kwargs) -> None:
         super(PurchasePlan, self).__init__(**kwargs)
-        self.publisher = kwargs.get('publisher', None)
-        self.name = kwargs.get('name', None)
-        self.product = kwargs.get('product', None)
-
-
-class RecommendedMachineConfiguration(Model):
-    """The properties describe the recommended machine configuration for this
-    Image Definition. These properties are updatable.
-
-    :param v_cp_us:
-    :type v_cp_us: ~azure.mgmt.compute.v2019_07_01.models.ResourceRange
-    :param memory:
-    :type memory: ~azure.mgmt.compute.v2019_07_01.models.ResourceRange
-    """
-
-    _attribute_map = {
-        'v_cp_us': {'key': 'vCPUs', 'type': 'ResourceRange'},
-        'memory': {'key': 'memory', 'type': 'ResourceRange'},
-    }
-
-    def __init__(self, **kwargs):
-        super(RecommendedMachineConfiguration, self).__init__(**kwargs)
-        self.v_cp_us = kwargs.get('v_cp_us', None)
-        self.memory = kwargs.get('memory', None)
+        self.publisher = publisher
+        self.name = name
+        self.product = product
 
 
 class RecoveryWalkResponse(Model):
@@ -4176,83 +2615,10 @@ class RecoveryWalkResponse(Model):
         'next_platform_update_domain': {'key': 'nextPlatformUpdateDomain', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(RecoveryWalkResponse, self).__init__(**kwargs)
         self.walk_performed = None
         self.next_platform_update_domain = None
-
-
-class RegionalReplicationStatus(Model):
-    """This is the regional replication status.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar region: The region to which the gallery Image Version is being
-     replicated to.
-    :vartype region: str
-    :ivar state: This is the regional replication state. Possible values
-     include: 'Unknown', 'Replicating', 'Completed', 'Failed'
-    :vartype state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.ReplicationState
-    :ivar details: The details of the replication status.
-    :vartype details: str
-    :ivar progress: It indicates progress of the replication job.
-    :vartype progress: int
-    """
-
-    _validation = {
-        'region': {'readonly': True},
-        'state': {'readonly': True},
-        'details': {'readonly': True},
-        'progress': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'region': {'key': 'region', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'details': {'key': 'details', 'type': 'str'},
-        'progress': {'key': 'progress', 'type': 'int'},
-    }
-
-    def __init__(self, **kwargs):
-        super(RegionalReplicationStatus, self).__init__(**kwargs)
-        self.region = None
-        self.state = None
-        self.details = None
-        self.progress = None
-
-
-class ReplicationStatus(Model):
-    """This is the replication status of the gallery Image Version.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar aggregated_state: This is the aggregated replication status based on
-     all the regional replication status flags. Possible values include:
-     'Unknown', 'InProgress', 'Completed', 'Failed'
-    :vartype aggregated_state: str or
-     ~azure.mgmt.compute.v2019_07_01.models.AggregatedReplicationState
-    :ivar summary: This is a summary of replication status for each region.
-    :vartype summary:
-     list[~azure.mgmt.compute.v2019_07_01.models.RegionalReplicationStatus]
-    """
-
-    _validation = {
-        'aggregated_state': {'readonly': True},
-        'summary': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'aggregated_state': {'key': 'aggregatedState', 'type': 'str'},
-        'summary': {'key': 'summary', 'type': '[RegionalReplicationStatus]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ReplicationStatus, self).__init__(**kwargs)
-        self.aggregated_state = None
-        self.summary = None
 
 
 class RequestRateByIntervalInput(LogAnalyticsInputBase):
@@ -4278,7 +2644,7 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
      LogAnalytics call rate logs. Possible values include: 'ThreeMins',
      'FiveMins', 'ThirtyMins', 'SixtyMins'
     :type interval_length: str or
-     ~azure.mgmt.compute.v2019_07_01.models.IntervalInMins
+     ~azure.mgmt.compute.v2020_06_01.models.IntervalInMins
     """
 
     _validation = {
@@ -4298,29 +2664,37 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
         'interval_length': {'key': 'intervalLength', 'type': 'IntervalInMins'},
     }
 
-    def __init__(self, **kwargs):
-        super(RequestRateByIntervalInput, self).__init__(**kwargs)
-        self.interval_length = kwargs.get('interval_length', None)
+    def __init__(self, *, blob_container_sas_uri: str, from_time, to_time, interval_length, group_by_throttle_policy: bool=None, group_by_operation_name: bool=None, group_by_resource_name: bool=None, **kwargs) -> None:
+        super(RequestRateByIntervalInput, self).__init__(blob_container_sas_uri=blob_container_sas_uri, from_time=from_time, to_time=to_time, group_by_throttle_policy=group_by_throttle_policy, group_by_operation_name=group_by_operation_name, group_by_resource_name=group_by_resource_name, **kwargs)
+        self.interval_length = interval_length
 
 
-class ResourceRange(Model):
-    """Describes the resource range.
+class RetrieveBootDiagnosticsDataResult(Model):
+    """The SAS URIs of the console screenshot and serial log blobs.
 
-    :param min: The minimum number of the resource.
-    :type min: int
-    :param max: The maximum number of the resource.
-    :type max: int
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar console_screenshot_blob_uri: The console screenshot blob URI
+    :vartype console_screenshot_blob_uri: str
+    :ivar serial_console_log_blob_uri: The serial console log blob URI.
+    :vartype serial_console_log_blob_uri: str
     """
 
-    _attribute_map = {
-        'min': {'key': 'min', 'type': 'int'},
-        'max': {'key': 'max', 'type': 'int'},
+    _validation = {
+        'console_screenshot_blob_uri': {'readonly': True},
+        'serial_console_log_blob_uri': {'readonly': True},
     }
 
-    def __init__(self, **kwargs):
-        super(ResourceRange, self).__init__(**kwargs)
-        self.min = kwargs.get('min', None)
-        self.max = kwargs.get('max', None)
+    _attribute_map = {
+        'console_screenshot_blob_uri': {'key': 'consoleScreenshotBlobUri', 'type': 'str'},
+        'serial_console_log_blob_uri': {'key': 'serialConsoleLogBlobUri', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(RetrieveBootDiagnosticsDataResult, self).__init__(**kwargs)
+        self.console_screenshot_blob_uri = None
+        self.serial_console_log_blob_uri = None
 
 
 class RollbackStatusInfo(Model):
@@ -4337,7 +2711,7 @@ class RollbackStatusInfo(Model):
      failed to rollback.
     :vartype failed_rolledback_instance_count: int
     :ivar rollback_error: Error details if OS rollback failed.
-    :vartype rollback_error: ~azure.mgmt.compute.v2019_07_01.models.ApiError
+    :vartype rollback_error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
     """
 
     _validation = {
@@ -4352,7 +2726,7 @@ class RollbackStatusInfo(Model):
         'rollback_error': {'key': 'rollbackError', 'type': 'ApiError'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(RollbackStatusInfo, self).__init__(**kwargs)
         self.successfully_rolledback_instance_count = None
         self.failed_rolledback_instance_count = None
@@ -4402,12 +2776,12 @@ class RollingUpgradePolicy(Model):
         'pause_time_between_batches': {'key': 'pauseTimeBetweenBatches', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, max_batch_instance_percent: int=None, max_unhealthy_instance_percent: int=None, max_unhealthy_upgraded_instance_percent: int=None, pause_time_between_batches: str=None, **kwargs) -> None:
         super(RollingUpgradePolicy, self).__init__(**kwargs)
-        self.max_batch_instance_percent = kwargs.get('max_batch_instance_percent', None)
-        self.max_unhealthy_instance_percent = kwargs.get('max_unhealthy_instance_percent', None)
-        self.max_unhealthy_upgraded_instance_percent = kwargs.get('max_unhealthy_upgraded_instance_percent', None)
-        self.pause_time_between_batches = kwargs.get('pause_time_between_batches', None)
+        self.max_batch_instance_percent = max_batch_instance_percent
+        self.max_unhealthy_instance_percent = max_unhealthy_instance_percent
+        self.max_unhealthy_upgraded_instance_percent = max_unhealthy_upgraded_instance_percent
+        self.pause_time_between_batches = pause_time_between_batches
 
 
 class RollingUpgradeProgressInfo(Model):
@@ -4445,7 +2819,7 @@ class RollingUpgradeProgressInfo(Model):
         'pending_instance_count': {'key': 'pendingInstanceCount', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(RollingUpgradeProgressInfo, self).__init__(**kwargs)
         self.successful_instance_count = None
         self.failed_instance_count = None
@@ -4462,13 +2836,13 @@ class RollingUpgradeRunningStatus(Model):
     :ivar code: Code indicating the current status of the upgrade. Possible
      values include: 'RollingForward', 'Cancelled', 'Completed', 'Faulted'
     :vartype code: str or
-     ~azure.mgmt.compute.v2019_07_01.models.RollingUpgradeStatusCode
+     ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradeStatusCode
     :ivar start_time: Start time of the upgrade.
     :vartype start_time: datetime
     :ivar last_action: The last action performed on the rolling upgrade.
      Possible values include: 'Start', 'Cancel'
     :vartype last_action: str or
-     ~azure.mgmt.compute.v2019_07_01.models.RollingUpgradeActionType
+     ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradeActionType
     :ivar last_action_time: Last action time of the upgrade.
     :vartype last_action_time: datetime
     """
@@ -4487,7 +2861,7 @@ class RollingUpgradeRunningStatus(Model):
         'last_action_time': {'key': 'lastActionTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(RollingUpgradeRunningStatus, self).__init__(**kwargs)
         self.code = None
         self.start_time = None
@@ -4515,17 +2889,17 @@ class RollingUpgradeStatusInfo(Resource):
     :type tags: dict[str, str]
     :ivar policy: The rolling upgrade policies applied for this upgrade.
     :vartype policy:
-     ~azure.mgmt.compute.v2019_07_01.models.RollingUpgradePolicy
+     ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradePolicy
     :ivar running_status: Information about the current running state of the
      overall upgrade.
     :vartype running_status:
-     ~azure.mgmt.compute.v2019_07_01.models.RollingUpgradeRunningStatus
+     ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradeRunningStatus
     :ivar progress: Information about the number of virtual machine instances
      in each upgrade state.
     :vartype progress:
-     ~azure.mgmt.compute.v2019_07_01.models.RollingUpgradeProgressInfo
+     ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradeProgressInfo
     :ivar error: Error details for this upgrade, if there are any.
-    :vartype error: ~azure.mgmt.compute.v2019_07_01.models.ApiError
+    :vartype error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
     """
 
     _validation = {
@@ -4551,8 +2925,8 @@ class RollingUpgradeStatusInfo(Resource):
         'error': {'key': 'properties.error', 'type': 'ApiError'},
     }
 
-    def __init__(self, **kwargs):
-        super(RollingUpgradeStatusInfo, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+        super(RollingUpgradeStatusInfo, self).__init__(location=location, tags=tags, **kwargs)
         self.policy = None
         self.running_status = None
         self.progress = None
@@ -4571,7 +2945,7 @@ class RunCommandDocumentBase(Model):
     :param os_type: Required. The Operating System type. Possible values
      include: 'Windows', 'Linux'
     :type os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
+     ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemTypes
     :param label: Required. The VM run command label.
     :type label: str
     :param description: Required. The VM run command description.
@@ -4594,13 +2968,13 @@ class RunCommandDocumentBase(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, schema: str, id: str, os_type, label: str, description: str, **kwargs) -> None:
         super(RunCommandDocumentBase, self).__init__(**kwargs)
-        self.schema = kwargs.get('schema', None)
-        self.id = kwargs.get('id', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.label = kwargs.get('label', None)
-        self.description = kwargs.get('description', None)
+        self.schema = schema
+        self.id = id
+        self.os_type = os_type
+        self.label = label
+        self.description = description
 
 
 class RunCommandDocument(RunCommandDocumentBase):
@@ -4615,7 +2989,7 @@ class RunCommandDocument(RunCommandDocumentBase):
     :param os_type: Required. The Operating System type. Possible values
      include: 'Windows', 'Linux'
     :type os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
+     ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemTypes
     :param label: Required. The VM run command label.
     :type label: str
     :param description: Required. The VM run command description.
@@ -4624,7 +2998,7 @@ class RunCommandDocument(RunCommandDocumentBase):
     :type script: list[str]
     :param parameters: The parameters used by the script.
     :type parameters:
-     list[~azure.mgmt.compute.v2019_07_01.models.RunCommandParameterDefinition]
+     list[~azure.mgmt.compute.v2020_06_01.models.RunCommandParameterDefinition]
     """
 
     _validation = {
@@ -4646,10 +3020,10 @@ class RunCommandDocument(RunCommandDocumentBase):
         'parameters': {'key': 'parameters', 'type': '[RunCommandParameterDefinition]'},
     }
 
-    def __init__(self, **kwargs):
-        super(RunCommandDocument, self).__init__(**kwargs)
-        self.script = kwargs.get('script', None)
-        self.parameters = kwargs.get('parameters', None)
+    def __init__(self, *, schema: str, id: str, os_type, label: str, description: str, script, parameters=None, **kwargs) -> None:
+        super(RunCommandDocument, self).__init__(schema=schema, id=id, os_type=os_type, label=label, description=description, **kwargs)
+        self.script = script
+        self.parameters = parameters
 
 
 class RunCommandInput(Model):
@@ -4664,7 +3038,7 @@ class RunCommandInput(Model):
     :type script: list[str]
     :param parameters: The run command parameters.
     :type parameters:
-     list[~azure.mgmt.compute.v2019_07_01.models.RunCommandInputParameter]
+     list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
     """
 
     _validation = {
@@ -4677,11 +3051,11 @@ class RunCommandInput(Model):
         'parameters': {'key': 'parameters', 'type': '[RunCommandInputParameter]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, command_id: str, script=None, parameters=None, **kwargs) -> None:
         super(RunCommandInput, self).__init__(**kwargs)
-        self.command_id = kwargs.get('command_id', None)
-        self.script = kwargs.get('script', None)
-        self.parameters = kwargs.get('parameters', None)
+        self.command_id = command_id
+        self.script = script
+        self.parameters = parameters
 
 
 class RunCommandInputParameter(Model):
@@ -4705,10 +3079,10 @@ class RunCommandInputParameter(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, value: str, **kwargs) -> None:
         super(RunCommandInputParameter, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.value = kwargs.get('value', None)
+        self.name = name
+        self.value = value
 
 
 class RunCommandParameterDefinition(Model):
@@ -4739,12 +3113,12 @@ class RunCommandParameterDefinition(Model):
         'required': {'key': 'required', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, type: str, default_value: str=None, required: bool=False, **kwargs) -> None:
         super(RunCommandParameterDefinition, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
-        self.default_value = kwargs.get('default_value', None)
-        self.required = kwargs.get('required', False)
+        self.name = name
+        self.type = type
+        self.default_value = default_value
+        self.required = required
 
 
 class RunCommandResult(Model):
@@ -4752,16 +3126,16 @@ class RunCommandResult(Model):
 
     :param value: Run command operation response.
     :type value:
-     list[~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value=None, **kwargs) -> None:
         super(RunCommandResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = value
 
 
 class ScaleInPolicy(Model):
@@ -4785,16 +3159,16 @@ class ScaleInPolicy(Model):
      the newest virtual machines that are not protected will be chosen for
      removal. <br><br>
     :type rules: list[str or
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetScaleInRules]
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetScaleInRules]
     """
 
     _attribute_map = {
         'rules': {'key': 'rules', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, rules=None, **kwargs) -> None:
         super(ScaleInPolicy, self).__init__(**kwargs)
-        self.rules = kwargs.get('rules', None)
+        self.rules = rules
 
 
 class ScheduledEventsProfile(Model):
@@ -4803,16 +3177,38 @@ class ScheduledEventsProfile(Model):
     :param terminate_notification_profile: Specifies Terminate Scheduled Event
      related configurations.
     :type terminate_notification_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.TerminateNotificationProfile
+     ~azure.mgmt.compute.v2020_06_01.models.TerminateNotificationProfile
     """
 
     _attribute_map = {
         'terminate_notification_profile': {'key': 'terminateNotificationProfile', 'type': 'TerminateNotificationProfile'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, terminate_notification_profile=None, **kwargs) -> None:
         super(ScheduledEventsProfile, self).__init__(**kwargs)
-        self.terminate_notification_profile = kwargs.get('terminate_notification_profile', None)
+        self.terminate_notification_profile = terminate_notification_profile
+
+
+class SecurityProfile(Model):
+    """Specifies the Security profile settings for the virtual machine or virtual
+    machine scale set.
+
+    :param encryption_at_host: This property can be used by user in the
+     request to enable or disable the Host Encryption for the virtual machine
+     or virtual machine scale set. This will enable the encryption for all the
+     disks including Resource/Temp disk at host itself. <br><br> Default: The
+     Encryption at host will be disabled unless this property is set to true
+     for the resource.
+    :type encryption_at_host: bool
+    """
+
+    _attribute_map = {
+        'encryption_at_host': {'key': 'encryptionAtHost', 'type': 'bool'},
+    }
+
+    def __init__(self, *, encryption_at_host: bool=None, **kwargs) -> None:
+        super(SecurityProfile, self).__init__(**kwargs)
+        self.encryption_at_host = encryption_at_host
 
 
 class Sku(Model):
@@ -4836,216 +3232,11 @@ class Sku(Model):
         'capacity': {'key': 'capacity', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, tier: str=None, capacity: int=None, **kwargs) -> None:
         super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = kwargs.get('tier', None)
-        self.capacity = kwargs.get('capacity', None)
-
-
-class Snapshot(Resource):
-    """Snapshot resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :ivar managed_by: Unused. Always Null.
-    :vartype managed_by: str
-    :param sku:
-    :type sku: ~azure.mgmt.compute.v2019_07_01.models.SnapshotSku
-    :ivar time_created: The time when the disk was created.
-    :vartype time_created: datetime
-    :param os_type: The Operating System type. Possible values include:
-     'Windows', 'Linux'
-    :type os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
-    :param hyper_vgeneration: The hypervisor generation of the Virtual
-     Machine. Applicable to OS disks only. Possible values include: 'V1', 'V2'
-    :type hyper_vgeneration: str or
-     ~azure.mgmt.compute.v2019_07_01.models.HyperVGeneration
-    :param creation_data: Required. Disk source information. CreationData
-     information cannot be changed after the disk has been created.
-    :type creation_data: ~azure.mgmt.compute.v2019_07_01.models.CreationData
-    :param disk_size_gb: If creationData.createOption is Empty, this field is
-     mandatory and it indicates the size of the disk to create. If this field
-     is present for updates or creation with other options, it indicates a
-     resize. Resizes are only allowed if the disk is not attached to a running
-     VM, and can only increase the disk's size.
-    :type disk_size_gb: int
-    :ivar disk_size_bytes: The size of the disk in bytes. This field is read
-     only.
-    :vartype disk_size_bytes: long
-    :ivar unique_id: Unique Guid identifying the resource.
-    :vartype unique_id: str
-    :param encryption_settings_collection: Encryption settings collection used
-     be Azure Disk Encryption, can contain multiple encryption settings per
-     disk or snapshot.
-    :type encryption_settings_collection:
-     ~azure.mgmt.compute.v2019_07_01.models.EncryptionSettingsCollection
-    :ivar provisioning_state: The disk provisioning state.
-    :vartype provisioning_state: str
-    :param incremental: Whether a snapshot is incremental. Incremental
-     snapshots on the same disk occupy less space than full snapshots and can
-     be diffed.
-    :type incremental: bool
-    :param encryption: Encryption property can be used to encrypt data at rest
-     with customer managed keys or platform managed keys.
-    :type encryption: ~azure.mgmt.compute.v2019_07_01.models.Encryption
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'managed_by': {'readonly': True},
-        'time_created': {'readonly': True},
-        'creation_data': {'required': True},
-        'disk_size_bytes': {'readonly': True},
-        'unique_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'managed_by': {'key': 'managedBy', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'SnapshotSku'},
-        'time_created': {'key': 'properties.timeCreated', 'type': 'iso-8601'},
-        'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
-        'hyper_vgeneration': {'key': 'properties.hyperVGeneration', 'type': 'str'},
-        'creation_data': {'key': 'properties.creationData', 'type': 'CreationData'},
-        'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
-        'disk_size_bytes': {'key': 'properties.diskSizeBytes', 'type': 'long'},
-        'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
-        'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'incremental': {'key': 'properties.incremental', 'type': 'bool'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Snapshot, self).__init__(**kwargs)
-        self.managed_by = None
-        self.sku = kwargs.get('sku', None)
-        self.time_created = None
-        self.os_type = kwargs.get('os_type', None)
-        self.hyper_vgeneration = kwargs.get('hyper_vgeneration', None)
-        self.creation_data = kwargs.get('creation_data', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.disk_size_bytes = None
-        self.unique_id = None
-        self.encryption_settings_collection = kwargs.get('encryption_settings_collection', None)
-        self.provisioning_state = None
-        self.incremental = kwargs.get('incremental', None)
-        self.encryption = kwargs.get('encryption', None)
-
-
-class SnapshotSku(Model):
-    """The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param name: The sku name. Possible values include: 'Standard_LRS',
-     'Premium_LRS', 'Standard_ZRS'
-    :type name: str or
-     ~azure.mgmt.compute.v2019_07_01.models.SnapshotStorageAccountTypes
-    :ivar tier: The sku tier.
-    :vartype tier: str
-    """
-
-    _validation = {
-        'tier': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SnapshotSku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = None
-
-
-class SnapshotUpdate(Model):
-    """Snapshot update resource.
-
-    :param os_type: the Operating System type. Possible values include:
-     'Windows', 'Linux'
-    :type os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
-    :param disk_size_gb: If creationData.createOption is Empty, this field is
-     mandatory and it indicates the size of the disk to create. If this field
-     is present for updates or creation with other options, it indicates a
-     resize. Resizes are only allowed if the disk is not attached to a running
-     VM, and can only increase the disk's size.
-    :type disk_size_gb: int
-    :param encryption_settings_collection: Encryption settings collection used
-     be Azure Disk Encryption, can contain multiple encryption settings per
-     disk or snapshot.
-    :type encryption_settings_collection:
-     ~azure.mgmt.compute.v2019_07_01.models.EncryptionSettingsCollection
-    :param encryption: Encryption property can be used to encrypt data at rest
-     with customer managed keys or platform managed keys.
-    :type encryption: ~azure.mgmt.compute.v2019_07_01.models.Encryption
-    :param tags: Resource tags
-    :type tags: dict[str, str]
-    :param sku:
-    :type sku: ~azure.mgmt.compute.v2019_07_01.models.SnapshotSku
-    """
-
-    _attribute_map = {
-        'os_type': {'key': 'properties.osType', 'type': 'OperatingSystemTypes'},
-        'disk_size_gb': {'key': 'properties.diskSizeGB', 'type': 'int'},
-        'encryption_settings_collection': {'key': 'properties.encryptionSettingsCollection', 'type': 'EncryptionSettingsCollection'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'SnapshotSku'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SnapshotUpdate, self).__init__(**kwargs)
-        self.os_type = kwargs.get('os_type', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.encryption_settings_collection = kwargs.get('encryption_settings_collection', None)
-        self.encryption = kwargs.get('encryption', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
-
-
-class SourceVault(Model):
-    """The vault id is an Azure Resource Manager Resource id in the form
-    /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}.
-
-    :param id: Resource Id
-    :type id: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SourceVault, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+        self.name = name
+        self.tier = tier
+        self.capacity = capacity
 
 
 class SshConfiguration(Model):
@@ -5054,16 +3245,16 @@ class SshConfiguration(Model):
     :param public_keys: The list of SSH public keys used to authenticate with
      linux based VMs.
     :type public_keys:
-     list[~azure.mgmt.compute.v2019_07_01.models.SshPublicKey]
+     list[~azure.mgmt.compute.v2020_06_01.models.SshPublicKey]
     """
 
     _attribute_map = {
         'public_keys': {'key': 'publicKeys', 'type': '[SshPublicKey]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, public_keys=None, **kwargs) -> None:
         super(SshConfiguration, self).__init__(**kwargs)
-        self.public_keys = kwargs.get('public_keys', None)
+        self.public_keys = public_keys
 
 
 class SshPublicKey(Model):
@@ -5087,10 +3278,119 @@ class SshPublicKey(Model):
         'key_data': {'key': 'keyData', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, path: str=None, key_data: str=None, **kwargs) -> None:
         super(SshPublicKey, self).__init__(**kwargs)
-        self.path = kwargs.get('path', None)
-        self.key_data = kwargs.get('key_data', None)
+        self.path = path
+        self.key_data = key_data
+
+
+class SshPublicKeyGenerateKeyPairResult(Model):
+    """Response from generation of an SSH key pair.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param private_key: Required. Private key portion of the key pair used to
+     authenticate to a virtual machine through ssh. The private key is returned
+     in RFC3447 format and should be treated as a secret.
+    :type private_key: str
+    :param public_key: Required. Public key portion of the key pair used to
+     authenticate to a virtual machine through ssh. The public key is in
+     ssh-rsa format.
+    :type public_key: str
+    :param id: Required. The ARM resource id in the form of
+     /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Compute/sshPublicKeys/{SshPublicKeyName}
+    :type id: str
+    """
+
+    _validation = {
+        'private_key': {'required': True},
+        'public_key': {'required': True},
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'private_key': {'key': 'privateKey', 'type': 'str'},
+        'public_key': {'key': 'publicKey', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, private_key: str, public_key: str, id: str, **kwargs) -> None:
+        super(SshPublicKeyGenerateKeyPairResult, self).__init__(**kwargs)
+        self.private_key = private_key
+        self.public_key = public_key
+        self.id = id
+
+
+class SshPublicKeyResource(Resource):
+    """Specifies information about the SSH public key.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Required. Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param public_key: SSH public key used to authenticate to a virtual
+     machine through ssh. If this property is not initially provided when the
+     resource is created, the publicKey property will be populated when
+     generateKeyPair is called. If the public key is provided upon resource
+     creation, the provided public key needs to be at least 2048-bit and in
+     ssh-rsa format.
+    :type public_key: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'public_key': {'key': 'properties.publicKey', 'type': 'str'},
+    }
+
+    def __init__(self, *, location: str, tags=None, public_key: str=None, **kwargs) -> None:
+        super(SshPublicKeyResource, self).__init__(location=location, tags=tags, **kwargs)
+        self.public_key = public_key
+
+
+class SshPublicKeyUpdateResource(UpdateResource):
+    """Specifies information about the SSH public key.
+
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param public_key: SSH public key used to authenticate to a virtual
+     machine through ssh. If this property is not initially provided when the
+     resource is created, the publicKey property will be populated when
+     generateKeyPair is called. If the public key is provided upon resource
+     creation, the provided public key needs to be at least 2048-bit and in
+     ssh-rsa format.
+    :type public_key: str
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'public_key': {'key': 'properties.publicKey', 'type': 'str'},
+    }
+
+    def __init__(self, *, tags=None, public_key: str=None, **kwargs) -> None:
+        super(SshPublicKeyUpdateResource, self).__init__(tags=tags, **kwargs)
+        self.public_key = public_key
 
 
 class StorageProfile(Model):
@@ -5102,17 +3402,17 @@ class StorageProfile(Model):
      platform image, marketplace image, or virtual machine image, but is not
      used in other creation operations.
     :type image_reference:
-     ~azure.mgmt.compute.v2019_07_01.models.ImageReference
+     ~azure.mgmt.compute.v2020_06_01.models.ImageReference
     :param os_disk: Specifies information about the operating system disk used
      by the virtual machine. <br><br> For more information about disks, see
      [About disks and VHDs for Azure virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
-    :type os_disk: ~azure.mgmt.compute.v2019_07_01.models.OSDisk
+    :type os_disk: ~azure.mgmt.compute.v2020_06_01.models.OSDisk
     :param data_disks: Specifies the parameters that are used to add a data
      disk to a virtual machine. <br><br> For more information about disks, see
      [About disks and VHDs for Azure virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
-    :type data_disks: list[~azure.mgmt.compute.v2019_07_01.models.DataDisk]
+    :type data_disks: list[~azure.mgmt.compute.v2020_06_01.models.DataDisk]
     """
 
     _attribute_map = {
@@ -5121,11 +3421,11 @@ class StorageProfile(Model):
         'data_disks': {'key': 'dataDisks', 'type': '[DataDisk]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, image_reference=None, os_disk=None, data_disks=None, **kwargs) -> None:
         super(StorageProfile, self).__init__(**kwargs)
-        self.image_reference = kwargs.get('image_reference', None)
-        self.os_disk = kwargs.get('os_disk', None)
-        self.data_disks = kwargs.get('data_disks', None)
+        self.image_reference = image_reference
+        self.os_disk = os_disk
+        self.data_disks = data_disks
 
 
 class SubResourceReadOnly(Model):
@@ -5146,7 +3446,7 @@ class SubResourceReadOnly(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(SubResourceReadOnly, self).__init__(**kwargs)
         self.id = None
 
@@ -5159,7 +3459,7 @@ class SubResourceWithColocationStatus(SubResource):
     :param colocation_status: Describes colocation status of a resource in the
      Proximity Placement Group.
     :type colocation_status:
-     ~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus
+     ~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus
     """
 
     _attribute_map = {
@@ -5167,43 +3467,9 @@ class SubResourceWithColocationStatus(SubResource):
         'colocation_status': {'key': 'colocationStatus', 'type': 'InstanceViewStatus'},
     }
 
-    def __init__(self, **kwargs):
-        super(SubResourceWithColocationStatus, self).__init__(**kwargs)
-        self.colocation_status = kwargs.get('colocation_status', None)
-
-
-class TargetRegion(Model):
-    """Describes the target region information.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The name of the region.
-    :type name: str
-    :param regional_replica_count: The number of replicas of the Image Version
-     to be created per region. This property is updatable.
-    :type regional_replica_count: int
-    :param storage_account_type: Specifies the storage account type to be used
-     to store the image. This property is not updatable. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS'
-    :type storage_account_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.StorageAccountType
-    """
-
-    _validation = {
-        'name': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'regional_replica_count': {'key': 'regionalReplicaCount', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(TargetRegion, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.regional_replica_count = kwargs.get('regional_replica_count', None)
-        self.storage_account_type = kwargs.get('storage_account_type', None)
+    def __init__(self, *, id: str=None, colocation_status=None, **kwargs) -> None:
+        super(SubResourceWithColocationStatus, self).__init__(id=id, **kwargs)
+        self.colocation_status = colocation_status
 
 
 class TerminateNotificationProfile(Model):
@@ -5225,10 +3491,10 @@ class TerminateNotificationProfile(Model):
         'enable': {'key': 'enable', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, not_before_timeout: str=None, enable: bool=None, **kwargs) -> None:
         super(TerminateNotificationProfile, self).__init__(**kwargs)
-        self.not_before_timeout = kwargs.get('not_before_timeout', None)
-        self.enable = kwargs.get('enable', None)
+        self.not_before_timeout = not_before_timeout
+        self.enable = enable
 
 
 class ThrottledRequestsInput(LogAnalyticsInputBase):
@@ -5267,8 +3533,8 @@ class ThrottledRequestsInput(LogAnalyticsInputBase):
         'group_by_resource_name': {'key': 'groupByResourceName', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(ThrottledRequestsInput, self).__init__(**kwargs)
+    def __init__(self, *, blob_container_sas_uri: str, from_time, to_time, group_by_throttle_policy: bool=None, group_by_operation_name: bool=None, group_by_resource_name: bool=None, **kwargs) -> None:
+        super(ThrottledRequestsInput, self).__init__(blob_container_sas_uri=blob_container_sas_uri, from_time=from_time, to_time=to_time, group_by_throttle_policy=group_by_throttle_policy, group_by_operation_name=group_by_operation_name, group_by_resource_name=group_by_resource_name, **kwargs)
 
 
 class UpgradeOperationHistoricalStatusInfo(Model):
@@ -5280,7 +3546,7 @@ class UpgradeOperationHistoricalStatusInfo(Model):
     :ivar properties: Information about the properties of the upgrade
      operation.
     :vartype properties:
-     ~azure.mgmt.compute.v2019_07_01.models.UpgradeOperationHistoricalStatusInfoProperties
+     ~azure.mgmt.compute.v2020_06_01.models.UpgradeOperationHistoricalStatusInfoProperties
     :ivar type: Resource type
     :vartype type: str
     :ivar location: Resource location
@@ -5299,7 +3565,7 @@ class UpgradeOperationHistoricalStatusInfo(Model):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(UpgradeOperationHistoricalStatusInfo, self).__init__(**kwargs)
         self.properties = None
         self.type = None
@@ -5315,22 +3581,22 @@ class UpgradeOperationHistoricalStatusInfoProperties(Model):
     :ivar running_status: Information about the overall status of the upgrade
      operation.
     :vartype running_status:
-     ~azure.mgmt.compute.v2019_07_01.models.UpgradeOperationHistoryStatus
+     ~azure.mgmt.compute.v2020_06_01.models.UpgradeOperationHistoryStatus
     :ivar progress: Counts of the VMs in each state.
     :vartype progress:
-     ~azure.mgmt.compute.v2019_07_01.models.RollingUpgradeProgressInfo
+     ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradeProgressInfo
     :ivar error: Error Details for this upgrade if there are any.
-    :vartype error: ~azure.mgmt.compute.v2019_07_01.models.ApiError
+    :vartype error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
     :ivar started_by: Invoker of the Upgrade Operation. Possible values
      include: 'Unknown', 'User', 'Platform'
     :vartype started_by: str or
-     ~azure.mgmt.compute.v2019_07_01.models.UpgradeOperationInvoker
+     ~azure.mgmt.compute.v2020_06_01.models.UpgradeOperationInvoker
     :ivar target_image_reference: Image Reference details
     :vartype target_image_reference:
-     ~azure.mgmt.compute.v2019_07_01.models.ImageReference
+     ~azure.mgmt.compute.v2020_06_01.models.ImageReference
     :ivar rollback_info: Information about OS rollback if performed
     :vartype rollback_info:
-     ~azure.mgmt.compute.v2019_07_01.models.RollbackStatusInfo
+     ~azure.mgmt.compute.v2020_06_01.models.RollbackStatusInfo
     """
 
     _validation = {
@@ -5351,7 +3617,7 @@ class UpgradeOperationHistoricalStatusInfoProperties(Model):
         'rollback_info': {'key': 'rollbackInfo', 'type': 'RollbackStatusInfo'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(UpgradeOperationHistoricalStatusInfoProperties, self).__init__(**kwargs)
         self.running_status = None
         self.progress = None
@@ -5369,7 +3635,7 @@ class UpgradeOperationHistoryStatus(Model):
 
     :ivar code: Code indicating the current status of the upgrade. Possible
      values include: 'RollingForward', 'Cancelled', 'Completed', 'Faulted'
-    :vartype code: str or ~azure.mgmt.compute.v2019_07_01.models.UpgradeState
+    :vartype code: str or ~azure.mgmt.compute.v2020_06_01.models.UpgradeState
     :ivar start_time: Start time of the upgrade.
     :vartype start_time: datetime
     :ivar end_time: End time of the upgrade.
@@ -5388,7 +3654,7 @@ class UpgradeOperationHistoryStatus(Model):
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(UpgradeOperationHistoryStatus, self).__init__(**kwargs)
         self.code = None
         self.start_time = None
@@ -5404,15 +3670,15 @@ class UpgradePolicy(Model):
      You do this by using the manualUpgrade action.<br /><br /> **Automatic** -
      All virtual machines in the scale set are  automatically updated at the
      same time. Possible values include: 'Automatic', 'Manual', 'Rolling'
-    :type mode: str or ~azure.mgmt.compute.v2019_07_01.models.UpgradeMode
+    :type mode: str or ~azure.mgmt.compute.v2020_06_01.models.UpgradeMode
     :param rolling_upgrade_policy: The configuration parameters used while
      performing a rolling upgrade.
     :type rolling_upgrade_policy:
-     ~azure.mgmt.compute.v2019_07_01.models.RollingUpgradePolicy
+     ~azure.mgmt.compute.v2020_06_01.models.RollingUpgradePolicy
     :param automatic_os_upgrade_policy: Configuration parameters used for
      performing automatic OS Upgrade.
     :type automatic_os_upgrade_policy:
-     ~azure.mgmt.compute.v2019_07_01.models.AutomaticOSUpgradePolicy
+     ~azure.mgmt.compute.v2020_06_01.models.AutomaticOSUpgradePolicy
     """
 
     _attribute_map = {
@@ -5421,11 +3687,11 @@ class UpgradePolicy(Model):
         'automatic_os_upgrade_policy': {'key': 'automaticOSUpgradePolicy', 'type': 'AutomaticOSUpgradePolicy'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, mode=None, rolling_upgrade_policy=None, automatic_os_upgrade_policy=None, **kwargs) -> None:
         super(UpgradePolicy, self).__init__(**kwargs)
-        self.mode = kwargs.get('mode', None)
-        self.rolling_upgrade_policy = kwargs.get('rolling_upgrade_policy', None)
-        self.automatic_os_upgrade_policy = kwargs.get('automatic_os_upgrade_policy', None)
+        self.mode = mode
+        self.rolling_upgrade_policy = rolling_upgrade_policy
+        self.automatic_os_upgrade_policy = automatic_os_upgrade_policy
 
 
 class Usage(Model):
@@ -5444,7 +3710,7 @@ class Usage(Model):
     :param limit: Required. The maximum permitted usage of the resource.
     :type limit: long
     :param name: Required. The name of the type of usage.
-    :type name: ~azure.mgmt.compute.v2019_07_01.models.UsageName
+    :type name: ~azure.mgmt.compute.v2020_06_01.models.UsageName
     """
 
     _validation = {
@@ -5463,11 +3729,11 @@ class Usage(Model):
 
     unit = "Count"
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, current_value: int, limit: int, name, **kwargs) -> None:
         super(Usage, self).__init__(**kwargs)
-        self.current_value = kwargs.get('current_value', None)
-        self.limit = kwargs.get('limit', None)
-        self.name = kwargs.get('name', None)
+        self.current_value = current_value
+        self.limit = limit
+        self.name = name
 
 
 class UsageName(Model):
@@ -5484,38 +3750,10 @@ class UsageName(Model):
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value: str=None, localized_value: str=None, **kwargs) -> None:
         super(UsageName, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.localized_value = kwargs.get('localized_value', None)
-
-
-class UserArtifactSource(Model):
-    """The source image from which the Image Version is going to be created.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param file_name: Required. Required. The fileName of the artifact.
-    :type file_name: str
-    :param media_link: Required. Required. The mediaLink of the artifact, must
-     be a readable storage blob.
-    :type media_link: str
-    """
-
-    _validation = {
-        'file_name': {'required': True},
-        'media_link': {'required': True},
-    }
-
-    _attribute_map = {
-        'file_name': {'key': 'fileName', 'type': 'str'},
-        'media_link': {'key': 'mediaLink', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(UserArtifactSource, self).__init__(**kwargs)
-        self.file_name = kwargs.get('file_name', None)
-        self.media_link = kwargs.get('media_link', None)
+        self.value = value
+        self.localized_value = localized_value
 
 
 class VaultCertificate(Model):
@@ -5547,10 +3785,10 @@ class VaultCertificate(Model):
         'certificate_store': {'key': 'certificateStore', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, certificate_url: str=None, certificate_store: str=None, **kwargs) -> None:
         super(VaultCertificate, self).__init__(**kwargs)
-        self.certificate_url = kwargs.get('certificate_url', None)
-        self.certificate_store = kwargs.get('certificate_store', None)
+        self.certificate_url = certificate_url
+        self.certificate_store = certificate_store
 
 
 class VaultSecretGroup(Model):
@@ -5558,11 +3796,11 @@ class VaultSecretGroup(Model):
 
     :param source_vault: The relative URL of the Key Vault containing all of
      the certificates in VaultCertificates.
-    :type source_vault: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type source_vault: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param vault_certificates: The list of key vault references in SourceVault
      which contain certificates.
     :type vault_certificates:
-     list[~azure.mgmt.compute.v2019_07_01.models.VaultCertificate]
+     list[~azure.mgmt.compute.v2020_06_01.models.VaultCertificate]
     """
 
     _attribute_map = {
@@ -5570,10 +3808,10 @@ class VaultSecretGroup(Model):
         'vault_certificates': {'key': 'vaultCertificates', 'type': '[VaultCertificate]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, source_vault=None, vault_certificates=None, **kwargs) -> None:
         super(VaultSecretGroup, self).__init__(**kwargs)
-        self.source_vault = kwargs.get('source_vault', None)
-        self.vault_certificates = kwargs.get('vault_certificates', None)
+        self.source_vault = source_vault
+        self.vault_certificates = vault_certificates
 
 
 class VirtualHardDisk(Model):
@@ -5587,9 +3825,9 @@ class VirtualHardDisk(Model):
         'uri': {'key': 'uri', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, uri: str=None, **kwargs) -> None:
         super(VirtualHardDisk, self).__init__(**kwargs)
-        self.uri = kwargs.get('uri', None)
+        self.uri = uri
 
 
 class VirtualMachine(Resource):
@@ -5617,31 +3855,35 @@ class VirtualMachine(Resource):
      marketplace image that you want to use and then click **Want to deploy
      programmatically, Get Started ->**. Enter any required information and
      then click **Save**.
-    :type plan: ~azure.mgmt.compute.v2019_07_01.models.Plan
+    :type plan: ~azure.mgmt.compute.v2020_06_01.models.Plan
     :param hardware_profile: Specifies the hardware settings for the virtual
      machine.
     :type hardware_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.HardwareProfile
+     ~azure.mgmt.compute.v2020_06_01.models.HardwareProfile
     :param storage_profile: Specifies the storage settings for the virtual
      machine disks.
     :type storage_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.StorageProfile
+     ~azure.mgmt.compute.v2020_06_01.models.StorageProfile
     :param additional_capabilities: Specifies additional capabilities enabled
      or disabled on the virtual machine.
     :type additional_capabilities:
-     ~azure.mgmt.compute.v2019_07_01.models.AdditionalCapabilities
+     ~azure.mgmt.compute.v2020_06_01.models.AdditionalCapabilities
     :param os_profile: Specifies the operating system settings used while
      creating the virtual machine. Some of the settings cannot be changed once
      VM is provisioned.
-    :type os_profile: ~azure.mgmt.compute.v2019_07_01.models.OSProfile
+    :type os_profile: ~azure.mgmt.compute.v2020_06_01.models.OSProfile
     :param network_profile: Specifies the network interfaces of the virtual
      machine.
     :type network_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.NetworkProfile
+     ~azure.mgmt.compute.v2020_06_01.models.NetworkProfile
+    :param security_profile: Specifies the Security related profile settings
+     for the virtual machine.
+    :type security_profile:
+     ~azure.mgmt.compute.v2020_06_01.models.SecurityProfile
     :param diagnostics_profile: Specifies the boot diagnostic settings state.
      <br><br>Minimum api-version: 2015-06-15.
     :type diagnostics_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.DiagnosticsProfile
+     ~azure.mgmt.compute.v2020_06_01.models.DiagnosticsProfile
     :param availability_set: Specifies information about the availability set
      that the virtual machine should be assigned to. Virtual machines specified
      in the same availability set are allocated to different nodes to maximize
@@ -5656,7 +3898,7 @@ class VirtualMachine(Resource):
      the same resource group as the availability set resource. An existing VM
      cannot be added to an availability set. <br><br>This property cannot exist
      along with a non-null properties.virtualMachineScaleSet reference.
-    :type availability_set: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type availability_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param virtual_machine_scale_set: Specifies information about the virtual
      machine scale set that the virtual machine should be assigned to. Virtual
      machines specified in the same virtual machine scale set are allocated to
@@ -5666,38 +3908,43 @@ class VirtualMachine(Resource):
      exist along with a non-null properties.availabilitySet reference.
      <br><br>Minimum api‐version: 2019‐03‐01
     :type virtual_machine_scale_set:
-     ~azure.mgmt.compute.v2019_07_01.models.SubResource
+     ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param proximity_placement_group: Specifies information about the
      proximity placement group that the virtual machine should be assigned to.
      <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
-     ~azure.mgmt.compute.v2019_07_01.models.SubResource
+     ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param priority: Specifies the priority for the virtual machine.
      <br><br>Minimum api-version: 2019-03-01. Possible values include:
      'Regular', 'Low', 'Spot'
     :type priority: str or
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachinePriorityTypes
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine and Azure Spot scale set. <br><br>For Azure Spot virtual
-     machines, the only supported value is 'Deallocate' and the minimum
+     machines, both 'Deallocate' and 'Delete' are supported and the minimum
      api-version is 2019-03-01. <br><br>For Azure Spot scale sets, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineEvictionPolicyTypes
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineEvictionPolicyTypes
     :param billing_profile: Specifies the billing related details of a Azure
      Spot virtual machine. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.BillingProfile
+     ~azure.mgmt.compute.v2020_06_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the
      virtual machine resides in. <br><br>Minimum api-version: 2018-10-01.
-    :type host: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type host: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :param host_group: Specifies information about the dedicated host group
+     that the virtual machine resides in. <br><br>Minimum api-version:
+     2020-06-01. <br><br>NOTE: User cannot specify both host and hostGroup
+     properties.
+    :type host_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineInstanceView
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineInstanceView
     :param license_type: Specifies that the image or disk that is being used
      was licensed on-premises. This element is only used for images that
      contain the Windows Server operating system. <br><br> Possible values are:
@@ -5712,12 +3959,18 @@ class VirtualMachine(Resource):
      that is encoded and stored in all Azure IaaS VMs SMBIOS and can be read
      using platform BIOS commands.
     :vartype vm_id: str
+    :param extensions_time_budget: Specifies the time alloted for all
+     extensions to start. The time duration should be between 15 minutes and
+     120 minutes (inclusive) and should be specified in ISO 8601 format. The
+     default value is 90 minutes (PT1H30M). <br><br> Minimum api-version:
+     2020-06-01
+    :type extensions_time_budget: str
     :ivar resources: The virtual machine child extension resources.
     :vartype resources:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineExtension]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtension]
     :param identity: The identity of the virtual machine, if configured.
     :type identity:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineIdentity
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineIdentity
     :param zones: The virtual machine zones.
     :type zones: list[str]
     """
@@ -5745,6 +3998,7 @@ class VirtualMachine(Resource):
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
+        'security_profile': {'key': 'properties.securityProfile', 'type': 'SecurityProfile'},
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'virtual_machine_scale_set': {'key': 'properties.virtualMachineScaleSet', 'type': 'SubResource'},
@@ -5753,38 +4007,43 @@ class VirtualMachine(Resource):
         'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
         'billing_profile': {'key': 'properties.billingProfile', 'type': 'BillingProfile'},
         'host': {'key': 'properties.host', 'type': 'SubResource'},
+        'host_group': {'key': 'properties.hostGroup', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
+        'extensions_time_budget': {'key': 'properties.extensionsTimeBudget', 'type': 'str'},
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachine, self).__init__(**kwargs)
-        self.plan = kwargs.get('plan', None)
-        self.hardware_profile = kwargs.get('hardware_profile', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.additional_capabilities = kwargs.get('additional_capabilities', None)
-        self.os_profile = kwargs.get('os_profile', None)
-        self.network_profile = kwargs.get('network_profile', None)
-        self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
-        self.availability_set = kwargs.get('availability_set', None)
-        self.virtual_machine_scale_set = kwargs.get('virtual_machine_scale_set', None)
-        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
-        self.priority = kwargs.get('priority', None)
-        self.eviction_policy = kwargs.get('eviction_policy', None)
-        self.billing_profile = kwargs.get('billing_profile', None)
-        self.host = kwargs.get('host', None)
+    def __init__(self, *, location: str, tags=None, plan=None, hardware_profile=None, storage_profile=None, additional_capabilities=None, os_profile=None, network_profile=None, security_profile=None, diagnostics_profile=None, availability_set=None, virtual_machine_scale_set=None, proximity_placement_group=None, priority=None, eviction_policy=None, billing_profile=None, host=None, host_group=None, license_type: str=None, extensions_time_budget: str=None, identity=None, zones=None, **kwargs) -> None:
+        super(VirtualMachine, self).__init__(location=location, tags=tags, **kwargs)
+        self.plan = plan
+        self.hardware_profile = hardware_profile
+        self.storage_profile = storage_profile
+        self.additional_capabilities = additional_capabilities
+        self.os_profile = os_profile
+        self.network_profile = network_profile
+        self.security_profile = security_profile
+        self.diagnostics_profile = diagnostics_profile
+        self.availability_set = availability_set
+        self.virtual_machine_scale_set = virtual_machine_scale_set
+        self.proximity_placement_group = proximity_placement_group
+        self.priority = priority
+        self.eviction_policy = eviction_policy
+        self.billing_profile = billing_profile
+        self.host = host
+        self.host_group = host_group
         self.provisioning_state = None
         self.instance_view = None
-        self.license_type = kwargs.get('license_type', None)
+        self.license_type = license_type
         self.vm_id = None
+        self.extensions_time_budget = extensions_time_budget
         self.resources = None
-        self.identity = kwargs.get('identity', None)
-        self.zones = kwargs.get('zones', None)
+        self.identity = identity
+        self.zones = zones
 
 
 class VirtualMachineAgentInstanceView(Model):
@@ -5795,10 +4054,10 @@ class VirtualMachineAgentInstanceView(Model):
     :param extension_handlers: The virtual machine extension handler instance
      view.
     :type extension_handlers:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineExtensionHandlerInstanceView]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionHandlerInstanceView]
     :param statuses: The resource status information.
     :type statuses:
-     list[~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
     """
 
     _attribute_map = {
@@ -5807,11 +4066,83 @@ class VirtualMachineAgentInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, vm_agent_version: str=None, extension_handlers=None, statuses=None, **kwargs) -> None:
         super(VirtualMachineAgentInstanceView, self).__init__(**kwargs)
-        self.vm_agent_version = kwargs.get('vm_agent_version', None)
-        self.extension_handlers = kwargs.get('extension_handlers', None)
-        self.statuses = kwargs.get('statuses', None)
+        self.vm_agent_version = vm_agent_version
+        self.extension_handlers = extension_handlers
+        self.statuses = statuses
+
+
+class VirtualMachineAssessPatchesResult(Model):
+    """Describes the properties of an AssessPatches result.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar status: The overall success or failure status of the operation. It
+     remains "InProgress" until the operation completes. At that point it will
+     become "Failed", "Succeeded", or "CompletedWithWarnings.". Possible values
+     include: 'InProgress', 'Failed', 'Succeeded', 'CompletedWithWarnings'
+    :vartype status: str or
+     ~azure.mgmt.compute.v2020_06_01.models.PatchOperationStatus
+    :ivar assessment_activity_id: The activity ID of the operation that
+     produced this result. It is used to correlate across CRP and extension
+     logs.
+    :vartype assessment_activity_id: str
+    :ivar reboot_pending: The overall reboot status of the VM. It will be true
+     when partially installed patches require a reboot to complete installation
+     but the reboot has not yet occurred.
+    :vartype reboot_pending: bool
+    :ivar critical_and_security_patch_count: The number of critical or
+     security patches that have been detected as available and not yet
+     installed.
+    :vartype critical_and_security_patch_count: int
+    :ivar other_patch_count: The number of all available patches excluding
+     critical and security.
+    :vartype other_patch_count: int
+    :ivar start_date_time: The UTC timestamp when the operation began.
+    :vartype start_date_time: datetime
+    :ivar patches: The list of patches that have been detected as available
+     for installation.
+    :vartype patches:
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineSoftwarePatchProperties]
+    :ivar error: The errors that were encountered during execution of the
+     operation. The details array contains the list of them.
+    :vartype error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+        'assessment_activity_id': {'readonly': True},
+        'reboot_pending': {'readonly': True},
+        'critical_and_security_patch_count': {'readonly': True},
+        'other_patch_count': {'readonly': True},
+        'start_date_time': {'readonly': True},
+        'patches': {'readonly': True},
+        'error': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'assessment_activity_id': {'key': 'assessmentActivityId', 'type': 'str'},
+        'reboot_pending': {'key': 'rebootPending', 'type': 'bool'},
+        'critical_and_security_patch_count': {'key': 'criticalAndSecurityPatchCount', 'type': 'int'},
+        'other_patch_count': {'key': 'otherPatchCount', 'type': 'int'},
+        'start_date_time': {'key': 'startDateTime', 'type': 'iso-8601'},
+        'patches': {'key': 'patches', 'type': '[VirtualMachineSoftwarePatchProperties]'},
+        'error': {'key': 'error', 'type': 'ApiError'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(VirtualMachineAssessPatchesResult, self).__init__(**kwargs)
+        self.status = None
+        self.assessment_activity_id = None
+        self.reboot_pending = None
+        self.critical_and_security_patch_count = None
+        self.other_patch_count = None
+        self.start_date_time = None
+        self.patches = None
+        self.error = None
 
 
 class VirtualMachineCaptureParameters(Model):
@@ -5841,11 +4172,11 @@ class VirtualMachineCaptureParameters(Model):
         'overwrite_vhds': {'key': 'overwriteVhds', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, vhd_prefix: str, destination_container_name: str, overwrite_vhds: bool, **kwargs) -> None:
         super(VirtualMachineCaptureParameters, self).__init__(**kwargs)
-        self.vhd_prefix = kwargs.get('vhd_prefix', None)
-        self.destination_container_name = kwargs.get('destination_container_name', None)
-        self.overwrite_vhds = kwargs.get('overwrite_vhds', None)
+        self.vhd_prefix = vhd_prefix
+        self.destination_container_name = destination_container_name
+        self.overwrite_vhds = overwrite_vhds
 
 
 class VirtualMachineCaptureResult(SubResource):
@@ -5881,8 +4212,8 @@ class VirtualMachineCaptureResult(SubResource):
         'resources': {'key': 'resources', 'type': '[object]'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineCaptureResult, self).__init__(**kwargs)
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(VirtualMachineCaptureResult, self).__init__(id=id, **kwargs)
         self.schema = None
         self.content_version = None
         self.parameters = None
@@ -5933,7 +4264,7 @@ class VirtualMachineExtension(Resource):
     :vartype provisioning_state: str
     :param instance_view: The virtual machine extension instance view.
     :type instance_view:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineExtensionInstanceView
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionInstanceView
     """
 
     _validation = {
@@ -5961,17 +4292,17 @@ class VirtualMachineExtension(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineExtensionInstanceView'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineExtension, self).__init__(**kwargs)
-        self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.virtual_machine_extension_type = kwargs.get('virtual_machine_extension_type', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
-        self.settings = kwargs.get('settings', None)
-        self.protected_settings = kwargs.get('protected_settings', None)
+    def __init__(self, *, location: str, tags=None, force_update_tag: str=None, publisher: str=None, virtual_machine_extension_type: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, instance_view=None, **kwargs) -> None:
+        super(VirtualMachineExtension, self).__init__(location=location, tags=tags, **kwargs)
+        self.force_update_tag = force_update_tag
+        self.publisher = publisher
+        self.virtual_machine_extension_type = virtual_machine_extension_type
+        self.type_handler_version = type_handler_version
+        self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.settings = settings
+        self.protected_settings = protected_settings
         self.provisioning_state = None
-        self.instance_view = kwargs.get('instance_view', None)
+        self.instance_view = instance_view
 
 
 class VirtualMachineExtensionHandlerInstanceView(Model):
@@ -5983,7 +4314,7 @@ class VirtualMachineExtensionHandlerInstanceView(Model):
     :param type_handler_version: Specifies the version of the script handler.
     :type type_handler_version: str
     :param status: The extension handler status.
-    :type status: ~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus
+    :type status: ~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus
     """
 
     _attribute_map = {
@@ -5992,11 +4323,11 @@ class VirtualMachineExtensionHandlerInstanceView(Model):
         'status': {'key': 'status', 'type': 'InstanceViewStatus'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, type: str=None, type_handler_version: str=None, status=None, **kwargs) -> None:
         super(VirtualMachineExtensionHandlerInstanceView, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.status = kwargs.get('status', None)
+        self.type = type
+        self.type_handler_version = type_handler_version
+        self.status = status
 
 
 class VirtualMachineExtensionImage(Resource):
@@ -6059,13 +4390,13 @@ class VirtualMachineExtensionImage(Resource):
         'supports_multiple_extensions': {'key': 'properties.supportsMultipleExtensions', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineExtensionImage, self).__init__(**kwargs)
-        self.operating_system = kwargs.get('operating_system', None)
-        self.compute_role = kwargs.get('compute_role', None)
-        self.handler_schema = kwargs.get('handler_schema', None)
-        self.vm_scale_set_enabled = kwargs.get('vm_scale_set_enabled', None)
-        self.supports_multiple_extensions = kwargs.get('supports_multiple_extensions', None)
+    def __init__(self, *, location: str, operating_system: str, compute_role: str, handler_schema: str, tags=None, vm_scale_set_enabled: bool=None, supports_multiple_extensions: bool=None, **kwargs) -> None:
+        super(VirtualMachineExtensionImage, self).__init__(location=location, tags=tags, **kwargs)
+        self.operating_system = operating_system
+        self.compute_role = compute_role
+        self.handler_schema = handler_schema
+        self.vm_scale_set_enabled = vm_scale_set_enabled
+        self.supports_multiple_extensions = supports_multiple_extensions
 
 
 class VirtualMachineExtensionInstanceView(Model):
@@ -6080,10 +4411,10 @@ class VirtualMachineExtensionInstanceView(Model):
     :type type_handler_version: str
     :param substatuses: The resource status information.
     :type substatuses:
-     list[~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
     :param statuses: The resource status information.
     :type statuses:
-     list[~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
     """
 
     _attribute_map = {
@@ -6094,13 +4425,13 @@ class VirtualMachineExtensionInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, type: str=None, type_handler_version: str=None, substatuses=None, statuses=None, **kwargs) -> None:
         super(VirtualMachineExtensionInstanceView, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.substatuses = kwargs.get('substatuses', None)
-        self.statuses = kwargs.get('statuses', None)
+        self.name = name
+        self.type = type
+        self.type_handler_version = type_handler_version
+        self.substatuses = substatuses
+        self.statuses = statuses
 
 
 class VirtualMachineExtensionsListResult(Model):
@@ -6108,16 +4439,16 @@ class VirtualMachineExtensionsListResult(Model):
 
     :param value: The list of extensions
     :type value:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineExtension]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtension]
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[VirtualMachineExtension]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, value=None, **kwargs) -> None:
         super(VirtualMachineExtensionsListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = value
 
 
 class VirtualMachineExtensionUpdate(UpdateResource):
@@ -6159,15 +4490,15 @@ class VirtualMachineExtensionUpdate(UpdateResource):
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineExtensionUpdate, self).__init__(**kwargs)
-        self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.type = kwargs.get('type', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
-        self.settings = kwargs.get('settings', None)
-        self.protected_settings = kwargs.get('protected_settings', None)
+    def __init__(self, *, tags=None, force_update_tag: str=None, publisher: str=None, type: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, **kwargs) -> None:
+        super(VirtualMachineExtensionUpdate, self).__init__(tags=tags, **kwargs)
+        self.force_update_tag = force_update_tag
+        self.publisher = publisher
+        self.type = type
+        self.type_handler_version = type_handler_version
+        self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.settings = settings
+        self.protected_settings = protected_settings
 
 
 class VirtualMachineHealthStatus(Model):
@@ -6177,7 +4508,7 @@ class VirtualMachineHealthStatus(Model):
     sending a request.
 
     :ivar status: The health status information for the VM.
-    :vartype status: ~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus
+    :vartype status: ~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus
     """
 
     _validation = {
@@ -6188,7 +4519,7 @@ class VirtualMachineHealthStatus(Model):
         'status': {'key': 'status', 'type': 'InstanceViewStatus'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(VirtualMachineHealthStatus, self).__init__(**kwargs)
         self.status = None
 
@@ -6211,13 +4542,13 @@ class VirtualMachineIdentity(Model):
      remove any identities from the virtual machine. Possible values include:
      'SystemAssigned', 'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
     :type type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.ResourceIdentityType
+     ~azure.mgmt.compute.v2020_06_01.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated
      with the Virtual Machine. The user identity dictionary key references will
      be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineIdentityUserAssignedIdentitiesValue]
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineIdentityUserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -6232,12 +4563,12 @@ class VirtualMachineIdentity(Model):
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{VirtualMachineIdentityUserAssignedIdentitiesValue}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
         super(VirtualMachineIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = kwargs.get('type', None)
-        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class VirtualMachineIdentityUserAssignedIdentitiesValue(Model):
@@ -6262,7 +4593,7 @@ class VirtualMachineIdentityUserAssignedIdentitiesValue(Model):
         'client_id': {'key': 'clientId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(VirtualMachineIdentityUserAssignedIdentitiesValue, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -6298,11 +4629,11 @@ class VirtualMachineImageResource(SubResource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineImageResource, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, *, name: str, location: str, id: str=None, tags=None, **kwargs) -> None:
+        super(VirtualMachineImageResource, self).__init__(id=id, **kwargs)
+        self.name = name
+        self.location = location
+        self.tags = tags
 
 
 class VirtualMachineImage(VirtualMachineImageResource):
@@ -6322,18 +4653,22 @@ class VirtualMachineImage(VirtualMachineImageResource):
      resources](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-using-tags.md).
     :type tags: dict[str, str]
     :param plan:
-    :type plan: ~azure.mgmt.compute.v2019_07_01.models.PurchasePlan
+    :type plan: ~azure.mgmt.compute.v2020_06_01.models.PurchasePlan
     :param os_disk_image:
-    :type os_disk_image: ~azure.mgmt.compute.v2019_07_01.models.OSDiskImage
+    :type os_disk_image: ~azure.mgmt.compute.v2020_06_01.models.OSDiskImage
     :param data_disk_images:
     :type data_disk_images:
-     list[~azure.mgmt.compute.v2019_07_01.models.DataDiskImage]
+     list[~azure.mgmt.compute.v2020_06_01.models.DataDiskImage]
     :param automatic_os_upgrade_properties:
     :type automatic_os_upgrade_properties:
-     ~azure.mgmt.compute.v2019_07_01.models.AutomaticOSUpgradeProperties
+     ~azure.mgmt.compute.v2020_06_01.models.AutomaticOSUpgradeProperties
     :param hyper_vgeneration: Possible values include: 'V1', 'V2'
     :type hyper_vgeneration: str or
-     ~azure.mgmt.compute.v2019_07_01.models.HyperVGenerationTypes
+     ~azure.mgmt.compute.v2020_06_01.models.HyperVGenerationTypes
+    :param disallowed: Specifies disallowed configuration for the
+     VirtualMachine created from the image
+    :type disallowed:
+     ~azure.mgmt.compute.v2020_06_01.models.DisallowedConfiguration
     """
 
     _validation = {
@@ -6351,19 +4686,24 @@ class VirtualMachineImage(VirtualMachineImageResource):
         'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]'},
         'automatic_os_upgrade_properties': {'key': 'properties.automaticOSUpgradeProperties', 'type': 'AutomaticOSUpgradeProperties'},
         'hyper_vgeneration': {'key': 'properties.hyperVGeneration', 'type': 'str'},
+        'disallowed': {'key': 'properties.disallowed', 'type': 'DisallowedConfiguration'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineImage, self).__init__(**kwargs)
-        self.plan = kwargs.get('plan', None)
-        self.os_disk_image = kwargs.get('os_disk_image', None)
-        self.data_disk_images = kwargs.get('data_disk_images', None)
-        self.automatic_os_upgrade_properties = kwargs.get('automatic_os_upgrade_properties', None)
-        self.hyper_vgeneration = kwargs.get('hyper_vgeneration', None)
+    def __init__(self, *, name: str, location: str, id: str=None, tags=None, plan=None, os_disk_image=None, data_disk_images=None, automatic_os_upgrade_properties=None, hyper_vgeneration=None, disallowed=None, **kwargs) -> None:
+        super(VirtualMachineImage, self).__init__(id=id, name=name, location=location, tags=tags, **kwargs)
+        self.plan = plan
+        self.os_disk_image = os_disk_image
+        self.data_disk_images = data_disk_images
+        self.automatic_os_upgrade_properties = automatic_os_upgrade_properties
+        self.hyper_vgeneration = hyper_vgeneration
+        self.disallowed = disallowed
 
 
 class VirtualMachineInstanceView(Model):
     """The instance view of a virtual machine.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     :param platform_update_domain: Specifies the update domain of the virtual
      machine.
@@ -6381,31 +4721,40 @@ class VirtualMachineInstanceView(Model):
     :param hyper_vgeneration: Specifies the HyperVGeneration Type associated
      with a resource. Possible values include: 'V1', 'V2'
     :type hyper_vgeneration: str or
-     ~azure.mgmt.compute.v2019_07_01.models.HyperVGenerationType
+     ~azure.mgmt.compute.v2020_06_01.models.HyperVGenerationType
     :param rdp_thumb_print: The Remote desktop certificate thumbprint.
     :type rdp_thumb_print: str
     :param vm_agent: The VM Agent running on the virtual machine.
     :type vm_agent:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineAgentInstanceView
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineAgentInstanceView
     :param maintenance_redeploy_status: The Maintenance Operation status on
      the virtual machine.
     :type maintenance_redeploy_status:
-     ~azure.mgmt.compute.v2019_07_01.models.MaintenanceRedeployStatus
+     ~azure.mgmt.compute.v2020_06_01.models.MaintenanceRedeployStatus
     :param disks: The virtual machine disk information.
-    :type disks: list[~azure.mgmt.compute.v2019_07_01.models.DiskInstanceView]
+    :type disks: list[~azure.mgmt.compute.v2020_06_01.models.DiskInstanceView]
     :param extensions: The extensions information.
     :type extensions:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineExtensionInstanceView]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionInstanceView]
     :param boot_diagnostics: Boot Diagnostics is a debugging feature which
      allows you to view Console Output and Screenshot to diagnose VM status.
      <br><br> You can easily view the output of your console log. <br><br>
      Azure also enables you to see a screenshot of the VM from the hypervisor.
     :type boot_diagnostics:
-     ~azure.mgmt.compute.v2019_07_01.models.BootDiagnosticsInstanceView
+     ~azure.mgmt.compute.v2020_06_01.models.BootDiagnosticsInstanceView
+    :ivar assigned_host: Resource id of the dedicated host, on which the
+     virtual machine is allocated through automatic placement, when the virtual
+     machine is associated with a dedicated host group that has automatic
+     placement enabled. <br><br>Minimum api-version: 2020-06-01.
+    :vartype assigned_host: str
     :param statuses: The resource status information.
     :type statuses:
-     list[~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
     """
+
+    _validation = {
+        'assigned_host': {'readonly': True},
+    }
 
     _attribute_map = {
         'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},
@@ -6420,24 +4769,26 @@ class VirtualMachineInstanceView(Model):
         'disks': {'key': 'disks', 'type': '[DiskInstanceView]'},
         'extensions': {'key': 'extensions', 'type': '[VirtualMachineExtensionInstanceView]'},
         'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnosticsInstanceView'},
+        'assigned_host': {'key': 'assignedHost', 'type': 'str'},
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, platform_update_domain: int=None, platform_fault_domain: int=None, computer_name: str=None, os_name: str=None, os_version: str=None, hyper_vgeneration=None, rdp_thumb_print: str=None, vm_agent=None, maintenance_redeploy_status=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None, **kwargs) -> None:
         super(VirtualMachineInstanceView, self).__init__(**kwargs)
-        self.platform_update_domain = kwargs.get('platform_update_domain', None)
-        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
-        self.computer_name = kwargs.get('computer_name', None)
-        self.os_name = kwargs.get('os_name', None)
-        self.os_version = kwargs.get('os_version', None)
-        self.hyper_vgeneration = kwargs.get('hyper_vgeneration', None)
-        self.rdp_thumb_print = kwargs.get('rdp_thumb_print', None)
-        self.vm_agent = kwargs.get('vm_agent', None)
-        self.maintenance_redeploy_status = kwargs.get('maintenance_redeploy_status', None)
-        self.disks = kwargs.get('disks', None)
-        self.extensions = kwargs.get('extensions', None)
-        self.boot_diagnostics = kwargs.get('boot_diagnostics', None)
-        self.statuses = kwargs.get('statuses', None)
+        self.platform_update_domain = platform_update_domain
+        self.platform_fault_domain = platform_fault_domain
+        self.computer_name = computer_name
+        self.os_name = os_name
+        self.os_version = os_version
+        self.hyper_vgeneration = hyper_vgeneration
+        self.rdp_thumb_print = rdp_thumb_print
+        self.vm_agent = vm_agent
+        self.maintenance_redeploy_status = maintenance_redeploy_status
+        self.disks = disks
+        self.extensions = extensions
+        self.boot_diagnostics = boot_diagnostics
+        self.assigned_host = None
+        self.statuses = statuses
 
 
 class VirtualMachineReimageParameters(Model):
@@ -6454,9 +4805,9 @@ class VirtualMachineReimageParameters(Model):
         'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, temp_disk: bool=None, **kwargs) -> None:
         super(VirtualMachineReimageParameters, self).__init__(**kwargs)
-        self.temp_disk = kwargs.get('temp_disk', None)
+        self.temp_disk = temp_disk
 
 
 class VirtualMachineScaleSet(Resource):
@@ -6478,7 +4829,7 @@ class VirtualMachineScaleSet(Resource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param sku: The virtual machine scale set sku.
-    :type sku: ~azure.mgmt.compute.v2019_07_01.models.Sku
+    :type sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
     :param plan: Specifies information about the marketplace image used to
      create the virtual machine. This element is only used for marketplace
      images. Before you can use a marketplace image from an API, you must
@@ -6486,15 +4837,15 @@ class VirtualMachineScaleSet(Resource):
      marketplace image that you want to use and then click **Want to deploy
      programmatically, Get Started ->**. Enter any required information and
      then click **Save**.
-    :type plan: ~azure.mgmt.compute.v2019_07_01.models.Plan
+    :type plan: ~azure.mgmt.compute.v2020_06_01.models.Plan
     :param upgrade_policy: The upgrade policy.
-    :type upgrade_policy: ~azure.mgmt.compute.v2019_07_01.models.UpgradePolicy
+    :type upgrade_policy: ~azure.mgmt.compute.v2020_06_01.models.UpgradePolicy
     :param automatic_repairs_policy: Policy for automatic repairs.
     :type automatic_repairs_policy:
-     ~azure.mgmt.compute.v2019_07_01.models.AutomaticRepairsPolicy
+     ~azure.mgmt.compute.v2020_06_01.models.AutomaticRepairsPolicy
     :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetVMProfile
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMProfile
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -6510,7 +4861,9 @@ class VirtualMachineScaleSet(Resource):
      Machine Scale Set.
     :vartype unique_id: str
     :param single_placement_group: When true this limits the scale set to a
-     single placement group, of max size 100 virtual machines.
+     single placement group, of max size 100 virtual machines. NOTE: If
+     singlePlacementGroup is true, it may be modified to false. However, if
+     singlePlacementGroup is false, it may not be modified to true.
     :type single_placement_group: bool
     :param zone_balance: Whether to force strictly even Virtual Machine
      distribution cross x-zones in case there is zone outage.
@@ -6522,24 +4875,28 @@ class VirtualMachineScaleSet(Resource):
      proximity placement group that the virtual machine scale set should be
      assigned to. <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
-     ~azure.mgmt.compute.v2019_07_01.models.SubResource
+     ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :param host_group: Specifies information about the dedicated host group
+     that the virtual machine scale set resides in. <br><br>Minimum
+     api-version: 2020-06-01.
+    :type host_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param additional_capabilities: Specifies additional capabilities enabled
      or disabled on the Virtual Machines in the Virtual Machine Scale Set. For
      instance: whether the Virtual Machines have the capability to support
      attaching managed data disks with UltraSSD_LRS storage account type.
     :type additional_capabilities:
-     ~azure.mgmt.compute.v2019_07_01.models.AdditionalCapabilities
+     ~azure.mgmt.compute.v2020_06_01.models.AdditionalCapabilities
     :param scale_in_policy: Specifies the scale-in policy that decides which
      virtual machines are chosen for removal when a Virtual Machine Scale Set
      is scaled-in.
     :type scale_in_policy:
-     ~azure.mgmt.compute.v2019_07_01.models.ScaleInPolicy
+     ~azure.mgmt.compute.v2020_06_01.models.ScaleInPolicy
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetIdentity
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetIdentity
     :param zones: The virtual machine scale set zones. NOTE: Availability
-     zones can only be set when you create the scale set.
+     zones can only be set when you create the scale set
     :type zones: list[str]
     """
 
@@ -6571,31 +4928,33 @@ class VirtualMachineScaleSet(Resource):
         'zone_balance': {'key': 'properties.zoneBalance', 'type': 'bool'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
+        'host_group': {'key': 'properties.hostGroup', 'type': 'SubResource'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineScaleSet, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
-        self.plan = kwargs.get('plan', None)
-        self.upgrade_policy = kwargs.get('upgrade_policy', None)
-        self.automatic_repairs_policy = kwargs.get('automatic_repairs_policy', None)
-        self.virtual_machine_profile = kwargs.get('virtual_machine_profile', None)
+    def __init__(self, *, location: str, tags=None, sku=None, plan=None, upgrade_policy=None, automatic_repairs_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, zone_balance: bool=None, platform_fault_domain_count: int=None, proximity_placement_group=None, host_group=None, additional_capabilities=None, scale_in_policy=None, identity=None, zones=None, **kwargs) -> None:
+        super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags, **kwargs)
+        self.sku = sku
+        self.plan = plan
+        self.upgrade_policy = upgrade_policy
+        self.automatic_repairs_policy = automatic_repairs_policy
+        self.virtual_machine_profile = virtual_machine_profile
         self.provisioning_state = None
-        self.overprovision = kwargs.get('overprovision', None)
-        self.do_not_run_extensions_on_overprovisioned_vms = kwargs.get('do_not_run_extensions_on_overprovisioned_vms', None)
+        self.overprovision = overprovision
+        self.do_not_run_extensions_on_overprovisioned_vms = do_not_run_extensions_on_overprovisioned_vms
         self.unique_id = None
-        self.single_placement_group = kwargs.get('single_placement_group', None)
-        self.zone_balance = kwargs.get('zone_balance', None)
-        self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
-        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
-        self.additional_capabilities = kwargs.get('additional_capabilities', None)
-        self.scale_in_policy = kwargs.get('scale_in_policy', None)
-        self.identity = kwargs.get('identity', None)
-        self.zones = kwargs.get('zones', None)
+        self.single_placement_group = single_placement_group
+        self.zone_balance = zone_balance
+        self.platform_fault_domain_count = platform_fault_domain_count
+        self.proximity_placement_group = proximity_placement_group
+        self.host_group = host_group
+        self.additional_capabilities = additional_capabilities
+        self.scale_in_policy = scale_in_policy
+        self.identity = identity
+        self.zones = zones
 
 
 class VirtualMachineScaleSetDataDisk(Model):
@@ -6613,21 +4972,21 @@ class VirtualMachineScaleSetDataDisk(Model):
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
-    :type caching: str or ~azure.mgmt.compute.v2019_07_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
     :type write_accelerator_enabled: bool
     :param create_option: Required. The create option. Possible values
      include: 'FromImage', 'Empty', 'Attach'
     :type create_option: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DiskCreateOptionTypes
+     ~azure.mgmt.compute.v2020_06_01.models.DiskCreateOptionTypes
     :param disk_size_gb: Specifies the size of an empty data disk in
      gigabytes. This element can be used to overwrite the size of the disk in a
      virtual machine image. <br><br> This value cannot be larger than 1023 GB
     :type disk_size_gb: int
     :param managed_disk: The managed disk parameters.
     :type managed_disk:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetManagedDiskParameters
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetManagedDiskParameters
     :param disk_iops_read_write: Specifies the Read-Write IOPS for the managed
      disk. Should be used only when StorageAccountType is UltraSSD_LRS. If not
      specified, a default value would be assigned based on diskSizeGB.
@@ -6656,17 +5015,17 @@ class VirtualMachineScaleSetDataDisk(Model):
         'disk_mbps_read_write': {'key': 'diskMBpsReadWrite', 'type': 'long'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, lun: int, create_option, name: str=None, caching=None, write_accelerator_enabled: bool=None, disk_size_gb: int=None, managed_disk=None, disk_iops_read_write: int=None, disk_mbps_read_write: int=None, **kwargs) -> None:
         super(VirtualMachineScaleSetDataDisk, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.lun = kwargs.get('lun', None)
-        self.caching = kwargs.get('caching', None)
-        self.write_accelerator_enabled = kwargs.get('write_accelerator_enabled', None)
-        self.create_option = kwargs.get('create_option', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.managed_disk = kwargs.get('managed_disk', None)
-        self.disk_iops_read_write = kwargs.get('disk_iops_read_write', None)
-        self.disk_mbps_read_write = kwargs.get('disk_mbps_read_write', None)
+        self.name = name
+        self.lun = lun
+        self.caching = caching
+        self.write_accelerator_enabled = write_accelerator_enabled
+        self.create_option = create_option
+        self.disk_size_gb = disk_size_gb
+        self.managed_disk = managed_disk
+        self.disk_iops_read_write = disk_iops_read_write
+        self.disk_mbps_read_write = disk_mbps_read_write
 
 
 class VirtualMachineScaleSetExtension(SubResourceReadOnly):
@@ -6732,19 +5091,19 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, force_update_tag: str=None, publisher: str=None, type1: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
         super(VirtualMachineScaleSetExtension, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name
         self.type = None
-        self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.type1 = kwargs.get('type1', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
-        self.settings = kwargs.get('settings', None)
-        self.protected_settings = kwargs.get('protected_settings', None)
+        self.force_update_tag = force_update_tag
+        self.publisher = publisher
+        self.type1 = type1
+        self.type_handler_version = type_handler_version
+        self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.settings = settings
+        self.protected_settings = protected_settings
         self.provisioning_state = None
-        self.provision_after_extensions = kwargs.get('provision_after_extensions', None)
+        self.provision_after_extensions = provision_after_extensions
 
 
 class VirtualMachineScaleSetExtensionProfile(Model):
@@ -6753,16 +5112,24 @@ class VirtualMachineScaleSetExtensionProfile(Model):
     :param extensions: The virtual machine scale set child extension
      resources.
     :type extensions:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetExtension]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetExtension]
+    :param extensions_time_budget: Specifies the time alloted for all
+     extensions to start. The time duration should be between 15 minutes and
+     120 minutes (inclusive) and should be specified in ISO 8601 format. The
+     default value is 90 minutes (PT1H30M). <br><br> Minimum api-version:
+     2020-06-01
+    :type extensions_time_budget: str
     """
 
     _attribute_map = {
         'extensions': {'key': 'extensions', 'type': '[VirtualMachineScaleSetExtension]'},
+        'extensions_time_budget': {'key': 'extensionsTimeBudget', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, extensions=None, extensions_time_budget: str=None, **kwargs) -> None:
         super(VirtualMachineScaleSetExtensionProfile, self).__init__(**kwargs)
-        self.extensions = kwargs.get('extensions', None)
+        self.extensions = extensions
+        self.extensions_time_budget = extensions_time_budget
 
 
 class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
@@ -6829,19 +5196,19 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         'provision_after_extensions': {'key': 'properties.provisionAfterExtensions', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, force_update_tag: str=None, publisher: str=None, type1: str=None, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
         super(VirtualMachineScaleSetExtensionUpdate, self).__init__(**kwargs)
         self.name = None
         self.type = None
-        self.force_update_tag = kwargs.get('force_update_tag', None)
-        self.publisher = kwargs.get('publisher', None)
-        self.type1 = kwargs.get('type1', None)
-        self.type_handler_version = kwargs.get('type_handler_version', None)
-        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
-        self.settings = kwargs.get('settings', None)
-        self.protected_settings = kwargs.get('protected_settings', None)
+        self.force_update_tag = force_update_tag
+        self.publisher = publisher
+        self.type1 = type1
+        self.type_handler_version = type_handler_version
+        self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.settings = settings
+        self.protected_settings = protected_settings
         self.provisioning_state = None
-        self.provision_after_extensions = kwargs.get('provision_after_extensions', None)
+        self.provision_after_extensions = provision_after_extensions
 
 
 class VirtualMachineScaleSetIdentity(Model):
@@ -6864,13 +5231,13 @@ class VirtualMachineScaleSetIdentity(Model):
      values include: 'SystemAssigned', 'UserAssigned', 'SystemAssigned,
      UserAssigned', 'None'
     :type type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.ResourceIdentityType
+     ~azure.mgmt.compute.v2020_06_01.models.ResourceIdentityType
     :param user_assigned_identities: The list of user identities associated
      with the virtual machine scale set. The user identity dictionary key
      references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -6885,12 +5252,12 @@ class VirtualMachineScaleSetIdentity(Model):
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, type=None, user_assigned_identities=None, **kwargs) -> None:
         super(VirtualMachineScaleSetIdentity, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
-        self.type = kwargs.get('type', None)
-        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(Model):
@@ -6915,7 +5282,7 @@ class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(Model):
         'client_id': {'key': 'clientId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue, self).__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
@@ -6930,31 +5297,37 @@ class VirtualMachineScaleSetInstanceView(Model):
     :ivar virtual_machine: The instance view status summary for the virtual
      machine scale set.
     :vartype virtual_machine:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetInstanceViewStatusesSummary
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetInstanceViewStatusesSummary
     :ivar extensions: The extensions information.
     :vartype extensions:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetVMExtensionsSummary]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMExtensionsSummary]
     :param statuses: The resource status information.
     :type statuses:
-     list[~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :ivar orchestration_services: The orchestration services information.
+    :vartype orchestration_services:
+     list[~azure.mgmt.compute.v2020_06_01.models.OrchestrationServiceSummary]
     """
 
     _validation = {
         'virtual_machine': {'readonly': True},
         'extensions': {'readonly': True},
+        'orchestration_services': {'readonly': True},
     }
 
     _attribute_map = {
         'virtual_machine': {'key': 'virtualMachine', 'type': 'VirtualMachineScaleSetInstanceViewStatusesSummary'},
         'extensions': {'key': 'extensions', 'type': '[VirtualMachineScaleSetVMExtensionsSummary]'},
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        'orchestration_services': {'key': 'orchestrationServices', 'type': '[OrchestrationServiceSummary]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, statuses=None, **kwargs) -> None:
         super(VirtualMachineScaleSetInstanceView, self).__init__(**kwargs)
         self.virtual_machine = None
         self.extensions = None
-        self.statuses = kwargs.get('statuses', None)
+        self.statuses = statuses
+        self.orchestration_services = None
 
 
 class VirtualMachineScaleSetInstanceViewStatusesSummary(Model):
@@ -6966,7 +5339,7 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(Model):
 
     :ivar statuses_summary: The extensions information.
     :vartype statuses_summary:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineStatusCodeCount]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineStatusCodeCount]
     """
 
     _validation = {
@@ -6977,7 +5350,7 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(Model):
         'statuses_summary': {'key': 'statusesSummary', 'type': '[VirtualMachineStatusCodeCount]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(VirtualMachineScaleSetInstanceViewStatusesSummary, self).__init__(**kwargs)
         self.statuses_summary = None
 
@@ -6992,41 +5365,41 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     :param name: Required. The IP configuration name.
     :type name: str
     :param subnet: Specifies the identifier of the subnet.
-    :type subnet: ~azure.mgmt.compute.v2019_07_01.models.ApiEntityReference
+    :type subnet: ~azure.mgmt.compute.v2020_06_01.models.ApiEntityReference
     :param primary: Specifies the primary network interface in case the
      virtual machine has more than 1 network interface.
     :type primary: bool
     :param public_ip_address_configuration: The publicIPAddressConfiguration.
     :type public_ip_address_configuration:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetPublicIPAddressConfiguration
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetPublicIPAddressConfiguration
     :param private_ip_address_version: Available from Api-Version 2017-03-30
      onwards, it represents whether the specific ipconfiguration is IPv4 or
      IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and 'IPv6'.
      Possible values include: 'IPv4', 'IPv6'
     :type private_ip_address_version: str or
-     ~azure.mgmt.compute.v2019_07_01.models.IPVersion
+     ~azure.mgmt.compute.v2020_06_01.models.IPVersion
     :param application_gateway_backend_address_pools: Specifies an array of
      references to backend address pools of application gateways. A scale set
      can reference backend address pools of multiple application gateways.
      Multiple scale sets cannot use the same application gateway.
     :type application_gateway_backend_address_pools:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
     :param application_security_groups: Specifies an array of references to
      application security group.
     :type application_security_groups:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
     :param load_balancer_backend_address_pools: Specifies an array of
      references to backend address pools of load balancers. A scale set can
      reference backend address pools of one public and one internal load
-     balancer. Multiple scale sets cannot use the same load balancer.
+     balancer. Multiple scale sets cannot use the same basic sku load balancer.
     :type load_balancer_backend_address_pools:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
     :param load_balancer_inbound_nat_pools: Specifies an array of references
      to inbound Nat pools of the load balancers. A scale set can reference
      inbound nat pools of one public and one internal load balancer. Multiple
-     scale sets cannot use the same load balancer
+     scale sets cannot use the same basic sku load balancer.
     :type load_balancer_inbound_nat_pools:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
     """
 
     _validation = {
@@ -7046,17 +5419,17 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         'load_balancer_inbound_nat_pools': {'key': 'properties.loadBalancerInboundNatPools', 'type': '[SubResource]'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineScaleSetIPConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.subnet = kwargs.get('subnet', None)
-        self.primary = kwargs.get('primary', None)
-        self.public_ip_address_configuration = kwargs.get('public_ip_address_configuration', None)
-        self.private_ip_address_version = kwargs.get('private_ip_address_version', None)
-        self.application_gateway_backend_address_pools = kwargs.get('application_gateway_backend_address_pools', None)
-        self.application_security_groups = kwargs.get('application_security_groups', None)
-        self.load_balancer_backend_address_pools = kwargs.get('load_balancer_backend_address_pools', None)
-        self.load_balancer_inbound_nat_pools = kwargs.get('load_balancer_inbound_nat_pools', None)
+    def __init__(self, *, name: str, id: str=None, subnet=None, primary: bool=None, public_ip_address_configuration=None, private_ip_address_version=None, application_gateway_backend_address_pools=None, application_security_groups=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_pools=None, **kwargs) -> None:
+        super(VirtualMachineScaleSetIPConfiguration, self).__init__(id=id, **kwargs)
+        self.name = name
+        self.subnet = subnet
+        self.primary = primary
+        self.public_ip_address_configuration = public_ip_address_configuration
+        self.private_ip_address_version = private_ip_address_version
+        self.application_gateway_backend_address_pools = application_gateway_backend_address_pools
+        self.application_security_groups = application_security_groups
+        self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
+        self.load_balancer_inbound_nat_pools = load_balancer_inbound_nat_pools
 
 
 class VirtualMachineScaleSetIpTag(Model):
@@ -7074,10 +5447,10 @@ class VirtualMachineScaleSetIpTag(Model):
         'tag': {'key': 'tag', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, ip_tag_type: str=None, tag: str=None, **kwargs) -> None:
         super(VirtualMachineScaleSetIpTag, self).__init__(**kwargs)
-        self.ip_tag_type = kwargs.get('ip_tag_type', None)
-        self.tag = kwargs.get('tag', None)
+        self.ip_tag_type = ip_tag_type
+        self.tag = tag
 
 
 class VirtualMachineScaleSetManagedDiskParameters(Model):
@@ -7088,11 +5461,11 @@ class VirtualMachineScaleSetManagedDiskParameters(Model):
      cannot be used with OS Disk. Possible values include: 'Standard_LRS',
      'Premium_LRS', 'StandardSSD_LRS', 'UltraSSD_LRS'
     :type storage_account_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.StorageAccountTypes
+     ~azure.mgmt.compute.v2020_06_01.models.StorageAccountTypes
     :param disk_encryption_set: Specifies the customer managed disk encryption
      set resource id for the managed disk.
     :type disk_encryption_set:
-     ~azure.mgmt.compute.v2019_07_01.models.DiskEncryptionSetParameters
+     ~azure.mgmt.compute.v2020_06_01.models.DiskEncryptionSetParameters
     """
 
     _attribute_map = {
@@ -7100,10 +5473,10 @@ class VirtualMachineScaleSetManagedDiskParameters(Model):
         'disk_encryption_set': {'key': 'diskEncryptionSet', 'type': 'DiskEncryptionSetParameters'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, storage_account_type=None, disk_encryption_set=None, **kwargs) -> None:
         super(VirtualMachineScaleSetManagedDiskParameters, self).__init__(**kwargs)
-        self.storage_account_type = kwargs.get('storage_account_type', None)
-        self.disk_encryption_set = kwargs.get('disk_encryption_set', None)
+        self.storage_account_type = storage_account_type
+        self.disk_encryption_set = disk_encryption_set
 
 
 class VirtualMachineScaleSetNetworkConfiguration(SubResource):
@@ -7124,15 +5497,15 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
     :type enable_accelerated_networking: bool
     :param network_security_group: The network security group.
     :type network_security_group:
-     ~azure.mgmt.compute.v2019_07_01.models.SubResource
+     ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param dns_settings: The dns settings to be applied on the network
      interfaces.
     :type dns_settings:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings
     :param ip_configurations: Required. Specifies the IP configurations of the
      network interface.
     :type ip_configurations:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetIPConfiguration]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetIPConfiguration]
     :param enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
     :type enable_ip_forwarding: bool
     """
@@ -7153,15 +5526,15 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
         'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.primary = kwargs.get('primary', None)
-        self.enable_accelerated_networking = kwargs.get('enable_accelerated_networking', None)
-        self.network_security_group = kwargs.get('network_security_group', None)
-        self.dns_settings = kwargs.get('dns_settings', None)
-        self.ip_configurations = kwargs.get('ip_configurations', None)
-        self.enable_ip_forwarding = kwargs.get('enable_ip_forwarding', None)
+    def __init__(self, *, name: str, ip_configurations, id: str=None, primary: bool=None, enable_accelerated_networking: bool=None, network_security_group=None, dns_settings=None, enable_ip_forwarding: bool=None, **kwargs) -> None:
+        super(VirtualMachineScaleSetNetworkConfiguration, self).__init__(id=id, **kwargs)
+        self.name = name
+        self.primary = primary
+        self.enable_accelerated_networking = enable_accelerated_networking
+        self.network_security_group = network_security_group
+        self.dns_settings = dns_settings
+        self.ip_configurations = ip_configurations
+        self.enable_ip_forwarding = enable_ip_forwarding
 
 
 class VirtualMachineScaleSetNetworkConfigurationDnsSettings(Model):
@@ -7176,9 +5549,9 @@ class VirtualMachineScaleSetNetworkConfigurationDnsSettings(Model):
         'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, dns_servers=None, **kwargs) -> None:
         super(VirtualMachineScaleSetNetworkConfigurationDnsSettings, self).__init__(**kwargs)
-        self.dns_servers = kwargs.get('dns_servers', None)
+        self.dns_servers = dns_servers
 
 
 class VirtualMachineScaleSetNetworkProfile(Model):
@@ -7189,11 +5562,11 @@ class VirtualMachineScaleSetNetworkProfile(Model):
      reference will be in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
     :type health_probe:
-     ~azure.mgmt.compute.v2019_07_01.models.ApiEntityReference
+     ~azure.mgmt.compute.v2020_06_01.models.ApiEntityReference
     :param network_interface_configurations: The list of network
      configurations.
     :type network_interface_configurations:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetNetworkConfiguration]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetNetworkConfiguration]
     """
 
     _attribute_map = {
@@ -7201,10 +5574,10 @@ class VirtualMachineScaleSetNetworkProfile(Model):
         'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetNetworkConfiguration]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, health_probe=None, network_interface_configurations=None, **kwargs) -> None:
         super(VirtualMachineScaleSetNetworkProfile, self).__init__(**kwargs)
-        self.health_probe = kwargs.get('health_probe', None)
-        self.network_interface_configurations = kwargs.get('network_interface_configurations', None)
+        self.health_probe = health_probe
+        self.network_interface_configurations = network_interface_configurations
 
 
 class VirtualMachineScaleSetOSDisk(Model):
@@ -7218,7 +5591,7 @@ class VirtualMachineScaleSetOSDisk(Model):
      values are: <br><br> **None** <br><br> **ReadOnly** <br><br> **ReadWrite**
      <br><br> Default: **None for Standard storage. ReadOnly for Premium
      storage**. Possible values include: 'None', 'ReadOnly', 'ReadWrite'
-    :type caching: str or ~azure.mgmt.compute.v2019_07_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
     :type write_accelerator_enabled: bool
@@ -7230,11 +5603,11 @@ class VirtualMachineScaleSetOSDisk(Model):
      marketplace image, you  also use the plan element previously described.
      Possible values include: 'FromImage', 'Empty', 'Attach'
     :type create_option: str or
-     ~azure.mgmt.compute.v2019_07_01.models.DiskCreateOptionTypes
+     ~azure.mgmt.compute.v2020_06_01.models.DiskCreateOptionTypes
     :param diff_disk_settings: Specifies the ephemeral disk Settings for the
      operating system disk used by the virtual machine scale set.
     :type diff_disk_settings:
-     ~azure.mgmt.compute.v2019_07_01.models.DiffDiskSettings
+     ~azure.mgmt.compute.v2020_06_01.models.DiffDiskSettings
     :param disk_size_gb: Specifies the size of the operating system disk in
      gigabytes. This element can be used to overwrite the size of the disk in a
      virtual machine image. <br><br> This value cannot be larger than 1023 GB
@@ -7244,16 +5617,16 @@ class VirtualMachineScaleSetOSDisk(Model):
      specialized VHD. <br><br> Possible values are: <br><br> **Windows**
      <br><br> **Linux**. Possible values include: 'Windows', 'Linux'
     :type os_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.OperatingSystemTypes
+     ~azure.mgmt.compute.v2020_06_01.models.OperatingSystemTypes
     :param image: Specifies information about the unmanaged user image to base
      the scale set on.
-    :type image: ~azure.mgmt.compute.v2019_07_01.models.VirtualHardDisk
+    :type image: ~azure.mgmt.compute.v2020_06_01.models.VirtualHardDisk
     :param vhd_containers: Specifies the container urls that are used to store
      operating system disks for the scale set.
     :type vhd_containers: list[str]
     :param managed_disk: The managed disk parameters.
     :type managed_disk:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetManagedDiskParameters
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetManagedDiskParameters
     """
 
     _validation = {
@@ -7273,18 +5646,18 @@ class VirtualMachineScaleSetOSDisk(Model):
         'managed_disk': {'key': 'managedDisk', 'type': 'VirtualMachineScaleSetManagedDiskParameters'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, create_option, name: str=None, caching=None, write_accelerator_enabled: bool=None, diff_disk_settings=None, disk_size_gb: int=None, os_type=None, image=None, vhd_containers=None, managed_disk=None, **kwargs) -> None:
         super(VirtualMachineScaleSetOSDisk, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.caching = kwargs.get('caching', None)
-        self.write_accelerator_enabled = kwargs.get('write_accelerator_enabled', None)
-        self.create_option = kwargs.get('create_option', None)
-        self.diff_disk_settings = kwargs.get('diff_disk_settings', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.os_type = kwargs.get('os_type', None)
-        self.image = kwargs.get('image', None)
-        self.vhd_containers = kwargs.get('vhd_containers', None)
-        self.managed_disk = kwargs.get('managed_disk', None)
+        self.name = name
+        self.caching = caching
+        self.write_accelerator_enabled = write_accelerator_enabled
+        self.create_option = create_option
+        self.diff_disk_settings = diff_disk_settings
+        self.disk_size_gb = disk_size_gb
+        self.os_type = os_type
+        self.image = image
+        self.vhd_containers = vhd_containers
+        self.managed_disk = managed_disk
 
 
 class VirtualMachineScaleSetOSProfile(Model):
@@ -7335,7 +5708,7 @@ class VirtualMachineScaleSetOSProfile(Model):
     :param windows_configuration: Specifies Windows operating system settings
      on the virtual machine.
     :type windows_configuration:
-     ~azure.mgmt.compute.v2019_07_01.models.WindowsConfiguration
+     ~azure.mgmt.compute.v2020_06_01.models.WindowsConfiguration
     :param linux_configuration: Specifies the Linux operating system settings
      on the virtual machine. <br><br>For a list of supported Linux
      distributions, see [Linux on Azure-Endorsed
@@ -7344,11 +5717,11 @@ class VirtualMachineScaleSetOSProfile(Model):
      Non-Endorsed
      Distributions](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json).
     :type linux_configuration:
-     ~azure.mgmt.compute.v2019_07_01.models.LinuxConfiguration
+     ~azure.mgmt.compute.v2020_06_01.models.LinuxConfiguration
     :param secrets: Specifies set of certificates that should be installed
      onto the virtual machines in the scale set.
     :type secrets:
-     list[~azure.mgmt.compute.v2019_07_01.models.VaultSecretGroup]
+     list[~azure.mgmt.compute.v2020_06_01.models.VaultSecretGroup]
     """
 
     _attribute_map = {
@@ -7361,15 +5734,15 @@ class VirtualMachineScaleSetOSProfile(Model):
         'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, computer_name_prefix: str=None, admin_username: str=None, admin_password: str=None, custom_data: str=None, windows_configuration=None, linux_configuration=None, secrets=None, **kwargs) -> None:
         super(VirtualMachineScaleSetOSProfile, self).__init__(**kwargs)
-        self.computer_name_prefix = kwargs.get('computer_name_prefix', None)
-        self.admin_username = kwargs.get('admin_username', None)
-        self.admin_password = kwargs.get('admin_password', None)
-        self.custom_data = kwargs.get('custom_data', None)
-        self.windows_configuration = kwargs.get('windows_configuration', None)
-        self.linux_configuration = kwargs.get('linux_configuration', None)
-        self.secrets = kwargs.get('secrets', None)
+        self.computer_name_prefix = computer_name_prefix
+        self.admin_username = admin_username
+        self.admin_password = admin_password
+        self.custom_data = custom_data
+        self.windows_configuration = windows_configuration
+        self.linux_configuration = linux_configuration
+        self.secrets = secrets
 
 
 class VirtualMachineScaleSetPublicIPAddressConfiguration(Model):
@@ -7385,19 +5758,19 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(Model):
     :param dns_settings: The dns settings to be applied on the publicIP
      addresses .
     :type dns_settings:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
     :param ip_tags: The list of IP tags associated with the public IP address.
     :type ip_tags:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetIpTag]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetIpTag]
     :param public_ip_prefix: The PublicIPPrefix from which to allocate
      publicIP addresses.
-    :type public_ip_prefix: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type public_ip_prefix: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param public_ip_address_version: Available from Api-Version 2019-07-01
      onwards, it represents whether the specific ipconfiguration is IPv4 or
      IPv6. Default is taken as IPv4. Possible values are: 'IPv4' and 'IPv6'.
      Possible values include: 'IPv4', 'IPv6'
     :type public_ip_address_version: str or
-     ~azure.mgmt.compute.v2019_07_01.models.IPVersion
+     ~azure.mgmt.compute.v2020_06_01.models.IPVersion
     """
 
     _validation = {
@@ -7413,14 +5786,14 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(Model):
         'public_ip_address_version': {'key': 'properties.publicIPAddressVersion', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, idle_timeout_in_minutes: int=None, dns_settings=None, ip_tags=None, public_ip_prefix=None, public_ip_address_version=None, **kwargs) -> None:
         super(VirtualMachineScaleSetPublicIPAddressConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
-        self.dns_settings = kwargs.get('dns_settings', None)
-        self.ip_tags = kwargs.get('ip_tags', None)
-        self.public_ip_prefix = kwargs.get('public_ip_prefix', None)
-        self.public_ip_address_version = kwargs.get('public_ip_address_version', None)
+        self.name = name
+        self.idle_timeout_in_minutes = idle_timeout_in_minutes
+        self.dns_settings = dns_settings
+        self.ip_tags = ip_tags
+        self.public_ip_prefix = public_ip_prefix
+        self.public_ip_address_version = public_ip_address_version
 
 
 class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(Model):
@@ -7443,9 +5816,9 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(Model):
         'domain_name_label': {'key': 'domainNameLabel', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, domain_name_label: str, **kwargs) -> None:
         super(VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings, self).__init__(**kwargs)
-        self.domain_name_label = kwargs.get('domain_name_label', None)
+        self.domain_name_label = domain_name_label
 
 
 class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
@@ -7461,8 +5834,8 @@ class VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters)
         'temp_disk': {'key': 'tempDisk', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineScaleSetVMReimageParameters, self).__init__(**kwargs)
+    def __init__(self, *, temp_disk: bool=None, **kwargs) -> None:
+        super(VirtualMachineScaleSetVMReimageParameters, self).__init__(temp_disk=temp_disk, **kwargs)
 
 
 class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimageParameters):
@@ -7483,9 +5856,9 @@ class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimagePar
         'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineScaleSetReimageParameters, self).__init__(**kwargs)
-        self.instance_ids = kwargs.get('instance_ids', None)
+    def __init__(self, *, temp_disk: bool=None, instance_ids=None, **kwargs) -> None:
+        super(VirtualMachineScaleSetReimageParameters, self).__init__(temp_disk=temp_disk, **kwargs)
+        self.instance_ids = instance_ids
 
 
 class VirtualMachineScaleSetSku(Model):
@@ -7497,10 +5870,10 @@ class VirtualMachineScaleSetSku(Model):
     :ivar resource_type: The type of resource the sku applies to.
     :vartype resource_type: str
     :ivar sku: The Sku.
-    :vartype sku: ~azure.mgmt.compute.v2019_07_01.models.Sku
+    :vartype sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
     :ivar capacity: Specifies the number of virtual machines in the scale set.
     :vartype capacity:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetSkuCapacity
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetSkuCapacity
     """
 
     _validation = {
@@ -7515,7 +5888,7 @@ class VirtualMachineScaleSetSku(Model):
         'capacity': {'key': 'capacity', 'type': 'VirtualMachineScaleSetSkuCapacity'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(VirtualMachineScaleSetSku, self).__init__(**kwargs)
         self.resource_type = None
         self.sku = None
@@ -7537,7 +5910,7 @@ class VirtualMachineScaleSetSkuCapacity(Model):
     :ivar scale_type: The scale type applicable to the sku. Possible values
      include: 'Automatic', 'None'
     :vartype scale_type: str or
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetSkuScaleType
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetSkuScaleType
     """
 
     _validation = {
@@ -7554,7 +5927,7 @@ class VirtualMachineScaleSetSkuCapacity(Model):
         'scale_type': {'key': 'scaleType', 'type': 'VirtualMachineScaleSetSkuScaleType'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(VirtualMachineScaleSetSkuCapacity, self).__init__(**kwargs)
         self.minimum = None
         self.maximum = None
@@ -7571,19 +5944,19 @@ class VirtualMachineScaleSetStorageProfile(Model):
      platform image, marketplace image, or virtual machine image, but is not
      used in other creation operations.
     :type image_reference:
-     ~azure.mgmt.compute.v2019_07_01.models.ImageReference
+     ~azure.mgmt.compute.v2020_06_01.models.ImageReference
     :param os_disk: Specifies information about the operating system disk used
      by the virtual machines in the scale set. <br><br> For more information
      about disks, see [About disks and VHDs for Azure virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
     :type os_disk:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetOSDisk
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetOSDisk
     :param data_disks: Specifies the parameters that are used to add data
      disks to the virtual machines in the scale set. <br><br> For more
      information about disks, see [About disks and VHDs for Azure virtual
      machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-about-disks-vhds?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
     :type data_disks:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetDataDisk]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetDataDisk]
     """
 
     _attribute_map = {
@@ -7592,11 +5965,11 @@ class VirtualMachineScaleSetStorageProfile(Model):
         'data_disks': {'key': 'dataDisks', 'type': '[VirtualMachineScaleSetDataDisk]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, image_reference=None, os_disk=None, data_disks=None, **kwargs) -> None:
         super(VirtualMachineScaleSetStorageProfile, self).__init__(**kwargs)
-        self.image_reference = kwargs.get('image_reference', None)
-        self.os_disk = kwargs.get('os_disk', None)
-        self.data_disks = kwargs.get('data_disks', None)
+        self.image_reference = image_reference
+        self.os_disk = os_disk
+        self.data_disks = data_disks
 
 
 class VirtualMachineScaleSetUpdate(UpdateResource):
@@ -7605,18 +5978,18 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :param tags: Resource tags
     :type tags: dict[str, str]
     :param sku: The virtual machine scale set sku.
-    :type sku: ~azure.mgmt.compute.v2019_07_01.models.Sku
+    :type sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
     :param plan: The purchase plan when deploying a virtual machine scale set
      from VM Marketplace images.
-    :type plan: ~azure.mgmt.compute.v2019_07_01.models.Plan
+    :type plan: ~azure.mgmt.compute.v2020_06_01.models.Plan
     :param upgrade_policy: The upgrade policy.
-    :type upgrade_policy: ~azure.mgmt.compute.v2019_07_01.models.UpgradePolicy
+    :type upgrade_policy: ~azure.mgmt.compute.v2020_06_01.models.UpgradePolicy
     :param automatic_repairs_policy: Policy for automatic repairs.
     :type automatic_repairs_policy:
-     ~azure.mgmt.compute.v2019_07_01.models.AutomaticRepairsPolicy
+     ~azure.mgmt.compute.v2020_06_01.models.AutomaticRepairsPolicy
     :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetUpdateVMProfile
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateVMProfile
     :param overprovision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
     :type overprovision: bool
@@ -7626,7 +5999,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      not run on the extra overprovisioned VMs.
     :type do_not_run_extensions_on_overprovisioned_vms: bool
     :param single_placement_group: When true this limits the scale set to a
-     single placement group, of max size 100 virtual machines.NOTE: If
+     single placement group, of max size 100 virtual machines. NOTE: If
      singlePlacementGroup is true, it may be modified to false. However, if
      singlePlacementGroup is false, it may not be modified to true.
     :type single_placement_group: bool
@@ -7635,21 +6008,21 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      instance: whether the Virtual Machines have the capability to support
      attaching managed data disks with UltraSSD_LRS storage account type.
     :type additional_capabilities:
-     ~azure.mgmt.compute.v2019_07_01.models.AdditionalCapabilities
+     ~azure.mgmt.compute.v2020_06_01.models.AdditionalCapabilities
     :param scale_in_policy: Specifies the scale-in policy that decides which
      virtual machines are chosen for removal when a Virtual Machine Scale Set
      is scaled-in.
     :type scale_in_policy:
-     ~azure.mgmt.compute.v2019_07_01.models.ScaleInPolicy
+     ~azure.mgmt.compute.v2020_06_01.models.ScaleInPolicy
     :param proximity_placement_group: Specifies information about the
      proximity placement group that the virtual machine scale set should be
      assigned to. <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
-     ~azure.mgmt.compute.v2019_07_01.models.SubResource
+     ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetIdentity
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetIdentity
     """
 
     _attribute_map = {
@@ -7668,59 +6041,61 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineScaleSetUpdate, self).__init__(**kwargs)
-        self.sku = kwargs.get('sku', None)
-        self.plan = kwargs.get('plan', None)
-        self.upgrade_policy = kwargs.get('upgrade_policy', None)
-        self.automatic_repairs_policy = kwargs.get('automatic_repairs_policy', None)
-        self.virtual_machine_profile = kwargs.get('virtual_machine_profile', None)
-        self.overprovision = kwargs.get('overprovision', None)
-        self.do_not_run_extensions_on_overprovisioned_vms = kwargs.get('do_not_run_extensions_on_overprovisioned_vms', None)
-        self.single_placement_group = kwargs.get('single_placement_group', None)
-        self.additional_capabilities = kwargs.get('additional_capabilities', None)
-        self.scale_in_policy = kwargs.get('scale_in_policy', None)
-        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
-        self.identity = kwargs.get('identity', None)
+    def __init__(self, *, tags=None, sku=None, plan=None, upgrade_policy=None, automatic_repairs_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, additional_capabilities=None, scale_in_policy=None, proximity_placement_group=None, identity=None, **kwargs) -> None:
+        super(VirtualMachineScaleSetUpdate, self).__init__(tags=tags, **kwargs)
+        self.sku = sku
+        self.plan = plan
+        self.upgrade_policy = upgrade_policy
+        self.automatic_repairs_policy = automatic_repairs_policy
+        self.virtual_machine_profile = virtual_machine_profile
+        self.overprovision = overprovision
+        self.do_not_run_extensions_on_overprovisioned_vms = do_not_run_extensions_on_overprovisioned_vms
+        self.single_placement_group = single_placement_group
+        self.additional_capabilities = additional_capabilities
+        self.scale_in_policy = scale_in_policy
+        self.proximity_placement_group = proximity_placement_group
+        self.identity = identity
 
 
 class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
     """Describes a virtual machine scale set network profile's IP configuration.
+    NOTE: The subnet of a scale set may be modified as long as the original
+    subnet and the new subnet are in the same virtual network.
 
     :param id: Resource Id
     :type id: str
     :param name: The IP configuration name.
     :type name: str
     :param subnet: The subnet.
-    :type subnet: ~azure.mgmt.compute.v2019_07_01.models.ApiEntityReference
+    :type subnet: ~azure.mgmt.compute.v2020_06_01.models.ApiEntityReference
     :param primary: Specifies the primary IP Configuration in case the network
      interface has more than one IP Configuration.
     :type primary: bool
     :param public_ip_address_configuration: The publicIPAddressConfiguration.
     :type public_ip_address_configuration:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
     :param private_ip_address_version: Available from Api-Version 2017-03-30
      onwards, it represents whether the specific ipconfiguration is IPv4 or
      IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and 'IPv6'.
      Possible values include: 'IPv4', 'IPv6'
     :type private_ip_address_version: str or
-     ~azure.mgmt.compute.v2019_07_01.models.IPVersion
+     ~azure.mgmt.compute.v2020_06_01.models.IPVersion
     :param application_gateway_backend_address_pools: The application gateway
      backend address pools.
     :type application_gateway_backend_address_pools:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
     :param application_security_groups: Specifies an array of references to
      application security group.
     :type application_security_groups:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
     :param load_balancer_backend_address_pools: The load balancer backend
      address pools.
     :type load_balancer_backend_address_pools:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
     :param load_balancer_inbound_nat_pools: The load balancer inbound nat
      pools.
     :type load_balancer_inbound_nat_pools:
-     list[~azure.mgmt.compute.v2019_07_01.models.SubResource]
+     list[~azure.mgmt.compute.v2020_06_01.models.SubResource]
     """
 
     _attribute_map = {
@@ -7736,17 +6111,17 @@ class VirtualMachineScaleSetUpdateIPConfiguration(SubResource):
         'load_balancer_inbound_nat_pools': {'key': 'properties.loadBalancerInboundNatPools', 'type': '[SubResource]'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineScaleSetUpdateIPConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.subnet = kwargs.get('subnet', None)
-        self.primary = kwargs.get('primary', None)
-        self.public_ip_address_configuration = kwargs.get('public_ip_address_configuration', None)
-        self.private_ip_address_version = kwargs.get('private_ip_address_version', None)
-        self.application_gateway_backend_address_pools = kwargs.get('application_gateway_backend_address_pools', None)
-        self.application_security_groups = kwargs.get('application_security_groups', None)
-        self.load_balancer_backend_address_pools = kwargs.get('load_balancer_backend_address_pools', None)
-        self.load_balancer_inbound_nat_pools = kwargs.get('load_balancer_inbound_nat_pools', None)
+    def __init__(self, *, id: str=None, name: str=None, subnet=None, primary: bool=None, public_ip_address_configuration=None, private_ip_address_version=None, application_gateway_backend_address_pools=None, application_security_groups=None, load_balancer_backend_address_pools=None, load_balancer_inbound_nat_pools=None, **kwargs) -> None:
+        super(VirtualMachineScaleSetUpdateIPConfiguration, self).__init__(id=id, **kwargs)
+        self.name = name
+        self.subnet = subnet
+        self.primary = primary
+        self.public_ip_address_configuration = public_ip_address_configuration
+        self.private_ip_address_version = private_ip_address_version
+        self.application_gateway_backend_address_pools = application_gateway_backend_address_pools
+        self.application_security_groups = application_security_groups
+        self.load_balancer_backend_address_pools = load_balancer_backend_address_pools
+        self.load_balancer_inbound_nat_pools = load_balancer_inbound_nat_pools
 
 
 class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
@@ -7764,14 +6139,14 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
     :type enable_accelerated_networking: bool
     :param network_security_group: The network security group.
     :type network_security_group:
-     ~azure.mgmt.compute.v2019_07_01.models.SubResource
+     ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param dns_settings: The dns settings to be applied on the network
      interfaces.
     :type dns_settings:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetNetworkConfigurationDnsSettings
     :param ip_configurations: The virtual machine scale set IP Configuration.
     :type ip_configurations:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetUpdateIPConfiguration]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateIPConfiguration]
     :param enable_ip_forwarding: Whether IP forwarding enabled on this NIC.
     :type enable_ip_forwarding: bool
     """
@@ -7787,15 +6162,15 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(SubResource):
         'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineScaleSetUpdateNetworkConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.primary = kwargs.get('primary', None)
-        self.enable_accelerated_networking = kwargs.get('enable_accelerated_networking', None)
-        self.network_security_group = kwargs.get('network_security_group', None)
-        self.dns_settings = kwargs.get('dns_settings', None)
-        self.ip_configurations = kwargs.get('ip_configurations', None)
-        self.enable_ip_forwarding = kwargs.get('enable_ip_forwarding', None)
+    def __init__(self, *, id: str=None, name: str=None, primary: bool=None, enable_accelerated_networking: bool=None, network_security_group=None, dns_settings=None, ip_configurations=None, enable_ip_forwarding: bool=None, **kwargs) -> None:
+        super(VirtualMachineScaleSetUpdateNetworkConfiguration, self).__init__(id=id, **kwargs)
+        self.name = name
+        self.primary = primary
+        self.enable_accelerated_networking = enable_accelerated_networking
+        self.network_security_group = network_security_group
+        self.dns_settings = dns_settings
+        self.ip_configurations = ip_configurations
+        self.enable_ip_forwarding = enable_ip_forwarding
 
 
 class VirtualMachineScaleSetUpdateNetworkProfile(Model):
@@ -7806,11 +6181,11 @@ class VirtualMachineScaleSetUpdateNetworkProfile(Model):
      reference will be in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'.
     :type health_probe:
-     ~azure.mgmt.compute.v2019_07_01.models.ApiEntityReference
+     ~azure.mgmt.compute.v2020_06_01.models.ApiEntityReference
     :param network_interface_configurations: The list of network
      configurations.
     :type network_interface_configurations:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetUpdateNetworkConfiguration]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateNetworkConfiguration]
     """
 
     _attribute_map = {
@@ -7818,10 +6193,10 @@ class VirtualMachineScaleSetUpdateNetworkProfile(Model):
         'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetUpdateNetworkConfiguration]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, health_probe=None, network_interface_configurations=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdateNetworkProfile, self).__init__(**kwargs)
-        self.health_probe = kwargs.get('health_probe', None)
-        self.network_interface_configurations = kwargs.get('network_interface_configurations', None)
+        self.health_probe = health_probe
+        self.network_interface_configurations = network_interface_configurations
 
 
 class VirtualMachineScaleSetUpdateOSDisk(Model):
@@ -7830,7 +6205,7 @@ class VirtualMachineScaleSetUpdateOSDisk(Model):
 
     :param caching: The caching type. Possible values include: 'None',
      'ReadOnly', 'ReadWrite'
-    :type caching: str or ~azure.mgmt.compute.v2019_07_01.models.CachingTypes
+    :type caching: str or ~azure.mgmt.compute.v2020_06_01.models.CachingTypes
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
     :type write_accelerator_enabled: bool
@@ -7841,12 +6216,12 @@ class VirtualMachineScaleSetUpdateOSDisk(Model):
     :param image: The Source User Image VirtualHardDisk. This VirtualHardDisk
      will be copied before using it to attach to the Virtual Machine. If
      SourceImage is provided, the destination VirtualHardDisk should not exist.
-    :type image: ~azure.mgmt.compute.v2019_07_01.models.VirtualHardDisk
+    :type image: ~azure.mgmt.compute.v2020_06_01.models.VirtualHardDisk
     :param vhd_containers: The list of virtual hard disk container uris.
     :type vhd_containers: list[str]
     :param managed_disk: The managed disk parameters.
     :type managed_disk:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetManagedDiskParameters
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetManagedDiskParameters
     """
 
     _attribute_map = {
@@ -7858,14 +6233,14 @@ class VirtualMachineScaleSetUpdateOSDisk(Model):
         'managed_disk': {'key': 'managedDisk', 'type': 'VirtualMachineScaleSetManagedDiskParameters'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, caching=None, write_accelerator_enabled: bool=None, disk_size_gb: int=None, image=None, vhd_containers=None, managed_disk=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdateOSDisk, self).__init__(**kwargs)
-        self.caching = kwargs.get('caching', None)
-        self.write_accelerator_enabled = kwargs.get('write_accelerator_enabled', None)
-        self.disk_size_gb = kwargs.get('disk_size_gb', None)
-        self.image = kwargs.get('image', None)
-        self.vhd_containers = kwargs.get('vhd_containers', None)
-        self.managed_disk = kwargs.get('managed_disk', None)
+        self.caching = caching
+        self.write_accelerator_enabled = write_accelerator_enabled
+        self.disk_size_gb = disk_size_gb
+        self.image = image
+        self.vhd_containers = vhd_containers
+        self.managed_disk = managed_disk
 
 
 class VirtualMachineScaleSetUpdateOSProfile(Model):
@@ -7875,13 +6250,13 @@ class VirtualMachineScaleSetUpdateOSProfile(Model):
     :type custom_data: str
     :param windows_configuration: The Windows Configuration of the OS profile.
     :type windows_configuration:
-     ~azure.mgmt.compute.v2019_07_01.models.WindowsConfiguration
+     ~azure.mgmt.compute.v2020_06_01.models.WindowsConfiguration
     :param linux_configuration: The Linux Configuration of the OS profile.
     :type linux_configuration:
-     ~azure.mgmt.compute.v2019_07_01.models.LinuxConfiguration
+     ~azure.mgmt.compute.v2020_06_01.models.LinuxConfiguration
     :param secrets: The List of certificates for addition to the VM.
     :type secrets:
-     list[~azure.mgmt.compute.v2019_07_01.models.VaultSecretGroup]
+     list[~azure.mgmt.compute.v2020_06_01.models.VaultSecretGroup]
     """
 
     _attribute_map = {
@@ -7891,12 +6266,12 @@ class VirtualMachineScaleSetUpdateOSProfile(Model):
         'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, custom_data: str=None, windows_configuration=None, linux_configuration=None, secrets=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdateOSProfile, self).__init__(**kwargs)
-        self.custom_data = kwargs.get('custom_data', None)
-        self.windows_configuration = kwargs.get('windows_configuration', None)
-        self.linux_configuration = kwargs.get('linux_configuration', None)
-        self.secrets = kwargs.get('secrets', None)
+        self.custom_data = custom_data
+        self.windows_configuration = windows_configuration
+        self.linux_configuration = linux_configuration
+        self.secrets = secrets
 
 
 class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(Model):
@@ -7910,7 +6285,7 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(Model):
     :param dns_settings: The dns settings to be applied on the publicIP
      addresses .
     :type dns_settings:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
     """
 
     _attribute_map = {
@@ -7919,11 +6294,11 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(Model):
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, idle_timeout_in_minutes: int=None, dns_settings=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdatePublicIPAddressConfiguration, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
-        self.dns_settings = kwargs.get('dns_settings', None)
+        self.name = name
+        self.idle_timeout_in_minutes = idle_timeout_in_minutes
+        self.dns_settings = dns_settings
 
 
 class VirtualMachineScaleSetUpdateStorageProfile(Model):
@@ -7931,13 +6306,13 @@ class VirtualMachineScaleSetUpdateStorageProfile(Model):
 
     :param image_reference: The image reference.
     :type image_reference:
-     ~azure.mgmt.compute.v2019_07_01.models.ImageReference
+     ~azure.mgmt.compute.v2020_06_01.models.ImageReference
     :param os_disk: The OS disk.
     :type os_disk:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetUpdateOSDisk
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateOSDisk
     :param data_disks: The data disks.
     :type data_disks:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetDataDisk]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetDataDisk]
     """
 
     _attribute_map = {
@@ -7946,11 +6321,11 @@ class VirtualMachineScaleSetUpdateStorageProfile(Model):
         'data_disks': {'key': 'dataDisks', 'type': '[VirtualMachineScaleSetDataDisk]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, image_reference=None, os_disk=None, data_disks=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdateStorageProfile, self).__init__(**kwargs)
-        self.image_reference = kwargs.get('image_reference', None)
-        self.os_disk = kwargs.get('os_disk', None)
-        self.data_disks = kwargs.get('data_disks', None)
+        self.image_reference = image_reference
+        self.os_disk = os_disk
+        self.data_disks = data_disks
 
 
 class VirtualMachineScaleSetUpdateVMProfile(Model):
@@ -7958,37 +6333,41 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
 
     :param os_profile: The virtual machine scale set OS profile.
     :type os_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetUpdateOSProfile
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateOSProfile
     :param storage_profile: The virtual machine scale set storage profile.
     :type storage_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetUpdateStorageProfile
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateStorageProfile
     :param network_profile: The virtual machine scale set network profile.
     :type network_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetUpdateNetworkProfile
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetUpdateNetworkProfile
+    :param security_profile: The virtual machine scale set Security profile
+    :type security_profile:
+     ~azure.mgmt.compute.v2020_06_01.models.SecurityProfile
     :param diagnostics_profile: The virtual machine scale set diagnostics
      profile.
     :type diagnostics_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.DiagnosticsProfile
+     ~azure.mgmt.compute.v2020_06_01.models.DiagnosticsProfile
     :param extension_profile: The virtual machine scale set extension profile.
     :type extension_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetExtensionProfile
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetExtensionProfile
     :param license_type: The license type, which is for bring your own license
      scenario.
     :type license_type: str
     :param billing_profile: Specifies the billing related details of a Azure
      Spot VMSS. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.BillingProfile
+     ~azure.mgmt.compute.v2020_06_01.models.BillingProfile
     :param scheduled_events_profile: Specifies Scheduled Event related
      configurations.
     :type scheduled_events_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.ScheduledEventsProfile
+     ~azure.mgmt.compute.v2020_06_01.models.ScheduledEventsProfile
     """
 
     _attribute_map = {
         'os_profile': {'key': 'osProfile', 'type': 'VirtualMachineScaleSetUpdateOSProfile'},
         'storage_profile': {'key': 'storageProfile', 'type': 'VirtualMachineScaleSetUpdateStorageProfile'},
         'network_profile': {'key': 'networkProfile', 'type': 'VirtualMachineScaleSetUpdateNetworkProfile'},
+        'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
         'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
@@ -7996,16 +6375,17 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
         'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, security_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, billing_profile=None, scheduled_events_profile=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdateVMProfile, self).__init__(**kwargs)
-        self.os_profile = kwargs.get('os_profile', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.network_profile = kwargs.get('network_profile', None)
-        self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
-        self.extension_profile = kwargs.get('extension_profile', None)
-        self.license_type = kwargs.get('license_type', None)
-        self.billing_profile = kwargs.get('billing_profile', None)
-        self.scheduled_events_profile = kwargs.get('scheduled_events_profile', None)
+        self.os_profile = os_profile
+        self.storage_profile = storage_profile
+        self.network_profile = network_profile
+        self.security_profile = security_profile
+        self.diagnostics_profile = diagnostics_profile
+        self.extension_profile = extension_profile
+        self.license_type = license_type
+        self.billing_profile = billing_profile
+        self.scheduled_events_profile = scheduled_events_profile
 
 
 class VirtualMachineScaleSetVM(Resource):
@@ -8029,7 +6409,7 @@ class VirtualMachineScaleSetVM(Resource):
     :ivar instance_id: The virtual machine instance ID.
     :vartype instance_id: str
     :ivar sku: The virtual machine SKU.
-    :vartype sku: ~azure.mgmt.compute.v2019_07_01.models.Sku
+    :vartype sku: ~azure.mgmt.compute.v2020_06_01.models.Sku
     :ivar latest_model_applied: Specifies whether the latest model has been
      applied to the virtual machine.
     :vartype latest_model_applied: bool
@@ -8037,36 +6417,40 @@ class VirtualMachineScaleSetVM(Resource):
     :vartype vm_id: str
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetVMInstanceView
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMInstanceView
     :param hardware_profile: Specifies the hardware settings for the virtual
      machine.
     :type hardware_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.HardwareProfile
+     ~azure.mgmt.compute.v2020_06_01.models.HardwareProfile
     :param storage_profile: Specifies the storage settings for the virtual
      machine disks.
     :type storage_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.StorageProfile
+     ~azure.mgmt.compute.v2020_06_01.models.StorageProfile
     :param additional_capabilities: Specifies additional capabilities enabled
      or disabled on the virtual machine in the scale set. For instance: whether
      the virtual machine has the capability to support attaching managed data
      disks with UltraSSD_LRS storage account type.
     :type additional_capabilities:
-     ~azure.mgmt.compute.v2019_07_01.models.AdditionalCapabilities
+     ~azure.mgmt.compute.v2020_06_01.models.AdditionalCapabilities
     :param os_profile: Specifies the operating system settings for the virtual
      machine.
-    :type os_profile: ~azure.mgmt.compute.v2019_07_01.models.OSProfile
+    :type os_profile: ~azure.mgmt.compute.v2020_06_01.models.OSProfile
+    :param security_profile: Specifies the Security related profile settings
+     for the virtual machine.
+    :type security_profile:
+     ~azure.mgmt.compute.v2020_06_01.models.SecurityProfile
     :param network_profile: Specifies the network interfaces of the virtual
      machine.
     :type network_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.NetworkProfile
+     ~azure.mgmt.compute.v2020_06_01.models.NetworkProfile
     :param network_profile_configuration: Specifies the network profile
      configuration of the virtual machine.
     :type network_profile_configuration:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetVMNetworkProfileConfiguration
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMNetworkProfileConfiguration
     :param diagnostics_profile: Specifies the boot diagnostic settings state.
      <br><br>Minimum api-version: 2015-06-15.
     :type diagnostics_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.DiagnosticsProfile
+     ~azure.mgmt.compute.v2020_06_01.models.DiagnosticsProfile
     :param availability_set: Specifies information about the availability set
      that the virtual machine should be assigned to. Virtual machines specified
      in the same availability set are allocated to different nodes to maximize
@@ -8078,7 +6462,7 @@ class VirtualMachineScaleSetVM(Resource):
      Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
      <br><br> Currently, a VM can only be added to availability set at creation
      time. An existing VM cannot be added to an availability set.
-    :type availability_set: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type availability_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -8099,7 +6483,7 @@ class VirtualMachineScaleSetVM(Resource):
     :param protection_policy: Specifies the protection policy of the virtual
      machine.
     :type protection_policy:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetVMProtectionPolicy
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMProtectionPolicy
     :param plan: Specifies information about the marketplace image used to
      create the virtual machine. This element is only used for marketplace
      images. Before you can use a marketplace image from an API, you must
@@ -8107,10 +6491,10 @@ class VirtualMachineScaleSetVM(Resource):
      marketplace image that you want to use and then click **Want to deploy
      programmatically, Get Started ->**. Enter any required information and
      then click **Save**.
-    :type plan: ~azure.mgmt.compute.v2019_07_01.models.Plan
+    :type plan: ~azure.mgmt.compute.v2020_06_01.models.Plan
     :ivar resources: The virtual machine child extension resources.
     :vartype resources:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineExtension]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtension]
     :ivar zones: The virtual machine zones.
     :vartype zones: list[str]
     """
@@ -8146,6 +6530,7 @@ class VirtualMachineScaleSetVM(Resource):
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
+        'security_profile': {'key': 'properties.securityProfile', 'type': 'SecurityProfile'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'network_profile_configuration': {'key': 'properties.networkProfileConfiguration', 'type': 'VirtualMachineScaleSetVMNetworkProfileConfiguration'},
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
@@ -8159,26 +6544,27 @@ class VirtualMachineScaleSetVM(Resource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineScaleSetVM, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags=None, hardware_profile=None, storage_profile=None, additional_capabilities=None, os_profile=None, security_profile=None, network_profile=None, network_profile_configuration=None, diagnostics_profile=None, availability_set=None, license_type: str=None, protection_policy=None, plan=None, **kwargs) -> None:
+        super(VirtualMachineScaleSetVM, self).__init__(location=location, tags=tags, **kwargs)
         self.instance_id = None
         self.sku = None
         self.latest_model_applied = None
         self.vm_id = None
         self.instance_view = None
-        self.hardware_profile = kwargs.get('hardware_profile', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.additional_capabilities = kwargs.get('additional_capabilities', None)
-        self.os_profile = kwargs.get('os_profile', None)
-        self.network_profile = kwargs.get('network_profile', None)
-        self.network_profile_configuration = kwargs.get('network_profile_configuration', None)
-        self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
-        self.availability_set = kwargs.get('availability_set', None)
+        self.hardware_profile = hardware_profile
+        self.storage_profile = storage_profile
+        self.additional_capabilities = additional_capabilities
+        self.os_profile = os_profile
+        self.security_profile = security_profile
+        self.network_profile = network_profile
+        self.network_profile_configuration = network_profile_configuration
+        self.diagnostics_profile = diagnostics_profile
+        self.availability_set = availability_set
         self.provisioning_state = None
-        self.license_type = kwargs.get('license_type', None)
+        self.license_type = license_type
         self.model_definition_applied = None
-        self.protection_policy = kwargs.get('protection_policy', None)
-        self.plan = kwargs.get('plan', None)
+        self.protection_policy = protection_policy
+        self.plan = plan
         self.resources = None
         self.zones = None
 
@@ -8193,7 +6579,7 @@ class VirtualMachineScaleSetVMExtensionsSummary(Model):
     :vartype name: str
     :ivar statuses_summary: The extensions information.
     :vartype statuses_summary:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineStatusCodeCount]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineStatusCodeCount]
     """
 
     _validation = {
@@ -8206,7 +6592,7 @@ class VirtualMachineScaleSetVMExtensionsSummary(Model):
         'statuses_summary': {'key': 'statusesSummary', 'type': '[VirtualMachineStatusCodeCount]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(VirtualMachineScaleSetVMExtensionsSummary, self).__init__(**kwargs)
         self.name = None
         self.statuses_summary = None
@@ -8225,9 +6611,9 @@ class VirtualMachineScaleSetVMInstanceIDs(Model):
         'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, instance_ids=None, **kwargs) -> None:
         super(VirtualMachineScaleSetVMInstanceIDs, self).__init__(**kwargs)
-        self.instance_ids = kwargs.get('instance_ids', None)
+        self.instance_ids = instance_ids
 
 
 class VirtualMachineScaleSetVMInstanceRequiredIDs(Model):
@@ -8247,9 +6633,9 @@ class VirtualMachineScaleSetVMInstanceRequiredIDs(Model):
         'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, instance_ids, **kwargs) -> None:
         super(VirtualMachineScaleSetVMInstanceRequiredIDs, self).__init__(**kwargs)
-        self.instance_ids = kwargs.get('instance_ids', None)
+        self.instance_ids = instance_ids
 
 
 class VirtualMachineScaleSetVMInstanceView(Model):
@@ -8266,28 +6652,33 @@ class VirtualMachineScaleSetVMInstanceView(Model):
     :type rdp_thumb_print: str
     :param vm_agent: The VM Agent running on the virtual machine.
     :type vm_agent:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineAgentInstanceView
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineAgentInstanceView
     :param maintenance_redeploy_status: The Maintenance Operation status on
      the virtual machine.
     :type maintenance_redeploy_status:
-     ~azure.mgmt.compute.v2019_07_01.models.MaintenanceRedeployStatus
+     ~azure.mgmt.compute.v2020_06_01.models.MaintenanceRedeployStatus
     :param disks: The disks information.
-    :type disks: list[~azure.mgmt.compute.v2019_07_01.models.DiskInstanceView]
+    :type disks: list[~azure.mgmt.compute.v2020_06_01.models.DiskInstanceView]
     :param extensions: The extensions information.
     :type extensions:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineExtensionInstanceView]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionInstanceView]
     :ivar vm_health: The health status for the VM.
     :vartype vm_health:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineHealthStatus
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineHealthStatus
     :param boot_diagnostics: Boot Diagnostics is a debugging feature which
      allows you to view Console Output and Screenshot to diagnose VM status.
      <br><br> You can easily view the output of your console log. <br><br>
      Azure also enables you to see a screenshot of the VM from the hypervisor.
     :type boot_diagnostics:
-     ~azure.mgmt.compute.v2019_07_01.models.BootDiagnosticsInstanceView
+     ~azure.mgmt.compute.v2020_06_01.models.BootDiagnosticsInstanceView
     :param statuses: The resource status information.
     :type statuses:
-     list[~azure.mgmt.compute.v2019_07_01.models.InstanceViewStatus]
+     list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :ivar assigned_host: Resource id of the dedicated host, on which the
+     virtual machine is allocated through automatic placement, when the virtual
+     machine is associated with a dedicated host group that has automatic
+     placement enabled. <br><br>Minimum api-version: 2020-06-01.
+    :vartype assigned_host: str
     :param placement_group_id: The placement group in which the VM is running.
      If the VM is deallocated it will not have a placementGroupId.
     :type placement_group_id: str
@@ -8295,6 +6686,7 @@ class VirtualMachineScaleSetVMInstanceView(Model):
 
     _validation = {
         'vm_health': {'readonly': True},
+        'assigned_host': {'readonly': True},
     }
 
     _attribute_map = {
@@ -8308,22 +6700,24 @@ class VirtualMachineScaleSetVMInstanceView(Model):
         'vm_health': {'key': 'vmHealth', 'type': 'VirtualMachineHealthStatus'},
         'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnosticsInstanceView'},
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        'assigned_host': {'key': 'assignedHost', 'type': 'str'},
         'placement_group_id': {'key': 'placementGroupId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, platform_update_domain: int=None, platform_fault_domain: int=None, rdp_thumb_print: str=None, vm_agent=None, maintenance_redeploy_status=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None, placement_group_id: str=None, **kwargs) -> None:
         super(VirtualMachineScaleSetVMInstanceView, self).__init__(**kwargs)
-        self.platform_update_domain = kwargs.get('platform_update_domain', None)
-        self.platform_fault_domain = kwargs.get('platform_fault_domain', None)
-        self.rdp_thumb_print = kwargs.get('rdp_thumb_print', None)
-        self.vm_agent = kwargs.get('vm_agent', None)
-        self.maintenance_redeploy_status = kwargs.get('maintenance_redeploy_status', None)
-        self.disks = kwargs.get('disks', None)
-        self.extensions = kwargs.get('extensions', None)
+        self.platform_update_domain = platform_update_domain
+        self.platform_fault_domain = platform_fault_domain
+        self.rdp_thumb_print = rdp_thumb_print
+        self.vm_agent = vm_agent
+        self.maintenance_redeploy_status = maintenance_redeploy_status
+        self.disks = disks
+        self.extensions = extensions
         self.vm_health = None
-        self.boot_diagnostics = kwargs.get('boot_diagnostics', None)
-        self.statuses = kwargs.get('statuses', None)
-        self.placement_group_id = kwargs.get('placement_group_id', None)
+        self.boot_diagnostics = boot_diagnostics
+        self.statuses = statuses
+        self.assigned_host = None
+        self.placement_group_id = placement_group_id
 
 
 class VirtualMachineScaleSetVMNetworkProfileConfiguration(Model):
@@ -8332,16 +6726,16 @@ class VirtualMachineScaleSetVMNetworkProfileConfiguration(Model):
     :param network_interface_configurations: The list of network
      configurations.
     :type network_interface_configurations:
-     list[~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetNetworkConfiguration]
+     list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetNetworkConfiguration]
     """
 
     _attribute_map = {
         'network_interface_configurations': {'key': 'networkInterfaceConfigurations', 'type': '[VirtualMachineScaleSetNetworkConfiguration]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, network_interface_configurations=None, **kwargs) -> None:
         super(VirtualMachineScaleSetVMNetworkProfileConfiguration, self).__init__(**kwargs)
-        self.network_interface_configurations = kwargs.get('network_interface_configurations', None)
+        self.network_interface_configurations = network_interface_configurations
 
 
 class VirtualMachineScaleSetVMProfile(Model):
@@ -8350,23 +6744,27 @@ class VirtualMachineScaleSetVMProfile(Model):
     :param os_profile: Specifies the operating system settings for the virtual
      machines in the scale set.
     :type os_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetOSProfile
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetOSProfile
     :param storage_profile: Specifies the storage settings for the virtual
      machine disks.
     :type storage_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetStorageProfile
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetStorageProfile
     :param network_profile: Specifies properties of the network interfaces of
      the virtual machines in the scale set.
     :type network_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetNetworkProfile
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetNetworkProfile
+    :param security_profile: Specifies the Security related profile settings
+     for the virtual machines in the scale set.
+    :type security_profile:
+     ~azure.mgmt.compute.v2020_06_01.models.SecurityProfile
     :param diagnostics_profile: Specifies the boot diagnostic settings state.
      <br><br>Minimum api-version: 2015-06-15.
     :type diagnostics_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.DiagnosticsProfile
+     ~azure.mgmt.compute.v2020_06_01.models.DiagnosticsProfile
     :param extension_profile: Specifies a collection of settings for
      extensions installed on virtual machines in the scale set.
     :type extension_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineScaleSetExtensionProfile
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetExtensionProfile
     :param license_type: Specifies that the image or disk that is being used
      was licensed on-premises. This element is only used for images that
      contain the Windows Server operating system. <br><br> Possible values are:
@@ -8381,29 +6779,30 @@ class VirtualMachineScaleSetVMProfile(Model):
      scale set. <br><br>Minimum api-version: 2017-10-30-preview. Possible
      values include: 'Regular', 'Low', 'Spot'
     :type priority: str or
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachinePriorityTypes
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine and Azure Spot scale set. <br><br>For Azure Spot virtual
-     machines, the only supported value is 'Deallocate' and the minimum
+     machines, both 'Deallocate' and 'Delete' are supported and the minimum
      api-version is 2019-03-01. <br><br>For Azure Spot scale sets, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineEvictionPolicyTypes
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineEvictionPolicyTypes
     :param billing_profile: Specifies the billing related details of a Azure
      Spot VMSS. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.BillingProfile
+     ~azure.mgmt.compute.v2020_06_01.models.BillingProfile
     :param scheduled_events_profile: Specifies Scheduled Event related
      configurations.
     :type scheduled_events_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.ScheduledEventsProfile
+     ~azure.mgmt.compute.v2020_06_01.models.ScheduledEventsProfile
     """
 
     _attribute_map = {
         'os_profile': {'key': 'osProfile', 'type': 'VirtualMachineScaleSetOSProfile'},
         'storage_profile': {'key': 'storageProfile', 'type': 'VirtualMachineScaleSetStorageProfile'},
         'network_profile': {'key': 'networkProfile', 'type': 'VirtualMachineScaleSetNetworkProfile'},
+        'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
         'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
@@ -8413,18 +6812,19 @@ class VirtualMachineScaleSetVMProfile(Model):
         'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, security_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, priority=None, eviction_policy=None, billing_profile=None, scheduled_events_profile=None, **kwargs) -> None:
         super(VirtualMachineScaleSetVMProfile, self).__init__(**kwargs)
-        self.os_profile = kwargs.get('os_profile', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.network_profile = kwargs.get('network_profile', None)
-        self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
-        self.extension_profile = kwargs.get('extension_profile', None)
-        self.license_type = kwargs.get('license_type', None)
-        self.priority = kwargs.get('priority', None)
-        self.eviction_policy = kwargs.get('eviction_policy', None)
-        self.billing_profile = kwargs.get('billing_profile', None)
-        self.scheduled_events_profile = kwargs.get('scheduled_events_profile', None)
+        self.os_profile = os_profile
+        self.storage_profile = storage_profile
+        self.network_profile = network_profile
+        self.security_profile = security_profile
+        self.diagnostics_profile = diagnostics_profile
+        self.extension_profile = extension_profile
+        self.license_type = license_type
+        self.priority = priority
+        self.eviction_policy = eviction_policy
+        self.billing_profile = billing_profile
+        self.scheduled_events_profile = scheduled_events_profile
 
 
 class VirtualMachineScaleSetVMProtectionPolicy(Model):
@@ -8444,10 +6844,10 @@ class VirtualMachineScaleSetVMProtectionPolicy(Model):
         'protect_from_scale_set_actions': {'key': 'protectFromScaleSetActions', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, protect_from_scale_in: bool=None, protect_from_scale_set_actions: bool=None, **kwargs) -> None:
         super(VirtualMachineScaleSetVMProtectionPolicy, self).__init__(**kwargs)
-        self.protect_from_scale_in = kwargs.get('protect_from_scale_in', None)
-        self.protect_from_scale_set_actions = kwargs.get('protect_from_scale_set_actions', None)
+        self.protect_from_scale_in = protect_from_scale_in
+        self.protect_from_scale_set_actions = protect_from_scale_set_actions
 
 
 class VirtualMachineSize(Model):
@@ -8481,14 +6881,93 @@ class VirtualMachineSize(Model):
         'max_data_disk_count': {'key': 'maxDataDiskCount', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str=None, number_of_cores: int=None, os_disk_size_in_mb: int=None, resource_disk_size_in_mb: int=None, memory_in_mb: int=None, max_data_disk_count: int=None, **kwargs) -> None:
         super(VirtualMachineSize, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.number_of_cores = kwargs.get('number_of_cores', None)
-        self.os_disk_size_in_mb = kwargs.get('os_disk_size_in_mb', None)
-        self.resource_disk_size_in_mb = kwargs.get('resource_disk_size_in_mb', None)
-        self.memory_in_mb = kwargs.get('memory_in_mb', None)
-        self.max_data_disk_count = kwargs.get('max_data_disk_count', None)
+        self.name = name
+        self.number_of_cores = number_of_cores
+        self.os_disk_size_in_mb = os_disk_size_in_mb
+        self.resource_disk_size_in_mb = resource_disk_size_in_mb
+        self.memory_in_mb = memory_in_mb
+        self.max_data_disk_count = max_data_disk_count
+
+
+class VirtualMachineSoftwarePatchProperties(Model):
+    """Describes the properties of a Virtual Machine software patch.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar patch_id: A unique identifier for the patch.
+    :vartype patch_id: str
+    :ivar name: The friendly name of the patch.
+    :vartype name: str
+    :ivar version: The version number of the patch. This property applies only
+     to Linux patches.
+    :vartype version: str
+    :ivar kbid: The KBID of the patch. Only applies to Windows patches.
+    :vartype kbid: str
+    :ivar classifications: The classification(s) of the patch as provided by
+     the patch publisher.
+    :vartype classifications: list[str]
+    :ivar reboot_behavior: Describes the reboot requirements of the patch.
+     Possible values include: 'NeverReboots', 'AlwaysRequiresReboot',
+     'CanRequestReboot'
+    :vartype reboot_behavior: str or
+     ~azure.mgmt.compute.v2020_06_01.models.SoftwareUpdateRebootBehavior
+    :ivar activity_id: The activity ID of the operation that produced this
+     result. It is used to correlate across CRP and extension logs.
+    :vartype activity_id: str
+    :ivar published_date: The UTC timestamp when the repository published this
+     patch.
+    :vartype published_date: datetime
+    :ivar last_modified_date_time: The UTC timestamp of the last update to
+     this patch record.
+    :vartype last_modified_date_time: datetime
+    :ivar assessment_state: Describes the outcome of an install operation for
+     a given patch. Possible values include: 'Installed', 'Failed', 'Excluded',
+     'NotSelected', 'Pending', 'Available'
+    :vartype assessment_state: str or
+     ~azure.mgmt.compute.v2020_06_01.models.PatchAssessmentState
+    """
+
+    _validation = {
+        'patch_id': {'readonly': True},
+        'name': {'readonly': True},
+        'version': {'readonly': True},
+        'kbid': {'readonly': True},
+        'classifications': {'readonly': True},
+        'reboot_behavior': {'readonly': True},
+        'activity_id': {'readonly': True},
+        'published_date': {'readonly': True},
+        'last_modified_date_time': {'readonly': True},
+        'assessment_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'patch_id': {'key': 'patchId', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'kbid': {'key': 'kbid', 'type': 'str'},
+        'classifications': {'key': 'classifications', 'type': '[str]'},
+        'reboot_behavior': {'key': 'rebootBehavior', 'type': 'str'},
+        'activity_id': {'key': 'activityId', 'type': 'str'},
+        'published_date': {'key': 'publishedDate', 'type': 'iso-8601'},
+        'last_modified_date_time': {'key': 'lastModifiedDateTime', 'type': 'iso-8601'},
+        'assessment_state': {'key': 'assessmentState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(VirtualMachineSoftwarePatchProperties, self).__init__(**kwargs)
+        self.patch_id = None
+        self.name = None
+        self.version = None
+        self.kbid = None
+        self.classifications = None
+        self.reboot_behavior = None
+        self.activity_id = None
+        self.published_date = None
+        self.last_modified_date_time = None
+        self.assessment_state = None
 
 
 class VirtualMachineStatusCodeCount(Model):
@@ -8514,7 +6993,7 @@ class VirtualMachineStatusCodeCount(Model):
         'count': {'key': 'count', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(VirtualMachineStatusCodeCount, self).__init__(**kwargs)
         self.code = None
         self.count = None
@@ -8535,31 +7014,35 @@ class VirtualMachineUpdate(UpdateResource):
      marketplace image that you want to use and then click **Want to deploy
      programmatically, Get Started ->**. Enter any required information and
      then click **Save**.
-    :type plan: ~azure.mgmt.compute.v2019_07_01.models.Plan
+    :type plan: ~azure.mgmt.compute.v2020_06_01.models.Plan
     :param hardware_profile: Specifies the hardware settings for the virtual
      machine.
     :type hardware_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.HardwareProfile
+     ~azure.mgmt.compute.v2020_06_01.models.HardwareProfile
     :param storage_profile: Specifies the storage settings for the virtual
      machine disks.
     :type storage_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.StorageProfile
+     ~azure.mgmt.compute.v2020_06_01.models.StorageProfile
     :param additional_capabilities: Specifies additional capabilities enabled
      or disabled on the virtual machine.
     :type additional_capabilities:
-     ~azure.mgmt.compute.v2019_07_01.models.AdditionalCapabilities
+     ~azure.mgmt.compute.v2020_06_01.models.AdditionalCapabilities
     :param os_profile: Specifies the operating system settings used while
      creating the virtual machine. Some of the settings cannot be changed once
      VM is provisioned.
-    :type os_profile: ~azure.mgmt.compute.v2019_07_01.models.OSProfile
+    :type os_profile: ~azure.mgmt.compute.v2020_06_01.models.OSProfile
     :param network_profile: Specifies the network interfaces of the virtual
      machine.
     :type network_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.NetworkProfile
+     ~azure.mgmt.compute.v2020_06_01.models.NetworkProfile
+    :param security_profile: Specifies the Security related profile settings
+     for the virtual machine.
+    :type security_profile:
+     ~azure.mgmt.compute.v2020_06_01.models.SecurityProfile
     :param diagnostics_profile: Specifies the boot diagnostic settings state.
      <br><br>Minimum api-version: 2015-06-15.
     :type diagnostics_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.DiagnosticsProfile
+     ~azure.mgmt.compute.v2020_06_01.models.DiagnosticsProfile
     :param availability_set: Specifies information about the availability set
      that the virtual machine should be assigned to. Virtual machines specified
      in the same availability set are allocated to different nodes to maximize
@@ -8574,7 +7057,7 @@ class VirtualMachineUpdate(UpdateResource):
      the same resource group as the availability set resource. An existing VM
      cannot be added to an availability set. <br><br>This property cannot exist
      along with a non-null properties.virtualMachineScaleSet reference.
-    :type availability_set: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type availability_set: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param virtual_machine_scale_set: Specifies information about the virtual
      machine scale set that the virtual machine should be assigned to. Virtual
      machines specified in the same virtual machine scale set are allocated to
@@ -8584,38 +7067,43 @@ class VirtualMachineUpdate(UpdateResource):
      exist along with a non-null properties.availabilitySet reference.
      <br><br>Minimum api‐version: 2019‐03‐01
     :type virtual_machine_scale_set:
-     ~azure.mgmt.compute.v2019_07_01.models.SubResource
+     ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param proximity_placement_group: Specifies information about the
      proximity placement group that the virtual machine should be assigned to.
      <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
-     ~azure.mgmt.compute.v2019_07_01.models.SubResource
+     ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :param priority: Specifies the priority for the virtual machine.
      <br><br>Minimum api-version: 2019-03-01. Possible values include:
      'Regular', 'Low', 'Spot'
     :type priority: str or
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachinePriorityTypes
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachinePriorityTypes
     :param eviction_policy: Specifies the eviction policy for the Azure Spot
      virtual machine and Azure Spot scale set. <br><br>For Azure Spot virtual
-     machines, the only supported value is 'Deallocate' and the minimum
+     machines, both 'Deallocate' and 'Delete' are supported and the minimum
      api-version is 2019-03-01. <br><br>For Azure Spot scale sets, both
      'Deallocate' and 'Delete' are supported and the minimum api-version is
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineEvictionPolicyTypes
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineEvictionPolicyTypes
     :param billing_profile: Specifies the billing related details of a Azure
      Spot virtual machine. <br><br>Minimum api-version: 2019-03-01.
     :type billing_profile:
-     ~azure.mgmt.compute.v2019_07_01.models.BillingProfile
+     ~azure.mgmt.compute.v2020_06_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the
      virtual machine resides in. <br><br>Minimum api-version: 2018-10-01.
-    :type host: ~azure.mgmt.compute.v2019_07_01.models.SubResource
+    :type host: ~azure.mgmt.compute.v2020_06_01.models.SubResource
+    :param host_group: Specifies information about the dedicated host group
+     that the virtual machine resides in. <br><br>Minimum api-version:
+     2020-06-01. <br><br>NOTE: User cannot specify both host and hostGroup
+     properties.
+    :type host_group: ~azure.mgmt.compute.v2020_06_01.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineInstanceView
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineInstanceView
     :param license_type: Specifies that the image or disk that is being used
      was licensed on-premises. This element is only used for images that
      contain the Windows Server operating system. <br><br> Possible values are:
@@ -8630,9 +7118,15 @@ class VirtualMachineUpdate(UpdateResource):
      that is encoded and stored in all Azure IaaS VMs SMBIOS and can be read
      using platform BIOS commands.
     :vartype vm_id: str
+    :param extensions_time_budget: Specifies the time alloted for all
+     extensions to start. The time duration should be between 15 minutes and
+     120 minutes (inclusive) and should be specified in ISO 8601 format. The
+     default value is 90 minutes (PT1H30M). <br><br> Minimum api-version:
+     2020-06-01
+    :type extensions_time_budget: str
     :param identity: The identity of the virtual machine, if configured.
     :type identity:
-     ~azure.mgmt.compute.v2019_07_01.models.VirtualMachineIdentity
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineIdentity
     :param zones: The virtual machine zones.
     :type zones: list[str]
     """
@@ -8651,6 +7145,7 @@ class VirtualMachineUpdate(UpdateResource):
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
+        'security_profile': {'key': 'properties.securityProfile', 'type': 'SecurityProfile'},
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'virtual_machine_scale_set': {'key': 'properties.virtualMachineScaleSet', 'type': 'SubResource'},
@@ -8659,36 +7154,41 @@ class VirtualMachineUpdate(UpdateResource):
         'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
         'billing_profile': {'key': 'properties.billingProfile', 'type': 'BillingProfile'},
         'host': {'key': 'properties.host', 'type': 'SubResource'},
+        'host_group': {'key': 'properties.hostGroup', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
+        'extensions_time_budget': {'key': 'properties.extensionsTimeBudget', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(VirtualMachineUpdate, self).__init__(**kwargs)
-        self.plan = kwargs.get('plan', None)
-        self.hardware_profile = kwargs.get('hardware_profile', None)
-        self.storage_profile = kwargs.get('storage_profile', None)
-        self.additional_capabilities = kwargs.get('additional_capabilities', None)
-        self.os_profile = kwargs.get('os_profile', None)
-        self.network_profile = kwargs.get('network_profile', None)
-        self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
-        self.availability_set = kwargs.get('availability_set', None)
-        self.virtual_machine_scale_set = kwargs.get('virtual_machine_scale_set', None)
-        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
-        self.priority = kwargs.get('priority', None)
-        self.eviction_policy = kwargs.get('eviction_policy', None)
-        self.billing_profile = kwargs.get('billing_profile', None)
-        self.host = kwargs.get('host', None)
+    def __init__(self, *, tags=None, plan=None, hardware_profile=None, storage_profile=None, additional_capabilities=None, os_profile=None, network_profile=None, security_profile=None, diagnostics_profile=None, availability_set=None, virtual_machine_scale_set=None, proximity_placement_group=None, priority=None, eviction_policy=None, billing_profile=None, host=None, host_group=None, license_type: str=None, extensions_time_budget: str=None, identity=None, zones=None, **kwargs) -> None:
+        super(VirtualMachineUpdate, self).__init__(tags=tags, **kwargs)
+        self.plan = plan
+        self.hardware_profile = hardware_profile
+        self.storage_profile = storage_profile
+        self.additional_capabilities = additional_capabilities
+        self.os_profile = os_profile
+        self.network_profile = network_profile
+        self.security_profile = security_profile
+        self.diagnostics_profile = diagnostics_profile
+        self.availability_set = availability_set
+        self.virtual_machine_scale_set = virtual_machine_scale_set
+        self.proximity_placement_group = proximity_placement_group
+        self.priority = priority
+        self.eviction_policy = eviction_policy
+        self.billing_profile = billing_profile
+        self.host = host
+        self.host_group = host_group
         self.provisioning_state = None
         self.instance_view = None
-        self.license_type = kwargs.get('license_type', None)
+        self.license_type = license_type
         self.vm_id = None
-        self.identity = kwargs.get('identity', None)
-        self.zones = kwargs.get('zones', None)
+        self.extensions_time_budget = extensions_time_budget
+        self.identity = identity
+        self.zones = zones
 
 
 class VMScaleSetConvertToSinglePlacementGroupInput(Model):
@@ -8706,9 +7206,9 @@ class VMScaleSetConvertToSinglePlacementGroupInput(Model):
         'active_placement_group_id': {'key': 'activePlacementGroupId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, active_placement_group_id: str=None, **kwargs) -> None:
         super(VMScaleSetConvertToSinglePlacementGroupInput, self).__init__(**kwargs)
-        self.active_placement_group_id = kwargs.get('active_placement_group_id', None)
+        self.active_placement_group_id = active_placement_group_id
 
 
 class WindowsConfiguration(Model):
@@ -8735,10 +7235,13 @@ class WindowsConfiguration(Model):
      XML formatted information that can be included in the Unattend.xml file,
      which is used by Windows Setup.
     :type additional_unattend_content:
-     list[~azure.mgmt.compute.v2019_07_01.models.AdditionalUnattendContent]
+     list[~azure.mgmt.compute.v2020_06_01.models.AdditionalUnattendContent]
+    :param patch_settings: Specifies settings related to in-guest patching
+     (KBs).
+    :type patch_settings: ~azure.mgmt.compute.v2020_06_01.models.PatchSettings
     :param win_rm: Specifies the Windows Remote Management listeners. This
      enables remote Windows PowerShell.
-    :type win_rm: ~azure.mgmt.compute.v2019_07_01.models.WinRMConfiguration
+    :type win_rm: ~azure.mgmt.compute.v2020_06_01.models.WinRMConfiguration
     """
 
     _attribute_map = {
@@ -8746,16 +7249,18 @@ class WindowsConfiguration(Model):
         'enable_automatic_updates': {'key': 'enableAutomaticUpdates', 'type': 'bool'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
         'additional_unattend_content': {'key': 'additionalUnattendContent', 'type': '[AdditionalUnattendContent]'},
+        'patch_settings': {'key': 'patchSettings', 'type': 'PatchSettings'},
         'win_rm': {'key': 'winRM', 'type': 'WinRMConfiguration'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, provision_vm_agent: bool=None, enable_automatic_updates: bool=None, time_zone: str=None, additional_unattend_content=None, patch_settings=None, win_rm=None, **kwargs) -> None:
         super(WindowsConfiguration, self).__init__(**kwargs)
-        self.provision_vm_agent = kwargs.get('provision_vm_agent', None)
-        self.enable_automatic_updates = kwargs.get('enable_automatic_updates', None)
-        self.time_zone = kwargs.get('time_zone', None)
-        self.additional_unattend_content = kwargs.get('additional_unattend_content', None)
-        self.win_rm = kwargs.get('win_rm', None)
+        self.provision_vm_agent = provision_vm_agent
+        self.enable_automatic_updates = enable_automatic_updates
+        self.time_zone = time_zone
+        self.additional_unattend_content = additional_unattend_content
+        self.patch_settings = patch_settings
+        self.win_rm = win_rm
 
 
 class WinRMConfiguration(Model):
@@ -8763,16 +7268,16 @@ class WinRMConfiguration(Model):
 
     :param listeners: The list of Windows Remote Management listeners
     :type listeners:
-     list[~azure.mgmt.compute.v2019_07_01.models.WinRMListener]
+     list[~azure.mgmt.compute.v2020_06_01.models.WinRMListener]
     """
 
     _attribute_map = {
         'listeners': {'key': 'listeners', 'type': '[WinRMListener]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, listeners=None, **kwargs) -> None:
         super(WinRMConfiguration, self).__init__(**kwargs)
-        self.listeners = kwargs.get('listeners', None)
+        self.listeners = listeners
 
 
 class WinRMListener(Model):
@@ -8782,7 +7287,7 @@ class WinRMListener(Model):
      Possible values are: <br>**http** <br><br> **https**. Possible values
      include: 'Http', 'Https'
     :type protocol: str or
-     ~azure.mgmt.compute.v2019_07_01.models.ProtocolTypes
+     ~azure.mgmt.compute.v2020_06_01.models.ProtocolTypes
     :param certificate_url: This is the URL of a certificate that has been
      uploaded to Key Vault as a secret. For adding a secret to the Key Vault,
      see [Add a key or secret to the key
@@ -8799,7 +7304,7 @@ class WinRMListener(Model):
         'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, protocol=None, certificate_url: str=None, **kwargs) -> None:
         super(WinRMListener, self).__init__(**kwargs)
-        self.protocol = kwargs.get('protocol', None)
-        self.certificate_url = kwargs.get('certificate_url', None)
+        self.protocol = protocol
+        self.certificate_url = certificate_url
