@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 30 Jun 2020 19:45:39 GMT
+      - Wed, 01 Jul 2020 18:21:06 GMT
       User-Agent:
       - TestApp/v1.0 azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 30 Jun 2020 19:45:39 GMT
+      - Wed, 01 Jul 2020 18:21:06 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 30 Jun 2020 19:45:38 GMT
+      - Wed, 01 Jul 2020 18:21:04 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -53,12 +53,12 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 30 Jun 2020 19:45:39 GMT
+      - Wed, 01 Jul 2020 18:21:06 GMT
       User-Agent:
       - TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-table/2019-07-07 Python/3.8.3
         (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 30 Jun 2020 19:45:39 GMT
+      - Wed, 01 Jul 2020 18:21:06 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -72,7 +72,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 30 Jun 2020 19:45:38 GMT
+      - Wed, 01 Jul 2020 18:21:04 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
