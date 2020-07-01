@@ -237,7 +237,7 @@ class SubscriptionValidationResponse(msrest.serialization.Model):
         super(SubscriptionValidationResponse, self).__init__(**kwargs)
         self.validation_response = kwargs.get('validation_response', None)
 
-class EventBatch(object):
+class EventBatch(msrest.serialization.Model):
     """A batch of events.
 
     Sending events in a batch is more performant than sending individual events.
@@ -257,9 +257,9 @@ class EventBatch(object):
     def __init__(self, max_size_in_bytes=None):
         # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
         return
-        self.max_size_in_bytes = max_size_in_bytes #or constants.MAX_MESSAGE_LENGTH_BYTES
-        self.schema = None
-        self.event_list = []#BatchMessage(data=[], multi_messages=False, properties=None)
+        self._max_size_in_bytes = max_size_in_bytes #or constants.MAX_MESSAGE_LENGTH_BYTES
+        self._schema = None
+        self._event_list = []#BatchMessage(data=[], multi_messages=False, properties=None)
 
         self._size = 0#self.message.gather()[0].get_message_encoded_size()
         self._count = 0
@@ -267,7 +267,7 @@ class EventBatch(object):
     def __repr__(self):
         # type: () -> str
         batch_repr = "max_size_in_bytes={}, event_count={}".format(
-            self.max_size_in_bytes, self._count
+            self._max_size_in_bytes, self._count
         )
         return "EventBatch({})".format(batch_repr)
 
@@ -345,27 +345,34 @@ class EventBatch(object):
 
         :rtype: str
         """
-        return self.schema
+        return self._schema
 
-class BaseEventType(object):
+class BaseEventType(msrest.serialization.Model):
     """The base type for different event type objects.
 
     """
     # class variable
-    #event_type_mappings = _initialize_mapping()
+    _event_type_mappings = {}
 
     def __init__(self, **kwargs):
         # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
         return
-        self.event_type = None   # type: str
-        self.event_data = None  # type: dict
+        self._event_type = "" # type: str
+        self._event_data = {} # type: dict
         # list other envelope properties
     
-    @classmethod
+    @property
+    def event_type(self):
+        return self._event_type
+
+    @property
+    def event_data(self):
+        return self._event_data
+    
     def create_event_type_object(self):
         """A specific event type object is returned based on the event type specified in the event.
-        The BaseEventType.event_type_mappings dict will be used to initialize the event type object
-        corresponding to `self.event_type`
+        The BaseEventType._event_type_mappings dict will be used to initialize the event type object
+        corresponding to `self.event_type`. It will be populated with the information in self.event_data.
 
         :rtype: List[Any]
         """
