@@ -63,6 +63,10 @@ class VirtualMachinesOperations:
         api_version = "2018-06-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_location.metadata['url']  # type: ignore
@@ -75,15 +79,11 @@ class VirtualMachinesOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -116,8 +116,8 @@ class VirtualMachinesOperations:
         vm_name: str,
         parameters: "models.VirtualMachineCaptureParameters",
         **kwargs
-    ) -> "models.VirtualMachineCaptureResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineCaptureResult"]
+    ) -> Optional["models.VirtualMachineCaptureResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VirtualMachineCaptureResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-06-01"
@@ -141,7 +141,6 @@ class VirtualMachinesOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'VirtualMachineCaptureParameters')
         body_content_kwargs['content'] = body_content
@@ -170,7 +169,7 @@ class VirtualMachinesOperations:
         vm_name: str,
         parameters: "models.VirtualMachineCaptureParameters",
         **kwargs
-    ) -> "models.VirtualMachineCaptureResult":
+    ) -> AsyncLROPoller["models.VirtualMachineCaptureResult"]:
         """Captures the VM by copying virtual hard disks of the VM and outputs a template that can be used
     to create similar VMs.
 
@@ -186,8 +185,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VirtualMachineCaptureResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2018_06_01.models.VirtualMachineCaptureResult
+        :return: An instance of AsyncLROPoller that returns either VirtualMachineCaptureResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2018_06_01.models.VirtualMachineCaptureResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -261,7 +260,6 @@ class VirtualMachinesOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'VirtualMachine')
         body_content_kwargs['content'] = body_content
@@ -274,7 +272,6 @@ class VirtualMachinesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachine', pipeline_response)
 
@@ -293,7 +290,7 @@ class VirtualMachinesOperations:
         vm_name: str,
         parameters: "models.VirtualMachine",
         **kwargs
-    ) -> "models.VirtualMachine":
+    ) -> AsyncLROPoller["models.VirtualMachine"]:
         """The operation to create or update a virtual machine.
 
         :param resource_group_name: The name of the resource group.
@@ -308,8 +305,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VirtualMachine, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2018_06_01.models.VirtualMachine
+        :return: An instance of AsyncLROPoller that returns either VirtualMachine or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2018_06_01.models.VirtualMachine]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -383,7 +380,6 @@ class VirtualMachinesOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'VirtualMachineUpdate')
         body_content_kwargs['content'] = body_content
@@ -396,7 +392,6 @@ class VirtualMachinesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachine', pipeline_response)
 
@@ -415,7 +410,7 @@ class VirtualMachinesOperations:
         vm_name: str,
         parameters: "models.VirtualMachineUpdate",
         **kwargs
-    ) -> "models.VirtualMachine":
+    ) -> AsyncLROPoller["models.VirtualMachine"]:
         """The operation to update a virtual machine.
 
         :param resource_group_name: The name of the resource group.
@@ -430,8 +425,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VirtualMachine, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2018_06_01.models.VirtualMachine
+        :return: An instance of AsyncLROPoller that returns either VirtualMachine or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2018_06_01.models.VirtualMachine]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -501,7 +496,6 @@ class VirtualMachinesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -520,7 +514,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         vm_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """The operation to delete a virtual machine.
 
         :param resource_group_name: The name of the resource group.
@@ -533,8 +527,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -617,7 +611,6 @@ class VirtualMachinesOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -673,7 +666,6 @@ class VirtualMachinesOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -717,7 +709,6 @@ class VirtualMachinesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -736,7 +727,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         vm_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Converts virtual machine disks from blob-based to managed disks. Virtual machine must be stop-
     deallocated before invoking this operation.
 
@@ -750,8 +741,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -817,7 +808,6 @@ class VirtualMachinesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -836,7 +826,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         vm_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Shuts down the virtual machine and releases the compute resources. You are not billed for the
     compute resources that this virtual machine uses.
 
@@ -850,8 +840,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -928,7 +918,6 @@ class VirtualMachinesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -963,6 +952,10 @@ class VirtualMachinesOperations:
         api_version = "2018-06-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -975,15 +968,11 @@ class VirtualMachinesOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -1028,6 +1017,10 @@ class VirtualMachinesOperations:
         api_version = "2018-06-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_all.metadata['url']  # type: ignore
@@ -1039,15 +1032,11 @@ class VirtualMachinesOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -1098,6 +1087,10 @@ class VirtualMachinesOperations:
         api_version = "2018-06-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_available_sizes.metadata['url']  # type: ignore
@@ -1111,15 +1104,11 @@ class VirtualMachinesOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -1173,7 +1162,6 @@ class VirtualMachinesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1192,7 +1180,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         vm_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """The operation to power off (stop) a virtual machine. The virtual machine can be restarted with
     the same provisioned resources. You are still charged for this virtual machine.
 
@@ -1206,8 +1194,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1273,7 +1261,6 @@ class VirtualMachinesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1292,7 +1279,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         vm_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """The operation to restart a virtual machine.
 
         :param resource_group_name: The name of the resource group.
@@ -1305,8 +1292,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1372,7 +1359,6 @@ class VirtualMachinesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1391,7 +1377,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         vm_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """The operation to start a virtual machine.
 
         :param resource_group_name: The name of the resource group.
@@ -1404,8 +1390,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1471,7 +1457,6 @@ class VirtualMachinesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1490,7 +1475,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         vm_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Shuts down the virtual machine, moves it to a new node, and powers it back on.
 
         :param resource_group_name: The name of the resource group.
@@ -1503,8 +1488,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1573,7 +1558,6 @@ class VirtualMachinesOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if parameters is not None:
             body_content = self._serialize.body(parameters, 'VirtualMachineReimageParameters')
@@ -1600,7 +1584,7 @@ class VirtualMachinesOperations:
         vm_name: str,
         parameters: Optional["models.VirtualMachineReimageParameters"] = None,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Reimages the virtual machine which has an ephemeral OS disk back to its initial state.
 
         :param resource_group_name: The name of the resource group.
@@ -1615,8 +1599,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1683,7 +1667,6 @@ class VirtualMachinesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1702,7 +1685,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         vm_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """The operation to perform maintenance on a virtual machine.
 
         :param resource_group_name: The name of the resource group.
@@ -1715,8 +1698,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1761,8 +1744,8 @@ class VirtualMachinesOperations:
         vm_name: str,
         parameters: "models.RunCommandInput",
         **kwargs
-    ) -> "models.RunCommandResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RunCommandResult"]
+    ) -> Optional["models.RunCommandResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.RunCommandResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-06-01"
@@ -1786,7 +1769,6 @@ class VirtualMachinesOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'RunCommandInput')
         body_content_kwargs['content'] = body_content
@@ -1815,7 +1797,7 @@ class VirtualMachinesOperations:
         vm_name: str,
         parameters: "models.RunCommandInput",
         **kwargs
-    ) -> "models.RunCommandResult":
+    ) -> AsyncLROPoller["models.RunCommandResult"]:
         """Run command on the VM.
 
         :param resource_group_name: The name of the resource group.
@@ -1830,8 +1812,8 @@ class VirtualMachinesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: RunCommandResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2018_06_01.models.RunCommandResult
+        :return: An instance of AsyncLROPoller that returns either RunCommandResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2018_06_01.models.RunCommandResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]

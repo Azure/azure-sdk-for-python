@@ -52,8 +52,8 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         vm_scale_set_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
@@ -75,7 +75,6 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -100,7 +99,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         vm_scale_set_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Cancels the current virtual machine scale set rolling upgrade.
 
         :param resource_group_name: The name of the resource group.
@@ -162,8 +161,8 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         vm_scale_set_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.OperationStatusResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationStatusResponse"]
+        # type: (...) -> Optional["models.OperationStatusResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.OperationStatusResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-12-01"
@@ -185,7 +184,6 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -210,7 +208,7 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         vm_scale_set_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.OperationStatusResponse"]
         """Starts a rolling upgrade to move all virtual machine scale set instances to the latest
     available Platform Image OS version. Instances which are already running the latest available
     OS version are not affected.
@@ -308,7 +306,6 @@ class VirtualMachineScaleSetRollingUpgradesOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
