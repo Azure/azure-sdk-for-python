@@ -72,6 +72,7 @@ class CloudEvent(msrest.serialization.Model):
         self.datacontenttype = kwargs.get('datacontenttype', None)
         self.subject = kwargs.get('subject', None)
 
+    @classmethod
     def from_dict(self, source):
         """
         Returns an array of CloudEvent objects given a dict of events following the CloudEvent schema.
@@ -144,6 +145,7 @@ class EventGridEvent(msrest.serialization.Model):
         self.metadata_version = None
         self.data_version = kwargs['data_version']
     
+    @classmethod
     def from_dict(self, source):
         """
         Returns an array of EventGridEvent objects given a dict of events following the EventGridEvent schema.

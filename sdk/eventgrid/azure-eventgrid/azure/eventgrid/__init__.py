@@ -8,7 +8,10 @@
 
 from ._event_grid_publisher_client import EventGridPublisherClient
 from ._event_grid_consumer import EventGridConsumer
+from .version import VERSION
+
 __all__ = ['EventGridPublisherClient', 'EventGridConsumer']
+__version__ = VERSION
 
 try:
     from ._patch import patch_sdk

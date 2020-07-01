@@ -42,7 +42,8 @@ def key_authentication(events, key, hostname):
     if type(events[0]) == EventGridEvent:
         sample_client.publish_events(hostname, events)
     else:
-        sample_client.publish_cloud_event_events(hostname, events)
+        response = sample_client.publish_cloud_event_events(hostname, events)
+        print(response)
 
 def create_event_grid_events():
     eg_event = EventGridEvent(id='831e1650-001e-001b-66ab-eeb76e06l631', subject="/blobServices/default/containers/oc2d2817345i200097container/blobs/oc2d2817345i20002296blob", data="{\"artist\": \"G\"}", event_type='recordInserted', event_time=dtime, data_version="1.0")
@@ -57,10 +58,10 @@ def create_cloud_events():
     return cloud_events
 
 # send cloud event
-#create_cloud_events()
-#key_authentication(create_cloud_events(), cloud_key, cloud_hostname)
+create_cloud_events()
+key_authentication(create_cloud_events(), cloud_key, cloud_hostname)
 
 # send EG event
-create_event_grid_events()
+#create_event_grid_events()
 
 
