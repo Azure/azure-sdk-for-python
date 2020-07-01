@@ -26,6 +26,7 @@ from .._generated.models import AnalyzeOperationResult
 from .._helpers import get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
 from .._user_agent import USER_AGENT
 from .._polling import AnalyzePolling
+from .._api_versions import validate_api_version
 from .._models import FormPage, RecognizedForm
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential
@@ -43,6 +44,9 @@ class FormRecognizerClient(object):
     :param credential: Credentials needed for the client to connect to Azure.
         This is an instance of AzureKeyCredential if using an API key or a token
         credential from :mod:`azure.identity`.
+    :keyword str api_version:
+        The API version of the service to use for requests.
+        Setting to an older version may result in reduced feature compatibility.
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
         or :class:`~azure.core.credentials_async.AsyncTokenCredential`
 

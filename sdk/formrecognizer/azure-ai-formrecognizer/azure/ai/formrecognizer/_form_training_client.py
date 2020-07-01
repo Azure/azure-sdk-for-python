@@ -36,6 +36,7 @@ from ._models import (
 from ._polling import TrainingPolling, CopyPolling
 from ._user_agent import USER_AGENT
 from ._form_recognizer_client import FormRecognizerClient
+from ._api_versions import validate_api_version
 if TYPE_CHECKING:
     from azure.core.credentials import AzureKeyCredential, TokenCredential
     from azure.core.pipeline import PipelineResponse
@@ -54,6 +55,9 @@ class FormTrainingClient(object):
     :param credential: Credentials needed for the client to connect to Azure.
         This is an instance of AzureKeyCredential if using an API key or a token
         credential from :mod:`azure.identity`.
+    :keyword str api_version:
+        The API version of the service to use for requests.
+        Setting to an older version may result in reduced feature compatibility.
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
         :class:`~azure.core.credentials.TokenCredential`
 
@@ -80,6 +84,8 @@ class FormTrainingClient(object):
         self._credential = credential
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        api_version = kwargs.pop('api_version', None)
+        validate_api_version(api_version)
         self._client = FormRecognizer(
             endpoint=self._endpoint,
             credential=self._credential,  # type: ignore

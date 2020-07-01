@@ -37,6 +37,7 @@ from .._models import (
     CustomFormModel
 )
 from .._user_agent import USER_AGENT
+from .._api_versions import validate_api_version
 from .._polling import TrainingPolling, CopyPolling
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -55,6 +56,9 @@ class FormTrainingClient(object):
     :param credential: Credentials needed for the client to connect to Azure.
         This is an instance of AzureKeyCredential if using an API key or a token
         credential from :mod:`azure.identity`.
+    :keyword str api_version:
+        The API version of the service to use for requests.
+        Setting to an older version may result in reduced feature compatibility.
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
         or :class:`~azure.core.credentials_async.AsyncTokenCredential`
 
