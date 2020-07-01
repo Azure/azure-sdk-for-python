@@ -5,7 +5,6 @@
 # pylint:disable=protected-access
 # pylint:disable=specify-parameter-names-in-call
 import functools
-from copy import copy
 from typing import TYPE_CHECKING, Any, Union, cast
 from xml.etree.ElementTree import ElementTree
 from datetime import timedelta
@@ -229,8 +228,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        internal_description = queue._to_internal_entity()
-        to_update = copy(internal_description)
+        to_update = queue._to_internal_entity()
 
         to_update.default_message_time_to_live = default_message_time_to_live \
                                                  or queue.default_message_time_to_live
@@ -393,8 +391,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :rtype: None
         """
 
-        internal_description = topic._to_internal_entity()
-        to_update = copy(internal_description)
+        to_update = topic._to_internal_entity()
 
         to_update.default_message_time_to_live = default_message_time_to_live or \
                                                  topic.default_message_time_to_live
@@ -574,8 +571,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         except AttributeError:
             topic_name = topic
 
-        internal_description = subscription._to_internal_entity()
-        to_update = copy(internal_description)
+        to_update = subscription._to_internal_entity()
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
@@ -763,8 +759,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         except AttributeError:
             subscription_name = subscription
 
-        internal_description = rule._to_internal_entity()
-        to_update = copy(internal_description)
+        to_update = rule._to_internal_entity()
 
         create_entity_body = CreateRuleBody(
             content=CreateRuleBodyContent(
