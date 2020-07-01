@@ -213,7 +213,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         Get the current span from the execution context. Return None otherwise.
         """
-        return cls.get_current_tracer().get_current_span()
+        return get_span_from_context()
 
     @classmethod
     def get_current_tracer(cls):
