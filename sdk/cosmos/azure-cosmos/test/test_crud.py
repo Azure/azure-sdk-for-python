@@ -246,14 +246,6 @@ class CRUDTests(unittest.TestCase):
                     {'name': '@id', 'value': collection_id}
                 ]
             }))
-        # Replacing indexing policy is allowed. Lazy policies will become consistent automatically
-        lazy_policy = {'indexingMode': 'lazy'}
-        created_properties = created_collection.read()
-        replaced_collection = created_db.replace_container(created_collection,
-                                                           partition_key=created_properties['partitionKey'],
-                                                           indexing_policy=lazy_policy)
-        replaced_properties = replaced_collection.read()                                                   
-        self.assertEqual('consistent', replaced_properties['indexingPolicy']['indexingMode'])
 
         self.assertTrue(collections)
         # delete collection
@@ -1676,22 +1668,6 @@ class CRUDTests(unittest.TestCase):
                          'default indexing mode should be consistent')
 
         db.delete_container(container=collection)
-
-        # Lazy indexing has been deprecated by the service. Containers created with this indexing will be returned as "consistent"
-        lazy_collection = db.create_container(
-            id='test_collection_indexing_policy lazy collection ' + str(uuid.uuid4()),
-            indexing_policy={
-                'indexingMode': documents.IndexingMode.Lazy
-            },
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-
-        lazy_collection_properties = lazy_collection.read()
-        self.assertEqual(lazy_collection_properties['indexingPolicy']['indexingMode'],
-                         documents.IndexingMode.Consistent,
-                         'indexing mode should be lazy')
-
-        db.delete_container(container=lazy_collection)
 
         consistent_collection = db.create_container(
             id='test_collection_indexing_policy consistent collection ' + str(uuid.uuid4()),
