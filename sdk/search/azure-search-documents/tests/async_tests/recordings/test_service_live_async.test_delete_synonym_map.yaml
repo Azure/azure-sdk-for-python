@@ -14,7 +14,7 @@ interactions:
       api-key:
       - E68F8C2BAE2BDB711153395E8AF5DBA2
     method: POST
-    uri: https://searchd31a1376.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://searchd31a1376.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchd31a1376.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC958EB24C8F\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -27,7 +27,7 @@ interactions:
       elapsed-time: '42'
       etag: W/"0x8D7EC958EB24C8F"
       expires: '-1'
-      location: https://searchd31a1376.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+      location: https://searchd31a1376.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -36,7 +36,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://searchd31a1376.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    url: https://searchd31a1376.search.windows.net/synonymmaps?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -47,7 +47,7 @@ interactions:
       api-key:
       - E68F8C2BAE2BDB711153395E8AF5DBA2
     method: GET
-    uri: https://searchd31a1376.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://searchd31a1376.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchd31a1376.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D7EC958EB24C8F\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -69,7 +69,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://searchd31a1376.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    url: https://searchd31a1376.search.windows.net/synonymmaps?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -80,7 +80,7 @@ interactions:
       api-key:
       - E68F8C2BAE2BDB711153395E8AF5DBA2
     method: DELETE
-    uri: https://searchd31a1376.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+    uri: https://searchd31a1376.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
     body:
       string: ''
@@ -95,7 +95,7 @@ interactions:
     status:
       code: 204
       message: No Content
-    url: https://searchd31a1376.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+    url: https://searchd31a1376.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -106,7 +106,7 @@ interactions:
       api-key:
       - E68F8C2BAE2BDB711153395E8AF5DBA2
     method: GET
-    uri: https://searchd31a1376.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://searchd31a1376.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchd31a1376.search.windows.net/$metadata#synonymmaps","value":[]}'
@@ -127,5 +127,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://searchd31a1376.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    url: https://searchd31a1376.search.windows.net/synonymmaps?api-version=2020-06-30
 version: 1

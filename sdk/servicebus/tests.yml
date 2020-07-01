@@ -15,18 +15,14 @@ jobs:
         AZURE_TEST_RUN_LIVE: 'true'
       Matrix:
         Linux_Python35:
-          OSName: 'Linux'
           OSVmImage: 'ubuntu-18.04'
           PythonVersion: '3.5'
         MacOs_Python37:
-          OSName: 'MacOS'
           OSVmImage: 'macOS-10.15'
           PythonVersion: '3.7'
         Windows_Python27:
-          OSName: 'Windows'
           OSVmImage: 'windows-2019'
           PythonVersion: '2.7'
         Linux_Python38:
-          OSName: 'Linux'
           OSVmImage: 'ubuntu-18.04'
           PythonVersion: '3.8'

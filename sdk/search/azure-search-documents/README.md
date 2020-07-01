@@ -133,7 +133,7 @@ client = SearchClient(endpoint=endpoint,
                       credential=credential)
 
 # Let's get the top 5 jobs related to Microsoft
-results = client.search(search_text="Microsoft", include_total_result_count=5)
+results = client.search(search_text="Microsoft", top=5)
 
 for result in results:
     # Print out the title and job description
@@ -183,6 +183,13 @@ These are just a few of the basics - please [check out our Samples](samples) for
 much more.
 
 
+* [Querying](#querying)
+* [Creating an index](#creating-an-index)
+* [Adding documents to your index](#adding-documents-to-your-index)
+* [Retrieving a specific document from your index](#retrieving-a-specific-document-from-your-index)
+* [Async APIs](#async-apis)
+
+
 ### Querying
 
 Let's start by importing our namespaces.
@@ -218,7 +225,7 @@ for result in results:
 ```
 
 
-### Create an index
+### Creating an index
 
 You can use the `SearchIndexClient` to create a search index. Fields can be
 defined using convenient `SimpleField`, `SearchableField`, or `ComplexField`
@@ -268,33 +275,6 @@ result = client.create_index(index)
 ```
 
 
-### Retrieve a specific document from an index
-
-In addition to querying for documents using keywords and optional filters,
-you can retrieve a specific document from your index if you already know the
-key. You could get the key from a query, for example, and want to show more
-information about it or navigate your customer to that document.
-
-```python
-import os
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-
-index_name = "hotels"
-endpoint = os.environ["SEARCH_ENDPOINT"]
-key = os.environ["SEARCH_API_KEY"]
-
-client = SearchClient(endpoint, index_name, AzureKeyCredential(key))
-
-result = client.get_document(key="1")
-
-print("Details for hotel '1' are:")
-print("        Name: {}".format(result["HotelName"]))
-print("      Rating: {}".format(result["Rating"]))
-print("    Category: {}".format(result["Category"]))
-```
-
-
 ### Adding documents to your index
 
 You can `Upload`, `Merge`, `MergeOrUpload`, and `Delete` multiple documents from
@@ -323,6 +303,54 @@ result = client.upload_documents(documents=[DOCUMENT])
 
 print("Upload of new document succeeded: {}".format(result[0].succeeded))
 ```
+
+
+### Retrieve a specific document from an index
+
+In addition to querying for documents using keywords and optional filters,
+you can retrieve a specific document from your index if you already know the
+key. You could get the key from a query, for example, and want to show more
+information about it or navigate your customer to that document.
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import SearchClient
+
+index_name = "hotels"
+endpoint = os.environ["SEARCH_ENDPOINT"]
+key = os.environ["SEARCH_API_KEY"]
+
+client = SearchClient(endpoint, index_name, AzureKeyCredential(key))
+
+result = client.get_document(key="1")
+
+print("Details for hotel '1' are:")
+print("        Name: {}".format(result["HotelName"]))
+print("      Rating: {}".format(result["Rating"]))
+print("    Category: {}".format(result["Category"]))
+```
+
+
+### Async APIs
+This library includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+See
+[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
+for more information.
+
+
+```py
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents.aio import SearchClient
+
+client = SearchClient(endpoint, index_name, AzureKeyCredential(api_key))
+
+async with client:
+  results = await client.search(search_text="hotel")
+  async for result in results:
+    print("{}: {})".format(result["hotelId"], result["hotelName"]))
+...
 
 
 ## Troubleshooting
@@ -380,7 +408,7 @@ you to agree to a Contributor License Agreement (CLA) declaring that you have
 the right to, and actually do, grant us the rights to use your contribution. For
 details, visit [cla.microsoft.com][cla].
 
-This project has adopted the [Microsoft Open Source Code of Conduct][coc].
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct].
 For more information see the [Code of Conduct FAQ][coc_faq]
 or contact [opencode@microsoft.com][coc_contact] with any
 additional questions or comments.
@@ -404,7 +432,7 @@ additional questions or comments.
 [create_search_service_docs]: https://docs.microsoft.com/azure/search/search-create-service-portal
 [create_search_service_ps]: https://docs.microsoft.com/azure/search/search-manage-powershell#create-or-delete-a-service
 [create_search_service_cli]: https://docs.microsoft.com/cli/azure/search/service?view=azure-cli-latest#az-search-service-create
-
+[search_contrib]: ../CONTRIBUTING.md
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 
 [cla]: https://cla.microsoft.com

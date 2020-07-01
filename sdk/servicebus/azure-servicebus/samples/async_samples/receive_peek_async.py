@@ -25,7 +25,7 @@ async def main():
     async with servicebus_client:
         receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
         async with receiver:
-            received_msgs = await receiver.peek(message_count=2)
+            received_msgs = await receiver.peek_messages(message_count=2)
             for msg in received_msgs:
                 print(str(msg))
 

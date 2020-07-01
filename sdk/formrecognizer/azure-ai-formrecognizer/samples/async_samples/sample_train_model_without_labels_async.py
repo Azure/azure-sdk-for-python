@@ -10,8 +10,13 @@
 FILE: sample_train_model_without_labels_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to train a model with unlabeled data. See sample_recognize_custom_forms_async.py
-    to recognize forms with your custom model.
+    This sample demonstrates how to train a model with unlabeled data. For this sample, you can use the training
+    forms found in https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/training
+    Upload the forms to your storage container and then generate a container SAS URL using these instructions:
+    https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/python-labeled-data#train-a-model-using-labeled-data
+
+    See sample_recognize_custom_forms_async.py to recognize forms with your custom model.
+
 USAGE:
     python sample_train_model_without_labels_async.py
 
@@ -48,8 +53,8 @@ class TrainModelWithoutLabelsSampleAsync(object):
             # Custom model information
             print("Model ID: {}".format(model.model_id))
             print("Status: {}".format(model.status))
-            print("Requested on: {}".format(model.requested_on))
-            print("Completed on: {}".format(model.completed_on))
+            print("Training started on: {}".format(model.training_started_on))
+            print("Training completed on: {}".format(model.training_completed_on))
 
             print("Recognized fields:")
             # Looping through the submodels, which contains the fields they were trained on

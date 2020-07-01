@@ -18,7 +18,7 @@ interactions:
       api-key:
       - 14E7C5E27E195E2E30A41D7A548E964C
     method: POST
-    uri: https://search640d10f9.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://search640d10f9.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search640d10f9.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC944ADA1B1D\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -39,7 +39,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search640d10f9.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+      - https://search640d10f9.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -67,7 +67,7 @@ interactions:
       api-key:
       - 14E7C5E27E195E2E30A41D7A548E964C
     method: GET
-    uri: https://search640d10f9.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://search640d10f9.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search640d10f9.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D7EC944ADA1B1D\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -116,7 +116,7 @@ interactions:
       api-key:
       - 14E7C5E27E195E2E30A41D7A548E964C
     method: DELETE
-    uri: https://search640d10f9.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+    uri: https://search640d10f9.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
     body:
       string: ''
@@ -152,7 +152,7 @@ interactions:
       api-key:
       - 14E7C5E27E195E2E30A41D7A548E964C
     method: GET
-    uri: https://search640d10f9.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://search640d10f9.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search640d10f9.search.windows.net/$metadata#synonymmaps","value":[]}'

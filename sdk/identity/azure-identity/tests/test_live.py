@@ -9,12 +9,10 @@ from azure.identity import (
     CertificateCredential,
     ClientSecretCredential,
     DeviceCodeCredential,
-    KnownAuthorities,
     InteractiveBrowserCredential,
     UsernamePasswordCredential,
 )
 from azure.identity._constants import AZURE_CLI_CLIENT_ID
-from azure.identity._internal import ConfidentialClientCredential
 
 ARM_SCOPE = "https://management.azure.com/.default"
 
@@ -54,16 +52,6 @@ def test_client_secret_credential(live_service_principal):
 
 def test_default_credential(live_service_principal):
     credential = DefaultAzureCredential()
-    get_token(credential)
-
-
-def test_confidential_client_credential(live_service_principal):
-    credential = ConfidentialClientCredential(
-        client_id=live_service_principal["client_id"],
-        client_credential=live_service_principal["client_secret"],
-        authority=KnownAuthorities.AZURE_PUBLIC_CLOUD,
-        tenant_id=live_service_principal["tenant_id"],
-    )
     get_token(credential)
 
 

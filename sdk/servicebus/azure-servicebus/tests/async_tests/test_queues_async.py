@@ -52,7 +52,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 for i in range(10):
                     message = Message("Handler message no. {}".format(i))
                     message.enqueue_sequence_number = i
-                    await sender.send(message)
+                    await sender.send_messages(message)
 
             with pytest.raises(ServiceBusConnectionError):
                 await (sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test", idle_timeout=5))._open_with_retry()
@@ -80,7 +80,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 for i in range(10):
                     message = Message("Handler message no. {}".format(i))
                     messages.append(message)
-                await sender.send(messages)
+                await sender.send_messages(messages)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 count = 0
@@ -103,9 +103,9 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(5):
-                    await sender.send(Message("Message {}".format(i)))
+                    await sender.send_messages(Message("Message {}".format(i)))
             async with sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5) as messages:
-                batch = await messages.receive()
+                batch = await messages.receive_messages()
                 count = len(batch)
                 async for message in messages:
                    _logger.debug(message)
@@ -123,7 +123,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(3):
-                    await sender.send(Message("Message {}".format(i)))
+                    await sender.send_messages(Message("Message {}".format(i)))
             async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=60) as messages:
                 async for message in messages:
                     _logger.debug(message)
@@ -147,7 +147,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 for i in range(10):
                     message = Message("Handler message no. {}".format(i))
                     message.enqueue_sequence_number = i
-                    await sender.send(message)
+                    await sender.send_messages(message)
 
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5) as receiver:
@@ -178,7 +178,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
                     message = Message("Stop message no. {}".format(i))
-                    await sender.send(message)
+                    await sender.send_messages(message)
 
             messages = []
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5, prefetch=0) 
@@ -216,7 +216,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
                         message = Message("Iter message no. {}".format(i))
-                        await sender.send(message)
+                        await sender.send_messages(message)
 
                 count = 0
                 async for message in receiver:
@@ -247,7 +247,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
                         message = Message("Abandoned message no. {}".format(i))
-                        await sender.send(message)
+                        await sender.send_messages(message)
 
                 count = 0
                 async for message in receiver:
@@ -284,7 +284,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
                         message = Message("Deferred message no. {}".format(i))
-                        await sender.send(message)
+                        await sender.send_messages(message)
 
                 count = 0
                 async for message in receiver:
@@ -317,7 +317,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
                         message = Message("Deferred message no. {}".format(i))
-                        await sender.send(message)
+                        await sender.send_messages(message)
 
                 count = 0
                 async for message in receiver:
@@ -349,7 +349,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             deferred_messages = []
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for message in [Message("Deferred message no. {}".format(i)) for i in range(10)]:
-                    results = await sender.send(message)
+                    results = await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
                 count = 0
@@ -383,7 +383,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             deferred_messages = []
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for message in [Message("Deferred message no. {}".format(i)) for i in range(10)]:
-                    results = await sender.send(message)
+                    results = await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
                 count = 0
@@ -424,7 +424,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             deferred_messages = []
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for message in [Message("Deferred message no. {}".format(i)) for i in range(10)]:
-                    results = await sender.send(message)
+                    results = await sender.send_messages(message)
 
             count = 0
             async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
@@ -460,7 +460,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(3):
                         message = Message("Deferred message no. {}".format(i))
-                        await sender.send(message)
+                        await sender.send_messages(message)
 
                 count = 0
                 async for message in receiver:
@@ -492,16 +492,16 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
                         message = Message("Dead lettered message no. {}".format(i))
-                        await sender.send(message)
+                        await sender.send_messages(message)
 
                 count = 0
-                messages = await receiver.receive()
+                messages = await receiver.receive_messages()
                 while messages:
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
                         await message.dead_letter(reason="Testing reason", description="Testing description")
-                    messages = await receiver.receive()
+                    messages = await receiver.receive_messages()
 
             assert count == 10
 
@@ -539,16 +539,16 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(10):
                         message = Message("Dead lettered message no. {}".format(i))
-                        await sender.send(message)
+                        await sender.send_messages(message)
 
                 count = 0
-                messages = await receiver.receive()
+                messages = await receiver.receive_messages()
                 while messages:
                     for message in messages:
                         print_message(_logger, message)
                         await message.dead_letter(reason="Testing reason", description="Testing description")
                         count += 1
-                    messages = await receiver.receive()
+                    messages = await receiver.receive_messages()
 
             assert count == 10
 
@@ -579,7 +579,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                await sender.send(Message("test session sender", session_id="test"))
+                await sender.send_messages(Message("test session sender", session_id="test"))
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -593,10 +593,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(5):
                     message = Message("Test message no. {}".format(i))
-                    await sender.send(message)
+                    await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.peek(5)
+                messages = await receiver.peek_messages(5)
                 assert len(messages) == 5
                 assert all(isinstance(m, PeekMessage) for m in messages)
                 for message in messages:
@@ -617,9 +617,9 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(5):
                         message = Message("Test message no. {}".format(i))
-                        await sender.send(message)
+                        await sender.send_messages(message)
 
-                messages = await receiver.peek(5)
+                messages = await receiver.peek_messages(5)
                 assert len(messages) > 0
                 assert all(isinstance(m, PeekMessage) for m in messages)
                 for message in messages:
@@ -637,7 +637,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
-                messages = await receiver.peek(10)
+                messages = await receiver.peek_messages(10)
                 assert len(messages) == 0
 
     @pytest.mark.liveTest
@@ -655,12 +655,12 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     for i in range(locks):
                         message = Message("Test message no. {}".format(i))
-                        await sender.send(message)
+                        await sender.send_messages(message)
 
-                messages.extend(await receiver.receive())
+                messages.extend(await receiver.receive_messages())
                 recv = True
                 while recv:
-                    recv = await receiver.receive()
+                    recv = await receiver.receive_messages()
                     messages.extend(recv)
 
                 try:
@@ -690,7 +690,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
                     message = Message("{}".format(i))
-                    await sender.send(message)
+                    await sender.send_messages(message)
 
             renewer = AutoLockRenew()
             messages = []
@@ -740,11 +740,11 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 with pytest.raises(MessageContentTooLarge):
-                    await sender.send(Message(too_large))
+                    await sender.send_messages(Message(too_large))
                     
                 half_too_large = "A" * int((1024 * 256) / 2)
                 with pytest.raises(MessageContentTooLarge):
-                    await sender.send([Message(half_too_large), Message(half_too_large)])
+                    await sender.send_messages([Message(half_too_large), Message(half_too_large)])
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -760,11 +760,11 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 message_id = uuid.uuid4()
                 message = Message(content)
                 message.time_to_live = timedelta(seconds=30)
-                await sender.send(message)
+                await sender.send_messages(message)
 
             time.sleep(30)
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(max_wait_time=10)
+                messages = await receiver.receive_messages(max_wait_time=10)
             assert not messages
 
             async with sb_client.get_queue_deadletter_receiver(servicebus_queue.name, idle_timeout=5, mode=ReceiveSettleMode.PeekLock) as receiver:
@@ -790,7 +790,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 for i in range(5):
                     message = Message(str(i))
                     message.properties.message_id = message_id
-                    await sender.send(message)
+                    await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                 count = 0
@@ -813,10 +813,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 content = str(uuid.uuid4())
                 message = Message(content)
-                await sender.send(message)
+                await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(max_wait_time=10)
+                messages = await receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
 
             with pytest.raises(MessageSettleFailed):
@@ -834,10 +834,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 content = str(uuid.uuid4())
                 message = Message(content)
-                await sender.send(message)
+                await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(max_wait_time=10)
+                messages = await receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
                 time.sleep(60)
                 assert messages[0].expired
@@ -847,7 +847,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await messages[0].renew_lock()
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(max_wait_time=30)
+                messages = await receiver.receive_messages(max_wait_time=30)
                 assert len(messages) == 1
                 print_message(_logger, messages[0])
                 assert messages[0].header.delivery_count > 0
@@ -865,10 +865,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 content = str(uuid.uuid4())
                 message = Message(content)
-                await sender.send(message)
+                await sender.send_messages(message)
             
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(max_wait_time=10)
+                messages = await receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
                 time.sleep(15)
                 await messages[0].renew_lock()
@@ -879,7 +879,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await messages[0].complete()
             
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(max_wait_time=10)
+                messages = await receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 0
 
     @pytest.mark.liveTest
@@ -893,10 +893,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = Message("Receive and delete test")
-                await sender.send(message)
+                await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete) as receiver:
-                messages = await receiver.receive(max_wait_time=10)
+                messages = await receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
                 received = messages[0]
                 print_message(_logger, received)
@@ -913,7 +913,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             time.sleep(30)
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(max_wait_time=10)
+                messages = await receiver.receive_messages(max_wait_time=10)
                 for m in messages:
                     print_message(_logger, m)
                 assert len(messages) == 0
@@ -931,13 +931,13 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 message = BatchMessage()
                 for i in range(5):
                     message.add(Message("Message no. {}".format(i)))
-                await sender.send(message)
+                await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(max_wait_time=10)
+                messages = await receiver.receive_messages(max_wait_time=10)
                 recv = True
                 while recv:
-                    recv = await receiver.receive(max_wait_time=10)
+                    recv = await receiver.receive_messages(max_wait_time=10)
                     messages.extend(recv)
 
                 assert len(messages) == 5
@@ -962,9 +962,9 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message = Message(content)
                     message.properties.message_id = message_id
                     message.scheduled_enqueue_time_utc = enqueue_time
-                    await sender.send(message)
+                    await sender.send_messages(message)
 
-                messages = await receiver.receive(max_wait_time=120)
+                messages = await receiver.receive_messages(max_wait_time=120)
                 if messages:
                     try:
                         data = str(messages[0])
@@ -998,12 +998,12 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message_id_b = uuid.uuid4()
                     message_b = Message(content)
                     message_b.properties.message_id = message_id_b
-                    tokens = await sender.schedule([message_a, message_b], enqueue_time)
+                    tokens = await sender.schedule_messages([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
 
-                recv = await receiver.receive(max_wait_time=120)
+                recv = await receiver.receive_messages(max_wait_time=120)
                 messages.extend(recv)
-                recv = await receiver.receive(max_wait_time=5)
+                recv = await receiver.receive_messages(max_wait_time=5)
                 messages.extend(recv)
                 if messages:
                     try:
@@ -1033,12 +1033,12 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     message_a = Message("Test scheduled message")
                     message_b = Message("Test scheduled message")
-                    tokens = await sender.schedule([message_a, message_b], enqueue_time)
+                    tokens = await sender.schedule_messages([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
 
                     await sender.cancel_scheduled_messages(tokens)
 
-                messages = await receiver.receive(max_wait_time=120)
+                messages = await receiver.receive_messages(max_wait_time=120)
                 assert len(messages) == 0
 
     @pytest.mark.liveTest
@@ -1055,11 +1055,11 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 assert sender._config.transport_type == TransportType.AmqpOverWebsocket
                 message = Message("Test")
-                await sender.send(message)
+                await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete) as receiver:
                 assert receiver._config.transport_type == TransportType.AmqpOverWebsocket
-                messages = await receiver.receive(max_wait_time=5)
+                messages = await receiver.receive_messages(max_wait_time=5)
                 assert len(messages) == 1
 
     def test_queue_message_http_proxy_setting(self):
@@ -1095,14 +1095,15 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = Message("Test")
-                await sender.send(message)
+                await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(max_wait_time=5)
+                messages = await receiver.receive_messages(max_wait_time=5)
                 await receiver._handler.message_handler.destroy_async()  # destroy the underlying receiver link
                 assert len(messages) == 1
                 await messages[0].complete()
 
+    @pytest.mark.asyncio
     async def test_async_queue_mock_no_reusing_auto_lock_renew(self):
         class MockReceivedMessage:
             def __init__(self):

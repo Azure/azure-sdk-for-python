@@ -17,7 +17,7 @@ interactions:
       api-key:
       - 61C29831B328077CA7F9271631F6FACD
     method: POST
-    uri: https://search30430f92.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    uri: https://search30430f92.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"@search.score":0.48248714,"hotelId":"10","hotelName":"Countryside
@@ -110,7 +110,7 @@ interactions:
       api-key:
       - 61C29831B328077CA7F9271631F6FACD
     method: POST
-    uri: https://search30430f92.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    uri: https://search30430f92.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"@search.score":1.2368374,"hotelId":"2","hotelName":"Roach

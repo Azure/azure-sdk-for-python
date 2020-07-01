@@ -41,6 +41,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
+    The two primary channels for message receipt are `receive()` to make a single request for messages,
+    and `async for message in receiver:` to continuously receive incoming messages in an ongoing fashion.
+
     :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :vartype fully_qualified_namespace: str
@@ -61,8 +64,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
      lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-     will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-     the client fails to process the message. The default mode is PeekLock.
+     will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
+     if the client fails to process the message.
+     The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
     :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
@@ -260,8 +264,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-         will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-         the client fails to process the message. The default mode is PeekLock.
+         will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
+         if the client fails to process the message.
+         The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
@@ -305,14 +310,17 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
         return cls(**constructor_args)
 
-    async def receive(self, max_batch_size=None, max_wait_time=None):
+    async def receive_messages(self, max_batch_size=None, max_wait_time=None):
         # type: (int, float) -> List[ReceivedMessage]
         """Receive a batch of messages at once.
 
-        This approach it optimal if you wish to process multiple messages simultaneously. Note that the
-        number of messages retrieved in a single batch will be dependent on
-        the `prefetch` value set for the receiver. If `prefetch` is not set for the receiver, the receiver would
+        This approach is optimal if you wish to process multiple messages simultaneously, or
+        perform an ad-hoc receive as a single call.
+
+        Note that the number of messages retrieved in a single batch will be dependent on
+        whether `prefetch` was set for the receiver. If `prefetch` is not set for the receiver, the receiver would
         try to cache max_batch_size (if provided) messages within the request to the service.
+
         This call will prioritize returning quickly over meeting a specified batch size, and so will
         return as soon as at least one message is received and there is a gap in incoming messages regardless
         of the specified batch size.
@@ -389,7 +397,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             m._receiver = self  # pylint: disable=protected-access
         return messages
 
-    async def peek(self, message_count=1, sequence_number=0):
+    async def peek_messages(self, message_count=1, sequence_number=0):
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
