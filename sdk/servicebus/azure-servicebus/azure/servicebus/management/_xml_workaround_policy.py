@@ -8,7 +8,33 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 
 class ServiceBusXMLWorkaroundPolicy(SansIOHTTPPolicy):
-    """A policy that mutates serialized XML to workaround ServiceBus requirement
+    """A policy that mutates serialized XML to workaround ServiceBus requirement.
+
+    For some request with xml body, ServiceBus doesn't accept namespace prefix. An example is prefix "ns1"
+    in the following xml. This workaround is to remove it.
+
+    <ns0:content type="application/xml">
+		<ns1:RuleDescription>
+			<ns1:Filter xsi:type="CorrelationFilter">
+				<ns1:CorrelationId>1</ns1:CorrelationId>
+				<ns1:MessageId>1</ns1:MessageId>
+	    ...
+	</ns0:content>
+
+    Another problem is Swagger specification doesn't allow an XML tag to have both a value and attributes.
+    For instance <ns1:Value xsi:type="d6p1:string">value1</ns1:Value> can't be defined in swagger.
+    So here we add it.
+
+    <ns1:Filter xsi:type="CorrelationFilter">
+        <ns1:CorrelationId>1</ns1:CorrelationId>
+        ...
+        <ns1:Properties>
+            <ns1:KeyValueOfstringanyType>
+                <ns1:Key>key1</ns1:Key>
+                <ns1:Value xsi:type="d6p1:string">value1</ns1:Value>
+            </ns1:KeyValueOfstringanyType>
+        </ns1:Properties>
+    </ns1:Filter>
 
     """
     def on_request(self, request):

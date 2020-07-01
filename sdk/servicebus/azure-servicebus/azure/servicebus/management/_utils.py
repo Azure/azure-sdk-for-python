@@ -5,6 +5,7 @@
 from typing import cast, Union
 from xml.etree.ElementTree import ElementTree
 
+# Refer to the async version of this module under ..\aio\management\_utils.py for detailed explanation.
 
 try:
     import urllib.parse as urlparse
@@ -25,19 +26,14 @@ def extract_data_template(feed_class, convert, feed_element):
 
 
 def get_next_template(list_func, *args, **kwargs):
-    if args:
-        next_link = args[0]
-    else:
-        next_link = kwargs.pop("next_link")
-
     start_index = kwargs.pop("start_index", 0)
     max_page_size = kwargs.pop("max_page_size", 100)
     api_version = constants.API_VERSION
-    if next_link:
-        queries = urlparse.parse_qs(urlparse.urlparse(next_link).query)
-        start_index = int(queries['$skip'][0])
-        max_page_size = int(queries['$top'][0])
-        api_version = queries['api-version'][0]
+    if args[0]:
+        queries = urlparse.parse_qs(urlparse.urlparse(args[0]).query)
+        start_index = int(queries[constants.LIST_OP_SKIP][0])
+        max_page_size = int(queries[constants.LIST_OP_TOP][0])
+        api_version = queries[constants.API_VERSION_PARAM_NAME][0]
     with _handle_response_error():
         feed_element = cast(
             ElementTree,

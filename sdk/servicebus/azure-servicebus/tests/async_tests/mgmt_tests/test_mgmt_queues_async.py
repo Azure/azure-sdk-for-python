@@ -208,13 +208,13 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
             await mgmt_service.create_queue(Exception())
 
         with pytest.raises(msrest.exceptions.ValidationError):
-            await mgmt_service.create_queue(QueueDescription(queue_name=Exception()))
+            await mgmt_service.create_queue(QueueDescription(name=Exception()))
 
         with pytest.raises(msrest.exceptions.ValidationError):
             await mgmt_service.create_queue('')
 
         with pytest.raises(msrest.exceptions.ValidationError):
-            await mgmt_service.create_queue(QueueDescription(queue_name=''))
+            await mgmt_service.create_queue(QueueDescription(name=''))
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -331,11 +331,11 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         queue_description = await mgmt_service.create_queue(queue_name)
         try:
             # handle a null update properly.
-            with pytest.raises(TypeError):
+            with pytest.raises(AttributeError):
                 await mgmt_service.update_queue(None)
 
             # handle an invalid type update properly.
-            with pytest.raises(TypeError):
+            with pytest.raises(AttributeError):
                 await mgmt_service.update_queue(Exception("test"))
 
             # change a setting we can't change; should fail.
