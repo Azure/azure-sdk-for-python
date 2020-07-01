@@ -785,7 +785,7 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_undelete_container(self, resource_group, location, storage_account, storage_account_key):
         # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
-
+        pytest.skip('This will be added back along with STG74 features')
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container_client = await self._create_container(bsc)
 
@@ -804,8 +804,8 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = await bsc.undelete_container(container.name, container.version,
-                                                                   new_name="restoredctn" + str(restored_version))
+                restored_ctn_client = await bsc._undelete_container(container.name, container.version,
+                                                                    new_name="restoredctn" + str(restored_version))
                 restored_version += 1
 
                 # to make sure the deleted container is restored
@@ -816,6 +816,7 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_restore_to_existing_container(self, resource_group, location, storage_account, storage_account_key):
+        pytest.skip('This will be added back along with STG74 features')
         # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
 
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
@@ -838,8 +839,8 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
                 with self.assertRaises(HttpResponseError):
-                    await bsc.undelete_container(container.name, container.version,
-                                                 new_name=existing_container_client.container_name)
+                    await bsc._undelete_container(container.name, container.version,
+                                                  new_name=existing_container_client.container_name)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

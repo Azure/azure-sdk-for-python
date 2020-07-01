@@ -723,6 +723,7 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_undelete_container(self, resource_group, location, storage_account, storage_account_key):
         # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        pytest.skip('This will be added back along with STG74 features')
 
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         container_client = self._create_container(bsc)
@@ -740,8 +741,8 @@ class StorageContainerTest(StorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc.undelete_container(container.name, container.version,
-                                                             new_name="restored" + str(restored_version))
+                restored_ctn_client = bsc._undelete_container(container.name, container.version,
+                                                              new_name="restored" + str(restored_version))
                 restored_version += 1
 
                 # to make sure the deleted container is restored
@@ -752,6 +753,7 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_restore_to_existing_container(self, resource_group, location, storage_account, storage_account_key):
         # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        pytest.skip('This will be added back along with STG74 features')
 
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
         # get an existing container
@@ -771,14 +773,15 @@ class StorageContainerTest(StorageTestCase):
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
                 with self.assertRaises(HttpResponseError):
-                    bsc.undelete_container(container.name, container.version,
-                                           new_name=existing_container_client.container_name)
+                    bsc._undelete_container(container.name, container.version,
+                                            new_name=existing_container_client.container_name)
 
     @pytest.mark.live_test_only  # sas token is dynamically generated
     @pytest.mark.playback_test_only  # we need container soft delete enabled account
     @GlobalStorageAccountPreparer()
     def test_restore_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        pytest.skip('This will be added back along with STG74 features')
         token = generate_account_sas(
             storage_account.name,
             storage_account_key,
@@ -800,8 +803,8 @@ class StorageContainerTest(StorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc.undelete_container(container.name, container.version,
-                                                             new_name="restored" + str(restored_version))
+                restored_ctn_client = bsc._undelete_container(container.name, container.version,
+                                                              new_name="restored" + str(restored_version))
                 restored_version += 1
 
                 # to make sure the deleted container is restored

@@ -5,8 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-import uuid
+from datetime import datetime, timedelta
 from enum import Enum
+
+import pytest
+
 try:
     from urllib.parse import quote
 except ImportError:
@@ -17,7 +20,8 @@ from azure.core.exceptions import (
     ResourceExistsError)
 from azure.storage.blob import (
     BlobServiceClient,
-    BlobBlock)
+    BlobBlock, generate_account_sas, ResourceTypes, AccountSasPermissions, generate_container_sas,
+    ContainerSasPermissions, BlobClient, generate_blob_sas, BlobSasPermissions)
 
 #------------------------------------------------------------------------------
 
@@ -279,4 +283,69 @@ class StorageBlobTagsTest(StorageTestCase):
 
         self.assertEqual(2, len(items_on_page1))
         self.assertEqual(2, len(items_on_page2))
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_filter_blobs_using_account_sas(self, resource_group, location, storage_account, storage_account_key):
+        token = generate_account_sas(
+            storage_account.name,
+            storage_account_key,
+            ResourceTypes(service=True, container=True, object=True),
+            AccountSasPermissions(write=True, list=True, read=True, delete_previous_version=True, tag=True,
+                                  filter_by_tags=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+        self._setup(storage_account, token)
+
+        tags = {"year": '1000', "tag2": "secondtag", "tag3": "thirdtag", "habitat_type": 'Shallow Lowland Billabongs'}
+        blob_client, _ = self._create_block_blob(tags=tags, container_name=self.container_name)
+        blob_client.set_blob_tags(tags=tags)
+        tags_on_blob = blob_client.get_blob_tags()
+        self.assertEqual(len(tags_on_blob), len(tags))
+
+        # To filter in a specific container use:
+        # where = "@container='{}' and tag1='1000' and tag2 = 'secondtag'".format(container_name1)
+        where = "\"year\"='1000' and tag2 = 'secondtag' and tag3='thirdtag'"
+
+        blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2).by_page()
+        first_page = next(blob_list)
+        items_on_page1 = list(first_page)
+        self.assertEqual(1, len(items_on_page1))
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_set_blob_tags_using_blob_sas(self, resource_group, location, storage_account, storage_account_key):
+        token = generate_account_sas(
+            storage_account.name,
+            storage_account_key,
+            ResourceTypes(service=True, container=True, object=True),
+            AccountSasPermissions(write=True, list=True, read=True, delete_previous_version=True, tag=True,
+                                  filter_by_tags=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+        self._setup(storage_account, token)
+
+        tags = {"year": '1000', "tag2": "secondtag", "tag3": "thirdtag", "habitat_type": 'Shallow Lowland Billabongs'}
+        blob_client, _ = self._create_block_blob(tags=tags, container_name=self.container_name)
+        token1 = generate_blob_sas(
+            storage_account.name,
+            self.container_name,
+            blob_client.blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(delete_previous_version=True, tag=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+        blob_client=BlobClient.from_blob_url(blob_client.url, token1)
+        blob_client.set_blob_tags(tags=tags)
+        tags_on_blob = blob_client.get_blob_tags()
+        self.assertEqual(len(tags_on_blob), len(tags))
+
+        # To filter in a specific container use:
+        # where = "@container='{}' and tag1='1000' and tag2 = 'secondtag'".format(container_name1)
+        where = "\"year\"='1000' and tag2 = 'secondtag' and tag3='thirdtag'"
+
+        blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2).by_page()
+        first_page = next(blob_list)
+        items_on_page1 = list(first_page)
+        self.assertEqual(1, len(items_on_page1))
 #------------------------------------------------------------------------------
