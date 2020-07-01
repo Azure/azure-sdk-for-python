@@ -3,6 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from typing import Dict, Any
+
+
 _SUPPORTED_API_VERSIONS = [
     "2.0-preview.1",
 ]
