@@ -372,7 +372,9 @@ class AlertModificationItem(Model):
     """Alert modification item.
 
     :param modification_event: Reason for the modification. Possible values
-     include: 'AlertCreated', 'StateChange', 'MonitorConditionChange'
+     include: 'AlertCreated', 'StateChange', 'MonitorConditionChange',
+     'SeverityChange', 'ActionRuleTriggered', 'ActionRuleSuppressed',
+     'ActionsTriggered', 'ActionsSuppressed', 'ActionsFailed'
     :type modification_event: str or
      ~azure.mgmt.alertsmanagement.models.AlertModificationEvent
     :param old_value: Old value
@@ -649,6 +651,34 @@ class AlertRulePatchObject(Model):
         self.frequency = kwargs.get('frequency', None)
         self.action_groups = kwargs.get('action_groups', None)
         self.throttling = kwargs.get('throttling', None)
+
+
+class AlertsManagementErrorResponse(Model):
+    """An error response from the service.
+
+    :param error:
+    :type error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBody
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AlertsManagementErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class AlertsManagementErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'AlertsManagementErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(AlertsManagementErrorResponseException, self).__init__(deserialize, response, 'AlertsManagementErrorResponse', *args)
 
 
 class AlertsMetaData(Model):
@@ -965,66 +995,6 @@ class Diagnostics(ActionRuleProperties):
         self.type = 'Diagnostics'
 
 
-class ErrorResponse(Model):
-    """An error response from the service.
-
-    :param error:
-    :type error: ~azure.mgmt.alertsmanagement.models.ErrorResponseBody
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
-
-
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
-
-
-class ErrorResponse1(Model):
-    """Describe the format of an Error response.
-
-    :param code: Error code
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ErrorResponse1, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
-
-
-class ErrorResponse1Exception(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse1'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorResponse1Exception, self).__init__(deserialize, response, 'ErrorResponse1', *args)
-
-
 class ErrorResponseBody(Model):
     """Details of error response.
 
@@ -1306,7 +1276,7 @@ class Scope(Model):
     resources from the scope subscription as well.
 
     :param scope_type: type of target scope. Possible values include:
-     'ResourceGroup', 'Resource'
+     'ResourceGroup', 'Resource', 'Subscription'
     :type scope_type: str or ~azure.mgmt.alertsmanagement.models.ScopeType
     :param values: list of ARM IDs of the given scope type which will be the
      target of the given action rule.
@@ -1322,6 +1292,38 @@ class Scope(Model):
         super(Scope, self).__init__(**kwargs)
         self.scope_type = kwargs.get('scope_type', None)
         self.values = kwargs.get('values', None)
+
+
+class SmartDetectorErrorResponse(Model):
+    """Describe the format of an Error response.
+
+    :param code: Error code
+    :type code: str
+    :param message: Error message indicating why the operation failed.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SmartDetectorErrorResponse, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+
+
+class SmartDetectorErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'SmartDetectorErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(SmartDetectorErrorResponseException, self).__init__(deserialize, response, 'SmartDetectorErrorResponse', *args)
 
 
 class SmartGroup(Resource):
