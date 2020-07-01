@@ -189,9 +189,9 @@ class FormField(object):
     """Represents a field recognized in an input form.
 
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
-        Contains the text, bounding box, and text content of the field label.
+        Contains the text, bounding box, and field elements of the field label.
     :ivar ~azure.ai.formrecognizer.FieldData value_data:
-        Contains the text, bounding box, and text content of the field value.
+        Contains the text, bounding box, and field elements of the field value.
     :ivar str name: The unique name of the field or label.
     :ivar value:
         The value for the recognized field. Possible types include: 'string',
