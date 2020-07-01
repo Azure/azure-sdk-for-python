@@ -10,8 +10,9 @@
 and `CustomFormModelInfo`
 - `FieldText` has been renamed to `FieldData`
 - `FormContent` has been renamed to `FormElement`
-- Parameter `include_text_content` has been renamed to `include_field_elements`
-- `text_content` has been renamed to `field_elements`
+- Parameter `include_text_content` has been renamed to `include_field_elements` for 
+`begin_recognize_receipts`, `begin_recognize_receipts_from_url`, `begin_recognize_custom_forms`, and `begin_recognize_custom_forms_from_url`
+- `text_content` has been renamed to `field_elements` on `FieldData` and `FormTableCell`
 
 **Fixes and improvements**
 

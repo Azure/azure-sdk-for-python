@@ -102,7 +102,7 @@ class FormRecognizerClient(object):
             Currently only supports US sales receipts.
         :type receipt: bytes or IO[bytes]
         :keyword bool include_field_elements:
-            Whether or not to include text elements such as lines and words in addition to form fields.
+            Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -166,7 +166,7 @@ class FormRecognizerClient(object):
             of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
             US sales receipts.
         :keyword bool include_field_elements:
-            Whether or not to include text elements such as lines and words in addition to form fields.
+            Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -308,7 +308,7 @@ class FormRecognizerClient(object):
         :param form: JPEG, PNG, PDF and TIFF type file stream or bytes.
         :type form: bytes or IO[bytes]
         :keyword bool include_field_elements:
-            Whether or not to include text elements such as lines and words in addition to form fields.
+            Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -382,7 +382,7 @@ class FormRecognizerClient(object):
         :param str form_url: The url of the form to analyze. The input must be a valid, encoded url
             of one of the supported formats: JPEG, PNG, PDF and TIFF.
         :keyword bool include_field_elements:
-            Whether or not to include text elements such as lines and words in addition to form fields.
+            Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
