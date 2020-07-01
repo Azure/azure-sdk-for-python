@@ -28,7 +28,7 @@ from .policies import (
     StorageContentValidation,
     StorageRequestHook,
     StorageHosts,
-    StorageHeadersPolicy,
+    StorageHeadersPolicy
 )
 from .policies_async import AsyncStorageResponseHook
 

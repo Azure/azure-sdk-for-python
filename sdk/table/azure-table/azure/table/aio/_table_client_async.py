@@ -8,7 +8,7 @@ from azure.table._deserialization import _convert_to_entity
 from azure.table._entity import Entity
 from azure.table._generated.aio._azure_table_async import AzureTable
 from azure.table._generated.models import SignedIdentifier
-from azure.table._models import TableEntityPropertiesPaged, AccessPolicy
+from azure.table._models import AccessPolicy
 from azure.table._serialization import _add_entity_properties
 from azure.table._serialize import _get_match_headers
 from azure.table._shared.base_client_async import AsyncStorageAccountHostsMixin
@@ -16,6 +16,7 @@ from azure.table._shared.policies_async import ExponentialRetry
 from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import return_headers_and_deserialized, process_storage_error
 from azure.table._table_client import TableClient as TableClientBase
+from azure.table.aio._models import TableEntityPropertiesPaged
 
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
@@ -62,7 +63,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     def __init__(
             self,
             account_url,  # type: str
-            queue_name,  # type: str
+            table_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
     ):
@@ -70,7 +71,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(TableClient, self).__init__(
-            account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
+            account_url, table_name=table_name, credential=credential, loop=loop, **kwargs
         )
         self._client = AzureTable(self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access

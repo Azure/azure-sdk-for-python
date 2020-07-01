@@ -2,16 +2,19 @@ import functools
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline import AsyncPipeline
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.table import VERSION, LocationMode
 from azure.table._generated.aio._azure_table_async import AzureTable
-from azure.table._generated.aio._table_client_async import TableClient
 from azure.table._generated.models import TableServiceProperties, TableProperties
-from azure.table._models import service_stats_deserialize, service_properties_deserialize, TablePropertiesPaged
-from azure.table._shared.base_client_async import AsyncStorageAccountHostsMixin
+from azure.table._models import service_stats_deserialize, service_properties_deserialize
+from azure.table._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from azure.table._shared.policies_async import ExponentialRetry
 from azure.table._shared.response_handlers import process_storage_error
 from azure.table._table_service_client import TableServiceClient as TableServiceClientBase
+from azure.table.aio._models import TablePropertiesPaged
+from azure.table.aio._table_client_async import TableClient
 
 
 class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
@@ -57,16 +60,16 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             self, account_url,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):
+    ):
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
-        super(TableServiceClient, self).__init__( # type: ignore
+        super(TableServiceClient, self).__init__(  # type: ignore
             account_url,
             credential=credential,
             loop=loop,
             **kwargs)
-        self._client = AzureTable(url=self.url, pipeline=self._pipeline, loop=loop) # type: ignore
+        self._client = AzureTable(url=self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
         self._loop = loop
 
@@ -158,8 +161,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
                 :raises: ~azure.core.exceptions.HttpResponseError
                 """
         table_properties = TableProperties(table_name=table_name, **dict(kwargs, headers=headers))
-        await self._client.table.create(table_properties)
         table = self.get_table_client(table=table_name)
+        await self._client.table.create(table_properties=table_properties, **kwargs)
         return table
 
     @distributed_trace_async
@@ -180,38 +183,38 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
                         :return: None
                         :rtype: ~None
                         """
-        response = await self._client.table.delete(table=table_name, request_id_parameter=request_id_parameter, **kwargs)
+        response = await self._client.table.delete(table=table_name, request_id_parameter=request_id_parameter,
+                                                   **kwargs)
         return response
         # table = self.get_table_client(table=table_name)
         # table.delete_queue(table_name)
 
-    @distributed_trace_async
-    async def list_tables(
+    @distributed_trace
+    def list_tables(
             self,
             query_options=None,  # type: Optional[QueryOptions]
-            headers=None,
             **kwargs
     ):
-        # type: (...) -> ItemPaged
+        # type: (...) -> AsyncItemPaged
         """Queries tables under the given account.
 
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ItemPaged, or the result of cls(response)
-        :rtype: ~ItemPaged
+        :return: AsyncItemPaged, or the result of cls(response)
+        :rtype: ~AsyncItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         command = functools.partial(
             self._client.table.query,
-            **dict(kwargs, headers=headers))
+            **kwargs)
         return AsyncItemPaged(
             command, results_per_page=query_options,
             page_iterator_class=TablePropertiesPaged
         )
 
-    @distributed_trace_async
-    async def query_tables(
+    @distributed_trace
+    def query_tables(
             self,
             query_options=None,
             **kwargs
@@ -252,7 +255,11 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         except AttributeError:
             table_name = table
 
-        #TODO: transport wrapper for pipeline
+        # TODO: transport wrapper for pipeline
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
+        )
 
         return TableClient(
             self.url, table_name=table_name, credential=self.credential,
