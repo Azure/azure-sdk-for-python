@@ -58,12 +58,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
-    :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-     The default value is 0, meaning messages will be received from the service and processed
-     one at a time. Increasing this value will improve message throughput performance but increase
-     the change that messages will expire while they are cached if they're not processed fast enough.
-     In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
-     within its request to the service.
     :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
@@ -81,6 +75,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+     This setting is only for advanced performance tuning. Increasing this value will improve message throughput
+     performance but increase the chance that messages will expire while they are cached if they're not
+     processed fast enough.
+     The default value is 0, meaning messages will be received from the service and processed one at a time.
+     In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+     within its request to the service.
 
     .. admonition:: Example:
 
@@ -273,12 +274,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-         The default value is 0, meaning messages will be received from the service and processed
-         one at a time. Increasing this value will improve message throughput performance but increase
-         the change that messages will expire while they are cached if they're not processed fast enough.
-         In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
-         within its request to the service.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -290,6 +285,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         This setting is only for advanced performance tuning. Increasing this value will improve message throughput
+         performance but increase the chance that messages will expire while they are cached if they're not
+         processed fast enough.
+         The default value is 0, meaning messages will be received from the service and processed one at a time.
+         In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+         within its request to the service.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         .. admonition:: Example:
