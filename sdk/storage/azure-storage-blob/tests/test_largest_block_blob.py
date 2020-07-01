@@ -301,7 +301,6 @@ class LargeStream:
 
 class PayloadDroppingPolicy(HTTPPolicy):
     def __init__(self):
-        super().__init__()
         self.put_block_counter = 0
         self.put_block_sizes = []
         self.put_blob_counter = 0

@@ -131,7 +131,6 @@ class LargeStream:
 
 class PayloadDroppingPolicy(HTTPPolicy):
     def __init__(self):
-        super().__init__()
         self.append_counter = 0
         self.append_sizes = []
         self.dummy_body = "dummy_body"

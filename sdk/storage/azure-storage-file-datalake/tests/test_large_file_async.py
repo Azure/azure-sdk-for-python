@@ -128,7 +128,6 @@ class LargeFileTest(StorageTestCase):
 
 class LargeStream(BytesIO):
     def __init__(self, length, initial_buffer_length=1024 * 1024):
-        super().__init__()
         self._base_data = urandom(initial_buffer_length)
         self._base_data_length = initial_buffer_length
         self._position = 0
@@ -159,7 +158,6 @@ class LargeStream(BytesIO):
 
 class PayloadDroppingPolicy(SansIOHTTPPolicy):
     def __init__(self):
-        super().__init__()
         self.append_counter = 0
         self.append_sizes = []
         self.dummy_body = "dummy_body"
