@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 import os
 
 import six
@@ -32,6 +33,8 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Type
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class ManagedIdentityCredential(object):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
@@ -50,8 +53,10 @@ class ManagedIdentityCredential(object):
         # type: (**Any) -> None
         self._credential = None
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            _LOGGER.info("%s will use MSI", self.__class__.__name__)
             self._credential = MsiCredential(**kwargs)
         else:
+            _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
 
     def get_token(self, *scopes, **kwargs):
@@ -160,6 +165,7 @@ class ImdsCredential(_ManagedIdentityBase):
             except Exception:  # pylint:disable=broad-except
                 # if anything else was raised, assume the endpoint is unavailable
                 self._endpoint_available = False
+                _LOGGER.info("No response from the IMDS endpoint.")
 
         if not self._endpoint_available:
             message = "ManagedIdentityCredential authentication unavailable, no managed identity endpoint found."
