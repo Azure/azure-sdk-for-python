@@ -154,6 +154,7 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertTrue(await blob.get_blob_properties())
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_page_blob_returns_vid(self, resource_group, location, storage_account, storage_account_key):

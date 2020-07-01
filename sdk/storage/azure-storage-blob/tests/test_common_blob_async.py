@@ -266,6 +266,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             content = data.decode('utf-8')
             self.assertEqual(content, blob_data)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_and_download_blob_with_vid(self, resource_group, location, storage_account,
@@ -724,6 +725,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
 
+    @pytest.mark.playback_test_only
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -762,6 +764,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_specific_blob_version(self, resource_group, location, storage_account, storage_account_key):
@@ -788,6 +791,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNone(resp)
         self.assertTrue(len(blob_list) > 0)
 
+    @pytest.mark.playback_test_only
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -879,6 +883,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(len(blobs), 1)
         self.assertIsNone(blobs[0].snapshot)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_snapshot_returns_vid(self, resource_group, location, storage_account, storage_account_key):
@@ -1178,6 +1183,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         finally:
             await self._disable_soft_delete()
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_copy_blob_returns_vid(self, resource_group, location, storage_account, storage_account_key):
