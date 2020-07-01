@@ -478,40 +478,43 @@ class StorageTableClientTest(TableTestCase):
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertIn(
-                response.http_request.headers['User-Agent'],
                 "TestApp/v1.0 azsdk-python-storage-table/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform()))
+                    platform.platform()),
+                response.http_request.headers['User-Agent']
+                )
 
         tables = list(service.list_tables(raw_response_hook=callback))
         self.assertIsInstance(tables, list)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertEqual(
-                response.http_request.headers['User-Agent'],
+            self.assertIn(
                 "TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-table/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform()))
+                    platform.platform()),
+                response.http_request.headers['User-Agent']
+                )
 
         tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
         self.assertIsInstance(tables, list)
 
-    #@pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_user_agent_append(self, resource_group, location, storage_account, storage_account_key):
         service = TableServiceClient(self.account_url(storage_account, "table"), credential=storage_account_key)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertIn(
+            self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-table/{} Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-storage-table/{} Python/{} ({}) customer_user_agent".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform()))
+                    platform.platform())
+)
 
         custom_headers = {'User-Agent': 'customer_user_agent'}
         tables = list(service.list_tables(raw_response_hook=callback, headers=custom_headers))

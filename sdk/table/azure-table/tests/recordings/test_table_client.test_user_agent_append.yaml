@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 01 Jul 2020 18:21:05 GMT
+      - Wed, 01 Jul 2020 18:25:06 GMT
       User-Agent:
       - customer_user_agent
       x-ms-date:
-      - Wed, 01 Jul 2020 18:21:05 GMT
+      - Wed, 01 Jul 2020 18:25:06 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 01 Jul 2020 18:21:03 GMT
+      - Wed, 01 Jul 2020 18:25:05 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
