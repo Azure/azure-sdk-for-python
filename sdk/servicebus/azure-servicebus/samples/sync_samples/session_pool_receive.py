@@ -53,7 +53,7 @@ def sample_session_send_receive_with_pool(connection_string, queue_name):
             for session_id in sessions:
                 for i in range(20):
                     message = Message("Sample message no. {}".format(i), session_id=session_id)
-                    sender.send(message)
+                    sender.send_messages(message)
 
         all_messages = []
         futures = []

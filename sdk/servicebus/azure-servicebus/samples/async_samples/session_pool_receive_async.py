@@ -53,8 +53,8 @@ async def sample_session_send_receive_with_pool_async(connection_string, queue_n
 
     for session_id in sessions:
         async with client.get_queue_sender(queue_name) as sender:
-            await asyncio.gather(*[sender.send(Message("Sample message no. {}".format(i), session_id=session_id)) for i in range(20)])
-            await sender.send(Message("shutdown", session_id=session_id))
+            await asyncio.gather(*[sender.send_messages(Message("Sample message no. {}".format(i), session_id=session_id)) for i in range(20)])
+            await sender.send_messages(Message("shutdown", session_id=session_id))
 
     receive_sessions = [message_processing(client, queue_name) for _ in range(concurrent_receivers)]
     await asyncio.gather(*receive_sessions)
