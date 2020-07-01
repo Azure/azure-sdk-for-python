@@ -284,7 +284,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
         return cls(**constructor_args)
 
-    def receive(self, max_batch_size=None, max_wait_time=None):
+    def receive_messages(self, max_batch_size=None, max_wait_time=None):
         # type: (int, float) -> List[ReceivedMessage]
         """Receive a batch of messages at once.
 
@@ -372,7 +372,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             m._receiver = self  # pylint: disable=protected-access
         return messages
 
-    def peek(self, message_count=1, sequence_number=None):
+    def peek_messages(self, message_count=1, sequence_number=None):
         # type: (int, Optional[int]) -> List[PeekMessage]
         """Browse messages currently pending in the queue.
 
