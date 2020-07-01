@@ -74,7 +74,7 @@ class _BearerTokenCredentialPolicyBase(object):
     def _load_token_refresh_options(self):
         try:
             token_refresh_options = self._credential.get_token_refresh_options()
-            self._token_refresh_offset = token_refresh_options.get("token_refresh_offset", 300)
+            self._token_refresh_offset = int(token_refresh_options.get("token_refresh_offset", 300))
         except Exception:  # pylint: disable=broad-except
             self._token_refresh_offset = 300
 
