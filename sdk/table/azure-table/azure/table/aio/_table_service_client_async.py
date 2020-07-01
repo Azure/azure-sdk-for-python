@@ -98,11 +98,11 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-                :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: TableServiceProperties, or the result of cls(response)
-                :rtype: ~azure.table.models.TableServiceProperties
-                :raises: ~azure.core.exceptions.HttpResponseError
-                """
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TableServiceProperties, or the result of cls(response)
+        :rtype: ~azure.table.models.TableServiceProperties
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         timeout = kwargs.pop('timeout', None)
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
@@ -123,15 +123,15 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
 
-               :param cors:
-               :param minute_metrics:
-               :param hour_metrics:
-               :param analytics_logging:
-               :keyword callable cls: A custom type or function that will be passed the direct response
-               :return: None, or the result of cls(response)
-               :rtype: None
-               :raises: ~azure.core.exceptions.HttpResponseError
-               """
+        :param cors:
+        :param minute_metrics:
+        :param hour_metrics:
+        :param analytics_logging:
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         props = TableServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,
@@ -153,13 +153,13 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         # type: (...) -> TableClient
         """Creates a new table under the given account.
 
-                :param headers:
-                :param table_name: The Table name.
-                :type table_name: ~azure.table._models.Table
-                :return: TableClient, or the result of cls(response)
-                :rtype: ~azure.table.TableClient or None
-                :raises: ~azure.core.exceptions.HttpResponseError
-                """
+        :param headers:
+        :param table_name: The Table name.
+        :type table_name: ~azure.table._models.Table
+        :return: TableClient, or the result of cls(response)
+        :rtype: ~azure.table.TableClient or None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         table_properties = TableProperties(table_name=table_name, **dict(kwargs, headers=headers))
         table = self.get_table_client(table=table_name)
         await self._client.table.create(table_properties=table_properties, **kwargs)
