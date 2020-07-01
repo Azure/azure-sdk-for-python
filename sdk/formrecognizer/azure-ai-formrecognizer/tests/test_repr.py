@@ -44,10 +44,10 @@ def form_line(bounding_box, form_word):
 def form_table_cell(bounding_box, form_word):
     model = _models.FormTableCell(
         text="Cell", row_index=3, column_index=4, row_span=2, column_span=3, bounding_box=bounding_box[0],
-        confidence=0.7, is_header=True, is_footer=False, page_number=3, field_element=[form_word[0]]
+        confidence=0.7, is_header=True, is_footer=False, page_number=3, field_elements=[form_word[0]]
     )
     model_repr = "FormTableCell(text=Cell, row_index=3, column_index=4, row_span=2, column_span=3, bounding_box={}, confidence=0.7, " \
-        "is_header=True, is_footer=False, page_number=3, field_element=[{}])".format(bounding_box[1], form_word[1])[:1024]
+        "is_header=True, is_footer=False, page_number=3, field_elements=[{}])".format(bounding_box[1], form_word[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -60,8 +60,8 @@ def form_table(form_table_cell):
 
 @pytest.fixture
 def field_text(bounding_box, form_word, form_line):
-    model = _models.FieldData(page_number=1, text="This is text.", bounding_box=bounding_box[0], field_element=[form_word[0], form_line[0]])
-    model_repr = "FieldData(page_number=1, text=This is text., bounding_box={}, field_element=[{}, {}])".format(bounding_box[1], form_word[1], form_line[1])[:1024]
+    model = _models.FieldData(page_number=1, text="This is text.", bounding_box=bounding_box[0], field_elements=[form_word[0], form_line[0]])
+    model_repr = "FieldData(page_number=1, text=This is text., bounding_box={}, field_elements=[{}, {}])".format(bounding_box[1], form_word[1], form_line[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 

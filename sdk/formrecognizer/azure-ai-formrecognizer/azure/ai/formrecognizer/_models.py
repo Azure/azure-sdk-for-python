@@ -291,7 +291,7 @@ class FieldData(FormContent):
 
     def __repr__(self):
         return "FieldData(page_number={}, text={}, bounding_box={}, field_elements={})".format(
-            self.page_number, self.text, self.bounding_box, repr(self.field_element)
+            self.page_number, self.text, self.bounding_box, repr(self.field_elements)
         )[:1024]
 
 
@@ -488,7 +488,7 @@ class FormTableCell(FormContent):
         self.confidence = kwargs.get("confidence", None)
         self.is_header = kwargs.get("is_header", False)
         self.is_footer = kwargs.get("is_footer", False)
-        self.field_element = kwargs.get("field_element", None)
+        self.field_elements = kwargs.get("field_elements", None)
 
     @classmethod
     def _from_generated(cls, cell, page, read_result):
@@ -515,7 +515,7 @@ class FormTableCell(FormContent):
         return "FormTableCell(text={}, row_index={}, column_index={}, row_span={}, column_span={}, " \
                 "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, field_elements={})".format(
                     self.text, self.row_index, self.column_index, self.row_span, self.column_span, self.bounding_box,
-                    self.confidence, self.is_header, self.is_footer, self.page_number, repr(self.field_element)
+                    self.confidence, self.is_header, self.is_footer, self.page_number, repr(self.field_elements)
                 )[:1024]
 
 
