@@ -2,10 +2,14 @@
 
 ## 7.0.0b4 (Unreleased)
 
+**New Features**
+
+* Add an on_lock_renew_failure as a parameter to `AutoLockRenew`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion)
+
 **BugFixes**
 
-* Fixed bug where sync AutoLockRenew does not shutdown itself timely.
-* Fixed bug where async AutoLockRenew does not support context manager.
+* Fixed bug where sync `AutoLockRenew` does not shutdown itself timely.
+* Fixed bug where async `AutoLockRenew` does not support context manager.
 
 ## 7.0.0b3 (2020-06-08)
 

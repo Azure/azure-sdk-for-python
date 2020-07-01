@@ -546,10 +546,14 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message = Message("{}".format(i), session_id=session_id)
                     sender.send(message)
 
+            results = []
+            def lock_lost_callback(renewable):
+                results.append(renewable)
+
             renewer = AutoLockRenew()
             messages = []
             with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
-                renewer.register(receiver.session, timeout=60)
+                renewer.register(receiver.session, timeout=60, on_lock_renew_failure = lock_lost_callback)
                 print("Registered lock renew thread", receiver.session._locked_until_utc, utc_now())
                 with pytest.raises(SessionLockExpired):
                     for message in receiver:
@@ -571,8 +575,10 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                             print("Starting second sleep")
                             time.sleep(40) # ensure renewer expires
                             print("Second sleep {}".format(receiver.session._locked_until_utc - utc_now()))
+                            assert not results
                             sleep_until_expired(receiver.session) # and then ensure it didn't slip a renew under the wire.
                             assert receiver.session.expired
+                            assert not results # Should not callback since it timed out as specified.
                             assert isinstance(receiver.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
                                 message.complete()
@@ -580,6 +586,16 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                             except SessionLockExpired as e:
                                 assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                             messages.append(message)
+
+            # While we're testing autolockrenew and sessions, let's make sure we don't call the lock-lost callback when a session exits.
+            renewer.renew_period = 1
+            session = None
+
+            with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
+                session = receiver.session
+                renewer.register(session, timeout=5, on_lock_renew_failure=lock_lost_callback)
+            sleep_until_expired(receiver.session)
+            assert not results
 
             renewer.shutdown()
             assert len(messages) == 2
