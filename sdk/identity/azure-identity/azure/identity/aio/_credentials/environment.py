@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 import os
 from typing import TYPE_CHECKING
 
@@ -14,6 +15,8 @@ from .base import AsyncCredentialBase
 if TYPE_CHECKING:
     from typing import Any, Optional, Union
     from azure.core.credentials import AccessToken
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class EnvironmentCredential(AsyncCredentialBase):
@@ -30,7 +33,7 @@ class EnvironmentCredential(AsyncCredentialBase):
     Service principal with certificate:
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
-      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key The
+      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key. The
         certificate must not be password-protected.
     """
 
@@ -51,6 +54,16 @@ class EnvironmentCredential(AsyncCredentialBase):
                 certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
                 **kwargs
             )
+
+        if self._credential:
+            _LOGGER.info("Environment is configured for %s", self._credential.__class__.__name__)
+        else:
+            expected_variables = set(EnvironmentVariables.CERT_VARS + EnvironmentVariables.CLIENT_SECRET_VARS)
+            set_variables = [v for v in expected_variables if v in os.environ]
+            if set_variables:
+                _LOGGER.warning("Incomplete environment configuration. Set variables: %s", ", ".join(set_variables))
+            else:
+                _LOGGER.info("No environment configuration found.")
 
     async def __aenter__(self):
         if self._credential:
