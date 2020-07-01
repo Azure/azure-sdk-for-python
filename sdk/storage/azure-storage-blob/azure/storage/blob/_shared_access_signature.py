@@ -9,8 +9,7 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from azure.storage.blob._shared import sign_string, url_quote
-# TODO: Uncomment the next line
-# from azure.storage.blob._shared.constants import X_MS_VERSION
+from azure.storage.blob._shared.constants import X_MS_VERSION
 from azure.storage.blob._shared.models import Services
 from azure.storage.blob._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
     QueryStringConstants
@@ -25,7 +24,6 @@ if TYPE_CHECKING:
         BlobSasPermissions
     )
 
-X_MS_VERSION = '2019-10-10'
 
 class BlobQueryStringConstants(object):
     SIGNED_TIMESTAMP = 'snapshot'
