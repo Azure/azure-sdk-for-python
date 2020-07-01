@@ -132,8 +132,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return element
 
     @classmethod
-    def from_connection_string(cls, conn_str, **kwargs):
-        # type: (str, Any) -> ServiceBusManagementClient
+    def from_connection_string(cls, conn_str: str, **kwargs) -> "ServiceBusManagementClient":
         """Create a client from connection string.
 
         :param str conn_str: The connection string of the Service Bus Namespace.
