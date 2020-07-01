@@ -1,5 +1,13 @@
 # Release History
 
+## 0.4.0 (2020-07-01)
+
+**Features**
+
+  - Model ConfigurationStore has a new parameter public_network_access
+  - Model ConfigurationStore has a new parameter private_endpoint_connections
+  - Model PrivateLinkResource has a new parameter required_zone_names
+
 ## 0.4.0 (2020-02-07)
 
 **Features**
