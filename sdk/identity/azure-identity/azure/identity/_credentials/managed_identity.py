@@ -22,6 +22,7 @@ from azure.core.pipeline.policies import (
 from .. import CredentialUnavailableError
 from .._authn_client import AuthnClient
 from .._constants import Endpoints, EnvironmentVariables
+from .._internal.decorators import log_get_token
 from .._internal.user_agent import USER_AGENT
 
 try:
@@ -59,6 +60,7 @@ class ManagedIdentityCredential(object):
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
 
+    @log_get_token(_LOGGER, "ManagedIdentityCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.

@@ -2,7 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
+
 from .._internal import AadClient, ClientSecretCredentialBase
+from .._internal.decorators import log_get_token
 
 try:
     from typing import TYPE_CHECKING
@@ -13,6 +16,8 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any
     from azure.core.credentials import AccessToken
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ClientSecretCredential(ClientSecretCredentialBase):
@@ -31,6 +36,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
           is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
+    @log_get_token(_LOGGER, "ClientSecretCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.

@@ -2,11 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 import sys
 from typing import TYPE_CHECKING
+
 from .._exceptions import CredentialUnavailableError
 from .._constants import AZURE_VSCODE_CLIENT_ID
 from .._internal.aad_client import AadClient
+from .._internal.decorators import log_get_token
 
 if sys.platform.startswith("win"):
     from .._internal.win_vscode_adapter import get_credentials
@@ -20,6 +23,8 @@ if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials import AccessToken
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class VSCodeCredential(object):
     """Authenticates by redeeming a refresh token previously saved by VS Code"""
@@ -29,6 +34,7 @@ class VSCodeCredential(object):
         self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
         self._refresh_token = None
 
+    @log_get_token(_LOGGER, "VSCodeCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.

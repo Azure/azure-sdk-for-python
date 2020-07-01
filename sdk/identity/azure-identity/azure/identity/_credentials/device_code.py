@@ -3,11 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
+import logging
 import time
 
 from azure.core.exceptions import ClientAuthenticationError
 
 from .._internal import InteractiveCredential, wrap_exceptions
+from .._internal.decorators import log_get_token
 
 try:
     from typing import TYPE_CHECKING
@@ -17,6 +19,9 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Optional
+    from azure.core.credentials import AccessToken
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class DeviceCodeCredential(InteractiveCredential):
@@ -60,6 +65,11 @@ class DeviceCodeCredential(InteractiveCredential):
         self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
         self._prompt_callback = kwargs.pop("prompt_callback", None)
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
+
+    @log_get_token(_LOGGER, "DeviceCodeCredential")
+    def get_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> AccessToken
+        return super(DeviceCodeCredential, self).get_token(*scopes, **kwargs)
 
     @wrap_exceptions
     def _request_token(self, *scopes, **kwargs):

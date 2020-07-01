@@ -6,6 +6,8 @@ import logging
 import os
 from typing import TYPE_CHECKING
 
+from .._internal.decorators import log_get_token
+
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
 from .certificate import CertificateCredential
@@ -76,6 +78,7 @@ class EnvironmentCredential(AsyncCredentialBase):
         if self._credential:
             await self._credential.__aexit__()
 
+    @log_get_token(_LOGGER)
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 

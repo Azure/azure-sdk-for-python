@@ -5,8 +5,10 @@
 import logging
 import os
 
+
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
+from .._internal.decorators import log_get_token
 from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
 from .user_password import UsernamePasswordCredential
@@ -93,6 +95,7 @@ class EnvironmentCredential(object):
             else:
                 _LOGGER.info("No environment configuration found.")
 
+    @log_get_token(_LOGGER, "EnvironmentCredential")
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.

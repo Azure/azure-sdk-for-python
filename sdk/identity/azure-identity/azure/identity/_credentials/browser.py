@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 import socket
 import uuid
 import webbrowser
@@ -11,6 +12,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from .. import CredentialUnavailableError
 from .._constants import AZURE_CLI_CLIENT_ID
 from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions
+from .._internal.decorators import log_get_token
 
 try:
     from typing import TYPE_CHECKING
@@ -20,6 +22,9 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, List, Mapping
+    from azure.core.credentials import AccessToken
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class InteractiveBrowserCredential(InteractiveCredential):
@@ -52,6 +57,11 @@ class InteractiveBrowserCredential(InteractiveCredential):
         self._server_class = kwargs.pop("server_class", AuthCodeRedirectServer)  # facilitate mocking
         client_id = kwargs.pop("client_id", AZURE_CLI_CLIENT_ID)
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
+
+    @log_get_token(_LOGGER, "InteractiveBrowserCredential")
+    def get_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> AccessToken
+        return super(InteractiveBrowserCredential, self).get_token(*scopes, **kwargs)
 
     @wrap_exceptions
     def _request_token(self, *scopes, **kwargs):

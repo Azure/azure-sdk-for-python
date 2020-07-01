@@ -2,15 +2,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 from typing import TYPE_CHECKING
 
 from .base import AsyncCredentialBase
 from .._internal import AadClient
+from .._internal.decorators import log_get_token
 from ..._internal import ClientSecretCredentialBase
 
 if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials import AccessToken
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ClientSecretCredential(AsyncCredentialBase, ClientSecretCredentialBase):
@@ -38,6 +42,7 @@ class ClientSecretCredential(AsyncCredentialBase, ClientSecretCredentialBase):
 
         await self._client.__aexit__()
 
+    @log_get_token(_LOGGER)
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 

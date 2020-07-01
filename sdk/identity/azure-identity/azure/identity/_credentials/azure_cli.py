@@ -4,6 +4,7 @@
 # ------------------------------------
 from datetime import datetime
 import json
+import logging
 import os
 import platform
 import re
@@ -17,10 +18,13 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource
+from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from typing import Any
+
+_LOGGER = logging.getLogger(__name__)
 
 CLI_NOT_FOUND = "Azure CLI not found on path"
 COMMAND_LINE = "az account get-access-token --output json --resource {}"
@@ -33,6 +37,7 @@ class AzureCliCredential(object):
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
     """
 
+    @log_get_token(_LOGGER, "AzureCliCredential")
     def get_token(self, *scopes, **kwargs):  # pylint:disable=no-self-use,unused-argument
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.

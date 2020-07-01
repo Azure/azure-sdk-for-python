@@ -2,15 +2,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 from typing import TYPE_CHECKING
 
 from .base import AsyncCredentialBase
 from .._internal import AadClient
+from .._internal.decorators import log_get_token
 from ..._internal import CertificateCredentialBase
 
 if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials import AccessToken
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
@@ -37,7 +41,8 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
 
         await self._client.__aexit__()
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    @log_get_token(_LOGGER)
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.

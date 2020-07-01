@@ -2,18 +2,22 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 from typing import TYPE_CHECKING
 
 from ... import CredentialUnavailableError
 from ..._constants import AZURE_CLI_CLIENT_ID
 from ..._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 from .._internal.aad_client import AadClient
+from .._internal.decorators import log_get_token
 from .base import AsyncCredentialBase
 
 if TYPE_CHECKING:
     from typing import Any
     from azure.core.credentials import AccessToken
     from ..._internal.aad_client import AadClientBase
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
@@ -45,6 +49,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
         if self._client:
             await self._client.__aexit__()
 
+    @log_get_token(_LOGGER)
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Get an access token for `scopes` from the shared cache.
 

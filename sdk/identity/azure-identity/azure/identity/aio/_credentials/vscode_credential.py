@@ -2,17 +2,22 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 from typing import TYPE_CHECKING
+
 from ..._exceptions import CredentialUnavailableError
 from .._credentials.base import AsyncCredentialBase
 from ..._constants import AZURE_VSCODE_CLIENT_ID
 from .._internal.aad_client import AadClient
+from .._internal.decorators import log_get_token
 from ..._credentials.vscode_credential import get_credentials
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any
     from azure.core.credentials import AccessToken
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class VSCodeCredential(AsyncCredentialBase):
@@ -33,6 +38,7 @@ class VSCodeCredential(AsyncCredentialBase):
         if self._client:
             await self._client.__aexit__()
 
+    @log_get_token(_LOGGER)
     async def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.

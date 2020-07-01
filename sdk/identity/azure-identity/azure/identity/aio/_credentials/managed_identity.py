@@ -13,6 +13,7 @@ from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .base import AsyncCredentialBase
 from .._authn_client import AsyncAuthnClient
+from .._internal.decorators import log_get_token
 from ... import CredentialUnavailableError
 from ..._constants import Endpoints, EnvironmentVariables
 from ..._credentials.managed_identity import _ManagedIdentityBase
@@ -56,6 +57,7 @@ class ManagedIdentityCredential(AsyncCredentialBase):
         if self._credential:
             await self._credential.__aexit__()
 
+    @log_get_token(_LOGGER)
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 

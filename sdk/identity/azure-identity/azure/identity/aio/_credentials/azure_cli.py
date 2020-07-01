@@ -3,11 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
+import logging
 import sys
 import os
 
 from azure.core.exceptions import ClientAuthenticationError
 from .._credentials.base import AsyncCredentialBase
+from .._internal.decorators import log_get_token
 from ... import CredentialUnavailableError
 from ..._credentials.azure_cli import (
     AzureCliCredential as _SyncAzureCliCredential,
@@ -20,6 +22,8 @@ from ..._credentials.azure_cli import (
 )
 from ..._internal import _scopes_to_resource
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class AzureCliCredential(AsyncCredentialBase):
     """Authenticates by requesting a token from the Azure CLI.
@@ -27,6 +31,7 @@ class AzureCliCredential(AsyncCredentialBase):
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
     """
 
+    @log_get_token(_LOGGER)
     async def get_token(self, *scopes, **kwargs):
         """Request an access token for `scopes`.
 
