@@ -25,7 +25,8 @@ adjust_attribute_map()
 
 class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
     """Description of a Service Bus queue resource.
-    :ivar name: Name of the queue.
+
+    :param name: Name of the queue.
     :type name: str
     :keyword authorization_rules: Authorization rules for resource.
     :type authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
@@ -183,18 +184,18 @@ class QueueRuntimeInfo(object):
 
     :ivar name: Name of the queue.
     :type name: str
-    :keyword accessed_at: Last time a message was sent, or the last time there was a receive request
+    :ivar accessed_at: Last time a message was sent, or the last time there was a receive request
      to this queue.
     :type accessed_at: ~datetime.datetime
-    :keyword created_at: The exact time the queue was created.
+    :ivar created_at: The exact time the queue was created.
     :type created_at: ~datetime.datetime
-    :keyword updated_at: The exact time a message was updated in the queue.
+    :ivar updated_at: The exact time a message was updated in the queue.
     :type updated_at: ~datetime.datetime
-    :keyword size_in_bytes: The size of the queue, in bytes.
+    :ivar size_in_bytes: The size of the queue, in bytes.
     :type size_in_bytes: int
-    :keyword message_count: The number of messages in the queue.
+    :ivar message_count: The number of messages in the queue.
     :type message_count: int
-    :keyword message_count_details: Details about the message counts in entity.
+    :ivar message_count_details: Details about the message counts in entity.
     :type message_count_details: ~azure.servicebus.management.MessageCountDetails
     """
 
@@ -232,7 +233,7 @@ class QueueRuntimeInfo(object):
 class TopicDescription(object):  # pylint:disable=too-many-instance-attributes
     """Description of a Service Bus topic resource.
 
-    :ivar name: Name of the topic.
+    :param name: Name of the topic.
     :type name: str
     :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
@@ -362,16 +363,16 @@ class TopicRuntimeInfo(object):
     """Description of a Service Bus topic resource.
 
     :ivar str name:
-    :keyword created_at: The exact time the queue was created.
+    :ivar created_at: The exact time the queue was created.
     :type created_at: ~datetime.datetime
-    :keyword updated_at: The exact time a message was updated in the queue.
+    :ivar updated_at: The exact time a message was updated in the queue.
     :type updated_at: ~datetime.datetime
-    :keyword accessed_at: Last time a message was sent, or the last time there was a receive request
+    :ivar accessed_at: Last time a message was sent, or the last time there was a receive request
      to this queue.
     :type accessed_at: ~datetime.datetime
-    :keyword message_count_details: Details about the message counts in queue.
+    :ivar message_count_details: Details about the message counts in queue.
     :type message_count_details: ~azure.servicebus.management._generated.models.MessageCountDetails
-    :keyword subscription_count: The number of subscriptions in the topic.
+    :ivar subscription_count: The number of subscriptions in the topic.
     :type subscription_count: int
     """
     def __init__(
@@ -405,7 +406,7 @@ class TopicRuntimeInfo(object):
 class SubscriptionDescription(object):  # pylint:disable=too-many-instance-attributes
     """Description of a Service Bus queue resource.
 
-    :ivar name: Name of the subscription.
+    :param name: Name of the subscription.
     :type name: str
     :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
      that the message is locked for other receivers. The maximum value for LockDuration is 5
@@ -473,7 +474,7 @@ class SubscriptionDescription(object):  # pylint:disable=too-many-instance-attri
     def _from_internal_entity(cls, name, internal_subscription):
         # type: (str, InternalSubscriptionDescription) -> SubscriptionDescription
         subscription = cls(name)
-        subscription._internal_sd = internal_subscription
+        subscription._internal_sd = deepcopy(internal_subscription)
         subscription.lock_duration = internal_subscription.lock_duration
         subscription.requires_session = internal_subscription.requires_session
         subscription.default_message_time_to_live = internal_subscription.default_message_time_to_live
@@ -517,16 +518,16 @@ class SubscriptionRuntimeInfo(object):
     """Description of a Service Bus queue resource.
 
     :ivar str name:
-    :keyword created_at: The exact time the queue was created.
+    :ivar created_at: The exact time the queue was created.
     :type created_at: ~datetime.datetime
-    :keyword updated_at: The exact time a message was updated in the queue.
+    :ivar updated_at: The exact time a message was updated in the queue.
     :type updated_at: ~datetime.datetime
-    :keyword accessed_at: Last time a message was sent, or the last time there was a receive request
+    :ivar accessed_at: Last time a message was sent, or the last time there was a receive request
      to this queue.
     :type accessed_at: ~datetime.datetime
-    :keyword message_count: The number of messages in the subscription.
+    :ivar message_count: The number of messages in the subscription.
     :type message_count: int
-    :keyword message_count_details: Details about the message counts in queue.
+    :ivar message_count_details: Details about the message counts in queue.
     :type message_count_details: ~azure.servicebus.management._generated.models.MessageCountDetails
 
     """
@@ -555,14 +556,15 @@ class SubscriptionRuntimeInfo(object):
 
 
 class RuleDescription(object):
-    """RuleDescription.
+    """Description of a topic subscription rule.
 
-    :ivar name:
+    :param name: Name of the rule.
     :type name: str
-    :keyword filter:
-    :type filter: ~azure.servicebus.management._generated.models.RuleFilter
-    :keyword action:
-    :type action: ~azure.servicebus.management._generated.models.RuleAction
+    :keyword filter: The filter of the rule.
+    :type filter: Union[~azure.servicebus.management.models.CorrelationRuleFilter,
+     ~azure.servicebus.management.models.SqlRuleFilter]
+    :keyword action: The action of the rule.
+    :type action: Optional[~azure.servicebus.management.models.SqlRuleAction]
     :keyword created_at: The exact time the rule was created.
     :type created_at: ~datetime.datetime
     """
@@ -579,7 +581,7 @@ class RuleDescription(object):
     def _from_internal_entity(cls, name, internal_rule):
         # type: (str, InternalRuleDescription) -> RuleDescription
         rule = cls(name)
-        rule._internal_rule = internal_rule
+        rule._internal_rule = deepcopy(internal_rule)
 
         rule.filter = RULE_CLASS_MAPPING[type(internal_rule.filter)]._from_internal_entity(internal_rule.filter) \
             if internal_rule.filter and isinstance(internal_rule.filter, tuple(RULE_CLASS_MAPPING.keys())) else None
