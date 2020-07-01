@@ -6,6 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
+from typing import Optional
+
 import msrest.serialization
 
 
@@ -59,29 +62,28 @@ class CloudEvent(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        id: str,
+        source: str,
+        type: str,
+        specversion: str,
+        data: Optional[object] = None,
+        time: Optional[datetime.datetime] = None,
+        dataschema: Optional[str] = None,
+        datacontenttype: Optional[str] = None,
+        subject: Optional[str] = None,
         **kwargs
     ):
         super(CloudEvent, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.source = kwargs['source']
-        self.data = kwargs.get('data', None)
-        self.type = kwargs['type']
-        self.time = kwargs.get('time', None)
-        self.specversion = kwargs['specversion']
-        self.dataschema = kwargs.get('dataschema', None)
-        self.datacontenttype = kwargs.get('datacontenttype', None)
-        self.subject = kwargs.get('subject', None)
-
-    def from_dict(self, source):
-        """
-        Returns an array of CloudEvent objects given a dict of events following the CloudEvent schema.
-
-        :param source: Required. The dict object following the CloudEvent schema.
-        :type source: dict
-
-        :rtype: List[~azure.eventgrid.CloudEvent]
-        """
-        pass
+        self.id = id
+        self.source = source
+        self.data = data
+        self.type = type
+        self.time = time
+        self.specversion = specversion
+        self.dataschema = dataschema
+        self.datacontenttype = datacontenttype
+        self.subject = subject
 
 
 class EventGridEvent(msrest.serialization.Model):
@@ -132,28 +134,25 @@ class EventGridEvent(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        id: str,
+        subject: str,
+        data: object,
+        event_type: str,
+        event_time: datetime.datetime,
+        data_version: str,
+        topic: Optional[str] = None,
         **kwargs
     ):
         super(EventGridEvent, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.topic = kwargs.get('topic', None)
-        self.subject = kwargs['subject']
-        self.data = kwargs['data']
-        self.event_type = kwargs['event_type']
-        self.event_time = kwargs['event_time']
+        self.id = id
+        self.topic = topic
+        self.subject = subject
+        self.data = data
+        self.event_type = event_type
+        self.event_time = event_time
         self.metadata_version = None
-        self.data_version = kwargs['data_version']
-    
-    def from_dict(self, source):
-        """
-        Returns an array of EventGridEvent objects given a dict of events following the EventGridEvent schema.
-
-        :param source: Required. The dict object following the EventGridEvent schema.
-        :type source: dict
-
-        :rtype: List[~azure.eventgrid.EventGridEvent]
-        """
-        pass
+        self.data_version = data_version
 
 
 class SubscriptionDeletedEventData(msrest.serialization.Model):
@@ -231,7 +230,9 @@ class SubscriptionValidationResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        validation_response: Optional[str] = None,
         **kwargs
     ):
         super(SubscriptionValidationResponse, self).__init__(**kwargs)
-        self.validation_response = kwargs.get('validation_response', None)
+        self.validation_response = validation_response
