@@ -122,3 +122,20 @@ def run_test_mgmt_list_with_negative_parameters(test_helper):
     result = test_helper.list_resource_method()
     assert len(result) == 0
 
+
+def clear_queues(servicebus_management_client):
+    queues = list(servicebus_management_client.list_queues())
+    for queue in queues:
+        try:
+            servicebus_management_client.delete_queue(queue)
+        except:
+            pass
+
+
+def clear_topics(servicebus_management_client):
+    topics = list(servicebus_management_client.list_topics())
+    for topic in topics:
+        try:
+            servicebus_management_client.delete_topic(topic)
+        except:
+            pass

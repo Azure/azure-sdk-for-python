@@ -17,6 +17,8 @@ from servicebus_preparer import (
     ServiceBusNamespacePreparer
 )
 
+from mgmt_test_utilities import clear_topics
+
 _logger = get_logger(logging.DEBUG)
 
 class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
@@ -24,6 +26,7 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_rule_create(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
         rule_name_1 = 'test_rule_1'
@@ -70,6 +73,7 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_rule_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
         topic_name = "dqkodq"
         subscription_name = 'kkaqo'
         rule_name = 'rule'
@@ -90,7 +94,7 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_rule_update_success(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
         rule_name = 'rule'
@@ -128,7 +132,7 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_rule_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
         rule_name = 'rule'
@@ -171,6 +175,7 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_rule_list_and_delete(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
         rule_name_1 = 'test_rule_1'

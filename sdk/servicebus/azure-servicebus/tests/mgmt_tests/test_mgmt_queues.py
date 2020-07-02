@@ -27,7 +27,8 @@ from mgmt_test_utilities import (
     MgmtQueueListTestHelper,
     MgmtQueueListRuntimeInfoTestHelper,
     run_test_mgmt_list_with_parameters,
-    run_test_mgmt_list_with_negative_parameters
+    run_test_mgmt_list_with_negative_parameters,
+    clear_queues
 )
 _logger = get_logger(logging.DEBUG)
 
@@ -38,6 +39,9 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     def test_mgmt_queue_list_basic(self, servicebus_namespace_connection_string, servicebus_namespace,
                                     servicebus_namespace_key_name, servicebus_namespace_primary_key):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+
+        clear_queues(mgmt_service)
+
         queues = list(mgmt_service.list_queues())
         assert len(queues) == 0
         mgmt_service.create_queue("test_queue")
@@ -67,6 +71,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         # Queue names can contain letters, numbers, periods (.), hyphens (-), underscores (_), and slashes (/), up to 260 characters. Queue names are also case-insensitive.
         queue_name = 'txt/.-_123'
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_queues(mgmt_service)
         queues = list(mgmt_service.list_queues())
         assert len(queues) == 0
         mgmt_service.create_queue(queue_name)
@@ -125,6 +130,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_delete_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_queues(mgmt_service)
         mgmt_service.create_queue("test_queue")
         queues = list(mgmt_service.list_queues())
         assert len(queues) == 1
@@ -147,6 +153,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_delete_one_and_check_not_existing(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_queues(mgmt_service)
         for i in range(10):
             mgmt_service.create_queue("queue{}".format(i))
 
@@ -166,6 +173,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_delete_negtive(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_queues(mgmt_service)
         mgmt_service.create_queue("test_queue")
         queues = list(mgmt_service.list_queues())
         assert len(queues) == 1
@@ -186,13 +194,12 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         with pytest.raises(ValueError):
             mgmt_service.delete_queue(queue=None)
 
-
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_create_by_name(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        clear_queues(mgmt_service)
         queue_name = "queue_testaddf"
         mgmt_service.create_queue(queue_name)
         created_at = utc_now()
@@ -228,7 +235,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_create_with_queue_description(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        clear_queues(mgmt_service)
         queue_name = "iweidk"
 
         #TODO: Why don't we have an input model (queueOptions? as superclass of QueueDescription?) and output model to not show these params?
@@ -274,7 +281,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        clear_queues(mgmt_service)
         queue_name = "rtofdk"
         mgmt_service.create_queue(queue_name)
         try:
@@ -288,7 +295,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_update_success(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        clear_queues(mgmt_service)
         queue_name = "fjrui"
         queue_description = mgmt_service.create_queue(queue_name)
         try:
@@ -340,7 +347,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        clear_queues(mgmt_service)
         queue_name = "dfjfj"
         queue_description = mgmt_service.create_queue(queue_name)
         try:
@@ -382,6 +389,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_list_runtime_info_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_queues(mgmt_service)
         queues = list(mgmt_service.list_queues())
         queues_infos = list(mgmt_service.list_queues_runtime_info())
 
@@ -432,7 +440,7 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_queue_get_runtime_info_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        clear_queues(mgmt_service)
         mgmt_service.create_queue("test_queue")
         try:
             queue_runtime_info = mgmt_service.get_queue_runtime_info("test_queue")

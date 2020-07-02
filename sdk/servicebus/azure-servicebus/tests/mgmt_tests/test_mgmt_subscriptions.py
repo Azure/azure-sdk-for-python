@@ -18,6 +18,8 @@ from servicebus_preparer import (
     ServiceBusNamespacePreparer
 )
 
+from mgmt_test_utilities import clear_topics
+
 _logger = get_logger(logging.DEBUG)
 
 
@@ -26,6 +28,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_create_by_name(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
 
@@ -44,6 +47,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_create_with_subscription_description(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
         topic_name = "iweidk"
         subscription_name = "kdosako"
         try:
@@ -78,6 +82,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
         topic_name = "dqkodq"
         subscription_name = 'kkaqo'
         try:
@@ -93,7 +98,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_update_success(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
 
@@ -134,7 +139,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        clear_topics(mgmt_service)
         topic_name = "dfjfj"
         subscription_name = "kwqxc"
         try:
@@ -174,6 +179,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_delete(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
         topic_name = 'test_topicgda'
         subscription_name_1 = 'test_sub1da'
         subscription_name_2 = 'test_sub2gcv'
@@ -203,6 +209,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_list(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        clear_topics(mgmt_service)
         topic_name = 'lkoqxc'
         subscription_name_1 = 'testsub1'
         subscription_name_2 = 'testsub2'
@@ -226,7 +233,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_list_runtime_info(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        clear_topics(mgmt_service)
         topic_name = 'dkoamv'
         subscription_name = 'cxqplc'
         mgmt_service.create_topic(topic_name)
@@ -267,7 +274,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     def test_mgmt_subscription_get_runtime_info_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        clear_topics(mgmt_service)
         topic_name = 'dcvxqa'
         subscription_name = 'xvazzag'
 

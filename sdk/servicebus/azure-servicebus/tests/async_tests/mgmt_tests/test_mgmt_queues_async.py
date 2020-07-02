@@ -24,7 +24,8 @@ from mgmt_test_utilities_async import (
     AsyncMgmtQueueListRuntimeInfoTestHelper,
     run_test_async_mgmt_list_with_parameters,
     run_test_async_mgmt_list_with_negative_parameters,
-    async_pageable_to_list
+    async_pageable_to_list,
+    clear_queues
 )
 
 
@@ -35,6 +36,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
                                                         servicebus_namespace, servicebus_namespace_key_name,
                                                         servicebus_namespace_primary_key):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        await clear_queues(mgmt_service)
         queues = await async_pageable_to_list(mgmt_service.list_queues())
         assert len(queues) == 0
         await mgmt_service.create_queue("test_queue")
@@ -64,6 +66,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         # Queue names can contain letters, numbers, periods (.), hyphens (-), underscores (_), and slashes (/), up to 260 characters. Queue names are also case-insensitive.
         queue_name = 'txt/.-_123'
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        await clear_queues(mgmt_service)
         queues = await async_pageable_to_list(mgmt_service.list_queues())
         assert len(queues) == 0
         await mgmt_service.create_queue(queue_name)
@@ -121,6 +124,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_delete_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        await clear_queues(mgmt_service)
         await mgmt_service.create_queue("test_queue")
         queues = await async_pageable_to_list(mgmt_service.list_queues())
         assert len(queues) == 1
@@ -143,6 +147,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_delete_one_and_check_not_existing(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        await clear_queues(mgmt_service)
         for i in range(10):
             await mgmt_service.create_queue("queue{}".format(i))
 
@@ -162,6 +167,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_delete_negtive(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        await clear_queues(mgmt_service)
         await mgmt_service.create_queue("test_queue")
         queues = await async_pageable_to_list(mgmt_service.list_queues())
         assert len(queues) == 1
@@ -186,7 +192,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_create_by_name(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        await clear_queues(mgmt_service)
         queue_name = "eidk"
         created_at = utc_now()
         await mgmt_service.create_queue(queue_name)
@@ -220,7 +226,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_create_with_queue_description(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        await clear_queues(mgmt_service)
         queue_name = "dkldf"
         await mgmt_service.create_queue(QueueDescription(name=queue_name,
                                                     auto_delete_on_idle=datetime.timedelta(minutes=10),
@@ -262,7 +268,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        await clear_queues(mgmt_service)
         queue_name = "eriodk"
         await mgmt_service.create_queue(queue_name)
         try:
@@ -275,7 +281,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_update_success(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        await clear_queues(mgmt_service)
         queue_name = "ewuidfj"
         queue_description = await mgmt_service.create_queue(queue_name)
 
@@ -326,7 +332,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        await clear_queues(mgmt_service)
         queue_name = "vbmfm"
         queue_description = await mgmt_service.create_queue(queue_name)
         try:
@@ -368,6 +374,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_list_runtime_info_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
+        await clear_queues(mgmt_service)
         queues = await async_pageable_to_list(mgmt_service.list_queues())
         queues_infos = await async_pageable_to_list(mgmt_service.list_queues_runtime_info())
 
@@ -418,7 +425,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     async def test_async_mgmt_queue_get_runtime_info_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
-
+        await clear_queues(mgmt_service)
         await mgmt_service.create_queue("test_queue")
         queue_runtime_info = await mgmt_service.get_queue_runtime_info("test_queue")
 
