@@ -311,7 +311,7 @@ class TableClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def update_entity(
+    def update_entity(  # pylint:disable=R1710
             self,
             mode,
             partition_key=None,
@@ -354,22 +354,22 @@ class TableClient(StorageAccountHostsMixin):
 
         if mode is UpdateMode.replace:
             try:
-                self._client.table.update_entity(
+                u = self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=table_entity_properties,
                     if_match=if_match or if_not_match or '*',
                     **kwargs)
-                return
+                return u
             except ResourceNotFoundError:
                 raise ResourceNotFoundError
         if mode is UpdateMode.merge:
             try:
-                self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
+                m = self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
                                                 row_key=row_key, if_match=if_match or if_not_match or '*',
                                                 table_entity_properties=table_entity_properties, **kwargs)
-                return
+                return m
             except ResourceNotFoundError:
                 raise ResourceNotFoundError
 
