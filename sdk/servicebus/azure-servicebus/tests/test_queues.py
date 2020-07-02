@@ -1268,10 +1268,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 message = BatchMessage()
                 for each in message_content():
                     message.add(each)
-                sender.send(message)
+                sender.send_messages(message)
 
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = receiver.receive(max_batch_size=20, max_wait_time=5)
+                messages = receiver.receive_messages(max_batch_size=20, max_wait_time=5)
 
                 assert len(messages) == 20
                 for m in messages:

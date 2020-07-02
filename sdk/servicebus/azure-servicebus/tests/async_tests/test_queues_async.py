@@ -1156,10 +1156,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 message = BatchMessage()
                 for each in message_content():
                     message.add(each)
-                await sender.send(message)
+                await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive(max_batch_size=20, max_wait_time=5)
+                messages = await receiver.receive_messages(max_batch_size=20, max_wait_time=5)
 
                 assert len(messages) == 20
                 for m in messages:
