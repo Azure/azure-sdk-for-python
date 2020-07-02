@@ -123,3 +123,16 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
         elif rk:
             next_entity = " " + rk
         return next_entity or None, props_list
+
+class UpdateMode(object):
+    def __init__(self):
+        self.r = False
+        self.m = False
+
+    def replace(self):
+        self.r = True
+        return self.r
+
+    def merge(self):
+        self.m = True
+        return self.m
