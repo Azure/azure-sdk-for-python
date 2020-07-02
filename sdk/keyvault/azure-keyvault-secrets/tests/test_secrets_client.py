@@ -308,6 +308,10 @@ class SecretClientTests(KeyVaultTestCase):
         poller = client.begin_recover_deleted_secret(secret.name, continuation_token=continuation_token)
         recovered_secret = poller.result()
         self.assertIsNotNone(recovered_secret)
+        poller.wait()
+
+        retrieved_secret = client.get_secret(secret.name)
+        self.assertEqual(retrieved_secret.name, recovered_secret.name)
 
 
     @ResourceGroupPreparer(random_name_enabled=True)
