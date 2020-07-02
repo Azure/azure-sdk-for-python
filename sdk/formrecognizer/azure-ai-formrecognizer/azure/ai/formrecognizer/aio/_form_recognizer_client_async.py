@@ -106,7 +106,7 @@ class FormRecognizerClient(object):
         :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
-        :paramtype: str or ~azure.ai.formrecognizer.FormContentType
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -221,7 +221,7 @@ class FormRecognizerClient(object):
         :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
-        :paramtype: str or ~azure.ai.formrecognizer.FormContentType
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -312,7 +312,7 @@ class FormRecognizerClient(object):
         :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
-        :paramtype: str or ~azure.ai.formrecognizer.FormContentType
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
