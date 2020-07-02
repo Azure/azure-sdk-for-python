@@ -251,7 +251,7 @@ class TestCustomForms(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = poller.result()
@@ -288,7 +288,7 @@ class TestCustomForms(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = poller.result()
@@ -326,7 +326,7 @@ class TestCustomForms(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = poller.result()
@@ -363,7 +363,7 @@ class TestCustomForms(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = poller.result()
@@ -427,7 +427,7 @@ class TestCustomForms(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = poller.result()
@@ -466,7 +466,7 @@ class TestCustomForms(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = poller.result()
