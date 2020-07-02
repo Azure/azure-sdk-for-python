@@ -328,12 +328,12 @@ class SecretClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
 
-        if continuation_token is None:
+        if continuation_token:
+            deleted_secret = pickle.loads(base64.b64decode(continuation_token))
+        else:
             deleted_secret = DeletedSecret._from_deleted_secret_bundle(
                 self._client.delete_secret(self.vault_url, name, error_map=_error_map, **kwargs)
             )
-        else:
-            deleted_secret = pickle.loads(base64.b64decode(continuation_token))
 
         command = partial(self.get_deleted_secret, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
@@ -466,12 +466,12 @@ class SecretClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
 
-        if continuation_token is None:
+        if continuation_token:
+            recovered_secret = pickle.loads(base64.b64decode(continuation_token))
+        else:
             recovered_secret = SecretProperties._from_secret_bundle(
                 self._client.recover_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
             )
-        else:
-            recovered_secret = pickle.loads(base64.b64decode(continuation_token))
 
         command = partial(self.get_secret, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
