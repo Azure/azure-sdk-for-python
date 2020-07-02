@@ -4,10 +4,14 @@
 
 **New Features**
 
-- `EventHubConsumerClient` constructor accepts two new parameters:
-    - `load_balancing_strategy`, which can be "greedy" or "balanced".
+- `EventHubConsumerClient` constructor accepts two new parameters for the load balancer.
+    - `load_balancing_strategy`, which can be "greedy" or "balanced". 
+     With greedy strategy, one execution of load balancing will claim as many partitions as required to balance the load
+     whereas with balanced strategy one execution of load balancing will claim at most 1 partition.
     - `partition_ownership_expiration_interval`, which allows you to customize the partition ownership expiration for load balancing.
-- Added enum class `azure.eventhub.LoadBalancingStrategy`.
+     A consumer client may lose its owned partitions more often with a smaller expiration interval. But a larger interval
+     may result in idle partitions not being claimed for longer time. 
+- Added enum class `azure.eventhub.LoadBalancingStrategy` for `load_balancing_strategy`.
 
 ## 5.1.0 (2020-05-04)
 
