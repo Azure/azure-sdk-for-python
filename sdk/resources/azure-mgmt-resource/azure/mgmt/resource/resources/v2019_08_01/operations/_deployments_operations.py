@@ -74,7 +74,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -94,7 +93,7 @@ class DeploymentsOperations(object):
         deployment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -193,7 +192,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -239,7 +237,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -252,7 +249,6 @@ class DeploymentsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentExtended', pipeline_response)
 
@@ -272,7 +268,7 @@ class DeploymentsOperations(object):
         parameters,  # type: "models.Deployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.DeploymentExtended"]
         """Deploys resources at a given scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -372,7 +368,6 @@ class DeploymentsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -432,7 +427,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -491,7 +485,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -504,7 +497,6 @@ class DeploymentsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', pipeline_response)
 
@@ -556,7 +548,6 @@ class DeploymentsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -601,6 +592,10 @@ class DeploymentsOperations(object):
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_at_scope.metadata['url']  # type: ignore
@@ -616,15 +611,11 @@ class DeploymentsOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -676,7 +667,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -695,7 +685,7 @@ class DeploymentsOperations(object):
         deployment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -787,7 +777,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -831,7 +820,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ScopedDeployment')
         body_content_kwargs['content'] = body_content
@@ -844,7 +832,6 @@ class DeploymentsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentExtended', pipeline_response)
 
@@ -863,7 +850,7 @@ class DeploymentsOperations(object):
         parameters,  # type: "models.ScopedDeployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.DeploymentExtended"]
         """Deploys resources at tenant scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -956,7 +943,6 @@ class DeploymentsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1012,7 +998,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1067,7 +1052,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ScopedDeployment')
         body_content_kwargs['content'] = body_content
@@ -1080,7 +1064,6 @@ class DeploymentsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', pipeline_response)
 
@@ -1128,7 +1111,6 @@ class DeploymentsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1170,6 +1152,10 @@ class DeploymentsOperations(object):
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_at_tenant_scope.metadata['url']  # type: ignore
@@ -1181,15 +1167,11 @@ class DeploymentsOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -1243,7 +1225,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1263,7 +1244,7 @@ class DeploymentsOperations(object):
         deployment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -1362,7 +1343,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1408,7 +1388,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ScopedDeployment')
         body_content_kwargs['content'] = body_content
@@ -1421,7 +1400,6 @@ class DeploymentsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentExtended', pipeline_response)
 
@@ -1441,7 +1419,7 @@ class DeploymentsOperations(object):
         parameters,  # type: "models.ScopedDeployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.DeploymentExtended"]
         """Deploys resources at management group scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -1541,7 +1519,6 @@ class DeploymentsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1601,7 +1578,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1660,7 +1636,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ScopedDeployment')
         body_content_kwargs['content'] = body_content
@@ -1673,7 +1648,6 @@ class DeploymentsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', pipeline_response)
 
@@ -1725,7 +1699,6 @@ class DeploymentsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1770,6 +1743,10 @@ class DeploymentsOperations(object):
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_at_management_group_scope.metadata['url']  # type: ignore
@@ -1785,15 +1762,11 @@ class DeploymentsOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -1846,7 +1819,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1865,7 +1837,7 @@ class DeploymentsOperations(object):
         deployment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -1958,7 +1930,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2003,7 +1974,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -2016,7 +1986,6 @@ class DeploymentsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentExtended', pipeline_response)
 
@@ -2035,7 +2004,7 @@ class DeploymentsOperations(object):
         parameters,  # type: "models.Deployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.DeploymentExtended"]
         """Deploys resources at subscription scope.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -2129,7 +2098,6 @@ class DeploymentsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2186,7 +2154,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2242,7 +2209,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -2255,7 +2221,6 @@ class DeploymentsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', pipeline_response)
 
@@ -2274,8 +2239,8 @@ class DeploymentsOperations(object):
         parameters,  # type: "models.DeploymentWhatIf"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.WhatIfOperationResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WhatIfOperationResult"]
+        # type: (...) -> Optional["models.WhatIfOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.WhatIfOperationResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-08-01"
@@ -2298,7 +2263,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'DeploymentWhatIf')
         body_content_kwargs['content'] = body_content
@@ -2332,7 +2296,7 @@ class DeploymentsOperations(object):
         parameters,  # type: "models.DeploymentWhatIf"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.WhatIfOperationResult"]
         """Returns changes that will be made by the deployment if executed at the scope of the
     subscription.
 
@@ -2425,7 +2389,6 @@ class DeploymentsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2467,6 +2430,10 @@ class DeploymentsOperations(object):
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_at_subscription_scope.metadata['url']  # type: ignore
@@ -2482,15 +2449,11 @@ class DeploymentsOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -2545,7 +2508,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2565,7 +2527,7 @@ class DeploymentsOperations(object):
         deployment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes a deployment from the deployment history.
 
         A template deployment that is currently running cannot be deleted. Deleting a template
@@ -2668,7 +2630,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2715,7 +2676,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -2728,7 +2688,6 @@ class DeploymentsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentExtended', pipeline_response)
 
@@ -2748,7 +2707,7 @@ class DeploymentsOperations(object):
         parameters,  # type: "models.Deployment"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.DeploymentExtended"]
         """Deploys resources to a resource group.
 
         You can provide the template and parameters directly in the request or link to JSON files.
@@ -2850,7 +2809,6 @@ class DeploymentsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2911,7 +2869,6 @@ class DeploymentsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2972,7 +2929,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Deployment')
         body_content_kwargs['content'] = body_content
@@ -2985,7 +2941,6 @@ class DeploymentsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('DeploymentValidateResult', pipeline_response)
 
@@ -3005,8 +2960,8 @@ class DeploymentsOperations(object):
         parameters,  # type: "models.DeploymentWhatIf"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.WhatIfOperationResult"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.WhatIfOperationResult"]
+        # type: (...) -> Optional["models.WhatIfOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.WhatIfOperationResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-08-01"
@@ -3030,7 +2985,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'DeploymentWhatIf')
         body_content_kwargs['content'] = body_content
@@ -3065,7 +3019,7 @@ class DeploymentsOperations(object):
         parameters,  # type: "models.DeploymentWhatIf"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.WhatIfOperationResult"]
         """Returns changes that will be made by the deployment if executed at the scope of the resource
     group.
 
@@ -3166,7 +3120,6 @@ class DeploymentsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -3212,6 +3165,10 @@ class DeploymentsOperations(object):
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -3228,15 +3185,11 @@ class DeploymentsOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -3296,7 +3249,6 @@ class DeploymentsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(template, 'object')
         body_content_kwargs['content'] = body_content
