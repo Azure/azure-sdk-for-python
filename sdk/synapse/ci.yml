@@ -31,5 +31,7 @@ extends:
     Artifacts:
     - name: azure_synapse
       safeName: azuresynapse
+    - name: azure_synapse_nspkg
+      safeName: azuresynapsenspkg
     - name: azure_mgmt_synapse
       safeName: azuremgmtsynapse
