@@ -372,8 +372,6 @@ class TableClient(StorageAccountHostsMixin):
                 return
             except ResourceNotFoundError:
                 raise ResourceNotFoundError
-        else:
-            raise HttpResponseError
 
     @distributed_trace
     def query_entities(
@@ -445,7 +443,7 @@ class TableClient(StorageAccountHostsMixin):
             raise ResourceNotFoundError
 
     @distributed_trace
-    def upsert_entity(
+    def upsert_entity(  # pylint:disable=R1710
             self,
             mode,
             partition_key=None,
@@ -516,5 +514,3 @@ class TableClient(StorageAccountHostsMixin):
                 )
                 properties = _convert_to_entity(insert_entity)
                 return Entity(properties)
-        else:
-            raise HttpResponseError

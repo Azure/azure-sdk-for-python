@@ -932,7 +932,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             with self.assertRaises(HttpResponseError):
-                self.table.update_entity(mode="merge",
+                self.table.update_entity(mode=UpdateMode.merge,
                                          table_entity_properties=sent_entity,
                                          etag='W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
                                          match_condition=MatchConditions.IfNotModified)
