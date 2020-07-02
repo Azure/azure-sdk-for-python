@@ -88,7 +88,7 @@ class EventProcessor(
         )  # type: float
         self._load_balancing_strategy = kwargs.get("load_balancing_strategy") or LoadBalancingStrategy.GREEDY
         self._ownership_timeout = kwargs.get(
-            "partition_ownership_expiration_interval") or self._load_balancing_interval * 6
+            "partition_ownership_expiration_interval", self._load_balancing_interval * 6)
 
         self._partition_contexts = {}  # type: Dict[str, PartitionContext]
 

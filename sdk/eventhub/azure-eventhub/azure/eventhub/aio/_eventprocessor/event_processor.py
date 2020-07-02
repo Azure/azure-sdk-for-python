@@ -94,7 +94,9 @@ class EventProcessor(
         self._initial_event_position = initial_event_position
         self._initial_event_position_inclusive = initial_event_position_inclusive
         self._load_balancing_interval = load_balancing_interval
-        self._ownership_timeout = partition_ownership_expiration_interval or self._load_balancing_interval * 6
+        self._ownership_timeout = partition_ownership_expiration_interval \
+            if partition_ownership_expiration_interval is not None \
+            else self._load_balancing_interval * 6
         self._load_balancing_strategy = load_balancing_strategy or LoadBalancingStrategy.GREEDY
         self._tasks = {}  # type: Dict[str, asyncio.Task]
         self._partition_contexts = {}  # type: Dict[str, PartitionContext]

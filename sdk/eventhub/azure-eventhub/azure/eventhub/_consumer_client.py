@@ -123,10 +123,14 @@ class EventHubConsumerClient(ClientBase):
     ):
         # type: (...) -> None
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
-        self._load_balancing_interval = kwargs.pop("load_balancing_interval", None) or 10
+        self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
+        if self._load_balancing_strategy is None:
+            self._load_balancing_strategy = 10
         self._partition_ownership_expiration_interval = kwargs.pop(
             "partition_ownership_expiration_interval", None
-        ) or 6*self._load_balancing_interval
+        )
+        if self._partition_ownership_expiration_interval is None:
+            self._partition_ownership_expiration_interval = 6 * self._load_balancing_interval
         load_balancing_strategy = kwargs.pop("load_balancing_strategy", None)
         self._load_balancing_strategy = LoadBalancingStrategy(load_balancing_strategy) if load_balancing_strategy \
             else LoadBalancingStrategy.GREEDY
