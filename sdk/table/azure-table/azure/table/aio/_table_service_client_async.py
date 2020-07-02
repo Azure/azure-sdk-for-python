@@ -1,5 +1,4 @@
 import functools
-
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import AsyncPipeline

@@ -14,7 +14,7 @@ import uuid
 from base64 import b64encode
 from datetime import datetime, timedelta
 
-from azure.table import TableServiceClient, TableClient, generate_table_sas
+from azure.table import TableServiceClient, generate_table_sas
 from azure.table._generated.models import QueryOptions
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
