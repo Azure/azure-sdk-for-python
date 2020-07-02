@@ -146,7 +146,9 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
             0 if self.owner_id in active_ownership_by_owner else 1
         )
         expected_count_per_owner = all_partition_count // owners_count
-        max_count_per_owner = int(math.ceil(all_partition_count / owners_count))
+        # Py2 math.ceil() returns float, a/b return int if not divisable.
+        # Py3 math.ceil() returns int, a/b return float if not divisable.
+        max_count_per_owner = int(math.ceil(all_partition_count*1.0 / owners_count))
         # end of calculating expected count per owner
 
         to_claim = active_ownership_self
