@@ -32,7 +32,7 @@ def _get_continuation_from_response_headers(response):
 # custom data type support.
 
 def _from_entity_binary(value):
-    return _decode_base64_to_bytes(value)
+    return EntityProperty(EdmType.BINARY, _decode_base64_to_bytes(value))
 
 
 def _from_entity_int32(value):
@@ -40,8 +40,6 @@ def _from_entity_int32(value):
 
 
 def _from_entity_datetime(value):
-    # Note that Azure always returns UTC datetime, and dateutil parser
-    # will set the tzinfo on the date it returns
     return parser.parse(value)
 
 
@@ -122,12 +120,7 @@ def _convert_to_entity(entry_element):
         else:  # need an object to hold the property
             conv = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
             if conv is not None:
-                try:
-                    new_property = conv(value)
-                except Exception as e:
-                    # throw if the type returned by the property resolver
-                    # cannot be used in the conversion
-                    raise e
+                new_property = conv(value)
             else:
                 new_property = EntityProperty(mtype, value)
             entity[name] = new_property

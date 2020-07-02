@@ -29,6 +29,8 @@ _ERROR_CANNOT_SERIALIZE_VALUE_TO_ENTITY = \
     'Cannot serialize the specified value ({0}) to an entity.  Please use ' + \
     'an EntityProperty (which can specify custom types), int, str, bool, ' + \
     'or datetime.'
+_ERROR_CANNOT_DESERIALIZE_VALUE_TO_ENTITY = \
+    'Cannot deserialize the specified value ({0}).'
 _ERROR_DUPLICATE_ROW_KEY_IN_BATCH = \
     'Row Keys should not be the same in a batch operations'
 _ERROR_INCORRECT_PARTITION_KEY_IN_BATCH = \
