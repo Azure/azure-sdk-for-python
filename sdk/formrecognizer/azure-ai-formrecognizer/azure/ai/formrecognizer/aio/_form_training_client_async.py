@@ -102,11 +102,13 @@ class FormTrainingClient(object):
             **kwargs: Any
     ) -> AsyncLROPoller[CustomFormModel]:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
-        externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
+        externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri). Note that
+        a container uri is accepted only when the container is public.
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
-        :param str training_files_url: An Azure Storage blob container's SAS URI.
+        :param str training_files_url: An Azure Storage blob container's SAS URI. A container uri can be used if the
+            container is public.
         :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
@@ -300,7 +302,9 @@ class FormTrainingClient(object):
         :param str resource_id: Azure Resource Id of the target Form Recognizer resource
             where the model will be copied to.
         :param str resource_region: Location of the target Form Recognizer resource. A valid Azure
-            region name supported by Cognitive Services.
+            region name supported by Cognitive Services. For example, 'westus', 'eastus' etc.
+            See https://azure.microsoft.com/global-infrastructure/services/?products=cognitive-services
+            for the regional availability of Cognitive Services
         :return: A dictionary with values for the copy authorization -
             "modelId", "accessToken", "resourceId", "resourceRegion", and "expirationDateTimeTicks".
         :rtype: Dict[str, Union[str, int]]

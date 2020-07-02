@@ -7,6 +7,10 @@
 * Fixed bug where sync AutoLockRenew does not shutdown itself timely.
 * Fixed bug where async AutoLockRenew does not support context manager.
 
+**Breaking Changes**
+
+* Renamed `receive()`, `peek()` `schedule()` and `send()` to `receive_messages()`, `peek_messages()`, `schedule_messages()` and `send_messages()` to align with other service bus SDKs.
+
 ## 7.0.0b3 (2020-06-08)
 
 **New Features**

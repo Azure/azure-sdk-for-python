@@ -21,7 +21,7 @@ SESSION_ID = "<your session id>"
 
 def send_single_message(sender):
     message = Message("DATA" * 64, session_id=SESSION_ID)
-    sender.send(message)
+    sender.send_messages(message)
 
 
 def send_batch_message(sender):
@@ -34,14 +34,14 @@ def send_batch_message(sender):
             # BatchMessage object reaches max_size.
             # New BatchMessage object can be created here to send more data.
             break
-    sender.send(batch_message)
+    sender.send_messages(batch_message)
 
 
 def receive_batch_message(receiver):
     session = receiver.session
     session.set_session_state("START")
     print("Session state:", session.get_session_state())
-    received_msgs = receiver.receive(max_batch_size=10, max_wait_time=5)
+    received_msgs = receiver.receive_messages(max_batch_size=10, max_wait_time=5)
     for msg in received_msgs:
         print(str(msg))
         msg.complete()

@@ -24,7 +24,7 @@ SESSION_ID = "<your session id>"
 async def send_single_message(sender):
     message = Message("DATA" * 64)
     message.session_id = SESSION_ID
-    await sender.send(message)
+    await sender.send_messages(message)
 
 
 async def send_batch_message(sender):
@@ -38,14 +38,14 @@ async def send_batch_message(sender):
             # BatchMessage object reaches max_size.
             # New BatchMessage object can be created here to send more data.
             break
-    await sender.send(batch_message)
+    await sender.send_messages(batch_message)
 
 
 async def receive_batch_messages(receiver):
     session = receiver.session
     await session.set_session_state("START")
     print("Session state:", await session.get_session_state())
-    received_msgs = await receiver.receive(max_batch_size=10, max_wait_time=5)
+    received_msgs = await receiver.receive_messages(max_batch_size=10, max_wait_time=5)
     for msg in received_msgs:
         print(str(msg))
         await msg.complete()

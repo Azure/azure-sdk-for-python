@@ -20,6 +20,14 @@ def adjust_confidence(score):
     return score
 
 
+def adjust_text_angle(text_angle):
+    """Adjust to (-180, 180]
+    """
+    if text_angle > 180:
+        text_angle -= 360
+    return text_angle
+
+
 def get_elements(field, read_result):
     text_elements = []
 
@@ -242,7 +250,8 @@ class FieldText(FormContent):
         Units are in pixels for images and inches for PDF.
     :ivar text_content:
         When `include_text_content` is set to true, a list of text
-        elements constituting this field or value is returned.
+        elements constituting this field or value is returned. The list
+        constitutes of text elements such as lines and words.
     :vartype text_content: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """
 
@@ -327,7 +336,7 @@ class FormPage(object):
     def _from_generated(cls, read_result):
         return [cls(
             page_number=page.page,
-            text_angle=page.angle,
+            text_angle=adjust_text_angle(page.angle),
             width=page.width,
             height=page.height,
             unit=page.unit,
@@ -464,7 +473,8 @@ class FormTableCell(FormContent):
         The 1-based number of the page in which this content is present.
     :ivar text_content:
         When `include_text_content` is set to true, a list of text
-        elements constituting this cell is returned.
+        elements constituting this cell is returned. The list
+        constitutes of text elements such as lines and words.
         For calls to recognize content, this list is always populated.
     :vartype text_content: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
     """

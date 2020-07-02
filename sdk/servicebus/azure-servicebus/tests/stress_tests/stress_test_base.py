@@ -132,7 +132,7 @@ class StressTestRunner:
         with sender:
             while end_time > datetime.utcnow():
                 message = self._ConstructMessage()
-                sender.send(message)
+                sender.send_messages(message)
                 self.OnSend(self._state, message)
                 self._state.total_sent += 1
                 time.sleep(self.send_delay)
@@ -144,7 +144,7 @@ class StressTestRunner:
         with receiver:
             while end_time > datetime.utcnow():
                 if self.receive_type == ReceiveType.pull:
-                    batch = receiver.receive()
+                    batch = receiver.receive_messages()
                 elif self.receive_type == ReceiveType.push:
                     batch = receiver
 
