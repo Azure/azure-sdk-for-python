@@ -9,7 +9,6 @@
 import json
 from typing import (
     Any,
-    AsyncIterable,
     Dict,
     Union,
     TYPE_CHECKING,
@@ -19,6 +18,7 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.async_paging import AsyncItemPaged
 from ._form_recognizer_client_async import FormRecognizerClient
 from ._helpers_async import AsyncTransportWrapper
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
@@ -42,7 +42,6 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
     from azure.core.credentials import AzureKeyCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.async_paging import AsyncItemPaged
 
 
 class FormTrainingClient(object):
