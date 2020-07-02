@@ -26,7 +26,7 @@ from azure.core.exceptions import (
     ResourceExistsError)
 
 from azure.table._entity import Entity, EntityProperty, EdmType
-from azure.table._models import TableSasPermissions, AccessPolicy
+from azure.table._models import TableSasPermissions, AccessPolicy, UpdateMode
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
@@ -710,7 +710,7 @@ class StorageTableEntityTest(TableTestCase):
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
 
             # resp = self.table.update_item(sent_entity, response_hook=lambda e, h: h)
-            resp = self.table.update_entity(table_entity_properties=sent_entity, response_hook=lambda e, h: h)
+            resp = self.table.update_entity(mode=UpdateMode.replace, table_entity_properties=sent_entity, response_hook=lambda e, h: h)
 
             # Assert
             #  self.assertTrue(resp)
@@ -732,7 +732,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             with self.assertRaises(ResourceNotFoundError):
-                self.table.update_entity(table_entity_properties=sent_entity)
+                self.table.update_entity(mode=UpdateMode.replace, table_entity_properties=sent_entity)
 
             # Assert
         finally:
@@ -749,7 +749,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             self.table.update_entity(
-                table_entity_properties=sent_entity, etag=etag,
+                mode=UpdateMode.replace, table_entity_properties=sent_entity, etag=etag,
                 match_condition=MatchConditions.IfNotModified, response_hook=lambda e, h: h)
 
             # Assert
@@ -771,6 +771,7 @@ class StorageTableEntityTest(TableTestCase):
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             with self.assertRaises(HttpResponseError):
                 self.table.update_entity(
+                    mode=UpdateMode.merge,
                     table_entity_properties=sent_entity,
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
                     match_condition=MatchConditions.IfNotModified)
@@ -790,7 +791,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.upsert_insert_merge_entity(table_entity_properties=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.merge, table_entity_properties=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
@@ -810,7 +811,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = self.table.upsert_insert_merge_entity(table_entity_properties=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.merge, table_entity_properties=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
@@ -831,7 +832,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.upsert_insert_update_entity(table_entity_properties=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.replace, table_entity_properties=sent_entity)
 
             # Assert
             # self.assertIsNone(resp)
@@ -851,7 +852,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = self.table.upsert_insert_update_entity(table_entity_properties=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.replace, table_entity_properties=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
@@ -871,7 +872,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.merge_entity(table_entity_properties=sent_entity)
+            resp = self.table.update_entity(mode=UpdateMode.merge, table_entity_properties=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
@@ -891,7 +892,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             with self.assertRaises(ResourceNotFoundError):
-                self.table.merge_entity(table_entity_properties=sent_entity)
+                self.table.update_entity(mode=UpdateMode.merge, table_entity_properties=sent_entity)
 
             # Assert
         finally:
@@ -907,8 +908,11 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.merge_entity(
-                table_entity_properties=sent_entity, etag=etag, match_condition=MatchConditions.IfNotModified)
+            resp = self.table.update_entity(
+                mode=UpdateMode.merge,
+                table_entity_properties=sent_entity,
+                etag=etag,
+                match_condition=MatchConditions.IfNotModified)
 
             # Assert
             self.assertIsNone(resp)
@@ -928,9 +932,10 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             with self.assertRaises(HttpResponseError):
-                self.table.merge_entity(
-                    table_entity_properties=sent_entity, etag='W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
-                    match_condition=MatchConditions.IfNotModified)
+                self.table.update_entity(mode="merge",
+                                         table_entity_properties=sent_entity,
+                                         etag='W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
+                                         match_condition=MatchConditions.IfNotModified)
 
             # Assert
         finally:
@@ -1073,7 +1078,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.upsert_insert_merge_entity(table_entity_properties=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.merge, table_entity_properties=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
@@ -1083,7 +1088,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity['newField'] = 'newFieldValue'
-            resp = self.table.update_entity(table_entity_properties=sent_entity)
+            resp = self.table.update_entity(mode=UpdateMode.merge, table_entity_properties=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
@@ -1565,7 +1570,7 @@ class StorageTableEntityTest(TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             updated_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            table.update_entity(table_entity_properties=updated_entity)
+            table.update_entity(mode=UpdateMode.replace, table_entity_properties=updated_entity)
 
             # Assert
             received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)

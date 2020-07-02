@@ -16,11 +16,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Thu, 02 Jul 2020 14:30:26 GMT
+      - Thu, 02 Jul 2020 14:47:14 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 14:30:26 GMT
+      - Thu, 02 Jul 2020 14:47:14 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -30,7 +30,7 @@ interactions:
       string: ''
     headers:
       date:
-      - Thu, 02 Jul 2020 14:30:23 GMT
+      - Thu, 02 Jul 2020 14:47:11 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -50,11 +50,11 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Thu, 02 Jul 2020 14:30:56 GMT
+      - Thu, 02 Jul 2020 14:47:44 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 14:30:56 GMT
+      - Thu, 02 Jul 2020 14:47:44 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -67,7 +67,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 02 Jul 2020 14:30:53 GMT
+      - Thu, 02 Jul 2020 14:47:41 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

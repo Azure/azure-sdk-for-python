@@ -28,7 +28,7 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.table._version import VERSION
 from azure.core.tracing.decorator import distributed_trace
 
-from ._models import TableEntityPropertiesPaged
+from ._models import TableEntityPropertiesPaged, UpdateMode
 
 from ._shared.response_handlers import return_headers_and_deserialized
 
@@ -313,6 +313,7 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def update_entity(
             self,
+            mode,
             partition_key=None,
             row_key=None,
             etag=None,
@@ -324,6 +325,8 @@ class TableClient(StorageAccountHostsMixin):
         # type: (...) -> None
         """Update entity in a table.
 
+        :param mode: Merge or Replace entity
+        :type mode: ~azure.table._models.UpdateMode
         :param response_hook:
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
@@ -349,60 +352,28 @@ class TableClient(StorageAccountHostsMixin):
             row_key = table_entity_properties['RowKey']
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
-        try:
-            self._client.table.update_entity(
-                table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=table_entity_properties,
-                if_match=if_match or if_not_match or "*",
-                **kwargs)
-        except ResourceNotFoundError:
-            raise ResourceNotFoundError
-
-    @distributed_trace
-    def merge_entity(
-            self,
-            partition_key=None,  # type: str
-            row_key=None,  # type: str
-            etag=None,  # type: str
-            match_condition=None,  # type: MatchConditions
-            table_entity_properties=None,  # type: Optional[Dict[str, object]]
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Merge entity in a table.
-
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
-         :param match_condition: MatchCondition
-        :type match_condition: ~azure.core.MatchConditions
-        :param etag: Etag of the entity
-        :type etag: str
-        :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
-                                                    etag_param='etag', match_param='match_condition')
-
-        if table_entity_properties:
-            partition_key = table_entity_properties['PartitionKey']
-            row_key = table_entity_properties['RowKey']
-            table_entity_properties = _add_entity_properties(table_entity_properties)
-
-        try:
-            self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
-                                            row_key=row_key, if_match=if_match or if_not_match or '*',
-                                            table_entity_properties=table_entity_properties, **kwargs)
-
-        except ResourceNotFoundError:
-            raise ResourceNotFoundError
+        if mode is UpdateMode.replace:
+            try:
+                self._client.table.update_entity(
+                    table=self.table_name,
+                    partition_key=partition_key,
+                    row_key=row_key,
+                    table_entity_properties=table_entity_properties,
+                    if_match=if_match or if_not_match or '*',
+                    **kwargs)
+                return
+            except ResourceNotFoundError:
+                raise ResourceNotFoundError
+        if mode is UpdateMode.merge:
+            try:
+                self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
+                                                row_key=row_key, if_match=if_match or if_not_match or '*',
+                                                table_entity_properties=table_entity_properties, **kwargs)
+                return
+            except ResourceNotFoundError:
+                raise ResourceNotFoundError
+        else:
+            raise HttpResponseError
 
     @distributed_trace
     def query_entities(
@@ -474,18 +445,19 @@ class TableClient(StorageAccountHostsMixin):
             raise ResourceNotFoundError
 
     @distributed_trace
-    def upsert_insert_merge_entity(
+    def upsert_entity(
             self,
+            mode,
             partition_key=None,
             row_key=None,
             table_entity_properties=None,
             query_options=None,
-            **kwargs
-    ):
-        # type: (...) -> Entity
-        """Merge or Insert entity into table.
+            **kwargs):
+        """Update/Merge or Insert entity into table.
 
 
+        :param mode: Merge or Replace
+        :type mode: ~azure.table._models.UpdateMode
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
@@ -500,75 +472,48 @@ class TableClient(StorageAccountHostsMixin):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        # Insert or Merge
-        if table_entity_properties:
-            # Losing a key here
-            partition_key = table_entity_properties['PartitionKey']
-            row_key = table_entity_properties['RowKey']
-            table_entity_properties = _add_entity_properties(table_entity_properties)
-
-        try:
-            merged_entity = self._client.table.merge_entity(
-                table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=table_entity_properties,
-                query_options=query_options,
-                **kwargs
-            )
-            return merged_entity
-        except ResourceNotFoundError:
-            insert_entity = self.create_entity(
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=table_entity_properties,
-                **kwargs
-            )
-            properties = _convert_to_entity(insert_entity)
-            return Entity(properties)
-
-    @distributed_trace
-    def upsert_insert_update_entity(
-            self,
-            partition_key=None,
-            row_key=None,
-            table_entity_properties=None,
-            **kwargs
-    ):
-        # type: (...) -> Entity
-        """Update or Insert entity into table.
-
-
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
-        :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TableEntityQueryResponse, or the result of cls(response)
-        :rtype: ~azure.table.models.TableEntityQueryResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-
-        # Insert or Update
         if table_entity_properties:
             partition_key = table_entity_properties['PartitionKey']
             row_key = table_entity_properties['RowKey']
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
-        try:
-            update_entity = self._client.table.update_entity(
-                table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=table_entity_properties,
-                **kwargs)
-            return update_entity
-        except ResourceNotFoundError:
-            insert_entity = self.create_entity(
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=table_entity_properties
-            )
-            return Entity(insert_entity)
+        if mode is UpdateMode.merge:
+            try:
+                merged_entity = self._client.table.merge_entity(
+                    table=self.table_name,
+                    partition_key=partition_key,
+                    row_key=row_key,
+                    table_entity_properties=table_entity_properties,
+                    query_options=query_options,
+                    **kwargs
+                )
+                return merged_entity
+            except ResourceNotFoundError:
+                insert_entity = self.create_entity(
+                    partition_key=partition_key,
+                    row_key=row_key,
+                    table_entity_properties=table_entity_properties,
+                    **kwargs
+                )
+                properties = _convert_to_entity(insert_entity)
+                return Entity(properties)
+        if mode is UpdateMode.replace:
+            try:
+                update_entity = self._client.table.update_entity(
+                    table=self.table_name,
+                    partition_key=partition_key,
+                    row_key=row_key,
+                    table_entity_properties=table_entity_properties,
+                    **kwargs)
+                return update_entity
+            except ResourceNotFoundError:
+                insert_entity = self.create_entity(
+                    partition_key=partition_key,
+                    row_key=row_key,
+                    table_entity_properties=table_entity_properties,
+                    **kwargs
+                )
+                properties = _convert_to_entity(insert_entity)
+                return Entity(properties)
+        else:
+            raise HttpResponseError

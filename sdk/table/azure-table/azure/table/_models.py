@@ -17,7 +17,6 @@ from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 
 
-
 class AccessPolicy(GenAccessPolicy):
     """Access Policy class used by the set and get access policy methods.
 
@@ -96,7 +95,7 @@ class TableAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy.from_generated(generated.retention_policy) # pylint:disable=W0212
+            retention_policy=RetentionPolicy.from_generated(generated.retention_policy)  # pylint:disable=W0212
             # pylint: disable=protected-access
         )
 
@@ -409,3 +408,19 @@ class TablePayloadFormat(object):
 
     JSON_FULL_METADATA = 'application/json;odata=fullmetadata'
     '''Returns minimal type information for the entity properties plus some extra odata properties.'''
+
+
+class UpdateMode(object):
+    def __init__(self, merge=False, replace=False):
+        self.merge = merge
+        self.replace = replace
+
+    def replace(self):
+        self.replace = True
+
+    def merge(self):
+        self.merge = True
+
+
+UpdateMode.MERGE = UpdateMode(merge=True)
+UpdateMode.REPLACE = UpdateMode(replace=True)

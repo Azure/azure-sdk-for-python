@@ -6,6 +6,9 @@
 
 import functools
 from typing import Any
+
+from azure.core.pipeline import Pipeline
+
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -15,7 +18,8 @@ except ImportError:
 from azure.table._generated import AzureTable
 from azure.table._generated.models import TableProperties, TableServiceProperties
 from azure.table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
-from azure.table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from azure.table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, \
+    TransportWrapper
 from azure.table._shared.models import LocationMode
 from azure.table._shared.response_handlers import process_storage_error
 from azure.table._version import VERSION
@@ -270,10 +274,13 @@ class TableServiceClient(StorageAccountHostsMixin):
         except AttributeError:
             table_name = table
 
-        #TODO: transport wrapper for pipeline
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies  # pylint: disable = protected-access
+        )
 
         return TableClient(
             self.url, table_name=table_name, credential=self.credential,
             key_resolver_function=self.key_resolver_function, require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=self._pipeline,
+            key_encryption_key=self.key_encryption_key, api_version=self.api_version, _pipeline=_pipeline,
             _configuration=self._config, _location_mode=self._location_mode, _hosts=self._hosts, **kwargs)
