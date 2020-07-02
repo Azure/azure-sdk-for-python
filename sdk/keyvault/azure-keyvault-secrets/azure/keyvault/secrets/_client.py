@@ -346,8 +346,7 @@ class SecretClient(KeyVaultClientBase):
 
         if continuation_token:
             return KeyVaultOperationPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=continuation_token
+                polling_method=polling_method
             )
 
         return KeyVaultOperationPoller(polling_method)
@@ -480,8 +479,7 @@ class SecretClient(KeyVaultClientBase):
 
         if continuation_token:
             return KeyVaultOperationPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=continuation_token
+                polling_method=polling_method
             )
 
         return KeyVaultOperationPoller(polling_method)
