@@ -354,7 +354,7 @@ class TableClient(StorageAccountHostsMixin):
 
         if mode is UpdateMode.replace:
             try:
-                u = self._client.table.update_entity(
+                self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
@@ -365,7 +365,7 @@ class TableClient(StorageAccountHostsMixin):
                 raise ResourceNotFoundError
         if mode is UpdateMode.merge:
             try:
-                m = self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
+                self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
                                                 row_key=row_key, if_match=if_match or if_not_match or "*",
                                                 table_entity_properties=table_entity_properties, **kwargs)
             except ResourceNotFoundError:
