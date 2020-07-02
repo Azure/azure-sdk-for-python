@@ -1,12 +1,26 @@
 # Release History
 
-# 0.18.0 (2020-03-23)
+## 0.19.0 (2020-06-22)
+
+**Features**
+
+  - Model SyncGroup has a new parameter use_private_link_connection
+  - Model ManagedInstanceUpdate has a new parameter maintenance_configuration_id
+  - Model SyncMember has a new parameter use_private_link_connection
+  - Model SyncMember has a new parameter sync_member_azure_database_resource_id
+  - Model ManagedInstance has a new parameter maintenance_configuration_id
+  - Added operation ExtendedDatabaseBlobAuditingPoliciesOperations.list_by_database
+  - Added operation ManagedInstancesOperations.failover
+  - Added operation ReplicationLinksOperations.unlink
+  - Added operation ExtendedServerBlobAuditingPoliciesOperations.list_by_server
+
+## 0.18.0 (2020-03-23)
 
 **Features**
 
   - Added operation group ManagedInstanceOperations
 
-# 0.17.0 (2020-03-02)
+## 0.17.0 (2020-03-02)
 
 **Features**
 
