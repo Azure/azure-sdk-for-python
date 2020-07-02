@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 02 Jul 2020 18:24:43 GMT
+      - Thu, 02 Jul 2020 18:52:11 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 18:24:43 GMT
+      - Thu, 02 Jul 2020 18:52:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 18:24:40 GMT
+      - Thu, 02 Jul 2020 18:52:08 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttable76561181')
       server:
@@ -63,27 +63,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 02 Jul 2020 18:24:44 GMT
+      - Thu, 02 Jul 2020 18:52:11 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 18:24:44 GMT
+      - Thu, 02 Jul 2020 18:52:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/uttable76561181
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable76561181/@Element","odata.etag":"W/\"datetime''2020-07-02T18%3A24%3A41.5721997Z''\"","PartitionKey":"pk76561181","RowKey":"rk76561181","Timestamp":"2020-07-02T18:24:41.5721997Z"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable76561181/@Element","odata.etag":"W/\"datetime''2020-07-02T18%3A52%3A09.0808584Z''\"","PartitionKey":"pk76561181","RowKey":"rk76561181","Timestamp":"2020-07-02T18:52:09.0808584Z"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 18:24:40 GMT
+      - Thu, 02 Jul 2020 18:52:08 GMT
       etag:
-      - W/"datetime'2020-07-02T18%3A24%3A41.5721997Z'"
+      - W/"datetime'2020-07-02T18%3A52%3A09.0808584Z'"
       location:
       - https://storagename.table.core.windows.net/uttable76561181(PartitionKey='pk76561181',RowKey='rk76561181')
       server:
@@ -109,27 +109,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 02 Jul 2020 18:24:44 GMT
+      - Thu, 02 Jul 2020 18:52:11 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 18:24:44 GMT
+      - Thu, 02 Jul 2020 18:52:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
     uri: https://storagename.table.core.windows.net/uttable76561181(PartitionKey='pk76561181',RowKey='rk76561181')
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable76561181/@Element","odata.etag":"W/\"datetime''2020-07-02T18%3A24%3A41.5721997Z''\"","PartitionKey":"pk76561181","RowKey":"rk76561181","Timestamp":"2020-07-02T18:24:41.5721997Z"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable76561181/@Element","odata.etag":"W/\"datetime''2020-07-02T18%3A52%3A09.0808584Z''\"","PartitionKey":"pk76561181","RowKey":"rk76561181","Timestamp":"2020-07-02T18:52:09.0808584Z"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 18:24:40 GMT
+      - Thu, 02 Jul 2020 18:52:08 GMT
       etag:
-      - W/"datetime'2020-07-02T18%3A24%3A41.5721997Z'"
+      - W/"datetime'2020-07-02T18%3A52%3A09.0808584Z'"
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -153,11 +153,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 02 Jul 2020 18:24:44 GMT
+      - Thu, 02 Jul 2020 18:52:11 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 18:24:44 GMT
+      - Thu, 02 Jul 2020 18:52:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -171,7 +171,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 18:24:41 GMT
+      - Thu, 02 Jul 2020 18:52:08 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
