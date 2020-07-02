@@ -14,13 +14,12 @@ except ImportError:
     from urllib2 import unquote  # type: ignore
 
 from azure.core.paging import ItemPaged
-from azure.table._deserialization import _convert_to_entity
+from azure.table._deserialize import _convert_to_entity
 from azure.table._entity import Entity
 from azure.table._generated import AzureTable
 from azure.table._generated.models import AccessPolicy, SignedIdentifier
 from azure.table._message_encoding import NoEncodePolicy, NoDecodePolicy
-from azure.table._serialization import _add_entity_properties
-from azure.table._serialize import _get_match_headers
+from azure.table._serialize import _get_match_headers, _add_entity_properties
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 
 from azure.table._shared.request_handlers import serialize_iso
