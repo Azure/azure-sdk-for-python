@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import pickle
+import base64
 from functools import partial
 from azure.core.tracing.decorator import distributed_trace
 
@@ -181,6 +183,7 @@ class KeyClient(KeyVaultClientBase):
         with soft-delete enabled. This method therefore returns a poller enabling you to wait for deletion to complete.
 
         :param str name: The name of the key to delete.
+        :keyword str continuation_token: A continuation token to restart the poller from a saved state.
         :returns: A poller for the delete key operation. The poller's `result` method returns the
          :class:`~azure.keyvault.keys.DeletedKey` without waiting for deletion to complete. If the vault has
          soft-delete enabled and you want to permanently delete the key with :func:`purge_deleted_key`, call the
@@ -200,11 +203,16 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         polling_interval = kwargs.pop("_polling_interval", None)
+        continuation_token = kwargs.pop("continuation_token", None)
         if polling_interval is None:
             polling_interval = 2
-        deleted_key = DeletedKey._from_deleted_key_bundle(
-            self._client.delete_key(self.vault_url, name, error_map=_error_map, **kwargs)
-        )
+
+        if continuation_token:
+            deleted_key = pickle.loads(base64.b64decode(continuation_token))
+        else:
+            deleted_key = DeletedKey._from_deleted_key_bundle(
+                self._client.delete_key(self.vault_url, name, error_map=_error_map, **kwargs)
+            )
 
         command = partial(self.get_deleted_key, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
@@ -214,6 +222,12 @@ class KeyClient(KeyVaultClientBase):
             final_resource=deleted_key,
             interval=polling_interval,
         )
+
+        if continuation_token:
+            return KeyVaultOperationPoller.from_continuation_token(
+                polling_method
+            )
+
         return KeyVaultOperationPoller(polling_method)
 
     @distributed_trace
@@ -379,6 +393,7 @@ class KeyClient(KeyVaultClientBase):
         you want to use the recovered key in another operation immediately.
 
         :param str name: The name of the deleted key to recover
+        :keyword str continuation_token: A continuation token to restart the poller from a saved state.
         :returns: A poller for the recovery operation. The poller's `result` method returns the recovered
          :class:`~azure.keyvault.keys.KeyVaultKey` without waiting for recovery to complete. If you want to use the
          recovered key immediately, call the poller's `wait` method, which blocks until the key is ready to use. The
@@ -395,18 +410,27 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         polling_interval = kwargs.pop("_polling_interval", None)
+        continuation_token = kwargs.pop("continuation_token", None)
         if polling_interval is None:
             polling_interval = 2
-        recovered_key = KeyVaultKey._from_key_bundle(
-            self._client.recover_deleted_key(
-                vault_base_url=self.vault_url, key_name=name, error_map=_error_map, **kwargs
+
+        if continuation_token:
+            recovered_key = pickle.loads(base64.b64decode(continuation_token))
+        else:
+            recovered_key = KeyVaultKey._from_key_bundle(
+                self._client.recover_deleted_key(
+                    vault_base_url=self.vault_url, key_name=name, error_map=_error_map, **kwargs
+                )
             )
-        )
         command = partial(self.get_key, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
             finished=False, command=command, final_resource=recovered_key, interval=polling_interval,
         )
 
+        if continuation_token:
+            return KeyVaultOperationPoller.from_continuation_token(
+                polling_method=polling_method
+            )
         return KeyVaultOperationPoller(polling_method)
 
 

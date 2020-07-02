@@ -4,6 +4,8 @@
 - Updated minimum `azure-core` version to 1.4.0
 - `CryptographyClient` will no longer perform encrypt or wrap operations when
   its key has expired or is not yet valid.
+- All long running operation methods now accept a `continuation_token` keyword argument
+to restart the poller from a saved state
 
 ## 4.2.0b1 (2020-03-10)
 - Support for Key Vault API version 7.1-preview
