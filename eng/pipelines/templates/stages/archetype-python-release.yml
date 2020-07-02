@@ -232,10 +232,22 @@ stages:
           pip install twine
         displayName: Install Twine
 
+      - pwsh: |
+          # For safety default to publishing to the private feed.
+          # Publish to https://dev.azure.com/azure-sdk/internal/_packaging?_a=feed&feed=azure-sdk-for-python-pr
+          $devopsFeedName = 'azure-sdk-for-python-pr'
+          if ('$(Build.Repository.Name)' -eq 'Azure/azure-sdk-for-python-pr') {
+            # Publish to https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python
+            $devopsFeedName = '${{ parameters.DevFeedName }}'
+          }
+          echo "##vso[task.setvariable variable=DevFeedName]$devopsFeedName"
+          echo "Using DevopsFeed = $devopsFeedName"
+        displayName: Setup DevOpsFeedName
+
       - task: TwineAuthenticate@0
-        displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'
+        displayName: 'Authenticate to feed: $(DevFeedName)'
         inputs:
-          artifactFeeds: ${{parameters.DevFeedName}}
+          artifactFeeds: $(DevFeedName)
 
       - ${{ each artifact in parameters.Artifacts }}:
 
@@ -252,9 +264,9 @@ stages:
 
         - script: |
             set -e
-            twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*.dev*.whl
+            twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*.dev*.whl
             echo "Uploaded whl to devops feed"
-            twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*.dev*.zip
+            twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*.dev*.zip
             echo "Uploaded sdist to devops feed"
-          displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
+          displayName: 'Publish package to feed: $(DevFeedName)'
           condition: gt(variables['FilesToUploadCount'], 0)
