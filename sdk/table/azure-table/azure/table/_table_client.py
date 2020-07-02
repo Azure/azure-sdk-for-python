@@ -453,10 +453,11 @@ class TableClient(StorageAccountHostsMixin):
             table_entity_properties=None,
             query_options=None,
             **kwargs):
+        # type: (...) -> "_models.Entity"
         """Update/Merge or Insert entity into table.
 
 
-        :param mode: Merge or Replace
+        :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.table._models.UpdateMode
         :param partition_key: The partition key of the entity.
         :type partition_key: str

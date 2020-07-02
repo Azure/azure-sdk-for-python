@@ -411,16 +411,14 @@ class TablePayloadFormat(object):
 
 
 class UpdateMode(object):
-    def __init__(self, merge=False, replace=False):
-        self.merge = merge
-        self.replace = replace
+    def __init__(self):
+        self.r = False
+        self.m = False
 
     def replace(self):
-        self.replace = True
+        self.r = True
+        return self.r
 
     def merge(self):
-        self.merge = True
-
-
-UpdateMode.MERGE = UpdateMode(merge=True)
-UpdateMode.REPLACE = UpdateMode(replace=True)
+        self.m = True
+        return self.m
