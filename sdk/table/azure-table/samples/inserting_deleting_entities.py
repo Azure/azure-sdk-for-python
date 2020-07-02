@@ -11,15 +11,14 @@ class InsertDeleteEntity(object):
     entity = {
         'product': 'Marker', 'color': 'Purple', 'price': '$5'}
 
-
-    def insert_entity(self):
+    def create_entity(self):
 
         from azure.table import TableClient
         from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
-            inserted_entity = table_client.insert_entity(partition_key=self.partition_key,
+            inserted_entity = table_client.create_entity(partition_key=self.partition_key,
                                                          row_key=self.row_key,
                                                          table_entity_properties=self.entity)
             # inserted_entity type is dict[str,object]
