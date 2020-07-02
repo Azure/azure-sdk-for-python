@@ -135,6 +135,7 @@ try:
     from ._models_py3 import QuotaCounterContract
     from ._models_py3 import QuotaCounterValueContract
     from ._models_py3 import QuotaCounterValueContractProperties
+    from ._models_py3 import QuotaCounterValueUpdateContract
     from ._models_py3 import RecipientEmailCollection
     from ._models_py3 import RecipientEmailContract
     from ._models_py3 import RecipientsContractProperties
@@ -306,6 +307,7 @@ except (SyntaxError, ImportError):
     from ._models import QuotaCounterContract
     from ._models import QuotaCounterValueContract
     from ._models import QuotaCounterValueContractProperties
+    from ._models import QuotaCounterValueUpdateContract
     from ._models import RecipientEmailCollection
     from ._models import RecipientEmailContract
     from ._models import RecipientsContractProperties
@@ -557,6 +559,7 @@ __all__ = [
     'QuotaCounterContract',
     'QuotaCounterValueContract',
     'QuotaCounterValueContractProperties',
+    'QuotaCounterValueUpdateContract',
     'RecipientEmailCollection',
     'RecipientEmailContract',
     'RecipientsContractProperties',

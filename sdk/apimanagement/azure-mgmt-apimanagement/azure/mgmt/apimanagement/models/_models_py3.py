@@ -6142,6 +6142,26 @@ class QuotaCounterValueContractProperties(Model):
         self.kb_transferred = kb_transferred
 
 
+class QuotaCounterValueUpdateContract(Model):
+    """Quota counter value details.
+
+    :param calls_count: Number of times Counter was called.
+    :type calls_count: int
+    :param kb_transferred: Data Transferred in KiloBytes.
+    :type kb_transferred: float
+    """
+
+    _attribute_map = {
+        'calls_count': {'key': 'properties.callsCount', 'type': 'int'},
+        'kb_transferred': {'key': 'properties.kbTransferred', 'type': 'float'},
+    }
+
+    def __init__(self, *, calls_count: int=None, kb_transferred: float=None, **kwargs) -> None:
+        super(QuotaCounterValueUpdateContract, self).__init__(**kwargs)
+        self.calls_count = calls_count
+        self.kb_transferred = kb_transferred
+
+
 class RecipientEmailCollection(Model):
     """Paged Recipient User list representation.
 
@@ -6976,7 +6996,7 @@ class SubscriptionContract(Resource):
      value.
     :type secondary_key: str
     :param state_comment: Optional subscription comment added by an
-     administrator.
+     administrator when the state is changed to the 'rejected'.
     :type state_comment: str
     :param allow_tracing: Determines whether tracing is enabled
     :type allow_tracing: bool
@@ -7183,7 +7203,7 @@ class SubscriptionUpdateParameters(Model):
      'suspended', 'active', 'expired', 'submitted', 'rejected', 'cancelled'
     :type state: str or ~azure.mgmt.apimanagement.models.SubscriptionState
     :param state_comment: Comments describing subscription state change by the
-     administrator.
+     administrator when the state is changed to the 'rejected'.
     :type state_comment: str
     :param allow_tracing: Determines whether tracing can be enabled
     :type allow_tracing: bool
