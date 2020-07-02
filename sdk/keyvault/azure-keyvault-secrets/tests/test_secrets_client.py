@@ -286,6 +286,32 @@ class SecretClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    def test_continuation_token(self, client, **kwargs):
+        secret_name = "crud-secret"
+        secret_value = self.get_resource_name("crud_secret_value")
+
+        # create secret
+        secret = client.set_secret(secret_name, secret_value)
+
+        # delete secret
+        initial_poller = client.begin_delete_secret(secret.name)
+        continuation_token = initial_poller.continuation_token()
+        poller = client.begin_delete_secret(secret.name, continuation_token=continuation_token)
+        deleted_secret = poller.result()
+        self.assertIsNotNone(deleted_secret)
+        poller.wait()
+
+        # recover deleted secret
+        initial_poller = client.begin_recover_deleted_secret(secret.name)
+        continuation_token = initial_poller.continuation_token()
+        poller = client.begin_recover_deleted_secret(secret.name, continuation_token=continuation_token)
+        recovered_secret = poller.result()
+        self.assertIsNotNone(recovered_secret)
+
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer(client_kwargs={"logging_enable": True})
     def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
