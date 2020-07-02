@@ -12,29 +12,29 @@
 from msrest.paging import Paged
 
 
-class TemplateSpecModelPaged(Paged):
+class TemplateSpecPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`TemplateSpecModel <azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecModel>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[TemplateSpecModel]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(TemplateSpecModelPaged, self).__init__(*args, **kwargs)
-class TemplateSpecVersionModelPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`TemplateSpecVersionModel <azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecVersionModel>` object
+    A paging container for iterating over a list of :class:`TemplateSpec <azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpec>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[TemplateSpecVersionModel]'}
+        'current_page': {'key': 'value', 'type': '[TemplateSpec]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(TemplateSpecVersionModelPaged, self).__init__(*args, **kwargs)
+        super(TemplateSpecPaged, self).__init__(*args, **kwargs)
+class TemplateSpecVersionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`TemplateSpecVersion <azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecVersion>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[TemplateSpecVersion]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(TemplateSpecVersionPaged, self).__init__(*args, **kwargs)

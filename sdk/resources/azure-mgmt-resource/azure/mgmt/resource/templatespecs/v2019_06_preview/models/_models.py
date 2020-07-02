@@ -176,41 +176,7 @@ class SystemData(Model):
         self.last_modified_at = kwargs.get('last_modified_at', None)
 
 
-class TemplateSpecArtifact(Model):
-    """Represents a Template Spec artifact.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: TemplateSpecTemplateArtifact
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param path: Required. A filesystem safe relative path of the artifact.
-    :type path: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
-    """
-
-    _validation = {
-        'path': {'required': True},
-        'kind': {'required': True},
-    }
-
-    _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'kind': {'template': 'TemplateSpecTemplateArtifact'}
-    }
-
-    def __init__(self, **kwargs):
-        super(TemplateSpecArtifact, self).__init__(**kwargs)
-        self.path = kwargs.get('path', None)
-        self.kind = None
-
-
-class TemplateSpecModel(AzureResourceBase):
+class TemplateSpec(AzureResourceBase):
     """Template Spec object.
 
     Variables are only populated by the server, and will be ignored when
@@ -262,11 +228,45 @@ class TemplateSpecModel(AzureResourceBase):
     }
 
     def __init__(self, **kwargs):
-        super(TemplateSpecModel, self).__init__(**kwargs)
+        super(TemplateSpec, self).__init__(**kwargs)
         self.location = kwargs.get('location', None)
         self.description = kwargs.get('description', None)
         self.display_name = kwargs.get('display_name', None)
         self.tags = kwargs.get('tags', None)
+
+
+class TemplateSpecArtifact(Model):
+    """Represents a Template Spec artifact.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: TemplateSpecTemplateArtifact
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param path: Required. A filesystem safe relative path of the artifact.
+    :type path: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    """
+
+    _validation = {
+        'path': {'required': True},
+        'kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'path': {'key': 'path', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'template': 'TemplateSpecTemplateArtifact'}
+    }
+
+    def __init__(self, **kwargs):
+        super(TemplateSpecArtifact, self).__init__(**kwargs)
+        self.path = kwargs.get('path', None)
+        self.kind = None
 
 
 class TemplateSpecsError(Model):
@@ -370,7 +370,7 @@ class TemplateSpecUpdateModel(AzureResourceBase):
         self.tags = kwargs.get('tags', None)
 
 
-class TemplateSpecVersionModel(AzureResourceBase):
+class TemplateSpecVersion(AzureResourceBase):
     """Template Spec Version object.
 
     Variables are only populated by the server, and will be ignored when
@@ -424,7 +424,7 @@ class TemplateSpecVersionModel(AzureResourceBase):
     }
 
     def __init__(self, **kwargs):
-        super(TemplateSpecVersionModel, self).__init__(**kwargs)
+        super(TemplateSpecVersion, self).__init__(**kwargs)
         self.location = kwargs.get('location', None)
         self.artifacts = kwargs.get('artifacts', None)
         self.description = kwargs.get('description', None)
