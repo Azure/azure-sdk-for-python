@@ -4,6 +4,8 @@
 - Values of `x-ms-keyvault-region` and `x-ms-keyvault-service-version` headers
   are no longer redacted in logging output.
 - Updated minimum `azure-core` version to 1.4.0
+- All long running operation methods now accept a `continuation_token` keyword argument
+to restart the poller from a saved state
 
 ## 4.2.0b1 (2020-03-10)
 - Support for Key Vault API version 7.1-preview
