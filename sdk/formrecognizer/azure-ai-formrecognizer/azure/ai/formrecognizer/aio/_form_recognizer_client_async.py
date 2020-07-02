@@ -106,7 +106,7 @@ class FormRecognizerClient(object):
         :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
-        :paramtype: str or ~azure.ai.formrecognizer.FormContentType
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -129,7 +129,7 @@ class FormRecognizerClient(object):
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a url.")
+            raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
@@ -157,12 +157,12 @@ class FormRecognizerClient(object):
             **kwargs: Any
     ) -> AsyncLROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given US sales receipt.
-        The input document must be the location (Url) of the receipt to be analyzed.
+        The input document must be the location (URL) of the receipt to be analyzed.
 
         See fields found on a receipt here:
         https://aka.ms/azsdk/python/formrecognizer/receiptfields
 
-        :param str receipt_url: The url of the receipt to analyze. The input must be a valid, encoded url
+        :param str receipt_url: The URL of the receipt to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
             US sales receipts.
         :keyword bool include_field_elements:
@@ -221,7 +221,7 @@ class FormRecognizerClient(object):
         :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
-        :paramtype: str or ~azure.ai.formrecognizer.FormContentType
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -265,9 +265,9 @@ class FormRecognizerClient(object):
     @distributed_trace_async
     async def begin_recognize_content_from_url(self, form_url: str, **kwargs: Any) -> AsyncLROPoller[List[FormPage]]:
         """Extract text and layout information from a given document.
-        The input document must be the location (Url) of the document to be analyzed.
+        The input document must be the location (URL) of the document to be analyzed.
 
-        :param str form_url: The url of the form to analyze. The input must be a valid, encoded url
+        :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF and TIFF.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
@@ -312,7 +312,7 @@ class FormRecognizerClient(object):
         :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
-        :paramtype: str or ~azure.ai.formrecognizer.FormContentType
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -339,7 +339,7 @@ class FormRecognizerClient(object):
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a url.")
+            raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a URL.")
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
@@ -376,10 +376,10 @@ class FormRecognizerClient(object):
     ) -> AsyncLROPoller[List[RecognizedForm]]:
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
-        The input document must be the location (Url) of the document to be analyzed.
+        The input document must be the location (URL) of the document to be analyzed.
 
         :param str model_id: Custom model identifier.
-        :param str form_url: The url of the form to analyze. The input must be a valid, encoded url
+        :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF and TIFF.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
