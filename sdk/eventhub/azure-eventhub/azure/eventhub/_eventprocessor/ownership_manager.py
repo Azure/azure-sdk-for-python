@@ -154,9 +154,8 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         to_claim = active_ownership_self
         if len(active_ownership_self) < max_count_per_owner:
             to_try_steal = True
-            if (
-                LoadBalancingStrategy.GREEDY is self.load_balancing_strategy
-            ):  # Greedily claim more partitions if there are claimable partitions
+            if self.load_balancing_strategy is LoadBalancingStrategy.GREEDY:
+                # Greedily claim more partitions if there are claimable partitions
                 to_greedy_claim_ids = random.sample(
                     claimable_partition_ids, k=min(
                         max_count_per_owner - len(active_ownership_self), len(claimable_partition_ids)
@@ -164,22 +163,19 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
                 )
                 if to_greedy_claim_ids:
                     for pid in to_greedy_claim_ids:
-                        if pid in ownership_dict:
-                            to_claim_partition = ownership_dict[pid]
-                            to_claim_partition["owner_id"] = self.owner_id
-                            to_claim.append(to_claim_partition)
-                        else:
-                            to_claim.append(
-                                {
-                                    "fully_qualified_namespace": self.fully_qualified_namespace,
-                                    "partition_id": pid,
-                                    "eventhub_name": self.eventhub_name,
-                                    "consumer_group": self.consumer_group,
-                                    "owner_id": self.owner_id,
-                                }
-                            )
+                        random_chosen_to_claim = ownership_dict.get(
+                            pid,
+                            {
+                                "fully_qualified_namespace": self.fully_qualified_namespace,
+                                "partition_id": pid,
+                                "eventhub_name": self.eventhub_name,
+                                "consumer_group": self.consumer_group,
+                            },
+                        )
+                        random_chosen_to_claim["owner_id"] = self.owner_id
+                        to_claim.append(random_chosen_to_claim)
                     to_try_steal = False  # already greedily got at least one
-            else:  # LoadBalancingStrategy.BALANCED is self.load_balancing_strategy
+            else:  # self.load_balancing_strategy is LoadBalancingStrategy.BALANCED
                 if claimable_partition_ids:  # claim an inactive partition if there is
                     random_partition_id = random.choice(claimable_partition_ids)
                     random_chosen_to_claim = ownership_dict.get(

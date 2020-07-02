@@ -99,7 +99,7 @@ class EventHubConsumerClient(ClientBaseAsync):
     :keyword str or ~azure.eventhub.LoadBalancingStrategy load_balancing_strategy: When load-balancing kicks in,
      it will use this strategy to claim and balance the partition ownership.
      Use "greedy" or `LoadBalancingStrategy.GREEDY` for the greedy strategy, which, for every
-     load-balancing evaluation, will grab all partitions that are not claimed by any other `EventHubConsumerClient`.
+     load-balancing evaluation, will grab as many unclaimed partitions required to balance the load.
      Use "balanced" or `LoadBalancingStrategy.BALANCED` for the balanced strategy, which, for every load-balancing
      evaluation, claims only one partition that is not claimed by other `EventHubConsumerClient`.
      If all partitions of an EventHub are claimed by other `EventHubConsumerClient` and this client has claimed
@@ -241,7 +241,7 @@ class EventHubConsumerClient(ClientBaseAsync):
         :keyword str or ~azure.eventhub.LoadBalancingStrategy load_balancing_strategy: When load-balancing kicks in,
          it will use this strategy to claim and balance the partition ownership.
          Use "greedy" or `LoadBalancingStrategy.GREEDY` for the greedy strategy, which, for every
-         load-balancing evaluation, will grab all partitions that are not claimed by any other `EventHubConsumerClient`.
+         load-balancing evaluation, will grab as many unclaimed partitions required to balance the load.
          Use "balanced" or `LoadBalancingStrategy.BALANCED` for the balanced strategy, which, for every load-balancing
          evaluation, claims only one partition that is not claimed by other `EventHubConsumerClient`.
          If all partitions of an EventHub are claimed by other `EventHubConsumerClient` and this client has claimed
