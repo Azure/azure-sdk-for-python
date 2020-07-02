@@ -1,6 +1,6 @@
 # Release History
 
-## 7.0.0b4 (Unreleased)
+## 7.0.0b4 (2020-07-05)
 
 **BugFixes**
 
