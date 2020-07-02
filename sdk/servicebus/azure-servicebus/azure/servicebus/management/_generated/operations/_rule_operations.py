@@ -21,8 +21,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class QueueOperations(object):
-    """QueueOperations operations.
+class RuleOperations(object):
+    """RuleOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -45,18 +45,24 @@ class QueueOperations(object):
 
     def get(
         self,
-        queue_name,  # type: str
+        topic_name,  # type: str
+        subscription_name,  # type: str
+        rule_name,  # type: str
         enrich=False,  # type: Optional[bool]
         api_version="2017_04",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> object
-        """Get the details about the Queue with the given queueName.
+        """Get the details about the rule of a subscription of a topic.
 
-        Get Queue.
+        Get Rule.
 
-        :param queue_name: The name of the queue relative to the Service Bus namespace.
-        :type queue_name: str
+        :param topic_name: name of the topic.
+        :type topic_name: str
+        :param subscription_name: name of the subscription.
+        :type subscription_name: str
+        :param rule_name: name of the filter.
+        :type rule_name: str
         :param enrich: A query parameter that sets enrich to true or false.
         :type enrich: bool
         :param api_version: Api Version.
@@ -74,7 +80,9 @@ class QueueOperations(object):
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
+            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', min_length=1),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -105,22 +113,28 @@ class QueueOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{queueName}'}  # type: ignore
+    get.metadata = {'url': '/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'}  # type: ignore
 
     def put(
         self,
-        queue_name,  # type: str
+        topic_name,  # type: str
+        subscription_name,  # type: str
+        rule_name,  # type: str
         request_body,  # type: object
         api_version="2017_04",  # type: Optional[str]
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> object
-        """Create or update a queue at the provided queuePath.
+        """Create or update a rule.
 
-        :param queue_name: The name of the queue relative to the Service Bus namespace.
-        :type queue_name: str
-        :param request_body: Parameters required to make or edit a queue.
+        :param topic_name: name of the topic.
+        :type topic_name: str
+        :param subscription_name: name of the subscription.
+        :type subscription_name: str
+        :param rule_name: name of the filter.
+        :type rule_name: str
+        :param request_body: Parameters required to make or edit a rule.
         :type request_body: object
         :param api_version: Api Version.
         :type api_version: str
@@ -137,13 +151,15 @@ class QueueOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        content_type = kwargs.pop("content_type", "application/xml")
+        content_type = kwargs.pop("content_type", "application/atom+xml")
 
         # Construct URL
         url = self.put.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
+            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', min_length=1),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -184,21 +200,27 @@ class QueueOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    put.metadata = {'url': '/{queueName}'}  # type: ignore
+    put.metadata = {'url': '/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'}  # type: ignore
 
     def delete(
         self,
-        queue_name,  # type: str
+        topic_name,  # type: str
+        subscription_name,  # type: str
+        rule_name,  # type: str
         api_version="2017_04",  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> object
-        """Delete the Queue with the given queueName.
+        """Delete the rule with the given topicName, subscriptionName and ruleName.
 
-        Delete Queue.
+        Delete Subscription.
 
-        :param queue_name: The name of the queue relative to the Service Bus namespace.
-        :type queue_name: str
+        :param topic_name: name of the topic.
+        :type topic_name: str
+        :param subscription_name: name of the subscription.
+        :type subscription_name: str
+        :param rule_name: name of the filter.
+        :type rule_name: str
         :param api_version: Api Version.
         :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -214,7 +236,9 @@ class QueueOperations(object):
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
+            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', min_length=1),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -243,4 +267,4 @@ class QueueOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    delete.metadata = {'url': '/{queueName}'}  # type: ignore
+    delete.metadata = {'url': '/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'}  # type: ignore
