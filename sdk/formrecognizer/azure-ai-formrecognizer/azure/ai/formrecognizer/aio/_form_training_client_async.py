@@ -9,7 +9,6 @@
 import json
 from typing import (
     Any,
-    AsyncIterable,
     Dict,
     Union,
     TYPE_CHECKING,
@@ -19,6 +18,7 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.async_paging import AsyncItemPaged
 from ._form_recognizer_client_async import FormRecognizerClient
 from ._helpers_async import AsyncTransportWrapper
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
@@ -46,9 +46,9 @@ if TYPE_CHECKING:
 
 class FormTrainingClient(object):
     """FormTrainingClient is the Form Recognizer interface to use for creating,
-    and managing custom models. It provides methods for training models on forms
-    you provide and methods for viewing and deleting models, as well as
-    accessing account properties.
+    and managing custom models. It provides methods for training models on the forms
+    you provide, as well as methods for viewing and deleting models, accessing
+    account properties, and copying a model to another Form Recognizer resource.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -102,17 +102,17 @@ class FormTrainingClient(object):
             **kwargs: Any
     ) -> AsyncLROPoller[CustomFormModel]:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
-        externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri). Note that
-        a container uri is accepted only when the container is public.
+        externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
+        a container URI is accepted only when the container is public.
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
-        :param str training_files_url: An Azure Storage blob container's SAS URI. A container uri can be used if the
+        :param str training_files_url: An Azure Storage blob container's SAS URI. A container URI can be used if the
             container is public.
         :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
-            training. For example, when using a Azure storage blob Uri, use the prefix to restrict sub
+            training. For example, when using a Azure storage blob URI, use the prefix to restrict sub
             folders for training.
         :keyword bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed. Not supported if
@@ -213,7 +213,7 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def list_custom_models(self, **kwargs: Any) -> AsyncIterable[CustomFormModelInfo]:
+    def list_custom_models(self, **kwargs: Any) -> AsyncItemPaged[CustomFormModelInfo]:
         """List information for each model, including model id,
         model status, and when it was created and last modified.
 
