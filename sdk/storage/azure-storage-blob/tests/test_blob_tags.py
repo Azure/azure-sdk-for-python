@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 import pytest
+from devtools_testutils import StorageAccountPreparer
 
 try:
     from urllib.parse import quote
@@ -54,8 +55,8 @@ class StorageBlobTagsTest(StorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    def _create_block_blob(self, tags=None, container_name=None):
-        blob_name = self._get_blob_reference()
+    def _create_block_blob(self, tags=None, container_name=None, blob_name=None):
+        blob_name = blob_name or self._get_blob_reference()
         blob_client = self.bsc.get_blob_client(container_name or self.container_name, blob_name)
         resp = blob_client.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=True, tags=tags)
         return blob_client, resp
@@ -89,6 +90,7 @@ class StorageBlobTagsTest(StorageTestCase):
     #-- test cases for blob tags ----------------------------------------------
 
     @GlobalStorageAccountPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     def test_set_blob_tags(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         blob_client, _ = self._create_block_blob()
@@ -262,6 +264,7 @@ class StorageBlobTagsTest(StorageTestCase):
                 self.assertEqual(tags[key], value)
 
     @GlobalStorageAccountPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     def test_filter_blobs(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         container_name1 = self._create_container(prefix="container1")
@@ -269,10 +272,10 @@ class StorageBlobTagsTest(StorageTestCase):
         container_name3 = self._create_container(prefix="container3")
 
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        self._create_block_blob(tags=tags)
-        self._create_block_blob(tags=tags, container_name=container_name1)
-        self._create_block_blob(tags=tags, container_name=container_name2)
-        self._create_block_blob(tags=tags, container_name=container_name3)
+        self._create_block_blob(tags=tags, blob_name="blob1")
+        self._create_block_blob(tags=tags, blob_name="blob2", container_name=container_name1)
+        self._create_block_blob(tags=tags, blob_name="blob3", container_name=container_name2)
+        self._create_block_blob(tags=tags, blob_name="blob4", container_name=container_name3)
 
         where = "tag1='firsttag'"
         blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2).by_page()
@@ -286,6 +289,7 @@ class StorageBlobTagsTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     def test_filter_blobs_using_account_sas(self, resource_group, location, storage_account, storage_account_key):
         token = generate_account_sas(
             storage_account.name,
@@ -314,6 +318,7 @@ class StorageBlobTagsTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     def test_set_blob_tags_using_blob_sas(self, resource_group, location, storage_account, storage_account_key):
         token = generate_account_sas(
             storage_account.name,
