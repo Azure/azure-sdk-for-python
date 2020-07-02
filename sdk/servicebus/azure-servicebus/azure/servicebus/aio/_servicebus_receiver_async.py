@@ -202,6 +202,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if max_batch_size and self._prefetch == 1 and max_batch_size > 1:
             link_credit_needed = max_batch_size - len(batch)
             await amqp_receive_client.message_handler.reset_link_credit_async(link_credit_needed)
+            await amqp_receive_client.do_work_async()
 
         first_message_received = expired = False
         receiving = True
