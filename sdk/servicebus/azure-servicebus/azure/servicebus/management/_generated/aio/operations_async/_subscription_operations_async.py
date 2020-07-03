@@ -17,8 +17,8 @@ from ... import models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class QueueOperations:
-    """QueueOperations async operations.
+class SubscriptionOperations:
+    """SubscriptionOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -41,17 +41,20 @@ class QueueOperations:
 
     async def get(
         self,
-        queue_name: str,
+        topic_name: str,
+        subscription_name: str,
         enrich: Optional[bool] = False,
         api_version: Optional[str] = "2017_04",
         **kwargs
     ) -> object:
-        """Get the details about the Queue with the given queueName.
+        """Get the details about the subscription of a topic.
 
-        Get Queue.
+        Get Subscription.
 
-        :param queue_name: The name of the queue relative to the Service Bus namespace.
-        :type queue_name: str
+        :param topic_name: name of the topic.
+        :type topic_name: str
+        :param subscription_name: name of the subscription.
+        :type subscription_name: str
         :param enrich: A query parameter that sets enrich to true or false.
         :type enrich: bool
         :param api_version: Api Version.
@@ -69,7 +72,8 @@ class QueueOperations:
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
+            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -100,21 +104,24 @@ class QueueOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{queueName}'}  # type: ignore
+    get.metadata = {'url': '/{topicName}/subscriptions/{subscriptionName}'}  # type: ignore
 
     async def put(
         self,
-        queue_name: str,
+        topic_name: str,
+        subscription_name: str,
         request_body: object,
         api_version: Optional[str] = "2017_04",
         if_match: Optional[str] = None,
         **kwargs
     ) -> object:
-        """Create or update a queue at the provided queuePath.
+        """Create or update a subscription.
 
-        :param queue_name: The name of the queue relative to the Service Bus namespace.
-        :type queue_name: str
-        :param request_body: Parameters required to make or edit a queue.
+        :param topic_name: name of the topic.
+        :type topic_name: str
+        :param subscription_name: name of the subscription.
+        :type subscription_name: str
+        :param request_body: Parameters required to make or edit a subscription.
         :type request_body: object
         :param api_version: Api Version.
         :type api_version: str
@@ -131,13 +138,14 @@ class QueueOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        content_type = kwargs.pop("content_type", "application/xml")
+        content_type = kwargs.pop("content_type", "application/atom+xml")
 
         # Construct URL
         url = self.put.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
+            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -178,20 +186,23 @@ class QueueOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    put.metadata = {'url': '/{queueName}'}  # type: ignore
+    put.metadata = {'url': '/{topicName}/subscriptions/{subscriptionName}'}  # type: ignore
 
     async def delete(
         self,
-        queue_name: str,
+        topic_name: str,
+        subscription_name: str,
         api_version: Optional[str] = "2017_04",
         **kwargs
     ) -> object:
-        """Delete the Queue with the given queueName.
+        """Delete the subscription with the given topicName and subscriptionName.
 
-        Delete Queue.
+        Delete Subscription.
 
-        :param queue_name: The name of the queue relative to the Service Bus namespace.
-        :type queue_name: str
+        :param topic_name: name of the topic.
+        :type topic_name: str
+        :param subscription_name: name of the subscription.
+        :type subscription_name: str
         :param api_version: Api Version.
         :type api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -207,7 +218,8 @@ class QueueOperations:
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
+            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', min_length=1),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -236,4 +248,4 @@ class QueueOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    delete.metadata = {'url': '/{queueName}'}  # type: ignore
+    delete.metadata = {'url': '/{topicName}/subscriptions/{subscriptionName}'}  # type: ignore
