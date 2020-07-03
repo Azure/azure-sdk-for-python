@@ -14,12 +14,12 @@ Note: The large version gap is in order to normalize service bus SDK versions ac
 
 ### Specific clients for sending and receiving
 In v7 we've simplified the API surface, making two distinct clients, rather than one for each of queue, topic, and subscription:
-* `ServiceBusSender` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusSender)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSender)
-* `ServiceBusReceiver` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusReceiver)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusReceiver)
-* `ServiceBusSessionReceiver` for receiving messages from a session. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusSessionReceiver)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSessionReceiver)
+* `ServiceBusSender` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b4/azure.servicebus.html#azure.servicebus.ServiceBusSender)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b4/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSender)
+* `ServiceBusReceiver` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b4/azure.servicebus.html#azure.servicebus.ServiceBusReceiver)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b4/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusReceiver)
+* `ServiceBusSessionReceiver` for receiving messages from a session. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b4/azure.servicebus.html#azure.servicebus.ServiceBusSessionReceiver)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b4/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSessionReceiver)
 
 As a user this will be largely transparent to you, as initialization will still occur primarily via the top level ServiceBusClient,
 the primary difference will be that rather than creating a queue_client, for instance, and then a sender off of that, you would simply
