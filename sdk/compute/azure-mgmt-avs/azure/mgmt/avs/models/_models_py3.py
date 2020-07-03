@@ -51,54 +51,6 @@ class AdminCredentials(Model):
         self.vcenter_password = None
 
 
-class ApiError(Model):
-    """API error response.
-
-    :param error: An error returned by the API
-    :type error: ~azure.mgmt.avs.models.ApiErrorBase
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ApiErrorBase'},
-    }
-
-    def __init__(self, *, error=None, **kwargs) -> None:
-        super(ApiError, self).__init__(**kwargs)
-        self.error = error
-
-
-class ApiErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'ApiError'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ApiErrorException, self).__init__(deserialize, response, 'ApiError', *args)
-
-
-class ApiErrorBase(Model):
-    """Api error.
-
-    :param code: Error code
-    :type code: str
-    :param message: Error message
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
-        super(ApiErrorBase, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-
-
 class Circuit(Model):
     """An ExpressRoute Circuit.
 
@@ -109,15 +61,11 @@ class Circuit(Model):
     :vartype primary_subnet: str
     :ivar secondary_subnet: CIDR of secondary subnet
     :vartype secondary_subnet: str
-    :ivar express_route_id: Identifier of the ExpressRoute (Microsoft Colo
-     only)
+    :ivar express_route_id: Identifier of the ExpressRoute Circuit (Microsoft
+     Colo only)
     :vartype express_route_id: str
-    :param authorizations: Authorizations for the ExpressRoute (Microsoft Colo
-     only)
-    :type authorizations:
-     list[~azure.mgmt.avs.models.ExpressRouteAuthorization]
-    :ivar express_route_private_peering_id: ExpressRoute private peering
-     identifier
+    :ivar express_route_private_peering_id: ExpressRoute Circuit private
+     peering identifier
     :vartype express_route_private_peering_id: str
     """
 
@@ -132,25 +80,43 @@ class Circuit(Model):
         'primary_subnet': {'key': 'primarySubnet', 'type': 'str'},
         'secondary_subnet': {'key': 'secondarySubnet', 'type': 'str'},
         'express_route_id': {'key': 'expressRouteID', 'type': 'str'},
-        'authorizations': {'key': 'authorizations', 'type': '[ExpressRouteAuthorization]'},
         'express_route_private_peering_id': {'key': 'expressRoutePrivatePeeringID', 'type': 'str'},
     }
 
-    def __init__(self, *, authorizations=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(Circuit, self).__init__(**kwargs)
         self.primary_subnet = None
         self.secondary_subnet = None
         self.express_route_id = None
-        self.authorizations = authorizations
         self.express_route_private_peering_id = None
 
 
 class CloudError(Model):
-    """CloudError.
+    """API error response.
+
+    :param error: An error returned by the API
+    :type error: ~azure.mgmt.avs.models.ErrorResponse
     """
 
     _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(CloudError, self).__init__(**kwargs)
+        self.error = error
+
+
+class CloudErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'CloudError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
 
 
 class Resource(Model):
@@ -192,100 +158,88 @@ class Cluster(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: The properties of a cluster resource
-    :type properties: ~azure.mgmt.avs.models.ClusterProperties
+    :param sku: Required. The cluster SKU
+    :type sku: ~azure.mgmt.avs.models.Sku
+    :param cluster_size: The cluster size
+    :type cluster_size: int
+    :ivar cluster_id: The identity
+    :vartype cluster_id: int
+    :ivar hosts: The hosts
+    :vartype hosts: list[str]
+    :ivar provisioning_state: The state of the cluster provisioning. Possible
+     values include: 'Succeeded', 'Failed', 'Cancelled', 'Deleting', 'Updating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.avs.models.ClusterProvisioningState
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ClusterProperties'},
-    }
-
-    def __init__(self, *, properties=None, **kwargs) -> None:
-        super(Cluster, self).__init__(**kwargs)
-        self.properties = properties
-
-
-class DefaultClusterProperties(Model):
-    """The properties of a default cluster.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar cluster_id: The identity
-    :vartype cluster_id: int
-    :param cluster_size: The cluster size
-    :type cluster_size: int
-    :ivar hosts: The hosts
-    :vartype hosts: list[str]
-    """
-
-    _validation = {
-        'cluster_id': {'readonly': True},
-        'hosts': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'cluster_id': {'key': 'clusterId', 'type': 'int'},
-        'cluster_size': {'key': 'clusterSize', 'type': 'int'},
-        'hosts': {'key': 'hosts', 'type': '[str]'},
-    }
-
-    def __init__(self, *, cluster_size: int=None, **kwargs) -> None:
-        super(DefaultClusterProperties, self).__init__(**kwargs)
-        self.cluster_id = None
-        self.cluster_size = cluster_size
-        self.hosts = None
-
-
-class ClusterProperties(DefaultClusterProperties):
-    """The properties of a cluster.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar cluster_id: The identity
-    :vartype cluster_id: int
-    :param cluster_size: The cluster size
-    :type cluster_size: int
-    :ivar hosts: The hosts
-    :vartype hosts: list[str]
-    :ivar provisioning_state: The state of the cluster provisioning. Possible
-     values include: 'Succeeded', 'Failed', 'Cancelled', 'Updating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.avs.models.ClusterProvisioningState
-    """
-
-    _validation = {
+        'sku': {'required': True},
         'cluster_id': {'readonly': True},
         'hosts': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
-        'cluster_id': {'key': 'clusterId', 'type': 'int'},
-        'cluster_size': {'key': 'clusterSize', 'type': 'int'},
-        'hosts': {'key': 'hosts', 'type': '[str]'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'cluster_size': {'key': 'properties.clusterSize', 'type': 'int'},
+        'cluster_id': {'key': 'properties.clusterId', 'type': 'int'},
+        'hosts': {'key': 'properties.hosts', 'type': '[str]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, sku, cluster_size: int=None, **kwargs) -> None:
+        super(Cluster, self).__init__(**kwargs)
+        self.sku = sku
+        self.cluster_size = cluster_size
+        self.cluster_id = None
+        self.hosts = None
+        self.provisioning_state = None
+
+
+class ClusterUpdate(Model):
+    """An update of a cluster resource.
+
+    :param cluster_size: The cluster size
+    :type cluster_size: int
+    """
+
+    _attribute_map = {
+        'cluster_size': {'key': 'properties.clusterSize', 'type': 'int'},
     }
 
     def __init__(self, *, cluster_size: int=None, **kwargs) -> None:
-        super(ClusterProperties, self).__init__(cluster_size=cluster_size, **kwargs)
-        self.provisioning_state = None
+        super(ClusterUpdate, self).__init__(**kwargs)
+        self.cluster_size = cluster_size
+
+
+class ClusterUpdateProperties(Model):
+    """The properties of a cluster that may be updated.
+
+    :param cluster_size: The cluster size
+    :type cluster_size: int
+    """
+
+    _attribute_map = {
+        'cluster_size': {'key': 'clusterSize', 'type': 'int'},
+    }
+
+    def __init__(self, *, cluster_size: int=None, **kwargs) -> None:
+        super(ClusterUpdateProperties, self).__init__(**kwargs)
+        self.cluster_size = cluster_size
 
 
 class Endpoints(Model):
@@ -298,54 +252,189 @@ class Endpoints(Model):
     :vartype nsxt_manager: str
     :ivar vcsa: Endpoint for Virtual Center Server Appliance
     :vartype vcsa: str
+    :ivar hcx_cloud_manager: Endpoint for the HCX Cloud Manager
+    :vartype hcx_cloud_manager: str
     """
 
     _validation = {
         'nsxt_manager': {'readonly': True},
         'vcsa': {'readonly': True},
+        'hcx_cloud_manager': {'readonly': True},
     }
 
     _attribute_map = {
         'nsxt_manager': {'key': 'nsxtManager', 'type': 'str'},
         'vcsa': {'key': 'vcsa', 'type': 'str'},
+        'hcx_cloud_manager': {'key': 'hcxCloudManager', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(Endpoints, self).__init__(**kwargs)
         self.nsxt_manager = None
         self.vcsa = None
+        self.hcx_cloud_manager = None
 
 
-class ExpressRouteAuthorization(Model):
-    """Authorization for an ExpressRoute.
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The name of the ExpressRoute
-    :type name: str
-    :ivar id: The ID of the ExpressRoute
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorResponse(Model):
+    """The resource management error response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.avs.models.ErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.avs.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ExpressRouteAuthorization(Resource):
+    """ExpressRoute Circuit Authorization.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar key: The key of the ExpressRoute
-    :vartype key: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar provisioning_state: The state of the  ExpressRoute Circuit
+     Authorization provisioning. Possible values include: 'Succeeded',
+     'Failed', 'Updating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.avs.models.ExpressRouteAuthorizationProvisioningState
+    :ivar express_route_authorization_id: The ID of the ExpressRoute Circuit
+     Authorization
+    :vartype express_route_authorization_id: str
+    :ivar express_route_authorization_key: The key of the ExpressRoute Circuit
+     Authorization
+    :vartype express_route_authorization_key: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'key': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'express_route_authorization_id': {'readonly': True},
+        'express_route_authorization_key': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'express_route_authorization_id': {'key': 'properties.expressRouteAuthorizationId', 'type': 'str'},
+        'express_route_authorization_key': {'key': 'properties.expressRouteAuthorizationKey', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(ExpressRouteAuthorization, self).__init__(**kwargs)
-        self.name = name
-        self.id = None
-        self.key = None
+        self.provisioning_state = None
+        self.express_route_authorization_id = None
+        self.express_route_authorization_key = None
+
+
+class HcxEnterpriseSite(Resource):
+    """An HCX Enterprise Site resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar activation_key: The activation key
+    :vartype activation_key: str
+    :ivar status: The status of the HCX Enterprise Site. Possible values
+     include: 'Available', 'Consumed', 'Deactivated', 'Deleted'
+    :vartype status: str or ~azure.mgmt.avs.models.HcxEnterpriseSiteStatus
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'activation_key': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'activation_key': {'key': 'properties.activationKey', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(HcxEnterpriseSite, self).__init__(**kwargs)
+        self.activation_key = None
+        self.status = None
 
 
 class IdentitySource(Model):
@@ -401,6 +490,37 @@ class IdentitySource(Model):
         self.ssl = ssl
         self.username = username
         self.password = password
+
+
+class ManagementCluster(ClusterUpdateProperties):
+    """The properties of a default cluster.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param cluster_size: The cluster size
+    :type cluster_size: int
+    :ivar cluster_id: The identity
+    :vartype cluster_id: int
+    :ivar hosts: The hosts
+    :vartype hosts: list[str]
+    """
+
+    _validation = {
+        'cluster_id': {'readonly': True},
+        'hosts': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'cluster_size': {'key': 'clusterSize', 'type': 'int'},
+        'cluster_id': {'key': 'clusterId', 'type': 'int'},
+        'hosts': {'key': 'hosts', 'type': '[str]'},
+    }
+
+    def __init__(self, *, cluster_size: int=None, **kwargs) -> None:
+        super(ManagementCluster, self).__init__(cluster_size=cluster_size, **kwargs)
+        self.cluster_id = None
+        self.hosts = None
 
 
 class Operation(Model):
@@ -515,6 +635,8 @@ class PrivateCloud(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -525,61 +647,28 @@ class PrivateCloud(TrackedResource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param sku: The private cloud SKU
+    :param sku: Required. The private cloud SKU
     :type sku: ~azure.mgmt.avs.models.Sku
-    :param properties: The properties of a private cloud resource
-    :type properties: ~azure.mgmt.avs.models.PrivateCloudProperties
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'properties': {'key': 'properties', 'type': 'PrivateCloudProperties'},
-    }
-
-    def __init__(self, *, location: str=None, tags=None, sku=None, properties=None, **kwargs) -> None:
-        super(PrivateCloud, self).__init__(location=location, tags=tags, **kwargs)
-        self.sku = sku
-        self.properties = properties
-
-
-class PrivateCloudProperties(Model):
-    """The properties of a private cloud resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar provisioning_state: The provisioning state. Possible values include:
-     'Succeeded', 'Failed', 'Cancelled', 'Pending', 'Building', 'Updating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.avs.models.PrivateCloudProvisioningState
-    :param circuit: An ExpressRoute Circuit
-    :type circuit: ~azure.mgmt.avs.models.Circuit
-    :param cluster: The default cluster used for management
-    :type cluster: ~azure.mgmt.avs.models.DefaultClusterProperties
-    :ivar clusters: The clusters
-    :vartype clusters: list[str]
-    :ivar endpoints: The endpoints
-    :vartype endpoints: ~azure.mgmt.avs.models.Endpoints
+    :param management_cluster: The default cluster used for management
+    :type management_cluster: ~azure.mgmt.avs.models.ManagementCluster
     :param internet: Connectivity to internet is enabled or disabled. Possible
      values include: 'Enabled', 'Disabled'
     :type internet: str or ~azure.mgmt.avs.models.InternetEnum
     :param identity_sources: vCenter Single Sign On Identity Sources
     :type identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
-    :param network_block: The block of addresses should be unique across VNet
-     in your subscription as well as on-premise. Make sure the CIDR format is
-     conformed to (A.B.C.D/X) where A,B,C,D are between 0 and 255, and X is
-     between 0 and 22
+    :ivar provisioning_state: The provisioning state. Possible values include:
+     'Succeeded', 'Failed', 'Cancelled', 'Pending', 'Building', 'Deleting',
+     'Updating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.avs.models.PrivateCloudProvisioningState
+    :param circuit: An ExpressRoute Circuit
+    :type circuit: ~azure.mgmt.avs.models.Circuit
+    :ivar endpoints: The endpoints
+    :vartype endpoints: ~azure.mgmt.avs.models.Endpoints
+    :param network_block: Required. The block of addresses should be unique
+     across VNet in your subscription as well as on-premise. Make sure the CIDR
+     format is conformed to (A.B.C.D/X) where A,B,C,D are between 0 and 255,
+     and X is between 0 and 22
     :type network_block: str
     :ivar management_network: Network used to access vCenter Server and NSX-T
      Manager
@@ -604,9 +693,13 @@ class PrivateCloudProperties(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'sku': {'required': True},
         'provisioning_state': {'readonly': True},
-        'clusters': {'readonly': True},
         'endpoints': {'readonly': True},
+        'network_block': {'required': True},
         'management_network': {'readonly': True},
         'provisioning_network': {'readonly': True},
         'vmotion_network': {'readonly': True},
@@ -615,32 +708,37 @@ class PrivateCloudProperties(Model):
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'circuit': {'key': 'circuit', 'type': 'Circuit'},
-        'cluster': {'key': 'cluster', 'type': 'DefaultClusterProperties'},
-        'clusters': {'key': 'clusters', 'type': '[str]'},
-        'endpoints': {'key': 'endpoints', 'type': 'Endpoints'},
-        'internet': {'key': 'internet', 'type': 'str'},
-        'identity_sources': {'key': 'identitySources', 'type': '[IdentitySource]'},
-        'network_block': {'key': 'networkBlock', 'type': 'str'},
-        'management_network': {'key': 'managementNetwork', 'type': 'str'},
-        'provisioning_network': {'key': 'provisioningNetwork', 'type': 'str'},
-        'vmotion_network': {'key': 'vmotionNetwork', 'type': 'str'},
-        'vcenter_password': {'key': 'vcenterPassword', 'type': 'str'},
-        'nsxt_password': {'key': 'nsxtPassword', 'type': 'str'},
-        'vcenter_certificate_thumbprint': {'key': 'vcenterCertificateThumbprint', 'type': 'str'},
-        'nsxt_certificate_thumbprint': {'key': 'nsxtCertificateThumbprint', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'management_cluster': {'key': 'properties.managementCluster', 'type': 'ManagementCluster'},
+        'internet': {'key': 'properties.internet', 'type': 'str'},
+        'identity_sources': {'key': 'properties.identitySources', 'type': '[IdentitySource]'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'circuit': {'key': 'properties.circuit', 'type': 'Circuit'},
+        'endpoints': {'key': 'properties.endpoints', 'type': 'Endpoints'},
+        'network_block': {'key': 'properties.networkBlock', 'type': 'str'},
+        'management_network': {'key': 'properties.managementNetwork', 'type': 'str'},
+        'provisioning_network': {'key': 'properties.provisioningNetwork', 'type': 'str'},
+        'vmotion_network': {'key': 'properties.vmotionNetwork', 'type': 'str'},
+        'vcenter_password': {'key': 'properties.vcenterPassword', 'type': 'str'},
+        'nsxt_password': {'key': 'properties.nsxtPassword', 'type': 'str'},
+        'vcenter_certificate_thumbprint': {'key': 'properties.vcenterCertificateThumbprint', 'type': 'str'},
+        'nsxt_certificate_thumbprint': {'key': 'properties.nsxtCertificateThumbprint', 'type': 'str'},
     }
 
-    def __init__(self, *, circuit=None, cluster=None, internet=None, identity_sources=None, network_block: str=None, vcenter_password: str=None, nsxt_password: str=None, **kwargs) -> None:
-        super(PrivateCloudProperties, self).__init__(**kwargs)
-        self.provisioning_state = None
-        self.circuit = circuit
-        self.cluster = cluster
-        self.clusters = None
-        self.endpoints = None
+    def __init__(self, *, sku, network_block: str, location: str=None, tags=None, management_cluster=None, internet=None, identity_sources=None, circuit=None, vcenter_password: str=None, nsxt_password: str=None, **kwargs) -> None:
+        super(PrivateCloud, self).__init__(location=location, tags=tags, **kwargs)
+        self.sku = sku
+        self.management_cluster = management_cluster
         self.internet = internet
         self.identity_sources = identity_sources
+        self.provisioning_state = None
+        self.circuit = circuit
+        self.endpoints = None
         self.network_block = network_block
         self.management_network = None
         self.provisioning_network = None
@@ -651,6 +749,35 @@ class PrivateCloudProperties(Model):
         self.nsxt_certificate_thumbprint = None
 
 
+class PrivateCloudUpdate(Model):
+    """An update to a private cloud resource.
+
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param management_cluster: The default cluster used for management
+    :type management_cluster: ~azure.mgmt.avs.models.ManagementCluster
+    :param internet: Connectivity to internet is enabled or disabled. Possible
+     values include: 'Enabled', 'Disabled'
+    :type internet: str or ~azure.mgmt.avs.models.InternetEnum
+    :param identity_sources: vCenter Single Sign On Identity Sources
+    :type identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'management_cluster': {'key': 'properties.managementCluster', 'type': 'ManagementCluster'},
+        'internet': {'key': 'properties.internet', 'type': 'str'},
+        'identity_sources': {'key': 'properties.identitySources', 'type': '[IdentitySource]'},
+    }
+
+    def __init__(self, *, tags=None, management_cluster=None, internet=None, identity_sources=None, **kwargs) -> None:
+        super(PrivateCloudUpdate, self).__init__(**kwargs)
+        self.tags = tags
+        self.management_cluster = management_cluster
+        self.internet = internet
+        self.identity_sources = identity_sources
+
+
 class Quota(Model):
     """Subscription quotas.
 
@@ -659,13 +786,14 @@ class Quota(Model):
 
     :ivar hosts_remaining: Remaining hosts quota by sku type
     :vartype hosts_remaining: dict[str, int]
-    :param quota_enabled: Host quota is active for current subscription.
+    :ivar quota_enabled: Host quota is active for current subscription.
      Possible values include: 'Enabled', 'Disabled'
-    :type quota_enabled: str or ~azure.mgmt.avs.models.QuotaEnabled
+    :vartype quota_enabled: str or ~azure.mgmt.avs.models.QuotaEnabled
     """
 
     _validation = {
         'hosts_remaining': {'readonly': True},
+        'quota_enabled': {'readonly': True},
     }
 
     _attribute_map = {
@@ -673,10 +801,10 @@ class Quota(Model):
         'quota_enabled': {'key': 'quotaEnabled', 'type': 'str'},
     }
 
-    def __init__(self, *, quota_enabled=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(Quota, self).__init__(**kwargs)
         self.hosts_remaining = None
-        self.quota_enabled = quota_enabled
+        self.quota_enabled = None
 
 
 class Sku(Model):
@@ -709,7 +837,7 @@ class Trial(Model):
 
     :ivar status: Trial status. Possible values include: 'TrialAvailable',
      'TrialUsed', 'TrialDisabled'
-    :vartype status: str or ~azure.mgmt.avs.models.enum
+    :vartype status: str or ~azure.mgmt.avs.models.TrialStatus
     :ivar available_hosts: Number of trial hosts available
     :vartype available_hosts: int
     """

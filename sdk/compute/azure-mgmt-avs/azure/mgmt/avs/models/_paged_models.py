@@ -51,3 +51,29 @@ class ClusterPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ClusterPaged, self).__init__(*args, **kwargs)
+class HcxEnterpriseSitePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`HcxEnterpriseSite <azure.mgmt.avs.models.HcxEnterpriseSite>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[HcxEnterpriseSite]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(HcxEnterpriseSitePaged, self).__init__(*args, **kwargs)
+class ExpressRouteAuthorizationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ExpressRouteAuthorization <azure.mgmt.avs.models.ExpressRouteAuthorization>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ExpressRouteAuthorization]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ExpressRouteAuthorizationPaged, self).__init__(*args, **kwargs)
