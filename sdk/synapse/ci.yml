@@ -29,6 +29,12 @@ extends:
   parameters:
     ServiceDirectory: synapse
     Artifacts:
+    - name: azure_synapse_accesscontrol
+      safeName: azuresynapseaccesscontrol
+    - name: azure_synapse_spark
+      safeName: azuresynapsespark
+    - name: azure_synapse_artifacts
+      safeName: azuresynapseartifacts
     - name: azure_synapse
       safeName: azuresynapse
     - name: azure_synapse_nspkg
