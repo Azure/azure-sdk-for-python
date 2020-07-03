@@ -209,7 +209,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if max_batch_size and self._prefetch == 1 and max_batch_size > 1:
             link_credit_needed = max_batch_size - len(batch)
             amqp_receive_client.message_handler.reset_link_credit(link_credit_needed)
-            amqp_receive_client.do_work()
 
         first_message_received = expired = False
         receiving = True
