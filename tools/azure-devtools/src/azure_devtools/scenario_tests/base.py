@@ -187,9 +187,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
 
             body = response['body']['string']
             if is_text_payload(response) and body and not isinstance(body, six.string_types):
-                # when the returned data is in avro format, keep the raw bytes instead of parsing it to str
-                if not body.startswith(b'Obj'):
-                    response['body']['string'] = body.decode('utf-8')
+                response['body']['string'] = body.decode('utf-8')
 
             for processor in self.recording_processors:
                 response = processor.process_response(response)

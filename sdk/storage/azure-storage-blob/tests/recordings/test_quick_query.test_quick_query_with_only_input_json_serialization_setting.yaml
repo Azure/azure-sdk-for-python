@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 01 Jul 2020 01:25:22 GMT
+      - Thu, 02 Jul 2020 23:55:17 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 01 Jul 2020 01:25:22 GMT
+      - Thu, 02 Jul 2020 23:55:16 GMT
       etag:
-      - '"0x8D81D5D9FFCC701"'
+      - '"0x8D81EE35EE66502"'
       last-modified:
-      - Wed, 01 Jul 2020 01:25:22 GMT
+      - Thu, 02 Jul 2020 23:55:17 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,7 +55,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 01 Jul 2020 01:25:22 GMT
+      - Thu, 02 Jul 2020 23:55:17 GMT
       x-ms-tags:
       - ''
       x-ms-version:
@@ -71,11 +71,11 @@ interactions:
       content-md5:
       - 5tYmuyKFS9mJzdfHlAFncQ==
       date:
-      - Wed, 01 Jul 2020 01:25:22 GMT
+      - Thu, 02 Jul 2020 23:55:16 GMT
       etag:
-      - '"0x8D81D5DA010ECF2"'
+      - '"0x8D81EE35EEBA9B9"'
       last-modified:
-      - Wed, 01 Jul 2020 01:25:22 GMT
+      - Thu, 02 Jul 2020 23:55:17 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -109,7 +109,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 01 Jul 2020 01:25:22 GMT
+      - Thu, 02 Jul 2020 23:55:17 GMT
       x-ms-version:
       - '2019-12-12'
     method: POST
@@ -151,20 +151,20 @@ interactions:
         aGF0IGFsbCByZXN1bHRzIGhhdmUgYmVlbiBzZW50LiIsCiAgICAiZmllbGRzIjogWwogICAgICB7
         CiAgICAgICAgIm5hbWUiOiAidG90YWxCeXRlcyIsCiAgICAgICAgInR5cGUiOiAibG9uZyIsCiAg
         ICAgICAgImRvYyI6ICJUaGUgdG90YWwgbnVtYmVyIG9mIGJ5dGVzIHRvIGJlIHNjYW5uZWQgaW4g
-        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoAMXp9EeYLOEaqWbd+uR5gOAJOAEp7Im5h
-        bWUiOiJvd25lciJ9Cnt9CnsibmFtZSI6Im93bmVyIn0KMXp9EeYLOEaqWbd+uR5gOAIKBI4BjgEx
-        en0R5gs4RqpZt365HmA4AgYGjgExen0R5gs4RqpZt365HmA4
+        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoAZXgcZh/DEEWixCVxyB2lZgJOAEp7Im5h
+        bWUiOiJvd25lciJ9Cnt9CnsibmFtZSI6Im93bmVyIn0KZXgcZh/DEEWixCVxyB2lZgIKBI4BjgFl
+        eBxmH8MQRaLEJXHIHaVmAgYGjgFleBxmH8MQRaLEJXHIHaVm
     headers:
       accept-ranges:
       - bytes
       content-type:
       - avro/binary
       date:
-      - Wed, 01 Jul 2020 01:25:38 GMT
+      - Thu, 02 Jul 2020 23:55:17 GMT
       etag:
-      - '"0x8D81D5DA010ECF2"'
+      - '"0x8D81EE35EEBA9B9"'
       last-modified:
-      - Wed, 01 Jul 2020 01:25:22 GMT
+      - Thu, 02 Jul 2020 23:55:17 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -172,7 +172,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 01 Jul 2020 01:25:22 GMT
+      - Thu, 02 Jul 2020 23:55:17 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -196,7 +196,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Wed, 01 Jul 2020 01:25:39 GMT
+      - Thu, 02 Jul 2020 23:55:18 GMT
       x-ms-version:
       - '2019-12-12'
     method: DELETE
@@ -208,7 +208,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 01 Jul 2020 01:25:39 GMT
+      - Thu, 02 Jul 2020 23:55:17 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
