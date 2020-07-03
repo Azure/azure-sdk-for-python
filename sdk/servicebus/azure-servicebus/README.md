@@ -432,14 +432,14 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [azure_cli]: https://docs.microsoft.com/cli/azure
-[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/index.html
+[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/index.html
 [product_docs]: https://docs.microsoft.com/azure/service-bus-messaging/
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b3/
+[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b4/
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
@@ -457,22 +457,22 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [servicebus_aad_authentication]: https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-authentication-and-authorization
 [token_credential_interface]: ../../core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
-[message_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.Message
-[receiver_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusReceiver
-[sender_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusSender
-[client_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusClient
-[send_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html?highlight=send#azure.servicebus.ServiceBusSender.send
-[receive_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html?highlight=receive#azure.servicebus.ServiceBusReceiver.receive
-[session_receive_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html?highlight=receive#azure.servicebus.ServiceBusSessionReceiver.receive
-[session_send_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html?highlight=session_id#azure.servicebus.Message.session_id
-[complete_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html?highlight=dead_letter#azure.servicebus.ReceivedMessage.complete
-[abandon_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html?highlight=dead_letter#azure.servicebus.ReceivedMessage.abandon
-[defer_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html?highlight=dead_letter#azure.servicebus.ReceivedMessage.defer
-[deadletter_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html?highlight=dead_letter#azure.servicebus.ReceivedMessage.dead_letter
-[autolockrenew_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.AutoLockRenew
-[exception_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#module-azure.servicebus.exceptions
-[subscription_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.aio.html?highlight=subscription#azure.servicebus.aio.ServiceBusClient.get_subscription_receiver
-[topic_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html?highlight=topic#azure.servicebus.ServiceBusClient.get_topic_sender
+[message_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.Message
+[receiver_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.ServiceBusReceiver
+[sender_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.ServiceBusSender
+[client_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.ServiceBusClient
+[send_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=send#azure.servicebus.ServiceBusSender.send
+[receive_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=receive#azure.servicebus.ServiceBusReceiver.receive
+[session_receive_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=receive#azure.servicebus.ServiceBusSessionReceiver.receive
+[session_send_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=session_id#azure.servicebus.Message.session_id
+[complete_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=dead_letter#azure.servicebus.ReceivedMessage.complete
+[abandon_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=dead_letter#azure.servicebus.ReceivedMessage.abandon
+[defer_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=dead_letter#azure.servicebus.ReceivedMessage.defer
+[deadletter_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=dead_letter#azure.servicebus.ReceivedMessage.dead_letter
+[autolockrenew_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.AutoLockRenew
+[exception_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#module-azure.servicebus.exceptions
+[subscription_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.aio.html?highlight=subscription#azure.servicebus.aio.ServiceBusClient.get_subscription_receiver
+[topic_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=topic#azure.servicebus.ServiceBusClient.get_topic_sender
 [0_50_source]: https://github.com/Azure/azure-sdk-for-python/tree/servicebus_v0.50.3/sdk/servicebus/azure-servicebus/
 [0_50_pypi]: https://pypi.org/project/azure-servicebus/
 [0_50_api_docs]:https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/0.50.3/index.html

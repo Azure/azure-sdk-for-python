@@ -82,5 +82,5 @@ pip install --pre azure-servicebus
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/index.html) to learn more about
+Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/index.html) to learn more about
 what you can do with the Azure Service Bus client library.
