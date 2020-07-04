@@ -114,7 +114,6 @@ from .operations import VirtualHubBgpConnectionOperations
 from .operations import VirtualHubBgpConnectionsOperations
 from .operations import VirtualHubIpConfigurationOperations
 from .operations import HubRouteTablesOperations
-from .operations import WebApplicationFirewallPoliciesOperations
 from . import models
 
 
@@ -324,8 +323,6 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, SDKClient)
     :vartype virtual_hub_ip_configuration: azure.mgmt.network.v2020_05_01.operations.VirtualHubIpConfigurationOperations
     :ivar hub_route_tables: HubRouteTables operations
     :vartype hub_route_tables: azure.mgmt.network.v2020_05_01.operations.HubRouteTablesOperations
-    :ivar web_application_firewall_policies: WebApplicationFirewallPolicies operations
-    :vartype web_application_firewall_policies: azure.mgmt.network.v2020_05_01.operations.WebApplicationFirewallPoliciesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -546,6 +543,4 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, SDKClient)
         self.virtual_hub_ip_configuration = VirtualHubIpConfigurationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.hub_route_tables = HubRouteTablesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.web_application_firewall_policies = WebApplicationFirewallPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
