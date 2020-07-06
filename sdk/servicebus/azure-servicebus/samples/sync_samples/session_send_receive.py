@@ -15,7 +15,7 @@ import os
 from azure.servicebus import ServiceBusClient, Message
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
+QUEUE_NAME = 'testsqueue'#os.environ["SERVICE_BUS_QUEUE_NAME"]
 SESSION_ID = "<your session id>"
 
 
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
         print("Send message is done.")
 
-        receiver = servicebus_client.get_queue_session_receiver(queue_name=QUEUE_NAME, session_id=SESSION_ID, prefetch=10)
+        receiver = servicebus_client.get_queue_session_receiver(queue_name=QUEUE_NAME, session_id=SESSION_ID)
         with receiver:
             receive_batch_message(receiver)
 
