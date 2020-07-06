@@ -1,5 +1,7 @@
 trigger: none
 
+# this is a specific request from the formrecognizer service team
+# their claim is that the full matrix ends up stress-testing their tests.
 variables:
   ${{ if contains(variables['Build.DefinitionName'], 'prod') }}:
     DefaultMatrix:
@@ -18,7 +20,7 @@ variables:
       Linux_Python38:
         OSVmImage: 'ubuntu-18.04'
         PythonVersion: '3.8'
-  ${{ if not contains(variables['Build.DefinitionName'], 'prod') }}:
+  ${{ if not(contains(variables['Build.DefinitionName'], 'prod')) }}:
     DefaultMatrix:
       Linux_Python35:
         OSVmImage: 'ubuntu-18.04'
