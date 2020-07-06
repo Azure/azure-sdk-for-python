@@ -2,6 +2,10 @@
 
 ## 7.0.0b4 (2020-07-06)
 
+**New Features**
+
+* Added support for management of topics, subscriptions, and rules.
+
 **BugFixes**
 
 * Fixed bug where sync AutoLockRenew does not shutdown itself timely.
