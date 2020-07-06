@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 from enum import Enum
 
+import pytest
 from devtools_testutils import StorageAccountPreparer
 
 from _shared.asynctestcase import AsyncStorageTestCase
@@ -15,7 +16,7 @@ try:
 except ImportError:
     from urllib2 import quote
 
-from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from azure.core.exceptions import (
     ResourceExistsError)
 from azure.storage.blob import BlobBlock
@@ -77,7 +78,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
 
     #-- test cases for blob tags ----------------------------------------------
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_tags(self, resource_group, location, storage_account, storage_account_key):
@@ -91,6 +92,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         # Assert
         self.assertIsNotNone(resp)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_tags_for_a_version(self, resource_group, location, storage_account, storage_account_key):
@@ -262,7 +264,7 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
             for key, value in blob.tags.items():
                 self.assertEqual(tags[key], value)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_filter_blobs(self, resource_group, location, storage_account, storage_account_key):

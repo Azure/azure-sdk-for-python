@@ -16,7 +16,7 @@ try:
 except ImportError:
     from urllib2 import quote
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from azure.core.exceptions import (
     ResourceExistsError)
 from azure.storage.blob import (
@@ -89,7 +89,7 @@ class StorageBlobTagsTest(StorageTestCase):
 
     #-- test cases for blob tags ----------------------------------------------
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     def test_set_blob_tags(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -102,6 +102,7 @@ class StorageBlobTagsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(resp)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_set_blob_tags_for_a_version(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -263,7 +264,7 @@ class StorageBlobTagsTest(StorageTestCase):
             for key, value in blob.tags.items():
                 self.assertEqual(tags[key], value)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     def test_filter_blobs(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -288,7 +289,7 @@ class StorageBlobTagsTest(StorageTestCase):
         self.assertEqual(2, len(items_on_page2))
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     def test_filter_blobs_using_account_sas(self, resource_group, location, storage_account, storage_account_key):
         token = generate_account_sas(
@@ -317,7 +318,7 @@ class StorageBlobTagsTest(StorageTestCase):
         self.assertEqual(1, len(items_on_page1))
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
     @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     def test_set_blob_tags_using_blob_sas(self, resource_group, location, storage_account, storage_account_key):
         token = generate_account_sas(
