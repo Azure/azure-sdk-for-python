@@ -50,7 +50,7 @@ class ChangeFeedPaged(PageIterator):
             start_time=None,
             end_time=None,
             continuation_token=None):
-        if not start_time and not continuation_token:
+        if start_time and continuation_token:
             raise ValueError("start_time and continuation_token shouldn't be specified at the same time")
         super(ChangeFeedPaged, self).__init__(
             get_next=self._get_next_cf,
@@ -131,7 +131,7 @@ class ChangeFeed(object):
                 start_year = ""
 
         # segment path generator will generate path starting from a specific year
-        self._segment_paths_generator = self._segment_paths_generator(start_year=start_year)
+        self._segment_paths_generator = self._get_segment_paths(start_year=start_year)
         next_segment_path = next(self._segment_paths_generator)
 
         # if start_time is specified, skip all segments earlier than start_time
@@ -156,7 +156,7 @@ class ChangeFeed(object):
             return Segment(self.client, segment_path, page_size, segment_cursor)
         return None
 
-    def _segment_paths_generator(self, start_year=""):
+    def _get_segment_paths(self, start_year=""):
         cur_year = datetime.today().year
         while not start_year or start_year <= cur_year:
             paths = self.client.list_blobs(name_starts_with=SEGMENT_COMMON_PATH + str(start_year))
