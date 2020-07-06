@@ -8,7 +8,7 @@ import functools
 import logging
 from typing import Any, TYPE_CHECKING, List, Optional
 
-from uamqp import ReceiveClientAsync, types
+from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
 
 from ._base_handler_async import BaseHandler, ServiceBusSharedKeyCredential
@@ -191,7 +191,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         timeout_ms = 1000 * (timeout or self._idle_timeout) if (timeout or self._idle_timeout) else 0
         abs_timeout_ms = amqp_receive_client._counter.get_current_ms() + timeout_ms if timeout_ms else 0
 
-        batch = []
+        batch = []  # type: List[Message]
         while not received_messages_queue.empty() and len(batch) < max_batch_size:
             batch.append(received_messages_queue.get())
             received_messages_queue.task_done()
