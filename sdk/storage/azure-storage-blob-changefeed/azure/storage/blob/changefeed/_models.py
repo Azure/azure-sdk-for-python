@@ -50,6 +50,8 @@ class ChangeFeedPaged(PageIterator):
             start_time=None,
             end_time=None,
             continuation_token=None):
+        if not start_time and not continuation_token:
+            raise ValueError("start_time and continuation_token shouldn't be specified at the same time")
         super(ChangeFeedPaged, self).__init__(
             get_next=self._get_next_cf,
             extract_data=self._extract_data_cb,
@@ -79,7 +81,7 @@ class ChangeFeed(object):
     def __init__(self, client, page_size, start_time=None, end_time=None, cf_cursor=None):
         self.client = client
         self.page_size = page_size
-        self.unprocessed_segment_paths = []
+        self._segment_paths_generator = None
         self.current_segment = None
         self.start_time = start_time
         self.end_time = end_time
@@ -106,11 +108,11 @@ class ChangeFeed(object):
                 # extend the current page of events
                 change_feed.extend(page_of_events)
                 remaining_to_load -= len(page_of_events)
-                self.cursor = {"segment_path": self.current_segment.segment_path.name,
+                self.cursor = {"segment_path": self.current_segment.segment_path,
                                "segment_cursor": self.current_segment.cursor}
             except StopIteration:
                 self.cursor = None
-                self.current_segment = self._get_next_segment(remaining_to_load)
+                self.current_segment = self._get_next_segment(next(self._segment_paths_generator), remaining_to_load)
 
         if not change_feed:
             raise StopIteration
@@ -119,36 +121,58 @@ class ChangeFeed(object):
     next = __next__  # Python 2 compatibility.
 
     def _initialize(self, cf_cursor=None):
+        try:
+            start_year = self.start_time.year
+        except:
+            try:
+                start_date = self._parse_datetime_from_segment_path(cf_cursor['segment_path'])
+                start_year = start_date.year
+            except:
+                start_year = ""
 
-        self.unprocessed_segment_paths = collections.deque(self.client.list_blobs(
-            name_starts_with=SEGMENT_COMMON_PATH))
+        # segment path generator will generate path starting from a specific year
+        self._segment_paths_generator = self._segment_paths_generator(start_year=start_year)
+        next_segment_path = next(self._segment_paths_generator)
 
-        # if start_time is specified, remove all segments earlier than start_time
+        # if start_time is specified, skip all segments earlier than start_time
         if self.start_time:
-            while self.unprocessed_segment_paths and \
-                    self._is_earlier_than_start_time(self.unprocessed_segment_paths[0]):
-                self.unprocessed_segment_paths.popleft()
+            while next_segment_path and self._is_earlier_than_start_time(next_segment_path):
+                next_segment_path = next(self._segment_paths_generator)
 
         # if change_feed_cursor is specified, start from the specified segment
         if cf_cursor:
-            while self.unprocessed_segment_paths[0].name != cf_cursor['segment_path']:
-                self.unprocessed_segment_paths.popleft()
+            while next_segment_path and next_segment_path != cf_cursor['segment_path']:
+                next_segment_path = next(self._segment_paths_generator)
 
-        self.current_segment = self._get_next_segment(self.page_size,
-                                                      segment_cursor=cf_cursor['segment_cursor'] if cf_cursor else None)
+        self.current_segment = self._get_next_segment(
+            next_segment_path,
+            self.page_size,
+            segment_cursor=cf_cursor['segment_cursor'] if cf_cursor else None)
 
-    def _get_next_segment(self, page_size, segment_cursor=None):
-        if self.unprocessed_segment_paths:
-            segment_path = self.unprocessed_segment_paths.popleft()
+    def _get_next_segment(self, segment_path, page_size, segment_cursor=None):
+        if segment_path:
             if self.end_time and self._is_later_than_end_time(segment_path):
-                self.unprocessed_segment_paths = []
                 return None
             return Segment(self.client, segment_path, page_size, segment_cursor)
         return None
 
+    def _segment_paths_generator(self, start_year=""):
+        cur_year = datetime.today().year
+        while not start_year or start_year <= cur_year:
+            paths = self.client.list_blobs(name_starts_with=SEGMENT_COMMON_PATH + str(start_year))
+            for path in paths:
+                yield path.name
+
+            # if not searching by prefix, all paths would have been iterated already, so it's time to yield None
+            if not start_year:
+                break
+            # search the segment prefixed with next year.
+            start_year += 1
+        yield None
+
     @staticmethod
     def _parse_datetime_from_segment_path(segment_path):
-        path_tokens = segment_path.name.split("/")
+        path_tokens = segment_path.split("/")
         return datetime(int(path_tokens[2]), int(path_tokens[3]), int(path_tokens[4]), int(path_tokens[5][:2]))
 
     def _is_earlier_than_start_time(self, segment_path):
