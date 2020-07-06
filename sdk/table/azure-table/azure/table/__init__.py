@@ -15,12 +15,6 @@ from ._shared.models import(
     AccountSasPermissions,
     StorageErrorCode
 )
-from ._message_encoding import (
-    TextBase64EncodePolicy,
-    TextBase64DecodePolicy,
-    BinaryBase64EncodePolicy,
-    BinaryBase64DecodePolicy,
-)
 from ._models import (
     AccessPolicy,
     Metrics,
@@ -41,10 +35,6 @@ __all__ = [
     'StorageErrorCode',
     'TableSasPermissions',
     'AccessPolicy',
-    'TextBase64EncodePolicy',
-    'TextBase64DecodePolicy',
-    'BinaryBase64EncodePolicy',
-    'BinaryBase64DecodePolicy',
     'TableAnalyticsLogging',
     'Metrics',
     'CorsRule',

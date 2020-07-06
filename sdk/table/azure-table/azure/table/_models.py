@@ -75,7 +75,7 @@ class TableAnalyticsLogging(GeneratedLogging):
     :keyword bool delete: Required. Indicates whether all delete requests should be logged.
     :keyword bool read: Required. Indicates whether all read requests should be logged.
     :keyword bool write: Required. Indicates whether all write requests should be logged.
-    :keyword ~azure.storage.queue.RetentionPolicy retention_policy: Required.
+    :keyword ~azure.table.RetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
     """
 
@@ -109,11 +109,13 @@ class Metrics(GeneratedMetrics):
     :keyword bool enabled: Required. Indicates whether metrics are enabled for the service.
     :keyword bool include_ap_is: Indicates whether metrics should generate summary
         statistics for called API operations.
-    :keyword ~azure.storage.queue.RetentionPolicy retention_policy: Required.
+    :keyword ~azure.table.RetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs):  # pylint:disable=W0231
+    def __init__(self,  # pylint:disable=W0231
+                 **kwargs  # type: Any
+                 ):
         self.version = kwargs.get('version', u'1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
@@ -121,6 +123,11 @@ class Metrics(GeneratedMetrics):
 
     @classmethod
     def _from_generated(cls, generated):
+        # type: (...) -> cls
+        """A summary of request statistics grouped by API in hour or minute aggregates.
+
+           :param Metrics generated: generated Metrics
+           """
         if not generated:
             return cls()
         return cls(
@@ -145,14 +152,27 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         be deleted.
     """
 
-    def __init__(self, enabled=False, days=None, **kwargs):  # pylint:disable=W0231
+    def __init__(  # pylint:disable=W0231
+            self,
+            enabled=False,  # type: bool
+            days=None,  # type: int
+            **kwargs):
         self.enabled = enabled
         self.days = days
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def from_generated(cls, generated):
+    def from_generated(cls, generated, **kwargs):
+        # type: (...) -> cls
+        """The retention policy which determines how long the associated data should
+            persist.
+
+            All required parameters must be populated in order to send to Azure.
+
+            :param RetentionPolicy generated: Generated Retention Policy
+            """
+
         if not generated:
             return cls()
         return cls(

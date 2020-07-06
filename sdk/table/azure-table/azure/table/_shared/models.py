@@ -280,7 +280,7 @@ class ResourceTypes(object):
         :param str string: Specify service, container, or object in
             in the string with the first letter of the word.
         :return: A ResourceTypes object
-        :rtype: ~azure.storage.queue.ResourceTypes
+        :rtype: ~azure.table.ResourceTypes
         """
         res_service = 's' in string
         res_container = 'c' in string
@@ -354,7 +354,7 @@ class AccountSasPermissions(object):
         :param str permission: Specify permissions in
             the string with the first letter of the word.
         :return: A AccountSasPermissions object
-        :rtype: ~azure.storage.queue.AccountSasPermissions
+        :rtype: ~azure.table.AccountSasPermissions
         """
         p_read = 'r' in permission
         p_write = 'w' in permission
@@ -375,7 +375,7 @@ class Services(object):
     :param bool blob:
         Access for the `~azure.storage.blob.BlobServiceClient`
     :param bool queue:
-        Access for the `~azure.storage.queue.QueueServiceClient`
+        Access for the `~azure.table.QueueServiceClient`
     :param bool fileshare:
         Access for the `~azure.storage.fileshare.ShareServiceClient`
     """
@@ -402,7 +402,7 @@ class Services(object):
         :param str string: Specify blob, queue, or file in
             in the string with the first letter of the word.
         :return: A Services object
-        :rtype: ~azure.storage.queue.Services
+        :rtype: ~azure.table.Services
         """
         res_blob = 'b' in string
         res_queue = 'q' in string

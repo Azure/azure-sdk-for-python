@@ -41,6 +41,20 @@ class TableClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
     ):
         # type: (...) -> None
+        """Create TableClient from a Credential.
+
+        :param str account_url:
+            A url to an Azure Storage account.
+        :param table_name: The table name.
+        :type table_name: str
+        :param Any credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, an account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+        :returns: None
+        """
+
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -78,20 +92,20 @@ class TableClient(StorageAccountHostsMixin):
             credential=None,  # type: Any
             **kwargs  # type: Any
     ):
-        # type: (...) -> None
-        """Create QueueClient from a Connection String.
+        # type: (...) -> TableClient
+        """Create TableClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param table_name: The queue name.
+        :param table_name: The table name.
         :type table_name: str
-        :param credential:
+        :param Any credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-        :returns: A queue client.
-        :rtype: ~azure.storage.queue.QueueClient
+        :returns: A table client.
+        :rtype: ~azure.table.TableClient
 
         .. admonition:: Example:
 
@@ -114,7 +128,7 @@ class TableClient(StorageAccountHostsMixin):
         """A client to interact with a specific Table.
 
         :param str table_url: The full URI to the table, including SAS token if used.
-        :param credential:
+        :param Any credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
             shared access key, or an instance of a TokenCredentials class from azure.identity.
@@ -150,13 +164,13 @@ class TableClient(StorageAccountHostsMixin):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.SignedIdentifier"]
+        # type: (...) -> List
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
                 :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: list of SignedIdentifier, or the result of cls(response)
-                :rtype: list[~azure.table.models.SignedIdentifier]
+                :return: list of SignedIdentifier
+                :rtype: List
                 :raises: ~azure.core.exceptions.HttpResponseError
                 """
         timeout = kwargs.pop('timeout', None)
@@ -209,13 +223,13 @@ class TableClient(StorageAccountHostsMixin):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TableServiceProperties"
+        # type: (...) -> TableServiceProperties
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TableServiceProperties, or the result of cls(response)
-        :rtype: ~azure.table.models.TableServiceProperties
+        :return: TableServiceProperties
+        :rtype: TableServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timeout = kwargs.pop('timeout', None)
@@ -250,7 +264,7 @@ class TableClient(StorageAccountHostsMixin):
         :param row_key: The row key of the entity.
         :type row_key: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -275,7 +289,7 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str, object]
+        # type: (...) -> Entity
         """Insert entity in a table.
 
         :param table_entity_properties: The properties for the table entity.
@@ -283,8 +297,8 @@ class TableClient(StorageAccountHostsMixin):
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: dict mapping str to object, or the result of cls(response)
-        :rtype: dict[str, object] or None
+        :return: Entity mapping str to object
+        :rtype: Entity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -372,14 +386,14 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TableEntityQueryResponse"
+        # type: (...) -> ItemPaged
         """Queries entities in a table.
 
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TableEntityQueryResponse, or the result of cls(response)
-        :rtype: ~azure.table.models.TableEntityQueryResponse
+        :return: ItemPaged
+        :rtype: ItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         command = functools.partial(
@@ -398,7 +412,7 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TableEntityQueryResponse"
+        # type: (...) -> Entity
         """Queries entities in a table.
 
         :param headers: Headers for service request
@@ -410,8 +424,8 @@ class TableClient(StorageAccountHostsMixin):
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TableEntityQueryResponse, or the result of cls(response)
-        :rtype: ~azure.table.models.TableEntityQueryResponse
+        :return: Entity dictionary
+        :rtype: Entity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -438,7 +452,7 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Entity"
+        # type: (...) -> Entity or None
         """Update/Merge or Insert entity into table.
 
 
@@ -453,8 +467,8 @@ class TableClient(StorageAccountHostsMixin):
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TableEntityQueryResponse, or the result of cls(response)
-        :rtype: ~azure.table.models.TableEntityQueryResponse
+        :return: Entity dictionary or None
+        :rtype: Entity or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 

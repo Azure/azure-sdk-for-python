@@ -35,6 +35,18 @@ class TableServiceClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
     ):
         # type: (...) -> None
+        """Create TableServiceClient from a Credential.
+
+        :param str account_url:
+            A url to an Azure Storage account.
+        :param Any credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, an account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+        :returns: None
+        """
+
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -68,13 +80,13 @@ class TableServiceClient(StorageAccountHostsMixin):
 
         :param str conn_str:
             A connection string to an Azure Storage account.
-        :param credential:
+        :param Any credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
         :returns: A Table service client.
-        :rtype: ~azure.storage.table.TableClient
+        :rtype: ~azure.storage.table.TableServiceClient
 
         .. admonition:: Example:
 
@@ -93,13 +105,13 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_stats(self, **kwargs):
-        # type: (...) -> "models.TableServiceStats"
+        # type: (...) -> dict
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
                 :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: TableServiceStats, or the result of cls(response)
-                :rtype: ~azure.table.models.TableServiceStats
+                :return: Dictionary of Service Stats
+                :rtype: dict
                 :raises: ~azure.core.exceptions.HttpResponseError
                 """
         try:
@@ -112,13 +124,13 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
-        # type: (...) -> "models.TableServiceProperties"
+        # type: (...) -> dict
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
                 :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: TableServiceProperties, or the result of cls(response)
-                :rtype: ~azure.table.models.TableServiceProperties
+                :return: Dictionary of service properties
+                :rtype: dict
                 :raises: ~azure.core.exceptions.HttpResponseError
                 """
         timeout = kwargs.pop('timeout', None)
@@ -140,16 +152,15 @@ class TableServiceClient(StorageAccountHostsMixin):
         """Sets properties for an account's Table service endpoint,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-
-               :param cors:
-               :param minute_metrics:
-               :param hour_metrics:
-               :param analytics_logging:
-               :keyword callable cls: A custom type or function that will be passed the direct response
-               :return: None, or the result of cls(response)
-               :rtype: None
-               :raises: ~azure.core.exceptions.HttpResponseError
-               """
+       :param Any cors:
+       :param Any minute_metrics:
+       :param Any hour_metrics:
+       :param Any analytics_logging:
+       :keyword callable cls: A custom type or function that will be passed the direct response
+       :return: None
+       :rtype: None
+       :raises: ~azure.core.exceptions.HttpResponseError
+       """
         props = TableServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,
@@ -164,8 +175,8 @@ class TableServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def create_table(
             self,
-            table_name,
-            **kwargs
+            table_name,  # type: str
+            **kwargs  # type: Any
     ):
         # type: (...) -> TableClient
         """Creates a new table under the given account.
@@ -173,7 +184,7 @@ class TableServiceClient(StorageAccountHostsMixin):
                 :param table_name: The Table name.
                 :type table_name: ~azure.table._models.Table
                 :return: TableClient, or the result of cls(response)
-                :rtype: ~azure.table.TableClient or None
+                :rtype: ~azure.table.TableClient
                 :raises: ~azure.core.exceptions.HttpResponseError
                 """
         table_properties = TableProperties(table_name=table_name, **kwargs)
@@ -197,36 +208,10 @@ class TableServiceClient(StorageAccountHostsMixin):
                         :type table_name: str
                         :keyword callable cls: A custom type or function that will be passed the direct response
                         :return: None
-                        :rtype: ~None
+                        :rtype: None
                         """
         response = self._client.table.delete(table=table_name, request_id_parameter=request_id_parameter, **kwargs)
         return response
-        # table = self.get_table_client(table=table_name)
-        # table.delete_queue(table_name)
-
-    @distributed_trace
-    def list_tables(
-            self,
-            query_options=None,  # type: Optional[QueryOptions]
-            **kwargs
-    ):
-        # type: (...) -> ItemPaged
-        """Queries tables under the given account.
-
-        :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ItemPaged, or the result of cls(response)
-        :rtype: ~ItemPaged
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        command = functools.partial(
-            self._client.table.query,
-            **kwargs)
-        return ItemPaged(
-            command, results_per_page=query_options,
-            page_iterator_class=TablePropertiesPaged
-        )
 
     @distributed_trace
     def query_tables(
@@ -240,8 +225,8 @@ class TableServiceClient(StorageAccountHostsMixin):
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ItemPaged, or the result of cls(response)
-        :rtype: ~ItemPaged
+        :return: ItemPaged
+        :rtype: ItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         command = functools.partial(self._client.table.query,

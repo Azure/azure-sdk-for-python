@@ -119,13 +119,13 @@ class StorageTableTest(TableTestCase):
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_list_tables(self, resource_group, location, storage_account, storage_account_key):
+    def test_query_tables(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table = self._create_table(ts)
 
         # Act
-        tables = list(ts.list_tables())
+        tables = list(ts.query_tables())
 
         # Assert
         self.assertIsNotNone(tables)
@@ -136,7 +136,7 @@ class StorageTableTest(TableTestCase):
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_list_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
+    def test_query_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table = self._create_table(ts)
@@ -153,7 +153,7 @@ class StorageTableTest(TableTestCase):
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_list_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
+    def test_query_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         query = QueryOptions()
         query.top = 3
@@ -164,8 +164,8 @@ class StorageTableTest(TableTestCase):
             self._create_table(ts, prefix + str(i), table_list)
 
         # Act
-        big_page = list(next(ts.list_tables().by_page()))
-        small_page = list(next(ts.list_tables(query_options=query).by_page()))
+        big_page = list(next(ts.query_tables().by_page()))
+        small_page = list(next(ts.query_tables(query_options=query).by_page()))
 
         # Assert
         self.assertEqual(len(small_page), 3)
@@ -173,7 +173,7 @@ class StorageTableTest(TableTestCase):
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_list_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
+    def test_query_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         prefix = 'listtable'
@@ -184,9 +184,9 @@ class StorageTableTest(TableTestCase):
         # table_names.sort()
 
         # Act
-        generator1 = ts.list_tables(query_options=QueryOptions(top=2)).by_page()
+        generator1 = ts.query_tables(query_options=QueryOptions(top=2)).by_page()
         next(generator1)
-        generator2 = ts.list_tables(query_options=QueryOptions(top=2)).by_page(
+        generator2 = ts.query_tables(query_options=QueryOptions(top=2)).by_page(
             continuation_token=generator1.continuation_token)
         next(generator2)
 
@@ -430,7 +430,7 @@ class StorageTableTest(TableTestCase):
             # Act
             table.create_table()
             try:
-                resp = ts.list_tables()
+                resp = ts.query_tables()
             except:
                 e = sys.exc_info()[0]
 

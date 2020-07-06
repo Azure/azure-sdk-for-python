@@ -1,4 +1,4 @@
-# Azure Storage Queues client library for Python
+# Azure Tables client library for Python
 
 ## Getting started
 

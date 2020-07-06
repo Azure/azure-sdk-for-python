@@ -76,8 +76,60 @@ def generate_table_sas(
         start_pk=None,
         start_rk=None,
         end_pk=None,
-        end_rk=None
+        end_rk=None,
+        **kwargs
 ):  # type: (...) -> str
+
+    """
+       Generates a shared access signature for the table service.
+       Use the returned signature with the sas_token parameter of TableService.
+
+
+       :param account_key: Account key
+       :type account_key: str
+       :param account_name: Account name
+       :type account_name: str
+       :param table_name: Table name
+       :type table_name: str
+       :param AccountPermissions permission:
+           The permissions associated with the shared access signature. The
+           user is restricted to operations allowed by the permissions.
+           Required unless an id is given referencing a stored access policy
+           which contains this field. This field must be omitted if it has been
+           specified in an associated stored access policy.
+       :param expiry:
+           The time at which the shared access signature becomes invalid.
+           Required unless an id is given referencing a stored access policy
+           which contains this field. This field must be omitted if it has
+           been specified in an associated stored access policy. Azure will always
+           convert values to UTC. If a date is passed in without timezone info, it
+           is assumed to be UTC.
+       :type expiry: datetime or str
+       :param start:
+           The time at which the shared access signature becomes valid. If
+           omitted, start time for this call is assumed to be the time when the
+           storage service receives the request. Azure will always convert values
+           to UTC. If a date is passed in without timezone info, it is assumed to
+           be UTC.
+       :type start: datetime or str
+       :param str ip:
+           Specifies an IP address or a range of IP addresses from which to accept requests.
+           If the IP address from which the request originates does not match the IP address
+           or address range specified on the SAS token, the request is not authenticated.
+           For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
+           restricts the request to those IP addresses.
+       :param policy_id:
+       :type policy_id: str
+       :param str protocol:
+           Specifies the protocol permitted for a request made. The default value
+           is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
+       :param str end_rk: End row key
+       :param str end_pk: End partition key
+       :param str start_rk: Starting row key
+       :param str start_pk: Starting partition key
+       :return: A Shared Access Signature (sas) token.
+       :rtype: str
+       """
 
     sas = TableSharedAccessSignature(account_name, account_key)
     return sas.generate_table(
@@ -91,7 +143,8 @@ def generate_table_sas(
         start_pk=start_pk,
         start_rk=start_rk,
         end_pk=end_pk,
-        end_rk=end_rk
+        end_rk=end_rk,
+        **kwargs
     )  # type: ignore
 
 
@@ -116,7 +169,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
                        expiry=None, start=None, policy_id=None,
                        ip=None, protocol=None,
                        start_pk=None, start_rk=None,
-                       end_pk=None, end_rk=None):
+                       end_pk=None, end_rk=None, **kwargs):
         """
         Generates a shared access signature for the table.
         Use the returned signature with the sas_token parameter of TableService.
@@ -144,7 +197,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
         :type start: datetime or str
-        :param str id:
+        :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
             stored access policy. To create a stored access policy, use
             set_table_service_properties.
