@@ -43,6 +43,10 @@ known_content_issues:
   # data plane. common issue filed to azure-sdk-for-python
   - ['README.rst', '#4554']
   - ['sdk/synapse/azure-synapse/README.md', '#4554']
+  - ['sdk/synapse/azure-synapse-accesscontrol/README.md', '#4554']
+  - ['sdk/synapse/azure-synapse-spark/README.md', '#4554']
+  - ['sdk/synapse/azure-synapse-artifacts/README.md', '#4554']
+  - ['sdk/synapse/azure-synapse-nspkg/README.md', '#4554']
   - ['sdk/applicationinsights/azure-applicationinsights/README.md', '#4554']
   - ['sdk/batch/azure-batch/README.md', '#4554']
   - ['sdk/cognitiveservices/azure-cognitiveservices-anomalydetector/README.md', '#4554']

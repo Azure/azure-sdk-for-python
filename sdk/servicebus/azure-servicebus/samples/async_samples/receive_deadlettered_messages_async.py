@@ -28,10 +28,10 @@ async def main():
         sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
         messages = [Message("Message to be deadlettered") for _ in range(10)]
         async with sender:
-            await sender.send(messages)
+            await sender.send_messages(messages)
 
         print('dead lettering messages')
-        receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch=10)
+        receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
         async with receiver:
             received_msgs = await receiver.receive_messages(max_batch_size=10, max_wait_time=5)
             for msg in received_msgs:
@@ -41,7 +41,7 @@ async def main():
         print('receiving deadlettered messages')
         dlq_receiver = servicebus_client.get_queue_deadletter_receiver(queue_name=QUEUE_NAME, prefetch=10)
         async with dlq_receiver:
-            received_msgs = await dlq_receiver.receive(max_batch_size=10, max_wait_time=5)
+            received_msgs = await dlq_receiver.receive_messages(max_batch_size=10, max_wait_time=5)
             for msg in received_msgs:
                 print(str(msg))
                 await msg.complete()

@@ -15,3 +15,8 @@ class CloseReason(Enum):
     # The Consumer lost the ownership of a partition. This would happend when another EventHubConsumerClient
     # instance claims ownership of the partition.
     OWNERSHIP_LOST = 1
+
+
+class LoadBalancingStrategy(Enum):
+    GREEDY = "greedy"
+    BALANCED = "balanced"

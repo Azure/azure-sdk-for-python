@@ -23,9 +23,9 @@ with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     messages = [Message("Message to be deferred") for _ in range(10)]
     with sender:
-        sender.send(messages)
+        sender.send_messages(messages)
 
-    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch=10)
+    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
     with receiver:
         received_msgs = receiver.receive_messages(max_batch_size=10, max_wait_time=5)
         deferred_sequenced_numbers = []

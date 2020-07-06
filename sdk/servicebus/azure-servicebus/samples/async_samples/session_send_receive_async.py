@@ -18,17 +18,17 @@ from azure.servicebus.aio import ServiceBusClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
-SESSION_ID = "<your session id>"
+SESSION_ID = os.environ['SERVICE_BUS_SESSION_ID']
 
 
 async def send_single_message(sender):
     message = Message("Single session message", session_id=SESSION_ID)
-    await sender.send(message)
+    await sender.send_messages(message)
 
 
 async def send_a_list_of_messages(sender):
     messages = [Message("Session Message in list", session_id=SESSION_ID) for _ in range(10)]
-    await sender.send(messages)
+    await sender.send_messages(messages)
 
 
 async def send_batch_message(sender):
@@ -40,14 +40,14 @@ async def send_batch_message(sender):
             # BatchMessage object reaches max_size.
             # New BatchMessage object can be created here to send more data.
             break
-    await sender.send(batch_message)
+    await sender.send_messages(batch_message)
 
 
 async def receive_batch_messages(receiver):
     session = receiver.session
     await session.set_session_state("START")
     print("Session state:", await session.get_session_state())
-    received_msgs = await receiver.receive(max_batch_size=10, max_wait_time=5)
+    received_msgs = await receiver.receive_messages(max_batch_size=10, max_wait_time=5)
     for msg in received_msgs:
         print(str(msg))
         await msg.complete()
@@ -68,7 +68,7 @@ async def main():
 
         print("Send message is done.")
 
-        receiver = servicebus_client.get_queue_session_receiver(queue_name=SESSION_QUEUE_NAME, session_id=SESSION_ID, prefetch=10)
+        receiver = servicebus_client.get_queue_session_receiver(queue_name=SESSION_QUEUE_NAME, session_id=SESSION_ID)
         async with receiver:
             await receive_batch_messages(receiver)
 

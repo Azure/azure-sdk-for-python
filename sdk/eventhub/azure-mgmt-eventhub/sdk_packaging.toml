@@ -4,4 +4,4 @@ package_pprint_name = "EventHub Management"
 package_doc_id = "event-hub?view=azure-python-preview"
 is_stable = true
 need_msrestazure = false
-need_azurecore = true
+need_azuremgmtcore = true
