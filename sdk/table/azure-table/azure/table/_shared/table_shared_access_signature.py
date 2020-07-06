@@ -169,7 +169,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
                        expiry=None, start=None, policy_id=None,
                        ip=None, protocol=None,
                        start_pk=None, start_rk=None,
-                       end_pk=None, end_rk=None, **kwargs):
+                       end_pk=None, end_rk=None):
         """
         Generates a shared access signature for the table.
         Use the returned signature with the sas_token parameter of TableService.

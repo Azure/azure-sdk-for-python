@@ -67,19 +67,23 @@ class AccessPolicy(GenAccessPolicy):
 
 
 class TableAnalyticsLogging(GeneratedLogging):
-    """Azure Analytics Logging settings.
 
-    All required parameters must be populated in order to send to Azure.
+    def __init__(  # pylint:disable=W0231
+            self,
+            **kwargs  # type: Any
+    ):
+        # type: (...)-> None
+        """Azure Analytics Logging settings.
 
-    :keyword str version: Required. The version of Storage Analytics to configure.
-    :keyword bool delete: Required. Indicates whether all delete requests should be logged.
-    :keyword bool read: Required. Indicates whether all read requests should be logged.
-    :keyword bool write: Required. Indicates whether all write requests should be logged.
-    :keyword ~azure.table.RetentionPolicy retention_policy: Required.
-        The retention policy for the metrics.
-    """
+           All required parameters must be populated in order to send to Azure.
 
-    def __init__(self, **kwargs):  # pylint:disable=W0231
+           :keyword str version: Required. The version of Storage Analytics to configure.
+           :keyword bool delete: Required. Indicates whether all delete requests should be logged.
+           :keyword bool read: Required. Indicates whether all read requests should be logged.
+           :keyword bool write: Required. Indicates whether all write requests should be logged.
+           :keyword ~azure.table.RetentionPolicy retention_policy: Required.
+               The retention policy for the metrics.
+           """
         self.version = kwargs.get('version', u'1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
@@ -140,30 +144,33 @@ class Metrics(GeneratedMetrics):
 
 
 class RetentionPolicy(GeneratedRetentionPolicy):
-    """The retention policy which determines how long the associated data should
-    persist.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param bool enabled: Required. Indicates whether a retention policy is enabled
-        for the storage service.
-    :param int days: Indicates the number of days that metrics or logging or
-        soft-deleted data should be retained. All data older than this value will
-        be deleted.
-    """
 
     def __init__(  # pylint:disable=W0231
             self,
             enabled=False,  # type: bool
             days=None,  # type: int
-            **kwargs):
+            **kwargs  # type: Any
+     ):
+        # type: (...) ->None
+        """The retention policy which determines how long the associated data should
+          persist.
+
+          All required parameters must be populated in order to send to Azure.
+
+          :param bool enabled: Required. Indicates whether a retention policy is enabled
+              for the storage service.
+          :param int days: Indicates the number of days that metrics or logging or
+              soft-deleted data should be retained. All data older than this value will
+              be deleted.
+          :param Any kwargs:
+          """
         self.enabled = enabled
         self.days = days
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def from_generated(cls, generated, **kwargs):
+    def from_generated(cls, generated):
         # type: (...) -> cls
         """The retention policy which determines how long the associated data should
             persist.
@@ -347,7 +354,15 @@ class TableEntityPropertiesPaged(PageIterator):
 
 class TableSasPermissions(object):
 
-    def __init__(self, query=False, add=False, update=False, delete=False, _str=None):
+    def __init__(
+            self,
+            query=False,  # type: bool
+            add=False,  # type: bool
+            update=False,  # type: bool
+            delete=False,  # type: bool
+            _str=None  # type: str
+    ):
+        # type: (...) -> None
         """
         :param bool query:
             Get entities and query entities.
