@@ -1,13 +1,12 @@
 trigger: none
 
-
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-ai-formrecognizer
       ServiceDirectory: formrecognizer
       # this is a specific request from the formrecognizer service team
-      # their claim is that the full matrix ends up stress-testing their tests.
+      # their claim is that the full matrix ends up stress-testing their service.
       ${{ if contains(variables['Build.DefinitionName'], 'prod') }}:
         Matrix:
           Linux_Python35:
