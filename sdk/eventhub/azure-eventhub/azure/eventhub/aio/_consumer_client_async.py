@@ -96,7 +96,7 @@ class EventHubConsumerClient(ClientBaseAsync):
      of seconds. Every load-balancing evaluation will automatically extend the ownership expiration time.
      Default is 6 * load_balancing_interval, i.e. 60 seconds when using the default load_balancing_interval
      of 10 seconds.
-    :keyword str or ~azure.eventhub.LoadBalancingStrategy load_balancing_strategy: When load-balancing kicks in,
+    :keyword load_balancing_strategy: When load-balancing kicks in,
      it will use this strategy to claim and balance the partition ownership.
      Use "greedy" or `LoadBalancingStrategy.GREEDY` for the greedy strategy, which, for every
      load-balancing evaluation, will grab as many unclaimed partitions required to balance the load.
@@ -106,6 +106,7 @@ class EventHubConsumerClient(ClientBaseAsync):
      too few partitions, this client will steal one partition from other clients for every load-balancing
      evaluation regardless of the load balancing strategy.
      Greedy strategy is used by default.
+    :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
 
     .. admonition:: Example:
 
@@ -242,7 +243,7 @@ class EventHubConsumerClient(ClientBaseAsync):
          of seconds. Every load-balancing evaluation will automatically extend the ownership expiration time.
          Default is 6 * load_balancing_interval, i.e. 60 seconds when using the default load_balancing_interval
          of 10 seconds.
-        :keyword str or ~azure.eventhub.LoadBalancingStrategy load_balancing_strategy: When load-balancing kicks in,
+        :keyword load_balancing_strategy: When load-balancing kicks in,
          it will use this strategy to claim and balance the partition ownership.
          Use "greedy" or `LoadBalancingStrategy.GREEDY` for the greedy strategy, which, for every
          load-balancing evaluation, will grab as many unclaimed partitions required to balance the load.
@@ -252,6 +253,7 @@ class EventHubConsumerClient(ClientBaseAsync):
          too few partitions, this client will steal one partition from other clients for every load-balancing
          evaluation regardless of the load balancing strategy.
          Greedy strategy is used by default.
+        :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
         :rtype: ~azure.eventhub.aio.EventHubConsumerClient
 
         .. admonition:: Example:
