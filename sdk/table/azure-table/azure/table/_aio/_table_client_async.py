@@ -17,7 +17,7 @@ from azure.table._shared.policies_async import ExponentialRetry
 from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import return_headers_and_deserialized, process_storage_error
 from azure.table._table_client import TableClient as TableClientBase
-from azure.table.aio._models import TableEntityPropertiesPaged, UpdateMode
+from azure.table._aio._models import TableEntityPropertiesPaged, UpdateMode
 
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
