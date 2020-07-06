@@ -26940,17 +26940,16 @@ class SapOpenHubLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param server: Required. Host name of the SAP BW instance where the open
-     hub destination is located. Type: string (or Expression with resultType
+    :param server: Host name of the SAP BW instance where the open hub
+     destination is located. Type: string (or Expression with resultType
      string).
     :type server: object
-    :param system_number: Required. System number of the BW system where the
-     open hub destination is located. (Usually a two-digit decimal number
-     represented as a string.) Type: string (or Expression with resultType
-     string).
+    :param system_number: System number of the BW system where the open hub
+     destination is located. (Usually a two-digit decimal number represented as
+     a string.) Type: string (or Expression with resultType string).
     :type system_number: object
-    :param client_id: Required. Client ID of the client on the BW system where
-     the open hub destination is located. (Usually a three-digit decimal number
+    :param client_id: Client ID of the client on the BW system where the open
+     hub destination is located. (Usually a three-digit decimal number
      represented as a string) Type: string (or Expression with resultType
      string).
     :type client_id: object
@@ -26958,6 +26957,9 @@ class SapOpenHubLinkedService(LinkedService):
      is located. The default value is EN. Type: string (or Expression with
      resultType string).
     :type language: object
+    :param system_id: SystemID of the SAP system where the table is located.
+     Type: string (or Expression with resultType string).
+    :type system_id: object
     :param user_name: Username to access the SAP BW server where the open hub
      destination is located. Type: string (or Expression with resultType
      string).
@@ -26965,6 +26967,15 @@ class SapOpenHubLinkedService(LinkedService):
     :param password: Password to access the SAP BW server where the open hub
      destination is located.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param message_server: The hostname of the SAP Message Server. Type:
+     string (or Expression with resultType string).
+    :type message_server: object
+    :param message_server_service: The service name or port number of the
+     Message Server. Type: string (or Expression with resultType string).
+    :type message_server_service: object
+    :param logon_group: The Logon Group for the SAP System. Type: string (or
+     Expression with resultType string).
+    :type logon_group: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -26973,9 +26984,6 @@ class SapOpenHubLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'server': {'required': True},
-        'system_number': {'required': True},
-        'client_id': {'required': True},
     }
 
     _attribute_map = {
@@ -26989,19 +26997,27 @@ class SapOpenHubLinkedService(LinkedService):
         'system_number': {'key': 'typeProperties.systemNumber', 'type': 'object'},
         'client_id': {'key': 'typeProperties.clientId', 'type': 'object'},
         'language': {'key': 'typeProperties.language', 'type': 'object'},
+        'system_id': {'key': 'typeProperties.systemId', 'type': 'object'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'message_server': {'key': 'typeProperties.messageServer', 'type': 'object'},
+        'message_server_service': {'key': 'typeProperties.messageServerService', 'type': 'object'},
+        'logon_group': {'key': 'typeProperties.logonGroup', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, server, system_number, client_id, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, language=None, user_name=None, password=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, server=None, system_number=None, client_id=None, language=None, system_id=None, user_name=None, password=None, message_server=None, message_server_service=None, logon_group=None, encrypted_credential=None, **kwargs) -> None:
         super(SapOpenHubLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.server = server
         self.system_number = system_number
         self.client_id = client_id
         self.language = language
+        self.system_id = system_id
         self.user_name = user_name
         self.password = password
+        self.message_server = message_server
+        self.message_server_service = message_server_service
+        self.logon_group = logon_group
         self.encrypted_credential = encrypted_credential
         self.type = 'SapOpenHub'
 
