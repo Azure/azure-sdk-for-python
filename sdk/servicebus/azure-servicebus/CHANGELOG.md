@@ -2,6 +2,11 @@
 
 ## 7.0.0b4 (2020-07-06)
 
+**New Features**
+
+* Added support for management of topics, subscriptions, and rules.
+* `receive_messages()` (formerly `receive()`) now supports receiving a batch of messages (`max_batch_size` > 1) without the need to set `prefetch` parameter during `ServiceBusReceiver` initialization.
+
 **BugFixes**
 
 * Fixed bug where sync AutoLockRenew does not shutdown itself timely.
@@ -9,8 +14,8 @@
 
 **Breaking Changes**
 
-* `ServiceBusReceiver.receive` now supports receiving a batch of messages without the need to adjust prefetch value when creating `ServiceBusReceiver` and it won't raise `ValueError` anymore if `max_batch_size` value is less than `prefetch` value.
 * Renamed `receive()`, `peek()` `schedule()` and `send()` to `receive_messages()`, `peek_messages()`, `schedule_messages()` and `send_messages()` to align with other service bus SDKs.
+* `receive_messages()` (formerly `receive()`) no longer raises a `ValueError` if `max_batch_size` is less than the `prefetch` parameter set during `ServiceBusReceiver` initialization.
 
 ## 7.0.0b3 (2020-06-08)
 
