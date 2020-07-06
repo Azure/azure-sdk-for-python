@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 02 Jul 2020 17:49:06 GMT
+      - Mon, 06 Jul 2020 15:21:42 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 17:49:06 GMT
+      - Mon, 06 Jul 2020 15:21:42 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -26,7 +26,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 02 Jul 2020 17:49:03 GMT
+      date: Mon, 06 Jul 2020 15:21:34 GMT
       location: https://storagename.table.core.windows.net/Tables('uttable4fed15dc')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -35,7 +35,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragedvrm5jjbskal.table.core.windows.net/Tables
+    url: https://pyacrstoragev4sat3affyvo.table.core.windows.net/Tables
 - request:
     body: '{"PartitionKey": "pk4fed15dc", "RowKey": "rk4fed15dc", "age": "39", "age@odata.type":
       "Edm.Int64", "sex": "male", "married": true, "deceased": false, "ratio": 3.1,
@@ -54,23 +54,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 02 Jul 2020 17:49:06 GMT
+      - Mon, 06 Jul 2020 15:21:42 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 17:49:06 GMT
+      - Mon, 06 Jul 2020 15:21:42 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/uttable4fed15dc
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable4fed15dc/@Element","odata.etag":"W/\"datetime''2020-07-02T17%3A49%3A03.9178597Z''\"","PartitionKey":"pk4fed15dc","RowKey":"rk4fed15dc","Timestamp":"2020-07-02T17:49:03.9178597Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable4fed15dc/@Element","odata.etag":"W/\"datetime''2020-07-06T15%3A21%3A34.9863295Z''\"","PartitionKey":"pk4fed15dc","RowKey":"rk4fed15dc","Timestamp":"2020-07-06T15:21:34.9863295Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 02 Jul 2020 17:49:03 GMT
-      etag: W/"datetime'2020-07-02T17%3A49%3A03.9178597Z'"
+      date: Mon, 06 Jul 2020 15:21:34 GMT
+      etag: W/"datetime'2020-07-06T15%3A21%3A34.9863295Z'"
       location: https://storagename.table.core.windows.net/uttable4fed15dc(PartitionKey='pk4fed15dc',RowKey='rk4fed15dc')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -79,32 +79,32 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragedvrm5jjbskal.table.core.windows.net/uttable4fed15dc
+    url: https://pyacrstoragev4sat3affyvo.table.core.windows.net/uttable4fed15dc
 - request:
     body: null
     headers:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 02 Jul 2020 17:49:06 GMT
+      - Mon, 06 Jul 2020 15:21:42 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       accept:
       - application/json;odata=fullmetadata
       x-ms-date:
-      - Thu, 02 Jul 2020 17:49:06 GMT
+      - Mon, 06 Jul 2020 15:21:42 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
     uri: https://storagename.table.core.windows.net/uttable4fed15dc(PartitionKey='pk4fed15dc',RowKey='rk4fed15dc')
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable4fed15dc/@Element","odata.type":"storagename.uttable4fed15dc","odata.id":"https://storagename.table.core.windows.net/uttable4fed15dc(PartitionKey=''pk4fed15dc'',RowKey=''rk4fed15dc'')","odata.etag":"W/\"datetime''2020-07-02T17%3A49%3A03.9178597Z''\"","odata.editLink":"uttable4fed15dc(PartitionKey=''pk4fed15dc'',RowKey=''rk4fed15dc'')","PartitionKey":"pk4fed15dc","RowKey":"rk4fed15dc","Timestamp@odata.type":"Edm.DateTime","Timestamp":"2020-07-02T17:49:03.9178597Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable4fed15dc/@Element","odata.type":"storagename.uttable4fed15dc","odata.id":"https://storagename.table.core.windows.net/uttable4fed15dc(PartitionKey=''pk4fed15dc'',RowKey=''rk4fed15dc'')","odata.etag":"W/\"datetime''2020-07-06T15%3A21%3A34.9863295Z''\"","odata.editLink":"uttable4fed15dc(PartitionKey=''pk4fed15dc'',RowKey=''rk4fed15dc'')","PartitionKey":"pk4fed15dc","RowKey":"rk4fed15dc","Timestamp@odata.type":"Edm.DateTime","Timestamp":"2020-07-06T15:21:34.9863295Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=fullmetadata;streaming=true;charset=utf-8
-      date: Thu, 02 Jul 2020 17:49:03 GMT
-      etag: W/"datetime'2020-07-02T17%3A49%3A03.9178597Z'"
+      date: Mon, 06 Jul 2020 15:21:34 GMT
+      etag: W/"datetime'2020-07-06T15%3A21%3A34.9863295Z'"
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -112,16 +112,16 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://pyacrstoragedvrm5jjbskal.table.core.windows.net/uttable4fed15dc(PartitionKey='pk4fed15dc',RowKey='rk4fed15dc')
+    url: https://pyacrstoragev4sat3affyvo.table.core.windows.net/uttable4fed15dc(PartitionKey='pk4fed15dc',RowKey='rk4fed15dc')
 - request:
     body: null
     headers:
       Date:
-      - Thu, 02 Jul 2020 17:49:06 GMT
+      - Mon, 06 Jul 2020 15:21:43 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 17:49:06 GMT
+      - Mon, 06 Jul 2020 15:21:43 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -132,12 +132,12 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 02 Jul 2020 17:49:03 GMT
+      date: Mon, 06 Jul 2020 15:21:34 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-07-07'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstoragedvrm5jjbskal.table.core.windows.net/Tables('uttable4fed15dc')
+    url: https://pyacrstoragev4sat3affyvo.table.core.windows.net/Tables('uttable4fed15dc')
 version: 1

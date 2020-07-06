@@ -2,6 +2,7 @@ import functools
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.table import VERSION
 from azure.table._deserialization import _convert_to_entity
@@ -292,7 +293,6 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     table_entity_properties=table_entity_properties,
                     if_match=if_match or if_not_match or '*',
                     **kwargs)
-                return
             except ResourceNotFoundError:
                 raise ResourceNotFoundError
         if mode is UpdateMode.merge:
@@ -300,14 +300,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 await self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
                                                       row_key=row_key, if_match=if_match or if_not_match or '*',
                                                       table_entity_properties=table_entity_properties, **kwargs)
-                return
             except ResourceNotFoundError:
                 raise ResourceNotFoundError
-        else:
-            raise HttpResponseError
 
-    @distributed_trace_async
-    async def query_entities(
+    @distributed_trace
+    def query_entities(
             self,
             headers=None,
             query_options=None,
@@ -445,5 +442,3 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 )
                 properties = _convert_to_entity(insert_entity)
                 return Entity(properties)
-        else:
-            raise HttpResponseError
