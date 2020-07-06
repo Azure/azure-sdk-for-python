@@ -41,6 +41,11 @@ def process_batch_error(error):
     """Raise detailed error message.
     """
     raise_error = HttpResponseError
+    if error.status_code == 200:
+        # this is the case where we manually throw the Too Many Documents error
+        # we don't want to raise an error based on the error.response
+        error.response.status_code = 400
+        raise HttpResponseError(response=error.response, message=error.message)
     if error.status_code == 401:
         raise_error = ClientAuthenticationError
     raise raise_error(response=error.response, error_format=CSODataV4Format)
@@ -71,7 +76,6 @@ def prepare_result(func):
         ]
         if too_many_documents_errors:
             too_many_documents_error = too_many_documents_errors[0]
-            response.status_code = 400
             response.reason = "Bad Request"
             code, message = _get_error_code_and_message(too_many_documents_error)
             raise HttpResponseError(
