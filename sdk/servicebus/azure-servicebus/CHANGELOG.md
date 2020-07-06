@@ -9,6 +9,7 @@
 
 **Breaking Changes**
 
+* `ServiceBusReceiver.receive` now supports receiving a batch of messages without the need to adjust prefetch value when creating `ServiceBusReceiver` and it won't raise `ValueError` anymore if `max_batch_size` value is less than `prefetch` value.
 * Renamed `receive()`, `peek()` `schedule()` and `send()` to `receive_messages()`, `peek_messages()`, `schedule_messages()` and `send_messages()` to align with other service bus SDKs.
 
 ## 7.0.0b3 (2020-06-08)

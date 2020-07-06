@@ -20,7 +20,7 @@ QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
 
 with servicebus_client:
-    receiver = servicebus_client.get_queue_deadletter_receiver(queue_name=QUEUE_NAME, prefetch=10)
+    receiver = servicebus_client.get_queue_deadletter_receiver(queue_name=QUEUE_NAME)
     with receiver:
         received_msgs = receiver.receive_messages(max_batch_size=10, max_wait_time=5)
         for msg in received_msgs:
