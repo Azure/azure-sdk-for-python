@@ -6,6 +6,7 @@ import abc
 import base64
 import json
 import logging
+import sys
 import time
 
 import msal
@@ -35,6 +36,12 @@ if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports,unused-import
     from typing import Any, Mapping, Optional, Type, Union
 
+if sys.version_info < (3, 3):
+    abstractproperty = abc.abstractproperty
+else:  # abc.abstractproperty is deprecated as of 3.3
+    import functools
+
+    abstractproperty = functools.partial(property, abc.abstractmethod)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -128,6 +135,10 @@ class MsalCredential(ABC):
 
 
 class InteractiveCredential(MsalCredential):
+    @abstractproperty
+    def _logger(self):
+        pass
+
     def __init__(self, **kwargs):
         self._disable_automatic_authentication = kwargs.pop("disable_automatic_authentication", False)
         self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
@@ -159,26 +170,46 @@ class InteractiveCredential(MsalCredential):
           configured not to begin this automatically. Call :func:`authenticate` to begin interactive authentication.
         """
         if not scopes:
-            raise ValueError("'get_token' requires at least one scope")
+            message = "'get_token' requires at least one scope"
+            self._logger.warning(self.__class__.__name__ + ".get_token failed: " + message)
+            raise ValueError(message)
 
         allow_prompt = kwargs.pop("_allow_prompt", not self._disable_automatic_authentication)
         try:
-            return self._acquire_token_silent(*scopes, **kwargs)
-        except AuthenticationRequiredError:
-            if not allow_prompt:
+            token = self._acquire_token_silent(*scopes, **kwargs)
+            self._logger.info(self.__class__.__name__ + ".get_token succeeded")
+            return token
+        except Exception as ex:  # pylint:disable=broad-except
+            if not (isinstance(ex, AuthenticationRequiredError) and allow_prompt):
+                self._logger.warning(
+                    "%s.get_token failed: %s",
+                    self.__class__.__name__,
+                    ex,
+                    exc_info=self._logger.isEnabledFor(logging.DEBUG),
+                )
                 raise
 
         # silent authentication failed -> authenticate interactively
         now = int(time.time())
 
-        result = self._request_token(*scopes, **kwargs)
-        if "access_token" not in result:
-            message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
-            raise ClientAuthenticationError(message=message)
+        try:
+            result = self._request_token(*scopes, **kwargs)
+            if "access_token" not in result:
+                message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
+                raise ClientAuthenticationError(message=message)
 
-        # this may be the first authentication, or the user may have authenticated a different identity
-        self._auth_record = _build_auth_record(result)
+            # this may be the first authentication, or the user may have authenticated a different identity
+            self._auth_record = _build_auth_record(result)
+        except Exception as ex:  # pylint:disable=broad-except
+            self._logger.warning(
+                "%s.get_token failed: %s",
+                self.__class__.__name__,
+                ex,
+                exc_info=self._logger.isEnabledFor(logging.DEBUG),
+            )
+            raise
 
+        self._logger.info(self.__class__.__name__ + ".get_token succeeded")
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
     def authenticate(self, **kwargs):

@@ -6,11 +6,9 @@ import logging
 from typing import TYPE_CHECKING
 
 from .._internal import InteractiveCredential, wrap_exceptions
-from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
     from typing import Any
-    from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -56,10 +54,9 @@ class UsernamePasswordCredential(InteractiveCredential):
         self._username = username
         self._password = password
 
-    @log_get_token(_LOGGER, "UsernamePasswordCredential")
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
-        return super(UsernamePasswordCredential, self).get_token(*scopes, **kwargs)
+    @property
+    def _logger(self):
+        return _LOGGER
 
     @wrap_exceptions
     def _request_token(self, *scopes, **kwargs):

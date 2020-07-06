@@ -37,6 +37,10 @@ class MockCredential(InteractiveCredential):
             client_id=client_id, _cache=cache or TokenCache(), transport=transport, **kwargs
         )
 
+    @property
+    def _logger(self):
+        return Mock()
+
     def _request_token(self, *scopes, **kwargs):
         return self._request_token_impl(*scopes, **kwargs)
 
@@ -208,6 +212,10 @@ def test_enable_persistent_cache():
         def __init__(self, **kwargs):
             super(TestCredential, self).__init__(client_id="...", **kwargs)
 
+        @property
+        def _logger(self):
+            return Mock()
+
         def _request_token(self, *_, **__):
             pass
 
@@ -251,6 +259,10 @@ def test_persistent_cache_linux(mock_extensions):
         def __init__(self, **kwargs):
             super(TestCredential, self).__init__(client_id="...", **kwargs)
 
+        @property
+        def _logger(self):
+            return Mock()
+
         def _request_token(self, *_, **__):
             pass
 
@@ -289,6 +301,10 @@ def test_home_account_id_client_info():
         def __init__(self, **kwargs):
             super(TestCredential, self).__init__(client_id="...", **kwargs)
 
+        @property
+        def _logger(self):
+            return Mock()
+
         def _request_token(self, *_, **__):
             return msal_response
 
@@ -313,6 +329,10 @@ def test_home_account_id_no_client_info():
     class TestCredential(InteractiveCredential):
         def __init__(self, **kwargs):
             super(TestCredential, self).__init__(client_id="...", **kwargs)
+
+        @property
+        def _logger(self):
+            return Mock()
 
         def _request_token(self, *_, **__):
             return msal_response
