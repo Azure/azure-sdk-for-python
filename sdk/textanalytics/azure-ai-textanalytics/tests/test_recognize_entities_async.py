@@ -126,6 +126,7 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             await client.recognize_entities(docs)
         except HttpResponseError as e:
             assert e.status_code == 400
+            assert "(InvalidDocumentBatch) The number of documents in the request have exceeded the data limitations" in str(e)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
