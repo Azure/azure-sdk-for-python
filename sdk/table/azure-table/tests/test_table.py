@@ -16,7 +16,7 @@ from datetime import (
 )
 
 from azure.table._generated.models import AccessPolicy, QueryOptions
-from azure.table._models import TableSasPermissions
+from azure.table._models import TableSasPermissions, UpdateMode
 from azure.table._shared.models import ResourceTypes, AccountSasPermissions
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
@@ -380,10 +380,10 @@ class StorageTableTest(TableTestCase):
                 'RowKey': 'test1',
                 'text': 'hello',
             }
-            table.upsert_insert_merge_entity(table_entity_properties=entity)
+            table.upsert_entity(mode=UpdateMode.merge, table_entity_properties=entity)
 
             entity['RowKey'] = 'test2'
-            table.upsert_insert_merge_entity(table_entity_properties=entity)
+            table.upsert_entity(mode=UpdateMode.merge, table_entity_properties=entity)
 
             token = generate_account_shared_access_signature(
                 storage_account.name,
@@ -407,8 +407,7 @@ class StorageTableTest(TableTestCase):
             self.assertEqual(entities[0].text, 'hello')
             self.assertEqual(entities[1].text, 'hello')
         finally:
-            self._delete_table(table=table,ts=tsc)
-
+            self._delete_table(table=table, ts=tsc)
 
     @pytest.mark.skip("msrest fails deserialization: https://github.com/Azure/msrest-for-python/issues/192")
     @GlobalStorageAccountPreparer()

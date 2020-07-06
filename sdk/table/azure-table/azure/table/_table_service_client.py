@@ -14,7 +14,6 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-
 from azure.table._generated import AzureTable
 from azure.table._generated.models import TableProperties, TableServiceProperties
 from azure.table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
@@ -166,20 +165,18 @@ class TableServiceClient(StorageAccountHostsMixin):
     def create_table(
             self,
             table_name,
-            headers=None,
             **kwargs
     ):
         # type: (...) -> TableClient
         """Creates a new table under the given account.
 
-                :param headers:
                 :param table_name: The Table name.
                 :type table_name: ~azure.table._models.Table
                 :return: TableClient, or the result of cls(response)
                 :rtype: ~azure.table.TableClient or None
                 :raises: ~azure.core.exceptions.HttpResponseError
                 """
-        table_properties = TableProperties(table_name=table_name, **dict(kwargs, headers=headers))
+        table_properties = TableProperties(table_name=table_name, **kwargs)
         self._client.table.create(table_properties)
         table = self.get_table_client(table=table_name)
         return table
@@ -187,8 +184,8 @@ class TableServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def delete_table(
             self,
-            table_name,
-            request_id_parameter=None,
+            table_name,  # type: str
+            request_id_parameter=None,  # type: Optional[str]
             **kwargs
     ):
         # type: (...) -> None
@@ -211,7 +208,6 @@ class TableServiceClient(StorageAccountHostsMixin):
     def list_tables(
             self,
             query_options=None,  # type: Optional[QueryOptions]
-            headers=None,
             **kwargs
     ):
         # type: (...) -> ItemPaged
@@ -226,7 +222,7 @@ class TableServiceClient(StorageAccountHostsMixin):
         """
         command = functools.partial(
             self._client.table.query,
-            **dict(kwargs, headers=headers))
+            **kwargs)
         return ItemPaged(
             command, results_per_page=query_options,
             page_iterator_class=TablePropertiesPaged
@@ -235,7 +231,7 @@ class TableServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def query_tables(
             self,
-            query_options=None,
+            query_options=None,  # type: Optional[QueryOptions]
             **kwargs
     ):
         # type: (...) -> ItemPaged

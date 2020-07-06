@@ -124,7 +124,7 @@ class StorageTableEntityTest(TableTestCase):
     def _insert_random_entity(self, pk=None, rk=None):
         entity = self._create_random_entity_dict(pk, rk)
         # etag = self.table.create_item(entity, response_hook=lambda e, h: h['etag'])
-        e = self.table.create_entity(table_entity_properties=entity, response_hook=lambda e, h: h['etag'])
+        e = self.table.create_entity(table_entity_properties=entity)
         etag = e['etag']
         return entity, etag
 
@@ -306,7 +306,8 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act
-            resp = self.table.create_entity(table_entity_properties=entity, response_hook=lambda e, h: (e, h))
+            #, response_hook=lambda e, h: (e, h)
+            resp = self.table.create_entity(table_entity_properties=entity)
 
             # Assert
             self.assertIsNotNone(resp)
@@ -323,10 +324,11 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act
+            # response_hook=lambda e, h: (e, h)
             resp = self.table.create_entity(
                 table_entity_properties=entity,
                 headers={'Accept': 'application/json;odata=nometadata'},
-                response_hook=lambda e, h: (e, h))
+                )
 
             # Assert
             self.assertIsNotNone(resp)
@@ -343,10 +345,11 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act
+            #response_hook=lambda e, h: (e, h)
             resp = self.table.create_entity(
                 table_entity_properties=entity,
                 headers={'Accept': 'application/json;odata=fullmetadata'},
-                response_hook=lambda e, h: (e, h))
+                )
 
             # Assert
             self.assertIsNotNone(resp)
@@ -553,10 +556,11 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             # resp, headers
+            # response_hook=lambda e, h: (e, h)
             resp = self.table.query_entities_with_partition_and_row_key(
                 partition_key=entity['PartitionKey'],
                 row_key=entity['RowKey'],
-                response_hook=lambda e, h: (e, h))
+                )
 
             # Assert
             self.assertEqual(resp['PartitionKey'], entity['PartitionKey'])
@@ -710,7 +714,7 @@ class StorageTableEntityTest(TableTestCase):
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
 
             # resp = self.table.update_item(sent_entity, response_hook=lambda e, h: h)
-            resp = self.table.update_entity(mode=UpdateMode.replace, table_entity_properties=sent_entity, response_hook=lambda e, h: h)
+            resp = self.table.update_entity(mode=UpdateMode.replace, table_entity_properties=sent_entity)
 
             # Assert
             #  self.assertTrue(resp)
@@ -748,9 +752,10 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
+            # , response_hook=lambda e, h: h)
             self.table.update_entity(
                 mode=UpdateMode.replace, table_entity_properties=sent_entity, etag=etag,
-                match_condition=MatchConditions.IfNotModified, response_hook=lambda e, h: h)
+                match_condition=MatchConditions.IfNotModified)
 
             # Assert
             # self.assertTrue(resp)

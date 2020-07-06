@@ -171,7 +171,10 @@ class TableClient(StorageAccountHostsMixin):
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
-    def set_table_access_policy(self, signed_identifiers, **kwargs):
+    def set_table_access_policy(
+            self,
+            signed_identifiers,  # type: dict
+            **kwargs):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
@@ -229,11 +232,11 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def delete_entity(
             self,
-            partition_key,
-            row_key,
-            etag=None,
-            match_condition=None,
-            **kwargs
+            partition_key,  # type: str
+            row_key,  # type: str
+            etag=None,  # type: Optional[object]
+            match_condition=None,  # type: Optional[MatchCondition]
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Deletes the specified entity in a table.
@@ -268,19 +271,13 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def create_entity(
             self,
-            headers=None,
-            table_entity_properties=None,
-            query_options=None,
-            response_hook=None,  # pylint:disable=W0613
-            **kwargs
+            table_entity_properties,  # type: dict
+            query_options=None,  # type: Optional[QueryOptions]
+            **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, object]
         """Insert entity in a table.
 
-        :param response_hook:
-        :type response_hook:
-        :param headers: Headers for service request
-        :type headers: HttpResponse Headers
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
@@ -303,7 +300,7 @@ class TableClient(StorageAccountHostsMixin):
                 table=self.table_name,
                 table_entity_properties=table_entity_properties,
                 query_options=query_options,
-                **dict(kwargs, headers=headers)
+                **kwargs
             )
             properties = _convert_to_entity(inserted_entity)
             return Entity(properties)
@@ -313,21 +310,19 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def update_entity(  # pylint:disable=R1710
             self,
-            mode,
-            partition_key=None,
-            row_key=None,
-            etag=None,
-            match_condition=None,
-            response_hook=None,  # pylint:disable=W0613
-            table_entity_properties=None,
-            **kwargs
+            mode,  # type: Any
+            table_entity_properties,  # type: dict
+            partition_key=None,  # type: Optional[str]
+            row_key=None,  # type: Optional[str]
+            etag=None,   # type: Optional[object]
+            match_condition=None,  # type: Optional[MatchCondition]
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Update entity in a table.
 
         :param mode: Merge or Replace entity
         :type mode: ~azure.table._models.UpdateMode
-        :param response_hook:
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
         :param match_condition: MatchCondition
@@ -374,15 +369,12 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def query_entities(
             self,
-            headers=None,
-            query_options=None,
-            **kwargs
+            query_options=None,  # type: Optional[QueryOptions]
+            **kwargs  # type: Any
     ):
         # type: (...) -> "models.TableEntityQueryResponse"
         """Queries entities in a table.
 
-        :param headers: Headers for service request
-        :type headers: HttpResponse Headers
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -392,7 +384,7 @@ class TableClient(StorageAccountHostsMixin):
         """
         command = functools.partial(
             self._client.table.query_entities,
-            **dict(kwargs, headers=headers))
+            **kwargs)
         return ItemPaged(
             command, results_per_page=query_options, table=self.table_name,
             page_iterator_class=TableEntityPropertiesPaged
@@ -401,18 +393,14 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def query_entities_with_partition_and_row_key(
             self,
-            partition_key,
-            row_key,
-            headers=None,
-            query_options=None,
-            response_hook=None,  # pylint:disable=W0613
-            **kwargs
+            partition_key,  # type: str
+            row_key,  # type: str
+            query_options=None,  # type: Optional[QueryOptions]
+            **kwargs  # type: Any
     ):
         # type: (...) -> "models.TableEntityQueryResponse"
         """Queries entities in a table.
 
-        :param response_hook:
-        :type response_hook:
         :param headers: Headers for service request
         :type headers: HttpResponse Headers
         :param partition_key: The partition key of the entity.
@@ -432,7 +420,7 @@ class TableClient(StorageAccountHostsMixin):
                                                                                   partition_key=partition_key,
                                                                                   row_key=row_key,
                                                                                   query_options=query_options,
-                                                                                  **dict(kwargs, headers=headers))
+                                                                                  **kwargs)
 
             properties = _convert_to_entity(entity.additional_properties)
 
@@ -443,12 +431,13 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def upsert_entity(  # pylint:disable=R1710
             self,
-            mode,
-            partition_key=None,
-            row_key=None,
-            table_entity_properties=None,
-            query_options=None,
-            **kwargs):
+            mode,  # type: Any
+            table_entity_properties,  # type: dict
+            partition_key=None,  # type: Optional[str]
+            row_key=None,  # type: Optional[str]
+            query_options=None,  # type: Optional[QueryOptions]
+            **kwargs  # type: Any
+    ):
         # type: (...) -> "_models.Entity"
         """Update/Merge or Insert entity into table.
 
