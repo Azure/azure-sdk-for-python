@@ -37,7 +37,7 @@ class TableClient(StorageAccountHostsMixin):
     def __init__(
             self, account_url,  # type: str
             table_name,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Union[str,TokenCredential]
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -45,7 +45,7 @@ class TableClient(StorageAccountHostsMixin):
 
         :param account_url:
             A url to an Azure Storage account.
-        :type credential: str
+        :type account_url: str
         :param table_name: The table name.
         :type table_name: str
         :param credential:
@@ -53,7 +53,7 @@ class TableClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Any
+        :type credential: Union[str,TokenCredential]
         :returns: None
         """
 
@@ -91,7 +91,7 @@ class TableClient(StorageAccountHostsMixin):
     def from_connection_string(
             cls, conn_str,  # type: str
             table_name,  # type: str
-            credential=None,  # type: Any
+            credential=None,  # type: Union[str,TokenCredential]
             **kwargs  # type: Any
     ):
         # type: (...) -> TableClient
@@ -107,7 +107,7 @@ class TableClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Any
+        :type credential: Union[str,TokenCredential]
         :returns: A table client.
         :rtype: ~azure.table.TableClient
         """
@@ -122,11 +122,13 @@ class TableClient(StorageAccountHostsMixin):
         # type: (str, Optional[Any], Any) -> TableClient
         """A client to interact with a specific Table.
 
-        :param str table_url: The full URI to the table, including SAS token if used.
-        :param Any credential:
+        :param table_url: The full URI to the table, including SAS token if used.
+        :type table_url: str
+        :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
             shared access key, or an instance of a TokenCredentials class from azure.identity.
+        :type credential: Union[str,TokenCredential]
         :returns: A table client.
         :rtype: ~azure.table.TableClient
         """
@@ -159,15 +161,14 @@ class TableClient(StorageAccountHostsMixin):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> List
+        # type: (...) -> dict
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
-                :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: list of SignedIdentifier
-                :rtype: List
-                :raises: ~azure.core.exceptions.HttpResponseError
-                """
+        :return: dict of SignedIdentifier
+        :rtype: dict
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         timeout = kwargs.pop('timeout', None)
         try:
             _, identifiers = self._client.table.get_access_policy(
@@ -182,18 +183,17 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def set_table_access_policy(
             self,
-            signed_identifiers,  # type: dict
+            signed_identifiers,  # type: dict[str,AccessPolicy]
             **kwargs):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
 
-                :param signed_identifiers:
-                :type signed_identifiers: {id,AccessPolicy}
-                :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: None
-                :rtype: None
-                :raises: ~azure.core.exceptions.HttpResponseError
-                """
+        :param signed_identifiers:
+        :type signed_identifiers: dict[str,AccessPolicy]
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         if len(signed_identifiers) > 5:
             raise ValueError(
                 'Too many access policies provided. The server does not support setting '
@@ -222,7 +222,6 @@ class TableClient(StorageAccountHostsMixin):
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceProperties
         :rtype: TableServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -258,7 +257,6 @@ class TableClient(StorageAccountHostsMixin):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -291,7 +289,6 @@ class TableClient(StorageAccountHostsMixin):
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Entity mapping str to object
         :rtype: Entity
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -342,7 +339,6 @@ class TableClient(StorageAccountHostsMixin):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -386,7 +382,6 @@ class TableClient(StorageAccountHostsMixin):
 
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ItemPaged
         :rtype: ItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -416,7 +411,6 @@ class TableClient(StorageAccountHostsMixin):
         :type row_key: str
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Entity mapping str to object
         :rtype: Entity
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -458,7 +452,6 @@ class TableClient(StorageAccountHostsMixin):
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Entity mapping str to object or None
         :rtype: Entity or None
         :raises: ~azure.core.exceptions.HttpResponseError

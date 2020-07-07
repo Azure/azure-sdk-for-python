@@ -31,7 +31,7 @@ from azure.table._table_client import TableClient
 class TableServiceClient(StorageAccountHostsMixin):
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Union[str,TokenCredential]
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -45,7 +45,7 @@ class TableServiceClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Any
+        :type credential: Union[str,TokenCredential]
         :returns: None
         """
 
@@ -75,7 +75,7 @@ class TableServiceClient(StorageAccountHostsMixin):
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            credential=None,  # type: Optional[Any]
+            credential=None,  # type: Union[str,TokenCredential]
             **kwargs  # type: Any
     ):  # type: (...) -> TableServiceClient
         """Create TableServiceClient from a Connection String.
@@ -88,7 +88,7 @@ class TableServiceClient(StorageAccountHostsMixin):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Any
+        :type credential: Union[str,TokenCredential]
         :returns: A Table service client.
         :rtype: ~azure.storage.table.TableServiceClient
         """
@@ -104,11 +104,10 @@ class TableServiceClient(StorageAccountHostsMixin):
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
-                :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: Dictionary of Service Stats
-                :rtype: dict
-                :raises: ~azure.core.exceptions.HttpResponseError
-                """
+        :return: Dictionary of Service Stats
+        :rtype: dict
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         try:
             timeout = kwargs.pop('timeout', None)
             stats = self._client.service.get_statistics(  # type: ignore
@@ -123,7 +122,6 @@ class TableServiceClient(StorageAccountHostsMixin):
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Dictionary of service properties
         :rtype: dict
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -156,7 +154,6 @@ class TableServiceClient(StorageAccountHostsMixin):
        :type hour_metrics: Any
        :param analytics_logging: Properties for analytics
        :type analytics_logging: Any
-       :keyword callable cls: A custom type or function that will be passed the direct response
        :return: None
        :rtype: None
        :raises: ~azure.core.exceptions.HttpResponseError
@@ -183,7 +180,6 @@ class TableServiceClient(StorageAccountHostsMixin):
 
         :param table_name: The Table name.
         :type table_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableClient, or the result of cls(response)
         :rtype: ~azure.table.TableClient
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -207,7 +203,6 @@ class TableServiceClient(StorageAccountHostsMixin):
         :type request_id_parameter: str
         :param table_name: The Table name.
         :type table_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None
         :rtype: None
         """
@@ -225,7 +220,6 @@ class TableServiceClient(StorageAccountHostsMixin):
 
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ItemPaged
         :rtype: ItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError
