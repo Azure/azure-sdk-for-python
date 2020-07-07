@@ -158,12 +158,12 @@ class TableClient(StorageAccountHostsMixin):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> dict[str,SignedIdentifier]
+        # type: (...) -> dict[str,AccessPolicy]
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
         :return: Dictionary of SignedIdentifiers
-        :rtype: dict[str, SignedIdentifier]
+        :rtype: dict[str,AccessPolicy]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timeout = kwargs.pop('timeout', None)

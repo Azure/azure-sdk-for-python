@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.table._entity import Entity
-from azure.table._generated.models import QueryOptions, TableServiceStats
+from azure.table._generated.models import QueryOptions, TableServiceStats, SignedIdentifier
 from azure.table._shared.table_shared_access_signature import generate_table_sas, \
     generate_account_shared_access_signature
 from azure.table._table_client import TableClient
