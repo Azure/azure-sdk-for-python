@@ -15,6 +15,7 @@ import uuid
 import types
 from typing import Any, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
+
 try:
     from urllib.parse import (
         urlparse,
@@ -23,8 +24,8 @@ try:
         urlencode,
     )
 except ImportError:
-    from urllib import urlencode # type: ignore
-    from urlparse import ( # type: ignore
+    from urllib import urlencode  # type: ignore
+    from urlparse import (  # type: ignore
         urlparse,
         parse_qsl,
         urlunparse,
@@ -42,13 +43,12 @@ from azure.core.exceptions import AzureError, ServiceRequestError, ServiceRespon
 from .models import LocationMode
 
 try:
-    _unicode_type = unicode # type: ignore
+    _unicode_type = unicode  # type: ignore
 except NameError:
     _unicode_type = str
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -105,6 +105,7 @@ def urljoin(base_url, stub_url):
     parsed = urlparse(base_url)
     parsed = parsed._replace(path=parsed.path + '/' + stub_url)
     return parsed.geturl()
+
 
 class StorageHeadersPolicy(HeadersPolicy):
     request_id_header_name = 'x-ms-client-request-id'
@@ -268,13 +269,13 @@ class StorageResponseHook(HTTPPolicy):
     def send(self, request):
         # type: (PipelineRequest) -> PipelineResponse
         data_stream_total = request.context.get('data_stream_total') or \
-            request.context.options.pop('data_stream_total', None)
+                            request.context.options.pop('data_stream_total', None)
         download_stream_current = request.context.get('download_stream_current') or \
-            request.context.options.pop('download_stream_current', None)
+                                  request.context.options.pop('download_stream_current', None)
         upload_stream_current = request.context.get('upload_stream_current') or \
-            request.context.options.pop('upload_stream_current', None)
+                                request.context.options.pop('upload_stream_current', None)
         response_callback = request.context.get('response_callback') or \
-            request.context.options.pop('raw_response_hook', self._response_callback)
+                            request.context.options.pop('raw_response_hook', self._response_callback)
 
         response = self.next.send(request)
         will_retry = is_retry(response, request.context.options.get('mode'))
@@ -343,7 +344,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
     def on_response(self, request, response):
         if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
             computed_md5 = request.context.get('validate_content_md5') or \
-                encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
+                           encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
             if response.http_response.headers['content-md5'] != computed_md5:
                 raise AzureError(
                     'MD5 mismatch. Expected value is \'{0}\', computed value is \'{1}\'.'.format(
@@ -417,6 +418,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """ Formula for computing the current backoff.
         Should be calculated by child class.
         :param Any settings:
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :rtype: float
         """
         return 0
@@ -433,15 +435,18 @@ class StorageRetryPolicy(HTTPPolicy):
             return
         transport.sleep(backoff)
 
-    def increment(self, settings, request, response=None, error=None):
+    def increment(self, settings, request, response=None, error=None, **kwargs):  # pylint:disable=W0613
         # type: (...)->None
         """Increment the retry counters.
 
-        :param response: A pipeline response object.
-        :param error: An error encountered during the request, or
+        :param Any request:
+        :param dict settings:
+        :param Any response: A pipeline response object.
+        :param Any error: An error encountered during the request, or
             None if the response was received successfully.
-
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Whether the retry attempts are exhausted.
+        :rtype: None
         """
         settings['total'] -= 1
 
@@ -484,6 +489,10 @@ class StorageRetryPolicy(HTTPPolicy):
         return False
 
     def send(self, request):
+        """
+        :param Any request:
+        :return: None
+        """
         retries_remaining = True
         response = None
         retry_settings = self.configure_retries(request)
@@ -561,6 +570,7 @@ class ExponentialRetry(StorageRetryPolicy):
         Calculates how long to sleep before retrying.
         :param **kwargs:
         :param dict settings:
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -588,7 +598,7 @@ class LinearRetry(StorageRetryPolicy):
             Whether the request should be retried to secondary, if able. This should
             only be enabled of RA-GRS accounts are used and potentially stale data
             can be handled.
-        :param int rety_total: total number of retries
+        :param int retry_total: total number of retries
         :param int random_jitter_range:
             A number in seconds which indicates a range to jitter/randomize for the back-off interval.
             For example, a random_jitter_range of 3 results in the back-off interval x to vary between x+3 and x-3.
@@ -602,7 +612,8 @@ class LinearRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param **kwargs:
+        :param dict settings:
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
