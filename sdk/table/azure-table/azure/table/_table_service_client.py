@@ -90,7 +90,7 @@ class TableServiceClient(StorageAccountHostsMixin):
             key, or an instance of a TokenCredentials class from azure.identity.
         :type credential: Union[str,TokenCredential]
         :returns: A Table service client.
-        :rtype: ~azure.storage.table.TableServiceClient
+        :rtype: ~azure.table.TableServiceClient
         """
         account_url, secondary, credential = parse_connection_str(
             conn_str, credential, 'table')
