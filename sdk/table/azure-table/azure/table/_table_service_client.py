@@ -146,14 +146,14 @@ class TableServiceClient(StorageAccountHostsMixin):
         """Sets properties for an account's Table service endpoint,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-       :param cors: Cross-origin resource sharing rules
-       :type cors: Any
-       :param minute_metrics: Minute level metrics
-       :type minute_metrics: Any
-       :param hour_metrics: Hour level metrics
-       :type hour_metrics: Any
        :param analytics_logging: Properties for analytics
        :type analytics_logging: Any
+       :param hour_metrics: Hour level metrics
+       :type hour_metrics: Any
+       :param minute_metrics: Minute level metrics
+       :type minute_metrics: Any
+       :param cors: Cross-origin resource sharing rules
+       :type cors: Any
        :return: None
        :rtype: None
        :raises: ~azure.core.exceptions.HttpResponseError
@@ -199,10 +199,10 @@ class TableServiceClient(StorageAccountHostsMixin):
         # type: (...) -> None
         """Creates a new table under the given account.
 
-        :param request_id_parameter: Request Id parameter
-        :type request_id_parameter: str
         :param table_name: The Table name.
         :type table_name: str
+        :param request_id_parameter: Request Id parameter
+        :type request_id_parameter: str
         :return: None
         :rtype: None
         """

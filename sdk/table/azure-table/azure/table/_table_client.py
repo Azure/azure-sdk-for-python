@@ -249,14 +249,14 @@ class TableClient(StorageAccountHostsMixin):
         # type: (...) -> None
         """Deletes the specified entity in a table.
 
-        :param match_condition: MatchCondition
-        :type match_condition: ~azure.core.MatchConditions
-        :param etag: Etag of the entity
-        :type etag: str
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
+        :param etag: Etag of the entity
+        :type etag: str
+        :param match_condition: MatchCondition
+        :type match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -331,14 +331,14 @@ class TableClient(StorageAccountHostsMixin):
         :type mode: ~azure.table._models.UpdateMode
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
-        :param match_condition: MatchCondition
-        :type match_condition: ~azure.core.MatchConditions
-        :param etag: Etag of the entity
-        :type etag: str
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
+        :param etag: Etag of the entity
+        :type etag: str
+        :param match_condition: MatchCondition
+        :type match_condition: ~azure.core.MatchConditions
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -444,12 +444,12 @@ class TableClient(StorageAccountHostsMixin):
 
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.table._models.UpdateMode
+        :param table_entity_properties: The properties for the table entity.
+        :type table_entity_properties: dict[str, object]
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
         :return: Entity mapping str to object or None
