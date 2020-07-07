@@ -7,6 +7,7 @@
 import os
 from datetime import datetime, timedelta
 from enum import Enum
+from time import sleep
 
 import pytest
 from devtools_testutils import StorageAccountPreparer
@@ -287,6 +288,8 @@ class StorageBlobTagsTest(StorageTestCase):
         self._create_block_blob(tags=tags, blob_name="blob3", container_name=container_name2)
         self._create_block_blob(tags=tags, blob_name="blob4", container_name=container_name3)
 
+        if self.is_live:
+            sleep(10)
         where = "tag1='firsttag'"
         blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2).by_page()
         first_page = next(blob_list)
@@ -316,6 +319,9 @@ class StorageBlobTagsTest(StorageTestCase):
         blob_client.set_blob_tags(tags=tags)
         tags_on_blob = blob_client.get_blob_tags()
         self.assertEqual(len(tags_on_blob), len(tags))
+
+        if self.is_live:
+            sleep(10)
 
         # To filter in a specific container use:
         # where = "@container='{}' and tag1='1000' and tag2 = 'secondtag'".format(container_name1)
@@ -354,6 +360,9 @@ class StorageBlobTagsTest(StorageTestCase):
         blob_client.set_blob_tags(tags=tags)
         tags_on_blob = blob_client.get_blob_tags()
         self.assertEqual(len(tags_on_blob), len(tags))
+
+        if self.is_live:
+            sleep(10)
 
         # To filter in a specific container use:
         # where = "@container='{}' and tag1='1000' and tag2 = 'secondtag'".format(container_name1)

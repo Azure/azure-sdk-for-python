@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
+from time import sleep
 
 import pytest
 from devtools_testutils import StorageAccountPreparer
@@ -287,6 +288,9 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         await self._create_block_blob(tags=tags, blob_name="blob2", container_name=container_name1)
         await self._create_block_blob(tags=tags, blob_name="blob3", container_name=container_name2)
         await self._create_block_blob(tags=tags, blob_name="blob4", container_name=container_name3)
+
+        if self.is_live:
+            sleep(10)
 
         where = "tag1='firsttag'"
         blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2).by_page()
