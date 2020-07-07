@@ -43,15 +43,17 @@ class TableClient(StorageAccountHostsMixin):
         # type: (...) -> None
         """Create TableClient from a Credential.
 
-        :param str account_url:
+        :param account_url:
             A url to an Azure Storage account.
+        :type credential: str
         :param table_name: The table name.
         :type table_name: str
-        :param Any credential:
+        :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
+        :type credential: Any
         :returns: None
         """
 
@@ -95,26 +97,19 @@ class TableClient(StorageAccountHostsMixin):
         # type: (...) -> TableClient
         """Create TableClient from a Connection String.
 
-        :param str conn_str:
+        :param conn_str:
             A connection string to an Azure Storage account.
+        :type conn_str: str
         :param table_name: The table name.
         :type table_name: str
-        :param Any credential:
+        :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
+        :type credential: Any
         :returns: A table client.
         :rtype: ~azure.table.TableClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/queue_samples_message.py
-                :start-after: [START create_queue_client_from_connection_string]
-                :end-before: [END create_queue_client_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Create the queue client from connection string.
         """
         account_url, secondary, credential = parse_connection_str(
             conn_str, credential, 'queue')
@@ -195,7 +190,7 @@ class TableClient(StorageAccountHostsMixin):
                 :param signed_identifiers:
                 :type signed_identifiers: {id,AccessPolicy}
                 :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: None, or the result of cls(response)
+                :return: None
                 :rtype: None
                 :raises: ~azure.core.exceptions.HttpResponseError
                 """
@@ -348,7 +343,7 @@ class TableClient(StorageAccountHostsMixin):
         :param row_key: The row key of the entity.
         :type row_key: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -415,8 +410,6 @@ class TableClient(StorageAccountHostsMixin):
         # type: (...) -> Entity
         """Queries entities in a table.
 
-        :param headers: Headers for service request
-        :type headers: HttpResponse Headers
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
@@ -424,7 +417,7 @@ class TableClient(StorageAccountHostsMixin):
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Entity dictionary
+        :return: Entity mapping str to object
         :rtype: Entity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -455,7 +448,6 @@ class TableClient(StorageAccountHostsMixin):
         # type: (...) -> Entity or None
         """Update/Merge or Insert entity into table.
 
-
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.table._models.UpdateMode
         :param partition_key: The partition key of the entity.
@@ -467,7 +459,7 @@ class TableClient(StorageAccountHostsMixin):
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Entity dictionary or None
+        :return: Entity mapping str to object or None
         :rtype: Entity or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """

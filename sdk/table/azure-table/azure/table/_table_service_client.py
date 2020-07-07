@@ -37,13 +37,15 @@ class TableServiceClient(StorageAccountHostsMixin):
         # type: (...) -> None
         """Create TableServiceClient from a Credential.
 
-        :param str account_url:
+        :param account_url:
             A url to an Azure Storage account.
-        :param Any credential:
+        :type account_url: str
+        :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
+        :type credential: Any
         :returns: None
         """
 
@@ -78,24 +80,17 @@ class TableServiceClient(StorageAccountHostsMixin):
     ):  # type: (...) -> TableServiceClient
         """Create TableServiceClient from a Connection String.
 
-        :param str conn_str:
+        :param conn_str:
             A connection string to an Azure Storage account.
-        :param Any credential:
+        :type conn_str: str
+        :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
+        :type credential: Any
         :returns: A Table service client.
         :rtype: ~azure.storage.table.TableServiceClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/queue_samples_authentication.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Creating the TableServiceClient with a connection string.
         """
         account_url, secondary, credential = parse_connection_str(
             conn_str, credential, 'table')
@@ -128,11 +123,11 @@ class TableServiceClient(StorageAccountHostsMixin):
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-                :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: Dictionary of service properties
-                :rtype: dict
-                :raises: ~azure.core.exceptions.HttpResponseError
-                """
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Dictionary of service properties
+        :rtype: dict
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         timeout = kwargs.pop('timeout', None)
         try:
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
@@ -142,20 +137,25 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_service_properties(
-            self, analytics_logging=None,
-            hour_metrics=None,
-            minute_metrics=None,
-            cors=None,
-            **kwargs
+            self,
+            analytics_logging=None,  # type: Optional[Any]
+            hour_metrics=None,  # type: Optional[Any]
+            minute_metrics=None,  # type: Optional[Any]
+            cors=None,  # type: Optional[Any]
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Sets properties for an account's Table service endpoint,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-       :param Any cors:
-       :param Any minute_metrics:
-       :param Any hour_metrics:
-       :param Any analytics_logging:
+       :param cors: Cross-origin resource sharing rules
+       :type cors: Any
+       :param minute_metrics: Minute level metrics
+       :type minute_metrics: Any
+       :param hour_metrics: Hour level metrics
+       :type hour_metrics: Any
+       :param analytics_logging: Properties for analytics
+       :type analytics_logging: Any
        :keyword callable cls: A custom type or function that will be passed the direct response
        :return: None
        :rtype: None
@@ -181,12 +181,13 @@ class TableServiceClient(StorageAccountHostsMixin):
         # type: (...) -> TableClient
         """Creates a new table under the given account.
 
-                :param table_name: The Table name.
-                :type table_name: ~azure.table._models.Table
-                :return: TableClient, or the result of cls(response)
-                :rtype: ~azure.table.TableClient
-                :raises: ~azure.core.exceptions.HttpResponseError
-                """
+        :param table_name: The Table name.
+        :type table_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TableClient, or the result of cls(response)
+        :rtype: ~azure.table.TableClient
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         table_properties = TableProperties(table_name=table_name, **kwargs)
         self._client.table.create(table_properties)
         table = self.get_table_client(table=table_name)
@@ -197,19 +198,19 @@ class TableServiceClient(StorageAccountHostsMixin):
             self,
             table_name,  # type: str
             request_id_parameter=None,  # type: Optional[str]
-            **kwargs
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Creates a new table under the given account.
 
-                        :param request_id_parameter: Request Id parameter
-                        :type request_id_parameter: str
-                        :param table_name: The Table name.
-                        :type table_name: str
-                        :keyword callable cls: A custom type or function that will be passed the direct response
-                        :return: None
-                        :rtype: None
-                        """
+        :param request_id_parameter: Request Id parameter
+        :type request_id_parameter: str
+        :param table_name: The Table name.
+        :type table_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None
+        :rtype: None
+        """
         response = self._client.table.delete(table=table_name, request_id_parameter=request_id_parameter, **kwargs)
         return response
 
@@ -217,7 +218,7 @@ class TableServiceClient(StorageAccountHostsMixin):
     def query_tables(
             self,
             query_options=None,  # type: Optional[QueryOptions]
-            **kwargs
+            **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged
         """Queries tables under the given account.
@@ -240,16 +241,16 @@ class TableServiceClient(StorageAccountHostsMixin):
         # type: (Union[TableProperties, str], Optional[Any]) -> TableClient
         """Get a client to interact with the specified table.
 
-               The table need not already exist.
+       The table need not already exist.
 
-               :param table:
-                   The queue. This can either be the name of the queue,
-                   or an instance of QueueProperties.
-               :type table: str or ~azure.storage.table.TableProperties
-               :returns: A :class:`~azure.table.TableClient` object.
-               :rtype: ~azure.table.TableClient
+       :param table:
+           The queue. This can either be the name of the queue,
+           or an instance of QueueProperties.
+       :type table: str
+       :returns: A :class:`~azure.table.TableClient` object.
+       :rtype: ~azure.table.TableClient
 
-               """
+       """
         try:
             table_name = table.name
         except AttributeError:
