@@ -2630,6 +2630,33 @@ class CRUDTests(unittest.TestCase):
         read_permission = created_user.get_permission(created_permission.properties)
         self.assertEqual(read_permission.id, created_permission.id)
 
+    def test_create_container_with_analytical_store_off(self):
+        created_db = self.databaseForTest
+        collection_id = 'test_create_container_with_analytical_store_off_' + str(uuid.uuid4())
+        collection_indexing_policy = {'indexingMode': 'consistent'}
+        created_recorder = RecordDiagnostics()
+        created_collection = created_db.create_container(id=collection_id,
+                                                         indexing_policy=collection_indexing_policy,
+                                                         partition_key=PartitionKey(path="/pk", kind="Hash"), 
+                                                         response_hook=created_recorder)
+        properties = created_collection.read()
+        ttl_key = "analyticalStorageTtl"
+        self.assertTrue(ttl_key not in properties or properties[ttl_key] == None)
+
+    def test_create_container_with_analytical_store_on(self):
+        created_db = self.databaseForTest
+        collection_id = 'test_create_container_with_analytical_store_on_' + str(uuid.uuid4())
+        collection_indexing_policy = {'indexingMode': 'consistent'}
+        created_recorder = RecordDiagnostics()
+        created_collection = created_db.create_container(id=collection_id,
+                                                         analytical_storage_ttl=-1,
+                                                         indexing_policy=collection_indexing_policy,
+                                                         partition_key=PartitionKey(path="/pk", kind="Hash"), 
+                                                         response_hook=created_recorder)
+        properties = created_collection.read()
+        ttl_key = "analyticalStorageTtl"
+        self.assertTrue(ttl_key in properties and properties[ttl_key] == -1)
+
     def _MockExecuteFunction(self, function, *args, **kwargs):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
                                     if HttpHeaders.PartitionKey in args[4].headers else '')

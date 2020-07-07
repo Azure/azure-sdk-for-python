@@ -154,6 +154,7 @@ class DatabaseProxy(object):
         offer_throughput=None,  # type: Optional[int]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        analytical_storage_ttl=None, # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
@@ -169,6 +170,8 @@ class DatabaseProxy(object):
         :param offer_throughput: The provisioned throughput for this offer.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :param analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of None leaves 
+            analytical storage off and a value of -1 turns analytical storage on with no TTL.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -208,6 +211,8 @@ class DatabaseProxy(object):
             definition["uniqueKeyPolicy"] = unique_key_policy
         if conflict_resolution_policy is not None:
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
+        if analytical_storage_ttl is not None:
+            definition["analyticalStorageTtl"] = analytical_storage_ttl
 
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -236,6 +241,7 @@ class DatabaseProxy(object):
         offer_throughput=None,  # type: Optional[int]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        analytical_storage_ttl=None, # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
@@ -253,6 +259,8 @@ class DatabaseProxy(object):
         :param offer_throughput: The provisioned throughput for this offer.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :param analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of None leaves 
+            analytical storage off and a value of -1 turns analytical storage on with no TTL.  
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -280,7 +288,8 @@ class DatabaseProxy(object):
                 populate_query_metrics=populate_query_metrics,
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
-                conflict_resolution_policy=conflict_resolution_policy
+                conflict_resolution_policy=conflict_resolution_policy,
+                analytical_storage_ttl=analytical_storage_ttl,
             )
 
     @distributed_trace
