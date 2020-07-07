@@ -305,11 +305,11 @@ class HttpRequest(object):
             if isinstance(v, list):
                 for w in v:
                     if w is None:
-                        raise ValueError()
+                        raise ValueError("Query parameter {} cannot be None".format(k))
                     query_params.append("{}={}".format(k, w))
             else:
                 if v is None:
-                    raise ValueError()
+                    raise ValueError("Query parameter {} cannot be None".format(k))
                 query_params.append("{}={}".format(k, v))
         query = "?" + "&".join(query_params)
         self.url = self.url + query
