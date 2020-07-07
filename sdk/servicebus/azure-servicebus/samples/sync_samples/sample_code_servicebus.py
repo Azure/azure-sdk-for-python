@@ -252,7 +252,7 @@ def example_send_and_receive_sync():
         # [END receive_complex_message]
 
         # [START abandon_message]
-        messages = servicebus_receiver.receive(max_wait_time=5)
+        messages = servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             message.abandon()
         # [END abandon_message]
