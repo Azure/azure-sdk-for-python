@@ -287,7 +287,7 @@ class TableClient(StorageAccountHostsMixin):
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.table.QueryOptions
         :return: Entity mapping str to azure.table.EntityProperty
         :rtype: ~azure.table.Entity
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -377,7 +377,7 @@ class TableClient(StorageAccountHostsMixin):
         """Queries entities in a table.
 
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.table.QueryOptions
         :return: Query of table entities
         :rtype: ItemPaged[Entity]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -406,7 +406,7 @@ class TableClient(StorageAccountHostsMixin):
         :param row_key: The row key of the entity.
         :type row_key: str
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.table.QueryOptions
         :return: Entity mapping str to azure.table.EntityProperty
         :rtype: ~azure.table.Entity
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -445,7 +445,7 @@ class TableClient(StorageAccountHostsMixin):
         :param row_key: The row key of the entity.
         :type row_key: str
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.table.QueryOptions
         :return: Entity mapping str to azure.table.EntityProperty or None
         :rtype: ~azure.table.Entity or None
         :raises: ~azure.core.exceptions.HttpResponseError

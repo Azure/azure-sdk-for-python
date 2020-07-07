@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.table._entity import Entity
+from azure.table._generated.models import QueryOptions, TableServiceStats
 from azure.table._shared.table_shared_access_signature import generate_table_sas, \
     generate_account_shared_access_signature
 from azure.table._table_client import TableClient
@@ -34,6 +35,7 @@ __all__ = [
     'ResourceTypes',
     'AccountSasPermissions',
     'StorageErrorCode',
+    'TableServiceStats',
     'TableSasPermissions',
     'AccessPolicy',
     'TableAnalyticsLogging',
@@ -42,6 +44,7 @@ __all__ = [
     'CorsRule',
     'UpdateMode',
     'Entity',
+    'QueryOptions',
     'RetentionPolicy',
     'generate_table_sas'
 ]

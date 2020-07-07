@@ -100,12 +100,12 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_stats(self, **kwargs):
-        # type: (...) -> dict[str,ServiceStats]
+        # type: (...) -> dict[str,TableServiceStats]
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
         :return: Dictionary of Service Stats
-        :rtype: dict[str, ~azure.storage.common.ServiceStats]
+        :rtype: dict[str, ~azure.table.TableServiceStats]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
@@ -218,7 +218,7 @@ class TableServiceClient(StorageAccountHostsMixin):
         """Queries tables under the given account.
 
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.table.QueryOptions
         :return: A query of tables
         :rtype: ItemPaged[AzureTable]
         :raises: ~azure.core.exceptions.HttpResponseError
