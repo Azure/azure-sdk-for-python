@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from azure.table._entity import Entity
 from azure.table._shared.table_shared_access_signature import generate_table_sas, \
     generate_account_shared_access_signature
 from azure.table._table_client import TableClient
@@ -40,6 +41,7 @@ __all__ = [
     'generate_account_shared_access_signature',
     'CorsRule',
     'UpdateMode',
+    'Entity',
     'RetentionPolicy',
     'generate_table_sas'
 ]
