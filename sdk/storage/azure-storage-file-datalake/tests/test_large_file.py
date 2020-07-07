@@ -80,8 +80,11 @@ class LargeFileTest(StorageTestCase):
         self.assertEqual(self.payload_dropping_policy.append_counter, 1)
         self.assertEqual(self.payload_dropping_policy.append_sizes[0], LARGEST_BLOCK_SIZE)
 
-    @pytest.mark.live_test_only
+    @record
     def test_upload_large_stream_without_network(self):
+        if not TestMode.is_playback(self.test_mode):
+            return
+
         directory_name = self.get_resource_name(TEST_DIRECTORY_PREFIX)
 
         # Create a directory to put the file under that
