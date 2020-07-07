@@ -1,7 +1,7 @@
 ## 4.0.1 (Unreleased)
 
 - Fixed error raised when a non string ID is used in an item. It now raises TypeError rather than AttributeError. Issue 11793 - thank you @Rabbit994.
-
+- Added the ability to set the analytical storage TTL we creating a new container.
 
 ## 4.0.0 (2020-05-20)
 
