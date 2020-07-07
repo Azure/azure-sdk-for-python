@@ -383,7 +383,14 @@ class StorageRetryPolicy(HTTPPolicy):
             updated = url._replace(netloc=settings['hosts'].get(settings['mode']))
             request.url = updated.geturl()
 
-    def configure_retries(self, request):  # pylint: disable=no-self-use
+    def configure_retries(self, request, **kwargs):  # pylint: disable=no-self-use
+        # type: (...)-> dict
+        """
+        :param Any request:
+        :param kwargs:
+        :return:
+        :rtype:dict
+        """
         body_position = None
         if hasattr(request.http_request.body, 'read'):
             try:
@@ -406,21 +413,28 @@ class StorageRetryPolicy(HTTPPolicy):
             'history': []
         }
 
-    def get_backoff_time(self, settings):  # pylint: disable=unused-argument,no-self-use
+    def get_backoff_time(self, settings, **kwargs):  # pylint: disable=unused-argument,no-self-use
         """ Formula for computing the current backoff.
         Should be calculated by child class.
-
+        :param Any settings:
         :rtype: float
         """
         return 0
 
-    def sleep(self, settings, transport):
+    def sleep(self, settings, transport, **kwargs):
+        # type: (...)->None
+        """
+        :param Any settings:
+        :param Any transport:
+        :return:None
+        """
         backoff = self.get_backoff_time(settings)
         if not backoff or backoff < 0:
             return
         transport.sleep(backoff)
 
     def increment(self, settings, request, response=None, error=None):
+        # type: (...)->None
         """Increment the retry counters.
 
         :param response: A pipeline response object.
@@ -513,7 +527,7 @@ class ExponentialRetry(StorageRetryPolicy):
 
     def __init__(self, initial_backoff=15, increment_base=3, retry_total=3,
                  retry_to_secondary=False, random_jitter_range=3, **kwargs):
-        '''
+        """
         Constructs an Exponential retry object. The initial_backoff is used for
         the first retry. Subsequent retries are retried after initial_backoff +
         increment_power^retry_count seconds. For example, by default the first retry
@@ -527,6 +541,7 @@ class ExponentialRetry(StorageRetryPolicy):
             first retry.
         :param int max_attempts:
             The maximum number of retry attempts.
+        :param int retry_total: total number of retries
         :param bool retry_to_secondary:
             Whether the request should be retried to secondary, if able. This should
             only be enabled of RA-GRS accounts are used and potentially stale data
@@ -534,7 +549,7 @@ class ExponentialRetry(StorageRetryPolicy):
         :param int random_jitter_range:
             A number in seconds which indicates a range to jitter/randomize for the back-off interval.
             For example, a random_jitter_range of 3 results in the back-off interval x to vary between x+3 and x-3.
-        '''
+        """
         self.initial_backoff = initial_backoff
         self.increment_base = increment_base
         self.random_jitter_range = random_jitter_range
@@ -544,7 +559,7 @@ class ExponentialRetry(StorageRetryPolicy):
     def get_backoff_time(self, settings):
         """
         Calculates how long to sleep before retrying.
-
+        :param dict settings:
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -572,6 +587,7 @@ class LinearRetry(StorageRetryPolicy):
             Whether the request should be retried to secondary, if able. This should
             only be enabled of RA-GRS accounts are used and potentially stale data
             can be handled.
+        :param int rety_total: total number of retries
         :param int random_jitter_range:
             A number in seconds which indicates a range to jitter/randomize for the back-off interval.
             For example, a random_jitter_range of 3 results in the back-off interval x to vary between x+3 and x-3.
