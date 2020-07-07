@@ -30,6 +30,56 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: identity
+    TestMatrix:
+      # Default matrix
+      Linux_Python27:
+        OSVmImage: 'ubuntu-18.04'
+        PythonVersion: '2.7'
+        CoverageArg: ''
+        RunForPR: true
+        InjectedPackages: ''
+      Linux_Python35:
+        OSVmImage: 'ubuntu-18.04'
+        PythonVersion: '3.5'
+        CoverageArg: ''
+        RunForPR: false
+        InjectedPackages: ''
+      Linux_Python38:
+        OSVmImage: 'ubuntu-18.04'
+        PythonVersion: '3.8'
+        CoverageArg: ''
+        RunForPR: true
+        InjectedPackages: ''
+      Windows_Python35:
+        OSVmImage: 'windows-2019'
+        PythonVersion: '3.5'
+        CoverageArg: ''
+        RunForPR: true
+        InjectedPackages: ''
+      MacOS_Python27:
+        OSVmImage: 'macOS-10.15'
+        PythonVersion: '2.7'
+        CoverageArg: ''
+        RunForPR: false
+        InjectedPackages: ''
+      Linux_pypy3:
+        OSVmImage: 'ubuntu-18.04'
+        PythonVersion: 'pypy3'
+        CoverageArg: '--disablecov'
+        RunForPR: false
+        InjectedPackages: ''
+
+      ${{ if eq(variables['Build.Reason'],'Schedule') }}:
+        # If the build is a nightly build also inject msal dev packages
+        Linux_Python35_msal:
+          OSVmImage: 'ubuntu-18.04'
+          PythonVersion: '3.5'
+          CoverageArg: ''
+          RunForPR: false
+          InjectedPackages: 'git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev'
+
+    # Use injected packages from the matrix
+    InjectedPackages: $(InjectedPackages)
     Artifacts:
     - name: azure_identity
       safeName: azureidentity
