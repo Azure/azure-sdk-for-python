@@ -9,22 +9,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.3
         azure-mgmt-compute/13.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2019-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2020-06-01
   response:
     body:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"limit\": 2500,\r\n      \"unit\":
         \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\": {\r\n        \"value\":
         \"availabilitySets\",\r\n        \"localizedValue\": \"Availability Sets\"\r\n
         \     }\r\n    },\r\n    {\r\n      \"limit\": 100,\r\n      \"unit\": \"Count\",\r\n
-        \     \"currentValue\": 16,\r\n      \"name\": {\r\n        \"value\": \"cores\",\r\n
+        \     \"currentValue\": 17,\r\n      \"name\": {\r\n        \"value\": \"cores\",\r\n
         \       \"localizedValue\": \"Total Regional vCPUs\"\r\n      }\r\n    },\r\n
         \   {\r\n      \"limit\": 25000,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\":
-        1,\r\n      \"name\": {\r\n        \"value\": \"virtualMachines\",\r\n        \"localizedValue\":
+        2,\r\n      \"name\": {\r\n        \"value\": \"virtualMachines\",\r\n        \"localizedValue\":
         \"Virtual Machines\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\": 2500,\r\n
         \     \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"virtualMachineScaleSets\",\r\n        \"localizedValue\":
@@ -38,13 +38,13 @@ interactions:
         100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 16,\r\n      \"name\":
         {\r\n        \"value\": \"standardDSv2Family\",\r\n        \"localizedValue\":
         \"Standard DSv2 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 1,\r\n      \"name\":
+        {\r\n        \"value\": \"standardA0_A7Family\",\r\n        \"localizedValue\":
+        \"Standard A0-A7 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
         100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"basicAFamily\",\r\n        \"localizedValue\": \"Basic
         A Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\": 100,\r\n
         \     \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
-        {\r\n        \"value\": \"standardA0_A7Family\",\r\n        \"localizedValue\":
-        \"Standard A0-A7 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
-        100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"standardA8_A11Family\",\r\n        \"localizedValue\":
         \"Standard A8-A11 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
         100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
@@ -104,6 +104,30 @@ interactions:
         100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"standardESv3Family\",\r\n        \"localizedValue\":
         \"Standard ESv3 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardDv4Family\",\r\n        \"localizedValue\":
+        \"Standard Dv4 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardDDv4Family\",\r\n        \"localizedValue\":
+        \"Standard DDv4 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardDSv4Family\",\r\n        \"localizedValue\":
+        \"Standard DSv4 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardDDSv4Family\",\r\n        \"localizedValue\":
+        \"Standard DDSv4 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardEv4Family\",\r\n        \"localizedValue\":
+        \"Standard Ev4 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardEDv4Family\",\r\n        \"localizedValue\":
+        \"Standard EDv4 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardESv4Family\",\r\n        \"localizedValue\":
+        \"Standard ESv4 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
+        100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
+        {\r\n        \"value\": \"standardEDSv4Family\",\r\n        \"localizedValue\":
+        \"Standard EDSv4 Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
         100,\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"name\":
         {\r\n        \"value\": \"standardBSFamily\",\r\n        \"localizedValue\":
         \"Standard BS Family vCPUs\"\r\n      }\r\n    },\r\n    {\r\n      \"limit\":
@@ -225,11 +249,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '14011'
+      - '15675'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 06:39:37 GMT
+      - Mon, 06 Jul 2020 07:08:45 GMT
       expires:
       - '-1'
       pragma:
