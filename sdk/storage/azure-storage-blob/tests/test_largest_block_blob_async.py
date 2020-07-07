@@ -307,7 +307,6 @@ class StorageLargestBlockBlobTestAsync(AsyncStorageTestCase):
 
 class LargeStream(BytesIO):
     def __init__(self, length, initial_buffer_length=1024 * 1024):
-        super().__init__()
         self._base_data = urandom(initial_buffer_length)
         self._base_data_length = initial_buffer_length
         self._position = 0
@@ -338,7 +337,6 @@ class LargeStream(BytesIO):
 
 class PayloadDroppingPolicy(SansIOHTTPPolicy):
     def __init__(self):
-        super().__init__()
         self.put_block_counter = 0
         self.put_block_sizes = []
         self.put_blob_counter = 0

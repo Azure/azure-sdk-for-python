@@ -174,6 +174,7 @@ class StorageBlockBlobAsyncTest(AsyncStorageTestCase):
         content = await (await dest_blob.download_blob()).readall()
         self.assertEqual(self.source_blob_data, content)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_sync_copy_blob_returns_vid(self, resource_group, location, storage_account, storage_account_key):

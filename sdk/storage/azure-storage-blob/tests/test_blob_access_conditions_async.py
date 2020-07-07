@@ -1621,6 +1621,7 @@ class StorageBlobAccessConditionsAsyncTest(AsyncStorageTestCase):
         content = await content.readall()
         self.assertEqual(content, b'AAABBBCCC')
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_block_list_returns_vid(self, resource_group, location, storage_account, storage_account_key):

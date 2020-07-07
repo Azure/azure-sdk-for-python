@@ -11,33 +11,32 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.3.2 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 12 Jun 2020 19:41:09 GMT
+      - Thu, 02 Jul 2020 23:54:52 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
     uri: https://storagename.blob.core.windows.net/utqqcontainer85a21ec8?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:9a46e011-301e-007f-04f1-40823b000000\nTime:2020-06-12T19:41:09.8481278Z</Message></Error>"
+      string: ''
     headers:
       content-length:
-      - '230'
-      content-type:
-      - application/xml
+      - '0'
       date:
-      - Fri, 12 Jun 2020 19:41:08 GMT
+      - Thu, 02 Jul 2020 23:54:52 GMT
+      etag:
+      - '"0x8D81EE350791CD6"'
+      last-modified:
+      - Thu, 02 Jul 2020 23:54:52 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ContainerAlreadyExists
       x-ms-version:
       - '2019-12-12'
     status:
-      code: 409
-      message: The specified container already exists.
+      code: 201
+      message: Created
 - request:
     body: "Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent
       Hubs\r\nEvent Hubs - Azure Storage CheckpointStore,azure-messaging-eventhubs-checkpointstore-blob,1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,1.1.0-beta.1,identity,FALSE\r\nKey
@@ -72,11 +71,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.3.2 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 12 Jun 2020 19:41:09 GMT
+      - Thu, 02 Jul 2020 23:54:53 GMT
       x-ms-tags:
       - ''
       x-ms-version:
@@ -92,11 +91,11 @@ interactions:
       content-md5:
       - YCu60jbjN5Bt+lODPNdZjg==
       date:
-      - Fri, 12 Jun 2020 19:41:09 GMT
+      - Thu, 02 Jul 2020 23:54:52 GMT
       etag:
-      - '"0x8D80F088EBF0688"'
+      - '"0x8D81EE3507E5825"'
       last-modified:
-      - Fri, 12 Jun 2020 19:41:10 GMT
+      - Thu, 02 Jul 2020 23:54:52 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -113,7 +112,7 @@ interactions:
 
       <QueryRequest><QueryType>SQL</QueryType><Expression>SELECT RepoPath from BlobStorage</Expression><InputSerialization><Format><Type>delimited</Type><DelimitedTextConfiguration><ColumnSeparator>,</ColumnSeparator><FieldQuote>"</FieldQuote><RecordSeparator>
 
-      </RecordSeparator><EscapeChar /><HasHeaders>true</HasHeaders></DelimitedTextConfiguration></Format></InputSerialization><OutputSerialization><Format><Type>delimited</Type><DelimitedTextConfiguration><ColumnSeparator>;</ColumnSeparator><FieldQuote>''</FieldQuote><RecordSeparator>%</RecordSeparator><EscapeChar>\</EscapeChar><HasHeaders>true</HasHeaders></DelimitedTextConfiguration></Format></OutputSerialization></QueryRequest>'
+      </RecordSeparator><EscapeChar /><HasHeaders>true</HasHeaders></DelimitedTextConfiguration></Format></InputSerialization><OutputSerialization><Format><Type>delimited</Type><DelimitedTextConfiguration><ColumnSeparator>;</ColumnSeparator><FieldQuote>''</FieldQuote><RecordSeparator>%</RecordSeparator><EscapeChar>\</EscapeChar><HasHeaders>false</HasHeaders></DelimitedTextConfiguration></Format></OutputSerialization></QueryRequest>'
     headers:
       Accept:
       - application/xml
@@ -122,13 +121,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '721'
+      - '722'
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-blob/12.3.2 Python/3.7.4 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Fri, 12 Jun 2020 19:41:10 GMT
+      - Thu, 02 Jul 2020 23:54:53 GMT
       x-ms-version:
       - '2019-12-12'
     method: POST
@@ -170,26 +169,26 @@ interactions:
         aGF0IGFsbCByZXN1bHRzIGhhdmUgYmVlbiBzZW50LiIsCiAgICAiZmllbGRzIjogWwogICAgICB7
         CiAgICAgICAgIm5hbWUiOiAidG90YWxCeXRlcyIsCiAgICAgICAgInR5cGUiOiAibG9uZyIsCiAg
         ICAgICAgImRvYyI6ICJUaGUgdG90YWwgbnVtYmVyIG9mIGJ5dGVzIHRvIGJlIHNjYW5uZWQgaW4g
-        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoAP3ArJRqT20SKd4Xw4RumvgLcBADWBGFw
+        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoAX+oNUjLzO0GyyKpoIqa4KwLcBADWBGFw
         cGNvbmZpZ3VyYXRpb24lZXZlbnRodWJzJWlkZW50aXR5JWtleXZhdWx0JWtleXZhdWx0JWtleXZh
         dWx0JXN0b3JhZ2Ulc3RvcmFnZSVzdG9yYWdlJXN0b3JhZ2Ulc3RvcmFnZSV0ZXh0YW5hbHl0aWNz
         JWNvcmUlUmVwb1BhdGglYXBwY29uZmlndXJhdGlvbiVldmVudGh1YnMlZXZlbnRodWJzJWlkZW50
         aXR5JWtleXZhdWx0JWtleXZhdWx0JWtleXZhdWx0JXN0b3JhZ2Ulc3RvcmFnZSVzdG9yYWdlJXN0
         b3JhZ2Ulc3RvcmFnZSV0ZXh0YW5hbHl0aWNzJWNvcmUlUmVwb1BhdGglYXBwY29uZmlndXJhdGlv
-        biVldmVudGh1YnMlP3ArJRqT20SKd4Xw4RumvgJ+AgAoSW52YWxpZENvbHVtbk9yZGluYWxKQ29s
-        dW1uIG9yZGluYWwgZG9lcyBub3QgZXhpc3QgaW4gcm93LuwBP3ArJRqT20SKd4Xw4RumvgIKBKAj
-        oCM/cCslGpPbRIp3hfDhG6a+AgYGoCM/cCslGpPbRIp3hfDhG6a+
+        biVldmVudGh1YnMlX+oNUjLzO0GyyKpoIqa4KwJ+AgAoSW52YWxpZENvbHVtbk9yZGluYWxKQ29s
+        dW1uIG9yZGluYWwgZG9lcyBub3QgZXhpc3QgaW4gcm93LuwBX+oNUjLzO0GyyKpoIqa4KwIKBKAj
+        oCNf6g1SMvM7QbLIqmgiprgrAgYGoCNf6g1SMvM7QbLIqmgiprgr
     headers:
       accept-ranges:
       - bytes
       content-type:
       - avro/binary
       date:
-      - Fri, 12 Jun 2020 19:41:09 GMT
+      - Thu, 02 Jul 2020 23:54:53 GMT
       etag:
-      - '"0x8D80F088EBF0688"'
+      - '"0x8D81EE3507E5825"'
       last-modified:
-      - Fri, 12 Jun 2020 19:41:10 GMT
+      - Thu, 02 Jul 2020 23:54:52 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -197,7 +196,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Fri, 12 Jun 2020 19:33:51 GMT
+      - Thu, 02 Jul 2020 23:54:52 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -207,4 +206,38 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 02 Jul 2020 23:54:54 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/utqqcontainer85a21ec8?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 02 Jul 2020 23:54:53 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 202
+      message: Accepted
 version: 1

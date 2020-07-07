@@ -145,6 +145,7 @@ class StorageBlockBlobTest(StorageTestCase):
         content = dest_blob.download_blob().readall()
         self.assertEqual(self.source_blob_data, content)
 
+    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
     def test_sync_copy_blob_returns_vid(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)

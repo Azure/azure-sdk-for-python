@@ -325,15 +325,14 @@ class AccountSasPermissions(object):
         Valid for the following Object resource types only: queue messages.
     :param bool process:
         Valid for the following Object resource type only: queue messages.
-    :param bool tag:
+    :keyword bool tag:
         To enable set or get tags on the blobs in the container.
-    :param bool filter_by_tags:
+    :keyword bool filter_by_tags:
         To enable get blobs by tags, this should be used together with list permission.
     """
     def __init__(self, read=False, write=False, delete=False,
                  list=False,  # pylint: disable=redefined-builtin
-                 add=False, create=False, update=False, process=False, delete_previous_version=False, tag=False,
-                 filter_by_tags=False):
+                 add=False, create=False, update=False, process=False, delete_previous_version=False, **kwargs):
         self.read = read
         self.write = write
         self.delete = delete
@@ -343,8 +342,8 @@ class AccountSasPermissions(object):
         self.create = create
         self.update = update
         self.process = process
-        self.tag = tag
-        self.filter_by_tags = filter_by_tags
+        self.tag = kwargs.pop('tag', False)
+        self.filter_by_tags = kwargs.pop('filter_by_tags', False)
         self._str = (('r' if self.read else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
