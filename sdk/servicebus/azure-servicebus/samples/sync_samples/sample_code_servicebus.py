@@ -189,7 +189,7 @@ def example_send_and_receive_sync():
     # [START send_sync]
     with servicebus_sender:
         message = Message("Hello World")
-        servicebus_sender.send(message)
+        servicebus_sender.send_messages(message)
     # [END send_sync]
 
     # [START create_batch_sync]
@@ -208,7 +208,7 @@ def example_send_and_receive_sync():
 
     # [START peek_messages_sync]
     with servicebus_receiver:
-        messages = servicebus_receiver.peek()
+        messages = servicebus_receiver.peek_messages()
         for message in messages:
             print(message)
     # [END peek_messages_sync]
@@ -227,14 +227,14 @@ def example_send_and_receive_sync():
 
     # [START receive_sync]
     with servicebus_receiver:
-        messages = servicebus_receiver.receive(max_wait_time=5)
+        messages = servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             print(message)
             message.complete()
     # [END receive_sync]
 
         # [START receive_complex_message]
-        messages = servicebus_receiver.receive(max_wait_time=5)
+        messages = servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             print("Receiving: {}".format(message))
             print("Time to live: {}".format(message.time_to_live))
@@ -251,16 +251,21 @@ def example_send_and_receive_sync():
             print("Enqueued time: {}".format(message.enqueued_time_utc))
         # [END receive_complex_message]
 
+        # [START abandon_message]
+        messages = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages:
+            message.abandon()
+        # [END abandon_message]
 
 def example_receive_deferred_sync():
     servicebus_sender = example_create_servicebus_sender_sync()
     servicebus_receiver = example_create_servicebus_receiver_sync()
     with servicebus_sender:
-        servicebus_sender.send(Message("Hello World"))
+        servicebus_sender.send_messages(Message("Hello World"))
     # [START receive_defer_sync]
     with servicebus_receiver:
         deferred_sequenced_numbers = []
-        messages = servicebus_receiver.receive(max_wait_time=5)
+        messages = servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
             print(message)
@@ -273,6 +278,26 @@ def example_receive_deferred_sync():
         for msg in received_deferred_msg:
             msg.complete()
     # [END receive_defer_sync]
+
+
+def example_receive_deadletter_sync():
+    servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+    queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+
+    with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
+        with servicebus_client.get_queue_sender(queue_name) as servicebus_sender:
+            servicebus_sender.send_messages(Message("Hello World"))
+        # [START receive_deadletter_sync]
+        with servicebus_client.get_queue_receiver(queue_name) as servicebus_receiver:
+            messages = servicebus_receiver.receive_messages(max_wait_time=5)
+            for message in messages:
+                message.dead_letter(reason='reason for dead lettering', description='description for dead lettering')
+
+        with servicebus_client.get_queue_deadletter_receiver(queue_name) as servicebus_deadletter_receiver:
+            messages = servicebus_deadletter_receiver.receive_messages(max_wait_time=5)
+            for message in messages:
+                message.complete()
+        # [END receive_deadletter_sync]
 
 
 def example_session_ops_sync():
@@ -325,7 +350,7 @@ def example_schedule_ops_sync():
     with servicebus_sender:
         scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
         scheduled_messages = [Message("Scheduled message") for _ in range(10)]
-        sequence_nums = servicebus_sender.schedule(scheduled_messages, scheduled_time_utc)
+        sequence_nums = servicebus_sender.schedule_messages(scheduled_messages, scheduled_time_utc)
     # [END scheduling_messages]
 
     # [START cancel_scheduled_messages]

@@ -126,6 +126,12 @@ You must specify use_cache=True in the preparer decorator""".format(test_class_i
                         _logger.debug("Storing cached resource for %s", self.__class__.__name__)
                         AbstractPreparer._resource_cache[aggregate_cache_key] = AbstractPreparer.ResourceCacheEntry(resource_name, kwargs, self)
 
+            if test_class_instance.is_live:
+                test_class_instance.scrubber.register_name_pair(
+                    resource_name,
+                    self.moniker
+                )
+
             # We shouldn't trim the same kwargs that we use for deletion, 
             # we may remove some of the variables we needed to do the delete.
             trimmed_kwargs = {k:v for k,v in kwargs.items()}

@@ -256,7 +256,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         poller = await fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = await poller.result()
@@ -294,7 +294,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         poller = await fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = await poller.result()
@@ -333,7 +333,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         poller = await fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = await poller.result()
@@ -371,7 +371,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         poller = await fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = await poller.result()
@@ -437,7 +437,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         poller = await fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = await poller.result()
@@ -476,7 +476,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         poller = await fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = await poller.result()

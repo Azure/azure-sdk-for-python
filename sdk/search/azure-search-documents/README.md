@@ -48,7 +48,7 @@ Use the Azure.Search.Documents client library to:
 Install the Azure Cognitive Search client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-search-documents --pre
+pip install azure-search-documents
 ```
 
 ### Prerequisites
@@ -183,6 +183,13 @@ These are just a few of the basics - please [check out our Samples](samples) for
 much more.
 
 
+* [Querying](#querying)
+* [Creating an index](#creating-an-index)
+* [Adding documents to your index](#adding-documents-to-your-index)
+* [Retrieving a specific document from your index](#retrieving-a-specific-document-from-your-index)
+* [Async APIs](#async-apis)
+
+
 ### Querying
 
 Let's start by importing our namespaces.
@@ -218,7 +225,7 @@ for result in results:
 ```
 
 
-### Create an index
+### Creating an index
 
 You can use the `SearchIndexClient` to create a search index. Fields can be
 defined using convenient `SimpleField`, `SearchableField`, or `ComplexField`
@@ -268,33 +275,6 @@ result = client.create_index(index)
 ```
 
 
-### Retrieve a specific document from an index
-
-In addition to querying for documents using keywords and optional filters,
-you can retrieve a specific document from your index if you already know the
-key. You could get the key from a query, for example, and want to show more
-information about it or navigate your customer to that document.
-
-```python
-import os
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-
-index_name = "hotels"
-endpoint = os.environ["SEARCH_ENDPOINT"]
-key = os.environ["SEARCH_API_KEY"]
-
-client = SearchClient(endpoint, index_name, AzureKeyCredential(key))
-
-result = client.get_document(key="1")
-
-print("Details for hotel '1' are:")
-print("        Name: {}".format(result["HotelName"]))
-print("      Rating: {}".format(result["Rating"]))
-print("    Category: {}".format(result["Category"]))
-```
-
-
 ### Adding documents to your index
 
 You can `Upload`, `Merge`, `MergeOrUpload`, and `Delete` multiple documents from
@@ -322,6 +302,33 @@ DOCUMENT = {
 result = client.upload_documents(documents=[DOCUMENT])
 
 print("Upload of new document succeeded: {}".format(result[0].succeeded))
+```
+
+
+### Retrieve a specific document from an index
+
+In addition to querying for documents using keywords and optional filters,
+you can retrieve a specific document from your index if you already know the
+key. You could get the key from a query, for example, and want to show more
+information about it or navigate your customer to that document.
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import SearchClient
+
+index_name = "hotels"
+endpoint = os.environ["SEARCH_ENDPOINT"]
+key = os.environ["SEARCH_API_KEY"]
+
+client = SearchClient(endpoint, index_name, AzureKeyCredential(key))
+
+result = client.get_document(key="1")
+
+print("Details for hotel '1' are:")
+print("        Name: {}".format(result["HotelName"]))
+print("      Rating: {}".format(result["Rating"]))
+print("    Category: {}".format(result["Category"]))
 ```
 
 
