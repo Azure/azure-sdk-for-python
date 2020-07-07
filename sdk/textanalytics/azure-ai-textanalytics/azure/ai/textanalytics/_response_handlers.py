@@ -27,10 +27,28 @@ from ._models import (
     TextAnalyticsWarning
 )
 
+def _get_too_many_documents_error(obj):
+    try:
+        too_many_documents_errors = [
+            error for error in obj.errors if error.id == ""
+        ]
+    except AttributeError:
+        too_many_documents_errors = [
+            error for error in obj["errors"] if error["id"] == ""
+        ]
+    if too_many_documents_errors:
+        return too_many_documents_errors[0]
+    return None
+
 class CSODataV4Format(ODataV4Format):
 
     def __init__(self, odata_error):
+
         try:
+            if not odata_error.get("error"):
+                odata_error = _get_too_many_documents_error(odata_error)
+            if not odata_error:
+                raise ValueError("The object given does not include an error.")
             if odata_error["error"]["innererror"]:
                 super(CSODataV4Format, self).__init__(odata_error["error"]["innererror"])
         except KeyError:
@@ -41,11 +59,6 @@ def process_batch_error(error):
     """Raise detailed error message.
     """
     raise_error = HttpResponseError
-    if error.status_code == 200:
-        # this is the case where we manually throw the Too Many Documents error
-        # we don't want to raise an error based on the error.response
-        error.response.status_code = 400
-        raise HttpResponseError(response=error.response, message=error.message)
     if error.status_code == 401:
         raise_error = ClientAuthenticationError
     raise raise_error(response=error.response, error_format=CSODataV4Format)
@@ -71,12 +84,10 @@ def prepare_result(func):
 
     def _deal_with_too_many_documents(response, obj):
         # special case for now if there are too many documents in the request
-        too_many_documents_errors = [
-            error for error in obj.errors if error.id == ""
-        ]
-        if too_many_documents_errors:
-            too_many_documents_error = too_many_documents_errors[0]
+        too_many_documents_error = _get_too_many_documents_error(obj)
+        if too_many_documents_error:
             response.reason = "Bad Request"
+            response.status_code = 400
             code, message = _get_error_code_and_message(too_many_documents_error)
             raise HttpResponseError(
                 message="({}) {}".format(code, message),

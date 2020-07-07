@@ -131,17 +131,6 @@ class TestDetectLanguage(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_too_many_documents(self, client):
-        docs = [u"hello world"] * 1000
-
-        try:
-            client.detect_language(docs)
-        except HttpResponseError as e:
-            assert e.status_code == 400
-            assert "(InvalidDocumentBatch) The number of documents in the request have exceeded the data limitations" in str(e)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
     def test_output_same_order_as_input(self, client):
         docs = [
             DetectLanguageInput(id="1", text="one"),
