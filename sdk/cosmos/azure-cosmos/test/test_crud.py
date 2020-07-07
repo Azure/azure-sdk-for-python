@@ -983,6 +983,15 @@ class CRUDTests(unittest.TestCase):
         # Upsert should create new document since the id is different
         new_document = created_collection.upsert_item(body=created_document)
 
+        # Test modified access conditions
+        created_document['spam'] = 'more eggs'
+        created_collection.upsert_item(body=created_document)
+        with pytest.raises(exceptions.CosmosHttpResponseError):
+            created_collection.upsert_item(
+                body=created_document,
+                match_condition=MatchConditions.IfNotModified,
+                etag=new_document['_etag'])
+
         # verify id property
         self.assertEqual(created_document['id'],
                          new_document['id'],
