@@ -205,7 +205,7 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
     def get_hardware_profile(self):
         virtual_machines_models = self.compute_client.virtual_machines.models
         return virtual_machines_models.HardwareProfile(
-            vm_size=virtual_machines_models.VirtualMachineSizeTypes.standard_a0
+            vm_size=virtual_machines_models.VirtualMachineSizeTypes.standard_ds1_v2
         )
 
     def get_network_profile(self, network_interface_id):

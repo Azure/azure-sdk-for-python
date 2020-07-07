@@ -131,7 +131,13 @@ class MgmtComputeTest(AzureMgmtTestCase):
     def get_hardware_profile(self):
         virtual_machines_models = self.compute_client.virtual_machines.models
         return virtual_machines_models.HardwareProfile(
-            vm_size=virtual_machines_models.VirtualMachineSizeTypes.standard_a0
+            vm_size=virtual_machines_models.VirtualMachineSizeTypes.standard_ds1_v2
+        )
+
+    def get_hardware_profile_vm_extensions(self):
+        virtual_machines_models = self.compute_client.virtual_machines.models
+        return virtual_machines_models.HardwareProfile(
+            vm_size=virtual_machines_models.VirtualMachineSizeTypes.standard_a1
         )
 
     def get_storage_profile(self, os_vhd_uri):
@@ -331,7 +337,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         params_create = virtual_machines_models.VirtualMachine(
             location=location,
             os_profile=self.get_os_profile(resource_group.name),
-            hardware_profile=self.get_hardware_profile(),
+            hardware_profile=self.get_hardware_profile_vm_extensions(),
             network_profile=self.get_network_profile(nic_id),
             storage_profile=storage_profile,
         )
