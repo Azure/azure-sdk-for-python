@@ -48,7 +48,7 @@ Use the Azure.Search.Documents client library to:
 Install the Azure Cognitive Search client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-search-documents --pre
+pip install azure-search-documents
 ```
 
 ### Prerequisites
