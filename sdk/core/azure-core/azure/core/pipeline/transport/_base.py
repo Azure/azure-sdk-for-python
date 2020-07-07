@@ -308,6 +308,8 @@ class HttpRequest(object):
                         raise ValueError()
                     query_params.append("{}={}".format(k, w))
             else:
+                if v is None:
+                    raise ValueError()
                 query_params.append("{}={}".format(k, v))
         query = "?" + "&".join(query_params)
         self.url = self.url + query
