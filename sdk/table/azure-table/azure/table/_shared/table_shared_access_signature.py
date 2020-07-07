@@ -24,7 +24,6 @@ def generate_account_shared_access_signature(
     Generates a shared access signature for the table service.
     Use the returned signature with the sas_token parameter of TableService.
 
-
     :param account_name: Account name
     :type account_name:str
     :param account_key: Account key

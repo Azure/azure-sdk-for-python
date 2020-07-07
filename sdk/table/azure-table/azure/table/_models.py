@@ -67,23 +67,24 @@ class AccessPolicy(GenAccessPolicy):
 
 
 class TableAnalyticsLogging(GeneratedLogging):
+    """Azure Analytics Logging settings.
+
+   All required parameters must be populated in order to send to Azure.
+
+   :ivar str version: Required. The version of Storage Analytics to configure.
+   :ivar bool delete: Required. Indicates whether all delete requests should be logged.
+   :ivar bool read: Required. Indicates whether all read requests should be logged.
+   :ivar bool write: Required. Indicates whether all write requests should be logged.
+   :ivar ~azure.table.RetentionPolicy retention_policy: Required.
+       The retention policy for the metrics.
+   """
 
     def __init__(  # pylint:disable=W0231
             self,
             **kwargs  # type: Any
     ):
         # type: (...)-> None
-        """Azure Analytics Logging settings.
 
-           All required parameters must be populated in order to send to Azure.
-
-           :keyword str version: Required. The version of Storage Analytics to configure.
-           :keyword bool delete: Required. Indicates whether all delete requests should be logged.
-           :keyword bool read: Required. Indicates whether all read requests should be logged.
-           :keyword bool write: Required. Indicates whether all write requests should be logged.
-           :keyword ~azure.table.RetentionPolicy retention_policy: Required.
-               The retention policy for the metrics.
-           """
         self.version = kwargs.get('version', u'1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
@@ -109,11 +110,11 @@ class Metrics(GeneratedMetrics):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword str version: The version of Storage Analytics to configure.
-    :keyword bool enabled: Required. Indicates whether metrics are enabled for the service.
-    :keyword bool include_ap_is: Indicates whether metrics should generate summary
+    :ivar str version: The version of Storage Analytics to configure.
+    :ivar bool enabled: Required. Indicates whether metrics are enabled for the service.
+    :ivar bool include_ap_is: Indicates whether metrics should generate summary
         statistics for called API operations.
-    :keyword ~azure.table.RetentionPolicy retention_policy: Required.
+    :ivar ~azure.table.RetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
     """
 
@@ -225,27 +226,7 @@ class CorsRule(GeneratedCorsRule):
             **kwargs  # type: Any
     ):
         # type: (...)-> None
-        """
-        :param list[str] allowed_origins:
-        A list of origin domains that will be allowed via CORS, or "*" to allow
-        all domains. The list of must contain at least one entry. Limited to 64
-        origin domains. Each allowed origin can have up to 256 characters.
-        :param list[str] allowed_methods:
-        A list of HTTP methods that are allowed to be executed by the origin.
-        The list of must contain at least one entry. For Azure Storage,
-        permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
-        :keyword int max_age_in_seconds:
-        The number of seconds that the client/browser should cache a
-        pre-flight response.
-        :keyword list[str] exposed_headers:
-        Defaults to an empty list. A list of response headers to expose to CORS
-        clients. Limited to 64 defined headers and two prefixed headers. Each
-        header can be up to 256 characters.
-        :keyword list[str] allowed_headers:
-        Defaults to an empty list. A list of headers allowed to be part of
-        the cross-origin request. Limited to 64 defined headers and 2 prefixed
-        headers. Each header can be up to 256 characters.
-    """
+
         self.allowed_origins = ','.join(allowed_origins)
         self.allowed_methods = ','.join(allowed_methods)
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))

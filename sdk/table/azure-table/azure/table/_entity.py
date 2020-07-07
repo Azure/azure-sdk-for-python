@@ -14,9 +14,16 @@ class Entity(dict):
         entity = Entity()
         entity.a = 'b'
         entity['x'] = 'y'
+
     """
 
     def __getattr__(self, name):
+        """
+        :param name:name of entity entry
+        :type name: str
+        :return: Entity dictionary
+        :rtype: dict[str,str]
+        """
         try:
             return self[name]
         except KeyError:
@@ -25,6 +32,10 @@ class Entity(dict):
     __setattr__ = dict.__setitem__
 
     def __delattr__(self, name):
+        """
+        :param name:name of entity entry
+        :type name: str
+        """
         try:
             if name is not None:
                 del self[name]
