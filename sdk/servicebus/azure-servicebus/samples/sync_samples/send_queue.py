@@ -14,8 +14,6 @@ Example to show sending message(s) to a Service Bus Queue.
 import os
 from azure.servicebus import ServiceBusClient, Message
 
-import logging
-logging.basicConfig(level=logging.INFO)
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]

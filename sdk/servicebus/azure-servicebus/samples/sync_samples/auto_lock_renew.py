@@ -36,7 +36,7 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
         renewer = AutoLockRenew()
 
         with servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch=10) as receiver:
-            received_msgs = receiver.receive(max_batch_size=10, max_wait_time=5)
+            received_msgs = receiver.receive_messages(max_batch_size=10, max_wait_time=5)
 
             for msg in received_msgs:
                 # automatically renew the lock on each message for 100 seconds
