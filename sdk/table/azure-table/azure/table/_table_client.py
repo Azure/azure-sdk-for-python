@@ -161,12 +161,12 @@ class TableClient(StorageAccountHostsMixin):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> dict
+        # type: (...) -> dict[str,SignedIdentifier]
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
         :return: dict of SignedIdentifier
-        :rtype: dict
+        :rtype: dict[str, SignedIdentifier]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timeout = kwargs.pop('timeout', None)
@@ -377,13 +377,13 @@ class TableClient(StorageAccountHostsMixin):
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged
+        # type: (...) -> ItemPaged[Entity]
         """Queries entities in a table.
 
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
-        :return: ItemPaged
-        :rtype: ItemPaged
+        :return: Query of table entities
+        :rtype: ItemPaged[Entity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         command = functools.partial(

@@ -214,13 +214,13 @@ class TableServiceClient(StorageAccountHostsMixin):
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged
+        # type: (...) -> ItemPaged[AzureTable]
         """Queries tables under the given account.
 
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
-        :return: ItemPaged
-        :rtype: ItemPaged
+        :return: A query of tables
+        :rtype: ItemPaged[AzureTable]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         command = functools.partial(self._client.table.query,
