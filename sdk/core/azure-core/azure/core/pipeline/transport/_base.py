@@ -303,7 +303,10 @@ class HttpRequest(object):
         query_params = []
         for k, v in params.items():
             if isinstance(v, list):
-                query_params.extend(["{}={}".format(k, w) for w in v])
+                for w in v:
+                    if w is None:
+                        raise ValueError()
+                    query_params.append("{}={}".format(k, w))
             else:
                 query_params.append("{}={}".format(k, v))
         query = "?" + "&".join(query_params)

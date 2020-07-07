@@ -294,6 +294,14 @@ class TestClientRequest(unittest.TestCase):
 
         self.assertIn(request.url, ["a/b/c?g=h&g=i&t=y", "a/b/c?t=y&g=h&g=i"])
 
+    def test_request_url_with_params_with_none(self):
+
+        request = HttpRequest("GET", "/")
+        request.url = "a/b/c?t=y"
+        with pytest.raises(ValueError):
+            request.format_parameters({"g": ["h",None]})
+
+
     def test_request_text(self):
         client = PipelineClientBase('http://example.org')
         request = client.get(
