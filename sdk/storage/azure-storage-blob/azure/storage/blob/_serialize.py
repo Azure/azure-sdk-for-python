@@ -121,6 +121,9 @@ def get_api_version(kwargs, default):
 
 def serialize_blob_tags_header(tags=None):
     # type: (Optional[Dict[str, str]]) -> str
+    if tags is None:
+        return None
+
     components = list()
     if tags:
         for key, value in tags.items():
