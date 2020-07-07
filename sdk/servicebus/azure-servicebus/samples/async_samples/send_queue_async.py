@@ -21,15 +21,20 @@ QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 
 async def send_single_message(sender):
-    message = Message("DATA" * 64)
+    message = Message("Single Message")
     await sender.send_messages(message)
+
+
+async def send_a_list_of_messages(sender):
+    messages = [Message("Message in list") for _ in range(10)]
+    await sender.send_messages(messages)
 
 
 async def send_batch_message(sender):
     batch_message = await sender.create_batch()
-    while True:
+    for _ in range(10):
         try:
-            batch_message.add(Message("DATA" * 256))
+            batch_message.add(Message("Message inside a BatchMessage"))
         except ValueError:
             # BatchMessage object reaches max_size.
             # New BatchMessage object can be created here to send more data.
@@ -44,6 +49,7 @@ async def main():
         sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
         async with sender:
             await send_single_message(sender)
+            await send_a_list_of_messages(sender)
             await send_batch_message(sender)
 
     print("Send message is done.")

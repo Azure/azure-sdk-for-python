@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-ample to show browsing messages currently pending in the queue asynchronously.
+Example to show browsing messages currently pending in the queue asynchronously.
 """
 
 # pylint: disable=C0111
