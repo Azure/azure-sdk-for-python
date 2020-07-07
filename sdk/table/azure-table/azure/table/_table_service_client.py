@@ -206,8 +206,7 @@ class TableServiceClient(StorageAccountHostsMixin):
         :return: None
         :rtype: None
         """
-        response = self._client.table.delete(table=table_name, request_id_parameter=request_id_parameter, **kwargs)
-        return response
+        self._client.table.delete(table=table_name, request_id_parameter=request_id_parameter, **kwargs)
 
     @distributed_trace
     def query_tables(
