@@ -13,21 +13,14 @@ class QueryTable(object):
     name_filter = "TableName eq '{}'".format(table_name)
     query_options = QueryOptions(filter=name_filter)
 
-    def list_tables(self):
-        from azure.table import TableServiceClient
-
-        table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-        tables = table_service_client.list_tables()
-        # table_client.list_tables() returns an itemPaged
-        # tables is a list of tables
-
-        for table in tables:
-            print(table.table_name)
-
     def query_tables(self):
         from azure.table import TableServiceClient
 
         table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
+        # Create Tables to query
+        my_table = table_service_client.create_table(table_name=self.table_name)
+        print(my_table)
+        # Query tables
         queried_tables = table_service_client.query_tables(query_options=self.name_filter)
         # table_client.query_tables() returns an itemPaged
         # queried_tables is a list of filtered tables

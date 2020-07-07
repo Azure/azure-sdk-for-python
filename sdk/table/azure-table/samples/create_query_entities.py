@@ -8,9 +8,8 @@ class CreateODataQuery(object):
     account_name = "example"
     access_key = "fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK=="
 
-    # Assuming there is a created table
-    partition_key = "1"
-    row_key = "1"
+    partition_key = "color"
+    row_key = "brand"
     # Creating query filter for that table
     table_name = "Office Supplies"
     entity_name = "marker"
@@ -18,12 +17,12 @@ class CreateODataQuery(object):
     # change select filter
     query_options = QueryOptions(filter=name_filter)
 
-    def create_query_entities(self):
+    def sample_query_entities(self):
 
         from azure.table import TableClient
         from azure.core.exceptions import HttpResponseError
 
-        table_client = TableClient(account_url=self.account_url, credential=self.access_key)
+        table_client = TableClient(account_url=self.account_url, table_name=self.table_name, credential=self.access_key)
         try:
             queried_entities = table_client.query_entities(query_options=self.query_options)
 

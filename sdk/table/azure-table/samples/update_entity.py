@@ -6,10 +6,10 @@ class UpdateEntity(object):
     account_name = "example"
     access_key = "fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK=="
 
-    partition_key = "1"
-    row_key = "1"
     # making keys not able to change - SEPARATE
     entity = {
+        'PartitionKey': 'color',
+        'RowKey': 'brand',
         'text': 'Marker',
         'color': 'Purple',
         'price': '5'
@@ -22,8 +22,7 @@ class UpdateEntity(object):
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
-            table_client.update_entity(mode=UpdateMode.merge, partition_key=self.partition_key, row_key=self.row_key,
-                                       table_entity_properties=self.entity)
+            table_client.update_entity(mode=UpdateMode.merge, table_entity_properties=self.entity)
         except HttpResponseError as e:
             print(e.response)
 
@@ -34,7 +33,6 @@ class UpdateEntity(object):
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
-            table_client.upsert_entity(mode=UpdateMode.replace, partition_key=self.partition_key, row_key=self.row_key,
-                                       table_entity_properties=self.entity)
+            table_client.upsert_entity(mode=UpdateMode.replace, table_entity_properties=self.entity)
         except HttpResponseError as e:
             print(e.response)
