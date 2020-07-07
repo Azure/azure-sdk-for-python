@@ -96,6 +96,8 @@ try:
     from ._models_py3 import ManagedInstanceLongTermRetentionBackup
     from ._models_py3 import ManagedInstanceLongTermRetentionPolicy
     from ._models_py3 import ManagedInstanceOperation
+    from ._models_py3 import ManagedInstanceOperationParametersPair
+    from ._models_py3 import ManagedInstanceOperationSteps
     from ._models_py3 import ManagedInstancePairInfo
     from ._models_py3 import ManagedInstanceUpdate
     from ._models_py3 import ManagedInstanceVcoresCapability
@@ -178,6 +180,8 @@ try:
     from ._models_py3 import TransparentDataEncryption
     from ._models_py3 import TransparentDataEncryptionActivity
     from ._models_py3 import UnlinkParameters
+    from ._models_py3 import UpsertManagedServerOperationParameters
+    from ._models_py3 import UpsertManagedServerOperationStep
     from ._models_py3 import Usage
     from ._models_py3 import VirtualCluster
     from ._models_py3 import VirtualClusterUpdate
@@ -274,6 +278,8 @@ except (SyntaxError, ImportError):
     from ._models import ManagedInstanceLongTermRetentionBackup
     from ._models import ManagedInstanceLongTermRetentionPolicy
     from ._models import ManagedInstanceOperation
+    from ._models import ManagedInstanceOperationParametersPair
+    from ._models import ManagedInstanceOperationSteps
     from ._models import ManagedInstancePairInfo
     from ._models import ManagedInstanceUpdate
     from ._models import ManagedInstanceVcoresCapability
@@ -356,6 +362,8 @@ except (SyntaxError, ImportError):
     from ._models import TransparentDataEncryption
     from ._models import TransparentDataEncryptionActivity
     from ._models import UnlinkParameters
+    from ._models import UpsertManagedServerOperationParameters
+    from ._models import UpsertManagedServerOperationStep
     from ._models import Usage
     from ._models import VirtualCluster
     from ._models import VirtualClusterUpdate
@@ -628,6 +636,8 @@ __all__ = [
     'ManagedInstanceLongTermRetentionBackup',
     'ManagedInstanceLongTermRetentionPolicy',
     'ManagedInstanceOperation',
+    'ManagedInstanceOperationParametersPair',
+    'ManagedInstanceOperationSteps',
     'ManagedInstancePairInfo',
     'ManagedInstanceUpdate',
     'ManagedInstanceVcoresCapability',
@@ -710,6 +720,8 @@ __all__ = [
     'TransparentDataEncryption',
     'TransparentDataEncryptionActivity',
     'UnlinkParameters',
+    'UpsertManagedServerOperationParameters',
+    'UpsertManagedServerOperationStep',
     'Usage',
     'VirtualCluster',
     'VirtualClusterUpdate',
