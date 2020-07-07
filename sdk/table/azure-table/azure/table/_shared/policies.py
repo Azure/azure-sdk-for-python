@@ -383,7 +383,7 @@ class StorageRetryPolicy(HTTPPolicy):
             updated = url._replace(netloc=settings['hosts'].get(settings['mode']))
             request.url = updated.geturl()
 
-    def configure_retries(self, request, **kwargs):  # pylint: disable=no-self-use
+    def configure_retries(self, request):  # pylint: disable=no-self-use
         # type: (...)-> dict
         """
         :param Any request:
@@ -421,14 +421,14 @@ class StorageRetryPolicy(HTTPPolicy):
         """
         return 0
 
-    def sleep(self, settings, transport, **kwargs):
+    def sleep(self, settings, transport):
         # type: (...)->None
         """
         :param Any settings:
         :param Any transport:
         :return:None
         """
-        backoff = self.get_backoff_time(settings)
+        backoff = self.get_backoff_time(settings, )
         if not backoff or backoff < 0:
             return
         transport.sleep(backoff)
@@ -556,9 +556,10 @@ class ExponentialRetry(StorageRetryPolicy):
         super(ExponentialRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings, **kwargs):
         """
         Calculates how long to sleep before retrying.
+        :param **kwargs:
         :param dict settings:
         :return:
             An integer indicating how long to wait before retrying the request,
@@ -597,10 +598,11 @@ class LinearRetry(StorageRetryPolicy):
         super(LinearRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings, **kwargs):
         """
         Calculates how long to sleep before retrying.
 
+        :param **kwargs:
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.

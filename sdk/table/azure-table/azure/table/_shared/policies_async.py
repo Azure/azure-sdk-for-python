@@ -161,10 +161,11 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
         super(ExponentialRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings, **kwargs):
         """
         Calculates how long to sleep before retrying.
 
+        :param **kwargs:
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -201,10 +202,11 @@ class LinearRetry(AsyncStorageRetryPolicy):
         super(LinearRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings, **kwargs):
         """
         Calculates how long to sleep before retrying.
 
+        :param **kwargs:
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
