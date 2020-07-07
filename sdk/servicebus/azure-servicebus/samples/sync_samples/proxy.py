@@ -27,7 +27,7 @@ HTTP_PROXY = {
 
 
 def send_single_message(sender):
-    message = Message("DATA" * 64)
+    message = Message("Single Message")
     sender.send_messages(message)
 
 
