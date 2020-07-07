@@ -24,6 +24,7 @@
 
 from typing import Any, List, Dict, Mapping, Union, cast, Iterable, Optional
 
+import warnings
 import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
@@ -34,6 +35,7 @@ from .offer import Offer
 from .http_constants import StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
+from .documents import IndexingMode
 
 __all__ = ("DatabaseProxy",)
 
@@ -201,6 +203,11 @@ class DatabaseProxy(object):
         if partition_key is not None:
             definition["partitionKey"] = partition_key
         if indexing_policy is not None:
+            if indexing_policy.get("indexingMode") is IndexingMode.Lazy:
+                warnings.warn(
+                    "Lazy indexing mode has been deprecated. Mode will be set to consistent indexing by the backend.",
+                    DeprecationWarning
+                )
             definition["indexingPolicy"] = indexing_policy
         if default_ttl is not None:
             definition["defaultTtl"] = default_ttl
