@@ -1,6 +1,6 @@
 # Change Log azure-ai-formrecognizer
 
-## 1.0.0b4 (2020-07-08)
+## 1.0.0b4 (2020-07-07)
 
 **Breaking Changes**
 
