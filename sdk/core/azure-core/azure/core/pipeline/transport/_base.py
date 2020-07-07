@@ -300,7 +300,14 @@ class HttpRequest(object):
                 p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]
             }
             params.update(existing_params)
-        query_params = ["{}={}".format(k, v) for k, v in params.items()]
+        query_params = []
+        for k, v in params.items():
+            if isinstance(v, str):
+                query_params.append("{}={}".format(k, v))
+            elif isinstance(v, list):
+                query_params.extend(["{}={}".format(k, w) for w in v])
+            else:
+                raise ValueError()
         query = "?" + "&".join(query_params)
         self.url = self.url + query
 
