@@ -265,15 +265,14 @@ class TableClient(StorageAccountHostsMixin):
         if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
                                                     etag_param='etag', match_param='match_condition')
 
-        try:
-            self._client.table.delete_entity(
-                table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
-                if_match=if_match or if_not_match or '*',
-                **kwargs)
-        except ResourceNotFoundError:
-            raise ResourceNotFoundError
+        self._client.table.delete_entity(
+            table=self.table_name,
+            partition_key=partition_key,
+            row_key=row_key,
+            if_match=if_match or if_not_match or '*',
+            **kwargs)
+
+        raise ResourceNotFoundError
 
     @distributed_trace
     def create_entity(
@@ -320,7 +319,7 @@ class TableClient(StorageAccountHostsMixin):
             table_entity_properties,  # type: dict
             partition_key=None,  # type: Optional[str]
             row_key=None,  # type: Optional[str]
-            etag=None,   # type: Optional[object]
+            etag=None,  # type: Optional[object]
             match_condition=None,  # type: Optional[MatchCondition]
             **kwargs  # type: Any
     ):
@@ -353,23 +352,20 @@ class TableClient(StorageAccountHostsMixin):
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
         if mode is UpdateMode.replace:
-            try:
-                self._client.table.update_entity(
-                    table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
-                    table_entity_properties=table_entity_properties,
-                    if_match=if_match or if_not_match or "*",
-                    **kwargs)
-            except ResourceNotFoundError:
-                raise ResourceNotFoundError
+            self._client.table.update_entity(
+                table=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                table_entity_properties=table_entity_properties,
+                if_match=if_match or if_not_match or "*",
+                **kwargs)
+
+            raise ResourceNotFoundError
         if mode is UpdateMode.merge:
-            try:
-                self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
-                                                row_key=row_key, if_match=if_match or if_not_match or "*",
-                                                table_entity_properties=table_entity_properties, **kwargs)
-            except ResourceNotFoundError:
-                raise ResourceNotFoundError
+            self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
+                                            row_key=row_key, if_match=if_match or if_not_match or "*",
+                                            table_entity_properties=table_entity_properties, **kwargs)
+            raise ResourceNotFoundError
 
     @distributed_trace
     def query_entities(
@@ -416,18 +412,16 @@ class TableClient(StorageAccountHostsMixin):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        try:
-            entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
+        entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
                                                                                   partition_key=partition_key,
                                                                                   row_key=row_key,
                                                                                   query_options=query_options,
                                                                                   **kwargs)
 
-            properties = _convert_to_entity(entity.additional_properties)
+        properties = _convert_to_entity(entity.additional_properties)
 
-            return Entity(properties)
-        except ResourceNotFoundError:
-            raise ResourceNotFoundError
+        return Entity(properties)
+        raise ResourceNotFoundError
 
     @distributed_trace
     def upsert_entity(  # pylint:disable=R1710
