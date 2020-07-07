@@ -30,7 +30,7 @@ from ._blob_client_async import BlobClient
 from .._models import ContainerProperties
 from .._deserialize import service_stats_deserialize, service_properties_deserialize
 from .._serialize import get_api_version
-from ._models import ContainerPropertiesPaged
+from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -76,7 +76,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
         Defaults to 4*1024*1024, or 4MB.
-    :keyword int max_single_put_size: If the blob size is less than max_single_put_size, then the blob will be
+    :keyword int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
         uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
         the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
     :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
@@ -354,7 +354,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 16
                 :caption: Listing the containers in the blob service.
         """
-        include = 'metadata' if include_metadata else None
+        include = ['metadata'] if include_metadata else []
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
@@ -369,6 +369,37 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             results_per_page=results_per_page,
             page_iterator_class=ContainerPropertiesPaged
         )
+
+    @distributed_trace
+    def find_blobs_by_tags(self, filter_expression, **kwargs):
+        # type: (str, **Any) -> AsyncItemPaged[FilteredBlob]
+        """The Filter Blobs operation enables callers to list blobs across all
+        containers whose tags match a given search expression.  Filter blobs
+        searches across all containers within a storage account but can be
+        scoped within the expression to a single container.
+
+        :param str filter_expression:
+            The expression to find blobs whose tags matches the specified condition.
+            eg. "\"yourtagname\"='firsttag' and \"yourtagname2\"='secondtag'"
+            To specify a container, eg. "@container='containerName' and \"Name\"='C'"
+        :keyword int results_per_page:
+            The max result per page when paginating.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of BlobProperties.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.FilteredBlob]
+        """
+
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
+        command = functools.partial(
+            self._client.service.filter_blobs,
+            where=filter_expression,
+            timeout=timeout,
+            **kwargs)
+        return AsyncItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=FilteredBlobPaged)
 
     @distributed_trace_async
     async def create_container(
@@ -477,6 +508,36 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             lease=lease,
             timeout=timeout,
             **kwargs)
+
+    @distributed_trace_async
+    async def _undelete_container(self, deleted_container_name, deleted_container_version, new_name=None, **kwargs):
+        # type: (str, str, str, **Any) -> ContainerClient
+        """Restores soft-deleted container.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        .. versionadded:: 12.4.0
+            This operation was introduced in API version '2019-12-12'.
+
+        :param str deleted_container_name:
+            Specifies the name of the deleted container to restore.
+        :param str deleted_container_version:
+            Specifies the version of the deleted container to restore.
+        :param str new_name:
+            The new name for the deleted container to be restored to.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.blob.aio.ContainerClient
+        """
+        container = self.get_container_client(new_name or deleted_container_name)
+        try:
+            await container._client.container.restore(deleted_container_name=deleted_container_name, # pylint: disable = protected-access
+                                                      deleted_container_version=deleted_container_version,
+                                                      timeout=kwargs.pop('timeout', None), **kwargs)
+            return container
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def get_container_client(self, container):
         # type: (Union[ContainerProperties, str]) -> ContainerClient

@@ -36,7 +36,9 @@ extends:
     ServiceDirectory: storage
     Artifacts:
     - name: azure_storage_blob
-      safeName: azurestorageblob
+      safeName:
+    - name: azure_storage_blob_changefeed
+      safeName: azurestorageblobchangefeed
     - name: azure_storage_file_share
       safeName: azurestoragefileshare
     - name: azure_storage_file_datalake

@@ -186,6 +186,9 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             Specifies that share metadata be returned in the response.
         :param bool include_snapshots:
             Specifies that share snapshot be returned in the response.
+        :keyword bool include_deleted:
+            Specifies that deleted shares be returned in the response.
+            This is only for share soft delete enabled account.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ShareProperties.
@@ -206,6 +209,10 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             include.append('metadata')
         if include_snapshots:
             include.append('snapshots')
+        include_deleted = kwargs.pop('include_deleted', None)
+        if include_deleted:
+            include.append("deleted")
+
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.service.list_shares_segment,
@@ -287,6 +294,34 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         kwargs.setdefault('merge_span', True)
         await share.delete_share(
             delete_snapshots=delete_snapshots, timeout=timeout, **kwargs)
+
+    @distributed_trace_async
+    async def undelete_share(self, deleted_share_name, deleted_share_version, **kwargs):
+        # type: (str, str, **Any) -> ShareClient
+        """Restores soft-deleted share.
+
+        Operation will only be successful if used within the specified number of days
+        set in the delete retention policy.
+
+        .. versionadded:: 12.2.0
+            This operation was introduced in API version '2019-12-12'.
+
+        :param str deleted_share_name:
+            Specifies the name of the deleted share to restore.
+        :param str deleted_share_version:
+            Specifies the version of the deleted share to restore.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.fileshare.aio.ShareClient
+        """
+        share = self.get_share_client(deleted_share_name)
+        try:
+            await share._client.share.restore(deleted_share_name=deleted_share_name,  # pylint: disable = protected-access
+                                              deleted_share_version=deleted_share_version,
+                                              timeout=kwargs.pop('timeout', None), **kwargs)
+            return share
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def get_share_client(self, share, snapshot=None):
         # type: (Union[ShareProperties, str],Optional[Union[Dict[str, Any], str]]) -> ShareClient
