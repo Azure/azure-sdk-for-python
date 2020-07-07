@@ -9,37 +9,37 @@
 /sdk/ @mayurid @lmazuel
 
 # Core
-/sdk/core/                                                           @lmazuel @xiangyan99 @johanste @rakshith91
+/sdk/core/                                                           @lmazuel @xiangyan99 @johanste @rakshith91                     %Azure.Core
 /sdk/core/azure-core/                                                @xiangyan99 @lmazuel
 
 # Service team
-/sdk/identity/                                                       @chlowell @schaabs
-/sdk/eventhub/                                                       @annatisch @yunhaoling @YijunXieMS
-/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft
-/sdk/applicationinsights/                                            @alexeldeib
-/sdk/batch/                                                          @bgklein @xingwu1
-/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
-/sdk/keyvault/                                                       @schaabs @chlowell @iscai-msft
-/sdk/loganalytics/                                                   @alexeldeib
-/sdk/consumption/                                                    @sandeepnl
-/sdk/containerinstance/                                              @samkreter @xizhamsft
-/sdk/containerregistry/                                              @djyou
+/sdk/identity/                                                       @chlowell @schaabs                                             %Azure.Identity
+/sdk/eventhub/                                                       @annatisch @yunhaoling @YijunXieMS                             %Event Hubs
+/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft    %Storage
+/sdk/applicationinsights/                                            @alexeldeib      
+/sdk/batch/                                                          @bgklein @xingwu1                                              %Batch
+/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish          
+/sdk/keyvault/                                                       @schaabs @chlowell @iscai-msft                                 %KeyVault
+/sdk/loganalytics/                                                   @alexeldeib                                                    %Monitor - LogAnalytics
+/sdk/consumption/                                                    @sandeepnl                                                     %Consumption
+/sdk/containerinstance/                                              @samkreter @xizhamsft                                          %Container Instances
+/sdk/containerregistry/                                              @djyou                                                         %Container Registry
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
-/sdk/cosmos/                                                         @southpolesteve @zfoster
-/sdk/datafactory/                                                    @hvermis
-/sdk/datalake/                                                       @ro-joowan
+/sdk/cosmos/                                                         @southpolesteve @zfoster                                       %Cosmos
+/sdk/datafactory/                                                    @hvermis                                                       %Data Factory
+/sdk/datalake/                                                       @ro-joowan                                                     
 /sdk/datadatamigration/                                              @vchske
-/sdk/eventgrid/                                                      @kalyanaj
-/sdk/hdinsight/                                                      @idear1203
-/sdk/machinelearningcompute/                                         @shutchings
-/sdk/recoveryservices/                                               @DheerendraRathor
-/sdk/search/                                                         @xiangyan99 @rakshith91
-/sdk/servicefabric/                                                  @QingChenmsft @samedder
-/sql/sql/                                                            @jaredmoo
-/sdk/servicebus/                                                     @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
-/sdk/synapse/                                                        @aim-for-better @idear1203
-/sdk/textanalytics/                                                  @kristapratico @iscai-msft
-/sdk/formrecognizer/                                                 @kristapratico @iscai-msft @rakshith91
+/sdk/eventgrid/                                                      @kalyanaj                                                      %Event Grid
+/sdk/hdinsight/                                                      @idear1203                                                     %HDInsight
+/sdk/machinelearningcompute/                                         @shutchings                                                    %Machine Learning Compute
+/sdk/recoveryservices/                                               @DheerendraRathor                                              %Recovery Services
+/sdk/search/                                                         @xiangyan99 @rakshith91                                        %Search
+/sdk/servicefabric/                                                  @QingChenmsft @samedder                                        %Service Fabric
+/sql/sql/                                                            @jaredmoo                                                      %SQL
+/sdk/servicebus/                                                     @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee        %Service Bus
+/sdk/synapse/                                                        @aim-for-better @idear1203                                     %Synapse
+/sdk/textanalytics/                                                  @kristapratico @iscai-msft                                     %Cognitive - Text Analytics
+/sdk/formrecognizer/                                                 @kristapratico @iscai-msft @rakshith91                         %Cognitive - Form Recognizer
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
