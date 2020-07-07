@@ -69,9 +69,8 @@ setup(
     packages=find_packages(exclude=[
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
-        'azure.storage',
         'tests',
-        'tests.queue',
+        'tests.table',
         'tests.common'
     ]),
     install_requires=[
@@ -80,7 +79,7 @@ setup(
         "cryptography>=2.1.4"
     ],
     extras_require={
-        ":python_version<'3.0'": ['futures', 'azure-storage-nspkg<4.0.0,>=3.0.0'],
+        ":python_version<'3.0'": ['futures'],
         ":python_version<'3.4'": ['enum34>=1.0.4'],
         ":python_version<'3.5'": ["typing"]
     },

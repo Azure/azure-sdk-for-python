@@ -11,7 +11,7 @@ from azure.table._table_service_client import TableServiceClient
 from ._models import (
     AccessPolicy,
     Metrics,
-    RetentionPolicy, TableAnalyticsLogging, TableSasPermissions, CorsRule,
+    RetentionPolicy, TableAnalyticsLogging, TableSasPermissions, CorsRule, UpdateMode,
 )
 from ._shared.models import (
     LocationMode,
@@ -39,6 +39,7 @@ __all__ = [
     'Metrics',
     'generate_account_shared_access_signature',
     'CorsRule',
+    'UpdateMode',
     'RetentionPolicy',
     'generate_table_sas'
 ]

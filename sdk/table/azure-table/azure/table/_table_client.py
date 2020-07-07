@@ -327,7 +327,7 @@ class TableClient(StorageAccountHostsMixin):
         """Update entity in a table.
 
         :param mode: Merge or Replace entity
-        :type mode: ~azure.table._models.UpdateMode
+        :type mode: ~azure.table.UpdateMode
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
         :param partition_key: The partition key of the entity.
@@ -437,7 +437,7 @@ class TableClient(StorageAccountHostsMixin):
         """Update/Merge or Insert entity into table.
 
         :param mode: Merge or Replace and Insert on fail
-        :type mode: ~azure.table._models.UpdateMode
+        :type mode: ~azure.table.UpdateMode
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
         :param partition_key: The partition key of the entity.
