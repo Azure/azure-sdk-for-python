@@ -1,0 +1,211 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Tue, 07 Jul 2020 00:08:19 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://pytagstoragestorname.blob.core.windows.net/container4b1215ce?timeout=5&restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 07 Jul 2020 00:08:19 GMT
+      etag: '"0x8D82209DB75AE37"'
+      last-modified: Tue, 07 Jul 2020 00:08:20 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-12-12'
+    status:
+      code: 201
+      message: Created
+    url: https://pytagstorageqnajnmaymstb.blob.core.windows.net/container4b1215ce?timeout=5&restype=container
+- request:
+    body: null
+    headers:
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Tue, 07 Jul 2020 00:08:20 GMT
+      x-ms-tags:
+      - ''
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://pytagstoragestorname.blob.core.windows.net/container4b1215ce/blob4b1215ce
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: 1B2M2Y8AsgTpgAmY7PhCfg==
+      date: Tue, 07 Jul 2020 00:08:19 GMT
+      etag: '"0x8D82209DB823C63"'
+      last-modified: Tue, 07 Jul 2020 00:08:20 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: AAAAAAAAAAA=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-12-12'
+    status:
+      code: 201
+      message: Created
+    url: https://pytagstorageqnajnmaymstb.blob.core.windows.net/container4b1215ce/blob4b1215ce
+- request:
+    body: AAA
+    headers:
+      Content-Length:
+      - '3'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Tue, 07 Jul 2020 00:08:20 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://pytagstoragestorname.blob.core.windows.net/container4b1215ce/blob4b1215ce?blockid=MQ%3D%3D&comp=block
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 07 Jul 2020 00:08:19 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: Cc/2Kr4DuKg=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-12-12'
+    status:
+      code: 201
+      message: Created
+    url: https://pytagstorageqnajnmaymstb.blob.core.windows.net/container4b1215ce/blob4b1215ce?blockid=MQ%3D%3D&comp=block
+- request:
+    body: BBB
+    headers:
+      Content-Length:
+      - '3'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Tue, 07 Jul 2020 00:08:20 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://pytagstoragestorname.blob.core.windows.net/container4b1215ce/blob4b1215ce?blockid=Mg%3D%3D&comp=block
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 07 Jul 2020 00:08:19 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: +3yuPEA7IqE=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-12-12'
+    status:
+      code: 201
+      message: Created
+    url: https://pytagstorageqnajnmaymstb.blob.core.windows.net/container4b1215ce/blob4b1215ce?blockid=Mg%3D%3D&comp=block
+- request:
+    body: CCC
+    headers:
+      Content-Length:
+      - '3'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Tue, 07 Jul 2020 00:08:20 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://pytagstoragestorname.blob.core.windows.net/container4b1215ce/blob4b1215ce?blockid=Mw%3D%3D&comp=block
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 07 Jul 2020 00:08:19 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: VRJmMeosVKY=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-12-12'
+    status:
+      code: 201
+      message: Created
+    url: https://pytagstorageqnajnmaymstb.blob.core.windows.net/container4b1215ce/blob4b1215ce?blockid=Mw%3D%3D&comp=block
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <BlockList><Latest>MQ==</Latest><Latest>Mg==</Latest><Latest>Mw==</Latest></BlockList>'
+    headers:
+      Content-Length:
+      - '125'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Tue, 07 Jul 2020 00:08:20 GMT
+      x-ms-tags:
+      - tag1=firsttag&tag2=secondtag&tag3=thirdtag
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://pytagstoragestorname.blob.core.windows.net/container4b1215ce/blob4b1215ce?comp=blocklist
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 07 Jul 2020 00:08:19 GMT
+      etag: '"0x8D82209DBB3B5A8"'
+      last-modified: Tue, 07 Jul 2020 00:08:20 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: dAoQ5rLgKr0=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-12-12'
+    status:
+      code: 201
+      message: Created
+    url: https://pytagstorageqnajnmaymstb.blob.core.windows.net/container4b1215ce/blob4b1215ce?comp=blocklist
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.3.3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Tue, 07 Jul 2020 00:08:21 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: GET
+    uri: https://pytagstoragestorname.blob.core.windows.net/container4b1215ce/blob4b1215ce?comp=tags
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Tags><TagSet><Tag><Key>tag1</Key><Value>firsttag</Value></Tag><Tag><Key>tag2</Key><Value>secondtag</Value></Tag><Tag><Key>tag3</Key><Value>thirdtag</Value></Tag></TagSet></Tags>"
+    headers:
+      content-length: '220'
+      content-type: application/xml
+      date: Tue, 07 Jul 2020 00:08:20 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-12-12'
+    status:
+      code: 200
+      message: OK
+    url: https://pytagstorageqnajnmaymstb.blob.core.windows.net/container4b1215ce/blob4b1215ce?comp=tags
+version: 1
