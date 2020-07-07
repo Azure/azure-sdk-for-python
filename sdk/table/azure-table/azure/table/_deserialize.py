@@ -16,8 +16,7 @@ from ._shared.models import StorageErrorCode
 
 
 def deserialize_metadata(response, _, headers):
-    raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
-    return {k[10:]: v for k, v in raw_metadata.items()}
+    return {k[10:]: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
 
 
 def deserialize_table_properties(response, obj, headers):
