@@ -1,4 +1,4 @@
-# Change Log azure-ai-textanalytics
+# Release History
 
 ## 1.0.1 (Unreleased)
 

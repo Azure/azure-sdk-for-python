@@ -1,4 +1,4 @@
-# Change Log azure-ai-formrecognizer
+# Release History
 
 ## 1.0.0b4 (Unreleased)
 
