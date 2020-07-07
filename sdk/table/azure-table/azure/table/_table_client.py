@@ -64,7 +64,7 @@ class TableClient(StorageAccountHostsMixin):
             raise ValueError("Account URL must be a string.")
         parsed_url = urlparse(account_url.rstrip('/'))
         if not table_name:
-            raise ValueError("Please specify a queue name.")
+            raise ValueError("Please specify a table name.")
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(parsed_url))
 
@@ -112,7 +112,7 @@ class TableClient(StorageAccountHostsMixin):
         :rtype: ~azure.table.TableClient
         """
         account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, 'queue')
+            conn_str, credential, 'table')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)  # type: ignore
