@@ -109,7 +109,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         # Assert
         self.assertIsNotNone(resp)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -127,7 +128,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         for key, value in resp.items():
             self.assertEqual(tags[key], value)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_tags_for_a_snapshot(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -145,7 +147,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         for key, value in resp.items():
             self.assertEqual(tags[key], value)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_upload_block_blob_with_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -158,7 +161,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), 3)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_blob_properties_returns_tags_num(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -173,7 +177,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertEqual(resp.tag_count, len(tags))
         self.assertEqual(downloaded.properties.tag_count, len(tags))
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_append_blob_with_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -186,7 +191,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), 3)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_page_blob_with_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -199,7 +205,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), 3)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_commit_block_list_with_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -220,7 +227,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), len(tags))
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_start_copy_from_url_with_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -249,7 +257,8 @@ class StorageBlobTagsTest(AsyncStorageTestCase):
         self.assertIsNotNone(resp)
         self.assertEqual(len(resp), len(tags))
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='pytagstorage')
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_blobs_returns_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)

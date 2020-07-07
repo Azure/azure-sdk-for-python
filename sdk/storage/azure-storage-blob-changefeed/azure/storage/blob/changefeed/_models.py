@@ -123,11 +123,11 @@ class ChangeFeed(object):
     def _initialize(self, cf_cursor=None):
         try:
             start_year = self.start_time.year
-        except:
+        except AttributeError:
             try:
-                start_date = self._parse_datetime_from_segment_path(cf_cursor['segment_path'])
+                start_date = self._parse_datetime_from_segment_path(cf_cursor.get('segment_path'))
                 start_year = start_date.year
-            except:
+            except AttributeError:
                 start_year = ""
 
         # segment path generator will generate path starting from a specific year

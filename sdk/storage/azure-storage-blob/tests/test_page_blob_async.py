@@ -1459,7 +1459,7 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
         # Act
         blob_size = len(data)
         with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = StoragePageBlobTestAsync.NonSeekableFile(stream)
+            non_seekable_file = StoragePageBlobAsyncTest.NonSeekableFile(stream)
             await blob.upload_blob(
                 non_seekable_file,
                 length=blob_size,
