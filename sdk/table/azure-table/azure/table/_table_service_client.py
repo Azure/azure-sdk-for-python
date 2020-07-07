@@ -136,10 +136,10 @@ class TableServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def set_service_properties(
             self,
-            analytics_logging=None,  # type: Optional[Any]
-            hour_metrics=None,  # type: Optional[Any]
-            minute_metrics=None,  # type: Optional[Any]
-            cors=None,  # type: Optional[Any]
+            analytics_logging=None,  # type: Optional[TableAnalyticsLogging]
+            hour_metrics=None,  # type: Optional[Metrics]
+            minute_metrics=None,  # type: Optional[Metrics]
+            cors=None,  # type: Optional[CorsRule]
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -147,13 +147,13 @@ class TableServiceClient(StorageAccountHostsMixin):
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
        :param analytics_logging: Properties for analytics
-       :type analytics_logging: Any
+       :type analytics_logging: ~azure.table.TableAnalyticsLogging
        :param hour_metrics: Hour level metrics
-       :type hour_metrics: Any
+       :type hour_metrics: ~azure.table.metrics
        :param minute_metrics: Minute level metrics
-       :type minute_metrics: Any
+       :type minute_metrics: ~azure.table.metrics
        :param cors: Cross-origin resource sharing rules
-       :type cors: Any
+       :type cors: ~azure.table.CorsRule
        :return: None
        :rtype: None
        :raises: ~azure.core.exceptions.HttpResponseError
