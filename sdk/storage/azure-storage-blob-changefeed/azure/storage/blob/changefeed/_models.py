@@ -173,7 +173,11 @@ class ChangeFeed(object):
     @staticmethod
     def _parse_datetime_from_segment_path(segment_path):
         path_tokens = segment_path.split("/")
-        return datetime(int(path_tokens[2]), int(path_tokens[3]), int(path_tokens[4]), int(path_tokens[5][:2]))
+        year = int(path_tokens[2])
+        month = int(path_tokens[3])
+        day = int(path_tokens[4])
+        hour = int(path_tokens[5][:2])
+        return datetime(year, month, day, hour)
 
     def _is_earlier_than_start_time(self, segment_path):
         segment_date = self._parse_datetime_from_segment_path(segment_path)
