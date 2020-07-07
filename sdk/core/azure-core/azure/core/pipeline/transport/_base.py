@@ -302,12 +302,10 @@ class HttpRequest(object):
             params.update(existing_params)
         query_params = []
         for k, v in params.items():
-            if isinstance(v, str):
-                query_params.append("{}={}".format(k, v))
-            elif isinstance(v, list):
+            if isinstance(v, list):
                 query_params.extend(["{}={}".format(k, w) for w in v])
             else:
-                raise ValueError()
+                query_params.append("{}={}".format(k, v))
         query = "?" + "&".join(query_params)
         self.url = self.url + query
 
