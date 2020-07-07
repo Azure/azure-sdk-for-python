@@ -18,7 +18,6 @@ from azure.table._deserialize import _convert_to_entity
 from azure.table._entity import Entity
 from azure.table._generated import AzureTable
 from azure.table._generated.models import AccessPolicy, SignedIdentifier
-from azure.table._message_encoding import NoEncodePolicy, NoDecodePolicy
 from azure.table._serialize import _get_match_headers, _add_entity_properties
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 
@@ -76,8 +75,6 @@ class TableClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(TableClient, self).__init__(parsed_url, service='table', credential=credential, **kwargs)
 
-        self._config.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
-        self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureTable(self.url, pipeline=self._pipeline)
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
@@ -165,7 +162,7 @@ class TableClient(StorageAccountHostsMixin):
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
 
-        :return: dict of SignedIdentifier
+        :return: Dictionary of SignedIdentifiers
         :rtype: dict[str, SignedIdentifier]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -266,18 +263,16 @@ class TableClient(StorageAccountHostsMixin):
                                                     etag_param='etag', match_param='match_condition')
 
         self._client.table.delete_entity(
-            table=self.table_name,
-            partition_key=partition_key,
-            row_key=row_key,
-            if_match=if_match or if_not_match or '*',
-            **kwargs)
-
-        raise ResourceNotFoundError
+                table=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                if_match=if_match or if_not_match or '*',
+                **kwargs)
 
     @distributed_trace
     def create_entity(
             self,
-            table_entity_properties,  # type: dict
+            table_entity_properties,  # type: dict[str,str]
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):
@@ -285,7 +280,7 @@ class TableClient(StorageAccountHostsMixin):
         """Insert entity in a table.
 
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
+        :type table_entity_properties: dict[str, str]
         :param query_options: Parameter group.
         :type query_options: ~azure.table.QueryOptions
         :return: Entity mapping str to azure.table.EntityProperty
@@ -316,7 +311,7 @@ class TableClient(StorageAccountHostsMixin):
     def update_entity(  # pylint:disable=R1710
             self,
             mode,  # type: Any
-            table_entity_properties,  # type: dict
+            table_entity_properties,  # type: dict[str,str]
             partition_key=None,  # type: Optional[str]
             row_key=None,  # type: Optional[str]
             etag=None,  # type: Optional[object]
@@ -329,7 +324,7 @@ class TableClient(StorageAccountHostsMixin):
         :param mode: Merge or Replace entity
         :type mode: ~azure.table.UpdateMode
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
+        :type table_entity_properties: dict[str, str]
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
@@ -353,19 +348,16 @@ class TableClient(StorageAccountHostsMixin):
 
         if mode is UpdateMode.replace:
             self._client.table.update_entity(
-                table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=table_entity_properties,
-                if_match=if_match or if_not_match or "*",
-                **kwargs)
-
-            raise ResourceNotFoundError
+                    table=self.table_name,
+                    partition_key=partition_key,
+                    row_key=row_key,
+                    table_entity_properties=table_entity_properties,
+                    if_match=if_match or if_not_match or "*",
+                    **kwargs)
         if mode is UpdateMode.merge:
             self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
                                             row_key=row_key, if_match=if_match or if_not_match or "*",
                                             table_entity_properties=table_entity_properties, **kwargs)
-            raise ResourceNotFoundError
 
     @distributed_trace
     def query_entities(
@@ -413,21 +405,18 @@ class TableClient(StorageAccountHostsMixin):
         """
 
         entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
-                                                                                  partition_key=partition_key,
-                                                                                  row_key=row_key,
-                                                                                  query_options=query_options,
-                                                                                  **kwargs)
-
+                                                                              partition_key=partition_key,
+                                                                              row_key=row_key,
+                                                                              query_options=query_options,
+                                                                              **kwargs)
         properties = _convert_to_entity(entity.additional_properties)
-
         return Entity(properties)
-        raise ResourceNotFoundError
 
     @distributed_trace
     def upsert_entity(  # pylint:disable=R1710
             self,
             mode,  # type: Any
-            table_entity_properties,  # type: dict
+            table_entity_properties,  # type: dict[str,str]
             partition_key=None,  # type: Optional[str]
             row_key=None,  # type: Optional[str]
             query_options=None,  # type: Optional[QueryOptions]
@@ -439,7 +428,7 @@ class TableClient(StorageAccountHostsMixin):
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.table.UpdateMode
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
+        :type table_entity_properties: dict[str, str]
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
