@@ -473,7 +473,18 @@ class TablePayloadFormat(object):
 
 
 class UpdateMode(object):
-    def __init__(self, re=False, me=False):
+    def __init__(
+            self,
+            re=False,  # type: bool
+            me=False  # type:bool
+    ):
+        """
+        Update Mode for replace or merge
+        :param re: Replace
+        :type re: bool
+        :param me: Merge
+        :type me: bool
+        """
         self.r = re
         self.m = me
 

@@ -150,9 +150,9 @@ class TableServiceClient(StorageAccountHostsMixin):
        :param analytics_logging: Properties for analytics
        :type analytics_logging: ~azure.table.TableAnalyticsLogging
        :param hour_metrics: Hour level metrics
-       :type hour_metrics: ~azure.table.metrics
+       :type hour_metrics: ~azure.table.Metrics
        :param minute_metrics: Minute level metrics
-       :type minute_metrics: ~azure.table.metrics
+       :type minute_metrics: ~azure.table.Metrics
        :param cors: Cross-origin resource sharing rules
        :type cors: ~azure.table.CorsRule
        :return: None
