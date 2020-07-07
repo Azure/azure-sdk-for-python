@@ -15,7 +15,7 @@ from azure.core.exceptions import ResourceExistsError
 from ._shared.models import StorageErrorCode
 
 
-def deserialize_metadata(response, obj, headers):
+def deserialize_metadata(response, _, headers):
     raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
     return {k[10:]: v for k, v in raw_metadata.items()}
 
@@ -29,7 +29,7 @@ def deserialize_table_properties(response, obj, headers):
     return table_properties
 
 
-def deserialize_table_creation(response, obj, headers):
+def deserialize_table_creation(response, _, headers):
     if response.status_code == 204:
         error_code = StorageErrorCode.queue_already_exists
         error = ResourceExistsError(
