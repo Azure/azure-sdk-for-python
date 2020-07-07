@@ -354,7 +354,7 @@ describes available configurations for retries, logging, transport protocols, an
 ## Troubleshooting
 
 ### General
-Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_ref_docs].
+Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
 
 ### Logging
 This library uses the standard
@@ -446,6 +446,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
+[azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [python_logging]: https://docs.python.org/3/library/logging.html
 [multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
