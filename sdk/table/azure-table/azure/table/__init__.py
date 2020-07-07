@@ -3,24 +3,24 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.table._shared.table_shared_access_signature import generate_table_sas
+from azure.table._shared.table_shared_access_signature import generate_table_sas, \
+    generate_account_shared_access_signature
 from azure.table._table_client import TableClient
 from azure.table._table_service_client import TableServiceClient
 
-from ._version import VERSION
-from ._shared.policies import ExponentialRetry, LinearRetry
-from ._shared.models import(
+from ._models import (
+    AccessPolicy,
+    Metrics,
+    RetentionPolicy, TableAnalyticsLogging, TableSasPermissions, CorsRule,
+)
+from ._shared.models import (
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
     StorageErrorCode
 )
-from ._models import (
-    AccessPolicy,
-    Metrics,
-    CorsRule,
-    RetentionPolicy, TableAnalyticsLogging, TableSasPermissions,
-)
+from ._shared.policies import ExponentialRetry, LinearRetry
+from ._version import VERSION
 
 __version__ = VERSION
 
@@ -37,6 +37,7 @@ __all__ = [
     'AccessPolicy',
     'TableAnalyticsLogging',
     'Metrics',
+    'generate_account_shared_access_signature',
     'CorsRule',
     'RetentionPolicy',
     'generate_table_sas'
