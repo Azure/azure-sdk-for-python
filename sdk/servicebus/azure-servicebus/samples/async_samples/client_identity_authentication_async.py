@@ -56,7 +56,7 @@ async def run():
     async with servicebus_client:
         sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
         async with sender:
-            await sender.send(Message('Single Message'))
+            await sender.send_messages(Message('Single Message'))
 
     await credential.close()
 

@@ -20,12 +20,12 @@ TOPIC_NAME = os.environ["SERVICE_BUS_TOPIC_NAME"]
 
 def send_single_message(sender):
     message = Message("Single Message")
-    sender.send(message)
+    sender.send_messages(message)
 
 
 def send_a_list_of_messages(sender):
     messages = [Message("Message in list") for _ in range(10)]
-    sender.send(messages)
+    sender.send_messages(messages)
 
 
 def send_batch_message(sender):
@@ -37,7 +37,7 @@ def send_batch_message(sender):
             # BatchMessage object reaches max_size.
             # New BatchMessage object can be created here to send more data.
             break
-    sender.send(batch_message)
+    sender.send_messages(batch_message)
 
 
 servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, logging_enable=True)

@@ -285,16 +285,16 @@ def example_receive_deadletter_sync():
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
     with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
-        with servicebus_client.get_queue_sender(queue_name):
-            servicebus_sender.send(Message("Hello World"))
+        with servicebus_client.get_queue_sender(queue_name) as servicebus_sender:
+            servicebus_sender.send_messages(Message("Hello World"))
         # [START receive_deadletter_sync]
         with servicebus_client.get_queue_receiver(queue_name) as servicebus_receiver:
-            messages = servicebus_receiver.receive(max_wait_time=5)
+            messages = servicebus_receiver.receive_messages(max_wait_time=5)
             for message in messages:
                 message.dead_letter(reason='reason for dead lettering', description='description for dead lettering')
 
         with servicebus_client.get_queue_deadletter_receiver(queue_name) as servicebus_deadletter_receiver:
-            messages = servicebus_deadletter_receiver.receive(max_wait_time=5)
+            messages = servicebus_deadletter_receiver.receive_messages(max_wait_time=5)
             for message in messages:
                 message.complete()
         # [END receive_deadletter_sync]
