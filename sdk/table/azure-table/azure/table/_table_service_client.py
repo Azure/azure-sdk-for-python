@@ -100,12 +100,12 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_stats(self, **kwargs):
-        # type: (...) -> dict[ServiceStats]
+        # type: (...) -> dict[str,ServiceStats]
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
         :return: Dictionary of Service Stats
-        :rtype: dict[~azure.storage.common.ServiceStats]
+        :rtype: dict[str, ~azure.storage.common.ServiceStats]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
@@ -118,12 +118,12 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
-        # type: (...) -> dict[TableServiceProperties]
+        # type: (...) -> dict[str,TableServiceProperties]
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :return: Dictionary of service properties
-        :rtype: dict[~azure.table.TableServiceProperties]
+        :rtype: dict[str, ~azure.table.TableServiceProperties]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timeout = kwargs.pop('timeout', None)
