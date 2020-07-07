@@ -742,15 +742,6 @@ class AzureFileshareProtectedItem(ProtectedItem):
      'ProtectionStopped', 'ProtectionPaused'
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
-    :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
-    :type health_status: str or
-     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
-    :param health_details: Health details on this backup item.
-    :type health_details:
-     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param last_backup_status: Last backup operation status. Possible values:
      Healthy, Unhealthy.
     :type last_backup_status: str
@@ -784,8 +775,6 @@ class AzureFileshareProtectedItem(ProtectedItem):
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'protection_status': {'key': 'protectionStatus', 'type': 'str'},
         'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
         'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureFileshareProtectedItemExtendedInfo'},
@@ -796,8 +785,6 @@ class AzureFileshareProtectedItem(ProtectedItem):
         self.friendly_name = kwargs.get('friendly_name', None)
         self.protection_status = kwargs.get('protection_status', None)
         self.protection_state = kwargs.get('protection_state', None)
-        self.health_status = kwargs.get('health_status', None)
-        self.health_details = kwargs.get('health_details', None)
         self.last_backup_status = kwargs.get('last_backup_status', None)
         self.last_backup_time = kwargs.get('last_backup_time', None)
         self.extended_info = kwargs.get('extended_info', None)
@@ -1435,9 +1422,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
     :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
     :type health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
     :param health_details: Health details on this backup item.
@@ -1575,9 +1560,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
     :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
     :type health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
     :param health_details: Health details on this backup item.
@@ -1794,9 +1777,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
     :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
     :type health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
     :param health_details: Health details on this backup item.
@@ -1894,7 +1875,7 @@ class AzureIaaSVMErrorInfo(Model):
         self.recommendations = None
 
 
-class HealthDetails(Model):
+class ResourceHealthDetails(Model):
     """Health Details for backup items.
 
     Variables are only populated by the server, and will be ignored when
@@ -1925,14 +1906,14 @@ class HealthDetails(Model):
     }
 
     def __init__(self, **kwargs):
-        super(HealthDetails, self).__init__(**kwargs)
+        super(ResourceHealthDetails, self).__init__(**kwargs)
         self.code = None
         self.title = None
         self.message = None
         self.recommendations = None
 
 
-class AzureIaaSVMHealthDetails(HealthDetails):
+class AzureIaaSVMHealthDetails(ResourceHealthDetails):
     """Azure IaaS VM workload-specific Health Details.
 
     Variables are only populated by the server, and will be ignored when
@@ -3506,15 +3487,6 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
      'Invalid', 'Healthy', 'Unhealthy', 'NotReachable', 'IRPending'
     :type protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
-    :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
-    :type health_status: str or
-     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
-    :param health_details: Health details on this backup item.
-    :type health_details:
-     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
@@ -3550,8 +3522,6 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
         'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
         'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
     }
 
@@ -3572,8 +3542,6 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         self.last_backup_error_detail = kwargs.get('last_backup_error_detail', None)
         self.protected_item_data_source_id = kwargs.get('protected_item_data_source_id', None)
         self.protected_item_health_status = kwargs.get('protected_item_health_status', None)
-        self.health_status = kwargs.get('health_status', None)
-        self.health_details = kwargs.get('health_details', None)
         self.extended_info = kwargs.get('extended_info', None)
         self.protected_item_type = 'AzureVmWorkloadProtectedItem'
 
@@ -3740,15 +3708,6 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      'Invalid', 'Healthy', 'Unhealthy', 'NotReachable', 'IRPending'
     :type protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
-    :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
-    :type health_status: str or
-     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
-    :param health_details: Health details on this backup item.
-    :type health_details:
-     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
@@ -3784,8 +3743,6 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
         'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
         'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
     }
 
@@ -4129,15 +4086,6 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      'Invalid', 'Healthy', 'Unhealthy', 'NotReachable', 'IRPending'
     :type protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
-    :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
-    :type health_status: str or
-     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
-    :param health_details: Health details on this backup item.
-    :type health_details:
-     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
@@ -4173,8 +4121,6 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
         'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
         'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
     }
 
@@ -4588,15 +4534,6 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      'Invalid', 'Healthy', 'Unhealthy', 'NotReachable', 'IRPending'
     :type protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
-    :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
-    :type health_status: str or
-     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
-    :param health_details: Health details on this backup item.
-    :type health_details:
-     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
@@ -4632,8 +4569,6 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
         'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
         'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
     }
 
