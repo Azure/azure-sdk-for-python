@@ -238,8 +238,7 @@ class TableServiceClient(StorageAccountHostsMixin):
        The table need not already exist.
 
        :param table:
-           The queue. This can either be the name of the queue,
-           or an instance of QueueProperties.
+           The table name
        :type table: str
        :returns: A :class:`~azure.table.TableClient` object.
        :rtype: ~azure.table.TableClient
