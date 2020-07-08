@@ -205,7 +205,7 @@ class RegressionTest:
     def _get_package_test_dir(self, pkg_root_path):
         # Returns path to test or tests folder within package root directory.
         paths = glob.glob(os.path.join(pkg_root_path, "test")) + glob.glob(os.path.join(pkg_root_path, "tests"))
-        if paths is None:
+        if not paths:
             # We will run into this situation only if test and tests are missing in repo.
             # For now, running test for package repo itself to keep it same as regular CI in such cases
             logging.error("'test' folder is not found in {}".format(pkg_root_path))
