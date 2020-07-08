@@ -62,6 +62,14 @@ class ScaleDirection(str, Enum):
     increase = "Increase"
     decrease = "Decrease"
 
+class ScaleRuleMetricDimensionOperationType(str, Enum):
+    """the dimension operator. Only 'Equals' and 'NotEquals' are supported. 'Equals' being equal to
+    any of the values. 'NotEquals' being not equal to all of the values
+    """
+
+    equals = "Equals"
+    not_equals = "NotEquals"
+
 class ScaleType(str, Enum):
     """the type of action that should occur when the scale rule fires.
     """
