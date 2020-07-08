@@ -455,6 +455,7 @@ class TableClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
     ):
         # type: (...) -> Entity or None
+        # TODO: Return type will need to change
         """Update/Merge or Insert entity into table.
 
         :param mode: Merge or Replace and Insert on fail
