@@ -5,7 +5,7 @@ Azure Table is a service for storing data that can be accessed from anywhere in 
 Common uses of Azure Table include:
 
 * Storing structured data in the form of tables
-* Querying tables and entities 
+* Quickly querying data using a clustered index
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/azure/storage/queue) | [Package (PyPI)](https://pypi.org/project/azure-storage-queue/) | [API reference documentation](https://aka.ms/azsdk-python-storage-queue-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples)
 
