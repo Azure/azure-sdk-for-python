@@ -394,12 +394,19 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def query_entities(
             self,
+            reuslts_per_page=None,
+            select=None,
+            filter=None,
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[Entity]
+        # TODO: exposed options
         """Queries entities in a table.
 
+        :param reuslts_per_page:
+        :param select:
+        :param filter:
         :param query_options: Parameter group.
         :type query_options: ~azure.table.QueryOptions
         :return: Query of table entities
