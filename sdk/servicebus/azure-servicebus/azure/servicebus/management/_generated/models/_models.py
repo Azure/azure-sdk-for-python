@@ -13,11 +13,11 @@ import msrest.serialization
 class AuthorizationRule(msrest.serialization.Model):
     """Authorization rule of an entity.
 
-    :param type:
+    :param type: The authorization type.
     :type type: str
-    :param claim_type:
+    :param claim_type: The claim type.
     :type claim_type: str
-    :param claim_value:
+    :param claim_value: The claim value.
     :type claim_value: str
     :param rights: Access rights of the entity. Values are 'Send', 'Listen', or 'Manage'.
     :type rights: list[str]
@@ -68,7 +68,7 @@ class RuleFilter(msrest.serialization.Model):
     """RuleFilter.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CorrelationFilter, FalseFilter, SqlFilter, TrueFilter.
+    sub-classes are: CorrelationFilter, SqlFilter.
 
     :param type: Constant filled by server.
     :type type: str
@@ -79,7 +79,7 @@ class RuleFilter(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'type': {'CorrelationFilter': 'CorrelationFilter', 'FalseFilter': 'FalseFilter', 'SqlFilter': 'SqlFilter', 'TrueFilter': 'TrueFilter'}
+        'type': {'CorrelationFilter': 'CorrelationFilter', 'SqlFilter': 'SqlFilter'}
     }
     _xml_map = {
         'name': 'Filter', 'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'
@@ -197,7 +197,7 @@ class CreateQueueBodyContent(msrest.serialization.Model):
 
 
 class CreateRuleBody(msrest.serialization.Model):
-    """The request body for creating a topic.
+    """The request body for creating a rule.
 
     :param content: RuleDescription for the new Rule.
     :type content: ~azure.servicebus.management._generated.models.CreateRuleBodyContent
@@ -245,9 +245,9 @@ class CreateRuleBodyContent(msrest.serialization.Model):
 
 
 class CreateSubscriptionBody(msrest.serialization.Model):
-    """The request body for creating a topic.
+    """The request body for creating a subscription.
 
-    :param content: TopicDescription for the new topic.
+    :param content: SubscriptionDescription for the new subscription.
     :type content: ~azure.servicebus.management._generated.models.CreateSubscriptionBodyContent
     """
 
@@ -267,11 +267,11 @@ class CreateSubscriptionBody(msrest.serialization.Model):
 
 
 class CreateSubscriptionBodyContent(msrest.serialization.Model):
-    """TopicDescription for the new topic.
+    """SubscriptionDescription for the new subscription.
 
     :param type: MIME type of content.
     :type type: str
-    :param subscription_description: Topic information to create.
+    :param subscription_description: Subscription information to create.
     :type subscription_description:
      ~azure.servicebus.management._generated.models.SubscriptionDescription
     """
@@ -389,18 +389,69 @@ class EmptyRuleAction(RuleAction):
         self.type = 'EmptyRuleAction'
 
 
-class FalseFilter(RuleFilter):
+class SqlFilter(RuleFilter):
+    """SqlFilter.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: FalseFilter, TrueFilter.
+
+    :param type: Constant filled by server.
+    :type type: str
+    :param sql_expression:
+    :type sql_expression: str
+    :param compatibility_level:
+    :type compatibility_level: str
+    :param parameters:
+    :type parameters: list[~azure.servicebus.management._generated.models.KeyValue]
+    :param requires_preprocessing:
+    :type requires_preprocessing: bool
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
+        'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'compatibility_level': {'key': 'CompatibilityLevel', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'parameters': {'key': 'Parameters', 'type': '[KeyValue]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'KeyValueOfstringanyType', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_preprocessing': {'key': 'RequiresPreprocessing', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+    }
+
+    _subtype_map = {
+        'type': {'FalseFilter': 'FalseFilter', 'TrueFilter': 'TrueFilter'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SqlFilter, self).__init__(**kwargs)
+        self.type = 'SqlFilter'
+        self.sql_expression = kwargs.get('sql_expression', None)
+        self.compatibility_level = kwargs.get('compatibility_level', "20")
+        self.parameters = kwargs.get('parameters', None)
+        self.requires_preprocessing = kwargs.get('requires_preprocessing', None)
+
+
+class FalseFilter(SqlFilter):
     """FalseFilter.
 
     :param type: Constant filled by server.
     :type type: str
     :param sql_expression:
     :type sql_expression: str
+    :param compatibility_level:
+    :type compatibility_level: str
+    :param parameters:
+    :type parameters: list[~azure.servicebus.management._generated.models.KeyValue]
+    :param requires_preprocessing:
+    :type requires_preprocessing: bool
     """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
         'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'compatibility_level': {'key': 'CompatibilityLevel', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'parameters': {'key': 'Parameters', 'type': '[KeyValue]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'KeyValueOfstringanyType', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_preprocessing': {'key': 'RequiresPreprocessing', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
 
     def __init__(
@@ -409,11 +460,10 @@ class FalseFilter(RuleFilter):
     ):
         super(FalseFilter, self).__init__(**kwargs)
         self.type = 'FalseFilter'
-        self.sql_expression = kwargs.get('sql_expression', "1 != 1")
 
 
 class KeyValue(msrest.serialization.Model):
-    """KeyValue.
+    """Key Values of custom properties.
 
     :param key:
     :type key: str
@@ -602,7 +652,7 @@ class QueueDescription(msrest.serialization.Model):
     :type lock_duration: ~datetime.timedelta
     :param max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
      memory allocated for the queue.
-    :type max_size_in_megabytes: int
+    :type max_size_in_megabytes: long
     :param requires_duplicate_detection: A value indicating if this queue requires duplicate
      detection.
     :type requires_duplicate_detection: bool
@@ -646,7 +696,7 @@ class QueueDescription(msrest.serialization.Model):
     :type user_metadata: str
     :param created_at: The exact time the queue was created.
     :type created_at: ~datetime.datetime
-    :param updated_at: The exact time a message was updated in the queue.
+    :param updated_at: The exact time the entity description was last updated.
     :type updated_at: ~datetime.datetime
     :param accessed_at: Last time a message was sent, or the last time there was a receive request
      to this queue.
@@ -675,7 +725,7 @@ class QueueDescription(msrest.serialization.Model):
 
     _attribute_map = {
         'lock_duration': {'key': 'LockDuration', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-        'max_size_in_megabytes': {'key': 'MaxSizeInMegabytes', 'type': 'int', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'max_size_in_megabytes': {'key': 'MaxSizeInMegabytes', 'type': 'long', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'requires_duplicate_detection': {'key': 'RequiresDuplicateDetection', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'requires_session': {'key': 'RequiresSession', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
         'default_message_time_to_live': {'key': 'DefaultMessageTimeToLive', 'type': 'duration', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
@@ -979,7 +1029,7 @@ class RuleDescriptionEntry(msrest.serialization.Model):
 class RuleDescriptionEntryContent(msrest.serialization.Model):
     """The RuleDescription.
 
-    :param type: Type of content in queue response.
+    :param type: Type of content in rule response.
     :type type: str
     :param rule_description:
     :type rule_description: ~azure.servicebus.management._generated.models.RuleDescription
@@ -1063,29 +1113,6 @@ class ServiceBusManagementError(msrest.serialization.Model):
         self.detail = kwargs.get('detail', None)
 
 
-class SqlFilter(RuleFilter):
-    """SqlFilter.
-
-    :param type: Constant filled by server.
-    :type type: str
-    :param sql_expression:
-    :type sql_expression: str
-    """
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
-        'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SqlFilter, self).__init__(**kwargs)
-        self.type = 'SqlFilter'
-        self.sql_expression = kwargs.get('sql_expression', None)
-
-
 class SqlRuleAction(RuleAction):
     """SqlRuleAction.
 
@@ -1093,11 +1120,20 @@ class SqlRuleAction(RuleAction):
     :type type: str
     :param sql_expression:
     :type sql_expression: str
+    :param compatibility_level:
+    :type compatibility_level: str
+    :param parameters:
+    :type parameters: list[~azure.servicebus.management._generated.models.KeyValue]
+    :param requires_preprocessing:
+    :type requires_preprocessing: bool
     """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
         'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'compatibility_level': {'key': 'CompatibilityLevel', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'parameters': {'key': 'Parameters', 'type': '[KeyValue]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'KeyValueOfstringanyType', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_preprocessing': {'key': 'RequiresPreprocessing', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
 
     def __init__(
@@ -1107,6 +1143,9 @@ class SqlRuleAction(RuleAction):
         super(SqlRuleAction, self).__init__(**kwargs)
         self.type = 'SqlRuleAction'
         self.sql_expression = kwargs.get('sql_expression', None)
+        self.compatibility_level = kwargs.get('compatibility_level', "20")
+        self.parameters = kwargs.get('parameters', None)
+        self.requires_preprocessing = kwargs.get('requires_preprocessing', None)
 
 
 class SubscriptionDescription(msrest.serialization.Model):
@@ -1116,8 +1155,8 @@ class SubscriptionDescription(msrest.serialization.Model):
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
     :type lock_duration: ~datetime.timedelta
-    :param requires_session: A value that indicates whether the queue supports the concept of
-     sessions.
+    :param requires_session: A value that indicates whether the subscription supports the concept
+     of sessions.
     :type requires_session: bool
     :param default_message_time_to_live: ISO 8601 default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
@@ -1262,7 +1301,7 @@ class SubscriptionDescriptionEntry(msrest.serialization.Model):
 class SubscriptionDescriptionEntryContent(msrest.serialization.Model):
     """The SubscriptionDescription.
 
-    :param type: Type of content in queue response.
+    :param type: Type of content in subscription response.
     :type type: str
     :param subscription_description: Description of a Service Bus subscription resource.
     :type subscription_description:
@@ -1383,7 +1422,7 @@ class TopicDescription(msrest.serialization.Model):
      subscription is to be partitioned.
     :type enable_subscription_partitioning: bool
     :param enable_express: A value that indicates whether Express Entities are enabled. An express
-     queue holds a message in memory temporarily before writing it to persistent storage.
+     topic holds a message in memory temporarily before writing it to persistent storage.
     :type enable_express: bool
     :param user_metadata: Metadata associated with the topic.
     :type user_metadata: str
@@ -1499,7 +1538,7 @@ class TopicDescriptionEntry(msrest.serialization.Model):
 class TopicDescriptionEntryContent(msrest.serialization.Model):
     """The TopicDescription.
 
-    :param type: Type of content in queue response.
+    :param type: Type of content in topic response.
     :type type: str
     :param topic_description: Description of a Service Bus topic resource.
     :type topic_description: ~azure.servicebus.management._generated.models.TopicDescription
@@ -1560,18 +1599,27 @@ class TopicDescriptionFeed(msrest.serialization.Model):
         self.entry = kwargs.get('entry', None)
 
 
-class TrueFilter(RuleFilter):
+class TrueFilter(SqlFilter):
     """TrueFilter.
 
     :param type: Constant filled by server.
     :type type: str
     :param sql_expression:
     :type sql_expression: str
+    :param compatibility_level:
+    :type compatibility_level: str
+    :param parameters:
+    :type parameters: list[~azure.servicebus.management._generated.models.KeyValue]
+    :param requires_preprocessing:
+    :type requires_preprocessing: bool
     """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str', 'xml': {'attr': True, 'prefix': 'xsi', 'ns': 'http://www.w3.org/2001/XMLSchema-instance'}},
         'sql_expression': {'key': 'SqlExpression', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'compatibility_level': {'key': 'CompatibilityLevel', 'type': 'str', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'parameters': {'key': 'Parameters', 'type': '[KeyValue]', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect', 'wrapped': True, 'itemsName': 'KeyValueOfstringanyType', 'itemsNs': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
+        'requires_preprocessing': {'key': 'RequiresPreprocessing', 'type': 'bool', 'xml': {'ns': 'http://schemas.microsoft.com/netservices/2010/10/servicebus/connect'}},
     }
 
     def __init__(
@@ -1580,4 +1628,3 @@ class TrueFilter(RuleFilter):
     ):
         super(TrueFilter, self).__init__(**kwargs)
         self.type = 'TrueFilter'
-        self.sql_expression = kwargs.get('sql_expression', "1 = 1")

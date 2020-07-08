@@ -19,6 +19,7 @@ from ._generated.models import QueueDescription as InternalQueueDescription, \
     KeyValue
 
 from ._model_workaround import adjust_attribute_map
+from ._constants import SQL_COMPATIBILITY_LEVEL
 
 adjust_attribute_map()
 
@@ -652,49 +653,76 @@ class CorrelationRuleFilter(object):
 
 
 class SqlRuleFilter(object):
-    def __init__(self, sql_expression=None):
+    def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=None):
         self.sql_expression = sql_expression
+        self.parameters = parameters
+        self.requires_preprocessing = requires_preprocessing
 
     @classmethod
     def _from_internal_entity(cls, internal_sql_rule_filter):
         sql_rule_filter = cls()
         sql_rule_filter.sql_expression = internal_sql_rule_filter.sql_expression
+        sql_rule_filter.parameters = OrderedDict((kv.key, kv.value) for kv in internal_sql_rule_filter.parameters) \
+            if internal_sql_rule_filter.parameters else OrderedDict()
+        sql_rule_filter.requires_preprocessing = internal_sql_rule_filter.requires_preprocessing
         return sql_rule_filter
 
     def _to_internal_entity(self):
         internal_entity = InternalSqlFilter(sql_expression=self.sql_expression)
+        internal_entity.parameters = [KeyValue(key=key, value=value) for key, value in self.parameters.items()] \
+            if self.parameters else None
+        internal_entity.compatibility_level = SQL_COMPATIBILITY_LEVEL
+        internal_entity.requires_preprocessing = self.requires_preprocessing
         return internal_entity
 
 
 class TrueRuleFilter(SqlRuleFilter):
     def __init__(self):
-        super(TrueRuleFilter, self).__init__("1=1")
+        super(TrueRuleFilter, self).__init__("1=1", None, True)
 
     def _to_internal_entity(self):
         internal_entity = InternalTrueFilter()
+        internal_entity.sql_expression = self.sql_expression
+        internal_entity.requires_preprocessing = True
+        internal_entity.compatibility_level = SQL_COMPATIBILITY_LEVEL
+
         return internal_entity
 
 
 class FalseRuleFilter(SqlRuleFilter):
     def __init__(self):
-        super(FalseRuleFilter, self).__init__("1>1")
+        super(FalseRuleFilter, self).__init__("1>1", None, True)
 
     def _to_internal_entity(self):
         internal_entity = InternalFalseFilter()
+        internal_entity.sql_expression = self.sql_expression
+        internal_entity.requires_preprocessing = True
+        internal_entity.compatibility_level = SQL_COMPATIBILITY_LEVEL
         return internal_entity
 
 
 class SqlRuleAction(object):
-    def __init__(self, sql_expression=None):
+    def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=None):
         self.sql_expression = sql_expression
+        self.parameters = parameters
+        self.requires_preprocessing = requires_preprocessing
 
     @classmethod
     def _from_internal_entity(cls, internal_sql_rule_action):
-        sql_rule_filter = cls(internal_sql_rule_action.sql_expression)
-        return sql_rule_filter
+        sql_rule_action = cls()
+        sql_rule_action.sql_expression = internal_sql_rule_action.sql_expression
+        sql_rule_action.parameters = OrderedDict((kv.key, kv.value) for kv in internal_sql_rule_action.parameters) \
+            if internal_sql_rule_action.parameters else OrderedDict()
+        sql_rule_action.requires_preprocessing = internal_sql_rule_action.requires_preprocessing
+        return sql_rule_action
 
     def _to_internal_entity(self):
-        return InternalSqlRuleAction(sql_expression=self.sql_expression)
+        internal_entity = InternalSqlRuleAction(sql_expression=self.sql_expression)
+        internal_entity.parameters = [KeyValue(key=key, value=value) for key, value in self.parameters.items()] \
+            if self.parameters else None
+        internal_entity.compatibility_level = SQL_COMPATIBILITY_LEVEL
+        internal_entity.requires_preprocessing = self.requires_preprocessing
+        return internal_entity
 
 
 RULE_CLASS_MAPPING = {

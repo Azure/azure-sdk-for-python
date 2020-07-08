@@ -16,3 +16,5 @@ ENTITY_TYPE_TOPICS = "topics"
 
 LIST_OP_SKIP = "$skip"
 LIST_OP_TOP = "$top"
+
+SQL_COMPATIBILITY_LEVEL = "20"
