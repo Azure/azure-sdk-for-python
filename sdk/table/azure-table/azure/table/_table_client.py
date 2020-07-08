@@ -150,7 +150,7 @@ class TableClient(StorageAccountHostsMixin):
             parsed_url.query)
         table_name = unquote(table_path[-1])
         if not table_name:
-            raise ValueError("Invalid URL. Please provide a URL with a valid queue name")
+            raise ValueError("Invalid URL. Please provide a URL with a valid table name")
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
     @distributed_trace
@@ -239,11 +239,11 @@ class TableClient(StorageAccountHostsMixin):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> TableClient
+        # type: (...) -> str
         """Creates a new table under the given account.
 
-        :return: TableClient, or the result of cls(response)
-        :rtype: ~azure.table.TableClient
+        :return: Table created
+        :rtype: str
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
@@ -295,11 +295,11 @@ class TableClient(StorageAccountHostsMixin):
                                                     etag_param='etag', match_param='match_condition')
 
         self._client.table.delete_entity(
-                table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
-                if_match=if_match or if_not_match or '*',
-                **kwargs)
+            table=self.table_name,
+            partition_key=partition_key,
+            row_key=row_key,
+            if_match=if_match or if_not_match or '*',
+            **kwargs)
 
     @distributed_trace
     def create_entity(
@@ -380,12 +380,12 @@ class TableClient(StorageAccountHostsMixin):
 
         if mode is UpdateMode.replace:
             self._client.table.update_entity(
-                    table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
-                    table_entity_properties=table_entity_properties,
-                    if_match=if_match or if_not_match or "*",
-                    **kwargs)
+                table=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                table_entity_properties=table_entity_properties,
+                if_match=if_match or if_not_match or "*",
+                **kwargs)
         if mode is UpdateMode.merge:
             self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
                                             row_key=row_key, if_match=if_match or if_not_match or "*",

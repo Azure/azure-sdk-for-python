@@ -31,12 +31,12 @@ class TableEntitySamples(object):
 
     def set_access_policy(self):
         # [START create_table_client_from_connection_string]
-        from azure.table import TableServiceClient
-        table_service = TableServiceClient.from_connection_string(self.connection_string)
+        from azure.table import TableClient
+        table = TableClient.from_connection_string(self.connection_string, table_name="mytable1")
         # [END create_table_client_from_connection_string]
 
-        # Create the Table and Table Client
-        table_client = table_service.create_table(table_name="mytable1")
+        # Create the Table
+        table.create_table()
 
         try:
             # [START set_access_policy]
@@ -49,39 +49,39 @@ class TableEntitySamples(object):
             identifiers = {'my-access-policy-id': access_policy}
 
             # Set the access policy
-            table_client.set_table_access_policy(identifiers)
+            table.set_table_access_policy(identifiers)
             # [END set_access_policy]
 
             # Use the access policy to generate a SAS token
             # [START table_client_sas_token]
             from azure.table import generate_table_sas
             sas_token = generate_table_sas(
-                table_service.account_name,
-                table_client.table_name,
-                table_service.credential.account_key,
+                table.account_name,
+                table.table_name,
+                table.credential.account_key,
                 policy_id='my-access-policy-id'
             )
             # [END table_client_sas_token]
 
             # Authenticate with the sas token
             # [START create_table_client]
-            token_auth_table = table_client.from_table_url(
-                table_url=table_service.url,
-                credential=sas_token
-            )
+           # token_auth_table = table.from_table_url(
+          #      table_url=table.url,
+          #      credential=sas_token
+         #   )
             # [END create_table_client]
 
         finally:
             # Delete the table
-            table_service.delete_table(table_name="mytable1")
+            table.delete_table()
 
     def create_and_get_entities(self):
         # Instantiate a table service client
-        from azure.table import TableServiceClient
-        table_service = TableServiceClient.from_connection_string(self.connection_string)
+        from azure.table import TableClient
+        table = TableClient.from_connection_string(self.connection_string, table_name="mytable3")
 
-        # Create the Table and Table Client
-        table = table_service.create_table(table_name="mytable3")
+        # Create the Table
+        table.create_table()
 
         my_entity = {
             'PartitionKey': 'color',
@@ -106,18 +106,18 @@ class TableEntitySamples(object):
 
         finally:
             # Delete the table
-            table_service.delete_table()
+            table.delete_table()
 
     def query_entities(self):
         # Instantiate a table service client
-        from azure.table import TableServiceClient, QueryOptions
-        table_service = TableServiceClient.from_connection_string(self.connection_string)
+        from azure.table import TableClient, QueryOptions
+        table = TableClient.from_connection_string(self.connection_string, table_name="mytable4")
 
-        # Create the table and Table Client
-        table = table_service.create_table(table_name="mytable4")
+        # Create the table
+        table.create_table()
 
-        entity = {'PartitionKey': 'color', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
-        entity1 = {'PartitionKey': 'color', 'RowKey': 'crayola', 'text': 'Marker', 'color': 'Red', 'price': '3'}
+        entity = {'PartitionKey': 'color2', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
+        entity1 = {'PartitionKey': 'color2', 'RowKey': 'crayola', 'text': 'Marker', 'color': 'Red', 'price': '3'}
 
         try:
             # Create entities
@@ -125,7 +125,7 @@ class TableEntitySamples(object):
             table.create_entity(table_entity_properties=entity1)
             # [START query_entities]
             # Query the entities in the table
-            entities = table.query_entities(query_options=QueryOptions(filter="RowKey eq {}".format(entity['RowKey'])))
+            entities = table.query_entities(query_options=QueryOptions())
 
             for e in entities:
                 print(e)
@@ -133,15 +133,15 @@ class TableEntitySamples(object):
 
         finally:
             # Delete the table
-            table_service.delete_table(table_name="mytable4")
+            table.delete_table()
 
     def upsert_entities(self):
         # Instantiate a table service client
-        from azure.table import TableServiceClient, UpdateMode
-        table_service = TableServiceClient.from_connection_string(self.connection_string)
+        from azure.table import TableClient, UpdateMode
+        table = TableClient.from_connection_string(self.connection_string, table_name="mytable5")
 
         # Create the table
-        table = table_service.create_table(table_name="mytable5")
+        table.create_table()
 
         entity = {'PartitionKey': 'color', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
         entity1 = {'PartitionKey': 'color', 'RowKey': 'crayola', 'text': 'Marker', 'color': 'Red', 'price': '3'}
@@ -163,15 +163,15 @@ class TableEntitySamples(object):
 
         finally:
             # Delete the table
-            table_service.delete_table(table_name="mytable5")
+            table.delete_table()
 
     def update_entities(self):
         # Instantiate a table service client
-        from azure.table import TableServiceClient, UpdateMode
-        table_service = TableServiceClient.from_connection_string(self.connection_string)
+        from azure.table import TableClient, UpdateMode
+        table = TableClient.from_connection_string(self.connection_string, table_name="mytable6")
 
         # Create the table and Table Client
-        table = table_service.create_table(table_name="mytable6")
+        table.create_table()
 
         entity = {'PartitionKey': 'color', 'RowKey': 'sharpie', 'text': 'Marker', 'color': 'Purple', 'price': '5'}
 
@@ -201,7 +201,7 @@ class TableEntitySamples(object):
 
         finally:
             # Delete the table
-            table_service.delete_table(table_name="mytable6")
+            table.delete_table()
 
 
 if __name__ == '__main__':
