@@ -48,7 +48,7 @@ class CSODataV4Format(ODataV4Format):
             if not odata_error.get("error"):
                 odata_error = _get_too_many_documents_error(odata_error)
             if not odata_error:
-                raise ValueError("The object given does not include an error.")
+                raise ValueError("Service encountered an error without any details")
             if odata_error["error"]["innererror"]:
                 super(CSODataV4Format, self).__init__(odata_error["error"]["innererror"])
         except KeyError:
