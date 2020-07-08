@@ -8,7 +8,6 @@ import functools
 from typing import Any
 
 from azure.core.pipeline import Pipeline
-from azure.table import TableServiceStats
 
 try:
     from urllib.parse import urlparse
