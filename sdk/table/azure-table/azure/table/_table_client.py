@@ -17,7 +17,7 @@ from azure.core.paging import ItemPaged
 from azure.table._deserialize import _convert_to_entity
 from azure.table._entity import Entity
 from azure.table._generated import AzureTable
-from azure.table._generated.models import AccessPolicy, SignedIdentifier
+from azure.table._generated.models import AccessPolicy, SignedIdentifier, TableProperties
 from azure.table._serialize import _get_match_headers, _add_entity_properties
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 
@@ -233,6 +233,38 @@ class TableClient(StorageAccountHostsMixin):
             return response
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace
+    def create_table(
+            self,
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> TableClient
+        """Creates a new table under the given account.
+
+        :return: TableClient, or the result of cls(response)
+        :rtype: ~azure.table.TableClient
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        table_properties = TableProperties(table_name=self.table_name, **kwargs)
+        table = self._client.table.create(table_properties)
+        return table
+
+    @distributed_trace
+    def delete_table(
+            self,
+            request_id_parameter=None,  # type: Optional[str]
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Creates a new table under the given account.
+
+        :param request_id_parameter: Request Id parameter
+        :type request_id_parameter: str
+        :return: None
+        :rtype: None
+        """
+        self._client.table.delete(table=self.table_name, request_id_parameter=request_id_parameter, **kwargs)
 
     @distributed_trace
     def delete_entity(

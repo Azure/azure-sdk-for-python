@@ -45,7 +45,7 @@ class TableEntitySamples(object):
             access_policy = AccessPolicy()
             access_policy.start = datetime.utcnow() - timedelta(hours=1)
             access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-            access_policy.permission = TableSasPermissions(read=True)
+            access_policy.permission = TableSasPermissions(add=True)
             identifiers = {'my-access-policy-id': access_policy}
 
             # Set the access policy
