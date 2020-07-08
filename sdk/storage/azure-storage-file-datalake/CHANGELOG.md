@@ -1,5 +1,8 @@
 # Release History
 
+## 12.1.0b2 (Unreleased)
+
+
 ## 12.1.0b1 (2020-07-07)
 **New Feature**
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
