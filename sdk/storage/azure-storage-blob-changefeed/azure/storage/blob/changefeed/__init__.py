@@ -5,7 +5,9 @@
 # --------------------------------------------------------------------------
 
 from ._change_feed_client import ChangeFeedClient
+from ._version import VERSION
 
+__version__ = VERSION
 
 __all__ = [
     'ChangeFeedClient'

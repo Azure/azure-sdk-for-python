@@ -46,5 +46,5 @@ pip install azure-storage-blob
 
 ## Next steps
 
-Check out the [API reference documentation](https://aka.ms/azsdk-python-storage-blobchangefeed-ref) to learn more about
+Check out the [API reference documentation](https://aka.ms/azsdk-python-storage-blob-changefeed-ref) to learn more about
 what you can do with the Azure Storage Blob client library.
