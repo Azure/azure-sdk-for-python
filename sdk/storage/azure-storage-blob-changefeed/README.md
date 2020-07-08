@@ -3,7 +3,7 @@
 This preview package for Python enables users to get blob change feed events. These events can be lazily generated, iterated by page, retrieved for a specific time interval, or iterated from a specific continuation token.
 
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob-changefeed/azure/storage/blobchangefeed) | [Package (PyPi)](https://pypi.org/project/azure-storage-blob-changefeed/) | [API reference documentation](https://aka.ms/azsdk-python-storage-blobchangefeed-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob-changefeed/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob-changefeed/azure/storage/blobchangefeed) | [Package (PyPi)](https://pypi.org/project/azure-storage-blob-changefeed/) | [API reference documentation](https://aka.ms/azsdk-python-storage-blob-changefeed-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob-changefeed/samples)
 
 
 ## Getting started
@@ -170,7 +170,7 @@ Get started with our [Azure Blob ChangeFeed samples](https://github.com/Azure/az
 
 Several Storage Blob ChangeFeed Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Blob ChangeFeed:
 
-* [`change_feed_samples.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob-changefeed/samples/change_feed_samples.py) - Examples for authenticating and operating on the client:
+* [change_feed_samples.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob-changefeed/samples/change_feed_samples.py) - Examples for authenticating and operating on the client:
     * list events by page
     * list all events
     * list events in a time range
