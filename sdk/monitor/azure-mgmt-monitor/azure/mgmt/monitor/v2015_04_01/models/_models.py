@@ -559,6 +559,9 @@ class MetricTrigger(Model):
     :param metric_name: Required. the name of the metric that defines what the
      rule monitors.
     :type metric_name: str
+    :param metric_namespace: the namespace of the metric that defines what the
+     rule monitors.
+    :type metric_namespace: str
     :param metric_resource_uri: Required. the resource identifier of the
      resource the rule monitors.
     :type metric_resource_uri: str
@@ -590,6 +593,10 @@ class MetricTrigger(Model):
     :param threshold: Required. the threshold of the metric that triggers the
      scale action.
     :type threshold: float
+    :param dimensions: List of dimension conditions. For example:
+     [{"DimensionName":"AppName","Operator":"Equals","Values":["App1"]},{"DimensionName":"Deployment","Operator":"Equals","Values":["default"]}].
+    :type dimensions:
+     list[~azure.mgmt.monitor.v2015_04_01.models.ScaleRuleMetricDimension]
     """
 
     _validation = {
@@ -605,6 +612,7 @@ class MetricTrigger(Model):
 
     _attribute_map = {
         'metric_name': {'key': 'metricName', 'type': 'str'},
+        'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'metric_resource_uri': {'key': 'metricResourceUri', 'type': 'str'},
         'time_grain': {'key': 'timeGrain', 'type': 'duration'},
         'statistic': {'key': 'statistic', 'type': 'MetricStatisticType'},
@@ -612,11 +620,13 @@ class MetricTrigger(Model):
         'time_aggregation': {'key': 'timeAggregation', 'type': 'TimeAggregationType'},
         'operator': {'key': 'operator', 'type': 'ComparisonOperationType'},
         'threshold': {'key': 'threshold', 'type': 'float'},
+        'dimensions': {'key': 'dimensions', 'type': '[ScaleRuleMetricDimension]'},
     }
 
     def __init__(self, **kwargs):
         super(MetricTrigger, self).__init__(**kwargs)
         self.metric_name = kwargs.get('metric_name', None)
+        self.metric_namespace = kwargs.get('metric_namespace', None)
         self.metric_resource_uri = kwargs.get('metric_resource_uri', None)
         self.time_grain = kwargs.get('time_grain', None)
         self.statistic = kwargs.get('statistic', None)
@@ -624,6 +634,7 @@ class MetricTrigger(Model):
         self.time_aggregation = kwargs.get('time_aggregation', None)
         self.operator = kwargs.get('operator', None)
         self.threshold = kwargs.get('threshold', None)
+        self.dimensions = kwargs.get('dimensions', None)
 
 
 class Operation(Model):
@@ -916,6 +927,43 @@ class ScaleRule(Model):
         super(ScaleRule, self).__init__(**kwargs)
         self.metric_trigger = kwargs.get('metric_trigger', None)
         self.scale_action = kwargs.get('scale_action', None)
+
+
+class ScaleRuleMetricDimension(Model):
+    """Specifies an auto scale rule metric dimension.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param dimension_name: Required. Name of the dimension.
+    :type dimension_name: str
+    :param operator: Required. the dimension operator. Only 'Equals' and
+     'NotEquals' are supported. 'Equals' being equal to any of the values.
+     'NotEquals' being not equal to all of the values. Possible values include:
+     'Equals', 'NotEquals'
+    :type operator: str or
+     ~azure.mgmt.monitor.v2015_04_01.models.ScaleRuleMetricDimensionOperationType
+    :param values: Required. list of dimension values. For example:
+     ["App1","App2"].
+    :type values: list[str]
+    """
+
+    _validation = {
+        'dimension_name': {'required': True},
+        'operator': {'required': True},
+        'values': {'required': True},
+    }
+
+    _attribute_map = {
+        'dimension_name': {'key': 'DimensionName', 'type': 'str'},
+        'operator': {'key': 'Operator', 'type': 'str'},
+        'values': {'key': 'Values', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ScaleRuleMetricDimension, self).__init__(**kwargs)
+        self.dimension_name = kwargs.get('dimension_name', None)
+        self.operator = kwargs.get('operator', None)
+        self.values = kwargs.get('values', None)
 
 
 class SenderAuthorization(Model):
