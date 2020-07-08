@@ -278,6 +278,76 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         """
         return self.message.get_data()
 
+    @property
+    def content_type(self):
+        # type: () -> str
+        return self.properties.content_type if self.properties else None
+
+    @content_type.setter
+    def content_type(self, val):
+        # type: (str) -> None
+        self.properties.content_type = val
+
+    @property
+    def correlation_id(self):
+        # type: () -> str
+        return self.properties.correlation_id if self.properties else None
+
+    @correlation_id.setter
+    def correlation_id(self, val):
+        # type: (str) -> None
+        self.properties.correlation_id = val
+
+    @property
+    def label(self):
+        # type: () -> str
+        return self.properties.subject if self.properties else None
+
+    @label.setter
+    def label(self, val):
+        # type: (str) -> None
+        self.properties.subject = val
+
+    @property
+    def message_id(self):
+        # type: () -> str
+        return self.properties.message_id if self.properties else None
+
+    @message_id.setter
+    def message_id(self, val):
+        # type: (str) -> None
+        self.properties.message_id = val
+
+    @property
+    def reply_to(self):
+        # type: () -> str
+        return self.properties.reply_to if self.properties else None
+
+    @reply_to.setter
+    def reply_to(self, val):
+        # type: (str) -> None
+        self.properties.reply_to = val
+
+    @property
+    def reply_to_session_id(self):
+        # type: () -> str
+        return self.properties.reply_to_group_id if self.properties else None
+
+    @reply_to_session_id.setter
+    def reply_to_session_id(self, val):
+        # type: (str) -> None
+        self.properties.reply_to_group_id = val
+
+    @property
+    def to(self):
+        # type: () -> str
+        return self.properties.to if self.properties else None
+
+    @to.setter
+    def to(self, val):
+        # type: (str) -> None
+        self.properties.to = val
+
 
 class BatchMessage(object):
     """A batch of messages.
@@ -420,6 +490,13 @@ class PeekMessage(Message):
             if timestamp:
                 in_seconds = timestamp/1000.0
                 return utc_from_timestamp(in_seconds)
+        return None
+
+    @property
+    def expires_at_utc(self):
+        # type: () -> Optional[datetime.datetime]
+        if self.enqueued_time_utc and self.time_to_live:
+            return self.enqueued_time_utc + self.time_to_live
         return None
 
     @property
