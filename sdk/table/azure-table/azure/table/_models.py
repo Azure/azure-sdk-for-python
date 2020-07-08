@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
 
 from azure.table._deserialize import _convert_to_entity
 from azure.table._entity import Entity
@@ -453,31 +454,7 @@ class TablePayloadFormat(object):
     '''Returns minimal type information for the entity properties plus some extra odata properties.'''
 
 
-class UpdateMode(object):
-    def __init__(
-            self,
-            re=False,  # type: bool
-            me=False  # type:bool
-    ):
-        # TODO: enum
-        """
-        Update Mode for replace or merge
-        :param re: Replace
-        :type re: bool
-        :param me: Merge
-        :type me: bool
-        """
-        self.r = re
-        self.m = me
+class UpdateMode(str, Enum):
 
-    def replace(self):
-        self.r = True
-        return self.r
-
-    def merge(self):
-        self.m = True
-        return self.m
-
-
-UpdateMode.replace = UpdateMode(re=True)
-UpdateMode.merge = UpdateMode(me=True)
+    replace = "replace"
+    merge = "merge"
