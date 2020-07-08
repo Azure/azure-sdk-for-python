@@ -36,10 +36,14 @@ if TYPE_CHECKING:
 class ManagedIdentityCredential(object):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
-    See the Azure Active Directory documentation for more information about managed identities:
-    https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview
+    This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of
+    the keyword arguments.
 
-    :keyword str client_id: ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+    :keyword str client_id: a user-assigned identity's client ID. This is supported in all hosting environments.
+    :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
+      or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
+      learn what values it expects.
+    :paramtype identity_config: Mapping[str, str]
     """
 
     def __init__(self, **kwargs):
@@ -67,11 +71,17 @@ class ManagedIdentityCredential(object):
 
 
 class _ManagedIdentityBase(object):
-    """Sans I/O base for managed identity credentials"""
-
     def __init__(self, endpoint, client_cls, config=None, client_id=None, **kwargs):
-        # type: (str, Type, Optional[Configuration], Optional[str], Any) -> None
-        self._client_id = client_id
+        # type: (str, Type, Optional[Configuration], Optional[str], **Any) -> None
+        self._identity_config = kwargs.pop("identity_config", None) or {}
+        if client_id:
+            if os.environ.get(EnvironmentVariables.MSI_ENDPOINT) and os.environ.get(EnvironmentVariables.MSI_SECRET):
+                # App Service: version 2017-09-1 accepts client ID as parameter "clientid"
+                if "clientid" not in self._identity_config:
+                    self._identity_config["clientid"] = client_id
+            elif "client_id" not in self._identity_config:
+                self._identity_config["client_id"] = client_id
+
         config = config or self._create_config(**kwargs)
         policies = [
             ContentDecodePolicy(),
@@ -163,9 +173,7 @@ class ImdsCredential(_ManagedIdentityBase):
             resource = scopes[0]
             if resource.endswith("/.default"):
                 resource = resource[: -len("/.default")]
-            params = {"api-version": "2018-02-01", "resource": resource}
-            if self._client_id:
-                params["client_id"] = self._client_id
+            params = dict({"api-version": "2018-02-01", "resource": resource}, **self._identity_config)
 
             try:
                 token = self._client.request_token(scopes, method="GET", params=params)
@@ -175,7 +183,7 @@ class ImdsCredential(_ManagedIdentityBase):
                 if ex.status_code == 400:
                     self._endpoint_available = False
                     message = "ManagedIdentityCredential authentication unavailable. "
-                    if self._client_id:
+                    if self._identity_config:
                         message += "The requested identity has not been assigned to this resource."
                     else:
                         message += "No identity has been assigned to this resource."
@@ -232,13 +240,9 @@ class MsiCredential(_ManagedIdentityBase):
         return token
 
     def _request_app_service_token(self, scopes, resource, secret):
-        params = {"api-version": "2017-09-01", "resource": resource}
-        if self._client_id:
-            params["clientid"] = self._client_id
+        params = dict({"api-version": "2017-09-01", "resource": resource}, **self._identity_config)
         return self._client.request_token(scopes, method="GET", headers={"secret": secret}, params=params)
 
     def _request_legacy_token(self, scopes, resource):
-        form_data = {"resource": resource}
-        if self._client_id:
-            form_data["client_id"] = self._client_id
+        form_data = dict({"resource": resource}, **self._identity_config)
         return self._client.request_token(scopes, method="POST", form_data=form_data)

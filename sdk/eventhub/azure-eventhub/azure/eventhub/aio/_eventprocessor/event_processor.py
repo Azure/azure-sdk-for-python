@@ -21,7 +21,7 @@ import logging
 from functools import partial
 
 from azure.eventhub import EventData
-from ..._eventprocessor.common import CloseReason
+from ..._eventprocessor.common import CloseReason, LoadBalancingStrategy
 from ..._eventprocessor._eventprocessor_mixin import EventProcessorMixin
 from .partition_context import PartitionContext
 from .in_memory_checkpoint_store import InMemoryCheckpointStore
@@ -60,6 +60,8 @@ class EventProcessor(
         initial_event_position: Union[str, int, "datetime", Dict[str, Any]] = "@latest",
         initial_event_position_inclusive: Union[bool, Dict[str, bool]] = False,
         load_balancing_interval: float = 10.0,
+        partition_ownership_expiration_interval: Optional[float] = None,
+        load_balancing_strategy: LoadBalancingStrategy = LoadBalancingStrategy.GREEDY,
         owner_level: Optional[int] = None,
         prefetch: Optional[int] = None,
         track_last_enqueued_event_properties: bool = False,
@@ -92,7 +94,10 @@ class EventProcessor(
         self._initial_event_position = initial_event_position
         self._initial_event_position_inclusive = initial_event_position_inclusive
         self._load_balancing_interval = load_balancing_interval
-        self._ownership_timeout = self._load_balancing_interval * 6
+        self._ownership_timeout = partition_ownership_expiration_interval \
+            if partition_ownership_expiration_interval is not None \
+            else self._load_balancing_interval * 6
+        self._load_balancing_strategy = load_balancing_strategy or LoadBalancingStrategy.GREEDY
         self._tasks = {}  # type: Dict[str, asyncio.Task]
         self._partition_contexts = {}  # type: Dict[str, PartitionContext]
         self._owner_level = owner_level
@@ -113,6 +118,7 @@ class EventProcessor(
             self._id,
             self._checkpoint_store,
             self._ownership_timeout,
+            self._load_balancing_strategy,
             self._partition_id,
         )
 

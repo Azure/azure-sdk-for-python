@@ -5,23 +5,23 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models?op=summary
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models?op=summary
   response:
     body:
-      string: '{"summary":{"count":0,"limit":5000,"lastUpdatedDateTime":"2020-04-15T19:11:19Z"}}'
+      string: '{"summary": {"count": 6, "limit": 5000, "lastUpdatedDateTime": "2020-06-11T15:45:09Z"}}'
     headers:
-      apim-request-id: c335570b-363a-4207-b104-0105447c3db2
+      apim-request-id: a18d2f4d-eb2a-4d6c-befb-c9d1f0255473
       content-type: application/json; charset=utf-8
-      date: Wed, 15 Apr 2020 19:11:19 GMT
+      date: Thu, 11 Jun 2020 15:45:08 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '92'
+      x-envoy-upstream-service-time: '11'
     status:
       code: 200
       message: OK
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models?op=summary
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models?op=summary
 version: 1

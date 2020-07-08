@@ -1,5 +1,35 @@
 # Release History
 
+## 3.0.0 (2020-06-22)
+
+*Training 3.3*
+
+**Features**
+
+  - Model ImageUrlCreateBatch has a new parameter metadata
+  - Model ImageIdCreateBatch has a new parameter metadata
+  - Model Prediction has a new parameter tag_type
+  - Model ImageFileCreateBatch has a new parameter metadata
+  - Model Image has a new parameter metadata
+  - Added operation get_images
+  - Added operation update_image_metadata
+  - Added operation get_artifact
+  - Added operation get_image_count
+
+**Breaking changes**
+
+  - Operation import_project has a new signature
+  - Operation publish_iteration has a new signature
+  - Operation create_images_from_files has a new signature
+  - Operation create_images_from_urls has a new signature
+  - Operation create_images_from_predictions has a new signature
+
+*Prediction 3.1*
+
+**Features**
+
+  - Model Prediction has a new parameter tag_type
+
 ## 2.0.0 (2020-05-14)
 
 **Features**
@@ -19,6 +49,10 @@
   - Added operation CustomVisionPredictionClientOperationsMixin.detect_image
   - Added operation group CustomVisionTrainingClientOperationsMixin
 
+**Breaking changes**
+
+- Credentials are now longer a simple string, but a `msrest.authentication.ApiKeyCredentials` instance instead
+
 **General Breaking changes**
 
 This version uses a next-generation code generator that *might*
@@ -27,10 +61,10 @@ were incorrectly visible/importable and have been renamed. This fixed
 several issues caused by usage of classes that were not supposed to be
 used in the first place.
 
-  - CustomVisionPredictionClient cannot be imported from `azure.cognitiveservices.vision.customvision.prediction`
-    anymore (import from `azure.cognitiveservices.vision.customvision` works like before)
+  - CustomVisionPredictionClient cannot be imported from `azure.cognitiveservices.vision.customvision.prediction.custom_vision_prediction_client`
+    anymore (import from `azure.cognitiveservices.vision.customvision.prediction` works like before)
   - CustomVisionPredictionClientConfiguration import has been moved from
-    `azure.cognitiveservices.vision.customvision.prediction` to `azure.cognitiveservices.vision.customvision.prediction`
+    `azure.cognitiveservices.vision.customvision.prediction.custom_vision_prediction_client` to `azure.cognitiveservices.vision.customvision.prediction`
   - A model `MyClass` from a "models" sub-module cannot be imported
     anymore using `azure.cognitiveservices.vision.customvision.prediction.models.my_class` (import from
     `azure.cognitiveservices.vision.customvision.prediction.models` works like before)
@@ -38,10 +72,10 @@ used in the first place.
     sub-module cannot be imported anymore using
     `azure.cognitiveservices.vision.customvision.operations.prediction.my_class_operations` (import
     from `azure.cognitiveservices.vision.customvision.prediction.operations` works like before)
-  - CustomVisionTrainingClient cannot be imported from `azure.cognitiveservices.vision.customvision.training`
-    anymore (import from `azure.cognitiveservices.vision.customvision` works like before)
+  - CustomVisionTrainingClient cannot be imported from `azure.cognitiveservices.vision.customvision.training.custom_vision_training_client`
+    anymore (import from `azure.cognitiveservices.vision.customvision.training` works like before)
   - CustomVisionTrainingClientConfiguration import has been moved from
-    `azure.cognitiveservices.vision.customvision.training` to `azure.cognitiveservices.vision.customvision.training`
+    `azure.cognitiveservices.vision.customvision.training.custom_vision_training_client` to `azure.cognitiveservices.vision.customvision.training`
   - A model `MyClass` from a "models" sub-module cannot be imported
     anymore using `azure.cognitiveservices.vision.customvision.training.models.my_class` (import from
     `azure.cognitiveservices.vision.customvision.training.models` works like before)

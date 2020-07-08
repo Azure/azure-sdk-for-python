@@ -1,7 +1,22 @@
 # Release History
 
-## 12.3.2 (Unreleased)
+## 12.4.0b1 (2020-07-07)
+**New features**
+- Added `query_blob` API to enable users to select/project on block blob or block blob snapshot data by providing simple query expressions.
+- Added blob versioning feature, so that every time there is a blob override the `version_id` will be updated automatically and returned in the response, the `version_id` could be used later to refer to the overwritten blob.
+- Added `set_blob_tags`,`get_blob_tags` and `find_blobs_by_tags` so that user can get blobs based on blob tags.
+- Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
+- For replication enabled account, users can get replication policies when get blob properties.
 
+## 12.3.2 (2020-6-12)
+**Fixes**
+- Fixed issue where batch requests could not be combined with SAS (#9534)
+- Batch requests now support applying parameters to individual blobs within the request via passing in a dictionary.
+- Metadata cannot have leading space (#11457)
+- Improve the performance of upload when using max_concurrency
+
+**Notes**
+- Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.6.0
 
 ## 12.3.1 (2020-04-29)
 

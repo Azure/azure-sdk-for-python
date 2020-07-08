@@ -18,6 +18,8 @@ try:
 except ImportError:  # python < 3.3
     from mock import Mock, patch  # type: ignore
 
+from helpers import build_aad_response
+
 
 class MockCredential(InteractiveCredential):
     """Test class to drive InteractiveCredential.
@@ -215,7 +217,7 @@ def test_enable_persistent_cache():
 
     # credential should default to an in memory cache
     raise_when_called = Mock(side_effect=Exception("credential shouldn't attempt to load a persistent cache"))
-    with patch(persistent_cache + ".load_persistent_cache", raise_when_called):
+    with patch(persistent_cache + "._load_persistent_cache", raise_when_called):
         with patch(InteractiveCredential.__module__ + ".msal.TokenCache", lambda: in_memory_cache):
             credential = TestCredential()
             assert credential._cache is in_memory_cache
@@ -266,3 +268,54 @@ def test_persistent_cache_linux(mock_extensions):
 
     TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
+
+
+def test_home_account_id_client_info():
+    """when MSAL returns client_info, the credential should decode it to get the home_account_id"""
+
+    object_id = "object-id"
+    home_tenant = "home-tenant-id"
+    msal_response = build_aad_response(uid=object_id, utid=home_tenant, access_token="***", refresh_token="**")
+    msal_response["id_token_claims"] = {
+        "aud": "client-id",
+        "iss": "https://localhost",
+        "object_id": object_id,
+        "tid": home_tenant,
+        "preferred_username": "me",
+        "sub": "subject",
+    }
+
+    class TestCredential(InteractiveCredential):
+        def __init__(self, **kwargs):
+            super(TestCredential, self).__init__(client_id="...", **kwargs)
+
+        def _request_token(self, *_, **__):
+            return msal_response
+
+    record = TestCredential().authenticate()
+    assert record.home_account_id == "{}.{}".format(object_id, home_tenant)
+
+
+def test_home_account_id_no_client_info():
+    """the credential should use the subject claim as home_account_id when MSAL doesn't provide client_info"""
+
+    subject = "subject"
+    msal_response = build_aad_response(access_token="***", refresh_token="**")
+    msal_response["id_token_claims"] = {
+        "aud": "client-id",
+        "iss": "https://localhost",
+        "object_id": "some-guid",
+        "tid": "some-tenant",
+        "preferred_username": "me",
+        "sub": subject,
+    }
+
+    class TestCredential(InteractiveCredential):
+        def __init__(self, **kwargs):
+            super(TestCredential, self).__init__(client_id="...", **kwargs)
+
+        def _request_token(self, *_, **__):
+            return msal_response
+
+    record = TestCredential().authenticate()
+    assert record.home_account_id == subject

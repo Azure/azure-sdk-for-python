@@ -17,7 +17,11 @@ _LOGGER = logging.getLogger(__name__)
 
 class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
     """The ServiceBusSessionReceiver class defines a high level interface for
-    receiving messages from the Azure Service Bus Queue or Topic Subscription.
+    receiving messages from the Azure Service Bus Queue or Topic Subscription
+    while utilizing a session for FIFO and ownership semantics.
+
+    The two primary channels for message receipt are `receive()` to make a single request for messages,
+    and `async for message in receiver:` to continuously receive incoming messages in an ongoing fashion.
 
     :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
@@ -39,8 +43,9 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
      lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-     will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-     the client fails to process the message. The default mode is PeekLock.
+     will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
+     if the client fails to process the message.
+     The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
     :keyword session_id: A specific session from which to receive. This must be specified for a
      sessionful entity, otherwise it must be None. In order to receive messages from the next available
@@ -79,7 +84,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
         **kwargs: Any
     ):
         super(ServiceBusSessionReceiver, self).__init__(fully_qualified_namespace, credential, **kwargs)
-        self._create_session_attributes(**kwargs)
+        self._populate_session_attributes(**kwargs)
         self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
 
     @classmethod
@@ -99,8 +104,9 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-         will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-         the client fails to process the message. The default mode is PeekLock.
+         will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
+         if the client fails to process the message.
+         The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful entity, otherwise it must be None. In order to receive messages from the next available

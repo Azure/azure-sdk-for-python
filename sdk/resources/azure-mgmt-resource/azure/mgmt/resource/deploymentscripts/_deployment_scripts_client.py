@@ -9,45 +9,45 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import DeploymentScriptsClientConfiguration
 
+class _SDKClient(object):
+    def __init__(self, *args, **kwargs):
+        """This is a fake class to support current implemetation of MultiApiClientMixin."
+        Will be removed in final version of multiapi azure-core based client
+        """
+        pass
 
-
-class DeploymentScriptsClient(MultiApiClientMixin, SDKClient):
+class DeploymentScriptsClient(MultiApiClientMixin, _SDKClient):
     """The APIs listed in this specification can be used to manage Deployment Scripts resource through the Azure Resource Manager.
 
-    This ready contains multiple API versions, to help you deal with all Azure clouds
+    This ready contains multiple API versions, to help you deal with all of the Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
-    By default, uses latest API version available on public Azure.
-    For production, you should stick a particular api-version and/or profile.
-    The profile sets a mapping between the operation group and an API version.
+    By default, it uses the latest API version available on public Azure.
+    For production, you should stick to a particular api-version and/or profile.
+    The profile sets a mapping between an operation group and its API version.
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :ivar config: Configuration for client.
-    :vartype config: DeploymentScriptsClientConfiguration
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: Subscription Id which forms part of the URI for every service call.
     :type subscription_id: str
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = '2019-10-01-preview'
-    _PROFILE_TAG = "azure.mgmt.resource.deploymentscripts.DeploymentScriptsClient"
+    _PROFILE_TAG = "azure.mgmt.resource.DeploymentScriptsClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -55,11 +55,22 @@ class DeploymentScriptsClient(MultiApiClientMixin, SDKClient):
         _PROFILE_TAG + " latest"
     )
 
-    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
-        self.config = DeploymentScriptsClientConfiguration(credentials, subscription_id, base_url)
+    def __init__(
+        self,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        api_version=None,
+        base_url=None,
+        profile=KnownProfiles.default,
+        **kwargs  # type: Any
+    ):
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = DeploymentScriptsClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(DeploymentScriptsClient, self).__init__(
-            credentials,
-            self.config,
+            credential,
+            self._config,
             api_version=api_version,
             profile=profile
         )
@@ -72,7 +83,7 @@ class DeploymentScriptsClient(MultiApiClientMixin, SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2019-10-01-preview: :mod:`v2019_10_preview.models<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models>`
+           * 2019-10-01-preview: :mod:`v2019_10_preview.models<azure.mgmt.resource.v2019_10_preview.models>`
         """
         if api_version == '2019-10-01-preview':
             from .v2019_10_preview import models
@@ -83,11 +94,19 @@ class DeploymentScriptsClient(MultiApiClientMixin, SDKClient):
     def deployment_scripts(self):
         """Instance depends on the API version:
 
-           * 2019-10-01-preview: :class:`DeploymentScriptsOperations<azure.mgmt.resource.deploymentscripts.v2019_10_preview.operations.DeploymentScriptsOperations>`
+           * 2019-10-01-preview: :class:`DeploymentScriptsOperations<azure.mgmt.resource.v2019_10_preview.operations.DeploymentScriptsOperations>`
         """
         api_version = self._get_api_version('deployment_scripts')
         if api_version == '2019-10-01-preview':
             from .v2019_10_preview.operations import DeploymentScriptsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)

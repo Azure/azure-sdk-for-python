@@ -112,6 +112,18 @@ def _case_insensitive_dict(*args, **kwargs):
 
 
 def _format_url_section(template, **kwargs):
+    """String format the template with the kwargs, auto-skip sections of the template that are NOT in the kwargs.
+
+    By default in Python, "format" will raise a KeyError if a template element is not found. Here the section between
+    the slashes will be removed from the template instead.
+
+    This is used for API like Storage, where when Swagger has template section not defined as parameter.
+
+    :param str template: a string template to fill
+    :param dict[str,str] kwargs: Template values as string
+    :rtype: str
+    :returns: Template completed
+    """
     components = template.split("/")
     while components:
         try:
@@ -288,7 +300,17 @@ class HttpRequest(object):
                 p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]
             }
             params.update(existing_params)
-        query_params = ["{}={}".format(k, v) for k, v in params.items()]
+        query_params = []
+        for k, v in params.items():
+            if isinstance(v, list):
+                for w in v:
+                    if w is None:
+                        raise ValueError("Query parameter {} cannot be None".format(k))
+                    query_params.append("{}={}".format(k, w))
+            else:
+                if v is None:
+                    raise ValueError("Query parameter {} cannot be None".format(k))
+                query_params.append("{}={}".format(k, v))
         query = "?" + "&".join(query_params)
         self.url = self.url + query
 
@@ -305,6 +327,19 @@ class HttpRequest(object):
                 "A streamable data source must be an open file-like object or iterable."
             )
         self.data = data
+        self.files = None
+
+    def set_text_body(self, data):
+        """Set a text as body of the request.
+
+        :param data: A text to send as body.
+        :type data: str
+        """
+        if data is None:
+            self.data = None
+        else:
+            self.data = data
+            self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
     def set_xml_body(self, data):
@@ -673,6 +708,11 @@ class PipelineClientBase(object):
         # type: (...) -> HttpRequest
         """Create HttpRequest object.
 
+        If content is not None, guesses will be used to set the right body:
+        - If content is an XML tree, will serialize as XML
+        - If content-type starts by "text/", set the content as text
+        - Else, try JSON serialization
+
         :param str method: HTTP method (GET, HEAD, etc.)
         :param str url: URL for the request.
         :param dict params: URL query parameters.
@@ -691,8 +731,15 @@ class PipelineClientBase(object):
             request.headers.update(headers)
 
         if content is not None:
+            content_type = request.headers.get("Content-Type")
             if isinstance(content, ET.Element):
                 request.set_xml_body(content)
+            # https://github.com/Azure/azure-sdk-for-python/issues/12137
+            # A string is valid JSON, make the difference between text
+            # and a plain JSON string.
+            # Content-Type is a good indicator of intent from user
+            elif content_type and content_type.startswith("text/"):
+                request.set_text_body(content)
             else:
                 try:
                     request.set_json_body(content)
@@ -718,7 +765,12 @@ class PipelineClientBase(object):
             parsed = urlparse(url)
             if not parsed.scheme or not parsed.netloc:
                 url = url.lstrip("/")
-                base = self._base_url.format(**kwargs).rstrip("/")
+                try:
+                    base = self._base_url.format(**kwargs).rstrip("/")
+                except KeyError as key:
+                    err_msg = "The value provided for the url part {} was incorrect, and resulted in an invalid url"
+                    raise ValueError(err_msg.format(key.args[0]))
+
                 url = _urljoin(base, url)
         else:
             url = self._base_url.format(**kwargs)

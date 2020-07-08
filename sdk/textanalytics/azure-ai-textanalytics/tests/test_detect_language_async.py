@@ -144,18 +144,6 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    @pytest.mark.xfail
-    async def test_too_many_documents(self, client):
-        # marking as xfail since the service hasn't added this error to this endpoint
-        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
-
-        try:
-            await client.detect_language(docs)
-        except HttpResponseError as e:
-            assert e.status_code == 400
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
     async def test_output_same_order_as_input(self, client):
         docs = [
             DetectLanguageInput(id="1", text="one"),
@@ -223,7 +211,8 @@ class TestDetectLanguage(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_show_stats_and_model_version(self, client):
         def callback(response):
-            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response)
+            self.assertIsNotNone(response.model_version, msg=response.raw_response)
             self.assertIsNotNone(response.raw_response)
             self.assertEqual(response.statistics.document_count, 5)
             self.assertEqual(response.statistics.transaction_count, 4)

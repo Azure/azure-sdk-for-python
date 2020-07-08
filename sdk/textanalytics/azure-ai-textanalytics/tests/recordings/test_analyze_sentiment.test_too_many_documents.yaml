@@ -3,7 +3,10 @@ interactions:
     body: '{"documents": [{"id": "0", "text": "One", "language": "en"}, {"id": "1",
       "text": "Two", "language": "en"}, {"id": "2", "text": "Three", "language": "en"},
       {"id": "3", "text": "Four", "language": "en"}, {"id": "4", "text": "Five", "language":
-      "en"}, {"id": "5", "text": "Six", "language": "en"}]}'
+      "en"}, {"id": "5", "text": "Six", "language": "en"}, {"id": "6", "text": "Seven",
+      "language": "en"}, {"id": "7", "text": "Eight", "language": "en"}, {"id": "8",
+      "text": "Nine", "language": "en"}, {"id": "9", "text": "Ten", "language": "en"},
+      {"id": "10", "text": "Eleven", "language": "en"}]}'
     headers:
       Accept:
       - application/json
@@ -12,26 +15,28 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '295'
+      - '534'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"offset":0,"length":3,"text":"One"}],"warnings":[]},{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"offset":0,"length":3,"text":"Two"}],"warnings":[]},{"id":"2","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":5,"text":"Three"}],"warnings":[]},{"id":"3","sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"offset":0,"length":4,"text":"Four"}],"warnings":[]},{"id":"4","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":4,"text":"Five"}],"warnings":[]},{"id":"5","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"offset":0,"length":3,"text":"Six"}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
+      string: '{"documents":[{"id":"0","sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.9,"negative":0.04},"offset":0,"length":3,"text":"One"}],"warnings":[]},{"id":"1","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.97,"negative":0.02},"offset":0,"length":3,"text":"Two"}],"warnings":[]},{"id":"2","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":5,"text":"Three"}],"warnings":[]},{"id":"3","sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.03,"neutral":0.96,"negative":0.01},"offset":0,"length":4,"text":"Four"}],"warnings":[]},{"id":"4","sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.05,"neutral":0.93,"negative":0.02},"offset":0,"length":4,"text":"Five"}],"warnings":[]},{"id":"5","sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.01,"neutral":0.98,"negative":0.01},"offset":0,"length":3,"text":"Six"}],"warnings":[]},{"id":"6","sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.91,"negative":0.03},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.06,"neutral":0.91,"negative":0.03},"offset":0,"length":5,"text":"Seven"}],"warnings":[]},{"id":"7","sentiment":"neutral","confidenceScores":{"positive":0.04,"neutral":0.94,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.04,"neutral":0.94,"negative":0.02},"offset":0,"length":5,"text":"Eight"}],"warnings":[]},{"id":"8","sentiment":"neutral","confidenceScores":{"positive":0.04,"neutral":0.94,"negative":0.02},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.04,"neutral":0.94,"negative":0.02},"offset":0,"length":4,"text":"Nine"}],"warnings":[]},{"id":"9","sentiment":"neutral","confidenceScores":{"positive":0.07,"neutral":0.9,"negative":0.03},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.07,"neutral":0.9,"negative":0.03},"offset":0,"length":3,"text":"Ten"}],"warnings":[]},{"id":"10","sentiment":"neutral","confidenceScores":{"positive":0.1,"neutral":0.86,"negative":0.04},"sentences":[{"sentiment":"neutral","confidenceScores":{"positive":0.1,"neutral":0.86,"negative":0.04},"offset":0,"length":6,"text":"Eleven"}],"warnings":[]}],"errors":[{"id":"","error":{"code":"InvalidRequest","message":"The
+        request has exceeded the allowed document limits.","innererror":{"code":"InvalidDocumentBatch","message":"The
+        number of documents in the request have exceeded the data limitations. See
+        https://aka.ms/text-analytics-data-limits for additional information"}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - adf81ddb-39e9-4b44-82d3-766334f3218e
+      - 678d6919-fa5a-4f93-a47f-5947f05e5916
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=6
+      - CognitiveServices.TextAnalytics.BatchScoring=11
       date:
-      - Wed, 27 May 2020 16:04:03 GMT
+      - Mon, 06 Jul 2020 22:22:28 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '102'
+      - '104'
     status:
       code: 200
       message: OK

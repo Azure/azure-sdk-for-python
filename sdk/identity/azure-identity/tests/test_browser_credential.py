@@ -83,11 +83,10 @@ def test_authenticate():
             )
             record = credential.authenticate(scopes=(scope,))
 
-    for auth_record in (record, credential.authentication_record):
-        assert auth_record.authority == environment
-        assert auth_record.home_account_id == object_id + "." + home_tenant
-        assert auth_record.tenant_id == home_tenant
-        assert auth_record.username == username
+    assert record.authority == environment
+    assert record.home_account_id == object_id + "." + home_tenant
+    assert record.tenant_id == home_tenant
+    assert record.username == username
 
     # credential should have a cached access token for the scope used in authenticate
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential should authenticate silently"))):
@@ -285,8 +284,8 @@ def test_redirect_server():
     thread.start()
 
     # send a request, verify the server exposes the query
-    url = "http://127.0.0.1:{}/?{}={}".format(port, expected_param, expected_value)
-    response = urllib.request.urlopen(url)
+    url = "http://127.0.0.1:{}/?{}={}".format(port, expected_param, expected_value) # nosec
+    response = urllib.request.urlopen(url)  # nosec
 
     assert response.code == 200
     assert server.query_params[expected_param] == [expected_value]

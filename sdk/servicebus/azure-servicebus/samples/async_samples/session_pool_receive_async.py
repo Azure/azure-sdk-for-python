@@ -15,7 +15,7 @@ from azure.servicebus.exceptions import NoActiveSession
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 # Note: This must be a session-enabled queue.
-QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
+SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
 
 
 async def message_processing(servicebus_client, queue_name):
@@ -53,8 +53,8 @@ async def sample_session_send_receive_with_pool_async(connection_string, queue_n
 
     for session_id in sessions:
         async with client.get_queue_sender(queue_name) as sender:
-            await asyncio.gather(*[sender.send(Message("Sample message no. {}".format(i), session_id=session_id)) for i in range(20)])
-            await sender.send(Message("shutdown", session_id=session_id))
+            await asyncio.gather(*[sender.send_messages(Message("Sample message no. {}".format(i), session_id=session_id)) for i in range(20)])
+            await sender.send_messages(Message("shutdown", session_id=session_id))
 
     receive_sessions = [message_processing(client, queue_name) for _ in range(concurrent_receivers)]
     await asyncio.gather(*receive_sessions)
@@ -62,4 +62,4 @@ async def sample_session_send_receive_with_pool_async(connection_string, queue_n
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(sample_session_send_receive_with_pool_async(CONNECTION_STR, QUEUE_NAME))
+    loop.run_until_complete(sample_session_send_receive_with_pool_async(CONNECTION_STR, SESSION_QUEUE_NAME))

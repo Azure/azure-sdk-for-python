@@ -207,7 +207,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(0, len(databases), 'Unexpected number of query results.')
 
         # query with a string.
-        databases = list(self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))
+        databases = list(self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))   # nosec
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
         self.client.delete_database(db1.id)
         self.client.delete_database(db2.id)
@@ -246,14 +246,6 @@ class CRUDTests(unittest.TestCase):
                     {'name': '@id', 'value': collection_id}
                 ]
             }))
-        # Replacing indexing policy is allowed.
-        lazy_policy = {'indexingMode': 'lazy'}
-        created_properties = created_collection.read()
-        replaced_collection = created_db.replace_container(created_collection,
-                                                           partition_key=created_properties['partitionKey'],
-                                                           indexing_policy=lazy_policy)
-        replaced_properties = replaced_collection.read()                                                   
-        self.assertEqual('lazy', replaced_properties['indexingPolicy']['indexingMode'])
 
         self.assertTrue(collections)
         # delete collection
@@ -507,7 +499,7 @@ class CRUDTests(unittest.TestCase):
         # query document on the partition key specified in the predicate will pass even without setting enableCrossPartitionQuery or passing in the partitionKey value
         documentlist = list(created_collection.query_items(
             {
-                'query': 'SELECT * FROM root r WHERE r.id=\'' + replaced_document.get('id') + '\''
+                'query': 'SELECT * FROM root r WHERE r.id=\'' + replaced_document.get('id') + '\''  # nosec
             }))
         self.assertEqual(1, len(documentlist))
 
@@ -515,14 +507,14 @@ class CRUDTests(unittest.TestCase):
         try:
             list(created_collection.query_items(
                 {
-                    'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''
+                    'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''    # nosec
                 }))
         except Exception:
             pass
 
         # cross partition query
         documentlist = list(created_collection.query_items(
-            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',
+            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',  # nosec
             enable_cross_partition_query=True
         ))
 
@@ -530,7 +522,7 @@ class CRUDTests(unittest.TestCase):
 
         # query document by providing the partitionKey value
         documentlist = list(created_collection.query_items(
-            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',
+            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',  # nosec
             partition_key=replaced_document.get('id')
         ))
 
@@ -746,14 +738,14 @@ class CRUDTests(unittest.TestCase):
         # query conflicts on any property other than partitionKey will fail without setting enableCrossPartitionQuery or passing in the partitionKey value
         try:
             list(created_collection.query_conflicts(
-                    query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get(
+                    query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get( # nosec
                         'resourceType') + '\''
                 ))
         except Exception:
             pass
 
         conflictlist = list(created_collection.query_conflicts(
-                query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',
+                query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',  # nosec
                 enable_cross_partition_query=True
         ))
 
@@ -762,7 +754,7 @@ class CRUDTests(unittest.TestCase):
         # query conflicts by providing the partitionKey value
         options = {'partitionKey': conflict_definition.get('id')}
         conflictlist = list(created_collection.query_conflicts(
-            query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',
+            query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',  # nosec
             partition_key=conflict_definition['id']
         ))
 
@@ -939,6 +931,11 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(created_document['id'],
                          document_definition['id'])
 
+        # test error for non-string id
+        with pytest.raises(TypeError):
+            document_definition['id'] = 7
+            created_collection.upsert_item(body=document_definition)
+
         # read documents after creation and verify updated count
         documents = list(created_collection.read_all_items())
         self.assertEqual(
@@ -977,6 +974,15 @@ class CRUDTests(unittest.TestCase):
 
         # Upsert should create new document since the id is different
         new_document = created_collection.upsert_item(body=created_document)
+
+        # Test modified access conditions
+        created_document['spam'] = 'more eggs'
+        created_collection.upsert_item(body=created_document)
+        with pytest.raises(exceptions.CosmosHttpResponseError):
+            created_collection.upsert_item(
+                body=created_document,
+                match_condition=MatchConditions.IfNotModified,
+                etag=new_document['_etag'])
 
         # verify id property
         self.assertEqual(created_document['id'],
@@ -1672,21 +1678,6 @@ class CRUDTests(unittest.TestCase):
 
         db.delete_container(container=collection)
 
-        lazy_collection = db.create_container(
-            id='test_collection_indexing_policy lazy collection ' + str(uuid.uuid4()),
-            indexing_policy={
-                'indexingMode': documents.IndexingMode.Lazy
-            },
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-
-        lazy_collection_properties = lazy_collection.read()
-        self.assertEqual(lazy_collection_properties['indexingPolicy']['indexingMode'],
-                         documents.IndexingMode.Lazy,
-                         'indexing mode should be lazy')
-
-        db.delete_container(container=lazy_collection)
-
         consistent_collection = db.create_container(
             id='test_collection_indexing_policy consistent collection ' + str(uuid.uuid4()),
             indexing_policy={
@@ -1706,7 +1697,7 @@ class CRUDTests(unittest.TestCase):
             id='CollectionWithIndexingPolicy ' + str(uuid.uuid4()),
             indexing_policy={
                 'automatic': True,
-                'indexingMode': documents.IndexingMode.Lazy,
+                'indexingMode': documents.IndexingMode.Consistent,
                 'includedPaths': [
                     {
                         'path': '/',
@@ -1754,7 +1745,7 @@ class CRUDTests(unittest.TestCase):
         collection = db.create_container(
             id='test_create_default_indexing_policy TestCreateDefaultPolicy01' + str(uuid.uuid4()),
             indexing_policy={
-                    'indexingMode': documents.IndexingMode.Lazy, 'automatic': True
+                    'indexingMode': documents.IndexingMode.Consistent, 'automatic': True
                 },
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
@@ -2371,16 +2362,6 @@ class CRUDTests(unittest.TestCase):
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
-        lazy_coll = created_db.create_container(
-            id='test_index_progress_headers lazy_coll ' + str(uuid.uuid4()),
-            indexing_policy={'indexingMode': documents.IndexingMode.Lazy},
-            partition_key=PartitionKey(path="/id", kind='Hash')
-        )
-        created_container = created_db.get_container_client(container=lazy_coll)
-        created_container.read(populate_quota_info=True)
-        self.assertTrue(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
-        self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
-
         none_coll = created_db.create_container(
             id='test_index_progress_headers none_coll ' + str(uuid.uuid4()),
             indexing_policy={
@@ -2395,7 +2376,6 @@ class CRUDTests(unittest.TestCase):
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
         created_db.delete_container(consistent_coll)
-        created_db.delete_container(lazy_coll)
         created_db.delete_container(none_coll)
 
     def test_id_validation(self):

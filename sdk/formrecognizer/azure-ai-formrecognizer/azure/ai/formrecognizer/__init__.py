@@ -9,14 +9,11 @@ from ._form_recognizer_client import FormRecognizerClient
 from ._form_training_client import FormTrainingClient
 
 from ._models import (
-    FormContent,
+    FormElement,
     LengthUnit,
     TrainingStatus,
     CustomFormModelStatus,
     FormContentType,
-    USReceipt,
-    ReceiptType,
-    USReceiptItem,
     FormTable,
     FormTableCell,
     TrainingDocumentInfo,
@@ -27,13 +24,13 @@ from ._models import (
     FormPageRange,
     RecognizedForm,
     FormField,
-    FieldText,
+    FieldData,
     FormPage,
     FormLine,
     FormWord,
     CustomFormModel,
-    CustomFormSubModel,
-    CustomFormModelField
+    CustomFormSubmodel,
+    CustomFormModelField,
 )
 
 
@@ -44,10 +41,7 @@ __all__ = [
     'TrainingStatus',
     'CustomFormModelStatus',
     'FormContentType',
-    'FormContent',
-    'USReceipt',
-    'ReceiptType',
-    'USReceiptItem',
+    'FormElement',
     'FormTable',
     'FormTableCell',
     'TrainingDocumentInfo',
@@ -58,13 +52,13 @@ __all__ = [
     'FormPageRange',
     'RecognizedForm',
     'FormField',
-    'FieldText',
+    'FieldData',
     'FormPage',
     'FormLine',
     'FormWord',
     'CustomFormModel',
-    'CustomFormSubModel',
-    'CustomFormModelField'
+    'CustomFormSubmodel',
+    'CustomFormModelField',
 ]
 
 __VERSION__ = VERSION

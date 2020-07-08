@@ -9,7 +9,7 @@ interactions:
       api-key:
       - 14143B3872694CCFBEFE981DD2C64829
     method: GET
-    uri: https://search22c31514.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
+    uri: https://search22c31514.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
   response:
     body:
       string: "\uFEFF10"
@@ -30,5 +30,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search22c31514.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
+    url: https://search22c31514.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
 version: 1

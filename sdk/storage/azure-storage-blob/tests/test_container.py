@@ -5,32 +5,26 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
-import unittest
-import re
-import sys
-from dateutil.tz import tzutc
 
-import requests
+import sys
 from datetime import datetime, timedelta
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+
+import pytest
+import requests
+
+from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.storage.blob import (
     BlobServiceClient,
-    ContainerClient,
     BlobClient,
-    ContainerSasPermissions,
     PublicAccess,
     ContainerSasPermissions,
     AccessPolicy,
     StandardBlobTier,
     PremiumPageBlobTier,
     generate_container_sas,
-    PartialBatchErrorException
-)
-
-from _shared.testcase import StorageTestCase, LogCaptured, GlobalStorageAccountPreparer
-import pytest
+    PartialBatchErrorException,
+    generate_account_sas, ResourceTypes, AccountSasPermissions)
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -405,7 +399,6 @@ class StorageContainerTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_set_container_acl_with_one_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
-        from dateutil.tz import tzutc
         container = self._create_container(bsc)
 
         # Act
@@ -726,6 +719,98 @@ class StorageContainerTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             container.get_container_properties()
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_undelete_container(self, resource_group, location, storage_account, storage_account_key):
+        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        pytest.skip('This will be added back along with STG74 features')
+
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container_client = self._create_container(bsc)
+
+        # Act
+        container_client.delete_container()
+        # to make sure the container deleted
+        with self.assertRaises(ResourceNotFoundError):
+            container_client.get_container_properties()
+
+        container_list = list(bsc.list_containers(include_deleted=True))
+        self.assertTrue(len(container_list) >= 1)
+
+        restored_version = 0
+        for container in container_list:
+            # find the deleted container and restore it
+            if container.deleted and container.name == container_client.container_name:
+                restored_ctn_client = bsc._undelete_container(container.name, container.version,
+                                                              new_name="restored" + str(restored_version))
+                restored_version += 1
+
+                # to make sure the deleted container is restored
+                props = restored_ctn_client.get_container_properties()
+                self.assertIsNotNone(props)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_restore_to_existing_container(self, resource_group, location, storage_account, storage_account_key):
+        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        pytest.skip('This will be added back along with STG74 features')
+
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        # get an existing container
+        existing_container_client = self._create_container(bsc, prefix="existing")
+        container_client = self._create_container(bsc)
+
+        # Act
+        container_client.delete_container()
+        # to make sure the container deleted
+        with self.assertRaises(ResourceNotFoundError):
+            container_client.get_container_properties()
+
+        container_list = list(bsc.list_containers(include_deleted=True))
+        self.assertTrue(len(container_list) >= 1)
+
+        for container in container_list:
+            # find the deleted container and restore it
+            if container.deleted and container.name == container_client.container_name:
+                with self.assertRaises(HttpResponseError):
+                    bsc._undelete_container(container.name, container.version,
+                                            new_name=existing_container_client.container_name)
+
+    @pytest.mark.live_test_only  # sas token is dynamically generated
+    @pytest.mark.playback_test_only  # we need container soft delete enabled account
+    @GlobalStorageAccountPreparer()
+    def test_restore_with_sas(self, resource_group, location, storage_account, storage_account_key):
+        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        pytest.skip('This will be added back along with STG74 features')
+        token = generate_account_sas(
+            storage_account.name,
+            storage_account_key,
+            ResourceTypes(service=True, container=True),
+            AccountSasPermissions(read=True, write=True, list=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), token)
+        container_client = self._create_container(bsc)
+        container_client.delete_container()
+        # to make sure the container deleted
+        with self.assertRaises(ResourceNotFoundError):
+            container_client.get_container_properties()
+
+        container_list = list(bsc.list_containers(include_deleted=True))
+        self.assertTrue(len(container_list) >= 1)
+
+        restored_version = 0
+        for container in container_list:
+            # find the deleted container and restore it
+            if container.deleted and container.name == container_client.container_name:
+                restored_ctn_client = bsc._undelete_container(container.name, container.version,
+                                                              new_name="restored" + str(restored_version))
+                restored_version += 1
+
+                # to make sure the deleted container is restored
+                props = restored_ctn_client.get_container_properties()
+                self.assertIsNotNone(props)
+
     @GlobalStorageAccountPreparer()
     def test_list_names(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
@@ -976,6 +1061,58 @@ class StorageContainerTest(StorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
+    @pytest.mark.live_test_only
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_delete_blobs_and_snapshot_using_sas(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        sas_token = generate_account_sas(
+            storage_account.name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(object=True, container=True),
+            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), sas_token)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        # blob with snapshot
+        blob_client1 = container.get_blob_client('bloba')
+        blob_client1.upload_blob(data, overwrite=True)
+        snapshot = blob_client1.create_snapshot()
+
+        container.get_blob_client('blobb').upload_blob(data, overwrite=True)
+        container.get_blob_client('blobc').upload_blob(data, overwrite=True)
+
+        # blob with lease
+        blob_client4 = container.get_blob_client('blobd')
+        blob_client4.upload_blob(data, overwrite=True)
+        lease = blob_client4.acquire_lease()
+
+        # Act
+        blob_props = blob_client1.get_blob_properties()
+        blob_props.snapshot = snapshot['snapshot']
+
+        blob_props_d = dict()
+        blob_props_d['name'] = "blobd"
+        blob_props_d['delete_snapshots'] = "include"
+        blob_props_d['lease_id'] = lease.id
+
+        response = container.delete_blobs(
+            blob_props,
+            'blobb',
+            'blobc',
+            blob_props_d,
+            timeout=3
+        )
+        response = list(response)
+        assert len(response) == 4
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+        assert response[3].status_code == 202
+
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_delete_blobs_simple_no_raise(self, resource_group, location, storage_account, storage_account_key):
@@ -1070,6 +1207,64 @@ class StorageContainerTest(StorageTestCase):
                 'blob1',
                 'blob2',
                 'blob3',
+            )
+
+            parts = list(parts)
+            assert len(parts) == 3
+
+            assert parts[0].status_code in [200, 202]
+            assert parts[1].status_code in [200, 202]
+            assert parts[2].status_code in [200, 202]
+
+            blob_ref2 = blob.get_blob_properties()
+            assert tier == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+            assert blob_ref2.blob_tier_change_time is not None
+
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        )
+
+    @pytest.mark.live_test_only
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_standard_blob_tier_set_tiers_with_sas(self, resource_group, location, storage_account,
+                                                   storage_account_key):
+        sas_token = generate_account_sas(
+            storage_account.name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(object=True, container=True),
+            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), sas_token)
+        container = self._create_container(bsc)
+        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
+
+        for tier in tiers:
+            response = container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                raise_on_any_failure=False
+            )
+            blob = container.get_blob_client('blob1')
+            data = b'hello world'
+            blob.upload_blob(data)
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+
+            blob_ref = blob.get_blob_properties()
+
+            parts = container.set_standard_blob_tier_blobs(
+                tier,
+                blob_ref,
+                'blob2',
+                'blob3',
+                timeout=5
             )
 
             parts = list(parts)
@@ -1318,5 +1513,5 @@ class StorageContainerTest(StorageTestCase):
 
         # Act
         downloaded = container.download_blob(blob_name)
-        
+
         assert downloaded.readall() == data
