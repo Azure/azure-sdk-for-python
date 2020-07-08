@@ -4,7 +4,7 @@
 **New features**
 - Added `query_blob` API to enable users to select/project on block blob or block blob snapshot data by providing simple query expressions.
 - Added blob versioning feature, so that every time there is a blob override the `version_id` will be updated automatically and returned in the response, the `version_id` could be used later to refer to the overwritten blob.
-- Added `set_blob_tags`,`set_blob_tags` and `find_blobs_by_tags` so that user can get blobs based on blob tags.
+- Added `set_blob_tags`,`get_blob_tags` and `find_blobs_by_tags` so that user can get blobs based on blob tags.
 - Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
 - For replication enabled account, users can get replication policies when get blob properties.
 
