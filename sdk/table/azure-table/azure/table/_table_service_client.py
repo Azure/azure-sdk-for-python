@@ -106,7 +106,7 @@ class TableServiceClient(StorageAccountHostsMixin):
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
         :return: Dictionary of Service Stats
-        :rtype: dict[str, object]
+        :rtype:dict[str, object]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
@@ -124,7 +124,7 @@ class TableServiceClient(StorageAccountHostsMixin):
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :return: Dictionary of service properties
-        :rtype: dict[str, TableServiceProperties]
+        :rtype:dict[str, TableServiceProperties]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timeout = kwargs.pop('timeout', None)
