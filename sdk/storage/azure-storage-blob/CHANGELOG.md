@@ -1,5 +1,8 @@
 # Release History
 
+## 12.4.0b2 (Unreleased)
+
+
 ## 12.4.0b1 (2020-07-07)
 **New features**
 - Added `query_blob` API to enable users to select/project on block blob or block blob snapshot data by providing simple query expressions.
