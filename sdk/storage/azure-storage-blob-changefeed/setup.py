@@ -88,7 +88,7 @@ setup(
         'azure.storage.blob.changefeed',
     ],
     install_requires=[
-        "azure-storage-blob~=12.4",
+        "azure-storage-blob~=12.4.0b1",
     ],
     extras_require={
         ":python_version<'3.0'": ['futures', 'azure-storage-nspkg<4.0.0,>=3.0.0'],
