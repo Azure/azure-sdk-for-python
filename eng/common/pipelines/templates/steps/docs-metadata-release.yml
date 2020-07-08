@@ -12,7 +12,8 @@ parameters:
   ArtifactName: ''
   Language: ''
   DocRepoDestinationPath: '' #usually docs-ref-services/
-  GithubReviewer: '' # externally set, as eng-common does not have the identity-resolver. Run as pre-step
+  GHReviewersVariable: '' 
+  GHTeamReviewersVariable: '' # externally set, as eng-common does not have the identity-resolver. Run as pre-step
 
 steps:
 - pwsh: |

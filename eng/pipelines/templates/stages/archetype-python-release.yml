@@ -153,6 +153,9 @@ stages:
               environment: githubio
               dependsOn: PublishPackage
 
+              variables:
+                GHReviewersVariable: OwningGHUser
+
               pool:
                 vmImage: ubuntu-18.04
 
@@ -166,10 +169,42 @@ stages:
                           SourceFolder: ${{parameters.ArtifactName}} 
                           TargetFolder: ${{artifact.safeName}}
                           PackageName: ${{artifact.name}}
+
                       - pwsh: |
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/${{artifact.safeName}}
                         workingDirectory: $(Pipeline.Workspace)
                         displayName: Output Visible Artifacts
+
+                      - pwsh: |
+                          git clone https://github.com/Azure/azure-sdk-tools.git $(Build.SourcesDirectory)/tools_repo
+                          cd $(Build.SourcesDirectory)/tools_repo
+                          git checkout feature/identity-resolver
+                        displayName: Get Appropriate Build Tools
+
+                      - pwsh: |
+                          $result = dotnet run -- `
+                            --aad-app-id-var APP_ID `
+                            --aad-app-secret-var APP_SECRET `
+                            --aad-tenant-var AAD_TENANT `
+                            --kusto-url-var KUSTO_URL `
+                            --kusto-database-var KUSTO_DB `
+                            --kusto-table-var KUSTO_TABLE `
+                            --identity "$(OwningGHUser)"
+                          $resolvedIdentity = $result | ConvertTo-Json
+
+                          Write-Host $result
+
+                          Write-Output "##vso[task.setvariable variable=$(GHReviewersVariable)]$result.GithubUserName"
+                        displayName: 'Run Identity Resolver'
+                        workingDirectory: $(Build.SourcesDirectory)/tools_repo/tools/notification-configuration/identity-resolver
+                        env:
+                          APP_ID: $(notification-aad-app-id)
+                          APP_SECRET: $(notification-aad-secret)
+                          AAD_TENANT: $(notification-aad-tenant)
+                          KUSTO_URL: $(notification-kusto-url)
+                          KUSTO_DB: $(notification-kusto-db)
+                          KUSTO_TABLE: $(notification-kusto-table)
+
                       - template: /eng/common/pipelines/templates/steps/docs-metadata-release.yml
                         parameters:
                           ArtifactLocation: $(Pipeline.Workspace)/${{artifact.safeName}}
@@ -185,6 +220,7 @@ stages:
                           Language: 'python'
                           ServiceDirectory: ${{ parameters.ServiceDirectory }}
                           DocRepoDestinationPath: 'docs-ref-services/' 
+                          GHReviewersVariable: $(GHReviewersVariable)
 
           - ${{if ne(artifact.options.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
