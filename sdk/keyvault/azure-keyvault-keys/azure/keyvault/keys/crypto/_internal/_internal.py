@@ -67,14 +67,16 @@ def _b64_to_str(b64str):
     return _b64_to_bstr(b64str).decode("utf8")
 
 
-def _int_to_bigendian_8_bytes(i):
+def _int_to_fixed_length_bigendian_bytes(i, length):
+    """Convert an integer to a bigendian byte string left-padded with zeroes to a fixed length."""
+
     b = _int_to_bytes(i)
 
-    if len(b) > 8:
-        raise ValueError("the specified integer is to large to be represented by 8 bytes")
+    if len(b) > length:
+        raise ValueError("{} is too large to be represented by {} bytes".format(i, length))
 
-    if len(b) < 8:
-        b = (b"\0" * (8 - len(b))) + b
+    if len(b) < length:
+        b = (b"\0" * (length - len(b))) + b
 
     return b
 
