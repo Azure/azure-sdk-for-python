@@ -1,5 +1,8 @@
 # Release History
 
+## 12.2.0b2 (Unreleased)
+
+
 ## 12.2.0b1 (2020-07-07)
 **New features**
 - Added `undelete_share` on FileShareServiceClient so that users can restore deleted share on share soft delete enabled account. Users can also list deleted shares when `list_shares` by specifying `include_deleted=True`.
