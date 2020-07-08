@@ -325,8 +325,23 @@ Get started with our [Table samples](https://github.com/Azure/azure-sdk-for-pyth
 
 Several Azure Table Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables:
 
-* [queue_samples_hello_world.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_hello_world.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples/queue_samples_hello_world_async.py)) - Examples found in this article:
-
+* [table_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples/table_samples_service.py) - Examples found in this article:
+    * Get and set service properties
+    * List tables in a storage account
+    * Create and delete a table from the service
+    * Get the TableClient
+* [table_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples/table_samples_authentication.py) - Examples found in this article:
+    * From a connection string
+    * From a shared access key
+    * From a shared access signature token
+    * From Azure Active Directory
+* [table_samples_client.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples/table_samples_client.py) - Examples found in this article:
+    * Client creation
+    * Create a table
+    * Create and Delete entities
+    * Query entities
+    * Update entities
+    * Upsert entities
     
 ### Additional documentation
 For more extensive documentation on Azure Table, see the [Azure Table documentation](https://docs.microsoft.com/azure/storage/tables/) on docs.microsoft.com.
