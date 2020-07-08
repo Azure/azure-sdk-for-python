@@ -23,9 +23,6 @@ USAGE:
     2) AZURE_STORAGE_ACCOUNT_URL - the Table service account URL
     3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
     4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
-    5) ACTIVE_DIRECTORY_APPLICATION_ID - Azure Active Directory application ID
-    6) ACTIVE_DIRECTORY_APPLICATION_SECRET - Azure Active Directory application secret
-    7) ACTIVE_DIRECTORY_TENANT_ID - Azure Active Directory tenant ID
 """
 
 
@@ -40,10 +37,6 @@ class TableAuthSamples(object):
     account_url = os.getenv("AZURE_STORAGE_ACCOUNT_URL")
     account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
     access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
-
-    active_directory_application_id = os.getenv("ACTIVE_DIRECTORY_APPLICATION_ID")
-    active_directory_application_secret = os.getenv("ACTIVE_DIRECTORY_APPLICATION_SECRET")
-    active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
 
     def authentication_by_connection_string(self):
         # Instantiate a TableServiceClient using a connection string
@@ -61,24 +54,6 @@ class TableAuthSamples(object):
         from azure.table import TableServiceClient
         table_service = TableServiceClient(account_url=self.account_url, credential=self.access_key)
         # [END create_table_service_client]
-
-        # Get information for the Table Service
-        properties = table_service.get_service_properties()
-
-    def authentication_by_active_directory(self):
-        # [START create_Table_service_client_token]
-        # Get a token credential for authentication
-        from azure.identity import ClientSecretCredential
-        token_credential = ClientSecretCredential(
-            self.active_directory_tenant_id,
-            self.active_directory_application_id,
-            self.active_directory_application_secret
-        )
-
-        # Instantiate a TableServiceClient using a token credential
-        from azure.table import TableServiceClient
-        table_service = TableServiceClient(account_url=self.account_url, credential=token_credential)
-        # [END create_Table_service_client_token]
 
         # Get information for the Table Service
         properties = table_service.get_service_properties()
@@ -109,5 +84,4 @@ if __name__ == '__main__':
     sample = TableAuthSamples()
     sample.authentication_by_connection_string()
     sample.authentication_by_shared_key()
-    sample.authentication_by_active_directory()
     sample.authentication_by_shared_access_signature()

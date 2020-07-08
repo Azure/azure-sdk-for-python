@@ -27,7 +27,7 @@ import os
 
 
 class TableEntitySamples(object):
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = "DefaultEndpointsProtocol=https;AccountName=lilawstorage;AccountKey=onkePABTSfc3NqYma2ulpi7JwEzDtVmnaPf17zrBbvRMQOf1mmLCWtoz1GuHWkv6PZJdrFOmoR0i8brr5GNJBw==;EndpointSuffix=core.windows.net"
 
     def set_access_policy(self):
         # [START create_table_client_from_connection_string]
@@ -100,8 +100,7 @@ class TableEntitySamples(object):
             # Get Entity by partition and row key
             got_entity = table.get_entity(partition_key=my_entity['PartitionKey'],
                                                                          row_key=my_entity['RowKey'])
-            for e in got_entity:
-                print(e)
+            print(got_entity)
             # [END get_entity]
 
         finally:
@@ -125,7 +124,7 @@ class TableEntitySamples(object):
             table.create_entity(table_entity_properties=entity1)
             # [START query_entities]
             # Query the entities in the table
-            entities = table.query_entities(query_options=QueryOptions())
+            entities = list(table.query_entities(query_options=QueryOptions()))
 
             for e in entities:
                 print(e)

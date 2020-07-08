@@ -459,6 +459,7 @@ class UpdateMode(object):
             re=False,  # type: bool
             me=False  # type:bool
     ):
+        # TODO: enum
         """
         Update Mode for replace or merge
         :param re: Replace
