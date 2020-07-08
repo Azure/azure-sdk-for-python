@@ -98,7 +98,7 @@ class TableEntitySamples(object):
 
             # [START get_entity]
             # Get Entity by partition and row key
-            got_entity = table.query_entities_with_partition_and_row_key(partition_key=my_entity['PartitionKey'],
+            got_entity = table.get_entity(partition_key=my_entity['PartitionKey'],
                                                                          row_key=my_entity['RowKey'])
             for e in got_entity:
                 print(e)
@@ -185,7 +185,7 @@ class TableEntitySamples(object):
             table.update_entity(mode=UpdateMode.replace, table_entity_properties=created)
 
             # Get the replaced entity
-            replaced = table.query_entities_with_partition_and_row_key(
+            replaced = table.get_entity(
                 partition_key=created.PartitionKey, row_key=created.RowKey)
             print(replaced)
 
@@ -194,7 +194,7 @@ class TableEntitySamples(object):
             table.update_entity(mode=UpdateMode.merge, table_entity_properties=replaced)
 
             # Get the merged entity
-            merged = table.query_entities_with_partition_and_row_key(
+            merged = table.get_entity(
                 partition_key=replaced.PartitionKey, row_key=replaced.RowKey)
             print(merged)
             # [END update_entity]

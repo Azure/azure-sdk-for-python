@@ -278,7 +278,7 @@ class StorageTableEncryptionTest(TableTestCase):
         self.table.create_entity(table_entity_properties=entity)
 
         # Act
-        new_entity = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
+        new_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
         # Assert
         self._assert_default_entity(new_entity)
@@ -308,7 +308,7 @@ class StorageTableEncryptionTest(TableTestCase):
         self.ts.create_entity(table_entity_properties=entity)
 
         # Act
-        new_entity = self.ts.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
+        new_entity = self.ts.get_entity(entity['PartitionKey'], entity['RowKey'])
 
         # Assert
         self._assert_default_entity(new_entity)

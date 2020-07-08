@@ -536,7 +536,7 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity['PartitionKey'],
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
                                                                         row_key=entity['RowKey'])
 
             # Assert
@@ -557,7 +557,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             # resp, headers
             # response_hook=lambda e, h: (e, h)
-            resp = self.table.query_entities_with_partition_and_row_key(
+            resp = self.table.get_entity(
                 partition_key=entity['PartitionKey'],
                 row_key=entity['RowKey'],
                 )
@@ -580,7 +580,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             # Do a get and confirm the etag is parsed correctly by using it
             # as a condition to delete.
-            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity['PartitionKey'],
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
                                                                         row_key=entity['RowKey'])
 
             self.table.delete_entity(
@@ -603,7 +603,7 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.query_entities_with_partition_and_row_key(
+            resp = self.table.get_entity(
                 entity.PartitionKey,
                 entity.RowKey,
                 headers={'accept': 'application/json;odata=fullmetadata'})
@@ -624,7 +624,7 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.query_entities_with_partition_and_row_key(
+            resp = self.table.get_entity(
                 partition_key=entity.PartitionKey,
                 row_key=entity.RowKey,
                 headers={'accept': 'application/json;odata=nometadata'})
@@ -646,7 +646,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             with self.assertRaises(ResourceNotFoundError):
-                self.table.query_entities_with_partition_and_row_key(partition_key=entity.PartitionKey,
+                self.table.get_entity(partition_key=entity.PartitionKey,
                                                                      row_key=entity.RowKey)
 
             # Assert
@@ -662,7 +662,7 @@ class StorageTableEntityTest(TableTestCase):
             entity, _ = self._insert_random_entity()
 
             # Act
-            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity.PartitionKey,
+            resp = self.table.get_entity(partition_key=entity.PartitionKey,
                                                                         row_key=entity.RowKey,
                                                                         query_options=QueryOptions(
                                                                             select="age,sex,xyz"))
@@ -692,7 +692,7 @@ class StorageTableEntityTest(TableTestCase):
             self.table.create_entity(table_entity_properties=entity)
 
             # Act
-            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity['PartitionKey'],
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
                                                                         row_key=entity['RowKey'])
 
             # Assert
@@ -718,7 +718,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             #  self.assertTrue(resp)
-            received_entity = self.table.query_entities_with_partition_and_row_key(partition_key=entity.PartitionKey,
+            received_entity = self.table.get_entity(partition_key=entity.PartitionKey,
                                                                                    row_key=entity.RowKey)
 
             self._assert_updated_entity(received_entity)
@@ -759,7 +759,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             # self.assertTrue(resp)
-            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
@@ -800,7 +800,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()
@@ -820,7 +820,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'],
+            received_entity = self.table.get_entity(entity['PartitionKey'],
                                                                                    entity['RowKey'])
             self._assert_updated_entity(received_entity)
         finally:
@@ -841,7 +841,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             # self.assertIsNone(resp)
-            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
@@ -861,7 +861,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'],
+            received_entity = self.table.get_entity(entity['PartitionKey'],
                                                                                    entity['RowKey'])
             self._assert_updated_entity(received_entity)
         finally:
@@ -881,7 +881,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()
@@ -921,7 +921,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_merged_entity(received_entity)
         finally:
             self._tear_down()
@@ -960,7 +960,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             self.assertIsNone(resp)
             with self.assertRaises(ResourceNotFoundError):
-                self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
+                self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             self._tear_down()
 
@@ -995,7 +995,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             self.assertIsNone(resp)
             with self.assertRaises(ResourceNotFoundError):
-                self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
+                self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             self._tear_down()
 
@@ -1088,7 +1088,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             self.assertIsNone(resp)
             # row key here only has 2 quotes
-            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
 
             # Act
@@ -1097,7 +1097,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertIsNone(resp)
-            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
             self.assertEqual(received_entity['newField'], 'newFieldValue')
 
@@ -1131,7 +1131,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             self.table.create_entity(table_entity_properties=entity)
-            resp = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
+            resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
             self.assertIsNotNone(resp)
@@ -1159,7 +1159,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act       
             self.table.create_entity(table_entity_properties=entity)
-            resp = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
+            resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
             self.assertIsNotNone(resp)
@@ -1179,7 +1179,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act  
             self.table.create_entity(table_entity_properties=entity)
-            resp = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
+            resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
             self.assertIsNotNone(resp)
@@ -1201,7 +1201,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             self.table.create_entity(table_entity_properties=entity)
-            resp = self.table.query_entities_with_partition_and_row_key(entity['PartitionKey'], entity['RowKey'])
+            resp = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
 
             # Assert
             self.assertIsNotNone(resp)
@@ -1472,7 +1472,7 @@ class StorageTableEntityTest(TableTestCase):
             table.create_entity(table_entity_properties=entity)
 
             # Assert
-            resp = self.table.query_entities_with_partition_and_row_key(partition_key=entity['PartitionKey'],
+            resp = self.table.get_entity(partition_key=entity['PartitionKey'],
                                                                         row_key=entity['RowKey'])
             self._assert_default_entity(resp)
         finally:
@@ -1509,7 +1509,7 @@ class StorageTableEntityTest(TableTestCase):
             table.create_entity(table_entity_properties=entity)
 
             # Assert
-            resp = self.table.query_entities_with_partition_and_row_key('test', 'test1')
+            resp = self.table.get_entity('test', 'test1')
             self._assert_default_entity(resp)
         finally:
             self._tear_down()
@@ -1579,7 +1579,7 @@ class StorageTableEntityTest(TableTestCase):
             table.update_entity(mode=UpdateMode.replace, table_entity_properties=updated_entity)
 
             # Assert
-            received_entity = self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
+            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
@@ -1614,7 +1614,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             with self.assertRaises(ResourceNotFoundError):
-                self.table.query_entities_with_partition_and_row_key(entity.PartitionKey, entity.RowKey)
+                self.table.get_entity(entity.PartitionKey, entity.RowKey)
         finally:
             self._tear_down()
 

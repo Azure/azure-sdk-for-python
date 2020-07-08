@@ -415,7 +415,7 @@ class TableClient(StorageAccountHostsMixin):
         )
 
     @distributed_trace
-    def query_entities_with_partition_and_row_key(
+    def get_entity(
             self,
             partition_key,  # type: str
             row_key,  # type: str
