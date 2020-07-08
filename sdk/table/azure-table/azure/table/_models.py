@@ -328,17 +328,11 @@ class TableEntityPropertiesPaged(PageIterator):
         self.location_mode = None
 
     def _get_next_cb(self, continuation_token):
-        row_key = None
-        partition_key = None
-        if continuation_token:
-            tokens = continuation_token.split(" ")
-            row_key = tokens[1]
-            partition_key = tokens[0]
         try:
             return self._command(
                 query_options=self.results_per_page or None,
-                next_row_key=row_key or None,
-                next_partition_key=partition_key or None,
+                next_row_key=continuation_token['RowKey'] or None,
+                next_partition_key=continuation_token['PartitionKey'] or None,
                 table=self.table,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode
@@ -349,20 +343,12 @@ class TableEntityPropertiesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = [Entity(_convert_to_entity(t)) for t in self._response.value]
-        pk = self._headers['x-ms-continuation-NextPartitionKey']
-        rk = self._headers['x-ms-continuation-NextRowKey']
-        next_entity = ''
-        if pk and rk:
-            next_entity = pk + " " + rk
-        elif pk:
-            next_entity = pk
-        elif rk:
-            next_entity = " " + rk
-        return next_entity or None, props_list
+
+        return {'PartitionKey': self._headers['x-ms-continuation-NextPartitionKey'],
+                'RowKey': self._headers['x-ms-continuation-NextRowKey']} or None, props_list
 
 
 class TableSasPermissions(object):
-
     def __init__(
             self,
             query=False,  # type: bool
@@ -455,6 +441,5 @@ class TablePayloadFormat(object):
 
 
 class UpdateMode(str, Enum):
-
     replace = "replace"
     merge = "merge"
