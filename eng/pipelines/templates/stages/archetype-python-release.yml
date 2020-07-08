@@ -192,9 +192,9 @@ stages:
                             --identity "$(OwningGHUser)"
                           $resolvedIdentity = $result | ConvertTo-Json
 
-                          Write-Host $result
+                          Write-Host $resolvedIdentity
 
-                          Write-Output "##vso[task.setvariable variable=$(GHReviewersVariable)]$result.GithubUserName"
+                          Write-Output "##vso[task.setvariable variable=$(GHReviewersVariable)]$resolvedIdentity.GithubUserName"
                         displayName: 'Run Identity Resolver'
                         workingDirectory: $(Build.SourcesDirectory)/tools_repo/tools/notification-configuration/identity-resolver
                         env:
