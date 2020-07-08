@@ -5,7 +5,7 @@ result = text_analytics_client.analyze_sentiment(documents)
 doc_result = [doc for doc in result if not doc.is_error][0]
 
 
-for sentence in doc_result:
+for sentence in doc_result.sentences:
     for aspect in sentence.aspects:
         print(aspect.text)  # 'design'
         print(aspect.sentiment)  # 'positive'
