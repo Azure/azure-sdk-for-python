@@ -1,3 +1,6 @@
+## 12.0.0b2 (Unreleased)
+
+
 ## 12.0.0b1 (2020-07-07)
 - Initial Release. Please see the README for information on the new design.
 - Support for ChangeFeedClient: get change feed events by page, get all change feed events, get events in a time range
