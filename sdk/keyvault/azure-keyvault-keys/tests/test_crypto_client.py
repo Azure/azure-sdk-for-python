@@ -11,7 +11,7 @@ from datetime import datetime
 from azure.core.credentials import AccessToken
 from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName, KeyVaultKey
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-from azure.keyvault.keys.crypto._client import _UTC
+from azure.keyvault.keys.crypto._key_validity import _UTC
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 import pytest

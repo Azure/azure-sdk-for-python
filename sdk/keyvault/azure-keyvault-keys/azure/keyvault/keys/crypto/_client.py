@@ -2,14 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime, timedelta, tzinfo
-
 import six
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
 from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
-from ._internal import EllipticCurveKey, RsaKey, SymmetricKey
+from ._nbf_exp import _enforce_nbf_exp
+from ._local_client import LocalCryptographyProvider
 from .._models import KeyVaultKey
 from .._shared import KeyVaultClientBase, parse_vault_id
 
@@ -24,43 +23,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
     from ._internal import Key as _Key
-
-
-class _UTC_TZ(tzinfo):
-    """from https://docs.python.org/2/library/datetime.html#tzinfo-objects"""
-
-    ZERO = timedelta(0)
-
-    def utcoffset(self, dt):
-        return self.ZERO
-
-    def tzname(self, dt):
-        return "UTC"
-
-    def dst(self, dt):
-        return self.ZERO
-
-
-_UTC = _UTC_TZ()
-
-
-def _enforce_nbf_exp(key):
-    # type: (KeyVaultKey) -> None
-    try:
-        nbf = key.properties.not_before
-        exp = key.properties.expires_on
-    except AttributeError:
-        # we consider the key valid because a user must have deliberately created it
-        # (if it came from Key Vault, it would have those attributes)
-        return
-
-    now = datetime.now(_UTC)
-    if (nbf and exp) and not nbf <= now <= exp:
-        raise ValueError("This client's key is useable only between {} and {} (UTC)".format(nbf, exp))
-    if nbf and nbf >= now:
-        raise ValueError("This client's key is not useable until {} (UTC)".format(nbf))
-    if exp and exp <= now:
-        raise ValueError("This client's key expired at {} (UTC)".format(exp))
 
 
 class CryptographyClient(KeyVaultClientBase):

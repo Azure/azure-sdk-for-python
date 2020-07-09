@@ -7,7 +7,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
 from .._internal import EllipticCurveKey, RsaKey, SymmetricKey
-from ...crypto._client import _enforce_nbf_exp
+from .._key_validity import enforce_nbf_exp
 from ..._models import KeyVaultKey
 from ..._shared import AsyncKeyVaultClientBase, parse_vault_id
 
@@ -157,7 +157,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         local_key = await self._get_local_key(**kwargs)
         if local_key:
-            _enforce_nbf_exp(self._key)
+            enforce_nbf_exp(self._key)
             if "encrypt" not in self._allowed_ops:
                 raise AzureError("This client doesn't have 'keys/encrypt' permission")
             result = local_key.encrypt(plaintext, algorithm=algorithm.value)
@@ -234,7 +234,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         local_key = await self._get_local_key(**kwargs)
         if local_key:
-            _enforce_nbf_exp(self._key)
+            enforce_nbf_exp(self._key)
             if "wrapKey" not in self._allowed_ops:
                 raise AzureError("This client doesn't have 'keys/wrapKey' permission")
             result = local_key.wrap_key(key, algorithm=algorithm.value)
