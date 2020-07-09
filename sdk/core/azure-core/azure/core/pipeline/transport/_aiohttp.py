@@ -72,7 +72,7 @@ class AioHttpTransport(AsyncHttpTransport):
             import aiohttp
             import asyncio
         except ImportError:
-            raise ImportError("aiohttp and asyncio libraries are required to use aiohttp")
+            raise ImportError("Please make sure aiohttp and asyncio libraries are installed")
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
@@ -214,7 +214,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             import aiohttp
             import asyncio
         except ImportError:
-            raise ImportError("aiohttp and asyncio libraries are required to use aiohttp")
+            raise ImportError("Please make sure aiohttp and asyncio libraries are installed")
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
@@ -279,7 +279,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             import aiohttp
             import asyncio
         except ImportError:
-            raise ImportError("aiohttp and asyncio libraries are required to use aiohttp")
+            raise ImportError("Please make sure aiohttp and asyncio libraries are installed")
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         self.status_code = aiohttp_response.status
