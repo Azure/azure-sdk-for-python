@@ -86,6 +86,10 @@ class ResourcesOperations:
         api_version = "2019-05-10"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -104,15 +108,11 @@ class ResourcesOperations:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -167,7 +167,6 @@ class ResourcesOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ResourcesMoveInfo')
         body_content_kwargs['content'] = body_content
@@ -190,7 +189,7 @@ class ResourcesOperations:
         source_resource_group_name: str,
         parameters: "models.ResourcesMoveInfo",
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Moves resources from one resource group to another resource group.
 
         The resources to move must be in the same source resource group. The target resource group may
@@ -209,8 +208,8 @@ class ResourcesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -277,7 +276,6 @@ class ResourcesOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ResourcesMoveInfo')
         body_content_kwargs['content'] = body_content
@@ -300,7 +298,7 @@ class ResourcesOperations:
         source_resource_group_name: str,
         parameters: "models.ResourcesMoveInfo",
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Validates whether resources can be moved from one resource group to another resource group.
 
         This operation checks whether the specified resources can be moved to the target. The resources
@@ -321,8 +319,8 @@ class ResourcesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -401,6 +399,10 @@ class ResourcesOperations:
         api_version = "2019-05-10"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -418,15 +420,11 @@ class ResourcesOperations:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -504,7 +502,6 @@ class ResourcesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -552,7 +549,6 @@ class ResourcesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -574,7 +570,7 @@ class ResourcesOperations:
         resource_type: str,
         resource_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes a resource.
 
         :param resource_group_name: The name of the resource group that contains the resource to
@@ -594,8 +590,8 @@ class ResourcesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -646,8 +642,8 @@ class ResourcesOperations:
         resource_name: str,
         parameters: "models.GenericResource",
         **kwargs
-    ) -> "models.GenericResource":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GenericResource"]
+    ) -> Optional["models.GenericResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.GenericResource"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-05-10"
@@ -674,7 +670,6 @@ class ResourcesOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'GenericResource')
         body_content_kwargs['content'] = body_content
@@ -709,7 +704,7 @@ class ResourcesOperations:
         resource_name: str,
         parameters: "models.GenericResource",
         **kwargs
-    ) -> "models.GenericResource":
+    ) -> AsyncLROPoller["models.GenericResource"]:
         """Creates a resource.
 
         :param resource_group_name: The name of the resource group for the resource. The name is case
@@ -731,8 +726,8 @@ class ResourcesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: GenericResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.resources.v2019_05_10.models.GenericResource
+        :return: An instance of AsyncLROPoller that returns either GenericResource or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resource.resources.v2019_05_10.models.GenericResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -787,8 +782,8 @@ class ResourcesOperations:
         resource_name: str,
         parameters: "models.GenericResource",
         **kwargs
-    ) -> "models.GenericResource":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GenericResource"]
+    ) -> Optional["models.GenericResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.GenericResource"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-05-10"
@@ -815,7 +810,6 @@ class ResourcesOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'GenericResource')
         body_content_kwargs['content'] = body_content
@@ -847,7 +841,7 @@ class ResourcesOperations:
         resource_name: str,
         parameters: "models.GenericResource",
         **kwargs
-    ) -> "models.GenericResource":
+    ) -> AsyncLROPoller["models.GenericResource"]:
         """Updates a resource.
 
         :param resource_group_name: The name of the resource group for the resource. The name is case
@@ -869,8 +863,8 @@ class ResourcesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: GenericResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.resources.v2019_05_10.models.GenericResource
+        :return: An instance of AsyncLROPoller that returns either GenericResource or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resource.resources.v2019_05_10.models.GenericResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -968,7 +962,6 @@ class ResourcesOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1020,7 +1013,6 @@ class ResourcesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1059,7 +1051,6 @@ class ResourcesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1077,7 +1068,7 @@ class ResourcesOperations:
         self,
         resource_id: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -1090,8 +1081,8 @@ class ResourcesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1134,8 +1125,8 @@ class ResourcesOperations:
         resource_id: str,
         parameters: "models.GenericResource",
         **kwargs
-    ) -> "models.GenericResource":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GenericResource"]
+    ) -> Optional["models.GenericResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.GenericResource"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-05-10"
@@ -1157,7 +1148,6 @@ class ResourcesOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'GenericResource')
         body_content_kwargs['content'] = body_content
@@ -1188,7 +1178,7 @@ class ResourcesOperations:
         resource_id: str,
         parameters: "models.GenericResource",
         **kwargs
-    ) -> "models.GenericResource":
+    ) -> AsyncLROPoller["models.GenericResource"]:
         """Create a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -1203,8 +1193,8 @@ class ResourcesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: GenericResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.resources.v2019_05_10.models.GenericResource
+        :return: An instance of AsyncLROPoller that returns either GenericResource or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resource.resources.v2019_05_10.models.GenericResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1251,8 +1241,8 @@ class ResourcesOperations:
         resource_id: str,
         parameters: "models.GenericResource",
         **kwargs
-    ) -> "models.GenericResource":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GenericResource"]
+    ) -> Optional["models.GenericResource"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.GenericResource"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-05-10"
@@ -1274,7 +1264,6 @@ class ResourcesOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'GenericResource')
         body_content_kwargs['content'] = body_content
@@ -1302,7 +1291,7 @@ class ResourcesOperations:
         resource_id: str,
         parameters: "models.GenericResource",
         **kwargs
-    ) -> "models.GenericResource":
+    ) -> AsyncLROPoller["models.GenericResource"]:
         """Updates a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -1317,8 +1306,8 @@ class ResourcesOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: GenericResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.resources.v2019_05_10.models.GenericResource
+        :return: An instance of AsyncLROPoller that returns either GenericResource or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resource.resources.v2019_05_10.models.GenericResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1396,7 +1385,6 @@ class ResourcesOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
