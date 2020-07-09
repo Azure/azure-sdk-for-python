@@ -68,14 +68,14 @@ def test_multiapi_client():
 
     # I can specify old profile syntax with dict
     client = TestClient(profile={
-        "operations": "1789-07-14"
+        "operations": "1900-01-01"
     })
-    assert client.operations() == "1789-07-14"
+    assert client.operations() == "1900-01-01"
 
     # If I give a profile definition with no default api-version
     # and I call a method not define in the profile, this fails
     client = TestClient(profile={
-        "operations2": "1789-07-14"
+        "operations2": "1900-01-01"
     })
     with pytest.raises(ValueError):
-        client.operations() == "1789-07-14"
+        client.operations() == "1900-01-01"
