@@ -1,6 +1,6 @@
 # Release History
 
-## 0.11.0 (2020-05-31)
+## 0.11.0 (2020-07-09)
 
 **Breaking changes**
 
