@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType
+from typing import Any, Optional, TypeVar, AsyncIterator as AsyncIteratorType
 from collections.abc import AsyncIterator
 
 import logging
@@ -45,6 +45,7 @@ from ._base_async import (
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
 _LOGGER = logging.getLogger(__name__)
+ClientResponse = TypeVar("ClientResponse")
 
 
 class AioHttpTransport(AsyncHttpTransport):
