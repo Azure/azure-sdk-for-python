@@ -11,7 +11,6 @@ class QueryTable(object):
     # Creating query filter for that table
     table_name = "Office Supplies"
     name_filter = "TableName eq '{}'".format(table_name)
-    query_options = QueryOptions(filter=name_filter)
 
     def query_tables(self):
         from azure.table import TableServiceClient
@@ -21,7 +20,7 @@ class QueryTable(object):
         my_table = table_service_client.create_table(table_name=self.table_name)
         print(my_table)
         # Query tables
-        queried_tables = table_service_client.query_tables(query_options=self.name_filter)
+        queried_tables = table_service_client.query_tables(filter=self.name_filter)
         # table_client.query_tables() returns an itemPaged
         # queried_tables is a list of filtered tables
 

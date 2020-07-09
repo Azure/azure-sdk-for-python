@@ -15,7 +15,6 @@ from base64 import b64encode
 from datetime import datetime, timedelta
 
 from azure.table import TableServiceClient, TableClient, generate_table_sas
-from azure.table._generated.models import QueryOptions
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
 
@@ -306,7 +305,7 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act
-            #, response_hook=lambda e, h: (e, h)
+            # , response_hook=lambda e, h: (e, h)
             resp = self.table.create_entity(table_entity_properties=entity)
 
             # Assert
@@ -328,7 +327,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.create_entity(
                 table_entity_properties=entity,
                 headers={'Accept': 'application/json;odata=nometadata'},
-                )
+            )
 
             # Assert
             self.assertIsNotNone(resp)
@@ -345,11 +344,11 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._create_random_entity_dict()
 
             # Act
-            #response_hook=lambda e, h: (e, h)
+            # response_hook=lambda e, h: (e, h)
             resp = self.table.create_entity(
                 table_entity_properties=entity,
                 headers={'Accept': 'application/json;odata=fullmetadata'},
-                )
+            )
 
             # Assert
             self.assertIsNotNone(resp)
@@ -537,7 +536,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             resp = self.table.get_entity(partition_key=entity['PartitionKey'],
-                                                                        row_key=entity['RowKey'])
+                                         row_key=entity['RowKey'])
 
             # Assert
             self.assertEqual(resp['PartitionKey'], entity['PartitionKey'])
@@ -560,7 +559,7 @@ class StorageTableEntityTest(TableTestCase):
             resp = self.table.get_entity(
                 partition_key=entity['PartitionKey'],
                 row_key=entity['RowKey'],
-                )
+            )
 
             # Assert
             self.assertEqual(resp['PartitionKey'], entity['PartitionKey'])
@@ -581,7 +580,7 @@ class StorageTableEntityTest(TableTestCase):
             # Do a get and confirm the etag is parsed correctly by using it
             # as a condition to delete.
             resp = self.table.get_entity(partition_key=entity['PartitionKey'],
-                                                                        row_key=entity['RowKey'])
+                                         row_key=entity['RowKey'])
 
             self.table.delete_entity(
                 partition_key=resp['PartitionKey'],
@@ -647,7 +646,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             with self.assertRaises(ResourceNotFoundError):
                 self.table.get_entity(partition_key=entity.PartitionKey,
-                                                                     row_key=entity.RowKey)
+                                      row_key=entity.RowKey)
 
             # Assert
         finally:
@@ -663,9 +662,8 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             resp = self.table.get_entity(partition_key=entity.PartitionKey,
-                                                                        row_key=entity.RowKey,
-                                                                        query_options=QueryOptions(
-                                                                            select="age,sex,xyz"))
+                                         row_key=entity.RowKey,
+                                         select="age,sex,xyz")
 
             # Assert
             self.assertEqual(resp.age, 39)
@@ -693,7 +691,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             resp = self.table.get_entity(partition_key=entity['PartitionKey'],
-                                                                        row_key=entity['RowKey'])
+                                         row_key=entity['RowKey'])
 
             # Assert
             self.assertEqual(resp.inf, float('inf'))
@@ -719,7 +717,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             #  self.assertTrue(resp)
             received_entity = self.table.get_entity(partition_key=entity.PartitionKey,
-                                                                                   row_key=entity.RowKey)
+                                                    row_key=entity.RowKey)
 
             self._assert_updated_entity(received_entity)
         finally:
@@ -821,7 +819,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             self.assertIsNone(resp)
             received_entity = self.table.get_entity(entity['PartitionKey'],
-                                                                                   entity['RowKey'])
+                                                    entity['RowKey'])
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
@@ -862,7 +860,7 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             self.assertIsNone(resp)
             received_entity = self.table.get_entity(entity['PartitionKey'],
-                                                                                   entity['RowKey'])
+                                                    entity['RowKey'])
             self._assert_updated_entity(received_entity)
         finally:
             self._tear_down()
@@ -1035,7 +1033,7 @@ class StorageTableEntityTest(TableTestCase):
             self.table.create_entity(table_entity_properties=entity1)
             self.table.create_entity(table_entity_properties=entity2)
             entities = list(self.table.query_entities(
-                query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity['PartitionKey']))))
+                filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
             self.assertEqual(len(entities), 2)
@@ -1060,7 +1058,7 @@ class StorageTableEntityTest(TableTestCase):
             self.table.create_entity(table_entity_properties=entity1)
             self.table.create_entity(table_entity_properties=entity2)
             entities = list(self.table.query_entities(
-                query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity['PartitionKey']))))
+                filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
             self.assertEqual(len(entities), 2)
@@ -1186,7 +1184,6 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(resp.binary.value, binary_data)
         finally:
             self._tear_down()
-
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
@@ -1324,7 +1321,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             entities = list(self.table.query_entities(
-                query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity.PartitionKey))))
+                filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
 
             # Assert
             self.assertEqual(len(entities), 1)
@@ -1342,7 +1339,7 @@ class StorageTableEntityTest(TableTestCase):
             table = self._create_query_table(2)
 
             # Act
-            entities = list(table.query_entities(query_options=QueryOptions(select="age, sex")))
+            entities = list(table.query_entities(select="age, sex"))
 
             # Assert
             self.assertEqual(len(entities), 2)
@@ -1363,7 +1360,7 @@ class StorageTableEntityTest(TableTestCase):
             table = self._create_query_table(3)
             # circular dependencies made this return a list not an item paged - problem when calling by page
             # Act
-            entities = list(next(table.query_entities(query_options=QueryOptions(top=2)).by_page()))
+            entities = list(next(table.query_entities(results_per_page=2).by_page()))
 
             # Assert
             self.assertEqual(len(entities), 2)
@@ -1379,12 +1376,12 @@ class StorageTableEntityTest(TableTestCase):
             table = self._create_query_table(5)
 
             # Act
-            resp1 = table.query_entities(query_options=QueryOptions(top=2)).by_page()
+            resp1 = table.query_entities(results_per_page=2).by_page()
             next(resp1)
-            resp2 = table.query_entities(query_options=QueryOptions(top=2)).by_page(
+            resp2 = table.query_entities(results_per_page=2).by_page(
                 continuation_token=resp1.continuation_token)
             next(resp2)
-            resp3 = table.query_entities(query_options=QueryOptions(top=2)).by_page(
+            resp3 = table.query_entities(results_per_page=2).by_page(
                 continuation_token=resp2.continuation_token)
             next(resp3)
 
@@ -1433,7 +1430,7 @@ class StorageTableEntityTest(TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
-                query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity['PartitionKey']))))
+                filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
             self.assertEqual(len(entities), 1)
@@ -1473,7 +1470,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             resp = self.table.get_entity(partition_key=entity['PartitionKey'],
-                                                                        row_key=entity['RowKey'])
+                                         row_key=entity['RowKey'])
             self._assert_default_entity(resp)
         finally:
             self._tear_down()
@@ -1648,7 +1645,7 @@ class StorageTableEntityTest(TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
-                query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity['PartitionKey']))))
+                filter="PartitionKey eq '{}'".format(entity['PartitionKey'])))
 
             # Assert
             self.assertEqual(len(entities), 1)
@@ -1691,7 +1688,7 @@ class StorageTableEntityTest(TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             entities = list(table.query_entities(
-                query_options=QueryOptions(filter="PartitionKey eq '{}'".format(entity.PartitionKey))))
+                filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
 
             # Assert
             self.assertEqual(len(entities), 1)

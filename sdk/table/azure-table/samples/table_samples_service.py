@@ -71,7 +71,7 @@ class TableServiceSamples(object):
 
     def tables_in_account(self):
         # Instantiate the TableServiceClient from a connection string
-        from azure.table import TableServiceClient, QueryOptions
+        from azure.table import TableServiceClient
         table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START tsc_create_table]
@@ -86,7 +86,7 @@ class TableServiceSamples(object):
                 print(table)
 
             # List the tables in the service that start with the name "my"
-            list_my_tables = table_service.query_tables(query_options=QueryOptions(select="my"))
+            list_my_tables = table_service.query_tables(select="my")
             for table in list_my_tables:
                 print(table)
             # [END tsc_list_tables]

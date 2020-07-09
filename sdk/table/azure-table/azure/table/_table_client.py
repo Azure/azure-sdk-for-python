@@ -7,6 +7,8 @@
 import functools
 from typing import Optional, Any
 
+from azure.table import QueryOptions
+
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -390,22 +392,27 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def query_entities(
             self,
-            query_options=None,  # type: Optional[QueryOptions]
+            results_per_page=None,
+            select=None,
+            filter=None,    # pylint: disable=W0622
             **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[Entity]
         # TODO: exposed options
         """Queries entities in a table.
 
-        :param results_per_page:
-        :param select:
-        :param filter:
-        :param query_options: Parameter group.
-        :type query_options: ~azure.table.QueryOptions
+        :param results_per_page: Number of entities per page in return ItemPaged
+        :type results_per_page: int
+        :param select: Specify desired properties of an entity to return certain entities
+        :type select: str
+        :param filter: Specify a filter to return certain entities
+        :type filter: str
         :return: Query of table entities
         :rtype: ItemPaged[Entity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        query_options = QueryOptions(top=results_per_page, select=select, filter=filter)
+
         command = functools.partial(
             self._client.table.query_entities,
             **kwargs)
@@ -419,7 +426,9 @@ class TableClient(StorageAccountHostsMixin):
             self,
             partition_key,  # type: str
             row_key,  # type: str
-            query_options=None,  # type: Optional[QueryOptions]
+            results_per_page=None,
+            select=None,
+            filter=None,     # pylint: disable=W0622
             **kwargs  # type: Any
     ):
         # type: (...) -> Entity
@@ -429,16 +438,18 @@ class TableClient(StorageAccountHostsMixin):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :param results_per_page:
-        :param select:
-        :param filter:
-        :param query_options: Parameter group.
-        :type query_options: ~azure.table.QueryOptions
+        :param results_per_page: Number of entities per page in return ItemPaged
+        :type results_per_page: int
+        :param select: Specify desired properties of an entity to return certain entities
+        :type select: str
+        :param filter: Specify a filter to return certain entities
+        :type filter: str
         :return: Entity mapping str to azure.table.EntityProperty
         :rtype: ~azure.table.Entity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
+        query_options = QueryOptions(top=results_per_page, select=select, filter=filter)
         entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
                                                                               partition_key=partition_key,
                                                                               row_key=row_key,
@@ -454,7 +465,6 @@ class TableClient(StorageAccountHostsMixin):
             table_entity_properties,  # type: dict[str,str]
             partition_key=None,  # type: Optional[str]
             row_key=None,  # type: Optional[str]
-            query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):
         # type: (...) -> Entity or None
@@ -469,8 +479,6 @@ class TableClient(StorageAccountHostsMixin):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :param query_options: Parameter group.
-        :type query_options: ~azure.table.QueryOptions
         :return: Entity mapping str to azure.table.EntityProperty or None
         :rtype: ~azure.table.Entity or None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -488,7 +496,6 @@ class TableClient(StorageAccountHostsMixin):
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=table_entity_properties,
-                    query_options=query_options,
                     **kwargs
                 )
                 return merged_entity

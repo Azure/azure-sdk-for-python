@@ -15,8 +15,7 @@ from datetime import (
     timedelta,
 )
 
-from azure.table._generated.models import AccessPolicy, QueryOptions
-from azure.table._models import TableSasPermissions, UpdateMode
+from azure.table._models import TableSasPermissions, UpdateMode, AccessPolicy
 from azure.table._shared.models import ResourceTypes, AccountSasPermissions
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
@@ -143,7 +142,7 @@ class StorageTableTest(TableTestCase):
 
         # Act
         name_filter = "TableName eq '{}'".format(table.table_name)
-        tables = list(ts.query_tables(query_options=QueryOptions(filter=name_filter)))
+        tables = list(ts.query_tables(filter=name_filter))
         # Assert
         self.assertIsNotNone(tables)
         self.assertEqual(len(tables), 1)
@@ -155,8 +154,6 @@ class StorageTableTest(TableTestCase):
     @GlobalStorageAccountPreparer()
     def test_query_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        query = QueryOptions()
-        query.top = 3
         prefix = 'listtable'
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table_list = []
@@ -165,7 +162,7 @@ class StorageTableTest(TableTestCase):
 
         # Act
         big_page = list(next(ts.query_tables().by_page()))
-        small_page = list(next(ts.query_tables(query_options=query).by_page()))
+        small_page = list(next(ts.query_tables(results_per_page=3).by_page()))
 
         # Assert
         self.assertEqual(len(small_page), 3)
@@ -184,9 +181,9 @@ class StorageTableTest(TableTestCase):
         # table_names.sort()
 
         # Act
-        generator1 = ts.query_tables(query_options=QueryOptions(top=2)).by_page()
+        generator1 = ts.query_tables(results_per_page=2).by_page()
         next(generator1)
-        generator2 = ts.query_tables(query_options=QueryOptions(top=2)).by_page(
+        generator2 = ts.query_tables(results_per_page=2).by_page(
             continuation_token=generator1.continuation_token)
         next(generator2)
 

@@ -109,7 +109,7 @@ class TableEntitySamples(object):
 
     def query_entities(self):
         # Instantiate a table service client
-        from azure.table import TableClient, QueryOptions
+        from azure.table import TableClient
         table = TableClient.from_connection_string(self.connection_string, table_name="mytable4")
 
         # Create the table
@@ -124,7 +124,7 @@ class TableEntitySamples(object):
             table.create_entity(table_entity_properties=entity1)
             # [START query_entities]
             # Query the entities in the table
-            entities = list(table.query_entities(query_options=QueryOptions()))
+            entities = list(table.query_entities())
 
             for e in entities:
                 print(e)

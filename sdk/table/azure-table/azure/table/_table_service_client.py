@@ -8,6 +8,7 @@ import functools
 from typing import Any
 
 from azure.core.pipeline import Pipeline
+from azure.table import QueryOptions
 
 try:
     from urllib.parse import urlparse
@@ -211,18 +212,25 @@ class TableServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def query_tables(
             self,
-            query_options=None,  # type: Optional[QueryOptions]
+            results_per_page=None,
+            select=None,
+            filter=None,  # pylint: disable=W0622
             **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[AzureTable]
         """Queries tables under the given account.
 
-        :param query_options: Parameter group.
-        :type query_options: ~azure.table.QueryOptions
+        :param results_per_page: Number of entities per page in return ItemPaged
+        :type results_per_page: int
+        :param select: Specify desired properties of an entity to return certain entities
+        :type select: str
+        :param filter: Specify a filter to return certain entities
+        :type filter: str
         :return: A query of tables
         :rtype: ItemPaged[AzureTable]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        query_options = QueryOptions(top=results_per_page, select=select, filter=filter)
         command = functools.partial(self._client.table.query,
                                     **kwargs)
         return ItemPaged(
