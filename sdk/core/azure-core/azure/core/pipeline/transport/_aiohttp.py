@@ -274,7 +274,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :type block_size: int
     """
     def __init__(self, request, aiohttp_response, block_size=None):
-        # type: (HttpRequest, aiohttp.ClientResponse, int) -> None
+        # type: (HttpRequest, ClientResponse, int) -> None
         try:
             import aiohttp
             import asyncio
