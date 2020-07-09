@@ -1152,6 +1152,15 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             await asyncio.sleep(3)
             assert len(results) == 2
 
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew.renew_period = 1
+        async with auto_lock_renew: # Check that it is not called when the receiver is shutdown
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            message._receiver._running = False
+            await asyncio.sleep(3)
+            assert len(results) == 2
+
 
     @pytest.mark.asyncio
     async def test_async_queue_mock_no_reusing_auto_lock_renew(self):

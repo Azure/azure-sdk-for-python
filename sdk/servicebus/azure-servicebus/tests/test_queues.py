@@ -1263,6 +1263,15 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             time.sleep(3)
             assert len(results) == 2
 
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew.renew_period = 1
+        with auto_lock_renew: # Check that it is not called when the receiver is shutdown
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            message._receiver._running = False
+            time.sleep(3)
+            assert len(results) == 2
+
 
     def test_queue_mock_no_reusing_auto_lock_renew(self):
         auto_lock_renew = AutoLockRenew()

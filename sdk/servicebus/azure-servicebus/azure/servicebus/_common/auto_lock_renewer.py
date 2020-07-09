@@ -67,7 +67,7 @@ class AutoLockRenew(object):
             return False
         if hasattr(renewable, 'settled') and renewable.settled:
             return False
-        if isinstance(renewable, ServiceBusSession) and not renewable._receiver._running:
+        if not renewable._receiver._running:
             return False
         if renewable.expired:
             return False
@@ -76,6 +76,7 @@ class AutoLockRenew(object):
     def _auto_lock_renew(self, renewable, starttime, timeout, on_lock_renew_failure=None):
         _log.debug("Running lock auto-renew thread for %r seconds", timeout)
         error = None
+        clean_shutdown = False # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
         try:
             while self._renewable(renewable):
                 if (utc_now() - starttime) >= datetime.timedelta(seconds=timeout):
@@ -85,8 +86,10 @@ class AutoLockRenew(object):
                     _log.debug("%r seconds or less until lock expires - auto renewing.", self.renew_period)
                     renewable.renew_lock()
                 time.sleep(self.sleep_time)
+            clean_shutdown = not renewable.expired
         except AutoLockRenewTimeout as e:
             renewable.auto_renew_error = e
+            clean_shutdown = not renewable.expired
         except Exception as e:  # pylint: disable=broad-except
             _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
             error = AutoLockRenewFailed(
@@ -94,14 +97,7 @@ class AutoLockRenew(object):
                 inner_exception=e)
             renewable.auto_renew_error = error
         finally:
-            if on_lock_renew_failure:
-                if self._shutdown.is_set() \
-                        or (hasattr(renewable, 'settled') and renewable.settled) \
-                        or (isinstance(renewable, ServiceBusSession) and not renewable._receiver._running) \
-                        or (not error and not renewable.expired):
-                    # Basically we want to make sure that any of the "intentional" exit cases are not fired on.
-                    # e.g. shutdown, settlement, session closure, renewer timeout (as opposed to renew failure/expiry)
-                    return
+            if on_lock_renew_failure and not clean_shutdown:
                 on_lock_renew_failure(renewable)
 
     def register(self, renewable, timeout=300, on_lock_renew_failure=None):
@@ -109,11 +105,11 @@ class AutoLockRenew(object):
 
         :param renewable: A locked entity that needs to be renewed.
         :type renewable: ~azure.servicebus.ReceivedMessage or
-         ~azure.servicebus.Session
+         ~azure.servicebus.ServiceBusSession
         :param float timeout: A time in seconds that the lock should be maintained for.
          Default value is 300 (5 minutes).
-        :param Callable[[Union[Session,ReceivedMessage]], None] on_lock_renew_failure: A callback may be specified
-         to be called when the lock is lost on the renewable that is being registered.
+        :param Optional[Callable[[Union[~azure.servicebus.ServiceBusSession, ReceivedMessage]], Awaitable[None]]] on_lock_renew_failure: 
+         A callback may be specified to be called when the lock is lost on the renewable that is being registered.
          Default value is None (no callback).
         """
         if self._shutdown.is_set():

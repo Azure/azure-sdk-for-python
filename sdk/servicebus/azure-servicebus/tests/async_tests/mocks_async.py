@@ -2,6 +2,10 @@ from datetime import timedelta
 
 from azure.servicebus._common.utils import utc_now
 
+class MockReceiver:
+    def __init__(self):
+        self._running = True
+
 class MockReceivedMessage:
     def __init__(self, prevent_renew_lock=False, exception_on_renew_lock=False):
         self._lock_duration = 2
@@ -9,6 +13,7 @@ class MockReceivedMessage:
         self.received_timestamp_utc = utc_now()
         self.locked_until_utc = self.received_timestamp_utc + timedelta(seconds=self._lock_duration)
         self.settled = False
+        self._receiver = MockReceiver()
 
         self._prevent_renew_lock = prevent_renew_lock
         self._exception_on_renew_lock = exception_on_renew_lock
