@@ -7,6 +7,7 @@ import uuid
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.ec import (
+    EllipticCurvePrivateNumbers,
     EllipticCurvePublicNumbers,
     SECP256R1,
     SECP384R1,
@@ -38,13 +39,19 @@ _curve_to_default_algo = {
 class EllipticCurveKey(Key):
     _supported_signature_algorithms = _curve_to_default_algo.values()
 
-    def __init__(self, x, y, kid=None, curve=None):
+    def __init__(self, x, y, d=None, kid=None, curve=None):
         super(EllipticCurveKey, self).__init__()
 
         self._kid = kid or str(uuid.uuid4())
         self._default_algo = _curve_to_default_algo[curve]
         curve_cls = _kv_crv_to_crypto_cls[curve]
-        self._ec_impl = EllipticCurvePublicNumbers(x, y, curve_cls()).public_key(default_backend())
+
+        public_numbers = EllipticCurvePublicNumbers(x, y, curve_cls())
+        self._public_key = public_numbers.public_key(default_backend())
+        self._private_key = None
+        if d is not None:
+            private_numbers = EllipticCurvePrivateNumbers(d, public_numbers)
+            self._private_key = private_numbers.private_key(default_backend())
 
     @classmethod
     def from_jwk(cls, jwk):
@@ -54,10 +61,13 @@ class EllipticCurveKey(Key):
         if not jwk.x or not jwk.y:
             raise ValueError("jwk must have values for 'x' and 'y'")
 
-        return cls(_bytes_to_int(jwk.x), _bytes_to_int(jwk.y), kid=jwk.kid, curve=jwk.crv)
+        x = _bytes_to_int(jwk.x)
+        y = _bytes_to_int(jwk.y)
+        d = _bytes_to_int(jwk.d) if jwk.d is not None else None
+        return cls(x, y, d, kid=jwk.kid, curve=jwk.crv)
 
     def is_private_key(self):
-        return False
+        return self._private_key is not None
 
     def decrypt(self, cipher_text, **kwargs):
         raise NotImplementedError()
