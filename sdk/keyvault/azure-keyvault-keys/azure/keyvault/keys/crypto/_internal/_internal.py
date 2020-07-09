@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 import codecs
 from base64 import b64encode, b64decode
 
@@ -81,17 +80,27 @@ def _int_to_fixed_length_bigendian_bytes(i, length):
     return b
 
 
-def encode_key_vault_ecdsa_signature(signature):
-    """
-    ASN.1 DER encode a Key Vault ECDSA signature.
+def ecdsa_to_asn1_der(signature):
+    """ASN.1 DER encode an ECDSA signature.
 
-    Key Vault returns ECDSA signatures as the concatenated bytes of two equal-size integers. ``cryptography`` expects
-    ECDSA signatures be ASN.1 DER encoded.
-
-    :param bytes signature: ECDSA signature returned by Key Vault
-    :return: signature encoded for use by ``cryptography``
+    :param bytes signature: ECDSA signature encoded according to RFC 7518, i.e. the concatenated big-endian bytes of
+      two integers (as produced by Key Vault)
+    :return: signature, ASN.1 DER encoded (as expected by ``cryptography``)
     """
     mid = len(signature) // 2
     r = _bytes_to_int(signature[:mid])
     s = _bytes_to_int(signature[mid:])
     return utils.encode_dss_signature(r, s)
+
+
+def asn1_der_to_ecdsa(signature, algorithm):
+    """Convert an ASN.1 DER encoded signature to ECDSA encoding.
+
+    :param bytes signature: an ASN.1 DER encoded ECDSA signature (as produced by ``cryptography``)
+    :param _Ecdsa algorithm: signing algorithm which produced ``signature``
+    :return: signature encoded according to RFC 7518 (as expected by Key Vault)
+    """
+    r, s = utils.decode_dss_signature(signature)
+    r_bytes = _int_to_fixed_length_bigendian_bytes(r, algorithm.coordinate_length)
+    s_bytes = _int_to_fixed_length_bigendian_bytes(s, algorithm.coordinate_length)
+    return r_bytes + s_bytes

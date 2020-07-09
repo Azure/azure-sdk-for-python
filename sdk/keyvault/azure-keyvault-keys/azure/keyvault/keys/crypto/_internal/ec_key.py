@@ -15,7 +15,7 @@ from cryptography.hazmat.primitives.asymmetric.ec import (
     SECP256K1,
 )
 
-from ._internal import _bytes_to_int, encode_key_vault_ecdsa_signature
+from ._internal import _bytes_to_int, asn1_der_to_ecdsa, ecdsa_to_asn1_der
 from .key import Key
 from .algorithms.ecdsa import Es256, Es512, Es384, Ecdsa256
 
@@ -70,27 +70,30 @@ class EllipticCurveKey(Key):
         return self._private_key is not None
 
     def decrypt(self, cipher_text, **kwargs):
-        raise NotImplementedError()
+        raise NotImplementedError("Local decryption isn't supported with elliptic curve keys")
 
     def encrypt(self, plain_text, **kwargs):
-        raise NotImplementedError()
+        raise NotImplementedError("Local encryption isn't supported with elliptic curve keys")
 
     def wrap_key(self, key, **kwargs):
-        raise NotImplementedError()
+        raise NotImplementedError("Local key wrapping isn't supported with elliptic curve keys")
 
     def unwrap_key(self, encrypted_key, **kwargs):
-        raise NotImplementedError()
+        raise NotImplementedError("Local key unwrapping isn't supported with elliptic curve keys")
 
     def sign(self, digest, **kwargs):
-        raise NotImplementedError()
+        algorithm = self._get_algorithm("sign", **kwargs)
+        signer = algorithm.create_signature_transform(self._private_key)
+        signature = signer.sign(digest)
+        ecdsa_signature = asn1_der_to_ecdsa(signature, algorithm)
+        return ecdsa_signature
 
     def verify(self, digest, signature, **kwargs):
         algorithm = self._get_algorithm("verify", **kwargs)
-        signer = algorithm.create_signature_transform(self._ec_impl)
-        dss_signature = encode_key_vault_ecdsa_signature(signature)
+        signer = algorithm.create_signature_transform(self._public_key)
+        asn1_signature = ecdsa_to_asn1_der(signature)
         try:
-            # cryptography's verify methods return None, and raise when verification fails
-            signer.verify(digest, dss_signature)
+            signer.verify(digest, asn1_signature)
             return True
         except InvalidSignature:
             return False
