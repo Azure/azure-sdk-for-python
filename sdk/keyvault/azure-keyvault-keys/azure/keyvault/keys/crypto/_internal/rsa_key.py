@@ -7,6 +7,7 @@ import uuid
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.rsa import (
+    RSAPrivateKey,
     RSAPrivateNumbers,
     RSAPublicNumbers,
     generate_private_key,
@@ -212,10 +213,7 @@ class RsaKey(Key):  # pylint:disable=too-many-public-methods
         return decryptor.transform(encrypted_key)
 
     def is_private_key(self):
-        # return isinstance(self._rsa_impl, RSAPrivateKey)
-        # TODO returning False here even if someone sneaked in private key material because
-        # currently we don't want to perform decrypt/unwrap/sign locally
-        return False
+        return isinstance(self._rsa_impl, RSAPrivateKey)
 
     def _public_key_material(self):
         return self.public_key.public_numbers()
