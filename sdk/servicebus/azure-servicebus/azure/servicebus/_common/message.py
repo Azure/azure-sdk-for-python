@@ -114,6 +114,19 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         else:
             self.message = uamqp.Message(body, properties=self.properties, header=self.header)
 
+    @classmethod
+    def _from_received_message(cls, received_message):
+        amqp_message = received_message.message
+        amqp_body = amqp_message._body
+
+        if isinstance(amqp_body, uamqp.message.DataBody):
+            body = b''.join(amqp_body.data)
+        else:
+            # amqp_body is type of uamqp.message.ValueBody
+            body = amqp_body.data
+        # TODO: other properties to be copied from the received message
+        return cls(body=body)
+
     @property
     def session_id(self):
         # type: () -> str
@@ -322,6 +335,8 @@ class BatchMessage(object):
             if not isinstance(each, Message):
                 raise ValueError("Only Message or an iterable object containing Message objects are accepted."
                                  "Received instead: {}".format(each.__class__.__name__))
+            if isinstance(each, (PeekMessage, ReceivedMessage)):
+                each = Message._from_received_message(each)  # pylint: disable=protected-access
             self.add(each)
 
     @property
@@ -346,6 +361,9 @@ class BatchMessage(object):
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
         """
+        if isinstance(message, (PeekMessage, ReceivedMessage)):
+            message = Message._from_received_message(message)  # pylint: disable=protected-access
+
         message_size = message.message.get_message_encoded_size()
 
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that

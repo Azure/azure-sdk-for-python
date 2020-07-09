@@ -9,7 +9,7 @@ from typing import Any, TYPE_CHECKING, Union, List
 import uamqp
 from uamqp import SendClientAsync, types
 
-from .._common.message import Message, BatchMessage
+from .._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
 from .._base_handler import _convert_connection_string_to_kwargs
 from .._servicebus_sender import SenderMixin
 from ._base_handler_async import BaseHandler, ServiceBusSharedKeyCredential
@@ -273,6 +273,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             pass
         if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
             raise ValueError("A BatchMessage or list of Message must have at least one Message")
+
+        if isinstance(message, (PeekMessage, ReceivedMessage)):
+            message = Message._from_received_message(message)  # pylint: disable=protected-access
 
         await self._do_retryable_operation(
             self._send,
