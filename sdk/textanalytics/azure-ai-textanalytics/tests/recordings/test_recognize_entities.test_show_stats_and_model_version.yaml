@@ -16,24 +16,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?model-version=latest&showStats=true
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?model-version=latest&showStats=true
   response:
     body:
-      string: '{"statistics":{"documentsCount":5,"validDocumentsCount":4,"erroneousDocumentsCount":1,"transactionsCount":4},"documents":[{"id":"56","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[]},{"id":"0","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[]},{"id":"19","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[]},{"id":"1","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innerError":{"code":"InvalidDocument","message":"Document
-        text is empty."}}}],"modelVersion":"2020-02-01"}'
+      string: '{"statistics":{"documentsCount":5,"validDocumentsCount":4,"erroneousDocumentsCount":1,"transactionsCount":4},"documents":[{"id":"56","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"0","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"warnings":[]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 0018ac1c-d6c5-4a61-aef6-8994ee03af63
+      - 85031a5c-a87d-48c3-a75d-6c186ef714ad
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=4
       date:
-      - Thu, 02 Apr 2020 15:07:30 GMT
+      - Thu, 18 Jun 2020 19:52:42 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -41,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '40'
+      - '64'
     status:
       code: 200
       message: OK

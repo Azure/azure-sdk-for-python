@@ -11,22 +11,25 @@ except ImportError:
     import mock
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchServiceClient
+from azure.search.documents import SearchClient
+from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
+from azure.search.documents.indexes.models import SearchIndexerDataContainer, SearchIndexerDataSourceConnection
+from azure.search.documents.indexes._internal._utils import pack_search_indexer_data_source
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
 
-class TestSearchServiceClient(object):
-    def test_init(self):
-        client = SearchServiceClient("endpoint", CREDENTIAL)
+class TestSearchIndexClient(object):
+    def test_index_init(self):
+        client = SearchIndexClient("endpoint", CREDENTIAL)
         assert client._headers == {
             "api-key": "test_api_key",
             "Accept": "application/json;odata.metadata=minimal",
         }
 
-    def test_credential_roll(self):
+    def test_index_credential_roll(self):
         credential = AzureKeyCredential(key="old_api_key")
-        client = SearchServiceClient("endpoint", credential)
+        client = SearchIndexClient("endpoint", credential)
         assert client._headers == {
             "api-key": "old_api_key",
             "Accept": "application/json;odata.metadata=minimal",
@@ -37,18 +40,79 @@ class TestSearchServiceClient(object):
             "Accept": "application/json;odata.metadata=minimal",
         }
 
-    def test_repr(self):
-        client = SearchServiceClient("endpoint", CREDENTIAL)
-        assert repr(client) == "<SearchServiceClient [endpoint={}]>".format(
-            repr("endpoint")
-        )
+    def test_get_search_client(self):
+        credential = AzureKeyCredential(key="old_api_key")
+        client = SearchIndexClient("endpoint", credential)
+        search_client = client.get_search_client('index')
+        assert isinstance(search_client, SearchClient)
 
     @mock.patch(
-        "azure.search.documents._service._generated._search_service_client.SearchServiceClient.get_service_statistics"
+        "azure.search.documents.indexes._internal._generated._search_service_client.SearchServiceClient.get_service_statistics"
     )
     def test_get_service_statistics(self, mock_get_stats):
-        client = SearchServiceClient("endpoint", CREDENTIAL)
+        client = SearchIndexClient("endpoint", CREDENTIAL)
         client.get_service_statistics()
         assert mock_get_stats.called
         assert mock_get_stats.call_args[0] == ()
         assert mock_get_stats.call_args[1] == {"headers": client._headers}
+
+    def test_index_endpoint_https(self):
+        credential = AzureKeyCredential(key="old_api_key")
+        client = SearchIndexClient("endpoint", credential)
+        assert client._endpoint.startswith('https')
+
+        client = SearchIndexClient("https://endpoint", credential)
+        assert client._endpoint.startswith('https')
+
+        with pytest.raises(ValueError):
+            client = SearchIndexClient("http://endpoint", credential)
+
+        with pytest.raises(ValueError):
+            client = SearchIndexClient(12345, credential)
+
+
+class TestSearchIndexerClient(object):
+    def test_indexer_init(self):
+        client = SearchIndexerClient("endpoint", CREDENTIAL)
+        assert client._headers == {
+            "api-key": "test_api_key",
+            "Accept": "application/json;odata.metadata=minimal",
+        }
+
+    def test_indexer_credential_roll(self):
+        credential = AzureKeyCredential(key="old_api_key")
+        client = SearchIndexerClient("endpoint", credential)
+        assert client._headers == {
+            "api-key": "old_api_key",
+            "Accept": "application/json;odata.metadata=minimal",
+        }
+        credential.update("new_api_key")
+        assert client._headers == {
+            "api-key": "new_api_key",
+            "Accept": "application/json;odata.metadata=minimal",
+        }
+
+    def test_indexer_endpoint_https(self):
+        credential = AzureKeyCredential(key="old_api_key")
+        client = SearchIndexerClient("endpoint", credential)
+        assert client._endpoint.startswith('https')
+
+        client = SearchIndexerClient("https://endpoint", credential)
+        assert client._endpoint.startswith('https')
+
+        with pytest.raises(ValueError):
+            client = SearchIndexerClient("http://endpoint", credential)
+
+        with pytest.raises(ValueError):
+            client = SearchIndexerClient(12345, credential)
+
+    def test_datasource_with_empty_connection_string(self):
+        container = SearchIndexerDataContainer(name='searchcontainer')
+        data_source_connection = SearchIndexerDataSourceConnection(
+            name="test",
+            type="azureblob",
+            connection_string="",
+            container=container
+        )
+        packed_data_source_connection = pack_search_indexer_data_source(data_source_connection)
+        assert packed_data_source_connection.credentials.connection_string == "<unchanged>"

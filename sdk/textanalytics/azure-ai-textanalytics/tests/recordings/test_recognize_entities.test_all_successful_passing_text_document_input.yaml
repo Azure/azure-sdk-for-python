@@ -17,31 +17,30 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?model-version=2020-02-01&showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","entities":[{"text":"Microsoft","type":"Organization","offset":0,"length":9,"score":1.0},{"text":"Bill
-        Gates","type":"Person","offset":25,"length":10,"score":0.67},{"text":"Paul
-        Allen","type":"Person","offset":40,"length":10,"score":0.81},{"text":"April
-        4, 1975","type":"DateTime","subtype":"Date","offset":54,"length":13,"score":0.8}]},{"id":"2","entities":[{"text":"Microsoft","type":"Organization","offset":0,"length":9,"score":1.0},{"text":"Bill
-        Gates","type":"Person","offset":26,"length":10,"score":0.8},{"text":"Paul
-        Allen","type":"Person","offset":39,"length":10,"score":0.78},{"text":"4 de
-        abril de 1975","type":"DateTime","subtype":"Date","offset":53,"length":18,"score":0.8}]},{"id":"3","entities":[{"text":"Microsoft","type":"Organization","offset":0,"length":9,"score":1.0},{"text":"4.
-        April 1975","type":"DateTime","subtype":"Date","offset":19,"length":13,"score":0.8},{"text":"Bill
-        Gates","type":"Person","offset":37,"length":10,"score":0.86},{"text":"Paul
-        Allen","type":"Person","offset":52,"length":10,"score":0.98}]}],"errors":[],"modelVersion":"2020-02-01"}'
+      string: '{"documents":[{"id":"1","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":1.0},{"text":"Bill
+        Gates","category":"Person","offset":25,"length":10,"confidenceScore":0.67},{"text":"Paul
+        Allen","category":"Person","offset":40,"length":10,"confidenceScore":0.81},{"text":"April
+        4, 1975","category":"DateTime","subcategory":"Date","offset":54,"length":13,"confidenceScore":0.8}],"warnings":[]},{"id":"2","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":1.0},{"text":"Bill
+        Gates","category":"Person","offset":26,"length":10,"confidenceScore":0.8},{"text":"Paul
+        Allen","category":"Person","offset":39,"length":10,"confidenceScore":0.78},{"text":"4
+        de abril de 1975","category":"DateTime","subcategory":"Date","offset":53,"length":18,"confidenceScore":0.8}],"warnings":[]},{"id":"3","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":1.0},{"text":"4.
+        April 1975","category":"DateTime","subcategory":"Date","offset":19,"length":13,"confidenceScore":0.8},{"text":"Bill
+        Gates","category":"Person","offset":37,"length":10,"confidenceScore":0.86},{"text":"Paul
+        Allen","category":"Person","offset":52,"length":10,"confidenceScore":0.98}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - d319e5b4-512d-443f-9156-00bb0f8ad024
+      - 72338736-1693-4a47-994e-8dc31b2f1e32
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 02 Apr 2020 15:07:19 GMT
+      - Thu, 18 Jun 2020 19:52:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -49,7 +48,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '56'
+      - '76'
     status:
       code: 200
       message: OK

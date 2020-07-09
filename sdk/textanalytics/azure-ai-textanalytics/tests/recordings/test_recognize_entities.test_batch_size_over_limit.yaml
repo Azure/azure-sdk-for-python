@@ -758,21 +758,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?showStats=false
   response:
     body:
-      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innerError":{"code":"InvalidDocumentBatch","message":"Batch
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
         request contains too many records. Max 1000 records are permitted."}}}'
     headers:
       apim-request-id:
-      - 7d6995f8-592f-4d5b-a86f-801c8e30a547
+      - 70d965f0-ca04-4ece-9ecb-37c10a25d2cd
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 02 Apr 2020 15:07:21 GMT
+      - Thu, 18 Jun 2020 19:52:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -780,7 +779,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '14'
+      - '212'
     status:
       code: 400
       message: Bad Request

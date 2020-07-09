@@ -11,8 +11,8 @@ import functools
 
 from uamqp import authentication
 
-from .._common.utils import renewable_start_time, get_running_loop, utc_now
-from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed
+from .._common.utils import renewable_start_time, utc_now
+from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed, ServiceBusError
 from .._common.constants import (
     JWT_TOKEN_SCOPE,
     TOKEN_TYPE_JWT,
@@ -21,6 +21,25 @@ from .._common.constants import (
 
 
 _log = logging.getLogger(__name__)
+
+
+def get_running_loop():
+    try:
+        return asyncio.get_running_loop()
+    except AttributeError:  # 3.5 / 3.6
+        loop = None
+        try:
+            loop = asyncio._get_running_loop()  # pylint: disable=protected-access
+        except AttributeError:
+            _log.warning('This version of Python is deprecated, please upgrade to >= v3.5.3')
+        if loop is None:
+            _log.warning('No running event loop')
+            loop = asyncio.get_event_loop()
+        return loop
+    except RuntimeError:
+        # For backwards compatibility, create new event loop
+        _log.warning('No running event loop')
+        return asyncio.get_event_loop()
 
 
 async def create_authentication(client):
@@ -87,7 +106,10 @@ class AutoLockRenew:
         self.sleep_time = 1
         self.renew_period = 10
 
-    def __aenter__(self):
+    async def __aenter__(self):
+        if self._shutdown.is_set():
+            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+                                  " auto lock renewing.")
         return self
 
     async def __aexit__(self, *args):
@@ -131,6 +153,9 @@ class AutoLockRenew:
         :param float timeout: A time in seconds that the lock should be maintained for.
          Default value is 300 (5 minutes).
         """
+        if self._shutdown.is_set():
+            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+                                  " auto lock renewing.")
         starttime = renewable_start_time(renewable)
         renew_future = asyncio.ensure_future(self._auto_lock_renew(renewable, starttime, timeout), loop=self.loop)
         self._futures.append(renew_future)

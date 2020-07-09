@@ -1,5 +1,62 @@
 # Release History
 
+## 11.0.1 (Unreleased)
+
+
+## 11.0.0 (2020-07-07)
+
+**Features**
+
+- Exposed more models:
+
+  * BM25SimilarityAlgorithm
+  * ClassicSimilarityAlgorithm
+  * EdgeNGramTokenFilterSide
+  * EntityCategory
+  * EntityRecognitionSkillLanguage
+  * FieldMapping
+  * FieldMappingFunction
+  * ImageAnalysisSkillLanguage
+  * ImageDetail
+  * IndexerExecutionStatus
+  * IndexerStatus
+  * KeyPhraseExtractionSkillLanguage
+  * MicrosoftStemmingTokenizerLanguage
+  * MicrosoftTokenizerLanguage
+  * OcrSkillLanguage
+  * PhoneticEncoder
+  * ScoringFunctionAggregation
+  * ScoringFunctionInterpolation
+
+## 1.0.0b4 (2020-06-09)
+
+**Breaking Changes**
+
+- Reorganized `SearchServiceClient` into `SearchIndexClient` & `SearchIndexerClient`    #11507
+- Split searchindex.json and searchservice.json models and operations into separate namespaces #11508
+- Renamed `edm` to `SearchFieldDataType`    #11511
+- Now Search Synonym Map creation/update returns a model    #11514
+- Renaming  #11565
+
+  * SearchIndexerDataSource -> SearchIndexerDataSourceConnection
+  * SearchField.SynonymMaps -> SearchField.SynonymMapNames
+  * SearchField.Analyzer -> SearchField.AnalyzerName
+  * SearchField.IndexAnalyzer -> SearchField.IndexAnalyzerName
+  * SearchField.SearchAnalyzer -> SearchField.SearchAnalyzerName
+  * SearchableField.SynonymMaps -> SearchableField.SynonymMapNames
+  * SearchableField.Analyzer -> SearchableField.AnalyzerName
+  * SearchableField.IndexAnalyzer -> SearchableField.IndexAnalyzerName
+  * SearchableField.SearchAnalyzer -> SearchableField.SearchAnalyzerName
+  * Similarity -> SimilarityAlgorithm
+  * Suggester -> SearchSuggester
+  * PathHierarchyTokenizerV2 -> PathHierarchyTokenizer
+- Renamed DataSource methods to DataSourceConnection    #11693
+- Autocomplete & suggest methods now takes arguments search_text & suggester_name rather than query objects   #11747
+- Create_or_updates methods does not support partial updates    #11800
+- Renamed AnalyzeRequest to AnalyzeTextOptions  #11800
+- Renamed Batch methods #11800
+  
+
 ## 1.0.0b3 (2020-05-04)
 
 **Features**

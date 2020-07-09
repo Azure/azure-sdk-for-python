@@ -26,51 +26,54 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import DataSource, DataContainer, DataSourceCredentials
-from azure.search.documents.aio import SearchServiceClient
+from azure.search.documents.indexes.models import SearchIndexerDataContainer, SearchIndexerDataSourceConnection
+from azure.search.documents.indexes.aio import SearchIndexerClient
 
-service_client = SearchServiceClient(service_endpoint, AzureKeyCredential(key))
-client = service_client.get_datasources_client()
+client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
 
-async def create_data_source():
-    # [START create_data_source_async]
-    credentials = DataSourceCredentials(connection_string=connection_string)
-    container = DataContainer(name='searchcontainer')
-    data_source = DataSource(name="async-sample-datasource", type="azureblob", credentials=credentials, container=container)
-    async with service_client:
-        result = await client.create_datasource(data_source)
-    print("Create new Data Source - async-sample-datasource")
-    # [END create_data_source_async]
+async def create_data_source_connection():
+    # [START create_data_source_connection_async]
+    container = SearchIndexerDataContainer(name='searchcontainer')
+    data_source = SearchIndexerDataSourceConnection(
+        name="async-sample-data-source-connection",
+        type="azureblob",
+        connection_string=connection_string,
+        container=container
+    )
+    async with client:
+        result = await client.create_data_source_connection(data_source)
+    print("Create new Data Source Connection - async-sample-data-source-connection")
+    # [END create_data_source_connection_async]
 
-async def list_data_sources():
-    # [START list_data_source_async]
-    async with service_client:
-        result = await client.get_datasources()
+async def list_data_source_connections():
+    # [START list_data_source_connection_async]
+    async with client:
+        result = await client.get_data_source_connections()
     names = [x.name for x in result]
-    print("Found {} Data Sources in the service: {}".format(len(result), ", ".join(names)))
-    # [END list_data_source_async]
+    print("Found {} Data Source Connections in the service: {}".format(len(result), ", ".join(names)))
+    # [END list_data_source_connection_async]
 
-async def get_data_source():
-    # [START get_data_source_async]
-    async with service_client:
-        result = await client.get_datasource("async-sample-datasource")
-        print("Retrived Data Source 'async-sample-datasource'")
+async def get_data_source_connection():
+    # [START get_data_source_connection_async]
+    async with client:
+        result = await client.get_data_source_connection("async-sample-data-source-connection")
+        print("Retrived Data Source Connection 'async-sample-data-source-connection'")
         return result
-    # [END get_data_source_async]
+    # [END get_data_source_connection_async]
 
-async def delete_data_source():
-    # [START delete_data_source_async]
-    async with service_client:
-        client.delete_datasource("async-sample-datasource")
-    print("Data Source 'async-sample-datasource' successfully deleted")
-    # [END delete_data_source_async]
+async def delete_data_source_connection():
+    # [START delete_data_source_connection_async]
+    async with client:
+        client.delete_data_source_connection("async-sample-data-source-connection")
+    print("Data Source Connection 'async-sample-data-source-connection' successfully deleted")
+    # [END delete_data_source_connection_async]
 
 async def main():
-    await create_data_source()
-    await list_data_sources()
-    await get_data_source()
-    await delete_data_source()
-    await service_client.close()
+    await create_data_source_connection()
+    await list_data_source_connections()
+    await get_data_source_connection()
+    await delete_data_source_connection()
+    await client.close()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

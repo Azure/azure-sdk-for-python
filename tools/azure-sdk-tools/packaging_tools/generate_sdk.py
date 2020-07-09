@@ -105,6 +105,9 @@ def generate_main():
     parser.add_argument('--autorest',
                         dest='autorest_bin',
                         help='Force the Autorest to be executed. Must be a executable command.')
+    parser.add_argument("-f", "--force",
+                        dest="force", action="store_true",
+                        help="Should I force generation if SwaggerToSdk tag is not found")
     parser.add_argument("-v", "--verbose",
                         dest="verbose", action="store_true",
                         help="Verbosity in INFO mode")
@@ -127,7 +130,8 @@ def generate_main():
              args.project,
              args.readme,
              args.restapi_git_folder,
-             args.autorest_bin)
+             args.autorest_bin,
+             args.force)
 
 if __name__ == "__main__":
     generate_main()

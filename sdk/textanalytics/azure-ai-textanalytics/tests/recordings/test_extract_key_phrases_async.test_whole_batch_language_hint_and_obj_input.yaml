@@ -12,27 +12,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
   response:
     body:
       string: "{\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"should take my cat\
-        \ to the veterinarian\"]},{\"id\":\"4\",\"keyPhrases\":[\"Espa\xF1ol\",\"\
-        Este\",\"un document escrito\"]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\
-        \u5E78\u305B\"]}],\"errors\":[],\"modelVersion\":\"2019-10-01\"}"
+        \ to the veterinarian\"],\"warnings\":[]},{\"id\":\"4\",\"keyPhrases\":[\"\
+        Espa\xF1ol\",\"Este\",\"un document escrito\"],\"warnings\":[]},{\"id\":\"\
+        3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\"\
+        :[],\"modelVersion\":\"2019-10-01\"}"
     headers:
-      apim-request-id: be570a53-288e-48fc-81e3-d75b5e27b78b
+      apim-request-id: 0c786bea-b13a-4a88-8877-f3496e1adccb
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Thu, 02 Apr 2020 15:07:17 GMT
+      date: Thu, 18 Jun 2020 19:52:41 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
+      x-envoy-upstream-service-time: '7'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/keyPhrases?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/keyPhrases?showStats=false
 version: 1

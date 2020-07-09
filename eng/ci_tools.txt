@@ -1,9 +1,10 @@
 # requirements leveraged by ci tools
 setuptools==44.1.0; python_version == '2.7'
 setuptools==45.1.0; python_version >= '3.5'
+virtualenv==20.0.23
 wheel==0.34.2 
 Jinja2==2.11.1
-packaging==20.3
+packaging==20.4
 tox==3.14.6
 tox-monorepo==0.1.2
 twine==1.15.0

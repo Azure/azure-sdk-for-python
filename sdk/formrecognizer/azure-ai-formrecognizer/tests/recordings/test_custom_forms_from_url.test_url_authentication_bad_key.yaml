@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"}'
+    body: 'b''{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"}'''
     headers:
       Accept:
       - '*/*'
@@ -13,31 +13,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xx/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error":{"code":"401","message": "Access denied due to invalid subscription
-        key or wrong API endpoint. Make sure to provide a valid key for an active
-        subscription and use a correct regional API endpoint for your resource."}}'
+      string: '{"error": {"code": "401", "message": "Access denied due to invalid
+        subscription key or wrong API endpoint. Make sure to provide a valid key for
+        an active subscription and use a correct regional API endpoint for your resource."}}'
     headers:
-      apim-request-id:
-      - 13e94f72-cdcb-437f-a859-0f4fdaf48f98
       content-length:
-      - '225'
-      content-type:
-      - application/json
+      - '224'
       date:
-      - Thu, 16 Apr 2020 17:47:55 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      www-authenticate:
-      - AzureApiManagementKey realm="https://westus.api.cognitive.microsoft.com/formrecognizer",name="Ocp-Apim-Subscription-Key",type="header"
-      x-content-type-options:
-      - nosniff
+      - Thu, 11 Jun 2020 15:42:31 GMT
     status:
       code: 401
-      message: Access Denied
+      message: PermissionDenied
 version: 1

@@ -1,7 +1,37 @@
 # Release History
 
-## 7.0.0b3 (Unreleased)
+## 7.0.0b5 (Unreleased)
 
+
+## 7.0.0b4 (2020-07-06)
+
+**New Features**
+
+* Added support for management of topics, subscriptions, and rules.
+* `receive_messages()` (formerly `receive()`) now supports receiving a batch of messages (`max_batch_size` > 1) without the need to set `prefetch` parameter during `ServiceBusReceiver` initialization.
+
+**BugFixes**
+
+* Fixed bug where sync AutoLockRenew does not shutdown itself timely.
+* Fixed bug where async AutoLockRenew does not support context manager.
+
+**Breaking Changes**
+
+* Renamed `receive()`, `peek()` `schedule()` and `send()` to `receive_messages()`, `peek_messages()`, `schedule_messages()` and `send_messages()` to align with other service bus SDKs.
+* `receive_messages()` (formerly `receive()`) no longer raises a `ValueError` if `max_batch_size` is less than the `prefetch` parameter set during `ServiceBusReceiver` initialization.
+
+## 7.0.0b3 (2020-06-08)
+
+**New Features**
+
+* Added support for management of queue entities.
+    - Use `azure.servicebus.management.ServiceBusManagementClient` (`azure.servicebus.management.aio.ServiceBusManagementClient` for aio) to create, update, delete, list queues and get settings as well as runtime information of queues under a ServiceBus namespace.
+* Added methods `get_queue_deadletter_receiver` and `get_subscription_deadletter_receiver` in `ServiceBusClient` to get a `ServiceBusReceiver` for the dead-letter sub-queue of the target entity.
+
+**BugFixes**
+
+* Updated uAMQP dependency to 1.2.8.
+    * Fixed bug where reason and description were not being set when dead-lettering messages.
 
 ## 7.0.0b2 (2020-05-04)
 
@@ -23,7 +53,7 @@
 
 **BugFixes**
 
-* Fig bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
+* Fixed bug where http_proxy and transport_type in ServiceBusClient are not propagated into Sender/Receiver creation properly.
 * Updated uAMQP dependency to 1.2.7.
     * Fixed bug in setting certificate of tlsio on MacOS. #7201
     * Fixed bug that caused segmentation fault in network tracing on MacOS when setting `logging_enable` to `True` in `ServiceBusClient`.

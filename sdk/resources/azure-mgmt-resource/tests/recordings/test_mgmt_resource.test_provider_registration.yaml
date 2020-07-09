@@ -11,10 +11,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-resource/8.0.1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search/unregister?api-version=2019-10-01
   response:
@@ -24,23 +21,23 @@ interactions:
         Asia","East Asia","North Central US","South Central US","Central US","Japan
         West","Japan East","Korea Central","Australia East","Australia Southeast","Brazil
         South","Central India","West Central US","Canada Central","UK South","France
-        Central","South Africa North","UAE North"],"apiVersions":["2019-10-01-Preview","2015-08-19","2015-02-28","2014-07-31-Preview"],"capabilities":"CrossResourceGroupResourceMove,
+        Central","South Africa North","UAE North"],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19","2015-02-28","2014-07-31-Preview"],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SystemAssignedResourceIdentity, SupportsTags,
         SupportsLocation"},{"resourceType":"checkServiceNameAvailability","locations":[],"apiVersions":["2015-02-28","2014-07-31-Preview"],"capabilities":"None"},{"resourceType":"checkNameAvailability","locations":[],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19"],"capabilities":"None"},{"resourceType":"resourceHealthMetadata","locations":["West
         US","West US 2","East US","East US 2","North Europe","West Europe","Southeast
         Asia","East Asia","North Central US","South Central US","Central US","Japan
         West","Japan East","Korea Central","Australia East","Australia Southeast","Brazil
         South","Central India","West Central US","Canada Central","UK South","France
-        Central","South Africa North","UAE North"],"apiVersions":["2019-10-01-Preview","2015-08-19"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19","2015-02-28"],"capabilities":"None"}],"registrationState":"Unregistering","registrationPolicy":"RegistrationRequired"}'
+        Central","South Africa North","UAE North"],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19","2015-02-28"],"capabilities":"None"}],"registrationState":"Unregistering","registrationPolicy":"RegistrationRequired"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1891'
+      - '1917'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 02 Apr 2020 07:49:09 GMT
+      - Tue, 19 May 2020 16:59:55 GMT
       expires:
       - '-1'
       pragma:
@@ -68,10 +65,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-resource/8.0.1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search?api-version=2019-10-01
   response:
@@ -81,23 +75,23 @@ interactions:
         Asia","East Asia","North Central US","South Central US","Central US","Japan
         West","Japan East","Korea Central","Australia East","Australia Southeast","Brazil
         South","Central India","West Central US","Canada Central","UK South","France
-        Central","South Africa North","UAE North"],"apiVersions":["2019-10-01-Preview","2015-08-19","2015-02-28","2014-07-31-Preview"],"capabilities":"CrossResourceGroupResourceMove,
+        Central","South Africa North","UAE North"],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19","2015-02-28","2014-07-31-Preview"],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SystemAssignedResourceIdentity, SupportsTags,
         SupportsLocation"},{"resourceType":"checkServiceNameAvailability","locations":[],"apiVersions":["2015-02-28","2014-07-31-Preview"],"capabilities":"None"},{"resourceType":"checkNameAvailability","locations":[],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19"],"capabilities":"None"},{"resourceType":"resourceHealthMetadata","locations":["West
         US","West US 2","East US","East US 2","North Europe","West Europe","Southeast
         Asia","East Asia","North Central US","South Central US","Central US","Japan
         West","Japan East","Korea Central","Australia East","Australia Southeast","Brazil
         South","Central India","West Central US","Canada Central","UK South","France
-        Central","South Africa North","UAE North"],"apiVersions":["2019-10-01-Preview","2015-08-19"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19","2015-02-28"],"capabilities":"None"}],"registrationState":"Unregistering","registrationPolicy":"RegistrationRequired"}'
+        Central","South Africa North","UAE North"],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19","2015-02-28"],"capabilities":"None"}],"registrationState":"Unregistering","registrationPolicy":"RegistrationRequired"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1891'
+      - '1917'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 02 Apr 2020 07:49:09 GMT
+      - Tue, 19 May 2020 16:59:56 GMT
       expires:
       - '-1'
       pragma:
@@ -123,10 +117,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.4.34
-        azure-mgmt-resource/8.0.1 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-azure-mgmt-resource/0.1.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Search/register?api-version=2019-10-01
   response:
@@ -136,23 +127,23 @@ interactions:
         Asia","East Asia","North Central US","South Central US","Central US","Japan
         West","Japan East","Korea Central","Australia East","Australia Southeast","Brazil
         South","Central India","West Central US","Canada Central","UK South","France
-        Central","South Africa North","UAE North"],"apiVersions":["2019-10-01-Preview","2015-08-19","2015-02-28","2014-07-31-Preview"],"capabilities":"CrossResourceGroupResourceMove,
+        Central","South Africa North","UAE North"],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19","2015-02-28","2014-07-31-Preview"],"capabilities":"CrossResourceGroupResourceMove,
         CrossSubscriptionResourceMove, SystemAssignedResourceIdentity, SupportsTags,
         SupportsLocation"},{"resourceType":"checkServiceNameAvailability","locations":[],"apiVersions":["2015-02-28","2014-07-31-Preview"],"capabilities":"None"},{"resourceType":"checkNameAvailability","locations":[],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19"],"capabilities":"None"},{"resourceType":"resourceHealthMetadata","locations":["West
         US","West US 2","East US","East US 2","North Europe","West Europe","Southeast
         Asia","East Asia","North Central US","South Central US","Central US","Japan
         West","Japan East","Korea Central","Australia East","Australia Southeast","Brazil
         South","Central India","West Central US","Canada Central","UK South","France
-        Central","South Africa North","UAE North"],"apiVersions":["2019-10-01-Preview","2015-08-19"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19","2015-02-28"],"capabilities":"None"}],"registrationState":"Registering","registrationPolicy":"RegistrationRequired"}'
+        Central","South Africa North","UAE North"],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19"],"capabilities":"None"},{"resourceType":"operations","locations":[],"apiVersions":["2020-03-13","2019-10-01-Preview","2015-08-19","2015-02-28"],"capabilities":"None"}],"registrationState":"Registering","registrationPolicy":"RegistrationRequired"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1889'
+      - '1915'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 02 Apr 2020 07:49:12 GMT
+      - Tue, 19 May 2020 16:59:58 GMT
       expires:
       - '-1'
       pragma:

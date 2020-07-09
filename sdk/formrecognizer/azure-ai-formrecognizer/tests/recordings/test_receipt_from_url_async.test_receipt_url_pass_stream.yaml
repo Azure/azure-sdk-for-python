@@ -1,30 +1,30 @@
 interactions:
 - request:
-    body: '{"source": "b''\\x89PNG''"}'
+    body: 'b''{"source": "b\''\\\\x89PNG\''"}'''
     headers:
       Content-Length:
       - '25'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
         Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error":{"code":"InvalidImageURL","innerError":{"requestId":"9d588494-82af-4af1-ab2b-37369d6ccf76"},"message":"Image
-        URL is badly formatted."}}'
+      string: '{"error": {"code": "InvalidImageURL", "innerError": {"requestId": "cd68f220-7bf1-4a82-9ec6-4e942a3e496a"},
+        "message": "Image URL is badly formatted."}}'
     headers:
-      apim-request-id: 9d588494-82af-4af1-ab2b-37369d6ccf76
+      apim-request-id: cd68f220-7bf1-4a82-9ec6-4e942a3e496a
       content-type: application/json; charset=utf-8
-      date: Wed, 15 Apr 2020 19:05:53 GMT
+      date: Thu, 11 Jun 2020 15:44:36 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4'
+      x-envoy-upstream-service-time: '3'
     status:
       code: 400
       message: Bad Request
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
 version: 1

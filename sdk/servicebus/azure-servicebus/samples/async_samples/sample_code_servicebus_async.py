@@ -134,6 +134,16 @@ async def example_create_servicebus_receiver_async():
     )
     # [END create_servicebus_receiver_async]
 
+    # [START create_queue_deadletter_receiver_from_sb_client_async]
+    import os
+    from azure.servicebus.aio import ServiceBusClient
+    servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+    queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+    async with servicebus_client:
+        queue_receiver = servicebus_client.get_queue_deadletter_receiver(queue_name=queue_name)
+    # [END create_queue_deadletter_receiver_from_sb_client_async]
+
     # [START create_servicebus_receiver_from_sb_client_async]
     import os
     from azure.servicebus.aio import ServiceBusClient
@@ -143,6 +153,20 @@ async def example_create_servicebus_receiver_async():
     async with servicebus_client:
         queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
     # [END create_servicebus_receiver_from_sb_client_async]
+
+    # [START create_subscription_deadletter_receiver_from_sb_client_async]
+    import os
+    from azure.servicebus import ServiceBusClient
+    servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+    topic_name = os.environ["SERVICE_BUS_TOPIC_NAME"]
+    subscription_name = os.environ["SERVICE_BUS_SUBSCRIPTION_NAME"]
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+    async with servicebus_client:
+        subscription_receiver = servicebus_client.get_subscription_deadletter_receiver(
+            topic_name=topic_name,
+            subscription_name=subscription_name,
+        )
+    # [END create_subscription_deadletter_receiver_from_sb_client_async]
 
     # [START create_subscription_receiver_from_sb_client_async]
     import os
@@ -169,7 +193,7 @@ async def example_send_and_receive_async():
     # [START send_async]
     async with servicebus_sender:
         message = Message("Hello World")
-        await servicebus_sender.send(message)
+        await servicebus_sender.send_messages(message)
     # [END send_async]
 
     # [START create_batch_async]
@@ -180,14 +204,14 @@ async def example_send_and_receive_async():
 
     # [START peek_messages_async]
     async with servicebus_receiver:
-        messages = await servicebus_receiver.peek()
+        messages = await servicebus_receiver.peek_messages()
         for message in messages:
             print(message)
     # [END peek_messages_async]
 
     # [START receive_async]
     async with servicebus_receiver:
-        messages = await servicebus_receiver.receive(max_wait_time=5)
+        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             print(message)
             await message.complete()
@@ -209,11 +233,11 @@ async def example_receive_deferred_async():
     servicebus_sender = await example_create_servicebus_sender_async()
     servicebus_receiver = await example_create_servicebus_receiver_async()
     async with servicebus_sender:
-        await servicebus_sender.send(Message("Hello World"))
+        await servicebus_sender.send_messages(Message("Hello World"))
     # [START receive_defer_async]
     async with servicebus_receiver:
         deferred_sequenced_numbers = []
-        messages = await servicebus_receiver.receive(max_wait_time=5)
+        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
             print(message)
@@ -278,7 +302,7 @@ async def example_schedule_ops_async():
     async with servicebus_sender:
         scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
         scheduled_messages = [Message("Scheduled message") for _ in range(10)]
-        sequence_nums = await servicebus_sender.schedule(scheduled_messages, scheduled_time_utc)
+        sequence_nums = await servicebus_sender.schedule_messages(scheduled_messages, scheduled_time_utc)
     # [END scheduling_messages_async]
 
     # [START cancel_scheduled_messages_async]

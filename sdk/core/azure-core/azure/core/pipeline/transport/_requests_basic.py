@@ -137,7 +137,7 @@ class StreamDownloadGenerator(object):
                     time.sleep(retry_interval)
                     headers = {'range': 'bytes=' + str(self.downloaded) + '-'}
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
-                    if resp.status_code == 416:
+                    if resp.http_response.status_code == 416:
                         raise
                     chunk = next(self.iter_content_func)
                     if not chunk:

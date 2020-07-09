@@ -4,6 +4,8 @@
 
 ## Getting started
 
+### Install the package
+
 Install the opentelemetry python for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
@@ -38,11 +40,13 @@ from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 
 settings.tracing_implementation = OpenTelemetrySpan
 
+# In the below example, we use a simple console exporter, uncomment these lines to use
+# the Azure Monitor Exporter.
 # Example of Azure Monitor exporter, but you can use anything OpenTelemetry supports
-from azure_monitor import AzureMonitorSpanExporter
-exporter = AzureMonitorSpanExporter(
-    instrumentation_key="uuid of the instrumentation key (see your Azure Monitor account)"
-)
+# from azure_monitor import AzureMonitorSpanExporter
+# exporter = AzureMonitorSpanExporter(
+#     instrumentation_key="uuid of the instrumentation key (see your Azure Monitor account)"
+# )
 
 # Regular open telemetry usage from here, see https://github.com/open-telemetry/opentelemetry-python
 # for details

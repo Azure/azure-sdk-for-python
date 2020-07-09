@@ -73,13 +73,12 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.0.0",
         "cryptography>=2.1.4",
-        "msal<2.0.0,>=1.0.0",
-        "msal-extensions~=0.1.3",
+        "msal<2.0.0,>=1.3.0",
+        "msal-extensions~=0.2.2",
         "six>=1.6",
     ],
     extras_require={
         ":python_version<'3.0'": ["azure-nspkg"],
-        ":python_version<'3.3'": ["mock"],
         ":python_version<'3.5'": ["typing"],
     },
 )

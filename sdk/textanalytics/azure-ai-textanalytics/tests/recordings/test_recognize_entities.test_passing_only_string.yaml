@@ -18,43 +18,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/entities/recognition/general?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/recognition/general?showStats=false
   response:
     body:
-      string: "{\"documents\":[{\"id\":\"0\",\"entities\":[{\"text\":\"Microsoft\"\
-        ,\"type\":\"Organization\",\"offset\":0,\"length\":9,\"score\":1.0},{\"text\"\
-        :\"Bill Gates\",\"type\":\"Person\",\"offset\":25,\"length\":10,\"score\"\
-        :0.67},{\"text\":\"Paul Allen\",\"type\":\"Person\",\"offset\":40,\"length\"\
-        :10,\"score\":0.81},{\"text\":\"April 4, 1975\",\"type\":\"DateTime\",\"subtype\"\
-        :\"Date\",\"offset\":54,\"length\":13,\"score\":0.8}]},{\"id\":\"1\",\"entities\"\
-        :[{\"text\":\"Microsoft\",\"type\":\"Organization\",\"offset\":0,\"length\"\
-        :9,\"score\":1.0},{\"text\":\"Bill Gates\",\"type\":\"Person\",\"offset\"\
-        :26,\"length\":10,\"score\":0.45},{\"text\":\"Paul Allen\",\"type\":\"Person\"\
-        ,\"offset\":39,\"length\":10,\"score\":0.69},{\"text\":\"4\",\"type\":\"Quantity\"\
-        ,\"subtype\":\"Number\",\"offset\":53,\"length\":1,\"score\":0.8},{\"text\"\
-        :\"1975\",\"type\":\"DateTime\",\"subtype\":\"DateRange\",\"offset\":67,\"\
-        length\":4,\"score\":0.8}]},{\"id\":\"2\",\"entities\":[{\"text\":\"Microsoft\"\
-        ,\"type\":\"Organization\",\"offset\":0,\"length\":9,\"score\":1.0},{\"text\"\
-        :\"4\",\"type\":\"Quantity\",\"subtype\":\"Number\",\"offset\":19,\"length\"\
-        :1,\"score\":0.8},{\"text\":\"April 1975\",\"type\":\"DateTime\",\"subtype\"\
-        :\"DateRange\",\"offset\":22,\"length\":10,\"score\":0.8},{\"text\":\"Paul\
-        \ Allen gegr\xFCndet\",\"type\":\"Person\",\"offset\":52,\"length\":20,\"\
-        score\":0.47}]}],\"errors\":[{\"id\":\"3\",\"error\":{\"code\":\"InvalidArgument\"\
-        ,\"message\":\"Invalid document in request.\",\"innerError\":{\"code\":\"\
-        InvalidDocument\",\"message\":\"Document text is empty.\"}}}],\"modelVersion\"\
-        :\"2020-02-01\"}"
+      string: '{"documents":[{"id":"0","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.81},{"text":"Bill
+        Gates","category":"Person","offset":25,"length":10,"confidenceScore":0.83},{"text":"Paul
+        Allen","category":"Person","offset":40,"length":10,"confidenceScore":0.87},{"text":"April
+        4, 1975","category":"DateTime","subcategory":"Date","offset":54,"length":13,"confidenceScore":0.8}],"warnings":[]},{"id":"1","entities":[{"text":"4","category":"Quantity","subcategory":"Number","offset":53,"length":1,"confidenceScore":0.8},{"text":"1975","category":"DateTime","subcategory":"DateRange","offset":67,"length":4,"confidenceScore":0.8}],"warnings":[]},{"id":"2","entities":[{"text":"4","category":"Quantity","subcategory":"Number","offset":19,"length":1,"confidenceScore":0.8},{"text":"April
+        1975","category":"DateTime","subcategory":"DateRange","offset":22,"length":10,"confidenceScore":0.8},{"text":"von
+        Bill Gates","category":"Person","offset":33,"length":14,"confidenceScore":0.59},{"text":"Paul
+        Allen","category":"Person","offset":52,"length":10,"confidenceScore":0.63}],"warnings":[]}],"errors":[{"id":"3","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - e6769828-fff2-40d0-bc0c-af6e9f4c544f
+      - b11e4dfd-da87-4084-b07b-a6bcb5ef1f0c
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 02 Apr 2020 15:07:27 GMT
+      - Thu, 18 Jun 2020 19:52:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -62,7 +48,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '90'
+      - '148'
     status:
       code: 200
       message: OK

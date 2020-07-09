@@ -8,6 +8,7 @@ from ._auth_record import AuthenticationRecord
 from ._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from ._constants import KnownAuthorities
 from ._credentials import (
+    AzureCliCredential,
     AuthorizationCodeCredential,
     CertificateCredential,
     ChainedTokenCredential,
@@ -19,11 +20,13 @@ from ._credentials import (
     ManagedIdentityCredential,
     SharedTokenCacheCredential,
     UsernamePasswordCredential,
+    VSCodeCredential,
 )
 
 
 __all__ = [
     "AuthenticationRecord",
+    "AzureCliCredential",
     "AuthenticationRequiredError",
     "AuthorizationCodeCredential",
     "CertificateCredential",
@@ -38,6 +41,7 @@ __all__ = [
     "ManagedIdentityCredential",
     "SharedTokenCacheCredential",
     "UsernamePasswordCredential",
+    "VSCodeCredential",
 ]
 
 from ._version import VERSION

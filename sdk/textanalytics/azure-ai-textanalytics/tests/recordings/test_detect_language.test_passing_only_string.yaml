@@ -17,24 +17,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]},{"id":"1","detectedLanguages":[{"name":"Spanish","iso6391Name":"es","score":1.0}]},{"id":"2","detectedLanguages":[{"name":"Japanese","iso6391Name":"ja","score":1.0}]},{"id":"3","detectedLanguages":[{"name":"German","iso6391Name":"de","score":1.0}]}],"errors":[{"id":"4","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innerError":{"code":"InvalidDocument","message":"Document
+      string: '{"documents":[{"id":"0","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"1","detectedLanguage":{"name":"Spanish","iso6391Name":"es","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"Japanese","iso6391Name":"ja","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"German","iso6391Name":"de","confidenceScore":1.0},"warnings":[]}],"errors":[{"id":"4","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2019-10-01"}'
     headers:
       apim-request-id:
-      - 2f16ff95-5e09-4348-a19c-177499e8ff7d
+      - e580a9e6-b3ed-405f-b714-7bdad4f0c4d6
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=4
       date:
-      - Thu, 02 Apr 2020 15:06:33 GMT
+      - Thu, 18 Jun 2020 19:52:37 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +41,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '8'
     status:
       code: 200
       message: OK

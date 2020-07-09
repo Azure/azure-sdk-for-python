@@ -59,6 +59,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         **False**.
     :keyword bool exclude_interactive_browser_credential: Whether to exclude interactive browser authentication (see
         :class:`~azure.identity.InteractiveBrowserCredential`). Defaults to **True**.
+    :keyword str interactive_browser_tenant_id: Tenant ID to use when authenticating a user through
+        :class:`~azure.identity.InteractiveBrowserCredential`. Defaults to the value of environment variable
+        AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_USERNAME, if any.
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
@@ -66,8 +69,13 @@ class DefaultAzureCredential(ChainedTokenCredential):
     """
 
     def __init__(self, **kwargs):
+        # type: (**Any) -> None
         authority = kwargs.pop("authority", None)
         authority = normalize_authority(authority) if authority else get_default_authority()
+
+        interactive_browser_tenant_id = kwargs.pop(
+            "interactive_browser_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
+        )
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
@@ -101,7 +109,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential())
         if not exclude_interactive_browser_credential:
-            credentials.append(InteractiveBrowserCredential())
+            credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id))
 
         super(DefaultAzureCredential, self).__init__(*credentials)
 

@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: 'b''{"source": "https://fakeuri.com/blank%20space"}'''
+    headers:
+      Content-Length:
+      - '47'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+  response:
+    body:
+      string: '{"error": {"code": "FailedToDownloadImage", "innerError": {"requestId":
+        "b256740a-1a9f-4d69-8304-928f7e29befb"}, "message": "Failed to download image
+        from input URL."}}'
+    headers:
+      apim-request-id: b256740a-1a9f-4d69-8304-928f7e29befb
+      content-type: application/json; charset=utf-8
+      date: Mon, 15 Jun 2020 18:28:14 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '3921'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+version: 1

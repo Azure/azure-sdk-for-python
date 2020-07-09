@@ -26,22 +26,35 @@ service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents.aio import SearchServiceClient
-from azure.search.documents import CorsOptions, Index, ScoringProfile, edm, SimpleField, SearchableField
+from azure.search.documents.indexes.aio import SearchIndexClient
+from azure.search.documents.indexes.models import (
+    ComplexField,
+    CorsOptions,
+    SearchIndex,
+    ScoringProfile,
+    SearchFieldDataType,
+    SimpleField,
+    SearchableField
+)
 
-client = SearchServiceClient(service_endpoint, AzureKeyCredential(key)).get_indexes_client()
+client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
 async def create_index():
     # [START create_index_async]
     name = "hotels"
     fields = [
-        SimpleField(name="hotelId", type=edm.String, key=True),
-        SimpleField(name="baseRate", type=edm.Double)
+        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+        SearchableField(name="description", type=SearchFieldDataType.String),
+        ComplexField(name="address", fields=[
+            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+            SimpleField(name="city", type=SearchFieldDataType.String),
+        ])
     ]
 
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
     scoring_profiles = []
-    index = Index(
+    index = SearchIndex(
         name=name,
         fields=fields,
         scoring_profiles=scoring_profiles,
@@ -60,9 +73,15 @@ async def update_index():
     # [START update_index_async]
     name = "hotels"
     fields = fields = [
-        SimpleField(name="hotelId", type=edm.String, key=True),
-        SimpleField(name="baseRate", type=edm.Double),
-        SearchableField(name="hotelName", type=edm.String)
+        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+        SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+        SearchableField(name="description", type=SearchFieldDataType.String),
+        SearchableField(name="hotelName", type=SearchFieldDataType.String),
+        ComplexField(name="address", fields=[
+            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+            SimpleField(name="city", type=SearchFieldDataType.String),
+            SimpleField(name="state", type=SearchFieldDataType.String),
+        ])
     ]
 
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
@@ -71,13 +90,13 @@ async def update_index():
     )
     scoring_profiles = []
     scoring_profiles.append(scoring_profile)
-    index = Index(
+    index = SearchIndex(
         name=name,
         fields=fields,
         scoring_profiles=scoring_profiles,
         cors_options=cors_options)
 
-    result = await client.create_or_update_index(index_name=index.name, index=index)
+    result = await client.create_or_update_index(index=index)
     # [END update_index_async]
 
 async def delete_index():

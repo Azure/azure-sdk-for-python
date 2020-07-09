@@ -1,0 +1,557 @@
+interactions:
+- request:
+    body: '{"location": "West US", "tags": {"key1": "value1"}, "properties": {"threatIntelMode":
+      "Alert"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '95'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"threatIntelMode\": \"Alert\",\r\n\
+        \    \"childPolicies\": [],\r\n    \"ruleGroups\": [],\r\n    \"firewalls\"\
+        : [],\r\n    \"provisioningState\": \"Updating\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy\"\
+        ,\r\n  \"name\": \"myFirewallPolicy\",\r\n  \"type\": \"Microsoft.Network/FirewallPolicies\"\
+        ,\r\n  \"etag\": \"4e041b29-aef2-49f4-945f-21e29ded3023\",\r\n  \"location\"\
+        : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/4bead938-b70c-43dc-acee-55801fb2c35d?api-version=2020-04-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '566'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 18 May 2020 16:30:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/4bead938-b70c-43dc-acee-55801fb2c35d?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 18 May 2020 16:30:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"threatIntelMode\": \"Alert\",\r\n\
+        \    \"childPolicies\": [],\r\n    \"ruleGroups\": [],\r\n    \"firewalls\"\
+        : [],\r\n    \"provisioningState\": \"Succeeded\"\r\n  },\r\n  \"id\": \"\
+        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy\"\
+        ,\r\n  \"name\": \"myFirewallPolicy\",\r\n  \"type\": \"Microsoft.Network/FirewallPolicies\"\
+        ,\r\n  \"etag\": \"4e041b29-aef2-49f4-945f-21e29ded3023\",\r\n  \"location\"\
+        : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '567'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 18 May 2020 16:30:30 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"priority": 110, "rules": [{"ruleType": "FirewallPolicyFilterRule",
+      "name": "Example-Filter-Rule", "action": {"type": "Deny"}, "ruleConditions":
+      [{"name": "network-condition1", "ruleConditionType": "NetworkRuleCondition",
+      "ipProtocols": ["TCP"], "sourceAddresses": ["10.1.25.0/24"], "destinationAddresses":
+      ["*"], "destinationPorts": ["*"]}]}]}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '361'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"priority\": 110,\r\n    \"rules\"\
+        : [\r\n      {\r\n        \"ruleType\": \"FirewallPolicyFilterRule\",\r\n\
+        \        \"action\": {\r\n          \"type\": \"Deny\"\r\n        },\r\n \
+        \       \"ruleConditions\": [\r\n          {\r\n            \"ruleConditionType\"\
+        : \"NetworkRuleCondition\",\r\n            \"name\": \"network-condition1\"\
+        ,\r\n            \"ipProtocols\": [\r\n              \"TCP\"\r\n         \
+        \   ],\r\n            \"sourceAddresses\": [\r\n              \"10.1.25.0/24\"\
+        \r\n            ],\r\n            \"destinationAddresses\": [\r\n        \
+        \      \"*\"\r\n            ],\r\n            \"destinationPorts\": [\r\n\
+        \              \"*\"\r\n            ]\r\n          }\r\n        ],\r\n   \
+        \     \"name\": \"Example-Filter-Rule\",\r\n        \"priority\": 0\r\n  \
+        \    }\r\n    ],\r\n    \"provisioningState\": \"Updating\"\r\n  },\r\n  \"\
+        id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
+        ,\r\n  \"name\": \"myRuleGroup\",\r\n  \"type\": \"Microsoft.Network/RuleGroups\"\
+        ,\r\n  \"etag\": \"0c78e6cb-9dc4-43d1-a016-6900a24da249\",\r\n  \"location\"\
+        : \"westus\"\r\n}"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/f8569a59-3a45-4d71-afb0-f97f8a414ffb?api-version=2020-04-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '1126'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 18 May 2020 16:30:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/f8569a59-3a45-4d71-afb0-f97f8a414ffb?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 18 May 2020 16:30:41 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"priority\": 110,\r\n    \"rules\"\
+        : [\r\n      {\r\n        \"ruleType\": \"FirewallPolicyFilterRule\",\r\n\
+        \        \"action\": {\r\n          \"type\": \"Deny\"\r\n        },\r\n \
+        \       \"ruleConditions\": [\r\n          {\r\n            \"ruleConditionType\"\
+        : \"NetworkRuleCondition\",\r\n            \"name\": \"network-condition1\"\
+        ,\r\n            \"ipProtocols\": [\r\n              \"TCP\"\r\n         \
+        \   ],\r\n            \"sourceAddresses\": [\r\n              \"10.1.25.0/24\"\
+        \r\n            ],\r\n            \"destinationAddresses\": [\r\n        \
+        \      \"*\"\r\n            ],\r\n            \"destinationPorts\": [\r\n\
+        \              \"*\"\r\n            ]\r\n          }\r\n        ],\r\n   \
+        \     \"name\": \"Example-Filter-Rule\",\r\n        \"priority\": 0\r\n  \
+        \    }\r\n    ],\r\n    \"provisioningState\": \"Succeeded\"\r\n  },\r\n \
+        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
+        ,\r\n  \"name\": \"myRuleGroup\",\r\n  \"type\": \"Microsoft.Network/RuleGroups\"\
+        ,\r\n  \"etag\": \"0c78e6cb-9dc4-43d1-a016-6900a24da249\",\r\n  \"location\"\
+        : \"westus\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1127'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 18 May 2020 16:30:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"priority\": 110,\r\n    \"rules\"\
+        : [\r\n      {\r\n        \"ruleType\": \"FirewallPolicyFilterRule\",\r\n\
+        \        \"action\": {\r\n          \"type\": \"Deny\"\r\n        },\r\n \
+        \       \"ruleConditions\": [\r\n          {\r\n            \"ruleConditionType\"\
+        : \"NetworkRuleCondition\",\r\n            \"name\": \"network-condition1\"\
+        ,\r\n            \"ipProtocols\": [\r\n              \"TCP\"\r\n         \
+        \   ],\r\n            \"sourceAddresses\": [\r\n              \"10.1.25.0/24\"\
+        \r\n            ],\r\n            \"destinationAddresses\": [\r\n        \
+        \      \"*\"\r\n            ],\r\n            \"destinationPorts\": [\r\n\
+        \              \"*\"\r\n            ]\r\n          }\r\n        ],\r\n   \
+        \     \"name\": \"Example-Filter-Rule\",\r\n        \"priority\": 0\r\n  \
+        \    }\r\n    ],\r\n    \"provisioningState\": \"Succeeded\"\r\n  },\r\n \
+        \ \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
+        ,\r\n  \"name\": \"myRuleGroup\",\r\n  \"type\": \"Microsoft.Network/RuleGroups\"\
+        ,\r\n  \"etag\": \"0c78e6cb-9dc4-43d1-a016-6900a24da249\",\r\n  \"location\"\
+        : \"westus\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1127'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 18 May 2020 16:30:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"threatIntelMode\": \"Alert\",\r\n\
+        \    \"childPolicies\": [],\r\n    \"ruleGroups\": [\r\n      {\r\n      \
+        \  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
+        \r\n      }\r\n    ],\r\n    \"firewalls\": [],\r\n    \"provisioningState\"\
+        : \"Succeeded\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy\"\
+        ,\r\n  \"name\": \"myFirewallPolicy\",\r\n  \"type\": \"Microsoft.Network/FirewallPolicies\"\
+        ,\r\n  \"etag\": \"4e041b29-aef2-49f4-945f-21e29ded3023\",\r\n  \"location\"\
+        : \"westus\",\r\n  \"tags\": {\r\n    \"key1\": \"value1\"\r\n  }\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '819'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 18 May 2020 16:30:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"properties\": {\r\n    \"priority\": 110,\r\n    \"rules\"\
+        : [\r\n      {\r\n        \"ruleType\": \"FirewallPolicyFilterRule\",\r\n\
+        \        \"action\": {\r\n          \"type\": \"Deny\"\r\n        },\r\n \
+        \       \"ruleConditions\": [\r\n          {\r\n            \"ruleConditionType\"\
+        : \"NetworkRuleCondition\",\r\n            \"name\": \"network-condition1\"\
+        ,\r\n            \"ipProtocols\": [\r\n              \"TCP\"\r\n         \
+        \   ],\r\n            \"sourceAddresses\": [\r\n              \"10.1.25.0/24\"\
+        \r\n            ],\r\n            \"destinationAddresses\": [\r\n        \
+        \      \"*\"\r\n            ],\r\n            \"destinationPorts\": [\r\n\
+        \              \"*\"\r\n            ]\r\n          }\r\n        ],\r\n   \
+        \     \"name\": \"Example-Filter-Rule\",\r\n        \"priority\": 0\r\n  \
+        \    }\r\n    ],\r\n    \"provisioningState\": \"Deleting\"\r\n  },\r\n  \"\
+        id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy/ruleGroups/myRuleGroup\"\
+        ,\r\n  \"name\": \"myRuleGroup\",\r\n  \"type\": \"Microsoft.Network/RuleGroups\"\
+        ,\r\n  \"etag\": \"0c78e6cb-9dc4-43d1-a016-6900a24da249\",\r\n  \"location\"\
+        : \"westus\"\r\n}"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/508c566d-65fb-4193-b551-51e62ede5633?api-version=2020-04-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '1126'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 18 May 2020 16:30:43 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperationResults/508c566d-65fb-4193-b551-51e62ede5633?api-version=2020-04-01
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/nfvOperations/508c566d-65fb-4193-b551-51e62ede5633?api-version=2020-04-01
+  response:
+    body:
+      string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '29'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 18 May 2020 16:30:54 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-network/11.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/firewallPolicies/myFirewallPolicy?api-version=2020-04-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Mon, 18 May 2020 16:30:56 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14997'
+    status:
+      code: 200
+      message: OK
+version: 1

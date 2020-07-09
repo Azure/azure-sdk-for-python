@@ -38,6 +38,10 @@ Then for common search index operations:
 
 * Analyze text: [sample_analyze_text.py](sample_analyze_text.py) ([async version](async_samples/sample_analyze_text_async.py))
 
+* CRUD operations for indexers: [sample_indexers_operations.py](sample_indexers_operations.py) ([async version](async_samples/sample_indexer_operations_async.py))
+
+* General workflow of indexer, datasource and index: [sample_indexer_datasource_skillset.py](sample_indexer_datasource_skillset.py) ([async version](async_samples/sample_indexer_datasource_skillset.py))
+
 ## Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
 * You must have an [Azure subscription](https://azure.microsoft.com/free/)

@@ -2,15 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Credentials wrapping MSAL applications and delegating token acquisition and caching to them.
-This entails monkeypatching MSAL's OAuth client with an adapter substituting an azure-core pipeline for Requests.
-"""
 import abc
 import base64
 import json
 import logging
-import os
-import sys
 import time
 
 import msal
@@ -19,7 +14,8 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .exception_wrapper import wrap_exceptions
-from .msal_transport_adapter import MsalTransportAdapter
+from .msal_client import MsalClient
+from .persistent_cache import load_user_cache
 from .._constants import KnownAuthorities
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from .._internal import get_default_authority, normalize_authority
@@ -62,32 +58,25 @@ def _build_auth_record(response):
     """Build an AuthenticationRecord from the result of an MSAL ClientApplication token request"""
 
     try:
-        client_info = json.loads(_decode_client_info(response["client_info"]))
         id_token = response["id_token_claims"]
+
+        if "client_info" in response:
+            client_info = json.loads(_decode_client_info(response["client_info"]))
+            home_account_id = "{uid}.{utid}".format(**client_info)
+        else:
+            # MSAL uses the subject claim as home_account_id when the STS doesn't provide client_info
+            home_account_id = id_token["sub"]
 
         return AuthenticationRecord(
             authority=urlparse(id_token["iss"]).netloc,  # "iss" is the URL of the issuing tenant
             client_id=id_token["aud"],
-            home_account_id="{uid}.{utid}".format(**client_info),
+            home_account_id=home_account_id,
             tenant_id=id_token["tid"],  # tenant which issued the token, not necessarily user's home tenant
             username=id_token["preferred_username"],
         )
     except (KeyError, ValueError):
-        # surprising: msal.ClientApplication always requests client_info and an id token, whose shapes shouldn't change
+        # surprising: msal.ClientApplication always requests an id token, whose shape shouldn't change
         return None
-
-
-def _load_persistent_cache():
-    # type: () -> msal.TokenCache
-
-    if sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
-        from msal_extensions.token_cache import WindowsTokenCache
-
-        return WindowsTokenCache(
-            cache_location=os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", "msal.cache")
-        )
-
-    raise NotImplementedError("A persistent cache is not available on this platform.")
 
 
 class MsalCredential(ABC):
@@ -105,11 +94,12 @@ class MsalCredential(ABC):
         self._cache = kwargs.pop("_cache", None)  # internal, for use in tests
         if not self._cache:
             if kwargs.pop("enable_persistent_cache", False):
-                self._cache = _load_persistent_cache()
+                allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
+                self._cache = load_user_cache(allow_unencrypted)
             else:
                 self._cache = msal.TokenCache()
 
-        self._adapter = kwargs.pop("msal_adapter", None) or MsalTransportAdapter(**kwargs)
+        self._client = MsalClient(**kwargs)
 
         # postpone creating the wrapped application because its initializer uses the network
         self._msal_app = None  # type: Optional[msal.ClientApplication]
@@ -126,51 +116,15 @@ class MsalCredential(ABC):
 
     def _create_app(self, cls):
         # type: (Type[msal.ClientApplication]) -> msal.ClientApplication
-        """Creates an MSAL application, patching msal.authority to use an azure-core pipeline during tenant discovery"""
-
-        # MSAL application initializers use msal.authority to send AAD tenant discovery requests
-        with self._adapter:
-            # MSAL's "authority" is a URL e.g. https://login.microsoftonline.com/common
-            app = cls(
-                client_id=self._client_id,
-                client_credential=self._client_credential,
-                authority="{}/{}".format(self._authority, self._tenant_id),
-                token_cache=self._cache,
-            )
-
-        # monkeypatch the app to replace requests.Session with MsalTransportAdapter
-        app.client.session.close()
-        app.client.session = self._adapter
+        app = cls(
+            client_id=self._client_id,
+            client_credential=self._client_credential,
+            authority="{}/{}".format(self._authority, self._tenant_id),
+            token_cache=self._cache,
+            http_client=self._client,
+        )
 
         return app
-
-
-class ConfidentialClientCredential(MsalCredential):
-    """Wraps an MSAL ConfidentialClientApplication with the TokenCredential API"""
-
-    @wrap_exceptions
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
-
-        # MSAL requires scopes be a list
-        scopes = list(scopes)  # type: ignore
-        now = int(time.time())
-
-        # First try to get a cached access token or if a refresh token is cached, redeem it for an access token.
-        # Failing that, acquire a new token.
-        app = self._get_app()
-        result = app.acquire_token_silent(scopes, account=None) or app.acquire_token_for_client(scopes)
-
-        if "access_token" not in result:
-            raise ClientAuthenticationError(message="authentication failed: {}".format(result.get("error_description")))
-
-        return AccessToken(result["access_token"], now + int(result["expires_in"]))
-
-    def _get_app(self):
-        # type: () -> msal.ConfidentialClientApplication
-        if not self._msal_app:
-            self._msal_app = self._create_app(msal.ConfidentialClientApplication)
-        return self._msal_app
 
 
 class PublicClientCredential(MsalCredential):
@@ -265,13 +219,7 @@ class InteractiveCredential(PublicClientCredential):
             scopes = _DEFAULT_AUTHENTICATE_SCOPES[self._authority]
 
         _ = self.get_token(*scopes, _allow_prompt=True, **kwargs)
-        return self.authentication_record  # type: ignore
-
-    @property
-    def authentication_record(self):
-        # type: () -> Optional[AuthenticationRecord]
-        """:class:`~azure.identity.AuthenticationRecord` for the most recent authentication"""
-        return self._auth_record
+        return self._auth_record  # type: ignore
 
     @wrap_exceptions
     def _acquire_token_silent(self, *scopes, **kwargs):

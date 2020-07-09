@@ -1,0 +1,51 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "One", "language": "en"}, {"id": "1",
+      "text": "Two", "language": "en"}, {"id": "2", "text": "Three", "language": "en"},
+      {"id": "3", "text": "Four", "language": "en"}, {"id": "4", "text": "Five", "language":
+      "en"}, {"id": "5", "text": "Six", "language": "en"}, {"id": "6", "text": "Seven",
+      "language": "en"}, {"id": "7", "text": "Eight", "language": "en"}, {"id": "8",
+      "text": "Nine", "language": "en"}, {"id": "9", "text": "Ten", "language": "en"},
+      {"id": "10", "text": "Eleven", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '534'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"0","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]},{"id":"6","keyPhrases":[],"warnings":[]},{"id":"7","keyPhrases":[],"warnings":[]},{"id":"8","keyPhrases":[],"warnings":[]},{"id":"9","keyPhrases":[],"warnings":[]},{"id":"10","keyPhrases":[],"warnings":[]}],"errors":[{"id":"","error":{"code":"InvalidRequest","message":"The
+        request has exceeded the allowed document limits.","innererror":{"code":"InvalidDocumentBatch","message":"The
+        number of documents in the request have exceeded the data limitations. See
+        https://aka.ms/text-analytics-data-limits for additional information"}}}],"modelVersion":"2019-10-01"}'
+    headers:
+      apim-request-id:
+      - 1974472d-7ecc-43ed-9ef6-2b190f4006ee
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=11
+      date:
+      - Mon, 06 Jul 2020 22:22:33 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '10'
+    status:
+      code: 200
+      message: OK
+version: 1

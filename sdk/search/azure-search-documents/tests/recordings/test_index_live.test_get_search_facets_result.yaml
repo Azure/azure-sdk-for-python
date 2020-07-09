@@ -17,7 +17,7 @@ interactions:
       api-key:
       - 3264E611B72761B1DD80EA3277F4EE84
     method: POST
-    uri: https://searcha7c9127c.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    uri: https://searcha7c9127c.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
       string: '{"@search.facets":{"category":[{"count":4,"value":"Budget"},{"count":1,"value":"Luxury"}]},"value":[{"@search.score":0.2423066,"hotelName":"Countryside

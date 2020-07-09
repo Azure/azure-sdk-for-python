@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
-from typing import Any, TYPE_CHECKING, List, Union
+from typing import Union
 import six
 
-from .._servicebus_session import ServiceBusSession as BaseSession
+from .._servicebus_session import BaseSession
 from .._common.constants import (
     REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
     REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
@@ -97,8 +97,10 @@ class ServiceBusSession(BaseSession):
 
         This operation must be performed periodically in order to retain a lock on the
         session to continue message processing.
-        Once the lock is lost the connection will be closed. This operation can
-        also be performed as a threaded background task by registering the session
+
+        Once the lock is lost the connection will be closed; an expired lock cannot be renewed.
+
+        This operation can also be performed as a threaded background task by registering the session
         with an `azure.servicebus.aio.AutoLockRenew` instance.
 
         .. admonition:: Example:

@@ -9,49 +9,31 @@ parameters:
   BuildDocs: true
   TestMatrix:
     Linux_Python27:
-      OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
       PythonVersion: '2.7'
       CoverageArg: ''
       RunForPR: true
     Linux_Python35:
-      OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
       PythonVersion: '3.5'
       CoverageArg: ''
       RunForPR: false
-    Linux_Python36:
-      OSName: 'Linux'
-      OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.6'
-      CoverageArg: ''
-      RunForPR: false
-    Linux_Python37:
-      OSName: 'Linux'
-      OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.7'
-      CoverageArg: ''
-      RunForPR: false
     Linux_Python38:
-      OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
       PythonVersion: '3.8'
       CoverageArg: ''
       RunForPR: true
     Windows_Python35:
-      OSName: 'Windows'
       OSVmImage: 'windows-2019'
       PythonVersion: '3.5'
       CoverageArg: ''
       RunForPR: true
     MacOS_Python27:
-      OSName: 'MacOS'
       OSVmImage: 'macOS-10.15'
       PythonVersion: '2.7'
       CoverageArg: ''
       RunForPR: false
     Linux_pypy3:
-      OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
       PythonVersion: 'pypy3'
       CoverageArg: '--disablecov'
@@ -90,6 +72,7 @@ jobs:
       parameters: 
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
@@ -128,7 +111,7 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-        OSName: $(OSName)
+        OSVmImage: $(OSVmImage)
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
@@ -145,44 +128,6 @@ jobs:
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
-  - job: 'RunMyPy'
-    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'], 'true'))
-    displayName: 'Run MyPy'
-    variables:
-    - template: ../variables/globals.yml
-
-    dependsOn:
-      - 'Build'
-
-    pool:
-      vmImage: 'ubuntu-18.04'
-
-    steps:
-    - template: ../steps/run_mypy.yml
-      parameters: 
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-
-  - job: 'RunPyLint'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'], 'true'))
-    displayName: 'Run Pylint'
-    variables:
-    - template: ../variables/globals.yml
-
-    dependsOn:
-      - 'Build'
-
-    pool:
-      vmImage: 'ubuntu-18.04'
-
-    steps:
-    - template: ../steps/run_pylint.yml
-      parameters: 
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
   - job: 'RunRegression'
     condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))

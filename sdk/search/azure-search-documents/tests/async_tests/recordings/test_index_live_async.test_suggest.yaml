@@ -13,7 +13,7 @@ interactions:
       api-key:
       - 7399C73616B0BBA23C477AA593479766
     method: POST
-    uri: https://searchf6640e13.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2019-05-06-Preview
+    uri: https://searchf6640e13.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"@search.text":"Cheapest hotel in town. Infact, a motel.","hotelId":"2"},{"@search.text":"Secret
@@ -35,5 +35,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://searchf6640e13.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2019-05-06-Preview
+    url: https://searchf6640e13.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2020-06-30
 version: 1

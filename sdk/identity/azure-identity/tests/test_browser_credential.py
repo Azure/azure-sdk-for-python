@@ -10,7 +10,7 @@ import time
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import AuthenticationRequiredError, InteractiveBrowserCredential
+from azure.identity import AuthenticationRequiredError, CredentialUnavailableError, InteractiveBrowserCredential
 from azure.identity._internal import AuthCodeRedirectServer
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
@@ -83,15 +83,15 @@ def test_authenticate():
             )
             record = credential.authenticate(scopes=(scope,))
 
-    # credential should have a cached access token for the scope used in authenticate
-    with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential should authenticate silently"))):
-        token = credential.get_token(scope)
-    assert token.token == access_token
-
     assert record.authority == environment
     assert record.home_account_id == object_id + "." + home_tenant
     assert record.tenant_id == home_tenant
     assert record.username == username
+
+    # credential should have a cached access token for the scope used in authenticate
+    with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential should authenticate silently"))):
+        token = credential.get_token(scope)
+    assert token.token == access_token
 
 
 def test_disable_automatic_authentication():
@@ -284,8 +284,8 @@ def test_redirect_server():
     thread.start()
 
     # send a request, verify the server exposes the query
-    url = "http://127.0.0.1:{}/?{}={}".format(port, expected_param, expected_value)
-    response = urllib.request.urlopen(url)
+    url = "http://127.0.0.1:{}/?{}={}".format(port, expected_param, expected_value) # nosec
+    response = urllib.request.urlopen(url)  # nosec
 
     assert response.code == 200
     assert server.query_params[expected_param] == [expected_value]
@@ -298,6 +298,14 @@ def test_no_browser():
         client_id="client-id", server_class=Mock(), transport=transport, _cache=TokenCache()
     )
     with pytest.raises(ClientAuthenticationError, match=r".*browser.*"):
+        credential.get_token("scope")
+
+
+def test_cannot_bind_port():
+    """get_token should raise CredentialUnavailableError when the redirect listener can't bind a port"""
+
+    credential = InteractiveBrowserCredential(server_class=Mock(side_effect=socket.error))
+    with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
 
 

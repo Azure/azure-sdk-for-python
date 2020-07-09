@@ -4,6 +4,8 @@ parameters:
   DependsOn: Build
   DocArtifact: 'documentation'
   DevFeedName: public/azure-sdk-for-python
+  TargetDocRepoOwner: ''
+  TargetDocRepoName: ''
 
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -26,15 +28,15 @@ stages:
                 deploy:
                   steps:
                     - checkout: self
+                    - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
+                      parameters:
+                        SourceFolder: ${{parameters.ArtifactName}} 
+                        TargetFolder: ${{artifact.safeName}}
+                        PackageName: ${{artifact.name}}
                     - pwsh: |
-                        Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
-                        New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
-                        $underscorePrefix = "${{artifact.name}}"
-                        $dashPrefix = "${{artifact.name}}".Replace("_", "-")
-                        Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
-                        Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
-                        Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
-                      displayName: Stage artifacts
+                        Get-ChildItem -Recurse $(Pipeline.Workspace)/${{artifact.safeName}}
+                      workingDirectory: $(Pipeline.Workspace)
+                      displayName: Output Visible Artifacts
                     - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
                       parameters:
                         ArtifactLocation: $(Pipeline.Workspace)/${{artifact.safeName}}
@@ -62,14 +64,11 @@ stages:
                         artifact: ${{parameters.ArtifactName}}
                         timeoutInMinutes: 5
 
-                      - pwsh: |
-                          Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}
-                          New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
-                          $underscorePrefix = "${{artifact.name}}"
-                          $dashPrefix = "${{artifact.name}}".Replace("_", "-")
-                          Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$dashPrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
-                          Copy-Item $(Pipeline.Workspace)/${{parameters.ArtifactName}}/$underscorePrefix-[0-9]*.[0-9]*.[0-9]* $(Pipeline.Workspace)/${{artifact.safeName}}
-                          Get-ChildItem $(Pipeline.Workspace)/${{artifact.safeName}}
+                      - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
+                        parameters:
+                          SourceFolder: ${{parameters.ArtifactName}} 
+                          TargetFolder: ${{artifact.safeName}}
+                          PackageName: ${{artifact.name}}
 
                       - task: UsePythonVersion@0
 
@@ -105,7 +104,7 @@ stages:
                         displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
 
           - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
-            - deployment: PublishDocs
+            - deployment: PublishGitHubIODocs
               displayName: Publish Docs to GitHubIO Blob Storage
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
               environment: githubio
@@ -119,12 +118,12 @@ stages:
                   deploy:
                     steps:
                       - checkout: self
-                      - pwsh: |
-                          Get-ChildItem $(Pipeline.Workspace)/${{parameters.DocArtifact}}
-                          New-Item -Type Directory -Name ${{artifact.safeName}} -Path $(Pipeline.Workspace)
-                          $dashPrefix = "${{artifact.name}}".Replace("_", "-")
-                          Copy-Item $(Pipeline.Workspace)/${{parameters.DocArtifact}}/$dashPrefix.zip $(Pipeline.Workspace)/${{artifact.safeName}}
-                        displayName: Stage artifacts
+                      - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
+                        parameters:
+                          SourceFolder: ${{parameters.DocArtifact}}
+                          TargetFolder: ${{artifact.safeName}}
+                          PackageName: ${{artifact.name}}
+                          AdditionalRegex: '.zip'
                       - pwsh: |
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/${{artifact.safeName}}
                         workingDirectory: $(Pipeline.Workspace)
@@ -137,6 +136,46 @@ stages:
                           TargetLanguage: 'python'
                           # we override the regular script path because we have cloned the build tools repo as a separate artifact.
                           ScriptPath: 'eng/common/scripts/copy-docs-to-blobstorage.ps1'
+
+          - ${{if ne(artifact.options.skipPublishDocs, 'true')}}:
+            - deployment: PublishDocs
+              displayName: "Docs.MS Release"
+              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
+              environment: githubio
+              dependsOn: PublishPackage
+
+              pool:
+                vmImage: ubuntu-18.04
+
+              strategy:
+                runOnce:
+                  deploy:
+                    steps:
+                      - checkout: self
+                      - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
+                        parameters:
+                          SourceFolder: ${{parameters.ArtifactName}} 
+                          TargetFolder: ${{artifact.safeName}}
+                          PackageName: ${{artifact.name}}
+                      - pwsh: |
+                          Get-ChildItem -Recurse $(Pipeline.Workspace)/${{artifact.safeName}}
+                        workingDirectory: $(Pipeline.Workspace)
+                        displayName: Output Visible Artifacts
+                      - template: /eng/common/pipelines/templates/steps/docs-metadata-release.yml
+                        parameters:
+                          ArtifactLocation: $(Pipeline.Workspace)/${{artifact.safeName}}
+                          PackageRepository: PyPI
+                          ReleaseSha: $(Build.SourceVersion)
+                          RepoId: Azure/azure-sdk-for-python
+                          WorkingDirectory: $(System.DefaultWorkingDirectory)
+                          TargetDocRepo: 'MicrosoftDocs/azure-docs-sdk-python'
+                          TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+                          TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+                          PRBranchName: 'smoke-test-rdme'
+                          ArtifactName: ${{parameters.ArtifactName}}
+                          Language: 'python'
+                          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+                          DocRepoDestinationPath: 'docs-ref-services/' 
 
           - ${{if ne(artifact.options.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
@@ -188,10 +227,22 @@ stages:
           pip install twine
         displayName: Install Twine
 
+      - pwsh: |
+          # For safety default to publishing to the private feed.
+          # Publish to https://dev.azure.com/azure-sdk/internal/_packaging?_a=feed&feed=azure-sdk-for-python-pr
+          $devopsFeedName = 'internal/azure-sdk-for-python-pr'
+          if ('$(Build.Repository.Name)' -eq 'Azure/azure-sdk-for-python') {
+            # Publish to https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python
+            $devopsFeedName = '${{ parameters.DevFeedName }}'
+          }
+          echo "##vso[task.setvariable variable=DevFeedName]$devopsFeedName"
+          echo "Using DevopsFeed = $devopsFeedName"
+        displayName: Setup DevOpsFeedName
+
       - task: TwineAuthenticate@0
-        displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'
+        displayName: 'Authenticate to feed: $(DevFeedName)'
         inputs:
-          artifactFeeds: ${{parameters.DevFeedName}}
+          artifactFeeds: $(DevFeedName)
 
       - ${{ each artifact in parameters.Artifacts }}:
 
@@ -208,9 +259,9 @@ stages:
 
         - script: |
             set -e
-            twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*.dev*.whl
+            twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*.dev*.whl
             echo "Uploaded whl to devops feed"
-            twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*.dev*.zip
+            twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{artifact.safeName}}/*.dev*.zip
             echo "Uploaded sdist to devops feed"
-          displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
+          displayName: 'Publish package to feed: $(DevFeedName)'
           condition: gt(variables['FilesToUploadCount'], 0)

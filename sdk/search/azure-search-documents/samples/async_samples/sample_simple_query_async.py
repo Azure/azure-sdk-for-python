@@ -36,7 +36,7 @@ async def simple_text_query():
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     async with search_client:
-        results = await search_client.search(query="spa")
+        results = await search_client.search(search_text="spa")
 
         print("Hotels containing 'spa' in the name (or other fields):")
         async for result in results:

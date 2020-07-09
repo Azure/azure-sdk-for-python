@@ -18,12 +18,14 @@ from concurrent.futures import ThreadPoolExecutor
 
 from uamqp import authentication
 
-from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout
+from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusError
 from .._version import VERSION as sdk_version
 from .constants import (
     JWT_TOKEN_SCOPE,
     TOKEN_TYPE_JWT,
-    TOKEN_TYPE_SASTOKEN
+    TOKEN_TYPE_SASTOKEN,
+    DEAD_LETTER_QUEUE_SUFFIX,
+    TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
 )
 
 _log = logging.getLogger(__name__)
@@ -59,26 +61,6 @@ def utc_from_timestamp(timestamp):
 
 def utc_now():
     return datetime.datetime.now(tz=TZ_UTC)
-
-
-def get_running_loop():
-    try:
-        import asyncio  # pylint: disable=import-error
-        return asyncio.get_running_loop()
-    except AttributeError:  # 3.5 / 3.6
-        loop = None
-        try:
-            loop = asyncio._get_running_loop()  # pylint: disable=protected-access
-        except AttributeError:
-            _log.warning('This version of Python is deprecated, please upgrade to >= v3.5.3')
-        if loop is None:
-            _log.warning('No running event loop')
-            loop = asyncio.get_event_loop()
-        return loop
-    except RuntimeError:
-        # For backwards compatibility, create new event loop
-        _log.warning('No running event loop')
-        return asyncio.get_event_loop()
 
 
 def parse_conn_str(conn_str):
@@ -161,6 +143,21 @@ def create_authentication(client):
     )
 
 
+def generate_dead_letter_entity_name(
+        queue_name=None,
+        topic_name=None,
+        subscription_name=None,
+        transfer_deadletter=False
+):
+    entity_name = queue_name if queue_name else (topic_name + "/Subscriptions/" + subscription_name)
+    entity_name = "{}{}".format(
+        entity_name,
+        TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if transfer_deadletter else DEAD_LETTER_QUEUE_SUFFIX
+    )
+
+    return entity_name
+
+
 class AutoLockRenew(object):
     """Auto renew locks for messages and sessions using a background thread pool.
 
@@ -197,6 +194,9 @@ class AutoLockRenew(object):
         self.renew_period = 10
 
     def __enter__(self):
+        if self._shutdown.is_set():
+            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+                                  " auto lock renewing.")
         return self
 
     def __exit__(self, *args):
@@ -240,6 +240,9 @@ class AutoLockRenew(object):
         :param float timeout: A time in seconds that the lock should be maintained for.
          Default value is 300 (5 minutes).
         """
+        if self._shutdown.is_set():
+            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+                                  " auto lock renewing.")
         starttime = renewable_start_time(renewable)
         self.executor.submit(self._auto_lock_renew, renewable, starttime, timeout)
 
@@ -249,4 +252,5 @@ class AutoLockRenew(object):
         :param wait: Whether to block until thread pool has shutdown. Default is `True`.
         :type wait: bool
         """
+        self._shutdown.set()
         self.executor.shutdown(wait=wait)

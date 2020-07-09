@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/copyAuthorization
+  response:
+    body:
+      string: '{"modelId": "5858edb8-5891-46e7-b9f7-47368b513f67", "accessToken":
+        "redacted", "expirationDateTimeTicks": 1591976587}'
+    headers:
+      apim-request-id: 4e32278c-c7bc-428f-bc03-9624cc0cf618
+      content-type: application/json; charset=utf-8
+      date: Thu, 11 Jun 2020 15:43:07 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/5858edb8-5891-46e7-b9f7-47368b513f67
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '54'
+    status:
+      code: 201
+      message: Created
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/copyAuthorization
+version: 1

@@ -10,19 +10,18 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/keyPhrases?model-version=latest&showStats=true
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?model-version=latest&showStats=true
   response:
     body:
       string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","keyPhrases":["Bill
-        Gates","the CEO of Microsoft"],"statistics":{"charactersCount":35,"transactionsCount":1}}],"errors":[],"modelVersion":"2019-10-01"}'
+        Gates","the CEO of Microsoft"],"statistics":{"charactersCount":35,"transactionsCount":1},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: fa5b1d32-008d-402b-984d-aa4b9f68c5c5
+      apim-request-id: b3e1bf3a-525e-4dbf-8629-9d5791b83d11
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Thu, 02 Apr 2020 15:07:13 GMT
+      date: Thu, 18 Jun 2020 19:52:40 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -30,5 +29,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/keyPhrases?model-version=latest&showStats=true
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/keyPhrases?model-version=latest&showStats=true
 version: 1

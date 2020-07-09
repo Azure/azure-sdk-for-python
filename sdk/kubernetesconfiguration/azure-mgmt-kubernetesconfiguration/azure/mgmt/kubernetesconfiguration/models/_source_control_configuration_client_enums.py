@@ -17,6 +17,8 @@ class ComplianceState(str, Enum):
     pending = "Pending"
     compliant = "Compliant"
     noncompliant = "Noncompliant"
+    installed = "Installed"
+    failed = "Failed"
 
 
 class MessageLevel(str, Enum):
