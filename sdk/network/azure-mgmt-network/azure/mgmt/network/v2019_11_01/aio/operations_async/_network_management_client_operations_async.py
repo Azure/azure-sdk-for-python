@@ -29,8 +29,8 @@ class NetworkManagementClientOperationsMixin:
         bastion_host_name: str,
         bsl_request: "models.BastionShareableLinkListRequest",
         **kwargs
-    ) -> "models.BastionShareableLinkListResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionShareableLinkListResult"]
+    ) -> Optional["models.BastionShareableLinkListResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.BastionShareableLinkListResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-11-01"
@@ -54,7 +54,6 @@ class NetworkManagementClientOperationsMixin:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(bsl_request, 'BastionShareableLinkListRequest')
         body_content_kwargs['content'] = body_content
@@ -83,7 +82,7 @@ class NetworkManagementClientOperationsMixin:
         bastion_host_name: str,
         bsl_request: "models.BastionShareableLinkListRequest",
         **kwargs
-    ) -> "models.BastionShareableLinkListResult":
+    ) -> AsyncLROPoller["models.BastionShareableLinkListResult"]:
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -98,8 +97,8 @@ class NetworkManagementClientOperationsMixin:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: BastionShareableLinkListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_11_01.models.BastionShareableLinkListResult
+        :return: An instance of AsyncLROPoller that returns either BastionShareableLinkListResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_11_01.models.BastionShareableLinkListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -172,7 +171,6 @@ class NetworkManagementClientOperationsMixin:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(bsl_request, 'BastionShareableLinkListRequest')
         body_content_kwargs['content'] = body_content
@@ -196,7 +194,7 @@ class NetworkManagementClientOperationsMixin:
         bastion_host_name: str,
         bsl_request: "models.BastionShareableLinkListRequest",
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -211,8 +209,8 @@ class NetworkManagementClientOperationsMixin:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -279,6 +277,11 @@ class NetworkManagementClientOperationsMixin:
         content_type = "application/json"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.get_bastion_shareable_link.metadata['url']  # type: ignore
@@ -292,19 +295,18 @@ class NetworkManagementClientOperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(bsl_request, 'BastionShareableLinkListRequest')
+                body_content_kwargs['content'] = body_content
+                request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            body_content_kwargs = {}  # type: Dict[str, Any]
-            body_content = self._serialize.body(bsl_request, 'BastionShareableLinkListRequest')
-            body_content_kwargs['content'] = body_content
-            request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(bsl_request, 'BastionShareableLinkListRequest')
+                body_content_kwargs['content'] = body_content
+                request = self._client.get(url, query_parameters, header_parameters, **body_content_kwargs)
 
             return request
 
@@ -337,8 +339,8 @@ class NetworkManagementClientOperationsMixin:
         resource_group_name: str,
         bastion_host_name: str,
         **kwargs
-    ) -> "models.BastionActiveSessionListResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BastionActiveSessionListResult"]
+    ) -> Optional["models.BastionActiveSessionListResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.BastionActiveSessionListResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-11-01"
@@ -360,7 +362,6 @@ class NetworkManagementClientOperationsMixin:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -384,7 +385,7 @@ class NetworkManagementClientOperationsMixin:
         resource_group_name: str,
         bastion_host_name: str,
         **kwargs
-    ) -> "models.BastionActiveSessionListResult":
+    ) -> AsyncLROPoller["models.BastionActiveSessionListResult"]:
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group.
@@ -397,8 +398,8 @@ class NetworkManagementClientOperationsMixin:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: BastionActiveSessionListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_11_01.models.BastionActiveSessionListResult
+        :return: An instance of AsyncLROPoller that returns either BastionActiveSessionListResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_11_01.models.BastionActiveSessionListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -467,6 +468,11 @@ class NetworkManagementClientOperationsMixin:
         content_type = "application/json"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.disconnect_active_sessions.metadata['url']  # type: ignore
@@ -480,19 +486,18 @@ class NetworkManagementClientOperationsMixin:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(session_ids, 'SessionIds')
+                body_content_kwargs['content'] = body_content
+                request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            body_content_kwargs = {}  # type: Dict[str, Any]
-            body_content = self._serialize.body(session_ids, 'SessionIds')
-            body_content_kwargs['content'] = body_content
-            request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+                body_content_kwargs = {}  # type: Dict[str, Any]
+                body_content = self._serialize.body(session_ids, 'SessionIds')
+                body_content_kwargs['content'] = body_content
+                request = self._client.get(url, query_parameters, header_parameters, **body_content_kwargs)
 
             return request
 
@@ -560,7 +565,6 @@ class NetworkManagementClientOperationsMixin:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -617,7 +621,6 @@ class NetworkManagementClientOperationsMixin:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -640,8 +643,8 @@ class NetworkManagementClientOperationsMixin:
         virtual_wan_name: str,
         vpn_client_params: "models.VirtualWanVpnProfileParameters",
         **kwargs
-    ) -> "models.VpnProfileResponse":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnProfileResponse"]
+    ) -> Optional["models.VpnProfileResponse"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnProfileResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-11-01"
@@ -665,7 +668,6 @@ class NetworkManagementClientOperationsMixin:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(vpn_client_params, 'VirtualWanVpnProfileParameters')
         body_content_kwargs['content'] = body_content
@@ -694,7 +696,7 @@ class NetworkManagementClientOperationsMixin:
         virtual_wan_name: str,
         vpn_client_params: "models.VirtualWanVpnProfileParameters",
         **kwargs
-    ) -> "models.VpnProfileResponse":
+    ) -> AsyncLROPoller["models.VpnProfileResponse"]:
         """Generates a unique VPN profile for P2S clients for VirtualWan and associated
     VpnServerConfiguration combination in the specified resource group.
 
@@ -712,8 +714,8 @@ class NetworkManagementClientOperationsMixin:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VpnProfileResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_11_01.models.VpnProfileResponse
+        :return: An instance of AsyncLROPoller that returns either VpnProfileResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_11_01.models.VpnProfileResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
