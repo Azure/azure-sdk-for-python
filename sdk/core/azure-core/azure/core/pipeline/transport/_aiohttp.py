@@ -69,6 +69,7 @@ class AioHttpTransport(AsyncHttpTransport):
             :caption: Asynchronous transport with aiohttp.
     """
     def __init__(self, *, session=None, loop=None, session_owner=True, **kwargs):
+        # pylint:disable=unused-import
         try:
             import aiohttp
             import asyncio
@@ -152,7 +153,6 @@ class AioHttpTransport(AsyncHttpTransport):
 
         :keyword bool stream: Defaults to False.
         :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
-        :keyword str proxy: will define the proxy to use all the time
         """
         await self.open()
 
@@ -211,6 +211,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     :type block_size: int
     """
     def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
+        # pylint:disable=unused-import
         try:
             import aiohttp
             import asyncio
@@ -276,6 +277,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     """
     def __init__(self, request, aiohttp_response, block_size=None):
         # type: (HttpRequest, ClientResponse, int) -> None
+        # pylint:disable=unused-import
         try:
             import aiohttp
             import asyncio
@@ -283,10 +285,10 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             raise ImportError("Please make sure aiohttp and asyncio libraries are installed")
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
-        self.status_code = aiohttp_response.status
-        self.headers = aiohttp_response.headers
-        self.reason = aiohttp_response.reason
-        self.content_type = aiohttp_response.headers.get('content-type')
+        self.status_code = aiohttp_response.status  # type:ignore
+        self.headers = aiohttp_response.headers # type:ignore
+        self.reason = aiohttp_response.reason   # type:ignore
+        self.content_type = aiohttp_response.headers.get('content-type')    # type:ignore
         self._body = None
 
     def body(self) -> bytes:
