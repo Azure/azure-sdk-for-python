@@ -29,6 +29,7 @@ from .constants import (
     _X_OPT_LOCKED_UNTIL,
     _X_OPT_LOCK_TOKEN,
     _X_OPT_SCHEDULED_ENQUEUE_TIME,
+    _X_OPT_DEAD_LETTER_SOURCE,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_DESCRIPTION,
@@ -39,7 +40,9 @@ from .constants import (
     MESSAGE_ABANDON,
     MESSAGE_DEFER,
     MESSAGE_RENEW_LOCK,
-    DEADLETTERNAME
+    DEADLETTERNAME,
+    PROPERTIES_DEAD_LETTER_REASON,
+    PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION
 )
 from ..exceptions import (
     MessageAlreadySettled,
@@ -86,8 +89,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", 'UTF-8')
-        self.properties = uamqp.message.MessageProperties(encoding=self._encoding, subject=subject)
-        self.header = uamqp.message.MessageHeader()
+        self._amqp_properties = uamqp.message.MessageProperties(encoding=self._encoding, subject=subject)
+        self._amqp_header = uamqp.message.MessageHeader()
         self._annotations = {}
         self._app_properties = {}
 
@@ -96,8 +99,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.message = kwargs['message']
             self._annotations = self.message.annotations
             self._app_properties = self.message.application_properties
-            self.properties = self.message.properties
-            self.header = self.message.header
+            self._amqp_properties = self.message.properties
+            self._amqp_header = self.message.header
         else:
             self._build_message(body)
 
@@ -106,13 +109,13 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     def _build_message(self, body):
         if isinstance(body, list) and body:  # TODO: This only works for a list of bytes/strings
-            self.message = uamqp.Message(body[0], properties=self.properties, header=self.header)
+            self.message = uamqp.Message(body[0], properties=self._amqp_properties, header=self._amqp_header)
             for more in body[1:]:
                 self.message._body.append(more)  # pylint: disable=protected-access
         elif body is None:
             raise ValueError("Message body cannot be None.")
         else:
-            self.message = uamqp.Message(body, properties=self.properties, header=self.header)
+            self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
 
     @property
     def session_id(self):
@@ -122,9 +125,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         :rtype: str
         """
         try:
-            return self.properties.group_id.decode('UTF-8')
+            return self._amqp_properties.group_id.decode('UTF-8')
         except (AttributeError, UnicodeDecodeError):
-            return self.properties.group_id
+            return self._amqp_properties.group_id
 
     @session_id.setter
     def session_id(self, value):
@@ -133,28 +136,10 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         :param value: The session id for the message.
         :type value: str
         """
-        self.properties.group_id = value
+        self._amqp_properties.group_id = value
 
     @property
-    def annotations(self):
-        # type: () -> dict
-        """The annotations of the message.
-
-        :rtype: dict
-        """
-        return self.message.annotations
-
-    @annotations.setter
-    def annotations(self, value):
-        """Set the annotations on the message.
-
-        :param value: The annotations for the Message.
-        :type value: dict
-        """
-        self.message.annotations = value
-
-    @property
-    def user_properties(self):
+    def properties(self):
         # type: () -> dict
         """User defined properties on the message.
 
@@ -162,31 +147,14 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         """
         return self.message.application_properties
 
-    @user_properties.setter
-    def user_properties(self, value):
+    @properties.setter
+    def properties(self, value):
         """User defined properties on the message.
 
         :param value: The application properties for the Message.
         :type value: dict
         """
         self.message.application_properties = value
-
-    @property
-    def enqueue_sequence_number(self):
-        # type: () -> Optional[int]
-        """
-
-        :rtype: int
-        """
-        if self.message.annotations:
-            return self.message.annotations.get(_X_OPT_ENQUEUE_SEQUENCE_NUMBER)
-        return None
-
-    @enqueue_sequence_number.setter
-    def enqueue_sequence_number(self, value):
-        if not self.message.annotations:
-            self.message.annotations = {}
-        self.message.annotations[types.AMQPSymbol(_X_OPT_ENQUEUE_SEQUENCE_NUMBER)] = value
 
     @property
     def partition_key(self):
@@ -229,18 +197,18 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
         :rtype: ~datetime.timedelta
         """
-        if self.header and self.header.time_to_live:
-            return datetime.timedelta(milliseconds=self.header.time_to_live)
+        if self._amqp_header and self._amqp_header.time_to_live:
+            return datetime.timedelta(milliseconds=self._amqp_header.time_to_live)
         return None
 
     @time_to_live.setter
     def time_to_live(self, value):
-        if not self.header:
-            self.header = uamqp.message.MessageHeader()
+        if not self._amqp_header:
+            self._amqp_header = uamqp.message.MessageHeader()
         if isinstance(value, datetime.timedelta):
-            self.header.time_to_live = value.seconds * 1000
+            self._amqp_header.time_to_live = value.seconds * 1000
         else:
-            self.header.time_to_live = int(value) * 1000
+            self._amqp_header.time_to_live = int(value) * 1000
 
     @property
     def scheduled_enqueue_time_utc(self):
@@ -263,8 +231,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @scheduled_enqueue_time_utc.setter
     def scheduled_enqueue_time_utc(self, value):
         # type: (datetime.datetime) -> None
-        if not self.properties.message_id:
-            self.properties.message_id = str(uuid.uuid4())
+        if not self._amqp_properties.message_id:
+            self._amqp_properties.message_id = str(uuid.uuid4())
         if not self.message.annotations:
             self.message.annotations = {}
         self.message.annotations[types.AMQPSymbol(_X_OPT_SCHEDULED_ENQUEUE_TIME)] = value
@@ -281,72 +249,72 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def content_type(self):
         # type: () -> str
-        return self.properties.content_type if self.properties else None
+        return self._amqp_properties.content_type if self._amqp_properties else None
 
     @content_type.setter
     def content_type(self, val):
         # type: (str) -> None
-        self.properties.content_type = val
+        self._amqp_properties.content_type = val
 
     @property
     def correlation_id(self):
         # type: () -> str
-        return self.properties.correlation_id if self.properties else None
+        return self._amqp_properties.correlation_id if self._amqp_properties else None
 
     @correlation_id.setter
     def correlation_id(self, val):
         # type: (str) -> None
-        self.properties.correlation_id = val
+        self._amqp_properties.correlation_id = val
 
     @property
     def label(self):
         # type: () -> str
-        return self.properties.subject if self.properties else None
+        return self._amqp_properties.subject if self._amqp_properties else None
 
     @label.setter
     def label(self, val):
         # type: (str) -> None
-        self.properties.subject = val
+        self._amqp_properties.subject = val
 
     @property
     def message_id(self):
         # type: () -> str
-        return self.properties.message_id if self.properties else None
+        return self._amqp_properties.message_id if self._amqp_properties else None
 
     @message_id.setter
     def message_id(self, val):
         # type: (str) -> None
-        self.properties.message_id = val
+        self._amqp_properties.message_id = val
 
     @property
     def reply_to(self):
         # type: () -> str
-        return self.properties.reply_to if self.properties else None
+        return self._amqp_properties.reply_to if self._amqp_properties else None
 
     @reply_to.setter
     def reply_to(self, val):
         # type: (str) -> None
-        self.properties.reply_to = val
+        self._amqp_properties.reply_to = val
 
     @property
     def reply_to_session_id(self):
         # type: () -> str
-        return self.properties.reply_to_group_id if self.properties else None
+        return self._amqp_properties.reply_to_group_id if self._amqp_properties else None
 
     @reply_to_session_id.setter
     def reply_to_session_id(self, val):
         # type: (str) -> None
-        self.properties.reply_to_group_id = val
+        self._amqp_properties.reply_to_group_id = val
 
     @property
     def to(self):
         # type: () -> str
-        return self.properties.to if self.properties else None
+        return self._amqp_properties.to if self._amqp_properties else None
 
     @to.setter
     def to(self, val):
         # type: (str) -> None
-        self.properties.to = val
+        self._amqp_properties.to = val
 
 
 class BatchMessage(object):
@@ -456,32 +424,51 @@ class PeekMessage(Message):
         self.received_timestamp_utc = utc_now()
 
     @property
-    def settled(self):
-        # type: () -> bool
-        """Whether the message has been settled.
-
-        This will aways be `True` for a message received using ReceiveAndDelete mode,
-        otherwise it will be `False` until the message is completed or otherwise settled.
-
-        :rtype: bool
-        """
-        return self.message.settled
+    def dead_letter_error_description(self):
+        # type: () -> Optional[bytes]
+        if self.message.application_properties:
+            return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION)
+        return None
 
     @property
-    def partition_id(self):
-        # type: () -> Optional[str]
+    def dead_letter_reason(self):
+        # type: () -> Optional[bytes]
+        if self.message.application_properties:
+            return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_REASON)
+        return None
+
+    @property
+    def dead_letter_source(self):
+        # type: () -> Optional[bytes]
+        if self.message.annotations:
+            return self.message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE)
+        return None
+
+    @property
+    def delivery_count(self):
+        # type: () -> Optional[int]
+        if self._amqp_header:
+            return self._amqp_header.delivery_count
+        return None
+
+    @property
+    def enqueued_sequence_number(self):
+        # type: () -> Optional[int]
         """
+        For messages that have been auto-forwarded, this property reflects the sequence number that had
+        first been assigned to the message at its original point of submission.
 
         :rtype: int
         """
         if self.message.annotations:
-            return self.message.annotations.get(_X_OPT_PARTITION_ID)
+            return self.message.annotations.get(_X_OPT_ENQUEUE_SEQUENCE_NUMBER)
         return None
 
     @property
     def enqueued_time_utc(self):
         # type: () -> Optional[datetime.datetime]
         """
+        The UTC datetime at which the message has been accepted and stored in the entity.
 
         :rtype: ~datetime.datetime
         """
@@ -495,8 +482,26 @@ class PeekMessage(Message):
     @property
     def expires_at_utc(self):
         # type: () -> Optional[datetime.datetime]
+        """
+        The UTC datetime at which the message is marked for removal and no longer available for retrieval
+        from the entity due to expiration. Expiry is controlled by the `Message.time_to_live` property.
+        This property is computed from `Message.enqueued_time_utc` + `Message.time_to_live`.
+
+        :rtype: ~datetime.datetime
+        """
         if self.enqueued_time_utc and self.time_to_live:
             return self.enqueued_time_utc + self.time_to_live
+        return None
+
+    @property
+    def partition_id(self):
+        # type: () -> Optional[str]
+        """
+        If the entity is partition-enabled, this property reflects the partition that the message lands on.
+        :rtype: int
+        """
+        if self.message.annotations:
+            return self.message.annotations.get(_X_OPT_PARTITION_ID)
         return None
 
     @property
@@ -509,6 +514,18 @@ class PeekMessage(Message):
         if self.message.annotations:
             return self.message.annotations.get(_X_OPT_SEQUENCE_NUMBER)
         return None
+
+    @property
+    def settled(self):
+        # type: () -> bool
+        """Whether the message has been settled.
+
+        This will aways be `True` for a message received using ReceiveAndDelete mode,
+        otherwise it will be `False` until the message is completed or otherwise settled.
+
+        :rtype: bool
+        """
+        return self.message.settled
 
 
 class ReceivedMessage(PeekMessage):
@@ -535,71 +552,6 @@ class ReceivedMessage(PeekMessage):
         self.auto_renew_error = None
         self._receiver = None  # type: ignore
         self._expiry = None
-
-    @property
-    def settled(self):
-        # type: () -> bool
-        """Whether the message has been settled.
-
-        This will aways be `True` for a message received using ReceiveAndDelete mode,
-        otherwise it will be `False` until the message is completed or otherwise settled.
-
-        :rtype: bool
-        """
-        return self._settled
-
-    @property
-    def expired(self):
-        # type: () -> bool
-        """
-
-        :rtype: bool
-        """
-        try:
-            if self._receiver.session:  # pylint: disable=protected-access
-                raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
-        except AttributeError: # Is not a session receiver
-            pass
-        if self.locked_until_utc and self.locked_until_utc <= utc_now():
-            return True
-        return False
-
-    @property
-    def locked_until_utc(self):
-        # type: () -> Optional[datetime.datetime]
-        """
-
-        :rtype: datetime.datetime
-        """
-        try:
-            if self.settled or self._receiver.session:  # pylint: disable=protected-access
-                return None
-        except AttributeError: # not settled, and isn't session receiver.
-            pass
-        if self._expiry:
-            return self._expiry
-        if self.message.annotations and _X_OPT_LOCKED_UNTIL in self.message.annotations:
-            expiry_in_seconds = self.message.annotations[_X_OPT_LOCKED_UNTIL]/1000
-            self._expiry = utc_from_timestamp(expiry_in_seconds)
-        return self._expiry
-
-    @property
-    def lock_token(self):
-        # type: () -> Optional[Union[uuid.UUID, str]]
-        """
-
-        :rtype:  ~uuid.UUID or str
-        """
-        if self.settled:
-            return None
-
-        if self.message.delivery_tag:
-            return uuid.UUID(bytes_le=self.message.delivery_tag)
-
-        delivery_annotations = self.message.delivery_annotations
-        if delivery_annotations:
-            return delivery_annotations.get(_X_OPT_LOCK_TOKEN)
-        return None
 
     def _check_live(self, action):
         # pylint: disable=no-member
@@ -697,6 +649,72 @@ class ReceivedMessage(PeekMessage):
                                        dead_letter_description=dead_letter_description)()
         except Exception as e:
             raise MessageSettleFailed(settle_operation, e)
+
+    @property
+    def settled(self):
+        # type: () -> bool
+        """Whether the message has been settled.
+
+        This will aways be `True` for a message received using ReceiveAndDelete mode,
+        otherwise it will be `False` until the message is completed or otherwise settled.
+
+        :rtype: bool
+        """
+        return self._settled
+
+    @property
+    def expired(self):
+        # type: () -> bool
+        # TODO: rename to lock_expired or internal? and the one in the session
+        """
+
+        :rtype: bool
+        """
+        try:
+            if self._receiver.session:  # pylint: disable=protected-access
+                raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
+        except AttributeError: # Is not a session receiver
+            pass
+        if self.locked_until_utc and self.locked_until_utc <= utc_now():
+            return True
+        return False
+
+    @property
+    def lock_token(self):
+        # type: () -> Optional[Union[uuid.UUID, str]]
+        """
+
+        :rtype:  ~uuid.UUID or str
+        """
+        if self.settled:
+            return None
+
+        if self.message.delivery_tag:
+            return uuid.UUID(bytes_le=self.message.delivery_tag)
+
+        delivery_annotations = self.message.delivery_annotations
+        if delivery_annotations:
+            return delivery_annotations.get(_X_OPT_LOCK_TOKEN)
+        return None
+
+    @property
+    def locked_until_utc(self):
+        # type: () -> Optional[datetime.datetime]
+        """
+
+        :rtype: datetime.datetime
+        """
+        try:
+            if self.settled or self._receiver.session:  # pylint: disable=protected-access
+                return None
+        except AttributeError: # not settled, and isn't session receiver.
+            pass
+        if self._expiry:
+            return self._expiry
+        if self.message.annotations and _X_OPT_LOCKED_UNTIL in self.message.annotations:
+            expiry_in_seconds = self.message.annotations[_X_OPT_LOCKED_UNTIL]/1000
+            self._expiry = utc_from_timestamp(expiry_in_seconds)
+        return self._expiry
 
     def complete(self):
         # type: () -> None

@@ -97,6 +97,10 @@ _X_OPT_VIA_PARTITION_KEY = b'x-opt-via-partition-key'
 _X_OPT_LOCKED_UNTIL = b'x-opt-locked-until'
 _X_OPT_LOCK_TOKEN = b'x-opt-lock-token'
 _X_OPT_SCHEDULED_ENQUEUE_TIME = b'x-opt-scheduled-enqueue-time'
+_X_OPT_DEAD_LETTER_SOURCE = b'x-opt-deadletter-source'
+
+PROPERTIES_DEAD_LETTER_REASON = b'DeadLetterReason'
+PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION = b'DeadLetterErrorDescription'
 
 
 DEAD_LETTER_QUEUE_SUFFIX = '/$DeadLetterQueue'
