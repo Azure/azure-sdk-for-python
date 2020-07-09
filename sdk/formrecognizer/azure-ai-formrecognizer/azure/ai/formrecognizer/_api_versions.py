@@ -7,7 +7,7 @@ from typing import Dict, Any
 
 
 _SUPPORTED_API_VERSIONS = [
-    "2.0-preview.1",
+    "2.0",
 ]
 
 def validate_api_version(api_version):
