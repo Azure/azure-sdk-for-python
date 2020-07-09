@@ -2316,8 +2316,6 @@ class ApplicationRuleCondition(FirewallPolicyRuleCondition):
     :param protocols: Array of Application Protocols.
     :type protocols:
      list[~azure.mgmt.network.v2020_04_01.models.FirewallPolicyRuleConditionApplicationProtocol]
-    :param target_urls: List of Urls for this rule condition.
-    :type target_urls: list[str]
     :param target_fqdns: List of FQDNs for this rule condition.
     :type target_fqdns: list[str]
     :param fqdn_tags: List of FQDN Tags for this rule condition.
@@ -2337,7 +2335,6 @@ class ApplicationRuleCondition(FirewallPolicyRuleCondition):
         'source_addresses': {'key': 'sourceAddresses', 'type': '[str]'},
         'destination_addresses': {'key': 'destinationAddresses', 'type': '[str]'},
         'protocols': {'key': 'protocols', 'type': '[FirewallPolicyRuleConditionApplicationProtocol]'},
-        'target_urls': {'key': 'targetUrls', 'type': '[str]'},
         'target_fqdns': {'key': 'targetFqdns', 'type': '[str]'},
         'fqdn_tags': {'key': 'fqdnTags', 'type': '[str]'},
         'source_ip_groups': {'key': 'sourceIpGroups', 'type': '[str]'},
@@ -2348,7 +2345,6 @@ class ApplicationRuleCondition(FirewallPolicyRuleCondition):
         self.source_addresses = kwargs.get('source_addresses', None)
         self.destination_addresses = kwargs.get('destination_addresses', None)
         self.protocols = kwargs.get('protocols', None)
-        self.target_urls = kwargs.get('target_urls', None)
         self.target_fqdns = kwargs.get('target_fqdns', None)
         self.fqdn_tags = kwargs.get('fqdn_tags', None)
         self.source_ip_groups = kwargs.get('source_ip_groups', None)
@@ -7738,19 +7734,9 @@ class FirewallPolicy(Resource):
     :param threat_intel_whitelist: ThreatIntel Whitelist for Firewall Policy.
     :type threat_intel_whitelist:
      ~azure.mgmt.network.v2020_04_01.models.FirewallPolicyThreatIntelWhitelist
-    :param intrusion_system_mode: The operation mode for Intrusion system.
-     Possible values include: 'Enabled', 'Disabled'
-    :type intrusion_system_mode: str or
-     ~azure.mgmt.network.v2020_04_01.models.FirewallPolicyIntrusionSystemMode
-    :param transport_security: TLS Configuration definition.
-    :type transport_security:
-     ~azure.mgmt.network.v2020_04_01.models.FirewallPolicyTransportSecurity
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
-    :param identity: The identity of the firewall policy.
-    :type identity:
-     ~azure.mgmt.network.v2020_04_01.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -7776,10 +7762,7 @@ class FirewallPolicy(Resource):
         'child_policies': {'key': 'properties.childPolicies', 'type': '[SubResource]'},
         'threat_intel_mode': {'key': 'properties.threatIntelMode', 'type': 'str'},
         'threat_intel_whitelist': {'key': 'properties.threatIntelWhitelist', 'type': 'FirewallPolicyThreatIntelWhitelist'},
-        'intrusion_system_mode': {'key': 'properties.intrusionSystemMode', 'type': 'str'},
-        'transport_security': {'key': 'properties.transportSecurity', 'type': 'FirewallPolicyTransportSecurity'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
     def __init__(self, **kwargs):
@@ -7791,31 +7774,7 @@ class FirewallPolicy(Resource):
         self.child_policies = None
         self.threat_intel_mode = kwargs.get('threat_intel_mode', None)
         self.threat_intel_whitelist = kwargs.get('threat_intel_whitelist', None)
-        self.intrusion_system_mode = kwargs.get('intrusion_system_mode', None)
-        self.transport_security = kwargs.get('transport_security', None)
         self.etag = None
-        self.identity = kwargs.get('identity', None)
-
-
-class FirewallPolicyCertificateAuthority(Model):
-    """Trusted Root certificates properties for tls.
-
-    :param key_vault_secret_id: Secret Id of (base-64 encoded unencrypted pfx)
-     'Secret' or 'Certificate' object stored in KeyVault.
-    :type key_vault_secret_id: str
-    :param name: Name of the CA certificate.
-    :type name: str
-    """
-
-    _attribute_map = {
-        'key_vault_secret_id': {'key': 'properties.keyVaultSecretId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(FirewallPolicyCertificateAuthority, self).__init__(**kwargs)
-        self.key_vault_secret_id = kwargs.get('key_vault_secret_id', None)
-        self.name = kwargs.get('name', None)
 
 
 class FirewallPolicyRule(Model):
@@ -8075,56 +8034,6 @@ class FirewallPolicyThreatIntelWhitelist(Model):
         super(FirewallPolicyThreatIntelWhitelist, self).__init__(**kwargs)
         self.ip_addresses = kwargs.get('ip_addresses', None)
         self.fqdns = kwargs.get('fqdns', None)
-
-
-class FirewallPolicyTransportSecurity(Model):
-    """Configuration needed to perform TLS termination & initiation.
-
-    :param certificate_authority: The CA used for intermediate CA generation.
-    :type certificate_authority:
-     ~azure.mgmt.network.v2020_04_01.models.FirewallPolicyCertificateAuthority
-    :param excluded_domains: List of domains which are excluded from TLS
-     termination.
-    :type excluded_domains: list[str]
-    :param trusted_root_certificates: Certificates which are to be trusted by
-     the firewall.
-    :type trusted_root_certificates:
-     list[~azure.mgmt.network.v2020_04_01.models.FirewallPolicyTrustedRootCertificate]
-    """
-
-    _attribute_map = {
-        'certificate_authority': {'key': 'certificateAuthority', 'type': 'FirewallPolicyCertificateAuthority'},
-        'excluded_domains': {'key': 'excludedDomains', 'type': '[str]'},
-        'trusted_root_certificates': {'key': 'trustedRootCertificates', 'type': '[FirewallPolicyTrustedRootCertificate]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(FirewallPolicyTransportSecurity, self).__init__(**kwargs)
-        self.certificate_authority = kwargs.get('certificate_authority', None)
-        self.excluded_domains = kwargs.get('excluded_domains', None)
-        self.trusted_root_certificates = kwargs.get('trusted_root_certificates', None)
-
-
-class FirewallPolicyTrustedRootCertificate(Model):
-    """Trusted Root certificates of a firewall policy.
-
-    :param key_vault_secret_id: Secret Id of (base-64 encoded unencrypted pfx)
-     the public certificate data stored in KeyVault.
-    :type key_vault_secret_id: str
-    :param name: Name of the trusted root certificate that is unique within a
-     firewall policy.
-    :type name: str
-    """
-
-    _attribute_map = {
-        'key_vault_secret_id': {'key': 'properties.keyVaultSecretId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(FirewallPolicyTrustedRootCertificate, self).__init__(**kwargs)
-        self.key_vault_secret_id = kwargs.get('key_vault_secret_id', None)
-        self.name = kwargs.get('name', None)
 
 
 class FlowLog(Resource):
@@ -10294,8 +10203,6 @@ class NatRuleCondition(FirewallPolicyRuleCondition):
     :type destination_ports: list[str]
     :param source_ip_groups: List of source IpGroups for this rule.
     :type source_ip_groups: list[str]
-    :param terminate_tls: Terminate TLS connections for this rule.
-    :type terminate_tls: bool
     """
 
     _validation = {
@@ -10311,7 +10218,6 @@ class NatRuleCondition(FirewallPolicyRuleCondition):
         'destination_addresses': {'key': 'destinationAddresses', 'type': '[str]'},
         'destination_ports': {'key': 'destinationPorts', 'type': '[str]'},
         'source_ip_groups': {'key': 'sourceIpGroups', 'type': '[str]'},
-        'terminate_tls': {'key': 'terminateTLS', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -10321,7 +10227,6 @@ class NatRuleCondition(FirewallPolicyRuleCondition):
         self.destination_addresses = kwargs.get('destination_addresses', None)
         self.destination_ports = kwargs.get('destination_ports', None)
         self.source_ip_groups = kwargs.get('source_ip_groups', None)
-        self.terminate_tls = kwargs.get('terminate_tls', None)
         self.rule_condition_type = 'NatRuleCondition'
 
 
