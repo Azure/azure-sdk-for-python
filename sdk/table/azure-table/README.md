@@ -7,20 +7,21 @@ Common uses of Azure Table include:
 * Storing structured data in the form of tables
 * Quickly querying data using a clustered index
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/azure/storage/queue) | [Package (PyPI)](https://pypi.org/project/azure-storage-queue/) | [API reference documentation](https://aka.ms/azsdk-python-storage-queue-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/azure/table) | [Package (PyPI)](https://pypi.org/project/azure-table/) | [API reference documentation](https://aka.ms/azsdk/python/table/docs) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples)
 
 ## Getting started
 
 ### Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package.
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package.
+[Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) to use this package
+ or you must have a [Azure Cosmos Account](https://docs.microsoft.com/en-us/azure/cosmos-db/account-overview).
 
 ### Install the package
 Install the Azure Table client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-table
+pip install --pre azure-table
 ```
 
 ### Create a storage account
@@ -39,8 +40,8 @@ az storage account create -n my-storage-account-name -g my-resource-group
 ```
 
 ### Create the client
-The Azure Table client library for Python allows you to interact with three types of resources: the storage
-account itself, tables, and entities. Interaction with these resources starts with an instance of a [client](#clients).
+The Azure Table client library for Python allows you to interact with two types of resources: the storage
+account and tables, and entities. Interaction with these resources starts with an instance of a [client](#clients).
 To create a client object, you will need the storage account's table service endpoint URL and a credential that allows
 you to access the storage account:
 
@@ -96,31 +97,6 @@ The `credential` parameter may be provided in a number of different forms, depen
     service = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net", credential="<account_access_key>")
     ```
 
-3. To use an [Azure Active Directory (AAD) token credential](https://docs.microsoft.com/azure/storage/common/storage-auth-aad),
-   provide an instance of the desired credential type obtained from the
-   [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials) library.
-   For example, [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential)
-   can be used to authenticate the client.
-   
-   This requires some initial setup:
-   * [Install azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#install-the-package)
-   * [Register a new AAD application](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app) and give permissions to access Azure Storage
-   * [Grant access](https://docs.microsoft.com/azure/storage/common/storage-auth-aad-rbac-portal) to Azure Table data with RBAC in the Azure Portal
-   * Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables: 
-     AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
-   
-   Use the returned token credential to authenticate the client:
-    ```python
-        from azure.identity import DefaultAzureCredential
-        from azure.table import TableServiceClient
-        token_credential = DefaultAzureCredential()
-    
-        queue_service_client = TableServiceClient(
-            account_url="https://<my_account_name>.table.core.windows.net",
-            credential=token_credential
-        )
-    ```
-
 #### Creating the client from a connection string
 Depending on your use case and authorization method, you may prefer to initialize a client instance with a storage
 connection string instead of providing the account URL and credential separately. To do this, pass the storage
@@ -141,21 +117,20 @@ az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
 
 ## Key concepts
 The following components make up the Azure Table Service:
-* The storage account itself
-* A table within the storage account, which contains a set of entities
+* The storage account and a table within the storage account, which contains a set of entities
 * An entity within a table, as a dictionary
 
 The Azure Table client library for Python allows you to interact with each of these components through the
 use of a dedicated client object.
 
 ### Clients
-Two different clients are provided to to interact with the various components of the Queue Service:
-1. [TableServiceClient](https://aka.ms/azsdk-python-storage-table-tableserviceclient) -
+Two different clients are provided to to interact with the various components of the Table Service:
+1. [TableServiceClient](https://aka.ms/azsdk/python/table/docs) -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the tables within. It provides operations to retrieve and configure the account
     properties as well as query, create, and delete tables within the account. To perform operations on a specific table,
     retrieve a client using the `get_table_client` method.
-2. [TableClient](https://aka.ms/azsdk-python-storage-table-tableclient) -
+2. [TableClient](https://aka.ms/azsdk/python/table/docs) -
     this client represents interaction with a specific table (which need not exist yet). It provides operations to
     create, delete, or update a table and includes operations to query, get, and upsert entities
     within it.
@@ -196,7 +171,7 @@ await table.create_table(table_name="my_table")
 ```
 
 ### Creating entities
-Create entities for table
+Create entities in the table
 
 ```python
 from azure.table import TableClient
@@ -210,7 +185,6 @@ entity = table.create_entity(table_entity_properties=my_entity)
 Create entities asynchronously
 
 ```python
-import asyncio
 from azure.table.aio import TableClient
 
 my_entity = {'PartitionKey':'part','RowKey':'row'}
@@ -220,34 +194,27 @@ entity = await table.create_entity(table_entity_properties=my_entity)
 ```
 
 ### Querying entities
-Querying entities for table
+Querying entities in the table
 
 ```python
 from azure.table import TableClient
-from azure.table._generated.models import QueryOptions
-
-query = QueryOptions(top=3)
 
 table = TableClient.from_connection_string(conn_str="<connection_string>", table_name="my_table")
-entity = table.query_entities(query_options=query)
+entity = table.query_entities(results_per_page=3)
 ```
 
 Querying entities asynchronously
 
 ```python
-import asyncio
 from azure.table.aio import TableClient
-from azure.table._generated.models import QueryOptions
-
-query = QueryOptions(top=3)
 
 table = TableClient.from_connection_string(conn_str="<connection_string>", table_name="my_table")
-entity = await table.query_entities(query_options=query)
+entity = await table.query_entities(results_per_page=3)
 ```
 
 ## Optional Configuration
 
-Optional keyword arguments that can be passed in at the client and per-operation level. 
+Optional keyword arguments can be passed in at the client and per-operation level. The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html) describes available configurations for retries, logging, transport protocols, and more.
 
 
 ### Retry Policy configuration
@@ -325,16 +292,16 @@ Get started with our [Table samples](https://github.com/Azure/azure-sdk-for-pyth
 
 Several Azure Table Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables:
 
-* [table_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples/table_samples_service.py) - Examples found in this article:
-    * Get and set service properties
-    * List tables in a storage account
-    * Create and delete a table from the service
-    * Get the TableClient
 * [table_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples/table_samples_authentication.py) - Examples found in this article:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
     * From Azure Active Directory
+* [table_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples/table_samples_service.py) - Examples found in this article:
+    * Get and set service properties
+    * List tables in a storage account
+    * Create and delete a table from the service
+    * Get the TableClient
 * [table_samples_client.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples/table_samples_client.py) - Examples found in this article:
     * Client creation
     * Create a table
