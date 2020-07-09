@@ -398,7 +398,6 @@ class TableClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[Entity]
-        # TODO: exposed options
         """Queries entities in a table.
 
         :param results_per_page: Number of entities per page in return ItemPaged
