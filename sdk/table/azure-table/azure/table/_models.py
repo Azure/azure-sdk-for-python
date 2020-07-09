@@ -319,7 +319,7 @@ class TableEntityPropertiesPaged(PageIterator):
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            continuation_token=continuation_token or {}
         )
         self._command = command
         self._headers = None
@@ -328,11 +328,18 @@ class TableEntityPropertiesPaged(PageIterator):
         self.location_mode = None
 
     def _get_next_cb(self, continuation_token):
+        row_key = ""
+        partition_key = ""
+        for key, value in continuation_token.items():
+            if key is "RowKey":
+                row_key = continuation_token['RowKey']
+            if key is "PartitionKey":
+                partition_key = continuation_token['PartitionKey']
         try:
             return self._command(
                 query_options=self.results_per_page or None,
-                next_row_key=continuation_token['RowKey'] or None,
-                next_partition_key=continuation_token['PartitionKey'] or None,
+                next_row_key=row_key or None,
+                next_partition_key=partition_key or None,
                 table=self.table,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode
@@ -343,9 +350,11 @@ class TableEntityPropertiesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = [Entity(_convert_to_entity(t)) for t in self._response.value]
-
-        return {'PartitionKey': self._headers['x-ms-continuation-NextPartitionKey'],
-                'RowKey': self._headers['x-ms-continuation-NextRowKey']} or None, props_list
+        next_entity = {}
+        if self._headers['x-ms-continuation-NextPartitionKey'] or self._headers['x-ms-continuation-NextRowKey']:
+            next_entity = {'PartitionKey': self._headers['x-ms-continuation-NextPartitionKey'],
+                           'RowKey': self._headers['x-ms-continuation-NextRowKey']}
+        return next_entity or None, props_list
 
 
 class TableSasPermissions(object):

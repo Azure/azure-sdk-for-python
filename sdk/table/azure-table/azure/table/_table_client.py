@@ -305,7 +305,6 @@ class TableClient(StorageAccountHostsMixin):
     def create_entity(
             self,
             table_entity_properties,  # type: dict[str,str]
-            query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):
         # type: (...) -> Entity
@@ -313,8 +312,6 @@ class TableClient(StorageAccountHostsMixin):
 
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, str]
-        :param query_options: Parameter group.
-        :type query_options: ~azure.table.QueryOptions
         :return: Entity mapping str to azure.table.EntityProperty
         :rtype: ~azure.table.Entity
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -331,7 +328,6 @@ class TableClient(StorageAccountHostsMixin):
             inserted_entity = self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=table_entity_properties,
-                query_options=query_options,
                 **kwargs
             )
             properties = _convert_to_entity(inserted_entity)
@@ -394,7 +390,7 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def query_entities(
             self,
-            reuslts_per_page=None,
+            results_per_page=None,
             select=None,
             filter=None,
             query_options=None,  # type: Optional[QueryOptions]
@@ -404,7 +400,7 @@ class TableClient(StorageAccountHostsMixin):
         # TODO: exposed options
         """Queries entities in a table.
 
-        :param reuslts_per_page:
+        :param results_per_page:
         :param select:
         :param filter:
         :param query_options: Parameter group.
@@ -426,6 +422,9 @@ class TableClient(StorageAccountHostsMixin):
             self,
             partition_key,  # type: str
             row_key,  # type: str
+            results_per_page=None,
+            select=None,
+            filter=None,
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):
@@ -436,6 +435,9 @@ class TableClient(StorageAccountHostsMixin):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
+        :param results_per_page:
+        :param select:
+        :param filter:
         :param query_options: Parameter group.
         :type query_options: ~azure.table.QueryOptions
         :return: Entity mapping str to azure.table.EntityProperty
