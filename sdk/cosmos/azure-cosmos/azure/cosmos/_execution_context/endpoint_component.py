@@ -44,12 +44,11 @@ class _QueryExecutionEndpointComponent(object):
     def __iter__(self):
         return self
 
-    def next(self):
-        return next(self._execution_context)
-
     def __next__(self):
         # supports python 3 iterator
-        return self.next()
+        return next(self._execution_context)
+    
+    next = __next__  # Python 2 compatibility.
 
 
 class _QueryExecutionOrderByEndpointComponent(_QueryExecutionEndpointComponent):
