@@ -296,7 +296,6 @@ Several Azure Table Python SDK samples are available to you in the SDK's GitHub 
     * From a connection string
     * From a shared access key
     * From a shared access signature token
-    * From Azure Active Directory
 * [table_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples/table_samples_service.py) - Examples found in this article:
     * Get and set service properties
     * List tables in a storage account
