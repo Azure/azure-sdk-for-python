@@ -138,8 +138,6 @@ class AioHttpTransport(AsyncHttpTransport):
         return request.data
 
     async def send(self, request: HttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
-        import aiohttp
-        import asyncio
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -153,7 +151,10 @@ class AioHttpTransport(AsyncHttpTransport):
 
         :keyword bool stream: Defaults to False.
         :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
+        :keyword str proxy: will define the proxy to use all the time
         """
+        import aiohttp
+        import asyncio
         await self.open()
 
         proxies = config.pop('proxies', None)
