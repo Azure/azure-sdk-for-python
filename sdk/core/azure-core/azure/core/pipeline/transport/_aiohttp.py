@@ -273,8 +273,8 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :param block_size: block size of data sent over connection.
     :type block_size: int
     """
-    def __init__(self, request, aiohttp_response, block_size=None) -> None:
-        # type: (HttpRequest, aiohttp.ClientResponse) -> None
+    def __init__(self, request, aiohttp_response, block_size=None):
+        # type: (HttpRequest, aiohttp.ClientResponse, int) -> None
         try:
             import aiohttp
             import asyncio
