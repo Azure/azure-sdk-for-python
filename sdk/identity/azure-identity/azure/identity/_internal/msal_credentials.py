@@ -14,12 +14,11 @@ from six.moves.urllib_parse import urlparse
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
-from .exception_wrapper import wrap_exceptions
 from .msal_client import MsalClient
 from .persistent_cache import load_user_cache
 from .._constants import KnownAuthorities
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
-from .._internal import get_default_authority, normalize_authority
+from .._internal import get_default_authority, normalize_authority, wrap_exceptions
 from .._auth_record import AuthenticationRecord
 
 try:
