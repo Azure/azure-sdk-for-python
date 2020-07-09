@@ -390,9 +390,6 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def query_entities(
             self,
-            results_per_page=None,
-            select=None,
-            filter=None,
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):
@@ -422,9 +419,6 @@ class TableClient(StorageAccountHostsMixin):
             self,
             partition_key,  # type: str
             row_key,  # type: str
-            results_per_page=None,
-            select=None,
-            filter=None,
             query_options=None,  # type: Optional[QueryOptions]
             **kwargs  # type: Any
     ):

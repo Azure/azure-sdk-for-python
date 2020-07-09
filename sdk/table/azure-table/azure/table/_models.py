@@ -331,10 +331,10 @@ class TableEntityPropertiesPaged(PageIterator):
         row_key = ""
         partition_key = ""
         for key, value in continuation_token.items():
-            if key is "RowKey":
-                row_key = continuation_token['RowKey']
-            if key is "PartitionKey":
-                partition_key = continuation_token['PartitionKey']
+            if key == "RowKey":
+                row_key = value
+            if key == "PartitionKey":
+                partition_key = value
         try:
             return self._command(
                 query_options=self.results_per_page or None,
