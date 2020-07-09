@@ -17,7 +17,7 @@ class RsaSignatureTransform(SignatureTransform):
         self._hash_algorithm = hash_algorithm
 
     def sign(self, digest):
-        return self._key.sign(digest, self._padding_function(digest), self._hash_algorithm)
+        return self._key.sign(digest, self._padding_function(digest), utils.Prehashed(self._hash_algorithm))
 
     def verify(self, digest, signature):
         self._key.verify(signature, digest, self._padding_function(digest), utils.Prehashed(self._hash_algorithm))
