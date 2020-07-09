@@ -47,7 +47,7 @@ class _QueryExecutionEndpointComponent(object):
     def __next__(self):
         # supports python 3 iterator
         return next(self._execution_context)
-    
+
     next = __next__  # Python 2 compatibility.
 
 

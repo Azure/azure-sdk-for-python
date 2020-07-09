@@ -63,7 +63,7 @@ class _DocumentProducer(object):
             return self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"])
 
         self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn)
-    
+
     def __lt__(self, other):
         return self._doc_producer_comp.compare(self, other) < 0
 
@@ -104,7 +104,7 @@ class _DocumentProducer(object):
             self._cur_item = next(self._ex_context)
 
         return self._cur_item
-    
+
     next = __next__  # Python 2 compatibility.
 
 
