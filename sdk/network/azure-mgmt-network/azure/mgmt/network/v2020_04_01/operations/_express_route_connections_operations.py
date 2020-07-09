@@ -80,7 +80,6 @@ class ExpressRouteConnectionsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(put_express_route_connection_parameters, 'ExpressRouteConnection')
         body_content_kwargs['content'] = body_content
@@ -93,7 +92,6 @@ class ExpressRouteConnectionsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ExpressRouteConnection', pipeline_response)
 
@@ -114,7 +112,7 @@ class ExpressRouteConnectionsOperations(object):
         put_express_route_connection_parameters,  # type: "models.ExpressRouteConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.ExpressRouteConnection"]
         """Creates a connection between an ExpressRoute gateway and an ExpressRoute circuit.
 
         :param resource_group_name: The name of the resource group.
@@ -221,7 +219,6 @@ class ExpressRouteConnectionsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -268,7 +265,6 @@ class ExpressRouteConnectionsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -289,7 +285,7 @@ class ExpressRouteConnectionsOperations(object):
         connection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes a connection to a ExpressRoute circuit.
 
         :param resource_group_name: The name of the resource group.
@@ -385,7 +381,6 @@ class ExpressRouteConnectionsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
