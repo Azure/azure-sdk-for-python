@@ -27,7 +27,7 @@ import os
 
 
 class TableEntitySamples(object):
-    connection_string = "DefaultEndpointsProtocol=https;AccountName=lilawstorage;AccountKey=onkePABTSfc3NqYma2ulpi7JwEzDtVmnaPf17zrBbvRMQOf1mmLCWtoz1GuHWkv6PZJdrFOmoR0i8brr5GNJBw==;EndpointSuffix=core.windows.net"
+    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     def set_access_policy(self):
         # [START create_table_client_from_connection_string]
