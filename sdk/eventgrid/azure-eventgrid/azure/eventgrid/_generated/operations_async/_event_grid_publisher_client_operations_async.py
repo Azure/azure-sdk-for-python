@@ -19,13 +19,13 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 class EventGridPublisherClientOperationsMixin:
 
-    async def publish_events(
+    async def publish_event_grid_events(
         self,
         topic_hostname: str,
         events: List["models.EventGridEvent"],
         **kwargs
     ) -> None:
-        """Publishes a batch of events to an Azure Event Grid topic.
+        """Publishes a batch of Event Grid events to an Azure Event Grid topic.
 
         :param topic_hostname: The host name of the topic, e.g. topic1.westus2-1.eventgrid.azure.net.
         :type topic_hostname: str
@@ -43,7 +43,7 @@ class EventGridPublisherClientOperationsMixin:
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.publish_events.metadata['url']  # type: ignore
+        url = self.publish_event_grid_events.metadata['url']  # type: ignore
         path_format_arguments = {
             'topicHostname': self._serialize.url("topic_hostname", topic_hostname, 'str', skip_quote=True),
         }
@@ -72,7 +72,7 @@ class EventGridPublisherClientOperationsMixin:
         if cls:
             return cls(pipeline_response, None, {})
 
-    publish_events.metadata = {'url': '/api/events'}  # type: ignore
+    publish_event_grid_events.metadata = {'url': '/api/events'}  # type: ignore
 
     async def publish_cloud_event_events(
         self,

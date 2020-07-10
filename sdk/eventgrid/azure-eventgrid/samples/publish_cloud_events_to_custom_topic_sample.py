@@ -2,9 +2,9 @@ import sys
 import os
 import datetime as dt
 import json
-from random import randint
+from random import randint, sample
 import time
-import exrex
+import uuid
 
 PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
@@ -21,8 +21,6 @@ from azure.core.exceptions import (
     ClientAuthenticationError
 )
 
-CLOUD_EVENTS_FILE_PATH = "\\..\\example_json\\cloud_custom_topic.json"
-
 key = os.environ.get("DEMO_ACCESS_KEY")
 topic_hostname = "eg-azure-sdk-demo.westus2-1.eventgrid.azure.net"
 
@@ -31,21 +29,24 @@ credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(topic_hostname, credential)
 
 # publish events
-for i in range(5):
+while True:
 
     # generate random # of events
-    event_batch = []
+    event_list = []
+    team_members = ["Josh", "Kerri", "Kieran", "Laurent", "Lily", "Matt", "Soren", "Srikanta", "Swathi"]
     for j in range(randint(1, 3)):
-        unique_id = exrex.getone('[a-z\d]{8}-[a-z\d]{4}-[a-z\d]{4}-[a-z\d]{4}-[a-z\d]{12}')
+        event_uuid = uuid.uuid4()
+        sample_members = sample(team_members, k=randint(1, 9))
         event = CloudEvent(
-                specversion="1.0", \
-                id=unique_id, \
-                type="Azure.Sdk.Demo", \
-                source="https://egdemo.dev/demoevent", \
-                data="{ \"team\": [\"Josh\", \"Kerri\", \"Kieran\", \"Laurent\", \"Lily\", \"Matt\", \"Soren\", \"Srikanta\", \"Swathi\"] }"
+                specversion="1.0",
+                id=event_uuid,
+                type="Azure.Sdk.Demo",
+                source="https://egdemo.dev/demoevent",
+                data={"team": sample_members}
                 )
-        event_batch.append(event)
+        event_list.append(event)
 
     # publish and receive response
-    response = client.publish_event_batch(event_batch)
+    response = client.publish_events(event_list)
+    print("Batch of size {} published".format(len(event_list)))
     time.sleep(randint(1, 5))

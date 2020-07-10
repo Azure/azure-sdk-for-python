@@ -45,23 +45,23 @@ class EventGridPublisherClient(EventGridPublisherClientImpl):
         )
         self._topic_hostname = topic_hostname
 
-    def publish_event_batch(
+    def publish_events(
         self,
-        event_batch,
+        events,
         **kwargs
     ):
         # type: (Union[List[CloudEvent], List[EventGridEvent]], Any) -> None
         """Sends event data to topic hostname specified during client initialization.
 
-        :param  event_batch: A list of `CloudEvent` or `EventGridEvent` to be sent
-        :type event_batch: Union[List[models.CloudEvent], List[models.EventGridEvent]]
+        :param  events: A list of `CloudEvent` or `EventGridEvent` to be sent
+        :type events: Union[List[models.CloudEvent], List[models.EventGridEvent]]
         :rtype: None
          """
 
-        if isinstance(event_batch[0], CloudEvent):
-            self.publish_cloud_event_events(self._topic_hostname, event_batch)
-        elif isinstance(event_batch[0], EventGridEvent):
-            self.publish_events(self._topic_hostname, event_batch)
+        if isinstance(events[0], CloudEvent):
+            self.publish_cloud_event_events(self._topic_hostname, events)
+        elif isinstance(events[0], EventGridEvent):
+            self.publish_event_grid_events(self._topic_hostname, events)
         else:
             print("Event schema is not correct. Please send as list of CloudEvent or list of EventGridEvent.")
 
@@ -71,5 +71,5 @@ class EventGridPublisherClient(EventGridPublisherClientImpl):
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if isinstance(credential, AzureKeyCredential):
-            authentication_policy = AzureKeyCredentialPolicy(credential=credential, name='aeg-sas-key')#constants.EVENTGRID_KEY_HEADER)
+            authentication_policy = AzureKeyCredentialPolicy(credential=credential, name=constants.EVENTGRID_KEY_HEADER)
         return authentication_policy
