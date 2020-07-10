@@ -7,6 +7,6 @@ __all__ = [
     'TableServiceClient',
 ]
 
-from azure.table._aio._table_client_async import TableClient
-from azure.table._aio._table_service_client_async import TableServiceClient
+from azure.table.aio._table_client_async import TableClient
+from azure.table.aio._table_service_client_async import TableServiceClient
 
