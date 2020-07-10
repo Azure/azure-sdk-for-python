@@ -47,7 +47,7 @@ class FormRecognizerClient(object):
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
         or :class:`~azure.core.credentials_async.AsyncTokenCredential`
     :keyword str api_version:
-        The API version of the service to use for requests.
+        The API version of the service to use for requests. It defaults to the latest service version.
         Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
