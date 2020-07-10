@@ -6,6 +6,8 @@
 from azure.table._shared.table_shared_access_signature import generate_table_sas
 from azure.table._table_client import TableClient
 from azure.table._table_service_client import TableServiceClient
+from azure.table.aio._table_client_async import TableClient
+from azure.table.aio._table_service_client_async import TableServiceClient
 
 from ._version import VERSION
 from ._shared.policies import ExponentialRetry, LinearRetry
@@ -49,5 +51,7 @@ __all__ = [
     'Metrics',
     'CorsRule',
     'RetentionPolicy',
-    'generate_table_sas'
+    'generate_table_sas',
+
 ]
+

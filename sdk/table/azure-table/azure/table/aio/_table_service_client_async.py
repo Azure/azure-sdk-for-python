@@ -12,8 +12,8 @@ from azure.table._shared.base_client_async import AsyncStorageAccountHostsMixin,
 from azure.table._shared.policies_async import ExponentialRetry
 from azure.table._shared.response_handlers import process_storage_error
 from azure.table._table_service_client import TableServiceClient as TableServiceClientBase
-from azure.table._aio._models import TablePropertiesPaged
-from azure.table._aio._table_client_async import TableClient
+from azure.table.aio._models import TablePropertiesPaged
+from azure.table.aio._table_client_async import TableClient
 
 
 class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):

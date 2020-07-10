@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 
 from azure.table import generate_table_sas
 from azure.table._generated.models import QueryOptions
-from azure.table._aio._models import UpdateMode
+from azure.table._models import UpdateMode
 from azure.table._generated.aio import TableServiceClient
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
