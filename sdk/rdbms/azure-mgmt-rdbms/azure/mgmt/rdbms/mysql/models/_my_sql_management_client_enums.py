@@ -35,8 +35,8 @@ class MinimalTlsVersionEnum(str, Enum):
 
 class InfrastructureEncryption(str, Enum):
 
-    enabled = "Enabled"
-    disabled = "Disabled"
+    enabled = "Enabled"  #: Default value for single layer of encryption for data at rest.
+    disabled = "Disabled"  #: Additional (2nd) layer of encryption for data at rest
 
 
 class PublicNetworkAccessEnum(str, Enum):
@@ -119,3 +119,11 @@ class ServerSecurityAlertPolicyState(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"

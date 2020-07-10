@@ -48,6 +48,7 @@ try:
     from ._models_py3 import ServerUpdateParameters
     from ._models_py3 import Sku
     from ._models_py3 import StorageProfile
+    from ._models_py3 import SystemData
     from ._models_py3 import TagsObject
     from ._models_py3 import TrackedResource
     from ._models_py3 import VirtualNetworkRule
@@ -90,6 +91,7 @@ except (SyntaxError, ImportError):
     from ._models import ServerUpdateParameters
     from ._models import Sku
     from ._models import StorageProfile
+    from ._models import SystemData
     from ._models import TagsObject
     from ._models import TrackedResource
     from ._models import VirtualNetworkRule
@@ -103,6 +105,7 @@ from ._paged_models import PrivateLinkResourcePaged
 from ._paged_models import ServerAdministratorResourcePaged
 from ._paged_models import ServerKeyPaged
 from ._paged_models import ServerPaged
+from ._paged_models import ServerSecurityAlertPolicyPaged
 from ._paged_models import VirtualNetworkRulePaged
 from ._postgre_sql_management_client_enums import (
     ServerVersion,
@@ -121,6 +124,7 @@ from ._postgre_sql_management_client_enums import (
     VirtualNetworkRuleState,
     OperationOrigin,
     ServerSecurityAlertPolicyState,
+    CreatedByType,
 )
 
 __all__ = [
@@ -162,6 +166,7 @@ __all__ = [
     'ServerUpdateParameters',
     'Sku',
     'StorageProfile',
+    'SystemData',
     'TagsObject',
     'TrackedResource',
     'VirtualNetworkRule',
@@ -176,6 +181,7 @@ __all__ = [
     'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
     'ServerKeyPaged',
+    'ServerSecurityAlertPolicyPaged',
     'ServerVersion',
     'SslEnforcementEnum',
     'MinimalTlsVersionEnum',
@@ -192,4 +198,5 @@ __all__ = [
     'VirtualNetworkRuleState',
     'OperationOrigin',
     'ServerSecurityAlertPolicyState',
+    'CreatedByType',
 ]
