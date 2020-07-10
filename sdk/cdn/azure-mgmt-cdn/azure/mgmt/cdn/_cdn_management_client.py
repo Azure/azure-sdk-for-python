@@ -17,6 +17,7 @@ from .operations import CdnManagementClientOperationsMixin
 from .operations import ProfilesOperations
 from .operations import EndpointsOperations
 from .operations import OriginsOperations
+from .operations import OriginGroupsOperations
 from .operations import CustomDomainsOperations
 from .operations import ResourceUsageOperations
 from .operations import Operations
@@ -38,6 +39,8 @@ class CdnManagementClient(CdnManagementClientOperationsMixin, SDKClient):
     :vartype endpoints: azure.mgmt.cdn.operations.EndpointsOperations
     :ivar origins: Origins operations
     :vartype origins: azure.mgmt.cdn.operations.OriginsOperations
+    :ivar origin_groups: OriginGroups operations
+    :vartype origin_groups: azure.mgmt.cdn.operations.OriginGroupsOperations
     :ivar custom_domains: CustomDomains operations
     :vartype custom_domains: azure.mgmt.cdn.operations.CustomDomainsOperations
     :ivar resource_usage: ResourceUsage operations
@@ -56,17 +59,22 @@ class CdnManagementClient(CdnManagementClientOperationsMixin, SDKClient):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param subscription_id1: Azure Subscription ID.
+    :type subscription_id1: str
+    :param api_version1: Version of the API to be used with the client
+     request. Current version is 2017-04-02.
+    :type api_version1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, subscription_id1, api_version1, base_url=None):
 
-        self.config = CdnManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = CdnManagementClientConfiguration(credentials, subscription_id, subscription_id1, api_version1, base_url)
         super(CdnManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-06-15-preview'
+        self.api_version = '2020-04-15'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -75,6 +83,8 @@ class CdnManagementClient(CdnManagementClientOperationsMixin, SDKClient):
         self.endpoints = EndpointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.origins = OriginsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.origin_groups = OriginGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.custom_domains = CustomDomainsOperations(
             self._client, self.config, self._serialize, self._deserialize)

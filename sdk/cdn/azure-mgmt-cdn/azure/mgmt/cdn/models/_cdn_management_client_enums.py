@@ -40,6 +40,27 @@ class OptimizationType(str, Enum):
     dynamic_site_acceleration = "DynamicSiteAcceleration"
 
 
+class HealthProbeRequestType(str, Enum):
+
+    not_set = "NotSet"
+    get = "GET"
+    head = "HEAD"
+
+
+class ProbeProtocol(str, Enum):
+
+    not_set = "NotSet"
+    http = "Http"
+    https = "Https"
+
+
+class ResponseBasedDetectedErrorTypes(str, Enum):
+
+    none = "None"
+    tcp_errors_only = "TcpErrorsOnly"
+    tcp_and_http_errors = "TcpAndHttpErrors"
+
+
 class EndpointResourceState(str, Enum):
 
     creating = "Creating"
@@ -210,6 +231,18 @@ class DestinationProtocol(str, Enum):
     https = "Https"
 
 
+class Algorithm(str, Enum):
+
+    sha256 = "SHA256"
+
+
+class ParamIndicator(str, Enum):
+
+    expires = "expires"
+    key_id = "keyId"
+    signature = "signature"
+
+
 class HeaderAction(str, Enum):
 
     append = "Append"
@@ -233,6 +266,22 @@ class QueryStringBehavior(str, Enum):
 
 
 class OriginResourceState(str, Enum):
+
+    creating = "Creating"
+    active = "Active"
+    deleting = "Deleting"
+
+
+class PrivateEndpointStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+    disconnected = "Disconnected"
+    timeout = "Timeout"
+
+
+class OriginGroupResourceState(str, Enum):
 
     creating = "Creating"
     active = "Active"
@@ -314,7 +363,7 @@ class CustomRuleEnabledState(str, Enum):
 class MatchVariable(str, Enum):
 
     remote_addr = "RemoteAddr"
-    country = "Country"
+    socket_addr = "SocketAddr"
     request_method = "RequestMethod"
     request_header = "RequestHeader"
     request_uri = "RequestUri"
