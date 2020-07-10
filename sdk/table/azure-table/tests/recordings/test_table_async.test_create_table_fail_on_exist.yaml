@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 02 Jul 2020 17:24:23 GMT
+      - Fri, 10 Jul 2020 13:57:49 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 17:24:23 GMT
+      - Fri, 10 Jul 2020 13:57:49 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -26,7 +26,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 02 Jul 2020 17:24:20 GMT
+      date: Fri, 10 Jul 2020 13:57:48 GMT
       location: https://storagename.table.core.windows.net/Tables('pytableasyncdea11390')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -35,7 +35,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragep2ebr2owzqnm.table.core.windows.net/Tables
+    url: https://pyacrstoragebjh2owqp36cz.table.core.windows.net/Tables
 - request:
     body: '{"TableName": "pytableasyncdea11390"}'
     headers:
@@ -48,11 +48,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 02 Jul 2020 17:24:24 GMT
+      - Fri, 10 Jul 2020 13:57:49 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 17:24:24 GMT
+      - Fri, 10 Jul 2020 13:57:49 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -60,11 +60,11 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"TableAlreadyExists","message":{"lang":"en-US","value":"The
-        table specified already exists.\nRequestId:3cdcd0b1-0002-0062-6e95-509844000000\nTime:2020-07-02T17:24:21.5728004Z"}}}'
+        table specified already exists.\nRequestId:3cee09f7-5002-0032-6ec2-565a14000000\nTime:2020-07-10T13:57:48.6491985Z"}}}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 02 Jul 2020 17:24:20 GMT
+      date: Fri, 10 Jul 2020 13:57:48 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -72,16 +72,16 @@ interactions:
     status:
       code: 409
       message: Conflict
-    url: https://pyacrstoragep2ebr2owzqnm.table.core.windows.net/Tables
+    url: https://pyacrstoragebjh2owqp36cz.table.core.windows.net/Tables
 - request:
     body: null
     headers:
       Date:
-      - Thu, 02 Jul 2020 17:24:24 GMT
+      - Fri, 10 Jul 2020 13:57:49 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 17:24:24 GMT
+      - Fri, 10 Jul 2020 13:57:49 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -92,12 +92,12 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 02 Jul 2020 17:24:21 GMT
+      date: Fri, 10 Jul 2020 13:57:48 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-07-07'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstoragep2ebr2owzqnm.table.core.windows.net/Tables('pytableasyncdea11390')
+    url: https://pyacrstoragebjh2owqp36cz.table.core.windows.net/Tables('pytableasyncdea11390')
 version: 1

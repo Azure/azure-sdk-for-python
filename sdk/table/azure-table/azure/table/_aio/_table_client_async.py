@@ -8,10 +8,11 @@ from azure.table import VERSION
 from azure.table._deserialization import _convert_to_entity
 from azure.table._entity import Entity
 from azure.table._generated.aio._azure_table_async import AzureTable
-from azure.table._generated.models import SignedIdentifier
+from azure.table._generated.models import SignedIdentifier, TableProperties, QueryOptions
 from azure.table._models import AccessPolicy
 from azure.table._serialization import _add_entity_properties
 from azure.table._serialize import _get_match_headers
+from azure.table._shared.base_client import parse_connection_str
 from azure.table._shared.base_client_async import AsyncStorageAccountHostsMixin
 from azure.table._shared.policies_async import ExponentialRetry
 from azure.table._shared.request_handlers import serialize_iso
@@ -83,15 +84,13 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> List["models.SignedIdentifier"]
+        # type: (...) -> dict[str,AccessPolicy]
         """Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
-
-                :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: list of SignedIdentifier, or the result of cls(response)
-                :rtype: list[~azure.table.models.SignedIdentifier]
-                :raises: ~azure.core.exceptions.HttpResponseError
-                """
+        :return: Dictionary of SignedIdentifiers
+        :rtype: dict[str,AccessPolicy]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         timeout = kwargs.pop('timeout', None)
         try:
             _, identifiers = await self._client.table.get_access_policy(
@@ -104,17 +103,18 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace_async
-    async def set_table_access_policy(self, signed_identifiers, **kwargs):
+    async def set_table_access_policy(
+            self,
+            signed_identifiers,  # type: dict[str,AccessPolicy]
+            **kwargs):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
-
-                :param signed_identifiers:
-                :type signed_identifiers: {id,AccessPolicy}
-                :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: None, or the result of cls(response)
-                :rtype: None
-                :raises: ~azure.core.exceptions.HttpResponseError
-                """
+        :param signed_identifiers:
+        :type signed_identifiers: dict[str,AccessPolicy]
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         if len(signed_identifiers) > 5:
             raise ValueError(
                 'Too many access policies provided. The server does not support setting '
@@ -139,13 +139,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TableServiceProperties"
+        # type: (...) -> TableServiceProperties
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
-
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TableServiceProperties, or the result of cls(response)
-        :rtype: ~azure.table.models.TableServiceProperties
+        :return: TableServiceProperties
+        :rtype: TableServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timeout = kwargs.pop('timeout', None)
@@ -160,27 +158,55 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
+    async def create_table(
+            self,
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> str
+        """Creates a new table under the given account.
+        :return: Table created
+        :rtype: str
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        table_properties = TableProperties(table_name=self.table_name, **kwargs)
+        table = await self._client.table.create(table_properties)
+        return table
+
+    @distributed_trace_async
+    async def delete_table(
+            self,
+            request_id_parameter=None,  # type: Optional[str]
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Creates a new table under the given account.
+        :param request_id_parameter: Request Id parameter
+        :type request_id_parameter: str
+        :return: None
+        :rtype: None
+        """
+        await self._client.table.delete(table=self.table_name, request_id_parameter=request_id_parameter, **kwargs)
+
+    @distributed_trace_async
     async def delete_entity(
             self,
-            partition_key,
-            row_key,
-            etag=None,
-            match_condition=None,
-            **kwargs
+            partition_key,  # type: str
+            row_key,  # type: str
+            etag=None,  # type: Optional[object]
+            match_condition=None,  # type: Optional[MatchCondition]
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Deletes the specified entity in a table.
-
-        :param match_condition: MatchCondition
-        :type match_condition: ~azure.core.MatchConditions
-        :param etag: Etag of the entity
-        :type etag: str
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :param etag: Etag of the entity
+        :type etag: str
+        :param match_condition: MatchCondition
+        :type match_condition: ~azure.core.MatchConditions
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -188,39 +214,25 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
                                                     etag_param='etag', match_param='match_condition')
 
-        try:
-            await self._client.table.delete_entity(
-                table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
-                if_match=if_match or if_not_match or '*',
-                **kwargs)
-        except ResourceNotFoundError:
-            raise ResourceNotFoundError
+        await self._client.table.delete_entity(
+            table=self.table_name,
+            partition_key=partition_key,
+            row_key=row_key,
+            if_match=if_match or if_not_match or '*',
+            **kwargs)
 
     @distributed_trace_async
     async def create_entity(
             self,
-            headers=None,
-            table_entity_properties=None,
-            query_options=None,
-            response_hook=None,  # pylint:disable=W0613
-            **kwargs
+            table_entity_properties,  # type: dict[str,str]
+            **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str, object]
+        # type: (...) -> Entity
         """Insert entity in a table.
-
-        :param response_hook:
-        :type response_hook:
-        :param headers: Headers for service request
-        :type headers: HttpResponse Headers
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
-        :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: dict mapping str to object, or the result of cls(response)
-        :rtype: dict[str, object] or None
+        :type table_entity_properties: dict[str, str]
+        :return: Entity mapping str to azure.table.EntityProperty
+        :rtype: ~azure.table.Entity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -235,8 +247,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             inserted_entity = await self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=table_entity_properties,
-                query_options=query_options,
-                **dict(kwargs, headers=headers)
+                **kwargs
             )
             properties = _convert_to_entity(inserted_entity)
             return Entity(properties)
@@ -244,34 +255,31 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def update_entity(
+    async def update_entity(  # pylint:disable=R1710
             self,
-            mode,
-            partition_key=None,
-            row_key=None,
-            etag=None,
-            match_condition=None,
-            response_hook=None,  # pylint:disable=W0613
-            table_entity_properties=None,
-            **kwargs
+            mode,  # type: Any
+            table_entity_properties,  # type: dict[str,str]
+            partition_key=None,  # type: Optional[str]
+            row_key=None,  # type: Optional[str]
+            etag=None,  # type: Optional[object]
+            match_condition=None,  # type: Optional[MatchCondition]
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Update entity in a table.
         :param mode: Merge or Replace entity
-        :type mode: ~azure.table._models.UpdateMode
-        :param response_hook:
+        :type mode: ~azure.table.UpdateMode
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
-        :param match_condition: MatchCondition
-        :type match_condition: ~azure.core.MatchConditions
-        :param etag: Etag of the entity
-        :type etag: str
+        :type table_entity_properties: dict[str, str]
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :param etag: Etag of the entity
+        :type etag: str
+        :param match_condition: MatchCondition
+        :type match_condition: ~azure.core.MatchConditions
+        :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -285,117 +293,106 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
         if mode is UpdateMode.replace:
-            try:
-                await self._client.table.update_entity(
-                    table=self.table_name,
-                    partition_key=partition_key,
-                    row_key=row_key,
-                    table_entity_properties=table_entity_properties,
-                    if_match=if_match or if_not_match or '*',
-                    **kwargs)
-            except ResourceNotFoundError:
-                raise ResourceNotFoundError
+            await self._client.table.update_entity(
+                table=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                table_entity_properties=table_entity_properties,
+                if_match=if_match or if_not_match or "*",
+                **kwargs)
         if mode is UpdateMode.merge:
-            try:
-                await self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
-                                                      row_key=row_key, if_match=if_match or if_not_match or '*',
-                                                      table_entity_properties=table_entity_properties, **kwargs)
-            except ResourceNotFoundError:
-                raise ResourceNotFoundError
+            await self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
+                                                  row_key=row_key, if_match=if_match or if_not_match or "*",
+                                                  table_entity_properties=table_entity_properties, **kwargs)
 
     @distributed_trace
     def query_entities(
             self,
-            headers=None,
-            query_options=None,
-            **kwargs
+            results_per_page=None,
+            select=None,
+            filter=None,  # pylint: disable=W0622
+            **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TableEntityQueryResponse"
+        # type: (...) -> ItemPaged[Entity]
         """Queries entities in a table.
-
-        :param headers: Headers for service request
-        :type headers: HttpResponse Headers
-        :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TableEntityQueryResponse, or the result of cls(response)
-        :rtype: ~azure.table.models.TableEntityQueryResponse
+        :param results_per_page: Number of entities per page in return ItemPaged
+        :type results_per_page: int
+        :param select: Specify desired properties of an entity to return certain entities
+        :type select: str
+        :param filter: Specify a filter to return certain entities
+        :type filter: str
+        :return: Query of table entities
+        :rtype: ItemPaged[Entity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        query_options = QueryOptions(top=results_per_page, select=select, filter=filter)
+
         command = functools.partial(
             self._client.table.query_entities,
-            **dict(kwargs, headers=headers))
+            **kwargs)
         return AsyncItemPaged(
             command, results_per_page=query_options, table=self.table_name,
             page_iterator_class=TableEntityPropertiesPaged
         )
 
     @distributed_trace_async
-    async def query_entities_with_partition_and_row_key(
+    async def get_entity(
             self,
-            partition_key,
-            row_key,
-            headers=None,
-            query_options=None,
-            response_hook=None,  # pylint:disable=W0613
-            **kwargs
+            partition_key,  # type: str
+            row_key,  # type: str
+            results_per_page=None,
+            select=None,
+            filter=None,  # pylint: disable=W0622
+            **kwargs  # type: Any
     ):
-        # type: (...) -> "models.TableEntityQueryResponse"
+        # type: (...) -> Entity
         """Queries entities in a table.
-
-        :param response_hook:
-        :type response_hook:
-        :param headers: Headers for service request
-        :type headers: HttpResponse Headers
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TableEntityQueryResponse, or the result of cls(response)
-        :rtype: ~azure.table.models.TableEntityQueryResponse
+        :param results_per_page: Number of entities per page in return ItemPaged
+        :type results_per_page: int
+        :param select: Specify desired properties of an entity to return certain entities
+        :type select: str
+        :param filter: Specify a filter to return certain entities
+        :type filter: str
+        :return: Entity mapping str to azure.table.EntityProperty
+        :rtype: ~azure.table.Entity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        try:
-            entity = await self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
-                                                                                        partition_key=partition_key,
-                                                                                        row_key=row_key,
-                                                                                        query_options=query_options,
-                                                                                        **dict(kwargs, headers=headers))
-
-            properties = _convert_to_entity(entity.additional_properties)
-
-            return Entity(properties)
-        except ResourceNotFoundError:
-            raise ResourceNotFoundError
+        query_options = QueryOptions(top=results_per_page, select=select, filter=filter)
+        entity = await self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
+                                                                                    partition_key=partition_key,
+                                                                                    row_key=row_key,
+                                                                                    query_options=query_options,
+                                                                                    **kwargs)
+        properties = _convert_to_entity(entity.additional_properties)
+        return Entity(properties)
 
     @distributed_trace_async
-    async def upsert_entity(
+    async def upsert_entity(  # pylint:disable=R1710
             self,
-            mode,
-            partition_key=None,
-            row_key=None,
-            table_entity_properties=None,
-            query_options=None,
-            **kwargs):
-        # type: (...) -> "_models.Entity"
+            mode,  # type: Any
+            table_entity_properties,  # type: dict[str,str]
+            partition_key=None,  # type: Optional[str]
+            row_key=None,  # type: Optional[str]
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        # TODO: Return type will need to change
         """Update/Merge or Insert entity into table.
         :param mode: Merge or Replace and Insert on fail
-        :type mode: ~azure.table._models.UpdateMode
+        :type mode: ~azure.table.UpdateMode
+        :param table_entity_properties: The properties for the table entity.
+        :type table_entity_properties: dict[str, str]
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
-        :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TableEntityQueryResponse, or the result of cls(response)
-        :rtype: ~azure.table.models.TableEntityQueryResponse
+        :return: Entity mapping str to azure.table.EntityProperty or None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -406,39 +403,32 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         if mode is UpdateMode.merge:
             try:
-                merged_entity = await self._client.table.merge_entity(
+                await self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=table_entity_properties,
-                    query_options=query_options,
                     **kwargs
                 )
-                return merged_entity
             except ResourceNotFoundError:
-                insert_entity = await self.create_entity(
+                await self.create_entity(
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=table_entity_properties,
                     **kwargs
                 )
-                properties = _convert_to_entity(insert_entity)
-                return Entity(properties)
         if mode is UpdateMode.replace:
             try:
-                update_entity = await self._client.table.update_entity(
+                await self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=table_entity_properties,
                     **kwargs)
-                return update_entity
             except ResourceNotFoundError:
-                insert_entity = await self.create_entity(
+                await self.create_entity(
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=table_entity_properties,
                     **kwargs
                 )
-                properties = _convert_to_entity(insert_entity)
-                return Entity(properties)

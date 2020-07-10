@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 02 Jul 2020 17:24:30 GMT
+      - Fri, 10 Jul 2020 13:57:55 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 02 Jul 2020 17:24:30 GMT
+      - Fri, 10 Jul 2020 13:57:55 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -23,11 +23,11 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"InvalidResourceName","message":{"lang":"en-US","value":"The
-        specifed resource name contains invalid characters.\nRequestId:8a9f55fc-f002-0014-6895-50120c000000\nTime:2020-07-02T17:24:27.7851034Z"}}}'
+        specifed resource name contains invalid characters.\nRequestId:60905e37-6002-0064-1ac2-56abfb000000\nTime:2020-07-10T13:57:54.6078130Z"}}}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 02 Jul 2020 17:24:27 GMT
+      date: Fri, 10 Jul 2020 13:57:54 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -35,5 +35,5 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://pyacrstoragep2ebr2owzqnm.table.core.windows.net/Tables
+    url: https://pyacrstoragebjh2owqp36cz.table.core.windows.net/Tables
 version: 1
