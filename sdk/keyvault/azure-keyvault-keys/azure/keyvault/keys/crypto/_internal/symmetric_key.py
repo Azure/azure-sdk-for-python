@@ -128,7 +128,7 @@ class SymmetricKey(Key):
         return decryptor.transform(encrypted_key)
 
     def sign(self, digest, **kwargs):
-        raise NotImplementedError()
+        raise NotImplementedError("Local signing isn't supported with symmetric keys")
 
     def verify(self, digest, signature, **kwargs):
-        raise NotImplementedError()
+        raise NotImplementedError("Local signature verification isn't supported with symmetric keys")
