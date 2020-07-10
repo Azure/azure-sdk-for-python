@@ -459,8 +459,8 @@ class QueryTest(unittest.TestCase):
             {'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0, 'f3': 100000000000000000.00},
             {'f3': 100000000000000000.0, 'f5': {'f6': {'f7': 2}}, 'f2': '\'value', 'f1': 1, 'f4': [1, 2.0, '3']}
         ]
-        self.OriginalExecuteFunction = _QueryExecutionContextBase.next
-        _QueryExecutionContextBase.next = self._MockNextFunction
+        self.OriginalExecuteFunction = _QueryExecutionContextBase.__next__
+        _QueryExecutionContextBase.__next__ = self._MockNextFunction
 
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
@@ -518,7 +518,7 @@ class QueryTest(unittest.TestCase):
             get_mock_result=lambda x, i: (i, x[i])
         )
 
-        _QueryExecutionContextBase.next = self.OriginalExecuteFunction
+        _QueryExecutionContextBase.__next__ = self.OriginalExecuteFunction
 
     def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results, get_mock_result):
         self.count = 0
