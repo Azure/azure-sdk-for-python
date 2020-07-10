@@ -64,5 +64,15 @@ try:
         ])
     except ImportError:
         pass  # Aiohttp not installed
+
+    try:
+        from ._httpx import HttpXTransport, HttpXTransportResponse
+        __all__.extend([
+            'HttpXTransport',
+            'HttpXTransportResponse',
+        ])
+    except ImportError:
+        pass  # httpx not installed
+
 except (ImportError, SyntaxError):
     pass  # Asynchronous pipelines not supported.
