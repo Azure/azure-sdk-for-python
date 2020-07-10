@@ -6,9 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._digital_twins_operations import DigitalTwinsOperations
-from ._digital_twins_endpoint_operations import DigitalTwinsEndpointOperations
-from ._operations import Operations
+from ._digital_twins_operations_async import DigitalTwinsOperations
+from ._digital_twins_endpoint_operations_async import DigitalTwinsEndpointOperations
+from ._operations_async import Operations
 
 __all__ = [
     'DigitalTwinsOperations',
