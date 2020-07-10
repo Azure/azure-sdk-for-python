@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
 import socket
 import uuid
 import webbrowser
@@ -21,8 +20,6 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, List, Mapping
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class InteractiveBrowserCredential(InteractiveCredential):
@@ -55,10 +52,6 @@ class InteractiveBrowserCredential(InteractiveCredential):
         self._server_class = kwargs.pop("server_class", AuthCodeRedirectServer)  # facilitate mocking
         client_id = kwargs.pop("client_id", AZURE_CLI_CLIENT_ID)
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
-
-    @property
-    def _logger(self):
-        return _LOGGER
 
     @wrap_exceptions
     def _request_token(self, *scopes, **kwargs):

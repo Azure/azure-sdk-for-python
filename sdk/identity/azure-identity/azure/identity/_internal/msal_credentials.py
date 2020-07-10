@@ -6,7 +6,6 @@ import abc
 import base64
 import json
 import logging
-import sys
 import time
 
 import msal
@@ -34,13 +33,6 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports,unused-import
     from typing import Any, Mapping, Optional, Type, Union
-
-if sys.version_info < (3, 3):
-    abstractproperty = abc.abstractproperty
-else:  # abc.abstractproperty is deprecated as of 3.3
-    import functools
-
-    abstractproperty = functools.partial(property, abc.abstractmethod)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -134,10 +126,6 @@ class MsalCredential(ABC):
 
 
 class InteractiveCredential(MsalCredential):
-    @abstractproperty
-    def _logger(self):
-        pass
-
     def __init__(self, **kwargs):
         self._disable_automatic_authentication = kwargs.pop("disable_automatic_authentication", False)
         self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
@@ -170,21 +158,21 @@ class InteractiveCredential(MsalCredential):
         """
         if not scopes:
             message = "'get_token' requires at least one scope"
-            self._logger.warning(self.__class__.__name__ + ".get_token failed: " + message)
+            _LOGGER.warning("%s.get_token failed: %s", self.__class__.__name__, message)
             raise ValueError(message)
 
         allow_prompt = kwargs.pop("_allow_prompt", not self._disable_automatic_authentication)
         try:
             token = self._acquire_token_silent(*scopes, **kwargs)
-            self._logger.info(self.__class__.__name__ + ".get_token succeeded")
+            _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
             return token
         except Exception as ex:  # pylint:disable=broad-except
             if not (isinstance(ex, AuthenticationRequiredError) and allow_prompt):
-                self._logger.warning(
+                _LOGGER.warning(
                     "%s.get_token failed: %s",
                     self.__class__.__name__,
                     ex,
-                    exc_info=self._logger.isEnabledFor(logging.DEBUG),
+                    exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
                 )
                 raise
 
@@ -200,15 +188,12 @@ class InteractiveCredential(MsalCredential):
             # this may be the first authentication, or the user may have authenticated a different identity
             self._auth_record = _build_auth_record(result)
         except Exception as ex:  # pylint:disable=broad-except
-            self._logger.warning(
-                "%s.get_token failed: %s",
-                self.__class__.__name__,
-                ex,
-                exc_info=self._logger.isEnabledFor(logging.DEBUG),
+            _LOGGER.warning(
+                "%s.get_token failed: %s", self.__class__.__name__, ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
             raise
 
-        self._logger.info(self.__class__.__name__ + ".get_token succeeded")
+        _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
     def authenticate(self, **kwargs):
