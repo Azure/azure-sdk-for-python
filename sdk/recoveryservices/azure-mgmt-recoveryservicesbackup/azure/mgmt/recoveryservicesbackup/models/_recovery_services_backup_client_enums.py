@@ -47,11 +47,8 @@ class ProtectionState(str, Enum):
     protection_paused = "ProtectionPaused"
 
 
-class HealthStatus(str, Enum):
+class ResourceHealthStatus(str, Enum):
 
-    passed = "Passed"
-    action_required = "ActionRequired"
-    action_suggested = "ActionSuggested"
     healthy = "Healthy"
     transient_degraded = "TransientDegraded"
     persistent_degraded = "PersistentDegraded"
@@ -118,6 +115,14 @@ class JobSupportedAction(str, Enum):
     invalid = "Invalid"
     cancellable = "Cancellable"
     retriable = "Retriable"
+
+
+class HealthStatus(str, Enum):
+
+    passed = "Passed"
+    action_required = "ActionRequired"
+    action_suggested = "ActionSuggested"
+    invalid = "Invalid"
 
 
 class ProtectedItemState(str, Enum):

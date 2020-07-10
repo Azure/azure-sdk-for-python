@@ -151,7 +151,6 @@ try:
     from ._models_py3 import GenericProtectionPolicy
     from ._models_py3 import GenericRecoveryPoint
     from ._models_py3 import GetProtectedItemQueryObject
-    from ._models_py3 import HealthDetails
     from ._models_py3 import IaasVMBackupRequest
     from ._models_py3 import IaaSVMContainer
     from ._models_py3 import IaasVMILRRegistrationRequest
@@ -169,6 +168,7 @@ try:
     from ._models_py3 import JobResource
     from ._models_py3 import KEKDetails
     from ._models_py3 import KeyAndSecretDetails
+    from ._models_py3 import KPIResourceHealthDetails
     from ._models_py3 import LogSchedulePolicy
     from ._models_py3 import LongTermRetentionPolicy
     from ._models_py3 import LongTermSchedulePolicy
@@ -220,6 +220,7 @@ try:
     from ._models_py3 import RecoveryPointResource
     from ._models_py3 import RecoveryPointTierInformation
     from ._models_py3 import Resource
+    from ._models_py3 import ResourceHealthDetails
     from ._models_py3 import ResourceList
     from ._models_py3 import RestoreFileSpecs
     from ._models_py3 import RestoreRequest
@@ -391,7 +392,6 @@ except (SyntaxError, ImportError):
     from ._models import GenericProtectionPolicy
     from ._models import GenericRecoveryPoint
     from ._models import GetProtectedItemQueryObject
-    from ._models import HealthDetails
     from ._models import IaasVMBackupRequest
     from ._models import IaaSVMContainer
     from ._models import IaasVMILRRegistrationRequest
@@ -409,6 +409,7 @@ except (SyntaxError, ImportError):
     from ._models import JobResource
     from ._models import KEKDetails
     from ._models import KeyAndSecretDetails
+    from ._models import KPIResourceHealthDetails
     from ._models import LogSchedulePolicy
     from ._models import LongTermRetentionPolicy
     from ._models import LongTermSchedulePolicy
@@ -460,6 +461,7 @@ except (SyntaxError, ImportError):
     from ._models import RecoveryPointResource
     from ._models import RecoveryPointTierInformation
     from ._models import Resource
+    from ._models import ResourceHealthDetails
     from ._models import ResourceList
     from ._models import RestoreFileSpecs
     from ._models import RestoreRequest
@@ -506,13 +508,14 @@ from ._recovery_services_backup_client_enums import (
     ProvisioningState,
     PrivateEndpointConnectionStatus,
     ProtectionState,
-    HealthStatus,
+    ResourceHealthStatus,
     RecoveryType,
     CopyOptions,
     RestoreRequestType,
     WorkloadType,
     PolicyType,
     JobSupportedAction,
+    HealthStatus,
     ProtectedItemState,
     LastBackupStatus,
     ProtectedItemHealthStatus,
@@ -699,7 +702,6 @@ __all__ = [
     'GenericProtectionPolicy',
     'GenericRecoveryPoint',
     'GetProtectedItemQueryObject',
-    'HealthDetails',
     'IaasVMBackupRequest',
     'IaaSVMContainer',
     'IaasVMILRRegistrationRequest',
@@ -717,6 +719,7 @@ __all__ = [
     'JobResource',
     'KEKDetails',
     'KeyAndSecretDetails',
+    'KPIResourceHealthDetails',
     'LogSchedulePolicy',
     'LongTermRetentionPolicy',
     'LongTermSchedulePolicy',
@@ -768,6 +771,7 @@ __all__ = [
     'RecoveryPointResource',
     'RecoveryPointTierInformation',
     'Resource',
+    'ResourceHealthDetails',
     'ResourceList',
     'RestoreFileSpecs',
     'RestoreRequest',
@@ -813,13 +817,14 @@ __all__ = [
     'ProvisioningState',
     'PrivateEndpointConnectionStatus',
     'ProtectionState',
-    'HealthStatus',
+    'ResourceHealthStatus',
     'RecoveryType',
     'CopyOptions',
     'RestoreRequestType',
     'WorkloadType',
     'PolicyType',
     'JobSupportedAction',
+    'HealthStatus',
     'ProtectedItemState',
     'LastBackupStatus',
     'ProtectedItemHealthStatus',
