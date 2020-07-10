@@ -24233,23 +24233,23 @@ class QuickBooksLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param endpoint: Required. The endpoint of the QuickBooks server. (i.e.
+    :param connection_properties: Properties used to connect to QuickBooks. It
+     is mutually exclusive with any other properties in the linked service.
+     Type: object.
+    :type connection_properties: object
+    :param endpoint: The endpoint of the QuickBooks server. (i.e.
      quickbooks.api.intuit.com)
     :type endpoint: object
-    :param company_id: Required. The company ID of the QuickBooks company to
-     authorize.
+    :param company_id: The company ID of the QuickBooks company to authorize.
     :type company_id: object
-    :param consumer_key: Required. The consumer key for OAuth 1.0
-     authentication.
+    :param consumer_key: The consumer key for OAuth 1.0 authentication.
     :type consumer_key: object
-    :param consumer_secret: Required. The consumer secret for OAuth 1.0
-     authentication.
+    :param consumer_secret: The consumer secret for OAuth 1.0 authentication.
     :type consumer_secret: ~azure.mgmt.datafactory.models.SecretBase
-    :param access_token: Required. The access token for OAuth 1.0
-     authentication.
+    :param access_token: The access token for OAuth 1.0 authentication.
     :type access_token: ~azure.mgmt.datafactory.models.SecretBase
-    :param access_token_secret: Required. The access token secret for OAuth
-     1.0 authentication.
+    :param access_token_secret: The access token secret for OAuth 1.0
+     authentication.
     :type access_token_secret: ~azure.mgmt.datafactory.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source
      endpoints are encrypted using HTTPS. The default value is true.
@@ -24262,12 +24262,6 @@ class QuickBooksLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'endpoint': {'required': True},
-        'company_id': {'required': True},
-        'consumer_key': {'required': True},
-        'consumer_secret': {'required': True},
-        'access_token': {'required': True},
-        'access_token_secret': {'required': True},
     }
 
     _attribute_map = {
@@ -24277,6 +24271,7 @@ class QuickBooksLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
+        'connection_properties': {'key': 'typeProperties.connectionProperties', 'type': 'object'},
         'endpoint': {'key': 'typeProperties.endpoint', 'type': 'object'},
         'company_id': {'key': 'typeProperties.companyId', 'type': 'object'},
         'consumer_key': {'key': 'typeProperties.consumerKey', 'type': 'object'},
@@ -24289,6 +24284,7 @@ class QuickBooksLinkedService(LinkedService):
 
     def __init__(self, **kwargs):
         super(QuickBooksLinkedService, self).__init__(**kwargs)
+        self.connection_properties = kwargs.get('connection_properties', None)
         self.endpoint = kwargs.get('endpoint', None)
         self.company_id = kwargs.get('company_id', None)
         self.consumer_key = kwargs.get('consumer_key', None)
@@ -25424,9 +25420,12 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param client_id: Required. The client ID associated with the Salesforce
-     Marketing Cloud application. Type: string (or Expression with resultType
-     string).
+    :param connection_properties: Properties used to connect to Salesforce
+     Marketing Cloud. It is mutually exclusive with any other properties in the
+     linked service. Type: object.
+    :type connection_properties: object
+    :param client_id: The client ID associated with the Salesforce Marketing
+     Cloud application. Type: string (or Expression with resultType string).
     :type client_id: object
     :param client_secret: The client secret associated with the Salesforce
      Marketing Cloud application. Type: string (or Expression with resultType
@@ -25453,7 +25452,6 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'client_id': {'required': True},
     }
 
     _attribute_map = {
@@ -25463,6 +25461,7 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
+        'connection_properties': {'key': 'typeProperties.connectionProperties', 'type': 'object'},
         'client_id': {'key': 'typeProperties.clientId', 'type': 'object'},
         'client_secret': {'key': 'typeProperties.clientSecret', 'type': 'SecretBase'},
         'use_encrypted_endpoints': {'key': 'typeProperties.useEncryptedEndpoints', 'type': 'object'},
@@ -25473,6 +25472,7 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
 
     def __init__(self, **kwargs):
         super(SalesforceMarketingCloudLinkedService, self).__init__(**kwargs)
+        self.connection_properties = kwargs.get('connection_properties', None)
         self.client_id = kwargs.get('client_id', None)
         self.client_secret = kwargs.get('client_secret', None)
         self.use_encrypted_endpoints = kwargs.get('use_encrypted_endpoints', None)
@@ -26940,17 +26940,16 @@ class SapOpenHubLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param server: Required. Host name of the SAP BW instance where the open
-     hub destination is located. Type: string (or Expression with resultType
+    :param server: Host name of the SAP BW instance where the open hub
+     destination is located. Type: string (or Expression with resultType
      string).
     :type server: object
-    :param system_number: Required. System number of the BW system where the
-     open hub destination is located. (Usually a two-digit decimal number
-     represented as a string.) Type: string (or Expression with resultType
-     string).
+    :param system_number: System number of the BW system where the open hub
+     destination is located. (Usually a two-digit decimal number represented as
+     a string.) Type: string (or Expression with resultType string).
     :type system_number: object
-    :param client_id: Required. Client ID of the client on the BW system where
-     the open hub destination is located. (Usually a three-digit decimal number
+    :param client_id: Client ID of the client on the BW system where the open
+     hub destination is located. (Usually a three-digit decimal number
      represented as a string) Type: string (or Expression with resultType
      string).
     :type client_id: object
@@ -26958,6 +26957,9 @@ class SapOpenHubLinkedService(LinkedService):
      is located. The default value is EN. Type: string (or Expression with
      resultType string).
     :type language: object
+    :param system_id: SystemID of the SAP system where the table is located.
+     Type: string (or Expression with resultType string).
+    :type system_id: object
     :param user_name: Username to access the SAP BW server where the open hub
      destination is located. Type: string (or Expression with resultType
      string).
@@ -26965,6 +26967,15 @@ class SapOpenHubLinkedService(LinkedService):
     :param password: Password to access the SAP BW server where the open hub
      destination is located.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param message_server: The hostname of the SAP Message Server. Type:
+     string (or Expression with resultType string).
+    :type message_server: object
+    :param message_server_service: The service name or port number of the
+     Message Server. Type: string (or Expression with resultType string).
+    :type message_server_service: object
+    :param logon_group: The Logon Group for the SAP System. Type: string (or
+     Expression with resultType string).
+    :type logon_group: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -26973,9 +26984,6 @@ class SapOpenHubLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'server': {'required': True},
-        'system_number': {'required': True},
-        'client_id': {'required': True},
     }
 
     _attribute_map = {
@@ -26989,8 +26997,12 @@ class SapOpenHubLinkedService(LinkedService):
         'system_number': {'key': 'typeProperties.systemNumber', 'type': 'object'},
         'client_id': {'key': 'typeProperties.clientId', 'type': 'object'},
         'language': {'key': 'typeProperties.language', 'type': 'object'},
+        'system_id': {'key': 'typeProperties.systemId', 'type': 'object'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'message_server': {'key': 'typeProperties.messageServer', 'type': 'object'},
+        'message_server_service': {'key': 'typeProperties.messageServerService', 'type': 'object'},
+        'logon_group': {'key': 'typeProperties.logonGroup', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -27000,8 +27012,12 @@ class SapOpenHubLinkedService(LinkedService):
         self.system_number = kwargs.get('system_number', None)
         self.client_id = kwargs.get('client_id', None)
         self.language = kwargs.get('language', None)
+        self.system_id = kwargs.get('system_id', None)
         self.user_name = kwargs.get('user_name', None)
         self.password = kwargs.get('password', None)
+        self.message_server = kwargs.get('message_server', None)
+        self.message_server_service = kwargs.get('message_server_service', None)
+        self.logon_group = kwargs.get('logon_group', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'SapOpenHub'
 
@@ -33336,8 +33352,11 @@ class XeroLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param host: Required. The endpoint of the Xero server. (i.e.
-     api.xero.com)
+    :param connection_properties: Properties used to connect to Xero. It is
+     mutually exclusive with any other properties in the linked service. Type:
+     object.
+    :type connection_properties: object
+    :param host: The endpoint of the Xero server. (i.e. api.xero.com)
     :type host: object
     :param consumer_key: The consumer key associated with the Xero
      application.
@@ -33365,7 +33384,6 @@ class XeroLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'host': {'required': True},
     }
 
     _attribute_map = {
@@ -33375,6 +33393,7 @@ class XeroLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
+        'connection_properties': {'key': 'typeProperties.connectionProperties', 'type': 'object'},
         'host': {'key': 'typeProperties.host', 'type': 'object'},
         'consumer_key': {'key': 'typeProperties.consumerKey', 'type': 'SecretBase'},
         'private_key': {'key': 'typeProperties.privateKey', 'type': 'SecretBase'},
@@ -33386,6 +33405,7 @@ class XeroLinkedService(LinkedService):
 
     def __init__(self, **kwargs):
         super(XeroLinkedService, self).__init__(**kwargs)
+        self.connection_properties = kwargs.get('connection_properties', None)
         self.host = kwargs.get('host', None)
         self.consumer_key = kwargs.get('consumer_key', None)
         self.private_key = kwargs.get('private_key', None)
