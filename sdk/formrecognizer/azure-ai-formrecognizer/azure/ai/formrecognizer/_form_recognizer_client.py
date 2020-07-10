@@ -43,11 +43,11 @@ class FormRecognizerClient(object):
     :param credential: Credentials needed for the client to connect to Azure.
         This is an instance of AzureKeyCredential if using an API key or a token
         credential from :mod:`azure.identity`.
+    :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
+        :class:`~azure.core.credentials.TokenCredential`
     :keyword str api_version:
         The API version of the service to use for requests. It defaults to the latest service version.
         Setting to an older version may result in reduced feature compatibility.
-    :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
-        :class:`~azure.core.credentials.TokenCredential`
 
     .. admonition:: Example:
 
