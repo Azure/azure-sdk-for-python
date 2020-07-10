@@ -6,9 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
-from typing import Optional
-
 import msrest.serialization
 
 
@@ -62,40 +59,18 @@ class CloudEvent(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        id: str,
-        source: str,
-        type: str,
-        specversion: str,
-        data: Optional[object] = None,
-        time: Optional[datetime.datetime] = None,
-        dataschema: Optional[str] = None,
-        datacontenttype: Optional[str] = None,
-        subject: Optional[str] = None,
         **kwargs
     ):
         super(CloudEvent, self).__init__(**kwargs)
-        self.id = id
-        self.source = source
-        self.data = data
-        self.type = type
-        self.time = time
-        self.specversion = specversion
-        self.dataschema = dataschema
-        self.datacontenttype = datacontenttype
-        self.subject = subject
-
-    @classmethod
-    def from_dict(self, source):
-        """
-        Returns an array of CloudEvent objects given a dict of events following the CloudEvent schema.
-
-        :param source: Required. The dict object following the CloudEvent schema.
-        :type source: dict
-
-        :rtype: List[~azure.eventgrid.CloudEvent]
-        """
-        pass
+        self.id = kwargs['id']
+        self.source = kwargs['source']
+        self.data = kwargs.get('data', None)
+        self.type = kwargs['type']
+        self.time = kwargs.get('time', None)
+        self.specversion = kwargs['specversion']
+        self.dataschema = kwargs.get('dataschema', None)
+        self.datacontenttype = kwargs.get('datacontenttype', None)
+        self.subject = kwargs.get('subject', None)
 
 
 class EventGridEvent(msrest.serialization.Model):
@@ -146,37 +121,17 @@ class EventGridEvent(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        id: str,
-        subject: str,
-        data: object,
-        event_type: str,
-        event_time: datetime.datetime,
-        data_version: str,
-        topic: Optional[str] = None,
         **kwargs
     ):
         super(EventGridEvent, self).__init__(**kwargs)
-        self.id = id
-        self.topic = topic
-        self.subject = subject
-        self.data = data
-        self.event_type = event_type
-        self.event_time = event_time
+        self.id = kwargs['id']
+        self.topic = kwargs.get('topic', None)
+        self.subject = kwargs['subject']
+        self.data = kwargs['data']
+        self.event_type = kwargs['event_type']
+        self.event_time = kwargs['event_time']
         self.metadata_version = None
-        self.data_version = data_version
-
-    @classmethod
-    def from_dict(self, source):
-        """
-        Returns an array of EventGridEvent objects given a dict of events following the EventGridEvent schema.
-
-        :param source: Required. The dict object following the EventGridEvent schema.
-        :type source: dict
-
-        :rtype: List[~azure.eventgrid.EventGridEvent]
-        """
-        pass
+        self.data_version = kwargs['data_version']
 
 
 class SubscriptionDeletedEventData(msrest.serialization.Model):
@@ -254,154 +209,7 @@ class SubscriptionValidationResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        validation_response: Optional[str] = None,
         **kwargs
     ):
         super(SubscriptionValidationResponse, self).__init__(**kwargs)
-        self.validation_response = validation_response
-
-class EventBatch(msrest.serialization.Model):
-    """A batch of events.
-
-    Sending events in a batch is more performant than sending individual events.
-    EventBatch helps you create the maximum allowed size batch of either `EventGridEvent` or `CloudEvent` to improve sending performance.
-
-    Use the `add` method to add events until the maximum batch size limit in bytes has been reached -
-    at which point a `ValueError` will be raised.
-    Use the `publish_events` method of :class:`EventGridPublisherClient<azure.eventgrid.EventGridPublisherClient>`
-    for sending.
-
-    **Please use the create_batch method of EventGridPublisherClient
-    to create an EventBatch object instead of instantiating an EventBatch object directly.**
-
-    :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold.
-    """
-
-    def __init__(self, max_size_in_bytes=None):
-        # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
-        return
-        self._max_size_in_bytes = max_size_in_bytes #or constants.MAX_MESSAGE_LENGTH_BYTES
-        self._schema = None
-        self._event_list = []#BatchMessage(data=[], multi_messages=False, properties=None)
-
-        self._size = 0#self.message.gather()[0].get_message_encoded_size()
-        self._count = 0
-
-    def __repr__(self):
-        # type: () -> str
-        batch_repr = "max_size_in_bytes={}, event_count={}".format(
-            self._max_size_in_bytes, self._count
-        )
-        return "EventBatch({})".format(batch_repr)
-
-    def __len__(self):
-        return self._count
-
-    def _load_events(self, events):
-        for event_data in events:
-            try:
-                self.add(event_data)
-            except ValueError:
-                raise ValueError("The combined size of EventData collection exceeds the Event Hub frame size limit. "
-                                 "Please send a smaller collection of EventData, or use EventDataBatch, "
-                                 "which is guaranteed to be under the frame size limit")
-
-    @property
-    def size_in_bytes(self):
-        # type: () -> int
-        """The combined size of the events in the batch, in bytes.
-
-        :rtype: int
-        """
-        return self._size
-
-    def add(self, event):
-        # type: (EventGridEvent, CloudEvent) -> None
-        """Try to add an EventGridEvent/CloudEvent to the batch.
-
-        The total size of an added event is the sum of its body, properties, etc.
-        If this added size results in the batch exceeding the maximum batch size, a `ValueError` will
-        be raised.
-
-        :param event: The EventData to add to the batch.
-        :type event: ~azure.eventgrid.EventGridEvent or ~azure.eventgrid.EventGridEvent 
-        :rtype: None
-        :raise: :class:`ValueError`, when exceeding the size limit.
-        """
-        pass
-        #if self._partition_key:
-        #    if (
-        #        event_data.partition_key
-        #        and event_data.partition_key != self._partition_key
-        #    ):
-        #        raise ValueError(
-        #            "The partition key of event_data does not match the partition key of this batch."
-        #        )
-        #    if not event_data.partition_key:
-        #        set_message_partition_key(event_data.message, self._partition_key)
-
-        #trace_message(event_data)
-        #event_data_size = event_data.message.get_message_encoded_size()
-
-        ## For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
-        ## message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
-        #size_after_add = (
-        #    self._size
-        #    + event_data_size
-        #    + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
-        #)
-
-        #if size_after_add > self.max_size_in_bytes:
-        #    raise ValueError(
-        #        "EventDataBatch has reached its size limit: {}".format(
-        #            self.max_size_in_bytes
-        #        )
-        #    )
-
-        #self.message._body_gen.append(event_data)  # pylint: disable=protected-access
-        #self._size = size_after_add
-        #self._count += 1
-    
-    @property
-    def event_schema(self):
-        """The event schema for all events in the batch.
-
-        :rtype: str
-        """
-        return self._schema
-
-class BaseEventType(msrest.serialization.Model):
-    """The base type for different event type objects.
-
-    """
-    # class variable
-    _event_type_mappings = {}
-
-    def __init__(self, **kwargs):
-        # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
-        return
-        self._event_type = "" # type: str
-        self._event_data = {} # type: dict
-        # list other envelope properties
-    
-    @property
-    def event_type(self):
-        return self._event_type
-
-    @property
-    def event_data(self):
-        return self._event_data
-    
-    def create_event_type_object(self):
-        """A specific event type object is returned based on the event type specified in the event.
-        The BaseEventType._event_type_mappings dict will be used to initialize the event type object
-        corresponding to `self.event_type`. It will be populated with the information in self.event_data.
-
-        :rtype: List[Any]
-        """
-
-        pass
-    
-    def _populate(self):
-        pass
+        self.validation_response = kwargs.get('validation_response', None)

@@ -28,8 +28,6 @@ class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):
 
     def __init__(
         self,
-        topic_hostname,  # type: str
-        credential,  # type: azure.core.credential.AzureKeyCredential
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -40,6 +38,7 @@ class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
+
 
     def close(self):
         # type: () -> None
