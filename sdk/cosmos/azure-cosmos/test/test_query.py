@@ -461,6 +461,7 @@ class QueryTest(unittest.TestCase):
         ]
         self.OriginalExecuteFunction = _QueryExecutionContextBase.__next__
         _QueryExecutionContextBase.__next__ = self._MockNextFunction
+        _QueryExecutionContextBase.next = self._MockNextFunction
 
         self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
@@ -519,6 +520,7 @@ class QueryTest(unittest.TestCase):
         )
 
         _QueryExecutionContextBase.__next__ = self.OriginalExecuteFunction
+        _QueryExecutionContextBase.next = self.OriginalExecuteFunction
 
     def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results, get_mock_result):
         self.count = 0
