@@ -1,5 +1,11 @@
 # Release History
 
+## 0.8.0 (2020-07-10)
+
+**Patch**
+
+  - Updated ReservedResourceType to support new products.
+
 ## 0.7.0 (2020-01-29)
 
 **Features**
