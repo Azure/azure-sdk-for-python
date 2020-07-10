@@ -23,6 +23,7 @@ from ._response_handlers import (
     prepare_form_result
 )
 from ._generated.models import AnalyzeOperationResult
+from ._api_versions import validate_api_version
 from ._helpers import get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
 from ._user_agent import USER_AGENT
 from ._polling import AnalyzePolling
@@ -44,6 +45,9 @@ class FormRecognizerClient(object):
         credential from :mod:`azure.identity`.
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
         :class:`~azure.core.credentials.TokenCredential`
+    :keyword str api_version:
+        The API version of the service to use for requests. It defaults to the latest service version.
+        Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -67,6 +71,8 @@ class FormRecognizerClient(object):
 
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        api_version = kwargs.pop('api_version', None)
+        validate_api_version(api_version)
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,  # type: ignore
