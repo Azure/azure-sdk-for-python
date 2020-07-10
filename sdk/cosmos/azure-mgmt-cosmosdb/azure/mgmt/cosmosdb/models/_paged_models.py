@@ -272,6 +272,19 @@ class GremlinGraphGetResultsPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(GremlinGraphGetResultsPaged, self).__init__(*args, **kwargs)
+class RestorableDatabaseAccountGetResultPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`RestorableDatabaseAccountGetResult <azure.mgmt.cosmosdb.models.RestorableDatabaseAccountGetResult>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RestorableDatabaseAccountGetResult]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RestorableDatabaseAccountGetResultPaged, self).__init__(*args, **kwargs)
 class NotebookWorkspacePaged(Paged):
     """
     A paging container for iterating over a list of :class:`NotebookWorkspace <azure.mgmt.cosmosdb.models.NotebookWorkspace>` object
