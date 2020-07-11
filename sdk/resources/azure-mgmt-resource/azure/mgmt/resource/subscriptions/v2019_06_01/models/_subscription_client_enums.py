@@ -8,6 +8,13 @@
 
 from enum import Enum
 
+class ResourceNameStatus(str, Enum):
+    """Is the resource name Allowed or Reserved
+    """
+
+    allowed = "Allowed"
+    reserved = "Reserved"
+
 class SpendingLimit(str, Enum):
     """The subscription spending limit.
     """
