@@ -13,7 +13,7 @@ from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_client_secret_credential_async(aad_credential, live_eventhub):
+async def test_client_secret_credential_async(aad_credential, aad_credential_test_eh):
     try:
         from azure.identity.aio import EnvironmentCredential
     except ImportError:
@@ -21,12 +21,12 @@ async def test_client_secret_credential_async(aad_credential, live_eventhub):
         return
 
     credential = EnvironmentCredential()
-    producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
-                                             eventhub_name=live_eventhub['event_hub'],
+    producer_client = EventHubProducerClient(fully_qualified_namespace=aad_credential_test_eh['hostname'],
+                                             eventhub_name=aad_credential_test_eh['event_hub'],
                                              credential=credential,
                                              user_agent='customized information')
-    consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
-                                             eventhub_name=live_eventhub['event_hub'],
+    consumer_client = EventHubConsumerClient(fully_qualified_namespace=aad_credential_test_eh['hostname'],
+                                             eventhub_name=aad_credential_test_eh['event_hub'],
                                              consumer_group='$default',
                                              credential=credential,
                                              user_agent='customized information')
@@ -46,5 +46,4 @@ async def test_client_secret_credential_async(aad_credential, live_eventhub):
         await asyncio.sleep(13)
     await task
     assert on_event.called is True
-    assert on_event.partition_id == "0"
-    assert list(on_event.event.body)[0] == 'A single message'.encode('utf-8')
+
