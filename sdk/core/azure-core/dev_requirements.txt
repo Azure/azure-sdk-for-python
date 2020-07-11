@@ -2,6 +2,7 @@ msrest
 trio; python_version >= '3.5'
 aiohttp>=3.0; python_version >= '3.5'
 aiodns>=2.0; python_version >= '3.5'
+httpx>=0.13.3; python_version >= '3.6'
 typing_extensions>=3.7.2
 opencensus>=0.6.0
 opencensus-ext-azure>=0.3.1
