@@ -80,23 +80,6 @@ def get_logger(filename, level=logging.INFO):
 log = get_logger(None, logging.DEBUG)
 
 
-def create_eventhub(eventhub_config):
-    client = eventhub_config["management_client"]
-    resource_group = eventhub_config["resource_group"]
-    namespace = eventhub_config["namespace"]
-    eventhub_name = eventhub_config["eventhub"]
-    hub_value = Eventhub(partition_count=PARTITION_COUNT)
-    client.operations.create_or_update(resource_group, namespace, eventhub_name, hub_value)
-
-
-def cleanup_eventhub(eventhub_config):
-    client = eventhub_config["management_client"]
-    resource_group = eventhub_config["resource_group"]
-    namespace = eventhub_config["namespace"]
-    eventhub_name = eventhub_config["eventhub"]
-    client.operations.delete(resource_group, namespace, eventhub_name)
-
-
 @pytest.fixture(scope="session")
 def resource_group():
         resource_client = ResourceManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
