@@ -24,7 +24,7 @@ class AutoQuotaIncreaseOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Api version. Constant value: "2019-07-19-preview".
+    :ivar api_version: API version. Constant value: "2019-07-19-preview".
     """
 
     models = models
@@ -40,10 +40,7 @@ class AutoQuotaIncreaseOperations(object):
 
     def get_properties(
             self, subscription_id, custom_headers=None, raw=False, **operation_config):
-        """For the specified subscription, gets the Auto Quota Increase enrollment
-        status.
-
-        Gets the Auto Quota Increase enrollment details for the specified
+        """Gets the Auto Quota Increase enrollment details for the specified
         subscription.
 
         :param subscription_id: Azure subscription id.
@@ -100,10 +97,7 @@ class AutoQuotaIncreaseOperations(object):
 
     def create(
             self, subscription_id, auto_quota_increase_request, custom_headers=None, raw=False, **operation_config):
-        """For the specified subscription, sets the Auto Quota Increase enrollment
-        properties.
-
-        Sets the Auto Quota Increase enrollment properties for the specified
+        """Sets the Auto Quota Increase enrollment properties for the specified
         subscription.
 
         :param subscription_id: Azure subscription id.
