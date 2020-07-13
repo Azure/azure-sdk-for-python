@@ -326,7 +326,7 @@ class TableClient(StorageAccountHostsMixin):
             else:
                 raise ValueError
         try:
-
+            # TODO: table name?
             inserted_entity = self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=table_entity_properties,
