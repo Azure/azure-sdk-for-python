@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class ApiVersion(str, Enum):
-    """Key Vault API versions supported by this package"""
+    """Text Analytics API versions supported by this package"""
 
     #: this is the default version
     V3_1_preview_1 = "v3.1-preview.1"
