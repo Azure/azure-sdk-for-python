@@ -1,5 +1,48 @@
 # Release History
 
+## 13.0.0 (2020-07-06)
+
+**Features**
+
+  - Model VirtualMachineScaleSet has a new parameter host_group
+  - Model DiskEncryptionSetUpdate has a new parameter encryption_type
+  - Model SnapshotUpdate has a new parameter network_access_policy
+  - Model SnapshotUpdate has a new parameter disk_access_id
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter assigned_host
+  - Model WindowsConfiguration has a new parameter patch_settings
+  - Model VirtualMachineScaleSetUpdateVMProfile has a new parameter security_profile
+  - Model DedicatedHostGroup has a new parameter support_automatic_placement
+  - Model DedicatedHostGroup has a new parameter instance_view
+  - Model VirtualMachineScaleSetVM has a new parameter security_profile
+  - Model DedicatedHostGroupUpdate has a new parameter support_automatic_placement
+  - Model DedicatedHostGroupUpdate has a new parameter instance_view
+  - Model DiskUpdate has a new parameter network_access_policy
+  - Model DiskUpdate has a new parameter disk_access_id
+  - Model Snapshot has a new parameter network_access_policy
+  - Model Snapshot has a new parameter disk_access_id
+  - Model VirtualMachine has a new parameter extensions_time_budget
+  - Model VirtualMachine has a new parameter security_profile
+  - Model VirtualMachine has a new parameter host_group
+  - Model VirtualMachineInstanceView has a new parameter assigned_host
+  - Model DiskEncryptionSet has a new parameter encryption_type
+  - Model VirtualMachineUpdate has a new parameter extensions_time_budget
+  - Model VirtualMachineUpdate has a new parameter security_profile
+  - Model VirtualMachineUpdate has a new parameter host_group
+  - Model VirtualMachineImage has a new parameter disallowed
+  - Model VirtualMachineScaleSetExtensionProfile has a new parameter extensions_time_budget
+  - Model VirtualMachineScaleSetVMProfile has a new parameter security_profile
+  - Model Disk has a new parameter network_access_policy
+  - Model Disk has a new parameter disk_access_id
+  - Added operation VirtualMachinesOperations.assess_patches
+  - Added operation VirtualMachinesOperations.retrieve_boot_diagnostics_data
+  - Added operation VirtualMachineScaleSetVMsOperations.retrieve_boot_diagnostics_data
+  - Added operation group DiskAccessesOperations
+
+**Breaking changes**
+
+  - Operation DedicatedHostGroupsOperations.get has a new signature
+  - Operation DiskEncryptionSetsOperations.update has a new signature
+
 ## 12.1.0 (2020-06-17)
 
 **Features**

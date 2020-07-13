@@ -1,6 +1,18 @@
 # Release History
 
-# 10.0.0 (2020-06-02)
+## 10.1.0 (2020-06-30)
+
+**Features**
+
+  - Model TemplateLink has a new parameter id
+  - Model TemplateLink has a new parameter relative_path
+  - Model AzureResourceBase has a new parameter system_data
+  - Added operation DeploymentsOperations.what_if_at_tenant_scope
+  - Added operation DeploymentsOperations.what_if_at_management_group_scope
+  - Added operation group TemplateSpecVersionsOperations
+  - Added operation group TemplateSpecsOperations
+
+## 10.0.0 (2020-06-02)
 
 **Features**
 

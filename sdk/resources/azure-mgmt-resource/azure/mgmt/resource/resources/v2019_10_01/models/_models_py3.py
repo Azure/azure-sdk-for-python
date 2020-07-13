@@ -1634,6 +1634,34 @@ class ScopedDeployment(Model):
         self.tags = tags
 
 
+class ScopedDeploymentWhatIf(Model):
+    """Deployment What-if operation parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The location to store the deployment data.
+    :type location: str
+    :param properties: Required. The deployment properties.
+    :type properties:
+     ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentWhatIfProperties
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DeploymentWhatIfProperties'},
+    }
+
+    def __init__(self, *, location: str, properties, **kwargs) -> None:
+        super(ScopedDeploymentWhatIf, self).__init__(**kwargs)
+        self.location = location
+        self.properties = properties
+
+
 class Sku(Model):
     """SKU for the resource.
 

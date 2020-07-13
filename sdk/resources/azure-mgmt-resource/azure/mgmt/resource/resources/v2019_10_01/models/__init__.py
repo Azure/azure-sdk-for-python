@@ -55,6 +55,7 @@ try:
     from ._models_py3 import ResourceReference
     from ._models_py3 import ResourcesMoveInfo
     from ._models_py3 import ScopedDeployment
+    from ._models_py3 import ScopedDeploymentWhatIf
     from ._models_py3 import Sku
     from ._models_py3 import SubResource
     from ._models_py3 import TagCount
@@ -115,6 +116,7 @@ except (SyntaxError, ImportError):
     from ._models import ResourceReference
     from ._models import ResourcesMoveInfo
     from ._models import ScopedDeployment
+    from ._models import ScopedDeploymentWhatIf
     from ._models import Sku
     from ._models import SubResource
     from ._models import TagCount
@@ -194,6 +196,7 @@ __all__ = [
     'ResourceReference',
     'ResourcesMoveInfo',
     'ScopedDeployment',
+    'ScopedDeploymentWhatIf',
     'Sku',
     'SubResource',
     'TagCount',

@@ -15,17 +15,17 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-5.0.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-resource/10.0.0 Azure-SDK-For-Python
+      - python/3.8.2 (Linux-4.19.104-microsoft-standard-x86_64-with-glibc2.29) msrest/0.6.16
+        msrest_azure/0.6.3 azure-mgmt-resource/10.1.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Resources/deployments/pytestlinkedafa117b7?api-version=2019-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7/providers/Microsoft.Resources/deployments/pytestlinkedafa117b7?api-version=2020-06-01
   response:
     body:
       string: '{"error":{"code":"InvalidTemplateDeployment","message":"The template
         deployment ''pytestlinkedafa117b7'' is not valid according to the validation
-        procedure. The tracking id is ''1c77b227-ff92-4f00-896b-ad9508c6e4fa''. See
+        procedure. The tracking id is ''6b97519d-c19f-4186-ab27-c86faa9b745d''. See
         inner errors for details.","details":[{"code":"InvalidDomainNameLabel","message":"The
         domain name label GEN-UNIQUE is invalid. It must conform to the following
         regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.","details":[]}]}}'
@@ -37,7 +37,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 05 Jun 2020 02:25:03 GMT
+      - Wed, 01 Jul 2020 00:54:57 GMT
       expires:
       - '-1'
       pragma:
