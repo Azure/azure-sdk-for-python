@@ -60,7 +60,7 @@ class AutoLockRenew(object):
         return self
 
     def __exit__(self, *args):
-        self.shutdown()
+        self.close()
 
     def _renewable(self, renewable):
         if self._shutdown.is_set():
@@ -118,8 +118,8 @@ class AutoLockRenew(object):
         starttime = renewable_start_time(renewable)
         self.executor.submit(self._auto_lock_renew, renewable, starttime, timeout, on_lock_renew_failure)
 
-    def shutdown(self, wait=True):
-        """Shutdown the thread pool to clean up any remaining lock renewal threads.
+    def close(self, wait=True):
+        """Cease autorenewal by shutting down the thread pool to clean up any remaining lock renewal threads.
 
         :param wait: Whether to block until thread pool has shutdown. Default is `True`.
         :type wait: bool

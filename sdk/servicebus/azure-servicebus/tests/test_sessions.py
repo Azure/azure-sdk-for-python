@@ -597,7 +597,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             sleep_until_expired(receiver.session)
             assert not results
 
-            renewer.shutdown()
+            renewer.close()
             assert len(messages) == 2
 
 

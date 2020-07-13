@@ -50,7 +50,7 @@ async def renew_lock_on_message_received_from_non_sessionful_entity():
                 await msg.complete()
             print('Complete messages.')
 
-        await renewer.shutdown()
+        await renewer.close()
 
 
 async def renew_lock_on_session_of_the_sessionful_entity():
@@ -81,7 +81,7 @@ async def renew_lock_on_session_of_the_sessionful_entity():
                 await msg.complete()
             print('Complete messages.')
 
-        await renewer.shutdown()
+        await renewer.close()
 
 
 loop = asyncio.get_event_loop()

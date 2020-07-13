@@ -49,7 +49,7 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
                 msg.complete() # Settling the message deregisters it from the AutoLockRenewer
             print('Complete messages.')
 
-        renewer.shutdown()
+        renewer.close()
 
 
 def renew_lock_on_session_of_the_sessionful_entity():
@@ -82,7 +82,7 @@ def renew_lock_on_session_of_the_sessionful_entity():
 
             print('Complete messages.')
 
-        renewer.shutdown()
+        renewer.close()
 
 
 renew_lock_on_message_received_from_non_sessionful_entity()

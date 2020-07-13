@@ -821,7 +821,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             print("Remaining messages", message.locked_until_utc, utc_now())
                             messages.append(message)
                             message.complete()
-            renewer.shutdown()
+            renewer.close()
             assert len(messages) == 11
 
     @pytest.mark.liveTest
@@ -1259,7 +1259,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with auto_lock_renew: # Check that it is not called when the renewer is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
             auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
-            auto_lock_renew.shutdown()
+            auto_lock_renew.close()
             time.sleep(3)
             assert len(results) == 2
 
@@ -1294,7 +1294,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             auto_lock_renew.register(renewable=MockReceivedMessage())
             time.sleep(3)
 
-        auto_lock_renew.shutdown()
+        auto_lock_renew.close()
 
         with pytest.raises(ServiceBusError):
             with auto_lock_renew:

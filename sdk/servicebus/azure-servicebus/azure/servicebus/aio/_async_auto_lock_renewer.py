@@ -59,7 +59,7 @@ class AutoLockRenew:
         return self
 
     async def __aexit__(self, *args: Iterable[Any]) -> None:
-        await self.shutdown()
+        await self.close()
 
     def _renewable(self, renewable: "Union[ReceivedMessage, ServiceBusSession]") -> bool:
         if self._shutdown.is_set():
@@ -124,7 +124,7 @@ class AutoLockRenew:
         renew_future = asyncio.ensure_future(self._auto_lock_renew(renewable, starttime, timeout, on_lock_renew_failure), loop=self.loop)
         self._futures.append(renew_future)
 
-    async def shutdown(self) -> None:
-        """Cancel remaining open lock renewal futures."""
+    async def close(self) -> None:
+        """Cease autorenewal by cancelling any remaining open lock renewal futures."""
         self._shutdown.set()
         await asyncio.wait(self._futures)

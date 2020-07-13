@@ -525,7 +525,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             await asyncio.sleep(max(0,(session.locked_until_utc - utc_now()).total_seconds()+1)) # If this pattern repeats make sleep_until_expired_async
             assert not results
 
-            await renewer.shutdown()
+            await renewer.close()
             assert len(messages) == 2
 
 
@@ -626,7 +626,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     assert len(messages) == 1
                 else:
                     raise Exception("Failed to receive schdeduled message.")
-            await renewer.shutdown()
+            await renewer.close()
 
 
     @pytest.mark.liveTest
@@ -666,7 +666,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     assert len(messages) == 2
                 else:
                     raise Exception("Failed to receive schdeduled message.")
-            await renewer.shutdown()
+            await renewer.close()
 
 
     @pytest.mark.liveTest
@@ -700,7 +700,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                         print(str(m))
                         await m.complete()
                     raise
-            await renewer.shutdown()
+            await renewer.close()
 
 
     @pytest.mark.liveTest

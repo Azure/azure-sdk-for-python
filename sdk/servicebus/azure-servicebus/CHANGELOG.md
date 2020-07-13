@@ -1,10 +1,16 @@
 # Release History
 
-## 7.0.0b4 (Unreleased)
+## 7.0.0b5 (Unreleased)
 
 **New Features**
 
-* Add an on_lock_renew_failure as a parameter to `AutoLockRenew`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion)
+* Add `on_lock_renew_failure` as a parameter to `AutoLockRenew.register`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion)
+
+**Breaking Changes**
+
+* `AutoLockRenew.shutdown` is now `AutoLockRenew.close` to normalize with other equivelent behaviors.
+
+## 7.0.0b4 (Unreleased)
 
 **BugFixes**
 
