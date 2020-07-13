@@ -3,12 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
+import sys
 import os
-
 import pytest
 import logging
-import sys
 import uuid
 import warnings
 from logging.handlers import RotatingFileHandler
@@ -16,10 +14,10 @@ from logging.handlers import RotatingFileHandler
 from azure.identity import EnvironmentCredential
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.eventhub import EventHubManagementClient
-from azure.mgmt.eventhub.models import Eventhub
 from azure.eventhub import EventHubProducerClient
-import uamqp
-from uamqp import authentication
+from uamqp import ReceiveClient
+from uamqp.authentication import SASTokenAuth
+
 
 # Ignore async tests for Python < 3.5
 collect_ignore = []
@@ -28,8 +26,6 @@ if sys.version_info < (3, 5):
     collect_ignore.append("tests/unittest/asynctests")
     collect_ignore.append("features")
     collect_ignore.append("samples/async_samples")
-    collect_ignore.append("examples/async_examples")
-
 PARTITION_COUNT = 2
 CONN_STR = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}"
 RES_GROUP_PREFIX = "eh-res-group"
@@ -209,7 +205,7 @@ def connstr_receivers(live_eventhub):
     receivers = []
     for p in partitions:
         uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-        sas_auth = authentication.SASTokenAuth.from_shared_access_key(
+        sas_auth = SASTokenAuth.from_shared_access_key(
             uri, live_eventhub['key_name'], live_eventhub['access_key'])
 
         source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -217,7 +213,7 @@ def connstr_receivers(live_eventhub):
             live_eventhub['event_hub'],
             live_eventhub['consumer_group'],
             p)
-        receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=0, prefetch=500)
+        receiver = ReceiveClient(source, auth=sas_auth, debug=False, timeout=0, prefetch=500)
         receiver.open()
         receivers.append(receiver)
     yield connection_str, receivers
