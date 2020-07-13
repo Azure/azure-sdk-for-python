@@ -432,7 +432,7 @@ class HttpRequest(object):
         :returns: The updated index after all parts in this request have been added.
         :rtype: int
         """
-        from email.message import Message
+        from email.message import Message   # pylint:disable=redefined-outer-name
         if not self.multipart_mixed_info:
             return 0
 
@@ -535,7 +535,7 @@ class _HttpResponseBase(object):
         # type: (Message, Type[_HttpResponseBase], List[HttpRequest]) -> List[HttpResponse]
         """Rebuild an HTTP response from pure string."""
         responses = []
-        for index, raw_reponse in enumerate(message.get_payload()):
+        for index, raw_reponse in enumerate(message.get_payload()): # type:ignore
             content_type = raw_reponse.get_content_type()
             if content_type == "application/http":
                 responses.append(

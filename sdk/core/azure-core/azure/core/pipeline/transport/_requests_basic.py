@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import logging
-from typing import Iterator, Optional, Any, Union, TypeVar
+from typing import Iterator, Optional, Any, Union, TypeVar, TYPE_CHECKING
 import time
 
 from azure.core.configuration import ConnectionConfiguration
@@ -45,6 +45,8 @@ PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
+if TYPE_CHECKING:
+    import requests
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
@@ -112,7 +114,7 @@ class StreamDownloadGenerator(object):
         return self
 
     def __next__(self):
-        import requests
+        import requests # pylint:disable=redefined-outer-name
         retry_active = True
         retry_total = 3
         retry_interval = 1000
@@ -204,12 +206,12 @@ class RequestsTransport(HttpTransport):
         self.close()
 
     def _init_session(self, session):
-        # type: (requests.Session) -> None  # type:ignore
+        # type: (requests.Session) -> None
         """Init session level configuration of requests.
 
         This is initialization I want to do once only on a session.
         """
-        import requests
+        import requests # pylint:disable=redefined-outer-name
         from urllib3.util.retry import Retry # type: ignore
         session.trust_env = self._use_env_settings
         disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
@@ -218,7 +220,7 @@ class RequestsTransport(HttpTransport):
             session.mount(p, adapter)
 
     def open(self):
-        import requests
+        import requests # pylint:disable=redefined-outer-name
         if not self.session and self._session_owner:
             self.session = requests.Session()
             self._init_session(self.session)
@@ -242,7 +244,7 @@ class RequestsTransport(HttpTransport):
          Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
-        import requests
+        import requests # pylint:disable=redefined-outer-name
         import urllib3 # type: ignore
         self.open()
         response = None
