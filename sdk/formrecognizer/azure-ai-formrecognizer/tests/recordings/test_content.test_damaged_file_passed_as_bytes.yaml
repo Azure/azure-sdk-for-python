@@ -13,21 +13,20 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyze
   response:
     body:
-      string: '{"error": {"code": "BadArgument", "message": "Bad or unrecognizable
-        request JSON or binary file."}}'
+      string: '{"error": {"code": "InvalidImage", "message": "The input data is not
+        a valid image or password protected."}}'
     headers:
       apim-request-id:
-      - 8a5721d2-4e72-477e-b4fa-9af5b046ce89
+      - 9edd8d19-97ad-4ac6-9c9c-2a170b3edd01
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 11 Jun 2020 15:40:46 GMT
+      - Fri, 10 Jul 2020 18:40:17 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -35,7 +34,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '4'
     status:
       code: 400
       message: Bad Request

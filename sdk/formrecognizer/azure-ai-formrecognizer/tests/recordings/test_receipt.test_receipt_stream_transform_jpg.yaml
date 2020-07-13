@@ -2724,28 +2724,27 @@ interactions:
       Content-Type:
       - image/jpeg
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - f4a4999e-9a72-4bb0-8180-705bf66494c8
+      - 36935844-1e42-4d5b-a087-044596eb1fd5
       content-length:
       - '0'
       date:
-      - Thu, 11 Jun 2020 15:44:46 GMT
+      - Fri, 10 Jul 2020 18:52:19 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/f4a4999e-9a72-4bb0-8180-705bf66494c8
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/36935844-1e42-4d5b-a087-044596eb1fd5
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '132'
+      - '173'
     status:
       code: 202
       message: Accepted
@@ -2759,14 +2758,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/f4a4999e-9a72-4bb0-8180-705bf66494c8
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/36935844-1e42-4d5b-a087-044596eb1fd5
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T15:44:46Z",
-        "lastUpdatedDateTime": "2020-06-11T15:44:47Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:52:20Z",
+        "lastUpdatedDateTime": "2020-07-10T18:52:21Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0.6893, "width": 1688, "height":
         3000, "unit": "pixel", "language": "en", "lines": [{"text": "Contoso", "boundingBox":
         [635, 510, 1086, 461, 1098, 558, 643, 604], "words": [{"text": "Contoso",
@@ -2889,11 +2887,11 @@ interactions:
         0.985, "elements": ["#/readResults/0/lines/19/words/0"]}}}]}}'
     headers:
       apim-request-id:
-      - 0e94686a-0cdc-49bd-800c-4836ab08bb0e
+      - 2bb483ee-6898-480a-ba86-ca6a71d486b8
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 11 Jun 2020 15:44:50 GMT
+      - Fri, 10 Jul 2020 18:52:24 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -2901,7 +2899,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '15'
+      - '16'
     status:
       code: 200
       message: OK
