@@ -74,7 +74,11 @@ log = get_logger(None, logging.DEBUG)
 
 @pytest.fixture(scope="session")
 def resource_group():
-    SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
+    try:
+        SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
+    except KeyError:
+        pytest.skip('AZURE_SUBSCRIPTION_ID defined')
+        return
     resource_client = ResourceManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
     resource_group_name = RES_GROUP_PREFIX + str(uuid.uuid4())
     try:
@@ -91,7 +95,11 @@ def resource_group():
 
 @pytest.fixture(scope="session")
 def eventhub_namespace(resource_group):
-    SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
+    try:
+        SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
+    except KeyError:
+        pytest.skip('AZURE_SUBSCRIPTION_ID defined')
+        return
     resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
     namespace_name = NAMESPACE_PREFIX + str(uuid.uuid4())
     try:
@@ -112,7 +120,11 @@ def eventhub_namespace(resource_group):
 
 @pytest.fixture()
 def live_eventhub(resource_group, eventhub_namespace):  # pylint: disable=redefined-outer-name
-    SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
+    try:
+        SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
+    except KeyError:
+        pytest.skip('AZURE_SUBSCRIPTION_ID defined')
+        return
     resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
     eventhub_name = EVENTHUB_PREFIX + str(uuid.uuid4())
     eventhub_ns_name, connection_string, key_name, primary_key = eventhub_namespace
