@@ -70,6 +70,7 @@ from .._tools import await_result as _await_result
 
 if TYPE_CHECKING:
     from ..policies import SansIOHTTPPolicy
+    from email.message import Message
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")

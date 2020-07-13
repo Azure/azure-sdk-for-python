@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import logging
-from typing import Iterator, Optional, Any, Union, TypeVar
+from typing import Iterator, Optional, Any, Union, TypeVar, TYPE_CHECKING
 import time
 
 from azure.core.configuration import ConnectionConfiguration
@@ -45,6 +45,8 @@ PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
+if TYPE_CHECKING:
+    import requests
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
     """Base class for accessing response data.
