@@ -30,8 +30,6 @@ from __future__ import absolute_import  # we have a "requests" module that confl
 import json
 import logging
 import os
-import platform
-import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
@@ -186,6 +184,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 
     def __init__(self, base_user_agent=None, **kwargs):  # pylint: disable=super-init-not-called
         # type: (Optional[str], **Any) -> None
+        import platform
         self.overwrite = kwargs.pop('user_agent_overwrite', False)
         self.use_env = kwargs.pop('user_agent_use_env', True)
         application_id = kwargs.pop('user_agent', None)
@@ -472,6 +471,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         :raises ~azure.core.exceptions.DecodeError: If deserialization fails
         :returns: A dict or XML tree, depending of the mime_type
         """
+        import xml.etree.ElementTree as ET
         if not data:
             return None
 

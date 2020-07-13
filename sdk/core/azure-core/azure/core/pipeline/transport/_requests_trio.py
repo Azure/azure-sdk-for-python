@@ -27,10 +27,6 @@ from collections.abc import AsyncIterator
 import functools
 import logging
 from typing import Any, Callable, Union, Optional, AsyncIterator as AsyncIteratorType
-import trio
-import urllib3
-
-import requests
 
 from azure.core.exceptions import (
     ServiceRequestError,
@@ -56,6 +52,11 @@ class TrioStreamDownloadGenerator(AsyncIterator):
     :param response: The response object.
     """
     def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
+        # pylint:disable=unused-import
+        try:
+            import trio
+        except ImportError:
+            raise ImportError("Please make sure trio library are installed")
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
@@ -68,6 +69,8 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
+        import trio
+        import requests
         retry_active = True
         retry_total = 3
         while retry_active:
@@ -144,6 +147,15 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
             :dedent: 4
             :caption: Asynchronous transport with trio.
     """
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        # pylint:disable=unused-import
+        try:
+            import trio
+        except ImportError:
+            raise ImportError("Please make sure trio library are installed")
+        super(TrioRequestsTransport, self).__init__(**kwargs)
+
     async def __aenter__(self):
         return super(TrioRequestsTransport, self).__enter__()
 
@@ -151,6 +163,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
         return super(TrioRequestsTransport, self).__exit__()
 
     async def sleep(self, duration):
+        import trio
         await trio.sleep(duration)
 
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
@@ -165,6 +178,9 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
          Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
+        import trio
+        import requests
+        import urllib3
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None

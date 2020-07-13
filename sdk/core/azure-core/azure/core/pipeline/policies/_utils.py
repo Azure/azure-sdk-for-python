@@ -24,8 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import datetime
-import email.utils
-from requests.structures import CaseInsensitiveDict
 
 class _FixedOffset(datetime.tzinfo):
     """Fixed offset in minutes east from UTC.
@@ -52,6 +50,7 @@ class _FixedOffset(datetime.tzinfo):
 
 def _parse_http_date(text):
     """Parse a HTTP date format into datetime."""
+    import email.utils
     parsed_date = email.utils.parsedate_tz(text)
     return datetime.datetime(
         *parsed_date[:6],
@@ -80,6 +79,7 @@ def get_retry_after(response):
     :return: Value of Retry-After in seconds.
     :rtype: float or None
     """
+    from requests.structures import CaseInsensitiveDict
     headers = CaseInsensitiveDict(response.http_response.headers)
     retry_after = headers.get("retry-after")
     if retry_after:

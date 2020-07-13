@@ -25,12 +25,7 @@
 # --------------------------------------------------------------------------
 
 import logging
-from .configuration import Configuration
-from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
-from .pipeline.policies import (
-    ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
-)
 
 try:
     from typing import TYPE_CHECKING
@@ -78,6 +73,7 @@ class AsyncPipelineClient(PipelineClientBase):
     """
 
     def __init__(self, base_url, **kwargs):
+        from .configuration import Configuration
         super(AsyncPipelineClient, self).__init__(base_url)
         self._config = kwargs.pop("config", None) or Configuration(**kwargs)
         self._base_url = base_url
@@ -97,6 +93,10 @@ class AsyncPipelineClient(PipelineClientBase):
         await self._pipeline.__aexit__()
 
     def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
+        from .pipeline import AsyncPipeline
+        from .pipeline.policies import (
+            ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
+        )
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
 

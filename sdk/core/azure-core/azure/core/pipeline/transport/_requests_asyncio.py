@@ -23,14 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
 from typing import Any, Union, Optional, AsyncIterator as AsyncIteratorType
-import urllib3 # type: ignore
-
-import requests
 
 from azure.core.exceptions import (
     ServiceRequestError,
@@ -50,6 +46,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def _get_running_loop():
+    import asyncio
     try:
         return asyncio.get_running_loop()
     except AttributeError:  # 3.5 / 3.6
@@ -73,6 +70,16 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
             :dedent: 4
             :caption: Asynchronous transport with asyncio.
     """
+
+    def __init__(self, **kwargs):
+        # type: (Any) -> None
+        # pylint:disable=unused-import
+        try:
+            import asyncio
+        except ImportError:
+            raise ImportError("Please make sure asyncio library are installed")
+        super(AsyncioRequestsTransport, self).__init__(**kwargs)
+
     async def __aenter__(self):
         return super(AsyncioRequestsTransport, self).__enter__()
 
@@ -80,6 +87,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         return super(AsyncioRequestsTransport, self).__exit__()
 
     async def sleep(self, duration):
+        import asyncio
         await asyncio.sleep(duration)
 
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
@@ -94,6 +102,8 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
          Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
+        import requests
+        import urllib3 # type: ignore
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
         response = None
@@ -142,6 +152,11 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
     :param int content_length: size of body in bytes.
     """
     def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
+        # pylint:disable=unused-import
+        try:
+            import asyncio
+        except ImportError:
+            raise ImportError("Please make sure asyncio library are installed")
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
@@ -154,6 +169,8 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
+        import asyncio
+        import requests
         loop = _get_running_loop()
         retry_active = True
         retry_total = 3

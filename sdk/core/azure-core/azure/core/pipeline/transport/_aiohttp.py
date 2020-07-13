@@ -28,10 +28,6 @@ from collections.abc import AsyncIterator
 
 import logging
 
-from requests.exceptions import (
-    ChunkedEncodingError,
-    StreamConsumedError)
-
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import Pipeline
@@ -230,6 +226,10 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
 
     async def __anext__(self):
         import asyncio
+        from requests.exceptions import (
+            ChunkedEncodingError,
+            StreamConsumedError
+        )
         retry_active = True
         retry_total = 3
         retry_interval = 1000

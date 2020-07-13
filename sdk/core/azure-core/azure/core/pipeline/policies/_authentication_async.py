@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import asyncio
-
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
@@ -20,6 +18,11 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOH
     """
 
     def __init__(self, credential, *scopes, **kwargs):
+        try:
+            import asyncio
+        except ImportError:
+            raise ImportError("Please make sure asyncio library are installed")
+
         super().__init__(credential, *scopes, **kwargs)
         self._lock = asyncio.Lock()
 

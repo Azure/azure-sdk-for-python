@@ -25,13 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import abc
-from email.message import Message
 
-try:
-    from email import message_from_bytes as message_parser
-except ImportError:  # 2.7
-    from email import message_from_string as message_parser  # type: ignore
-from io import BytesIO
 import json
 import logging
 import os
@@ -44,7 +38,6 @@ try:
 except ImportError:
     binary_type = bytes  # type: ignore
     from urllib.parse import urlparse
-import xml.etree.ElementTree as ET
 
 from typing import (
     TYPE_CHECKING,
@@ -348,6 +341,7 @@ class HttpRequest(object):
         :param data: The request field data.
         :type data: XML node
         """
+        import xml.etree.ElementTree as ET
         if data is None:
             self.data = None
         else:
@@ -437,6 +431,7 @@ class HttpRequest(object):
         :returns: The updated index after all parts in this request have been added.
         :rtype: int
         """
+        from email.message import Message
         if not self.multipart_mixed_info:
             return 0
 
@@ -567,6 +562,10 @@ class _HttpResponseBase(object):
         If parts are application/http use http_response_type or HttpClientTransportResponse
         as enveloppe.
         """
+        try:
+            from email import message_from_bytes as message_parser
+        except ImportError:  # 2.7
+            from email import message_from_string as message_parser  # type: ignore
         if http_response_type is None:
             http_response_type = HttpClientTransportResponse
 
@@ -674,6 +673,7 @@ class BytesIOSocket(object):
         self.bytes_data = bytes_data
 
     def makefile(self, *_):
+        from io import BytesIO
         return BytesIO(self.bytes_data)
 
 
@@ -722,6 +722,7 @@ class PipelineClientBase(object):
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
+        import xml.etree.ElementTree as ET
         request = HttpRequest(method, self.format_url(url))
 
         if params:

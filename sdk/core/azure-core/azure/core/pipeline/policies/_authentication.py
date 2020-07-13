@@ -4,8 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-import six
-
 from . import SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
 
@@ -104,6 +102,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
     """
     def __init__(self, credential, name, **kwargs):  # pylint: disable=unused-argument
         # type: (AzureKeyCredential, str, Any) -> None
+        import six
         super(AzureKeyCredentialPolicy, self).__init__()
         self._credential = credential
         if not name:

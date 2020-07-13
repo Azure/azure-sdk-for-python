@@ -29,10 +29,6 @@ This module is the requests implementation of Pipeline ABC
 from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
 import logging
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
-try:
-    from urlparse import urlparse  # type: ignore
-except ImportError:
-    from urllib.parse import urlparse
 
 from azure.core.exceptions import TooManyRedirectsError
 
@@ -123,6 +119,10 @@ class RedirectPolicy(HTTPPolicy):
         :rtype: bool
         """
         # TODO: Revise some of the logic here.
+        try:
+            from urlparse import urlparse  # type: ignore
+        except ImportError:
+            from urllib.parse import urlparse
         settings['redirects'] -= 1
         settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
 

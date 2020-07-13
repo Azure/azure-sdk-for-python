@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 
-import asyncio
 import abc
 from collections.abc import AsyncIterator
 
@@ -77,10 +76,16 @@ class _PartGenerator(AsyncIterator):
     """
 
     def __init__(self, response: "AsyncHttpResponse") -> None:
+        # pylint:disable=unused-import
+        try:
+            import asyncio
+        except ImportError:
+            raise ImportError("Please make sure asyncio library are installed")
         self._response = response
         self._parts = None
 
     async def _parse_response(self):
+        import asyncio
         responses = self._response._get_raw_parts(  # pylint: disable=protected-access
             http_response_type=AsyncHttpClientTransportResponse
         )
@@ -180,4 +185,5 @@ class AsyncHttpTransport(
         """Close the session if it is not externally owned."""
 
     async def sleep(self, duration):
+        import asyncio
         await asyncio.sleep(duration)
