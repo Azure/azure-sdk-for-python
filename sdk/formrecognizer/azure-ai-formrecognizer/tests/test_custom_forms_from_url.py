@@ -199,7 +199,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
             self.form_url_jpg,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = poller.result()
@@ -233,7 +233,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
             blob_sas_url,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = poller.result()
@@ -269,7 +269,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
             self.form_url_jpg,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = poller.result()
@@ -303,7 +303,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
             blob_sas_url,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = poller.result()
@@ -363,7 +363,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
             blob_sas_url,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = poller.result()
@@ -399,7 +399,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         poller = fr_client.begin_recognize_custom_forms_from_url(
             model.model_id,
             blob_sas_url,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         form = poller.result()

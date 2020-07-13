@@ -131,7 +131,7 @@ class ContainerSamplesAsync(object):
                                             expiry=datetime.utcnow() + timedelta(hours=1),
                                             start=datetime.utcnow() - timedelta(minutes=1))
 
-                identifiers = {'test': access_policy}
+                identifiers = {'my-access-policy-id': access_policy}
 
                 # Set the access policy on the container
                 await container_client.set_container_access_policy(signed_identifiers=identifiers)
