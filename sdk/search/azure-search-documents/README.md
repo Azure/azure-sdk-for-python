@@ -350,8 +350,10 @@ async with client:
   results = await client.search(search_text="hotel")
   async for result in results:
     print("{}: {})".format(result["hotelId"], result["hotelName"]))
+
 ...
 
+```
 
 ## Troubleshooting
 
