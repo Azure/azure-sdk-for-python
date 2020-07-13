@@ -34,10 +34,6 @@ EVENTHUB_PREFIX = "eh"
 EVENTHUB_DEFAULT_AUTH_RULE_NAME = 'RootManageSharedAccessKey'
 LOCATION = "westus"
 
-TENANT_ID = os.environ["AZURE_TENANT_ID"]
-CLIENT_ID = os.environ["AZURE_CLIENT_ID"]
-SECRET = os.environ["AZURE_CLIENT_SECRET"]
-SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -78,22 +74,24 @@ log = get_logger(None, logging.DEBUG)
 
 @pytest.fixture(scope="session")
 def resource_group():
-        resource_client = ResourceManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
-        resource_group_name = RES_GROUP_PREFIX + str(uuid.uuid4())
+    SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
+    resource_client = ResourceManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
+    resource_group_name = RES_GROUP_PREFIX + str(uuid.uuid4())
+    try:
+        rg = resource_client.resource_groups.create_or_update(
+           resource_group_name, {"location": LOCATION}
+        )
+        yield rg
+    finally:
         try:
-            rg = resource_client.resource_groups.create_or_update(
-               resource_group_name, {"location": LOCATION}
-            )
-            yield rg
-        finally:
-            try:
-                resource_client.resource_groups.begin_delete(resource_group_name)
-            except:
-                warnings.warn(UserWarning("resource group teardown failed"))
+            resource_client.resource_groups.begin_delete(resource_group_name)
+        except:
+            warnings.warn(UserWarning("resource group teardown failed"))
 
 
 @pytest.fixture(scope="session")
 def eventhub_namespace(resource_group):
+    SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
     resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
     namespace_name = NAMESPACE_PREFIX + str(uuid.uuid4())
     try:
@@ -114,6 +112,7 @@ def eventhub_namespace(resource_group):
 
 @pytest.fixture()
 def live_eventhub(resource_group, eventhub_namespace):  # pylint: disable=redefined-outer-name
+    SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
     resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
     eventhub_name = EVENTHUB_PREFIX + str(uuid.uuid4())
     eventhub_ns_name, connection_string, key_name, primary_key = eventhub_namespace
@@ -174,28 +173,6 @@ def invalid_policy(live_eventhub):
         "invalid",
         live_eventhub['access_key'],
         live_eventhub['event_hub'])
-
-
-@pytest.fixture(scope="session")
-def aad_credential():
-    try:
-        return os.environ['AZURE_CLIENT_ID'], os.environ['AZURE_CLIENT_SECRET'], os.environ['AZURE_TENANT_ID']
-    except KeyError:
-        pytest.skip('No Azure Active Directory credential found')
-
-@pytest.fixture(scope="session")
-def aad_credential_test_eh():
-    try:
-        config = {}
-        config['hostname'] = os.environ['EVENT_HUB_HOSTNAME']
-        config['event_hub'] = os.environ['EVENT_HUB_NAME']
-        config['key_name'] = os.environ['EVENT_HUB_SAS_POLICY']
-        config['access_key'] = os.environ['EVENT_HUB_SAS_KEY']
-        config['namespace'] = os.environ['EVENT_HUB_NAMESPACE']
-    except KeyError:
-        pytest.skip("Live EventHub configuration not found.")
-    else:
-        return config
 
 
 @pytest.fixture()

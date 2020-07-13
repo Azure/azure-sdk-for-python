@@ -7,19 +7,19 @@ import pytest
 import time
 import threading
 
+from azure.identity import EnvironmentCredential
 from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient
 
 
 @pytest.mark.liveTest
-def test_client_secret_credential(aad_credential, aad_credential_test_eh):
-    from azure.identity import EnvironmentCredential
+def test_client_secret_credential(live_eventhub):
     credential = EnvironmentCredential()
-    producer_client = EventHubProducerClient(fully_qualified_namespace=aad_credential_test_eh['hostname'],
-                                             eventhub_name=aad_credential_test_eh['event_hub'],
+    producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                             eventhub_name=live_eventhub['event_hub'],
                                              credential=credential,
                                              user_agent='customized information')
-    consumer_client = EventHubConsumerClient(fully_qualified_namespace=aad_credential_test_eh['hostname'],
-                                             eventhub_name=aad_credential_test_eh['event_hub'],
+    consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                             eventhub_name=live_eventhub['event_hub'],
                                              consumer_group='$default',
                                              credential=credential,
                                              user_agent='customized information')
@@ -44,4 +44,5 @@ def test_client_secret_credential(aad_credential, aad_credential_test_eh):
 
     worker.join()
     assert on_event.called is True
-
+    assert on_event.partition_id == "0"
+    assert list(on_event.event.body)[0] == 'A single message'.encode('utf-8')
