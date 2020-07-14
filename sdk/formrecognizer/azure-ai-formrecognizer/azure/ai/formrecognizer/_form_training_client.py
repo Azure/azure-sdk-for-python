@@ -11,6 +11,8 @@ from typing import (
     Any,
     Dict,
     Union,
+    List,
+    Optional,
     TYPE_CHECKING,
 )
 from azure.core.tracing.decorator import distributed_trace
