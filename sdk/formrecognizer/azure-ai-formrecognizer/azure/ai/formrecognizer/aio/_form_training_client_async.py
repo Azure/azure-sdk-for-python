@@ -39,6 +39,7 @@ from .._models import (
     CustomFormModel
 )
 from .._user_agent import USER_AGENT
+from .._api_versions import validate_api_version
 from .._polling import TrainingPolling, CopyPolling
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -59,6 +60,9 @@ class FormTrainingClient(object):
         credential from :mod:`azure.identity`.
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
         or :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :keyword str api_version:
+        The API version of the service to use for requests. It defaults to the latest service version.
+        Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -87,6 +91,8 @@ class FormTrainingClient(object):
         self._credential = credential
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        api_version = kwargs.pop('api_version', None)
+        validate_api_version(api_version)
         self._client = FormRecognizer(
             endpoint=self._endpoint,
             credential=self._credential,  # type: ignore

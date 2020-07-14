@@ -4,6 +4,10 @@
 - Fix for bug where options headers were not added to upsert_item function. Issue #11791 - thank you @aalapatirvbd.
 - Fixed error raised when a non string ID is used in an item. It now raises TypeError rather than AttributeError. Issue #11793 - thank you @Rabbit994.
 
+** Bug fixes **
+- Fixed support for dicts as inputs for get_client APIs.
+- Fixed Python 2/3 compatibility in query iterators.
+
 
 ## 4.0.0 (2020-05-20)
 
