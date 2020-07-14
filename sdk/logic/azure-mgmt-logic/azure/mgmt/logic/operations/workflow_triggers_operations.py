@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 import uuid
+from msrest.exceptions import HttpOperationError
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 
