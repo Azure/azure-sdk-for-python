@@ -20,6 +20,7 @@ def generate_account_shared_access_signature(
         ip=None,  # type:str
         protocol=None  # type:str
 ):
+    # type: (...) -> str
     """
     Generates a shared access signature for the table service.
     Use the returned signature with the sas_token parameter of TableService.
