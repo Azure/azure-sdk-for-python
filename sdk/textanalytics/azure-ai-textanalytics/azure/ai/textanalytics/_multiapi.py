@@ -17,11 +17,7 @@ class ApiVersion(str, Enum):
     V3_0 = "v3.0"
 
 
-DEFAULT_VERSION = ApiVersion.V3_0
-
-
 def load_generated_api(api_version, aio=False):
-    api_version = api_version or DEFAULT_VERSION
     try:
         # api_version could be a string; map it to an instance of ApiVersion
         # (this is a no-op if it's already an instance of ApiVersion)

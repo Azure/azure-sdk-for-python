@@ -378,6 +378,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
+        :keyword bool show_aspects: Whether to conduct aspect-based sentiment analysis.
+            Aspect-based sentiment analysis provides more granular
+            information about the opinions related to aspects (which are the attributes of products or services)
+            in text. If set to true, the returned :class:`~azure.ai.textanalytics.SentenceSentiment` objects
+            will have property `aspects` containing the result of this analysis
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -408,11 +413,26 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        show_aspects = kwargs.pop("show_aspects", None)
+
         try:
+            if self._api_version == "v3.0":
+                if show_aspects is not None:
+                    raise TypeError(
+                        "Parameter 'show_aspects' is only added for API version v3.1-preview.1 and up"
+                    )
+                return await self._client.sentiment(
+                    documents=docs,
+                    model_version=model_version,
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", sentiment_result),
+                    **kwargs
+                )
             return await self._client.sentiment(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
+                opinion_mining=show_aspects,
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
