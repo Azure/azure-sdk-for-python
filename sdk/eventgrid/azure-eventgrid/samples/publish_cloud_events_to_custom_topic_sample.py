@@ -6,7 +6,7 @@ from random import randint, sample
 import time
 import uuid
 from datetime import timezone
-from dateutil.tz import tzlocal
+from dateutil.tz import tzutc
 import datetime as dt
 
 PACKAGE_PARENT = '..'
@@ -46,7 +46,6 @@ while True:
                 id=event_uuid,
                 type="Azure.Sdk.Demo",
                 source="https://egdemo.dev/demoevent",
-                time=dt.datetime.now(tzlocal()).isoformat(),
                 data={"team": sample_members}
                 )
         event_list.append(event)

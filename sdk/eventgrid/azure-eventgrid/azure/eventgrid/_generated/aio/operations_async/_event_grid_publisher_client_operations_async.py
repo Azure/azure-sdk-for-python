@@ -24,7 +24,7 @@ class EventGridPublisherClientOperationsMixin:
         topic_hostname: str,
         events: List["models.EventGridEvent"],
         **kwargs
-    ) -> None:
+    ) -> object:
         """Publishes a batch of Event Grid events to an Azure Event Grid topic.
 
         :param topic_hostname: The host name of the topic, e.g. topic1.westus2-1.eventgrid.azure.net.
@@ -32,11 +32,11 @@ class EventGridPublisherClientOperationsMixin:
         :param events: An array of events to be published to Event Grid.
         :type events: list[~event_grid_publisher_client.models.EventGridEvent]
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: object, or the result of cls(response)
+        :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01"
@@ -56,6 +56,7 @@ class EventGridPublisherClientOperationsMixin:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(events, '[EventGridEvent]')
@@ -69,9 +70,12 @@ class EventGridPublisherClientOperationsMixin:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = self._deserialize('object', pipeline_response)
 
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
     publish_event_grid_events.metadata = {'url': '/api/events'}  # type: ignore
 
     async def publish_cloud_event_events(
@@ -79,7 +83,7 @@ class EventGridPublisherClientOperationsMixin:
         topic_hostname: str,
         events: List["models.CloudEvent"],
         **kwargs
-    ) -> None:
+    ) -> object:
         """Publishes a batch of cloud events to an Azure Event Grid topic.
 
         :param topic_hostname: The host name of the topic, e.g. topic1.westus2-1.eventgrid.azure.net.
@@ -87,11 +91,11 @@ class EventGridPublisherClientOperationsMixin:
         :param events: An array of cloud events to be published to Event Grid.
         :type events: list[~event_grid_publisher_client.models.CloudEvent]
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: object, or the result of cls(response)
+        :rtype: object
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType[object]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01"
@@ -111,6 +115,7 @@ class EventGridPublisherClientOperationsMixin:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(events, '[CloudEvent]')
@@ -124,7 +129,10 @@ class EventGridPublisherClientOperationsMixin:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = self._deserialize('object', pipeline_response)
 
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
     publish_cloud_event_events.metadata = {'url': '/api/events'}  # type: ignore

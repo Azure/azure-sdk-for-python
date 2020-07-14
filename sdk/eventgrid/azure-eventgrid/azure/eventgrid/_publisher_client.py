@@ -1,3 +1,4 @@
+#
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -59,11 +60,13 @@ class EventGridPublisherClient(EventGridPublisherClientImpl):
          """
 
         if isinstance(events[0], CloudEvent):
-            self.publish_cloud_event_events(self._topic_hostname, events)
+            response = self.publish_cloud_event_events(self._topic_hostname, events)
         elif isinstance(events[0], EventGridEvent):
-            self.publish_event_grid_events(self._topic_hostname, events)
+            response = self.publish_event_grid_events(self._topic_hostname, events)
         else:
             print("Event schema is not correct. Please send as list of CloudEvent or list of EventGridEvent.")
+        
+        return response
 
     @classmethod
     def _get_authentication_policy(cls, credential):

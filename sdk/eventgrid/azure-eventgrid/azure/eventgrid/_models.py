@@ -6,6 +6,8 @@
 import datetime
 from copy import deepcopy
 from typing import Optional
+from dateutil.tz import tzutc
+import datetime as dt
 
 from msrest.serialization import Model
 
@@ -50,7 +52,7 @@ class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attrib
         self.source = kwargs['source']
         self.data = kwargs.get('data', None)
         self.type = kwargs['type']
-        self.time = kwargs.get('time', None)
+        self.time = kwargs.get('time', dt.datetime.now(tzutc()).isoformat())
         self.specversion = kwargs['specversion']
         self.dataschema = kwargs.get('dataschema', None)
         self.datacontenttype = kwargs.get('datacontenttype', None)
@@ -131,7 +133,7 @@ class EventGridEvent(InternalEventGridEvent):
         self.subject = kwargs['subject']
         self.data = kwargs['data']
         self.event_type = kwargs['event_type']
-        self.event_time = kwargs['event_time']
+        self.event_time = kwargs.get('event_time', dt.datetime.now(tzutc()).isoformat())
         self.metadata_version = None
         self.data_version = kwargs['data_version']
 
