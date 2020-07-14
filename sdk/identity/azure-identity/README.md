@@ -138,13 +138,13 @@ client secret and certificate are both present, the client secret will be used.
 
 # Examples
 
-Following examples are provided below:
+The following examples are provided below:
 
-* [Authenticating with DefaultAzureCredential](#authenticating-with-defaultazurecredential)
-* [Authenticating a service principal with a client secret](#authenticating-a-service-principal-with-a-client-secret)
-* [Authenticating a service principal with a certificate](#authenticating-a-service-principal-with-a-certificate)
-* [Chaining credentials](#chaining-credentials)
-* [Async credentials](#async-credentials)
+* [Authenticating with DefaultAzureCredential](#authenticating-with-defaultazurecredential "Authenticating with DefaultAzureCredential")
+* [Authenticating a service principal with a client secret](#authenticating-a-service-principal-with-a-client-secret "Authenticating a service principal with a client secret")
+* [Authenticating a service principal with a certificate](#authenticating-a-service-principal-with-a-certificate "Authenticating a service principal with a certificate")
+* [Chaining credentials](#chaining-credentials "Chaining credentials")
+* [Async credentials](#async-credentials "Async credentials")
 
 ## Authenticating with `DefaultAzureCredential`
 This example demonstrates authenticating the `BlobServiceClient` from the
