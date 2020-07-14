@@ -405,7 +405,12 @@ class FormTrainingClient(object):
         model_ids: List[str],
         display_name: Optional[str] = None,
         **kwargs
-    ) -> CustomFormModel:
+    ) -> AsyncLROPoller[CustomFormModel]:
+        """Begin Compose Model
+
+        :param list[str] model_ids:
+        :param str display_name:
+        """
         pass
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:

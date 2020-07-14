@@ -382,6 +382,11 @@ class FormTrainingClient(object):
         **kwargs
     ):
         # type: (List[str], Optional[str], Any) -> LROPoller[CustomFormModel]
+        """Begin Compose Model
+
+        :param list[str] model_ids:
+        :param str display_name:
+        """
         pass
 
     def get_form_recognizer_client(self, **kwargs):
