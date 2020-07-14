@@ -10,15 +10,13 @@ from azure.table._shared.encryption import _validate_not_none
 from azure.table._shared.shared_access_signature import _SharedAccessHelper, SharedAccessSignature, QueryStringConstants
 
 
-def generate_account_shared_access_signature(
+def generate_account_sas(
         account_name,  # type:str
         account_key,  # type:str
         resource_types,   # type:ResourceTypes
         permission,  # type:AccountSasPermissions
         expiry,  # type:Union[datetime,str]
-        start=None,  # type:Union[datetime,str]
-        ip=None,  # type:str
-        protocol=None  # type:str
+        **kwargs  # type:Any
 ):
     # type: (...) -> str
     """
@@ -38,7 +36,7 @@ def generate_account_shared_access_signature(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: AccountPermissions
+    :type permission: AccountSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -47,24 +45,20 @@ def generate_account_shared_access_signature(
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
     :type expiry: Union[datetime,str]
-    :param start:
+    :ivar Union[datetime,str] start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: Union[datetime,str]
-    :param ip:
+    :ivar str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
-    :type ip:  str
-    :param protocol:
-        Specifies the protocol permitted for a request made. The default value
-        is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
-    :type protocol: str
+    :ivar str protocol:
+        Specifies the protocol permitted for a request made.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -73,23 +67,13 @@ def generate_account_shared_access_signature(
 
     sas = TableSharedAccessSignature(account_name, account_key)
     return sas.generate_account(TableServices(), resource_types, permission,
-                                expiry, start=start, ip=ip, protocol=protocol)
+                                expiry, start=kwargs.pop('start'), ip=kwargs.pop('ip'), protocol=kwargs.pop('protocol'))
 
 
 def generate_table_sas(
         account_name,  # type: str
         account_key,  # type: str
         table_name,  # type: str
-        permission=None,  # type: AccountPermissions
-        expiry=None,  # type: Union[datetime,str]
-        start=None,  # type: Union[datetime,str]
-        policy_id=None,  # type: str
-        ip=None,  # type: str
-        protocol=None,  # type: str
-        start_pk=None,  # type: str
-        start_rk=None,  # type: str
-        end_pk=None,  # type: str
-        end_rk=None,  # type: str
         **kwargs  # type: Any
 ):  # type: (...) -> str
 
@@ -104,49 +88,38 @@ def generate_table_sas(
        :type account_name: str
        :param table_name: Table name
        :type table_name: str
-       :param permission:
+       :ivar TableSasPermissions permission:
            The permissions associated with the shared access signature. The
            user is restricted to operations allowed by the permissions.
            Required unless an id is given referencing a stored access policy
            which contains this field. This field must be omitted if it has been
            specified in an associated stored access policy.
-       :type permission: AccountPermissions
-       :param expiry:
+       :ivar Union[datetime,str] expiry:
            The time at which the shared access signature becomes invalid.
            Required unless an id is given referencing a stored access policy
            which contains this field. This field must be omitted if it has
            been specified in an associated stored access policy. Azure will always
            convert values to UTC. If a date is passed in without timezone info, it
            is assumed to be UTC.
-       :type expiry: datetime or str
-       :param start:
+       :ivar Union[datetime,str] start:
            The time at which the shared access signature becomes valid. If
            omitted, start time for this call is assumed to be the time when the
            storage service receives the request. Azure will always convert values
            to UTC. If a date is passed in without timezone info, it is assumed to
            be UTC.
-       :type start: datetime or str
-       :param ip:
+       :ivar str ip:
            Specifies an IP address or a range of IP addresses from which to accept requests.
            If the IP address from which the request originates does not match the IP address
            or address range specified on the SAS token, the request is not authenticated.
            For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
            restricts the request to those IP addresses.
-       :type ip: str
-       :param policy_id:
-       :type policy_id: str
-       :param protocol:
-           Specifies the protocol permitted for a request made. The default value
-           is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
-       :type protocol: str
-       :param end_rk: End row key
-       :type end_rk: str
-       :param end_pk: End partition key
-       :type end_pk: str
-       :param start_rk: Starting row key
-       :type start_rk: str
-       :param start_pk: Starting partition key
-       :type start_pk: str
+       :ivar str policy_id: Access policy ID.
+       :ivar str protocol:
+           Specifies the protocol permitted for a request made.
+       :ivar str end_rk: End row key
+       :ivar str end_pk: End partition key
+       :ivar str start_rk: Starting row key
+       :ivar str start_pk: Starting partition key
        :return: A Shared Access Signature (sas) token.
        :rtype: str
        """
@@ -154,16 +127,16 @@ def generate_table_sas(
     sas = TableSharedAccessSignature(account_name, account_key)
     return sas.generate_table(
         table_name=table_name,
-        permission=permission,
-        expiry=expiry,
-        start=start,
-        policy_id=policy_id,
-        ip=ip,
-        protocol=protocol,
-        start_pk=start_pk,
-        start_rk=start_rk,
-        end_pk=end_pk,
-        end_rk=end_rk,
+        permission=kwargs.pop('permission'),
+        expiry=kwargs.pop('expiry'),
+        start=kwargs.pop('start'),
+        policy_id=kwargs.pop('policy_id'),
+        ip=kwargs.pop('ip'),
+        protocol=kwargs.pop('protocol'),
+        start_pk=kwargs.pop('start_pk'),
+        start_rk=kwargs.pop('start_rk'),
+        end_pk=kwargs.pop('end_pk'),
+        end_rk=kwargs.pop('end_rk'),
         **kwargs
     )  # type: ignore
 
@@ -191,7 +164,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
                        expiry=None, start=None, policy_id=None,
                        ip=None, protocol=None,
                        start_pk=None, start_rk=None,
-                       end_pk=None, end_rk=None):
+                       end_pk=None, end_rk=None, **kwargs):
         """
         Generates a shared access signature for the table.
         Use the returned signature with the sas_token parameter of TableService.
