@@ -379,9 +379,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
         :keyword bool show_aspects: Whether to conduct aspect-based sentiment analysis.
-            Aspect-based sentiment analysis provides more granular
-            information about the opinions related to aspects (which are the attributes of products or services)
-            in text. If set to true, the returned :class:`~azure.ai.textanalytics.SentenceSentiment` objects
+            Aspect-based sentiment analysis provides more granular analysis of sentiment and
+            opinions around specific aspects or attributes of a product or service.
+            If set to true, the returned :class:`~azure.ai.textanalytics.SentenceSentiment` objects
             will have property `aspects` containing the result of this analysis
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.

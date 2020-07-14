@@ -25,7 +25,9 @@ from ._models import (
     LinkedEntityMatch,
     TextDocumentBatchStatistics,
     SentenceSentiment,
-    SentimentConfidenceScores
+    SentimentConfidenceScores,
+    SentenceAspect,
+    AspectOpinion
 )
 
 __all__ = [
@@ -48,7 +50,9 @@ __all__ = [
     'LinkedEntityMatch',
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
-    'SentimentConfidenceScores'
+    'SentimentConfidenceScores',
+    'SentenceAspect',
+    'AspectOpinion'
 ]
 
 __version__ = VERSION

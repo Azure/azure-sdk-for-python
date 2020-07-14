@@ -638,7 +638,7 @@ class SentenceSentiment(DictMixin):
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
     :ivar aspects: The list of aspects of the sentence. An aspect is a
-        key attribute of a sentence, for example the attributes of a product
+        key phrase of a sentence, for example the attributes of a product
         or a service. Only returned if `show_aspects` is set to True in
         call to `analyze_sentiment`
     :vartype aspects:
@@ -675,7 +675,7 @@ class SentenceAspect(DictMixin):
     """SentenceAspect contains the related opinions, predicted sentiment,
     confidence scores and other information about an aspect of a sentence.
     An aspect of a sentence is a key component of a sentence, for example
-    in the sentence "The food is good", "food" is the aspect.
+    in the sentence "The food is good", "food" is an aspect.
 
     :ivar str text: The aspect text.
     :ivar str sentiment: The predicted Sentiment for the aspect. Possible values
@@ -688,7 +688,7 @@ class SentenceAspect(DictMixin):
     :ivar opinions: All of the opinions in the sentence related to this aspect.
     :vartype opinions: list[~azure.ai.textanalytics.AspectOpinion]
     :ivar int offset: The aspect offset from the start of the sentence.
-    :ivar int length: The lenght of the aspect.
+    :ivar int length: The length of the aspect.
     """
 
     def __init__(self, **kwargs):
@@ -755,7 +755,7 @@ class AspectOpinion(DictMixin):
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
     :ivar int offset: The opinion offset from the start of the sentence.
-    :ivar int length: The lenght of the opinion.
+    :ivar int length: The length of the opinion.
     :ivar bool is_negated: Whether the opinion is negated. For example, in
         "The food is not good", the opinion "good" is negated.
     """
