@@ -49,8 +49,8 @@ class AadClientBase(ABC):
         self._cache = cache or TokenCache()
         self._client_id = client_id
         self._pipeline = self._build_pipeline(**kwargs)
-        self._token_refresh_retry_timeout = DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT  # default 30s
-        self._token_refresh_offset = DEFAULT_REFRESH_OFFSET  # default 2 min
+        self._token_refresh_retry_timeout = DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT
+        self._token_refresh_offset = DEFAULT_REFRESH_OFFSET
         self._last_refresh_time = 0
 
     def get_cached_access_token(self, scopes, query=None):
