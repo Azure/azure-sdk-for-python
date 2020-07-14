@@ -155,10 +155,6 @@ class ResourceTypes(object):
     :param bool service:
         Access to service-level APIs (e.g., Get/Set Service Properties,
         Get Service Stats, List Containers/Queues/Shares)
-    :param bool container:
-        Access to container-level APIs (e.g., Create/Delete Container,
-        Create/Delete Queue, Create/Delete Share,
-        List Blobs/Files and Directories)
     :param bool object:
         Access to object-level APIs for blobs, queue messages, and
         files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
@@ -226,14 +222,14 @@ class AccountSasPermissions(object):
     """
 
     def __init__(self, **kwargs):  # pylint: disable=redefined-builtin
-        self.read = kwargs.pop('read')
-        self.write = kwargs.pop('write')
-        self.delete = kwargs.pop('delete')
-        self.list = kwargs.pop('list')
-        self.add = kwargs.pop('add')
-        self.create = kwargs.pop('create')
-        self.update = kwargs.pop('update')
-        self.process = kwargs.pop('process')
+        self.read = kwargs.pop('read', None)
+        self.write = kwargs.pop('write', None)
+        self.delete = kwargs.pop('delete', None)
+        self.list = kwargs.pop('list', None)
+        self.add = kwargs.pop('add', None)
+        self.create = kwargs.pop('create', None)
+        self.update = kwargs.pop('update', None)
+        self.process = kwargs.pop('process', None)
         self._str = (('r' if self.read else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +

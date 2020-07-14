@@ -12,7 +12,7 @@ from azure.table._shared._common_conversion import _decode_base64_to_bytes
 from azure.table._generated.models import TableProperties
 from azure.core.exceptions import ResourceExistsError
 
-from ._shared.models import StorageErrorCode
+from ._shared.models import TableErrorCode
 
 
 def deserialize_metadata(response, _, headers):

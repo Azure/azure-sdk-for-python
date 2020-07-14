@@ -358,32 +358,28 @@ class TableEntityPropertiesPaged(PageIterator):
 class TableSasPermissions(object):
     def __init__(
             self,
-            query=False,  # type: bool
-            add=False,  # type: bool
-            update=False,  # type: bool
-            delete=False,  # type: bool
             _str=None,  # type: str
             **kwargs  # type: Any
     ):
         # type: (...) -> None
         """
-        :param bool query:
+        :ivar bool query:
             Get entities and query entities.
-        :param bool add:
+        :ivar bool add:
             Add entities. Add and Update permissions are required for upsert operations.
-        :param bool update:
+        :ivar bool update:
             Update entities. Add and Update permissions are required for upsert operations.
-        :param bool delete:
+        :ivar bool delete:
             Delete entities.
         :param str _str:
             A string representing the permissions.
         """
         if not _str:
             _str = ''
-        self.query = query or ('r' in _str)
-        self.add = add or ('a' in _str)
-        self.update = update or ('u' in _str)
-        self.delete = delete or ('d' in _str)
+        self.query = kwargs.pop('query', None) or ('r' in _str)
+        self.add = kwargs.pop('add', None) or ('a' in _str)
+        self.update = kwargs.pop('update', None) or ('u' in _str)
+        self.delete = kwargs.pop('delete', None) or ('d' in _str)
 
     def __or__(self, other):
         return TableSasPermissions(_str=str(self) + str(other))
@@ -397,11 +393,35 @@ class TableSasPermissions(object):
                 ('u' if self.update else '') +
                 ('d' if self.delete else ''))
 
+    @classmethod
+    def from_string(cls, permission, **kwargs):  # pylint:disable=W0613
+        """Create AccountSasPermissions from a string.
 
-TableSasPermissions.QUERY = TableSasPermissions(query=True)
-TableSasPermissions.ADD = TableSasPermissions(add=True)
-TableSasPermissions.UPDATE = TableSasPermissions(update=True)
-TableSasPermissions.DELETE = TableSasPermissions(delete=True)
+        To specify read, write, delete, etc. permissions you need only to
+        include the first letter of the word in the string. E.g. for read and write
+        permissions you would provide a string "rw".
+
+        :param str permission: Specify permissions in
+            the string with the first letter of the word.
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: A AccountSasPermissions object
+        :rtype: ~azure.table.AccountSasPermissions
+        """
+        p_query = 'r' in permission
+        p_add = 'a' in permission
+        p_delete = 'd' in permission
+        p_update = 'u' in permission
+
+        parsed = cls(
+            **dict(kwargs, query=p_query, add=p_add, delete=p_delete, update=p_update))
+        parsed._str = permission  # pylint: disable = protected-access
+        return parsed
+
+
+TableSasPermissions.QUERY = TableSasPermissions(**dict(query=True))
+TableSasPermissions.ADD = TableSasPermissions(**dict(add=True))
+TableSasPermissions.UPDATE = TableSasPermissions(**dict(update=True))
+TableSasPermissions.DELETE = TableSasPermissions(**dict(delete=True))
 
 
 def service_stats_deserialize(generated):

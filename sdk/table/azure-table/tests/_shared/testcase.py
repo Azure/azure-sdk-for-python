@@ -14,7 +14,7 @@ import time
 from datetime import datetime, timedelta
 
 from azure.table import ResourceTypes, AccountSasPermissions
-from azure.table._shared.table_shared_access_signature import generate_account_shared_access_signature
+from azure.table._shared.table_shared_access_signature import generate_account_sas
 
 try:
     import unittest.mock as mock

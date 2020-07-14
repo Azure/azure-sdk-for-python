@@ -67,7 +67,8 @@ def generate_account_sas(
 
     sas = TableSharedAccessSignature(account_name, account_key)
     return sas.generate_account(TableServices(), resource_types, permission,
-                                expiry, start=kwargs.pop('start'), ip=kwargs.pop('ip'), protocol=kwargs.pop('protocol'))
+                                expiry, start=kwargs.pop('start', None), ip=kwargs.pop('ip', None),
+                                protocol=kwargs.pop('protocol', None))
 
 
 def generate_table_sas(
@@ -127,16 +128,16 @@ def generate_table_sas(
     sas = TableSharedAccessSignature(account_name, account_key)
     return sas.generate_table(
         table_name=table_name,
-        permission=kwargs.pop('permission'),
-        expiry=kwargs.pop('expiry'),
-        start=kwargs.pop('start'),
-        policy_id=kwargs.pop('policy_id'),
-        ip=kwargs.pop('ip'),
-        protocol=kwargs.pop('protocol'),
-        start_pk=kwargs.pop('start_pk'),
-        start_rk=kwargs.pop('start_rk'),
-        end_pk=kwargs.pop('end_pk'),
-        end_rk=kwargs.pop('end_rk'),
+        permission=kwargs.pop('permission', None),
+        expiry=kwargs.pop('expiry', None),
+        start=kwargs.pop('start', None),
+        policy_id=kwargs.pop('policy_id', None),
+        ip=kwargs.pop('ip', None),
+        protocol=kwargs.pop('protocol', None),
+        start_pk=kwargs.pop('start_pk', None),
+        start_rk=kwargs.pop('start_rk', None),
+        end_pk=kwargs.pop('end_pk', None),
+        end_rk=kwargs.pop('end_rk', None),
         **kwargs
     )  # type: ignore
 

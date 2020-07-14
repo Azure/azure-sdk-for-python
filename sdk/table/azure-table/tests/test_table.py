@@ -32,7 +32,7 @@ from azure.core.exceptions import (
     ResourceExistsError)
 
 # ------------------------------------------------------------------------------
-from azure.table._shared.table_shared_access_signature import generate_account_shared_access_signature
+from azure.table._shared.table_shared_access_signature import generate_account_sas
 
 TEST_TABLE_PREFIX = 'pytablesync'
 
@@ -320,7 +320,7 @@ class StorageTableTest(TableTestCase):
             pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, storage_account_key)
         table = self._create_table(ts)
-        client = ts.get_table_client(table=table.table_name)
+        client = ts.get_table_client(table_name=table.table_name)
 
         # Act
         identifiers = dict()
@@ -377,12 +377,12 @@ class StorageTableTest(TableTestCase):
                 'RowKey': 'test1',
                 'text': 'hello',
             }
-            table.upsert_entity(mode=UpdateMode.merge, table_entity_properties=entity)
+            table.upsert_entity(mode=UpdateMode.merge, entity=entity)
 
             entity['RowKey'] = 'test2'
-            table.upsert_entity(mode=UpdateMode.merge, table_entity_properties=entity)
+            table.upsert_entity(mode=UpdateMode.merge, entity=entity)
 
-            token = generate_account_shared_access_signature(
+            token = generate_account_sas(
                 storage_account.name,
                 storage_account_key,
                 resource_types=ResourceTypes(object=True),
@@ -397,7 +397,7 @@ class StorageTableTest(TableTestCase):
                 credential=token,
             )
             sas_table = service.get_table_client(table.table_name)
-            entities = list(sas_table.query_entities())
+            entities = list(sas_table.list_entities())
 
             # Assert
             self.assertEqual(len(entities), 2)

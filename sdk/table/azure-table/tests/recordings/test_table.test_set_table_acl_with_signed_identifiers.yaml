@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 09 Jul 2020 12:47:35 GMT
+      - Tue, 14 Jul 2020 19:26:09 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 09 Jul 2020 12:47:35 GMT
+      - Tue, 14 Jul 2020 19:26:09 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 09 Jul 2020 12:47:24 GMT
+      - Tue, 14 Jul 2020 19:26:07 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('pytablesync45dd15a0')
       server:
@@ -50,7 +50,7 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-07-09T12:42:36Z</Start><Expiry>2020-07-09T13:47:36Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
+      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-07-14T19:21:09Z</Start><Expiry>2020-07-14T20:26:09Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
     headers:
       Accept:
       - application/xml
@@ -63,11 +63,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Thu, 09 Jul 2020 12:47:36 GMT
+      - Tue, 14 Jul 2020 19:26:09 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 09 Jul 2020 12:47:36 GMT
+      - Tue, 14 Jul 2020 19:26:09 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -79,7 +79,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 09 Jul 2020 12:47:24 GMT
+      - Tue, 14 Jul 2020 19:26:07 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -97,23 +97,23 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Thu, 09 Jul 2020 12:47:36 GMT
+      - Tue, 14 Jul 2020 19:26:09 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 09 Jul 2020 12:47:36 GMT
+      - Tue, 14 Jul 2020 19:26:09 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
     uri: https://storagename.table.core.windows.net/pytablesync45dd15a0?comp=acl
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-07-09T12:42:36.0000000Z</Start><Expiry>2020-07-09T13:47:36.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-07-14T19:21:09.0000000Z</Start><Expiry>2020-07-14T20:26:09.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 09 Jul 2020 12:47:24 GMT
+      - Tue, 14 Jul 2020 19:26:08 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -135,11 +135,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 09 Jul 2020 12:47:36 GMT
+      - Tue, 14 Jul 2020 19:26:09 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 09 Jul 2020 12:47:36 GMT
+      - Tue, 14 Jul 2020 19:26:09 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -153,7 +153,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 09 Jul 2020 12:47:24 GMT
+      - Tue, 14 Jul 2020 19:26:08 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

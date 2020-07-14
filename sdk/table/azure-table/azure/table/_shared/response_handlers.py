@@ -20,7 +20,7 @@ from azure.core.exceptions import (
     DecodeError)
 
 from .parser import _to_utc_datetime
-from .models import StorageErrorCode, UserDelegationKey, get_enum_value
+from .models import TableErrorCode, UserDelegationKey, get_enum_value
 
 
 if TYPE_CHECKING:

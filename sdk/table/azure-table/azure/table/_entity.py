@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from enum import Enum
-
 from ._shared._error import _ERROR_ATTRIBUTE_MISSING
 
 
@@ -82,32 +80,32 @@ class Table(object):
     """
 
 
-class EdmType(object, Enum):
+class EdmType(object):
     """
     Used by :class:`~.EntityProperty` to represent the type of the entity property
     to be stored by the Table service.
     """
 
-    BINARY = 'Edm.Binary'
+    BINARY = "Edm.Binary"
     ''' Represents byte data. Must be specified. '''
 
-    INT64 = 'Edm.Int64'
+    INT64 = "Edm.Int64"
     ''' Represents a number between -(2^31) and 2^31. This is the default type for Python numbers. '''
 
-    GUID = 'Edm.Guid'
+    GUID = "Edm.Guid"
     ''' Represents a GUID. Must be specified. '''
 
-    DATETIME = 'Edm.DateTime'
+    DATETIME = "Edm.DateTime"
     ''' Represents a date. This type will be inferred for Python datetime objects. '''
 
-    STRING = 'Edm.String'
+    STRING = "Edm.String"
     ''' Represents a string. This type will be inferred for Python strings. '''
 
-    INT32 = 'Edm.Int32'
+    INT32 = "Edm.Int32"
     ''' Represents a number between -(2^15) and 2^15. Must be specified or numbers will default to INT64. '''
 
-    DOUBLE = 'Edm.Double'
+    DOUBLE = "Edm.Double"
     ''' Represents a double. This type will be inferred for Python floating point numbers. '''
 
-    BOOLEAN = 'Edm.Boolean'
+    BOOLEAN = "Edm.Boolean"
     ''' Represents a boolean. This type will be inferred for Python bools. '''

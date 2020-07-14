@@ -76,7 +76,6 @@ class TableServiceClient(StorageAccountHostsMixin):
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
-            credential=None,  # type: Union[str,TokenCredential]
             **kwargs  # type: Any
     ):  # type: (...) -> TableServiceClient
         """Create TableServiceClient from a Connection String.
@@ -84,17 +83,11 @@ class TableServiceClient(StorageAccountHostsMixin):
         :param conn_str:
             A connection string to an Azure Storage account.
         :type conn_str: str
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Union[str,TokenCredential]
         :returns: A Table service client.
         :rtype: ~azure.table.TableServiceClient
         """
         account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, 'table')
+            conn_str, 'table')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
@@ -187,14 +180,13 @@ class TableServiceClient(StorageAccountHostsMixin):
         """
         table_properties = TableProperties(table_name=table_name, **kwargs)
         self._client.table.create(table_properties)
-        table = self.get_table_client(table=table_name)
+        table = self.get_table_client(table_name=table_name)
         return table
 
     @distributed_trace
     def delete_table(
             self,
             table_name,  # type: str
-            request_id_parameter=None,  # type: Optional[str]
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -202,35 +194,30 @@ class TableServiceClient(StorageAccountHostsMixin):
 
         :param table_name: The Table name.
         :type table_name: str
-        :param request_id_parameter: Request Id parameter
-        :type request_id_parameter: str
         :return: None
         :rtype: None
         """
-        self._client.table.delete(table=table_name, request_id_parameter=request_id_parameter, **kwargs)
+        self._client.table.delete(table=table_name, **kwargs)
 
     @distributed_trace
     def query_tables(
             self,
-            results_per_page=None,
-            select=None,
             filter=None,  # pylint: disable=W0622
             **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[AzureTable]
         """Queries tables under the given account.
 
-        :param results_per_page: Number of entities per page in return ItemPaged
-        :type results_per_page: int
-        :param select: Specify desired properties of an entity to return certain entities
-        :type select: str
+        :ivar int results_per_page: Number of entities per page in return ItemPaged
+        :ivar str select: Specify desired properties of an entity to return certain entities
         :param filter: Specify a filter to return certain entities
         :type filter: str
         :return: A query of tables
         :rtype: ItemPaged[AzureTable]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        query_options = QueryOptions(top=results_per_page, select=select, filter=filter)
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
+                                     filter=filter)
         command = functools.partial(self._client.table.query,
                                     **kwargs)
         return ItemPaged(
@@ -238,23 +225,49 @@ class TableServiceClient(StorageAccountHostsMixin):
             page_iterator_class=TablePropertiesPaged
         )
 
-    def get_table_client(self, table, **kwargs):
+    @distributed_trace
+    def list_tables(
+            self,
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> ItemPaged[AzureTable]
+        """Queries tables under the given account.
+
+        :ivar int results_per_page: Number of entities per page in return ItemPaged
+        :ivar str select: Specify desired properties of an entity to return certain entities
+        :param filter: Specify a filter to return certain entities
+        :type filter: str
+        :return: A query of tables
+        :rtype: ItemPaged[AzureTable]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
+                                     filter=kwargs.pop('filter', None))
+
+        command = functools.partial(self._client.table.query,
+                                    **kwargs)
+        return ItemPaged(
+            command, results_per_page=query_options,
+            page_iterator_class=TablePropertiesPaged
+        )
+
+    def get_table_client(self, table_name, **kwargs):
         # type: (Union[TableProperties, str], Optional[Any]) -> TableClient
         """Get a client to interact with the specified table.
 
        The table need not already exist.
 
-       :param table:
+       :param table_name:
            The table name
-       :type table: str
+       :type table_name: str
        :returns: A :class:`~azure.table.TableClient` object.
        :rtype: ~azure.table.TableClient
 
        """
         try:
-            table_name = table.name
+            table_name = table_name.name
         except AttributeError:
-            table_name = table
+            table_name = table_name
 
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
