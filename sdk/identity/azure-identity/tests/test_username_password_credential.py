@@ -135,18 +135,3 @@ def test_authenticate():
     # credential should have a cached access token for the scope passed to authenticate
     token = credential.get_token(scope)
     assert token.token == access_token
-
-def test_token_refresh_offset():
-    client_id = "client-id"
-    environment = "localhost"
-    issuer = "https://" + environment
-    tenant_id = "some-tenant"
-    username = "me@work.com"
-    token_refresh_options = UsernamePasswordCredential(
-        username=username,
-        password="1234",
-        authority=environment,
-        client_id=client_id,
-        tenant_id=tenant_id,
-    ).get_token_refresh_options()
-    assert "token_refresh_offset" not in token_refresh_options

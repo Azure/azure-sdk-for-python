@@ -202,10 +202,3 @@ async def test_identity_config():
     token = await credential.get_token(scope)
 
     assert token == expected_token
-
-async def test_token_refresh_offset():
-    token_refresh_options = ImdsCredential().get_token_refresh_options()
-    assert token_refresh_options.get("token_refresh_offset") == DEFAULT_REFRESH_OFFSET
-
-    token_refresh_options = ImdsCredential(token_refresh_offset=100).get_token_refresh_options()
-    assert token_refresh_options.get("token_refresh_offset") == 100

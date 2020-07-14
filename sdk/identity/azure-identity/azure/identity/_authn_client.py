@@ -65,9 +65,8 @@ class AuthnClientBase(ABC):
             authority = normalize_authority(authority) if authority else get_default_authority()
             self._auth_url = "/".join((authority, tenant.strip("/"), "oauth2/v2.0/token"))
         self._cache = kwargs.get("cache") or TokenCache()  # type: TokenCache
-        self._token_refresh_retry_timeout = kwargs.get("token_refresh_retry_timeout",
-                                                       DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT)  # default 30s
-        self._token_refresh_offset = kwargs.get("token_refresh_offset", DEFAULT_REFRESH_OFFSET)  # default 2 min
+        self._token_refresh_retry_timeout = DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT  # default 30s
+        self._token_refresh_offset = DEFAULT_REFRESH_OFFSET  # default 2 min
         self._last_refresh_time = 0
 
     @property
@@ -85,11 +84,6 @@ class AuthnClientBase(ABC):
         if now - self._last_refresh_time < self._token_refresh_retry_timeout:
             return False
         return True
-
-    @property
-    def token_refresh_offset(self):
-        # type: () -> int
-        return self._token_refresh_offset
 
     def get_cached_token(self, scopes):
         # type: (Iterable[str]) -> Optional[AccessToken]

@@ -111,14 +111,3 @@ def test_identity_config_cloud_shell():
         token = credential.get_token(scope)
 
     assert token == expected_token
-
-def test_token_refresh_offset():
-    endpoint = "http://localhost:42/token"
-    with mock.patch.dict(
-            MsiCredential.__module__ + ".os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint}, clear=True
-    ):
-        token_refresh_options = MsiCredential().get_token_refresh_options()
-        assert token_refresh_options.get("token_refresh_offset") == DEFAULT_REFRESH_OFFSET
-
-        token_refresh_options = MsiCredential(token_refresh_offset=100).get_token_refresh_options()
-        assert token_refresh_options.get("token_refresh_offset") == 100

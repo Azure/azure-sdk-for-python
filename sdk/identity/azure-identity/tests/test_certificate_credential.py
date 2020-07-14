@@ -241,10 +241,3 @@ def test_persistent_cache_multiple_clients(cert_path, cert_password):
     token_b = credential_b.get_token(scope)
     assert token_b.token == access_token_b
     assert transport_b.send.call_count == 1
-
-def test_token_refresh_offset():
-    token_refresh_options = CertificateCredential("tenant-id", "client-id", CERT_PATH).get_token_refresh_options()
-    assert token_refresh_options.get("token_refresh_offset") == DEFAULT_REFRESH_OFFSET
-
-    token_refresh_options = CertificateCredential("tenant-id", "client-id", CERT_PATH, token_refresh_offset=100).get_token_refresh_options()
-    assert token_refresh_options.get("token_refresh_offset") == 100

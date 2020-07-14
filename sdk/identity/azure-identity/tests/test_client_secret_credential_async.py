@@ -260,11 +260,3 @@ async def test_persistent_cache_multiple_clients():
     token_b = await credential_b.get_token(scope)
     assert token_b.token == access_token_b
     assert transport_b.send.call_count == 1
-
-@pytest.mark.asyncio
-async def test_token_refresh_offset():
-    token_refresh_options = ClientSecretCredential("tenant-id", "client-id", "client-secret").get_token_refresh_options()
-    assert token_refresh_options.get("token_refresh_offset") == DEFAULT_REFRESH_OFFSET
-
-    token_refresh_options = ClientSecretCredential("tenant-id", "client-id", "client-secret", token_refresh_offset=100).get_token_refresh_options()
-    assert token_refresh_options.get("token_refresh_offset") == 100

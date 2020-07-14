@@ -304,11 +304,3 @@ async def test_imds_user_assigned_identity():
     with mock.patch.dict("os.environ", clear=True):
         token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
     assert token == expected_token
-
-@pytest.mark.asyncio
-async def test_token_refresh_offset():
-    token_refresh_options = ManagedIdentityCredential().get_token_refresh_options()
-    assert token_refresh_options.get("token_refresh_offset") == DEFAULT_REFRESH_OFFSET
-
-    token_refresh_options = ManagedIdentityCredential(token_refresh_offset=100).get_token_refresh_options()
-    assert token_refresh_options.get("token_refresh_offset") == 100

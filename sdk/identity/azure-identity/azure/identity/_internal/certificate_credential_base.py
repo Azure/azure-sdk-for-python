@@ -57,7 +57,3 @@ class CertificateCredentialBase(ABC):
     @abc.abstractmethod
     def _get_auth_client(self, tenant_id, client_id, **kwargs):
         pass
-
-    def get_token_refresh_options(self):
-        # type: () -> dict
-        return {"token_refresh_offset": self._client.token_refresh_offset}

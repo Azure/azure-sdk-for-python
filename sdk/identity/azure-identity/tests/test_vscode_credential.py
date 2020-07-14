@@ -129,11 +129,3 @@ def test_mac_keychain_error():
         credential = VSCodeCredential()
         with pytest.raises(CredentialUnavailableError):
             token = credential.get_token("scope")
-
-
-def test_token_refresh_offset():
-    token_refresh_options = VSCodeCredential().get_token_refresh_options()
-    assert token_refresh_options.get("token_refresh_offset") == DEFAULT_REFRESH_OFFSET
-
-    token_refresh_options = VSCodeCredential(token_refresh_offset=100).get_token_refresh_options()
-    assert token_refresh_options.get("token_refresh_offset") == 100

@@ -49,9 +49,8 @@ class AadClientBase(ABC):
         self._cache = cache or TokenCache()
         self._client_id = client_id
         self._pipeline = self._build_pipeline(**kwargs)
-        self._token_refresh_retry_timeout = kwargs.get("token_refresh_retry_timeout",
-                                                       DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT)  # default 30s
-        self._token_refresh_offset = kwargs.get("token_refresh_offset", DEFAULT_REFRESH_OFFSET)  # default 2 min
+        self._token_refresh_retry_timeout = DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT  # default 30s
+        self._token_refresh_offset = DEFAULT_REFRESH_OFFSET  # default 2 min
         self._last_refresh_time = 0
 
     def get_cached_access_token(self, scopes, query=None):
@@ -100,11 +99,6 @@ class AadClientBase(ABC):
     @abc.abstractmethod
     def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
         pass
-
-    @property
-    def token_refresh_offset(self):
-        # type: () -> int
-        return self._token_refresh_offset
 
     def _process_response(self, response, request_time):
         # type: (PipelineResponse, int) -> AccessToken
