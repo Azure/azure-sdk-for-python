@@ -255,7 +255,6 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def delete_table(
             self,
-            request_id_parameter=None,  # type: Optional[str]
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -266,7 +265,7 @@ class TableClient(StorageAccountHostsMixin):
         :return: None
         :rtype: None
         """
-        self._client.table.delete(table=self.table_name, request_id_parameter=request_id_parameter, **kwargs)
+        self._client.table.delete(table=self.table_name, **kwargs)
 
     @distributed_trace
     def delete_entity(
@@ -323,6 +322,7 @@ class TableClient(StorageAccountHostsMixin):
 
             if "PartitionKey" in table_entity_properties and "RowKey" in table_entity_properties:
                 table_entity_properties = _add_entity_properties(table_entity_properties)
+            # TODO: Remove - and run test to see what happens with the service
             else:
                 raise ValueError
         try:
@@ -466,8 +466,7 @@ class TableClient(StorageAccountHostsMixin):
             row_key=None,  # type: Optional[str]
             **kwargs  # type: Any
     ):
-        # type: (...) -> Entity or None
-        # TODO: Return type will need to change
+        # type: (...) -> None
         """Update/Merge or Insert entity into table.
 
         :param mode: Merge or Replace and Insert on fail
@@ -490,38 +489,32 @@ class TableClient(StorageAccountHostsMixin):
 
         if mode is UpdateMode.merge:
             try:
-                merged_entity = self._client.table.merge_entity(
+                self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=table_entity_properties,
                     **kwargs
                 )
-                return merged_entity
             except ResourceNotFoundError:
-                insert_entity = self.create_entity(
+                self.create_entity(
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=table_entity_properties,
                     **kwargs
                 )
-                properties = _convert_to_entity(insert_entity)
-                return Entity(properties)
         if mode is UpdateMode.replace:
             try:
-                update_entity = self._client.table.update_entity(
+                self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=table_entity_properties,
                     **kwargs)
-                return update_entity
             except ResourceNotFoundError:
-                insert_entity = self.create_entity(
+                self.create_entity(
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=table_entity_properties,
                     **kwargs
                 )
-                properties = _convert_to_entity(insert_entity)
-                return Entity(properties)

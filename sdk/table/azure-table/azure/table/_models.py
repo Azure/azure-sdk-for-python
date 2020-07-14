@@ -101,7 +101,7 @@ class TableAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy.from_generated(generated.retention_policy)  # pylint:disable=W0212
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint:disable=W0212
             # pylint: disable=protected-access
         )
 
@@ -172,7 +172,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def from_generated(cls, generated, **kwargs):  # pylint:disable=W0613
+    def _from_generated(cls, generated, **kwargs):  # pylint:disable=W0613
         # type: (...) -> cls
         """The retention policy which determines how long the associated data should
             persist.
@@ -291,8 +291,6 @@ class TablePropertiesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = [t for t in self._response.value]
-        # props_list = [TableProperties._from_generated(q) for q in self._response.value] # pylint: disable=protected-access
-        # return self._response.next_marker or None, props_list
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 
@@ -364,7 +362,8 @@ class TableSasPermissions(object):
             add=False,  # type: bool
             update=False,  # type: bool
             delete=False,  # type: bool
-            _str=None  # type: str
+            _str=None,  # type: str
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
         """

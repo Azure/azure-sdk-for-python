@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
+
 from ._shared._error import _ERROR_ATTRIBUTE_MISSING
 
 
@@ -58,17 +60,18 @@ class EntityProperty(object):
         entity.x = EntityProperty(EdmType.STRING, 'y')
     """
 
-    def __init__(self, type=None, value=None, encrypt=False):  # pylint:disable=W0622
+    def __init__(self,
+                 type=None,  # type: Union[str,EdmType] # pylint:disable=W0622
+                 value=None  # type: Any
+                 ):
         """
         Represents an Azure Table. Returned by list_tables.
 
-        :param str type: The type of the property.
-        :param any value: The value of the property.
-        :param bool encrypt: Indicates whether or not the property should be encrypted.
+        :param Union[str, EdmType] type: The type of the property.
+        :param Any value: The value of the property.
         """
         self.type = type
         self.value = value
-        self.encrypt = encrypt
 
 
 class Table(object):
@@ -79,7 +82,7 @@ class Table(object):
     """
 
 
-class EdmType(object):
+class EdmType(object, Enum):
     """
     Used by :class:`~.EntityProperty` to represent the type of the entity property
     to be stored by the Table service.

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.table._entity import Entity, EntityProperty
+from azure.table._entity import Entity, EntityProperty, EdmType
 from azure.table._generated.models import QueryOptions, TableServiceStats
 from azure.table._shared.table_shared_access_signature import generate_table_sas, \
     generate_account_shared_access_signature
@@ -45,7 +45,7 @@ __all__ = [
     'UpdateMode',
     'Entity',
     'EntityProperty',
-    'QueryOptions',
+    'EdmType',
     'RetentionPolicy',
     'generate_table_sas'
 ]
