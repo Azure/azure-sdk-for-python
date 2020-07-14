@@ -137,11 +137,6 @@ class MsalCredential(ABC):
 
         return app
 
-    @classmethod
-    def get_token_refresh_options(cls):
-        # type: () -> dict
-        return dict()
-
 
 class ConfidentialClientCredential(MsalCredential):
     """Wraps an MSAL ConfidentialClientApplication with the TokenCredential API"""

@@ -92,7 +92,3 @@ class EnvironmentCredential(object):
             )
             raise CredentialUnavailableError(message=message)
         return self._credential.get_token(*scopes, **kwargs)
-
-    def get_token_refresh_options(self):
-        # type: () -> dict
-        return self._credential.get_token_refresh_options()

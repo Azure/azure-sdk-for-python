@@ -57,10 +57,6 @@ class AzureCliCredential(AsyncCredentialBase):
     async def close(self):
         """Calling this method is unnecessary"""
 
-    @classmethod
-    def get_token_refresh_options(cls):
-        # type: () -> dict
-        return dict()
 
 async def _run_command(command):
     if sys.platform.startswith("win"):

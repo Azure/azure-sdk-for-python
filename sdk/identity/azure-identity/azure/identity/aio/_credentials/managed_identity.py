@@ -64,9 +64,6 @@ class ManagedIdentityCredential(AsyncCredentialBase):
             raise CredentialUnavailableError(message="No managed identity endpoint found.")
         return await self._credential.get_token(*scopes, **kwargs)
 
-    def get_token_refresh_options(self):
-        # type: () -> dict
-        return self._credential.get_token_refresh_options()
 
 class _AsyncManagedIdentityBase(_ManagedIdentityBase, AsyncCredentialBase):
     def __init__(self, endpoint: str, **kwargs: "Any") -> None:

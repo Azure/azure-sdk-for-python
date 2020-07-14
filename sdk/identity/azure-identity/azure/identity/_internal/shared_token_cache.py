@@ -229,11 +229,6 @@ class SharedTokenCacheBase(ABC):
             message = "Error accessing cached data: {}".format(ex)
             six.raise_from(CredentialUnavailableError(message=message), ex)
 
-    @classmethod
-    def get_token_refresh_options(cls):
-        # type: () -> dict
-        return dict()
-
     @staticmethod
     def supported():
         # type: () -> bool

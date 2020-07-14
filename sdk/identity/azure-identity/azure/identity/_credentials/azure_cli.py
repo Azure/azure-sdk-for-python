@@ -61,11 +61,6 @@ class AzureCliCredential(object):
 
         return token
 
-    @classmethod
-    def get_token_refresh_options(cls):
-        # type: () -> dict
-        return dict()
-
 
 def parse_token(output):
     """Parse output of 'az account get-access-token' to an AccessToken.

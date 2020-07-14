@@ -74,8 +74,3 @@ class ChainedTokenCredential(object):
         attempts = _get_error_message(history)
         message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts
         raise ClientAuthenticationError(message=message)
-
-    @classmethod
-    def get_token_refresh_options(cls):
-        # type: () -> dict
-        return dict()
