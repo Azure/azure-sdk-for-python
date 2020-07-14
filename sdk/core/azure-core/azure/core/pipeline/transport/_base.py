@@ -626,7 +626,7 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
 
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 # List comprehension to raise exceptions if happened
-                [  # pylint: disable=expression-not-assigned
+                [  # pylint: disable=expression-not-assigned, unnecessary-comprehension
                     _ for _ in executor.map(parse_responses, responses)
                 ]
 

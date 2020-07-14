@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     Policy = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
 
 
+# pylint:disable=invalid-overridden-method
 class AadClient(AadClientBase):
     async def __aenter__(self):
         await self._pipeline.__aenter__()
