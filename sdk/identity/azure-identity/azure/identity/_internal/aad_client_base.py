@@ -102,7 +102,7 @@ class AadClientBase(ABC):
 
     def _process_response(self, response, request_time):
         # type: (PipelineResponse, int) -> AccessToken
-        self._last_refresh_time = int(time.time())   # no matter succeed or not, update the last refresh time
+        self._last_refresh_time = request_time   # no matter succeed or not, update the last refresh time
 
         content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
