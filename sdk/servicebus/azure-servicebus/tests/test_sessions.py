@@ -510,7 +510,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 try:
                     for m in messages:
                         with pytest.raises(TypeError):
-                            expired = m.expired
+                            expired = m._lock_expired
                         assert m.locked_until_utc is None
                         assert m.lock_token is not None
                     time.sleep(5)
@@ -557,9 +557,9 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                             print("Starting first sleep")
                             time.sleep(40)
                             print("First sleep {}".format(receiver.session._locked_until_utc - utc_now()))
-                            assert not receiver.session.expired
+                            assert not receiver.session._lock_expired
                             with pytest.raises(TypeError):
-                                message.expired
+                                message._lock_expired
                             assert message.locked_until_utc is None
                             with pytest.raises(TypeError):
                                 message.renew_lock()
@@ -572,7 +572,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                             time.sleep(40) # ensure renewer expires
                             print("Second sleep {}".format(receiver.session._locked_until_utc - utc_now()))
                             sleep_until_expired(receiver.session) # and then ensure it didn't slip a renew under the wire.
-                            assert receiver.session.expired
+                            assert receiver.session._lock_expired
                             assert isinstance(receiver.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
                                 message.complete()
@@ -632,11 +632,11 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 print_message(_logger, messages[0])
                 time.sleep(60)
                 with pytest.raises(TypeError):
-                    messages[0].expired
+                    messages[0]._lock_expired
                 with pytest.raises(TypeError):
                     messages[0].renew_lock()
                     #TODO: Bug: Why was this 30s sleep before?  compare with T1.
-                assert receiver.session.expired
+                assert receiver.session._lock_expired
                 with pytest.raises(SessionLockExpired):
                     messages[0].complete()
                 with pytest.raises(SessionLockExpired):

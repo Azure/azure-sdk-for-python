@@ -118,9 +118,9 @@ class AutoLockRenew:
     def _renewable(self, renewable):
         if self._shutdown.is_set():
             return False
-        if hasattr(renewable, 'settled') and renewable.settled:
+        if hasattr(renewable, '_settled') and renewable._settled:  # pylint: disable=protected-access
             return False
-        if renewable.expired:
+        if renewable._lock_expired:  # pylint: disable=protected-access
             return False
         return True
 

@@ -61,13 +61,6 @@ _LOGGER = logging.getLogger(__name__)
 class Message(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """A Service Bus Message.
 
-    :ivar properties: Properties of the internal AMQP message object.
-    :vartype properties: ~uamqp.message.MessageProperties
-    :ivar header: Header of the internal AMQP message object.
-    :vartype header: ~uamqp.message.MessageHeader
-    :ivar message: Internal AMQP message object.
-    :vartype message: ~uamqp.message.Message
-
     :param body: The data to send in a single message.
     :type body: str or bytes
     :keyword str encoding: The encoding for string data. Default is UTF-8.
@@ -120,7 +113,13 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def session_id(self):
         # type: () -> str
-        """The session id of the message
+        """The session identifier of the message for a sessionful entity.
+
+        For sessionful entities, this application-defined value specifies the session affiliation of the message.
+        Messages with the same session identifier are subject to summary locking and enable exact in-order
+        processing and demultiplexing. For non-sessionful entities, this value is ignored.
+
+        See Message Sessions in `https://docs.microsoft.com/azure/service-bus-messaging/message-sessions`.
 
         :rtype: str
         """
@@ -131,11 +130,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @session_id.setter
     def session_id(self, value):
-        """Set the session id on the message.
-
-        :param value: The session id for the message.
-        :type value: str
-        """
+        # type: (str) -> None
         self._amqp_properties.group_id = value
 
     @property
@@ -149,17 +144,20 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @properties.setter
     def properties(self, value):
-        """User defined properties on the message.
-
-        :param value: The application properties for the Message.
-        :type value: dict
-        """
+        # type: (dict) -> None
         self.message.application_properties = value
 
     @property
     def partition_key(self):
         # type: () -> Optional[str]
-        """
+        """ The partition key for sending a message to a partitioned entity.
+
+        Setting this value enables assigning related messages to the same internal partition, so that submission
+        sequence order is correctly recorded.
+        The partition is chosen by a hash function over this value and cannot be chosen directly.
+
+        See Partitioned queues and topics in
+        `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-partitioning`.
 
         :rtype: str
         """
@@ -169,6 +167,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @partition_key.setter
     def partition_key(self, value):
+        # type: (str) -> None
         if not self.message.annotations:
             self.message.annotations = {}
         self.message.annotations[types.AMQPSymbol(_X_OPT_PARTITION_KEY)] = value
@@ -176,7 +175,14 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def via_partition_key(self):
         # type: () -> Optional[str]
-        """
+        """ The partition key for sending a message into an entity via a partitioned transfer queue.
+
+        If a message is sent via a transfer queue in the scope of a transaction, this value selects the transfer
+        queue partition: This is functionally equivalent to `partition_key` and ensures that messages are kept
+        together and in order as they are transferred.
+
+        See Transfers and Send Via in
+        `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-transactions#transfers-and-send-via`.
 
         :rtype: str
         """
@@ -186,6 +192,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @via_partition_key.setter
     def via_partition_key(self, value):
+        # type: (str) -> None
         if not self.message.annotations:
             self.message.annotations = {}
         self.message.annotations[types.AMQPSymbol(_X_OPT_VIA_PARTITION_KEY)] = value
@@ -193,7 +200,15 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def time_to_live(self):
         # type: () -> Optional[datetime.timedelta]
-        """
+        """The life duration of a message.
+
+        This value is the relative duration after which the message expires, starting from the instant the message
+        has been accepted and stored by the broker, as captured in `enqueued_time_utc`.
+        When not set explicitly, the assumed value is the DefaultTimeToLive for the respective queue or topic.
+        A message-level time-to-live value cannot be longer than the entity's time-to-live setting and it is silently
+        adjusted if it does.
+
+        See Expiration in `https://docs.microsoft.com/azure/service-bus-messaging/message-expiration`
 
         :rtype: ~datetime.timedelta
         """
@@ -203,6 +218,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @time_to_live.setter
     def time_to_live(self, value):
+        # type: (datetime.timedelta) -> None
         if not self._amqp_header:
             self._amqp_header = uamqp.message.MessageHeader()
         if isinstance(value, datetime.timedelta):
@@ -213,7 +229,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def scheduled_enqueue_time_utc(self):
         # type: () -> Optional[datetime.datetime]
-        """Get or set the utc scheduled enqueue time to the message.
+        """The utc scheduled enqueue time to the message.
+
         This property can be used for scheduling when sending a message through `ServiceBusSender.send` method.
         If cancelling scheduled messages is required, you should use the `ServiceBusSender.schedule` method,
         which returns sequence numbers that can be used for future cancellation.
@@ -249,6 +266,13 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def content_type(self):
         # type: () -> str
+        """The content type descriptor.
+
+        Optionally describes the payload of the message, with a descriptor following the format of RFC2045, Section 5,
+        for example "application/json".
+
+        :rtype: str
+        """
         return self._amqp_properties.content_type if self._amqp_properties else None
 
     @content_type.setter
@@ -259,6 +283,16 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def correlation_id(self):
         # type: () -> str
+        """The correlation identifier.
+
+        Allows an application to specify a context for the message for the purposes of correlation, for example
+        reflecting the MessageId of a message that is being replied to.
+
+        See Message Routing and Correlation in
+        `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
+
+        :rtype: str
+        """
         return self._amqp_properties.correlation_id if self._amqp_properties else None
 
     @correlation_id.setter
@@ -269,6 +303,13 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def label(self):
         # type: () -> str
+        """The application specific label
+
+        This property enables the application to indicate the purpose of the message to the receiver in a standardized
+        fashion, similar to an email subject line.
+
+        :rtype: str
+        """
         return self._amqp_properties.subject if self._amqp_properties else None
 
     @label.setter
@@ -279,6 +320,16 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def message_id(self):
         # type: () -> str
+        """The id to identify the message.
+
+        The message identifier is an application-defined value that uniquely identifies the message and its payload.
+        The identifier is a free-form string and can reflect a GUID or an identifier derived from the
+        application context.  If enabled, the duplicate detection (see
+        `https://docs.microsoft.com/azure/service-bus-messaging/duplicate-detection`)
+         feature identifies and removes second and further submissions of messages with the same message id.
+
+        :rtype: str
+        """
         return self._amqp_properties.message_id if self._amqp_properties else None
 
     @message_id.setter
@@ -289,6 +340,17 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def reply_to(self):
         # type: () -> str
+        """The address of an entity to send replies to.
+
+        This optional and application-defined value is a standard way to express a reply path to the receiver of
+        the message. When a sender expects a reply, it sets the value to the absolute or relative path of the queue
+        or topic it expects the reply to be sent to.
+
+        See Message Routing and Correlation in
+        `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
+
+        :rtype: str
+        """
         return self._amqp_properties.reply_to if self._amqp_properties else None
 
     @reply_to.setter
@@ -299,6 +361,16 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def reply_to_session_id(self):
         # type: () -> str
+        """The session identifier augmenting the `reply_to` address.
+
+        This value augments the `reply_to` information and specifies which session id should be set for the reply
+        when sent to the reply entity.
+
+        See Message Routing and Correlation in
+         `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
+
+        :rtype: str
+        """
         return self._amqp_properties.reply_to_group_id if self._amqp_properties else None
 
     @reply_to_session_id.setter
@@ -309,6 +381,16 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def to(self):
         # type: () -> str
+        """The "to" address.
+
+        This property is reserved for future use in routing scenarios and presently ignored by the broker itself.
+        Applications can use this value in rule-driven auto-forward chaining scenarios to indicate the intended
+        logical destination of the message.
+
+        See `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-auto-forwarding` for more details.
+
+        :rtype: str
+        """
         return self._amqp_properties.to if self._amqp_properties else None
 
     @to.setter
@@ -414,39 +496,67 @@ class PeekMessage(Message):
     A peeked message cannot be completed, abandoned, dead-lettered or deferred.
     It has no lock token or expiry.
 
-    :ivar received_timestamp_utc: The utc timestamp of when the message is received.
-    :vartype received_timestamp_utc: datetime.datetime
-
     """
 
     def __init__(self, message):
         super(PeekMessage, self).__init__(None, message=message)
-        self.received_timestamp_utc = utc_now()
 
     @property
     def dead_letter_error_description(self):
-        # type: () -> Optional[bytes]
+        # type: () -> Optional[str]
+        """
+        Dead letter error description, when the message is received from a deadletter subqueue of an entity.
+
+        :rtype: str
+        """
         if self.message.application_properties:
-            return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION)
+            try:
+                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION).decode('UTF-8')
+            except AttributeError:
+                pass
         return None
 
     @property
     def dead_letter_reason(self):
-        # type: () -> Optional[bytes]
+        # type: () -> Optional[str]
+        """
+        Dead letter reason, when the message is received from a deadletter subqueue of an entity.
+
+        :rtype: str
+        """
         if self.message.application_properties:
-            return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_REASON)
+            try:
+                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_REASON).decode('UTF-8')
+            except AttributeError:
+                pass
         return None
 
     @property
     def dead_letter_source(self):
-        # type: () -> Optional[bytes]
+        # type: () -> Optional[str]
+        """
+        The name of the queue or subscription that this message was enqueued on, before it was deadlettered.
+        This property is only set in messages that have been dead-lettered and subsequently auto-forwarded
+        from the dead-letter queue to another entity. Indicates the entity in which the message was dead-lettered.
+
+        :rtype: str
+        """
         if self.message.annotations:
-            return self.message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE)
+            try:
+                return self.message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode('UTF-8')
+            except AttributeError:
+                pass
         return None
 
     @property
     def delivery_count(self):
         # type: () -> Optional[int]
+        """
+        Number of deliveries that have been attempted for this message. The count is incremented
+        when a message lock expires or the message is explicitly abandoned by the receiver.
+
+        :rtype: int
+        """
         if self._amqp_header:
             return self._amqp_header.delivery_count
         return None
@@ -508,24 +618,16 @@ class PeekMessage(Message):
     def sequence_number(self):
         # type: () -> Optional[int]
         """
+        The unique number assigned to a message by Service Bus. The sequence number is a unique 64-bit integer
+        assigned to a message as it is accepted and stored by the broker and functions as its true identifier.
+        For partitioned entities, the topmost 16 bits reflect the partition identifier.
+        Sequence numbers monotonically increase. They roll over to 0 when the 48-64 bit range is exhausted.
 
         :rtype: int
         """
         if self.message.annotations:
             return self.message.annotations.get(_X_OPT_SEQUENCE_NUMBER)
         return None
-
-    @property
-    def settled(self):
-        # type: () -> bool
-        """Whether the message has been settled.
-
-        This will aways be `True` for a message received using ReceiveAndDelete mode,
-        otherwise it will be `False` until the message is completed or otherwise settled.
-
-        :rtype: bool
-        """
-        return self.message.settled
 
 
 class ReceivedMessage(PeekMessage):
@@ -547,7 +649,7 @@ class ReceivedMessage(PeekMessage):
 
     def __init__(self, message, mode=ReceiveSettleMode.PeekLock, **kwargs):
         super(ReceivedMessage, self).__init__(message=message)
-        self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
+        self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self.auto_renew_error = None
         self._receiver = None  # type: ignore
@@ -557,15 +659,15 @@ class ReceivedMessage(PeekMessage):
         # pylint: disable=no-member
         if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
             raise MessageSettleFailed(action, "Orphan message had no open connection.")
-        if self.settled:
+        if self._settled:
             raise MessageAlreadySettled(action)
         try:
-            if self.expired:
+            if self._lock_expired:
                 raise MessageLockExpired(inner_exception=self.auto_renew_error)
         except TypeError:
             pass
         try:
-            if self._receiver.session.expired:
+            if self._receiver.session._lock_expired:  # pylint: disable=protected-access
                 raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
         except AttributeError:
             pass
@@ -651,7 +753,7 @@ class ReceivedMessage(PeekMessage):
             raise MessageSettleFailed(settle_operation, e)
 
     @property
-    def settled(self):
+    def _settled(self):
         # type: () -> bool
         """Whether the message has been settled.
 
@@ -660,13 +762,13 @@ class ReceivedMessage(PeekMessage):
 
         :rtype: bool
         """
-        return self._settled
+        return self.message.settled
 
     @property
-    def expired(self):
+    def _lock_expired(self):
         # type: () -> bool
-        # TODO: rename to lock_expired or internal? and the one in the session
         """
+        Whether the lock on the message has expired.
 
         :rtype: bool
         """
@@ -683,10 +785,12 @@ class ReceivedMessage(PeekMessage):
     def lock_token(self):
         # type: () -> Optional[Union[uuid.UUID, str]]
         """
+        The lock token for the current message serving as a reference to the lock that
+        is being held by the broker in PeekLock mode.
 
         :rtype:  ~uuid.UUID or str
         """
-        if self.settled:
+        if self._settled:
             return None
 
         if self.message.delivery_tag:
@@ -701,13 +805,16 @@ class ReceivedMessage(PeekMessage):
     def locked_until_utc(self):
         # type: () -> Optional[datetime.datetime]
         """
+        The UTC datetime until which the message will be locked in the queue/subscription.
+        When the lock expires, delivery count of hte message is incremented and the message
+        is again available for retrieval.
 
         :rtype: datetime.datetime
         """
         try:
-            if self.settled or self._receiver.session:  # pylint: disable=protected-access
+            if self._settled or self._receiver.session:  # pylint: disable=protected-access
                 return None
-        except AttributeError: # not settled, and isn't session receiver.
+        except AttributeError:  # not settled, and isn't session receiver.
             pass
         if self._expiry:
             return self._expiry
@@ -741,7 +848,6 @@ class ReceivedMessage(PeekMessage):
         # pylint: disable=protected-access
         self._check_live(MESSAGE_COMPLETE)
         self._settle_message(MESSAGE_COMPLETE)
-        self._settled = True
 
     def dead_letter(self, reason=None, description=None):
         # type: (Optional[str], Optional[str]) -> None
@@ -772,7 +878,6 @@ class ReceivedMessage(PeekMessage):
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
         self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_reason=reason, dead_letter_description=description)
-        self._settled = True
 
     def abandon(self):
         # type: () -> None
@@ -799,7 +904,6 @@ class ReceivedMessage(PeekMessage):
         # pylint: disable=protected-access
         self._check_live(MESSAGE_ABANDON)
         self._settle_message(MESSAGE_ABANDON)
-        self._settled = True
 
     def defer(self):
         # type: () -> None
@@ -826,7 +930,6 @@ class ReceivedMessage(PeekMessage):
         """
         self._check_live(MESSAGE_DEFER)
         self._settle_message(MESSAGE_DEFER)
-        self._settled = True
 
     def renew_lock(self):
         # type: () -> None

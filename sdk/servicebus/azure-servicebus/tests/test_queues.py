@@ -82,7 +82,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             _logger.debug(message)
                             _logger.debug(message.sequence_number)
                             _logger.debug(message.enqueued_time_utc)
-                            _logger.debug(message.expired)
+                            _logger.debug(message._lock_expired)
                             message.complete()
                             time.sleep(40)
 
@@ -757,7 +757,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
                 try:
                     for m in messages:
-                        assert not m.expired
+                        assert not m._lock_expired
                         time.sleep(5)
                         initial_expiry = m.locked_until_utc
                         m.renew_lock()
@@ -794,25 +794,25 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 for message in receiver:
                     if not messages:
                         messages.append(message)
-                        assert not message.expired
+                        assert not message._lock_expired
                         renewer.register(message, timeout=60)
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
                         time.sleep(60)
                         print("Finished first sleep", message.locked_until_utc)
-                        assert not message.expired
+                        assert not message._lock_expired
                         time.sleep(15) #generate autolockrenewtimeout error by going one iteration past.
                         sleep_until_expired(message)
                         print("Finished second sleep", message.locked_until_utc, utc_now())
-                        assert message.expired
+                        assert message._lock_expired
                         try:
                             message.complete()
                             raise AssertionError("Didn't raise MessageLockExpired")
                         except MessageLockExpired as e:
                             assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                     else:
-                        if message.expired:
+                        if message._lock_expired:
                             print("Remaining messages", message.locked_until_utc, utc_now())
-                            assert message.expired
+                            assert message._lock_expired
                             with pytest.raises(MessageLockExpired):
                                 message.complete()
                         else:
@@ -927,7 +927,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
                 time.sleep((messages[0].locked_until_utc - utc_now()).total_seconds()+1)
-                assert messages[0].expired
+                assert messages[0]._lock_expired
                 with pytest.raises(MessageLockExpired):
                     messages[0].complete()
                 with pytest.raises(MessageLockExpired):
@@ -964,7 +964,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 time.sleep(15)
                 messages[0].renew_lock()
                 time.sleep(15)
-                assert not messages[0].expired
+                assert not messages[0]._lock_expired
                 messages[0].complete()
     
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
@@ -1218,8 +1218,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     def test_queue_mock_no_reusing_auto_lock_renew(self):
         class MockReceivedMessage:
             def __init__(self):
-                self.received_timestamp_utc = utc_now()
-                self.locked_until_utc = self.received_timestamp_utc + timedelta(seconds=10)
+                self._received_timestamp_utc = utc_now()
+                self.locked_until_utc = self._received_timestamp_utc + timedelta(seconds=10)
 
             def renew_lock(self):
                 self.locked_until_utc = self.locked_until_utc + timedelta(seconds=10)

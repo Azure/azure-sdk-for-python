@@ -447,7 +447,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 try:
                     for m in messages:
                         with pytest.raises(TypeError):
-                            expired = m.expired
+                            expired = m._lock_expired
                         assert m.locked_until_utc is None
                         assert m.lock_token is not None
                     time.sleep(5)
@@ -487,9 +487,9 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                         if not messages:
                             await asyncio.sleep(45)
                             print("First sleep {}".format(session.session.locked_until_utc - utc_now()))
-                            assert not session.session.expired
+                            assert not session.session._lock_expired
                             with pytest.raises(TypeError):
-                                message.expired
+                                message._lock_expired
                             assert message.locked_until_utc is None
                             with pytest.raises(TypeError):
                                 await message.renew_lock()
@@ -500,7 +500,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                         elif len(messages) == 1:
                             await asyncio.sleep(45)
                             print("Second sleep {}".format(session.session.locked_until_utc - utc_now()))
-                            assert session.session.expired
+                            assert session.session._lock_expired
                             assert isinstance(session.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
                                 await message.complete()
@@ -559,10 +559,10 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 print_message(_logger, messages[0])
                 await asyncio.sleep(60) #TODO: Was 30, but then lock isn't expired.
                 with pytest.raises(TypeError):
-                    messages[0].expired
+                    messages[0]._lock_expired
                 with pytest.raises(TypeError):
                     await messages[0].renew_lock()
-                assert receiver.session.expired
+                assert receiver.session._lock_expired
                 with pytest.raises(SessionLockExpired):
                     await messages[0].complete()
                 with pytest.raises(SessionLockExpired):
