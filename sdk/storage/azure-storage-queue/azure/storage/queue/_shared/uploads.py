@@ -536,7 +536,7 @@ class IterStreamer(object):
         count = len(self.leftover)
         try:
             while count < size:
-                chunk = self.next()
+                chunk = self.__next__()
                 if isinstance(chunk, six.text_type):
                     chunk = chunk.encode(self.encoding)
                 data += chunk
