@@ -87,6 +87,19 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         return '/' + self.account_name + uri_path
 
     @staticmethod
+    def _get_canonicalized_headers(request):
+        string_to_sign = ''
+        x_ms_headers = []
+        for name, value in request.http_request.headers.items():
+            if name.startswith('x-ms-'):
+                x_ms_headers.append((name.lower(), value))
+        x_ms_headers.sort()
+        for name, value in x_ms_headers:
+            if value is not None:
+                string_to_sign += ''.join([name, ':', value, '\n'])
+        return string_to_sign
+
+    @staticmethod
     def _get_canonicalized_resource_query(request):
         sorted_queries = list(request.http_request.query.items())
         sorted_queries.sort()
