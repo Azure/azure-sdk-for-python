@@ -42,9 +42,10 @@ class AspectBasedSentimentAnalysisSample(object):
             api_version=ApiVersion.V3_1_preview_1
         )
 
-        # Here we have a handful of reviews for Hotel Foo. We are trying to determine, based
-        # on which parts of the hotel are good and which parts are bad, whether we want to book
-        # a vacation stay here.
+        # In this sample we will be combing through the reviews of a potential hotel to stay at: Hotel Foo.
+        # We will find what aspects of the hotel are good, and which are bad, and based on this more granular
+        # analysis will decide where we will stay
+
         print(
             "I first found a handful of reviews for Hotel Foo. The hotel was rated 3.5 stars on Contoso.com, "
             "let's see if I want to stay here"
@@ -61,8 +62,6 @@ class AspectBasedSentimentAnalysisSample(object):
         result = text_analytics_client.analyze_sentiment(documents, show_aspects=True)
         doc_result = [doc for doc in result if not doc.is_error]
 
-        # What I would like to do is find the aspects of the hotel experience that were positive,
-        # mixed, and negative, then compare them
         print("Let's first organize the aspects of the hotel experience into positive, mixed, and negative")
         positive_aspects = []
         mixed_aspects = []
@@ -78,14 +77,12 @@ class AspectBasedSentimentAnalysisSample(object):
                     else:
                         negative_aspects.append(aspect)
 
-        # let us first take a look at the positive aspects, and what specific opinions users had for each positive aspect
         print("\n\nLet's look at the {} positive aspects of this hotel".format(len(positive_aspects)))
         for aspect in positive_aspects:
             print("...Reviewers have the following opinions for the overall positive '{}' aspect of the hotel".format(aspect.text))
             for opinion in aspect.opinions:
                 print("......'{}' opinion '{}'".format(opinion.sentiment, opinion.text))
 
-        # let's look at mixed
         print("\n\nNow let's look at the {} aspects with mixed sentiment".format(len(mixed_aspects)))
         for aspect in mixed_aspects:
             print("...Reviewers have the following opinions for the overall mixed '{}' aspect of the hotel".format(aspect.text))
