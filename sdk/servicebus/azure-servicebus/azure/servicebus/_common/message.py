@@ -283,7 +283,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def correlation_id(self):
         # type: () -> str
-        # pylint: line-too-long
+        # pylint: disable=line-too-long
         """The correlation identifier.
 
         Allows an application to specify a context for the message for the purposes of correlation, for example
@@ -341,7 +341,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def reply_to(self):
         # type: () -> str
-        # pylint: line-too-long
+        # pylint: disable=line-too-long
         """The address of an entity to send replies to.
 
         This optional and application-defined value is a standard way to express a reply path to the receiver of
@@ -363,7 +363,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def reply_to_session_id(self):
         # type: () -> str
-        # pylint: line-too-long
+        # pylint: disable=line-too-long
         """The session identifier augmenting the `reply_to` address.
 
         This value augments the `reply_to` information and specifies which session id should be set for the reply
