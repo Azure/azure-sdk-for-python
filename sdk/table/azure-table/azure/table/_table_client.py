@@ -7,8 +7,6 @@
 import functools
 from typing import Optional, Any
 
-from azure.table import QueryOptions
-
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -19,7 +17,7 @@ from azure.core.paging import ItemPaged
 from azure.table._deserialize import _convert_to_entity
 from azure.table._entity import Entity
 from azure.table._generated import AzureTable
-from azure.table._generated.models import AccessPolicy, SignedIdentifier, TableProperties
+from azure.table._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
 from azure.table._serialize import _get_match_headers, _add_entity_properties
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 
@@ -104,7 +102,7 @@ class TableClient(StorageAccountHostsMixin):
         :rtype: ~azure.table.TableClient
         """
         account_url, secondary, credential = parse_connection_str(
-            conn_str, 'table')
+            conn_str=conn_str, credential=None, service='table')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)  # type: ignore
@@ -375,7 +373,7 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def query_entities(
             self,
-            filter,  # type: str
+            filter,  # type: str  # pylint: disable = W0622
             **kwargs
     ):
         # type: (...) -> ItemPaged[Entity]

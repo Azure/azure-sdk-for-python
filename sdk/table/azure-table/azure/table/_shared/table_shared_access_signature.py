@@ -161,7 +161,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
         """
         super(TableSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
 
-    def generate_table(self, table_name, permission=None,
+    def generate_table(self, table_name, permission=None,   # pylint: disable = W0613
                        expiry=None, start=None, policy_id=None,
                        ip=None, protocol=None,
                        start_pk=None, start_rk=None,

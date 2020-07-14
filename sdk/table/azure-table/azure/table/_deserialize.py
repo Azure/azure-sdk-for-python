@@ -30,7 +30,7 @@ def deserialize_table_properties(response, obj, headers):
 
 def deserialize_table_creation(response, _, headers):
     if response.status_code == 204:
-        error_code = StorageErrorCode.queue_already_exists
+        error_code = TableErrorCode.table_already_exists
         error = ResourceExistsError(
             message="Table already exists\nRequestId:{}\nTime:{}\nErrorCode:{}".format(
                 headers['x-ms-request-id'],

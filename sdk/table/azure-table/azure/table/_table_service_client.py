@@ -8,7 +8,6 @@ import functools
 from typing import Any
 
 from azure.core.pipeline import Pipeline
-from azure.table import QueryOptions
 
 try:
     from urllib.parse import urlparse
@@ -16,7 +15,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
 
 from azure.table._generated import AzureTable
-from azure.table._generated.models import TableProperties, TableServiceProperties
+from azure.table._generated.models import TableProperties, TableServiceProperties, QueryOptions
 from azure.table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, \
     TransportWrapper
@@ -87,7 +86,7 @@ class TableServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.table.TableServiceClient
         """
         account_url, secondary, credential = parse_connection_str(
-            conn_str, 'table')
+            conn_str=conn_str, credential=None, service='table')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
