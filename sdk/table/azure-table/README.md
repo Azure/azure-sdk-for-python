@@ -159,7 +159,7 @@ Create a table in your storage account
 from azure.table import TableServiceClient
 
 table = TableServiceClient.from_connection_string(conn_str="<connection_string>")
-table.create_table(table_name="my_table")
+table.create_table(table_name="myTable")
 ```
 
 Use the async client to create a table
@@ -167,7 +167,7 @@ Use the async client to create a table
 from azure.table.aio import TableServiceClient
 
 table = TableServiceClient.from_connection_string(conn_str="<connection_string>")
-await table.create_table(table_name="my_table")
+await table.create_table(table_name="myTable")
 ```
 
 ### Creating entities
