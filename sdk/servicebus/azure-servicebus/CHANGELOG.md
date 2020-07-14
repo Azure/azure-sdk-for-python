@@ -2,6 +2,29 @@
 
 ## 7.0.0b5 (Unreleased)
 
+**New Features**
+
+* Added new properties to Message: `content_type`, `correlation_id`, `label`,
+`message_id`, `reply_to`, `reply_to_session_id` and `to`. Please refer to the docstring for further information.
+
+* Add new properties to PeekedMessaged and ReceivedMessage: `dead_letter_error_description`,
+`dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`.
+Please refer to the docstring for further information.
+
+**Breaking Changes**
+
+* Removed/Renamed several properties and instance variables on Message.
+  - Renamed property `user_properties` to `properties`
+      - The original instance variable `properties` which represents the AMQP properties now becomes an internal instance variable `_amqp_properties`.
+  - Removed property `enqueue_sequence_number`.
+  - Removed property `annotations`.
+  - Removed instance variable `header`.
+
+* Removed several properties and instance variables on PeekMessage and ReceivedMessage.
+  - Removed property `settled` on both Message type.
+  - Removed instance variable `received_timestamp_utc ` on both Message type.
+  - Removed property `expired` on `ReceivedMessage`.
+
 
 ## 7.0.0b4 (2020-07-06)
 

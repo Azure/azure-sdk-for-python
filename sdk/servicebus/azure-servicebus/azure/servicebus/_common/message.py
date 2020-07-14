@@ -283,6 +283,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def correlation_id(self):
         # type: () -> str
+        # pylint: disable=protected-access
         """The correlation identifier.
 
         Allows an application to specify a context for the message for the purposes of correlation, for example
@@ -340,6 +341,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def reply_to(self):
         # type: () -> str
+        # pylint: disable=protected-access
         """The address of an entity to send replies to.
 
         This optional and application-defined value is a standard way to express a reply path to the receiver of
@@ -361,13 +363,14 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def reply_to_session_id(self):
         # type: () -> str
+        # pylint: disable=protected-access
         """The session identifier augmenting the `reply_to` address.
 
         This value augments the `reply_to` information and specifies which session id should be set for the reply
         when sent to the reply entity.
 
         See Message Routing and Correlation in
-         `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
+        `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-messages-payloads?#message-routing-and-correlation`.
 
         :rtype: str
         """
@@ -387,7 +390,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         Applications can use this value in rule-driven auto-forward chaining scenarios to indicate the intended
         logical destination of the message.
 
-        See `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-auto-forwarding` for more details.
+        See https://docs.microsoft.com/azure/service-bus-messaging/service-bus-auto-forwarding for more details.
 
         :rtype: str
         """
@@ -649,6 +652,7 @@ class ReceivedMessage(PeekMessage):
 
     def __init__(self, message, mode=ReceiveSettleMode.PeekLock, **kwargs):
         super(ReceivedMessage, self).__init__(message=message)
+        self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self.auto_renew_error = None
@@ -753,18 +757,6 @@ class ReceivedMessage(PeekMessage):
             raise MessageSettleFailed(settle_operation, e)
 
     @property
-    def _settled(self):
-        # type: () -> bool
-        """Whether the message has been settled.
-
-        This will aways be `True` for a message received using ReceiveAndDelete mode,
-        otherwise it will be `False` until the message is completed or otherwise settled.
-
-        :rtype: bool
-        """
-        return self.message.settled
-
-    @property
     def _lock_expired(self):
         # type: () -> bool
         """
@@ -848,6 +840,7 @@ class ReceivedMessage(PeekMessage):
         # pylint: disable=protected-access
         self._check_live(MESSAGE_COMPLETE)
         self._settle_message(MESSAGE_COMPLETE)
+        self._settled = True
 
     def dead_letter(self, reason=None, description=None):
         # type: (Optional[str], Optional[str]) -> None
@@ -878,6 +871,7 @@ class ReceivedMessage(PeekMessage):
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
         self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_reason=reason, dead_letter_description=description)
+        self._settled = True
 
     def abandon(self):
         # type: () -> None
@@ -904,6 +898,7 @@ class ReceivedMessage(PeekMessage):
         # pylint: disable=protected-access
         self._check_live(MESSAGE_ABANDON)
         self._settle_message(MESSAGE_ABANDON)
+        self._settled = True
 
     def defer(self):
         # type: () -> None
@@ -930,6 +925,7 @@ class ReceivedMessage(PeekMessage):
         """
         self._check_live(MESSAGE_DEFER)
         self._settle_message(MESSAGE_DEFER)
+        self._settled = True
 
     def renew_lock(self):
         # type: () -> None
