@@ -14,7 +14,7 @@ except ImportError:  # python < 3.3
 
 from azure.core.credentials import AccessToken
 from azure.identity._authn_client import AuthnClient
-from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT
+from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 import pytest
 from six.moves.urllib_parse import urlparse
 from helpers import mock_response
@@ -268,12 +268,12 @@ def test_token_refresh_kwargs():
 
     # need refresh
     token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT - 1
+    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY - 1
     should_refresh = client.should_refresh(token)
     assert should_refresh
 
     # not exceed cool down time, do not refresh
     token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT + 1
+    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY + 1
     should_refresh = client.should_refresh(token)
     assert not should_refresh

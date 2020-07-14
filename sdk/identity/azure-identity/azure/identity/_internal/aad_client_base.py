@@ -16,7 +16,7 @@ from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from . import get_default_authority, normalize_authority
-from .._constants import DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT, DEFAULT_REFRESH_OFFSET
+from .._constants import DEFAULT_TOKEN_REFRESH_RETRY_DELAY, DEFAULT_REFRESH_OFFSET
 
 try:
     from typing import TYPE_CHECKING
@@ -49,7 +49,7 @@ class AadClientBase(ABC):
         self._cache = cache or TokenCache()
         self._client_id = client_id
         self._pipeline = self._build_pipeline(**kwargs)
-        self._token_refresh_retry_timeout = DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT
+        self._token_refresh_retry_delay = DEFAULT_TOKEN_REFRESH_RETRY_DELAY
         self._token_refresh_offset = DEFAULT_REFRESH_OFFSET
         self._last_refresh_time = 0
 
@@ -58,7 +58,7 @@ class AadClientBase(ABC):
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes), query=query)
         for token in tokens:
             expires_on = int(token["expires_on"])
-            if expires_on - 30 > int(time.time()):
+            if expires_on - self._token_refresh_retry_delay > int(time.time()):
                 return AccessToken(token["secret"], expires_on)
         return None
 
@@ -75,7 +75,7 @@ class AadClientBase(ABC):
         now = int(time.time())
         if expires_on - now > self._token_refresh_offset:
             return False
-        if now - self._last_refresh_time < self._token_refresh_retry_timeout:
+        if now - self._last_refresh_time < self._token_refresh_retry_delay:
             return False
         return True
 

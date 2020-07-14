@@ -5,7 +5,6 @@
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import UsernamePasswordCredential
 from azure.identity._internal.user_agent import USER_AGENT
-from azure.identity._constants import DEFAULT_REFRESH_OFFSET
 import pytest
 
 from helpers import (

@@ -5,7 +5,7 @@
 import functools
 import time
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT
+from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 from azure.identity._internal.aad_client import AadClient
 from azure.core.credentials import AccessToken
 import pytest
@@ -238,12 +238,12 @@ def test_token_refresh_kwargs():
 
     # need refresh
     token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT - 1
+    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY - 1
     should_refresh = client.should_refresh(token)
     assert should_refresh
 
     # not exceed cool down time, do not refresh
     token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_TIMEOUT + 1
+    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY + 1
     should_refresh = client.should_refresh(token)
     assert not should_refresh
