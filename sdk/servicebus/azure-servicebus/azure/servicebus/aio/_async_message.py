@@ -51,12 +51,9 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
                         settle_operation,
                         exception
                     )
-            await get_running_loop().run_in_executor(
-                        None,
-                        self._settle_via_mgmt_link(settle_operation,
+            await self._settle_via_mgmt_link(settle_operation,
                                              dead_letter_reason=dead_letter_reason,
                                              dead_letter_description=dead_letter_description)()
-                        )
         except Exception as e:
             raise MessageSettleFailed(settle_operation, e)
 
