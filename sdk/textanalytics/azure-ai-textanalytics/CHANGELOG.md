@@ -2,6 +2,11 @@
 
 ## 1.0.1 (Unreleased)
 
+**New features**
+
+- Adding support for the service's v3.1-preview.1 API. The default API version is v3.0, but pass in "v3.1-preview.1" as the value for `api_version` when creating your client.
+- We now have added support for aspect based sentiment analysis. To use this feature, you need to make sure you are using the service's
+v3.1-preview.1 API. To get this support pass `show_aspects` as True when calling the `analyze_sentiment` endpoint
 
 ## 1.0.0 (2020-06-09)
 
