@@ -1,5 +1,11 @@
 # Release History
 
+## 0.11.0 (2020-07-09)
+
+**Breaking changes**
+
+  - Volume parameter mount_targets changes type from MountTarget to MountTargetProperties
+
 ## 0.10.0 (2020-04-21)
 
 **Features**

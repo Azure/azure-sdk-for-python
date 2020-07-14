@@ -50,7 +50,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.AzureNetAppFilesManagementClient)
 
     def test_create_delete_snapshot(self):
-        print("@@@@@@@@@", TEST_RG)
         snapshot = create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, LOCATION)
 
         snapshot_list = self.client.snapshots.list(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
