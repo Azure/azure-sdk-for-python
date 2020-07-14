@@ -89,4 +89,3 @@ class AuthorizationCodeCredential(object):
             if token:
                 return token
         return None
-
