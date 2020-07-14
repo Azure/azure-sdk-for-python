@@ -34,6 +34,7 @@ from ._models import (
     ModelAttributes,
     SelectionMark,
     SelectionMarkState,
+    FieldValueType
 )
 
 
@@ -65,6 +66,7 @@ __all__ = [
     'ModelAttributes',
     'SelectionMark',
     'SelectionMarkState',
+    'FieldValueType'
 ]
 
 __VERSION__ = VERSION

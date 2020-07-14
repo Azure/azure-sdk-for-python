@@ -83,6 +83,21 @@ class SelectionMarkState(str, Enum):
     UNSELECTED = "unselected"
 
 
+class FieldValueType(str, Enum):
+    """Semantic data type of the field value.
+    """
+
+    STRING = "string"
+    DATE = "date"
+    TIME = "time"
+    PHONE_NUMBER = "phoneNumber"
+    NUMBER = "number"
+    INTEGER = "integer"
+    ARRAY = "array"
+    OBJECT = "object"
+    SELECTION_MARK = "selectionMark"
+
+
 class LengthUnit(str, Enum):
     """The unit used by the width, height and bounding box properties.
     For images, the unit is "pixel". For PDF, the unit is "inch".
@@ -203,8 +218,9 @@ class RecognizedForm(object):
 class FormField(object):
     """Represents a field recognized in an input form.
 
-    :ivar str type: The type of the FormField, e.g.
+    :ivar type: The type of the FormField, e.g.
         "string", "date", "time", "phoneNumber", "number", "integer", "array", "object", "selectionMark".
+    :vartype type: str or ~azure.ai.formrecognizer.FieldValueType
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and field elements for the field label.
     :ivar ~azure.ai.formrecognizer.FieldData value_data:
@@ -270,8 +286,7 @@ class FieldData(FormElement):
         When `include_field_elements` is set to true, a list of
         elements constituting this field or value is returned. The list
         constitutes of elements such as lines and words.
-    :vartype field_elements: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine,
-        ~azure.ai.formrecognizer.SelectionMark]
+    :vartype field_elements: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.SelectionMark]
     """
 
     def __init__(self, **kwargs):
@@ -524,8 +539,7 @@ class FormTableCell(FormElement):
         elements constituting this cell is returned. The list
         constitutes of elements such as lines and words.
         For calls to begin_recognize_content(), this list is always populated.
-    :vartype field_elements: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine,
-        ~azure.ai.formrecognizer.SelectionMark]
+    :vartype field_elements: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.SelectionMark]
     """
 
     def __init__(self, **kwargs):
