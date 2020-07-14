@@ -10,7 +10,7 @@ if (!(Test-Path $codeOwnersLocation)) {
   exit 1
 }
 
-$codeOwnersContent = Get-Content ($codeOwnersLocation | Select-Object -Last 1)
+$codeOwnersContent = Get-Content $codeOwnersLocation
 
 $ownedFolders = @{}
 
