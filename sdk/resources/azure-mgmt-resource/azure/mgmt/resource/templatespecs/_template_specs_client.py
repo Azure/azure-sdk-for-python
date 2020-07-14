@@ -72,9 +72,13 @@ class TemplateSpecsClient(MultiApiClientMixin, SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
+           * 2019-06-01-preview: :mod:`v2019_06_01_preview.models<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models>`
            * 2019-06-01-preview: :mod:`v2019_06_preview.models<azure.mgmt.resource.templatespecs.v2019_06_preview.models>`
         """
         if api_version == '2019-06-01-preview':
+            from .v2019_06_01_preview import models
+            return models
+        elif api_version == '2019-06-01-preview':
             from .v2019_06_preview import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -83,10 +87,13 @@ class TemplateSpecsClient(MultiApiClientMixin, SDKClient):
     def template_spec_versions(self):
         """Instance depends on the API version:
 
+           * 2019-06-01-preview: :class:`TemplateSpecVersionsOperations<azure.mgmt.resource.templatespecs.v2019_06_01_preview.operations.TemplateSpecVersionsOperations>`
            * 2019-06-01-preview: :class:`TemplateSpecVersionsOperations<azure.mgmt.resource.templatespecs.v2019_06_preview.operations.TemplateSpecVersionsOperations>`
         """
         api_version = self._get_api_version('template_spec_versions')
         if api_version == '2019-06-01-preview':
+            from .v2019_06_01_preview.operations import TemplateSpecVersionsOperations as OperationClass
+        elif api_version == '2019-06-01-preview':
             from .v2019_06_preview.operations import TemplateSpecVersionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -96,10 +103,13 @@ class TemplateSpecsClient(MultiApiClientMixin, SDKClient):
     def template_specs(self):
         """Instance depends on the API version:
 
+           * 2019-06-01-preview: :class:`TemplateSpecsOperations<azure.mgmt.resource.templatespecs.v2019_06_01_preview.operations.TemplateSpecsOperations>`
            * 2019-06-01-preview: :class:`TemplateSpecsOperations<azure.mgmt.resource.templatespecs.v2019_06_preview.operations.TemplateSpecsOperations>`
         """
         api_version = self._get_api_version('template_specs')
         if api_version == '2019-06-01-preview':
+            from .v2019_06_01_preview.operations import TemplateSpecsOperations as OperationClass
+        elif api_version == '2019-06-01-preview':
             from .v2019_06_preview.operations import TemplateSpecsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
