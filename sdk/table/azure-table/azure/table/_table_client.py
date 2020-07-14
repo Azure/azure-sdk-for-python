@@ -250,7 +250,7 @@ class TableClient(StorageAccountHostsMixin):
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         table = self._client.table.create(table_properties)
-        return table
+        return table.table_name
 
     @distributed_trace
     def delete_table(
