@@ -99,6 +99,8 @@ class FormRecognizerClient(object):
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
         :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
+        :keyword str locale: Locale of the receipt. Supported locales include: en-AU, en-CA, en-GB, en-IN,
+            en-US(default).
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -153,6 +155,8 @@ class FormRecognizerClient(object):
             US sales receipts.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
+        :keyword str locale: Locale of the receipt. Supported locales include: en-AU, en-CA, en-GB, en-IN,
+            en-US(default).
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -184,6 +188,71 @@ class FormRecognizerClient(object):
             continuation_token=continuation_token,
             **kwargs
         )
+
+    @distributed_trace
+    def begin_recognize_business_cards(
+            self,
+            business_card,
+            **kwargs
+    ):
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
+        """Analyze Business Card.
+
+        Extract field text and semantic values from a given business card document. The input document
+        must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or
+        'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri) of the
+        document to be analyzed.
+
+        :param business_card: JPEG, PNG, PDF and TIFF type file stream or bytes.
+        :type business_card: bytes or IO[bytes]
+        :keyword bool include_field_elements:
+            Whether or not to include field elements such as lines and words in addition to form fields.
+        :keyword content_type: Media type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
+        :keyword str locale: Locale of the business card. Supported locales include: en-AU, en-CA, en-GB, en-IN,
+            en-US(default).
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        pass
+
+    @distributed_trace
+    def begin_recognize_business_cards_from_url(
+            self,
+            business_card_url,
+            **kwargs
+    ):
+        # type: (str, Any) -> LROPoller[List[RecognizedForm]]
+        """Analyze Business Card.
+
+        Extract field text and semantic values from a given business card document. The input document
+        must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or
+        'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri) of the
+        document to be analyzed.
+
+        :param str business_card_url: The URL of the business card to analyze. The input must be a valid, encoded URL
+            of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
+            US sales receipts.
+        :keyword bool include_field_elements:
+            Whether or not to include field elements such as lines and words in addition to form fields.
+        :keyword str locale: Locale of the receipt. Supported locales include: en-AU, en-CA, en-GB, en-IN,
+            en-US(default).
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        pass
 
     def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)

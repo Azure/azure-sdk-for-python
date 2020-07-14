@@ -11,6 +11,8 @@ from typing import (
     Any,
     Dict,
     Union,
+    List,
+    Optional,
     TYPE_CHECKING,
 )
 from azure.core.polling import AsyncLROPoller
@@ -117,6 +119,7 @@ class FormTrainingClient(object):
         :keyword bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed. Not supported if
             training with labels.
+        :keyword str display_name: A display name for your model.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -395,6 +398,15 @@ class FormTrainingClient(object):
             continuation_token=continuation_token,
             **kwargs
         )
+
+    @distributed_trace_async
+    def begin_compose_custom_models(
+        self,
+        model_ids: List[str],
+        display_name: Optional[str] = None,
+        **kwargs
+    ) -> CustomFormModel:
+        pass
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
         """Get an instance of a FormRecognizerClient from FormTrainingClient.

@@ -31,6 +31,9 @@ from ._models import (
     CustomFormModel,
     CustomFormSubmodel,
     CustomFormModelField,
+    ModelAttributes,
+    SelectionMark,
+    SelectionMarkState,
 )
 
 
@@ -59,6 +62,9 @@ __all__ = [
     'CustomFormModel',
     'CustomFormSubmodel',
     'CustomFormModelField',
+    'ModelAttributes',
+    'SelectionMark',
+    'SelectionMarkState',
 ]
 
 __VERSION__ = VERSION

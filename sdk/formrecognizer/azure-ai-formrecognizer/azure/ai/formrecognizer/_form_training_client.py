@@ -108,6 +108,7 @@ class FormTrainingClient(object):
         :keyword bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed. Not supported if
             training with labels.
+        :keyword str display_name: A display name for your model.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -370,6 +371,16 @@ class FormTrainingClient(object):
             continuation_token=continuation_token,
             **kwargs
         )
+
+    @distributed_trace
+    def begin_compose_custom_models(
+        self,
+        model_ids,
+        display_name=None,
+        **kwargs
+    ):
+        # type: (List[str], Optional[str], Any) -> LROPoller[CustomFormModel]
+        pass
 
     def get_form_recognizer_client(self, **kwargs):
         # type: (Any) -> FormRecognizerClient

@@ -75,6 +75,14 @@ def get_field_value(field, value, read_result):  # pylint: disable=too-many-retu
     return None
 
 
+class SelectionMarkState(str, Enum):
+    """State of the selection mark.
+    """
+
+    SELECTED = "selected"
+    UNSELECTED = "unselected"
+
+
 class LengthUnit(str, Enum):
     """The unit used by the width, height and bounding box properties.
     For images, the unit is "pixel". For PDF, the unit is "inch".
@@ -161,6 +169,11 @@ class RecognizedForm(object):
 
     :ivar str form_type:
         The type of form the model identified the submitted form to be.
+    :ivar str form_type_confidence:
+        Confidence of the type of form the model identified the submitted form to be.
+    :ivar str model_id:
+        Model identifier of model used to analyze form if not using a prebuilt
+        model.
     :ivar fields:
         A dictionary of the fields found on the form. The fields dictionary
         keys are the `name` of the field. For models trained with labels,
@@ -178,6 +191,8 @@ class RecognizedForm(object):
         self.form_type = kwargs.get("form_type", None)
         self.page_range = kwargs.get("page_range", None)
         self.pages = kwargs.get("pages", None)
+        self.model_id = kwargs.get('model_id', None)
+        self.form_type_confidence = kwargs.get('form_type_confidence', None)
 
     def __repr__(self):
         return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={})".format(
@@ -188,6 +203,8 @@ class RecognizedForm(object):
 class FormField(object):
     """Represents a field recognized in an input form.
 
+    :ivar str type: The type of the FormField, e.g.
+        "string", "date", "time", "phoneNumber", "number", "integer", "array", "object", "selectionMark".
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and field elements for the field label.
     :ivar ~azure.ai.formrecognizer.FieldData value_data:
@@ -203,6 +220,7 @@ class FormField(object):
     """
 
     def __init__(self, **kwargs):
+        self.type = kwargs.get("type", None)
         self.label_data = kwargs.get("label_data", None)
         self.value_data = kwargs.get("value_data", None)
         self.name = kwargs.get("name", None)
@@ -252,7 +270,8 @@ class FieldData(FormElement):
         When `include_field_elements` is set to true, a list of
         elements constituting this field or value is returned. The list
         constitutes of elements such as lines and words.
-    :vartype field_elements: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
+    :vartype field_elements: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine,
+        ~azure.ai.formrecognizer.SelectionMark]
     """
 
     def __init__(self, **kwargs):
@@ -321,6 +340,8 @@ class FormPage(object):
         certain cases proximity is treated with higher priority. As the sorting order depends on
         the detected text, it may change across images and OCR version updates. Thus, business
         logic should be built upon the actual line location instead of order.
+    :ivar selection_marks: List of selection marks extracted from the page.
+    :vartype selection_marks: list[~azure.ai.formrecognizer.SelectionMark]
     """
 
     def __init__(self, **kwargs):
@@ -331,6 +352,7 @@ class FormPage(object):
         self.unit = kwargs.get("unit", None)
         self.tables = kwargs.get("tables", None)
         self.lines = kwargs.get("lines", None)
+        self.selection_marks = kwargs.get("selection_marks", None)
 
     @classmethod
     def _from_generated(cls, read_result):
@@ -427,6 +449,32 @@ class FormWord(FormElement):
         )[:1024]
 
 
+class SelectionMark(FormElement):
+    """Information about the extracted selection mark.
+
+    :ivar str text: The text content - not returned for SelectionMark.
+    :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the text. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
+        Units are in pixels for images and inches for PDF.
+    :ivar float confidence: Confidence value.
+    :ivar state: Required. State of the selection mark. Possible values include: "selected",
+     "unselected".
+    :type state: str or ~azure.ai.formrecognizer.SelectionMarkState
+    :ivar int page_number:
+        The 1-based number of the page in which this content is present.
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SelectionMark, self).__init__(**kwargs)
+        self.confidence = kwargs['confidence']
+        self.state = kwargs['state']
+
+
 class FormTable(object):
     """Information about the extracted table contained on a page.
 
@@ -476,7 +524,8 @@ class FormTableCell(FormElement):
         elements constituting this cell is returned. The list
         constitutes of elements such as lines and words.
         For calls to begin_recognize_content(), this list is always populated.
-    :vartype field_elements: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine]
+    :vartype field_elements: list[~azure.ai.formrecognizer.FormWord, ~azure.ai.formrecognizer.FormLine,
+        ~azure.ai.formrecognizer.SelectionMark]
     """
 
     def __init__(self, **kwargs):
@@ -538,6 +587,9 @@ class CustomFormModel(object):
         List of any training errors.
     :ivar ~azure.ai.formrecognizer.TrainingDocumentInfo training_documents:
          Metadata about each of the documents used to train the model.
+    :ivar str display_name: Optional user defined model name (max length: 1024).
+    :ivar attributes: Optional model attributes.
+    :vartype attributes: ~azure.ai.formrecognizer.ModelAttributes
     """
 
     def __init__(self, **kwargs):
@@ -548,6 +600,8 @@ class CustomFormModel(object):
         self.submodels = kwargs.get("submodels", None)
         self.errors = kwargs.get("errors", None)
         self.training_documents = kwargs.get("training_documents", [])
+        self.display_name = kwargs.get("display_name", None)
+        self.attributes = kwargs.get("attributes", None)
 
     @classmethod
     def _from_generated(cls, model):
@@ -573,6 +627,8 @@ class CustomFormModel(object):
 class CustomFormSubmodel(object):
     """Represents a submodel that extracts fields from a specific type of form.
 
+    :ivar str model_id:
+        Model identifier of the submodel.
     :ivar float accuracy: The mean of the model's field accuracies.
     :ivar fields: A dictionary of the fields that this submodel will recognize
         from the input document. The fields dictionary keys are the `name` of
@@ -583,6 +639,7 @@ class CustomFormSubmodel(object):
     :ivar str form_type: Type of form this submodel recognizes.
     """
     def __init__(self, **kwargs):
+        self.model_id = kwargs.get("model_id", None)
         self.accuracy = kwargs.get("accuracy", None)
         self.fields = kwargs.get("fields", None)
         self.form_type = kwargs.get("form_type", None)
@@ -700,6 +757,19 @@ class FormRecognizerError(object):
         return "FormRecognizerError(code={}, message={})".format(self.code, self.message)[:1024]
 
 
+class ModelAttributes(object):
+    """Optional model attributes.
+
+    :ivar bool is_composed: Is this model composed? (default: false).
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.is_composed = kwargs.get('is_composed', False)
+
+
 class CustomFormModelInfo(object):
     """Custom model information.
 
@@ -711,6 +781,10 @@ class CustomFormModelInfo(object):
         Date and time (UTC) when model training was started.
     :ivar ~datetime.datetime training_completed_on:
         Date and time (UTC) when model training completed.
+    :ivar display_name: Optional user defined model name (max length: 1024).
+    :vartype display_name: str
+    :ivar attributes: Optional model attributes.
+    :vartype attributes: ~azure.ai.formrecognizer.Attributes
     """
 
     def __init__(self, **kwargs):
@@ -718,6 +792,8 @@ class CustomFormModelInfo(object):
         self.status = kwargs.get("status", None)
         self.training_started_on = kwargs.get("training_started_on", None)
         self.training_completed_on = kwargs.get("training_completed_on", None)
+        self.display_name = kwargs.get("display_name", None)
+        self.attributes = kwargs.get("attributes", None)
 
     @classmethod
     def _from_generated(cls, model, model_id=None):

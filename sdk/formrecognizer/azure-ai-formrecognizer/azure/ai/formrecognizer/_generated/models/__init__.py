@@ -7,6 +7,8 @@
 try:
     from ._models_py3 import AnalyzeOperationResult
     from ._models_py3 import AnalyzeResult
+    from ._models_py3 import Attributes
+    from ._models_py3 import ComposeRequest
     from ._models_py3 import CopyAuthorizationResult
     from ._models_py3 import CopyOperationResult
     from ._models_py3 import CopyRequest
@@ -27,6 +29,7 @@ try:
     from ._models_py3 import ModelsSummary
     from ._models_py3 import PageResult
     from ._models_py3 import ReadResult
+    from ._models_py3 import SelectionMark
     from ._models_py3 import SourcePath
     from ._models_py3 import TextLine
     from ._models_py3 import TextWord
@@ -37,6 +40,8 @@ try:
 except (SyntaxError, ImportError):
     from ._models import AnalyzeOperationResult  # type: ignore
     from ._models import AnalyzeResult  # type: ignore
+    from ._models import Attributes  # type: ignore
+    from ._models import ComposeRequest  # type: ignore
     from ._models import CopyAuthorizationResult  # type: ignore
     from ._models import CopyOperationResult  # type: ignore
     from ._models import CopyRequest  # type: ignore
@@ -57,6 +62,7 @@ except (SyntaxError, ImportError):
     from ._models import ModelsSummary  # type: ignore
     from ._models import PageResult  # type: ignore
     from ._models import ReadResult  # type: ignore
+    from ._models import SelectionMark  # type: ignore
     from ._models import SourcePath  # type: ignore
     from ._models import TextLine  # type: ignore
     from ._models import TextWord  # type: ignore
@@ -67,17 +73,22 @@ except (SyntaxError, ImportError):
 
 from ._form_recognizer_client_enums import (
     ContentType,
+    FieldValueSelectionMark,
     FieldValueType,
+    KeyValueType,
     Language,
     LengthUnit,
     ModelStatus,
     OperationStatus,
+    SelectionMarkState,
     TrainStatus,
 )
 
 __all__ = [
     'AnalyzeOperationResult',
     'AnalyzeResult',
+    'Attributes',
+    'ComposeRequest',
     'CopyAuthorizationResult',
     'CopyOperationResult',
     'CopyRequest',
@@ -98,6 +109,7 @@ __all__ = [
     'ModelsSummary',
     'PageResult',
     'ReadResult',
+    'SelectionMark',
     'SourcePath',
     'TextLine',
     'TextWord',
@@ -106,10 +118,13 @@ __all__ = [
     'TrainSourceFilter',
     'TrainingDocumentInfo',
     'ContentType',
+    'FieldValueSelectionMark',
     'FieldValueType',
+    'KeyValueType',
     'Language',
     'LengthUnit',
     'ModelStatus',
     'OperationStatus',
+    'SelectionMarkState',
     'TrainStatus',
 ]
