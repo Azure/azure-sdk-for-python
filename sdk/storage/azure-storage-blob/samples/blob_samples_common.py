@@ -140,7 +140,7 @@ class CommonBlobSamples(object):
         # [END delete_multiple_blobs]
 
         # Delete container
-        blob_service_client.delete_container("containerforbatchblobdeletesasync")
+        blob_service_client.delete_container("containerforbatchblobdelete")
 
     def acquire_lease_on_blob(self):
 
