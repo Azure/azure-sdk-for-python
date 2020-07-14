@@ -10,7 +10,7 @@ tox-monorepo==0.1.2
 twine==1.15.0
 pathlib2==2.3.5
 readme-renderer[md]==25.0
-doc-warden==0.5.4
+doc-warden==0.7.1
 coverage==4.5.4
 codecov==2.0.22 
 beautifulsoup4==4.8.2
