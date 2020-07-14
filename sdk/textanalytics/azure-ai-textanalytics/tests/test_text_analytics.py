@@ -110,6 +110,26 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
             transaction_count=4
         )
 
+        aspect_opinion_confidence_score = _models.SentimentConfidenceScores(positive=0.5, negative=0.5)
+
+        aspect_opinion = _models.AspectOpinion(
+            text="opinion",
+            sentiment="positive",
+            confidence_scores=aspect_opinion_confidence_score,
+            offset=3,
+            length=7,
+            is_negated=False
+        )
+
+        sentence_aspect = _models.SentenceAspect(
+            text="aspect",
+            sentiment="positive",
+            confidence_scores=aspect_opinion_confidence_score,
+            offset=10,
+            length=6,
+            opinions=[aspect_opinion]
+        )
+
         self.assertEqual("DetectedLanguage(name=English, iso6391_name=en, confidence_score=1.0)", repr(detected_language))
         self.assertEqual("CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, confidence_score=0.899)",
                          repr(categorized_entity))
@@ -168,6 +188,18 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual("TextDocumentInput(id=1, text=hello world, language=en)", repr(text_document_input))
         self.assertEqual("TextDocumentBatchStatistics(document_count=1, valid_document_count=2, "
                          "erroneous_document_count=3, transaction_count=4)", repr(text_document_batch_statistics))
+
+        aspect_opinion_repr = (
+            "AspectOpinion(text=opinion, sentiment=positive, confidence_scores=SentimentConfidenceScores("
+            "positive=0.5, neutral=0.0, negative=0.5), offset=3, length=7, is_negated=False)"
+        )
+        self.assertEqual(aspect_opinion_repr, repr(aspect_opinion))
+        self.assertEqual(
+            "SentenceAspect(text=aspect, sentiment=positive, confidence_scores=SentimentConfidenceScores("
+            "positive=0.5, neutral=0.0, negative=0.5), opinions=[{}], offset=10, length=6)".format(aspect_opinion_repr),
+            repr(sentence_aspect)
+        )
+
 
     def test_inner_error_takes_precedence(self):
         generated_innererror = _generated_models.InnerError(

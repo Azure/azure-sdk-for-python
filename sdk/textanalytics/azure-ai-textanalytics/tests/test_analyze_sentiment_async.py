@@ -16,7 +16,8 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     VERSION,
     DetectLanguageInput,
-    TextDocumentInput
+    TextDocumentInput,
+    ApiVersion
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -589,3 +590,92 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             cls=callback
         )
         assert res == "cls result"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": ApiVersion.V3_1_preview_1})
+    async def test_aspect_based_sentiment_analysis(self, client):
+        documents = [
+            "It has a sleek premium aluminum design that makes it beautiful to look at."
+        ]
+
+        document = (await client.analyze_sentiment(documents=documents, show_aspects=True))[0]
+
+        for sentence in document.sentences:
+            for aspect in sentence.aspects:
+                self.assertEqual('design', aspect.text)
+                self.assertEqual('positive', aspect.sentiment)
+                self.assertEqual(1.0, aspect.confidence_scores.positive)
+                self.assertEqual(0.0, aspect.confidence_scores.neutral)
+                self.assertEqual(0.0, aspect.confidence_scores.negative)
+                self.assertEqual(32, aspect.offset)
+                self.assertEqual(6, aspect.length)
+
+                sleek_opinion = aspect.opinions[0]
+                self.assertEqual('sleek', sleek_opinion.text)
+                self.assertEqual('positive', sleek_opinion.sentiment)
+                self.assertEqual(1.0, sleek_opinion.confidence_scores.positive)
+                self.assertEqual(0.0, sleek_opinion.confidence_scores.neutral)
+                self.assertEqual(0.0, sleek_opinion.confidence_scores.negative)
+                self.assertEqual(9, sleek_opinion.offset)
+                self.assertEqual(5, sleek_opinion.length)
+                self.assertFalse(sleek_opinion.is_negated)
+
+                premium_opinion = aspect.opinions[1]
+                self.assertEqual('premium', premium_opinion.text)
+                self.assertEqual('positive', premium_opinion.sentiment)
+                self.assertEqual(1.0, premium_opinion.confidence_scores.positive)
+                self.assertEqual(0.0, premium_opinion.confidence_scores.neutral)
+                self.assertEqual(0.0, premium_opinion.confidence_scores.negative)
+                self.assertEqual(15, premium_opinion.offset)
+                self.assertEqual(7, premium_opinion.length)
+                self.assertFalse(premium_opinion.is_negated)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": ApiVersion.V3_1_preview_1})
+    async def test_aspect_based_sentiment_analysis_negated_opinion(self, client):
+        documents = [
+            "The food and service is not good"
+        ]
+
+        document = (await client.analyze_sentiment(documents=documents, show_aspects=True))[0]
+
+        for sentence in document.sentences:
+            food_aspect = sentence.aspects[0]
+            service_aspect = sentence.aspects[1]
+
+            self.assertEqual('food', food_aspect.text)
+            self.assertEqual('negative', food_aspect.sentiment)
+            self.assertEqual(0.01, food_aspect.confidence_scores.positive)
+            self.assertEqual(0.0, food_aspect.confidence_scores.neutral)
+            self.assertEqual(0.99, food_aspect.confidence_scores.negative)
+            self.assertEqual(4, food_aspect.offset)
+            self.assertEqual(4, food_aspect.length)
+
+            self.assertEqual('service', service_aspect.text)
+            self.assertEqual('negative', service_aspect.sentiment)
+            self.assertEqual(0.01, service_aspect.confidence_scores.positive)
+            self.assertEqual(0.0, service_aspect.confidence_scores.neutral)
+            self.assertEqual(0.99, service_aspect.confidence_scores.negative)
+            self.assertEqual(13, service_aspect.offset)
+            self.assertEqual(7, service_aspect.length)
+
+            food_opinion = food_aspect.opinions[0]
+            service_opinion = service_aspect.opinions[0]
+            self.assertOpinionsEqual(food_opinion, service_opinion)
+
+            self.assertEqual('good', food_opinion.text)
+            self.assertEqual('negative', food_opinion.sentiment)
+            self.assertEqual(0.01, food_opinion.confidence_scores.positive)
+            self.assertEqual(0.0, food_opinion.confidence_scores.neutral)
+            self.assertEqual(0.99, food_opinion.confidence_scores.negative)
+            self.assertEqual(28, food_opinion.offset)
+            self.assertEqual(4, food_opinion.length)
+            self.assertTrue(food_opinion.is_negated)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_aspect_based_sentiment_analysis_v3(self, client):
+        with pytest.raises(TypeError) as excinfo:
+            await client.analyze_sentiment(["will fail"], show_aspects=True)
+
+        assert "'show_aspects' is only added for API version v3.1-preview.1 and up" in str(excinfo.value)
