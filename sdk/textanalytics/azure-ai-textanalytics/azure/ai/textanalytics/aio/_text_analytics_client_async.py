@@ -415,24 +415,19 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         show_aspects = kwargs.pop("show_aspects", None)
 
-        try:
+        if show_aspects is not None:
             if self._api_version == "v3.0":
-                if show_aspects is not None:
-                    raise TypeError(
-                        "Parameter 'show_aspects' is only added for API version v3.1-preview.1 and up"
-                    )
-                return await self._client.sentiment(
-                    documents=docs,
-                    model_version=model_version,
-                    show_stats=show_stats,
-                    cls=kwargs.pop("cls", sentiment_result),
-                    **kwargs
+                raise TypeError(
+                    "Parameter 'show_aspects' is only added for API version v3.1-preview.1 and up"
                 )
+            elif self._api_version == "v3.1-preview.1":
+                kwargs.update({"opinion_mining": show_aspects})
+
+        try:
             return await self._client.sentiment(
                 documents=docs,
                 model_version=model_version,
                 show_stats=show_stats,
-                opinion_mining=show_aspects,
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
