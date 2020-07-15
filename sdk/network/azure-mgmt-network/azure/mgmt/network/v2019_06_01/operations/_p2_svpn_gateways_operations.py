@@ -87,7 +87,6 @@ class P2SVpnGatewaysOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -137,7 +136,6 @@ class P2SVpnGatewaysOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(p2_s_vpn_gateway_parameters, 'P2SVpnGateway')
         body_content_kwargs['content'] = body_content
@@ -151,7 +149,6 @@ class P2SVpnGatewaysOperations(object):
             error = self._deserialize(models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('P2SVpnGateway', pipeline_response)
 
@@ -171,7 +168,7 @@ class P2SVpnGatewaysOperations(object):
         p2_s_vpn_gateway_parameters,  # type: "models.P2SVpnGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.P2SVpnGateway"]
         """Creates a virtual wan p2s vpn gateway if it doesn't exist else updates the existing gateway.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway.
@@ -263,7 +260,6 @@ class P2SVpnGatewaysOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(p2_s_vpn_gateway_parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
@@ -277,7 +273,6 @@ class P2SVpnGatewaysOperations(object):
             error = self._deserialize(models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('P2SVpnGateway', pipeline_response)
 
@@ -297,7 +292,7 @@ class P2SVpnGatewaysOperations(object):
         p2_s_vpn_gateway_parameters,  # type: "models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.P2SVpnGateway"]
         """Updates virtual wan p2s vpn gateway tags.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway.
@@ -385,7 +380,6 @@ class P2SVpnGatewaysOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -406,7 +400,7 @@ class P2SVpnGatewaysOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes a virtual wan p2s vpn gateway.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway.
@@ -480,6 +474,10 @@ class P2SVpnGatewaysOperations(object):
         api_version = "2019-06-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -492,15 +490,11 @@ class P2SVpnGatewaysOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -546,6 +540,10 @@ class P2SVpnGatewaysOperations(object):
         api_version = "2019-06-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -557,15 +555,11 @@ class P2SVpnGatewaysOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -600,8 +594,8 @@ class P2SVpnGatewaysOperations(object):
         parameters,  # type: "models.P2SVpnProfileParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VpnProfileResponse"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnProfileResponse"]
+        # type: (...) -> Optional["models.VpnProfileResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnProfileResponse"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-06-01"
@@ -625,7 +619,6 @@ class P2SVpnGatewaysOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'P2SVpnProfileParameters')
         body_content_kwargs['content'] = body_content
@@ -655,7 +648,7 @@ class P2SVpnGatewaysOperations(object):
         parameters,  # type: "models.P2SVpnProfileParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VpnProfileResponse"]
         """Generates VPN profile for P2S client of the P2SVpnGateway in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -721,8 +714,8 @@ class P2SVpnGatewaysOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.P2SVpnGateway"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.P2SVpnGateway"]
+        # type: (...) -> Optional["models.P2SVpnGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.P2SVpnGateway"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-06-01"
@@ -744,7 +737,6 @@ class P2SVpnGatewaysOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -769,7 +761,7 @@ class P2SVpnGatewaysOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.P2SVpnGateway"]
         """Gets the connection health of P2S clients of the virtual wan P2SVpnGateway in the specified
     resource group.
 

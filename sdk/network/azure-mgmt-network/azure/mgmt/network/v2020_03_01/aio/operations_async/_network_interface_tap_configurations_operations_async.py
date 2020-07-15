@@ -72,7 +72,6 @@ class NetworkInterfaceTapConfigurationsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -92,7 +91,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         network_interface_name: str,
         tap_configuration_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes the specified tap configuration from the NetworkInterface.
 
         :param resource_group_name: The name of the resource group.
@@ -107,8 +106,8 @@ class NetworkInterfaceTapConfigurationsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -191,7 +190,6 @@ class NetworkInterfaceTapConfigurationsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -241,7 +239,6 @@ class NetworkInterfaceTapConfigurationsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(tap_configuration_parameters, 'NetworkInterfaceTapConfiguration')
         body_content_kwargs['content'] = body_content
@@ -254,7 +251,6 @@ class NetworkInterfaceTapConfigurationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('NetworkInterfaceTapConfiguration', pipeline_response)
 
@@ -274,7 +270,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         tap_configuration_name: str,
         tap_configuration_parameters: "models.NetworkInterfaceTapConfiguration",
         **kwargs
-    ) -> "models.NetworkInterfaceTapConfiguration":
+    ) -> AsyncLROPoller["models.NetworkInterfaceTapConfiguration"]:
         """Creates or updates a Tap configuration in the specified NetworkInterface.
 
         :param resource_group_name: The name of the resource group.
@@ -292,8 +288,8 @@ class NetworkInterfaceTapConfigurationsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: NetworkInterfaceTapConfiguration, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2020_03_01.models.NetworkInterfaceTapConfiguration
+        :return: An instance of AsyncLROPoller that returns either NetworkInterfaceTapConfiguration or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2020_03_01.models.NetworkInterfaceTapConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -360,6 +356,10 @@ class NetworkInterfaceTapConfigurationsOperations:
         api_version = "2020-03-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -373,15 +373,11 @@ class NetworkInterfaceTapConfigurationsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
