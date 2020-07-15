@@ -356,11 +356,17 @@ class TableClient(StorageAccountHostsMixin):
         :rtype: ItemPaged[Entity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if kwargs.pop('parameters', None) and kwargs.pop('filter', None):
-            pass
+        parameters = kwargs.pop('parameters', None)
+        filter = kwargs.pop('filter', None)
+        if parameters:
+            filter_start = filter.split('@')[0]
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
 
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
-                                     filter=kwargs.pop('filter', None))
+                                     filter=filter)
 
         command = functools.partial(
             self._client.table.query_entities,
@@ -388,8 +394,13 @@ class TableClient(StorageAccountHostsMixin):
         :rtype: ItemPaged[Entity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if kwargs.pop('parameters', None):
-            pass
+        parameters = kwargs.pop('parameters', None)
+        if parameters:
+            filter_start = filter.split('@')[0]
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
 
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
                                      filter=filter)
@@ -424,11 +435,17 @@ class TableClient(StorageAccountHostsMixin):
         :rtype: ~azure.table.Entity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if kwargs.pop('parameters', None) and kwargs.pop('filter', None):
-            pass
+        parameters = kwargs.pop('parameters', None)
+        filter = kwargs.pop('filter', None)
+        if parameters:
+            filter_start = filter.split('@')[0]
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
 
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
-                                     filter=kwargs.pop('filter', None))
+                                     filter=filter)
 
         entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
                                                                               partition_key=partition_key,

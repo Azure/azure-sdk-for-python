@@ -300,6 +300,23 @@ class StorageTableEntityTest(TableTestCase):
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
+    def test_query_user_filter(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity = self._insert_random_entity()
+
+            # Act
+            # resp = self.table.create_item(entity)
+            resp = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': 'True'})
+
+            # Assert  --- Does this mean insert returns nothing?
+            self.assertIsNotNone(resp)
+        finally:
+            self._tear_down()
+
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
     def test_insert_entity_dictionary(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
