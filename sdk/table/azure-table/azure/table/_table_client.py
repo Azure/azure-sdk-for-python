@@ -357,7 +357,7 @@ class TableClient(StorageAccountHostsMixin):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        filter = kwargs.pop('filter', None)
+        filter = kwargs.pop('filter', None)  # pylint: disable = W0622
         if parameters:
             filter_start = filter.split('@')[0]
             selected = filter.split('@')[1]
@@ -436,7 +436,7 @@ class TableClient(StorageAccountHostsMixin):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        filter = kwargs.pop('filter', None)
+        filter = kwargs.pop('filter', None)  # pylint: disable = W0622
         if parameters:
             filter_start = filter.split('@')[0]
             selected = filter.split('@')[1]
