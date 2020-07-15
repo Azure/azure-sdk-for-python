@@ -11,12 +11,13 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class OperationStatusOperations(object):
-    """OperationStatusOperations operations.
+class PrivateLinkResourcesOperations(object):
+    """PrivateLinkResourcesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -38,38 +39,34 @@ class OperationStatusOperations(object):
 
         self.config = config
 
-    def get(
-            self, resource_group_name, location_name, workflow_id, operation_id, custom_headers=None, raw=False, **operation_config):
-        """Get Operation status.
+    def list_by_storage_sync_service(
+            self, resource_group_name, storage_sync_service_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the private link resources that need to be created for a storage
+        sync service.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param location_name: The desired region to obtain information from.
-        :type location_name: str
-        :param workflow_id: workflow Id
-        :type workflow_id: str
-        :param operation_id: operation Id
-        :type operation_id: str
+        :param storage_sync_service_name: The name of the storage sync service
+         name within the specified resource group.
+        :type storage_sync_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: OperationStatus or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.storagesync.models.OperationStatus or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
+        :return: PrivateLinkResourceListResult or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.storagesync.models.PrivateLinkResourceListResult
+         or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.list_by_storage_sync_service.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'locationName': self._serialize.url("location_name", location_name, 'str'),
-            'workflowId': self._serialize.url("workflow_id", workflow_id, 'str'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str')
+            'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -92,21 +89,17 @@ class OperationStatusOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.StorageSyncErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        header_dict = {}
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('OperationStatus', response)
-            header_dict = {
-                'x-ms-request-id': 'str',
-                'x-ms-correlation-request-id': 'str',
-            }
+            deserialized = self._deserialize('PrivateLinkResourceListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/locations/{locationName}/workflows/{workflowId}/operations/{operationId}'}
+    list_by_storage_sync_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/privateLinkResources'}
