@@ -140,7 +140,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = await fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.image_jpeg)
+        poller = await fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.IMAGE_JPEG)
         form = await poller.result()
         self.assertEqual(form[0].form_type, "form-0")
         self.assertFormPagesHasValues(form[0].pages)
@@ -165,7 +165,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         poller = await fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            content_type=FormContentType.application_pdf
+            content_type=FormContentType.APPLICATION_PDF
         )
         forms = await poller.result()
 
@@ -192,7 +192,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = await fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.image_jpeg)
+        poller = await fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.IMAGE_JPEG)
         form = await poller.result()
 
         self.assertEqual(form[0].form_type, "form-"+model.model_id)
@@ -220,7 +220,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         poller = await fr_client.begin_recognize_custom_forms(
             model.model_id,
             myfile,
-            content_type=FormContentType.application_pdf
+            content_type=FormContentType.APPLICATION_PDF
         )
         forms = await poller.result()
 

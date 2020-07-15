@@ -689,7 +689,7 @@ class PeekMessage(Message):
         return None
 
 
-class ReceivedMessage(PeekMessage):
+class ReceivedMessageBase(PeekMessage):
     """
     A Service Bus Message received from service side.
 
@@ -707,7 +707,7 @@ class ReceivedMessage(PeekMessage):
     """
 
     def __init__(self, message, mode=ReceiveSettleMode.PeekLock, **kwargs):
-        super(ReceivedMessage, self).__init__(message=message)
+        super(ReceivedMessageBase, self).__init__(message=message)
         self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
@@ -785,6 +785,8 @@ class ReceivedMessage(PeekMessage):
             return functools.partial(self.message.modify, True, True)
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
 
+
+class ReceivedMessage(ReceivedMessageBase):
     def _settle_message(
             self,
             settle_operation,

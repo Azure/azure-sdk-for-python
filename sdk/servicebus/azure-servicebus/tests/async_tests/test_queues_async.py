@@ -1163,9 +1163,18 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = await receiver.receive_messages(max_batch_size=20, max_wait_time=5)
+                receive_counter = 0
+                message_received_cnt = 0
+                while message_received_cnt < 20:
+                    messages = await receiver.receive_messages(max_batch_size=20, max_wait_time=5)
+                    if not messages:
+                        break
+                    receive_counter += 1
+                    message_received_cnt += len(messages)
+                    for m in messages:
+                        print_message(_logger, m)
+                        await m.complete()
 
-                assert len(messages) == 20
-                for m in messages:
-                    print_message(_logger, m)
-                    await m.complete()
+                assert message_received_cnt == 20
+                # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
+                assert receive_counter < 10  # Dynamic link credit issuing come info effect
