@@ -9,5 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.11.0"
+from ._management_group_diagnostic_settings_operations import ManagementGroupDiagnosticSettingsOperations
 
+__all__ = [
+    'ManagementGroupDiagnosticSettingsOperations',
+]
