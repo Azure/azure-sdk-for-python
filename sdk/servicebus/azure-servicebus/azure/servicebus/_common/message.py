@@ -664,17 +664,6 @@ class PeekMessage(Message):
         return None
 
     @property
-    def partition_id(self):
-        # type: () -> Optional[str]
-        """
-        If the entity is partition-enabled, this property reflects the partition that the message lands on.
-        :rtype: int
-        """
-        if self.message.annotations:
-            return self.message.annotations.get(_X_OPT_PARTITION_ID)
-        return None
-
-    @property
     def sequence_number(self):
         # type: () -> Optional[int]
         """
