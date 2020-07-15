@@ -6,7 +6,6 @@
 from enum import Enum
 
 from azure.table._deserialize import _convert_to_entity
-from azure.table._entity import Entity
 from azure.table._shared.models import Services
 from azure.table._shared.response_handlers import return_context_and_deserialized, process_table_error
 from azure.core.exceptions import HttpResponseError
