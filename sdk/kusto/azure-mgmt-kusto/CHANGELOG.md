@@ -1,5 +1,14 @@
 # Release History
 
+## 0.9.0 (2020-07-13)
+
+**Features**
+
+  - Model Cluster has a new parameter enable_double_encryption
+  - Model ClusterUpdate has a new parameter enable_double_encryption
+  - Model EventGridDataConnection has a new parameter blob_storage_event_type
+  - Model EventGridDataConnection has a new parameter ignore_first_record
+
 ## 0.8.0 (2020-05-31)
 
 **Breaking changes**

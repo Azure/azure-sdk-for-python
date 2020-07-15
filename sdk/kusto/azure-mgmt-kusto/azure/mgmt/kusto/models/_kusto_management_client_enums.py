@@ -109,6 +109,8 @@ class EventHubDataFormat(str, Enum):
     tsve = "TSVE"
     parquet = "PARQUET"
     orc = "ORC"
+    apacheavro = "APACHEAVRO"
+    w3_clogfile = "W3CLOGFILE"
 
 
 class Compression(str, Enum):
@@ -133,6 +135,8 @@ class IotHubDataFormat(str, Enum):
     tsve = "TSVE"
     parquet = "PARQUET"
     orc = "ORC"
+    apacheavro = "APACHEAVRO"
+    w3_clogfile = "W3CLOGFILE"
 
 
 class EventGridDataFormat(str, Enum):
@@ -151,6 +155,14 @@ class EventGridDataFormat(str, Enum):
     tsve = "TSVE"
     parquet = "PARQUET"
     orc = "ORC"
+    apacheavro = "APACHEAVRO"
+    w3_clogfile = "W3CLOGFILE"
+
+
+class BlobStorageEventType(str, Enum):
+
+    microsoft_storage_blob_created = "Microsoft.Storage.BlobCreated"
+    microsoft_storage_blob_renamed = "Microsoft.Storage.BlobRenamed"
 
 
 class IdentityType(str, Enum):
