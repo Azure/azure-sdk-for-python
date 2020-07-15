@@ -257,6 +257,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             mgmt_handlers.lock_renew_op
         )
 
+    def receive_forever(self):
+        return self
+
     @classmethod
     def from_connection_string(
         cls,
