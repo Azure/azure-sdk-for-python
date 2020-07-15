@@ -422,7 +422,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 )
             if self._api_version == "v3.1-preview.1":
                 kwargs.update({"opinion_mining": show_aspects})
-
         try:
             return self._client.sentiment(
                 documents=docs,
