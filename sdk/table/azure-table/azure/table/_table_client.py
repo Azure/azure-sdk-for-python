@@ -22,7 +22,7 @@ from azure.table._serialize import _get_match_headers, _add_entity_properties
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 
 from azure.table._shared.request_handlers import serialize_iso
-from azure.table._shared.response_handlers import process_storage_error
+from azure.table._shared.response_handlers import process_table_error
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.table._version import VERSION
 from azure.core.tracing.decorator import distributed_trace
@@ -167,7 +167,7 @@ class TableClient(StorageAccountHostsMixin):
                 cls=return_headers_and_deserialized,
                 **kwargs)
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
@@ -201,7 +201,23 @@ class TableClient(StorageAccountHostsMixin):
                 table_acl=signed_identifiers or None,
                 **kwargs)
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
+
+    @distributed_trace
+    def _set_metadata(
+            self,
+            entity
+    ):
+        """Creates metadata dictionary to be an entity tag
+        :param entity: Entity to be passed in
+        :type entity: Union[Entity, dict[str,str]]
+        :return Entity with metadata as one tag
+        :rtype Entity
+
+        """
+        metadata = {'etag': entity.pop('etag'), 'timestamp': entity.pop('Timestamp')}
+        entity['metadata'] = metadata
+        return entity
 
     @distributed_trace
     def create_table(
@@ -292,14 +308,15 @@ class TableClient(StorageAccountHostsMixin):
                 **kwargs
             )
             properties = _convert_to_entity(inserted_entity)
-            return Entity(properties)
+            new_entity = self._set_metadata(properties)
+            return Entity(new_entity)
         except ValueError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     @distributed_trace
     def update_entity(  # pylint:disable=R1710
             self,
-            entity,   # type: Union[Entity, dict[str,str]]
+            entity,  # type: Union[Entity, dict[str,str]]
             mode=UpdateMode.merge,  # type: UpdateMode
             **kwargs  # type: Any
     ):
@@ -436,7 +453,8 @@ class TableClient(StorageAccountHostsMixin):
                                                                               query_options=query_options,
                                                                               **kwargs)
         properties = _convert_to_entity(entity.additional_properties)
-        return Entity(properties)
+        new_entity = self._set_metadata(properties)
+        return Entity(new_entity)
 
     @distributed_trace
     def upsert_entity(  # pylint:disable=R1710
