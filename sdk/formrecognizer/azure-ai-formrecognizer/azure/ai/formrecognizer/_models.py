@@ -229,7 +229,7 @@ class FormField(object):
     @classmethod
     def _from_generated(cls, field, value, read_result):
         return cls(
-            type=value.type,
+            type=value.type if value else None,
             label_data=FieldData._from_generated(field, read_result),
             value_data=FieldData._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
