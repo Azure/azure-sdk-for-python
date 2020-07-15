@@ -420,7 +420,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 raise TypeError(
                     "Parameter 'show_aspects' is only added for API version v3.1-preview.1 and up"
                 )
-            elif self._api_version == "v3.1-preview.1":
+            if self._api_version == "v3.1-preview.1":
                 kwargs.update({"opinion_mining": show_aspects})
 
         try:
