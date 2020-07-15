@@ -47,7 +47,7 @@ from azure.storage.blob import (
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
-    StandardBlobTier)
+    StandardBlobTier, RehydratePriority)
 
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import GlobalStorageAccountPreparer
@@ -102,10 +102,10 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    async def _create_block_blob(self):
+    async def _create_block_blob(self, standard_blob_tier=None):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        await blob.upload_blob(self.byte_data, length=len(self.byte_data))
+        await blob.upload_blob(self.byte_data, length=len(self.byte_data), standard_blob_tier=standard_blob_tier)
         return blob_name
 
     async def _create_remote_container(self):
@@ -536,6 +536,23 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(props.lease.status, 'unlocked')
         self.assertIsNotNone(props.creation_time)
 
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_get_blob_properties_returns_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._setup(storage_account, storage_account_key)
+        blob_name = await self._create_block_blob(standard_blob_tier=StandardBlobTier.Archive)
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.set_standard_blob_tier(StandardBlobTier.Hot, rehydrate_priority=RehydratePriority.high)
+        props = await blob.get_blob_properties()
+
+        # Assert
+        self.assertIsInstance(props, BlobProperties)
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
+        self.assertEqual(props.size, len(self.byte_data))
+        self.assertEqual(props.blob_rehydrate_priority, 'High')
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

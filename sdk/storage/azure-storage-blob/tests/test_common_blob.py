@@ -82,10 +82,10 @@ class StorageCommonBlobTest(StorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    def _create_block_blob(self):
+    def _create_block_blob(self, standard_blob_tier=None, overwrite=False):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(self.byte_data, length=len(self.byte_data))
+        blob.upload_blob(self.byte_data, length=len(self.byte_data), standard_blob_tier=standard_blob_tier, overwrite=overwrite)
         return blob_name
 
     def _create_remote_container(self):
@@ -452,6 +452,21 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(props.lease.status, 'unlocked')
         self.assertIsNotNone(props.creation_time)
 
+    @GlobalStorageAccountPreparer()
+    def test_get_blob_properties_returns_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        blob_name = self._create_block_blob(standard_blob_tier=StandardBlobTier.Archive, overwrite=True)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.set_standard_blob_tier(StandardBlobTier.Hot, rehydrate_priority=RehydratePriority.high)
+
+        # Act
+        props = blob.get_blob_properties()
+
+        # Assert
+        self.assertIsInstance(props, BlobProperties)
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
+        self.assertEqual(props.size, len(self.byte_data))
+        self.assertEqual(props.blob_rehydrate_priority, 'High')
 
     # This test is to validate that the ErrorCode is retrieved from the header during a
     # HEAD request.
