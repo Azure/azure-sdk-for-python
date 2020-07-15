@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
+import re
 from typing import Optional, Any
 
 from azure.table import QueryOptions
