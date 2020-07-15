@@ -16,6 +16,7 @@ try:
     from ._models_py3 import ApplicationProperties
     from ._models_py3 import Autoscale
     from ._models_py3 import AutoscaleCapacity
+    from ._models_py3 import AutoscaleConfigurationUpdateParameter
     from ._models_py3 import AutoscaleRecurrence
     from ._models_py3 import AutoscaleSchedule
     from ._models_py3 import AutoscaleTimeAndCapacity
@@ -44,6 +45,7 @@ try:
     from ._models_py3 import DataDisksGroups
     from ._models_py3 import DiskBillingMeters
     from ._models_py3 import DiskEncryptionProperties
+    from ._models_py3 import EncryptionInTransitProperties
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Errors
     from ._models_py3 import ExecuteScriptActionParameters
@@ -54,6 +56,7 @@ try:
     from ._models_py3 import KafkaRestProperties
     from ._models_py3 import LinuxOperatingSystemProfile
     from ._models_py3 import LocalizedName
+    from ._models_py3 import NetworkSettings
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationResource
@@ -92,6 +95,7 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationProperties
     from ._models import Autoscale
     from ._models import AutoscaleCapacity
+    from ._models import AutoscaleConfigurationUpdateParameter
     from ._models import AutoscaleRecurrence
     from ._models import AutoscaleSchedule
     from ._models import AutoscaleTimeAndCapacity
@@ -120,6 +124,7 @@ except (SyntaxError, ImportError):
     from ._models import DataDisksGroups
     from ._models import DiskBillingMeters
     from ._models import DiskEncryptionProperties
+    from ._models import EncryptionInTransitProperties
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import Errors
     from ._models import ExecuteScriptActionParameters
@@ -130,6 +135,7 @@ except (SyntaxError, ImportError):
     from ._models import KafkaRestProperties
     from ._models import LinuxOperatingSystemProfile
     from ._models import LocalizedName
+    from ._models import NetworkSettings
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import OperationResource
@@ -168,6 +174,8 @@ from ._paged_models import RuntimeScriptActionDetailPaged
 from ._hd_insight_management_client_enums import (
     DirectoryType,
     DaysOfWeek,
+    PublicNetworkAccess,
+    OutboundOnlyPublicNetworkAccessType,
     OSType,
     Tier,
     JsonWebKeyEncryptionAlgorithm,
@@ -184,6 +192,7 @@ __all__ = [
     'ApplicationProperties',
     'Autoscale',
     'AutoscaleCapacity',
+    'AutoscaleConfigurationUpdateParameter',
     'AutoscaleRecurrence',
     'AutoscaleSchedule',
     'AutoscaleTimeAndCapacity',
@@ -212,6 +221,7 @@ __all__ = [
     'DataDisksGroups',
     'DiskBillingMeters',
     'DiskEncryptionProperties',
+    'EncryptionInTransitProperties',
     'ErrorResponse', 'ErrorResponseException',
     'Errors',
     'ExecuteScriptActionParameters',
@@ -222,6 +232,7 @@ __all__ = [
     'KafkaRestProperties',
     'LinuxOperatingSystemProfile',
     'LocalizedName',
+    'NetworkSettings',
     'Operation',
     'OperationDisplay',
     'OperationResource',
@@ -259,6 +270,8 @@ __all__ = [
     'OperationPaged',
     'DirectoryType',
     'DaysOfWeek',
+    'PublicNetworkAccess',
+    'OutboundOnlyPublicNetworkAccessType',
     'OSType',
     'Tier',
     'JsonWebKeyEncryptionAlgorithm',

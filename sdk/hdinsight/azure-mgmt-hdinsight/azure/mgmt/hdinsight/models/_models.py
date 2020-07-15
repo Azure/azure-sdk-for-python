@@ -290,6 +290,22 @@ class AutoscaleCapacity(Model):
         self.max_instance_count = kwargs.get('max_instance_count', None)
 
 
+class AutoscaleConfigurationUpdateParameter(Model):
+    """The autoscale configuration update parameter.
+
+    :param autoscale: The autoscale configuration.
+    :type autoscale: ~azure.mgmt.hdinsight.models.Autoscale
+    """
+
+    _attribute_map = {
+        'autoscale': {'key': 'autoscale', 'type': 'Autoscale'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AutoscaleConfigurationUpdateParameter, self).__init__(**kwargs)
+        self.autoscale = kwargs.get('autoscale', None)
+
+
 class AutoscaleRecurrence(Model):
     """Schedule-based autoscale request parameters.
 
@@ -657,8 +673,14 @@ class ClusterCreateProperties(Model):
     :param disk_encryption_properties: The disk encryption properties.
     :type disk_encryption_properties:
      ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
+    :param encryption_in_transit_properties: The encryption-in-transit
+     properties.
+    :type encryption_in_transit_properties:
+     ~azure.mgmt.hdinsight.models.EncryptionInTransitProperties
     :param min_supported_tls_version: The minimal supported tls version.
     :type min_supported_tls_version: str
+    :param network_settings: The network settings.
+    :type network_settings: ~azure.mgmt.hdinsight.models.NetworkSettings
     """
 
     _attribute_map = {
@@ -671,7 +693,9 @@ class ClusterCreateProperties(Model):
         'compute_profile': {'key': 'computeProfile', 'type': 'ComputeProfile'},
         'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
+        'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
         'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
+        'network_settings': {'key': 'networkSettings', 'type': 'NetworkSettings'},
     }
 
     def __init__(self, **kwargs):
@@ -685,7 +709,9 @@ class ClusterCreateProperties(Model):
         self.compute_profile = kwargs.get('compute_profile', None)
         self.storage_profile = kwargs.get('storage_profile', None)
         self.disk_encryption_properties = kwargs.get('disk_encryption_properties', None)
+        self.encryption_in_transit_properties = kwargs.get('encryption_in_transit_properties', None)
         self.min_supported_tls_version = kwargs.get('min_supported_tls_version', None)
+        self.network_settings = kwargs.get('network_settings', None)
 
 
 class ClusterDefinition(Model):
@@ -784,8 +810,14 @@ class ClusterGetProperties(Model):
     :param disk_encryption_properties: The disk encryption properties.
     :type disk_encryption_properties:
      ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
+    :param encryption_in_transit_properties: The encryption-in-transit
+     properties.
+    :type encryption_in_transit_properties:
+     ~azure.mgmt.hdinsight.models.EncryptionInTransitProperties
     :param min_supported_tls_version: The minimal supported tls version.
     :type min_supported_tls_version: str
+    :param network_settings: The network settings.
+    :type network_settings: ~azure.mgmt.hdinsight.models.NetworkSettings
     """
 
     _validation = {
@@ -807,7 +839,9 @@ class ClusterGetProperties(Model):
         'errors': {'key': 'errors', 'type': '[Errors]'},
         'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': '[ConnectivityEndpoint]'},
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
+        'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
         'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
+        'network_settings': {'key': 'networkSettings', 'type': 'NetworkSettings'},
     }
 
     def __init__(self, **kwargs):
@@ -826,7 +860,9 @@ class ClusterGetProperties(Model):
         self.errors = kwargs.get('errors', None)
         self.connectivity_endpoints = kwargs.get('connectivity_endpoints', None)
         self.disk_encryption_properties = kwargs.get('disk_encryption_properties', None)
+        self.encryption_in_transit_properties = kwargs.get('encryption_in_transit_properties', None)
         self.min_supported_tls_version = kwargs.get('min_supported_tls_version', None)
+        self.network_settings = kwargs.get('network_settings', None)
 
 
 class ClusterIdentity(Model):
@@ -1171,6 +1207,23 @@ class DiskEncryptionProperties(Model):
         self.msi_resource_id = kwargs.get('msi_resource_id', None)
 
 
+class EncryptionInTransitProperties(Model):
+    """The encryption-in-transit properties.
+
+    :param is_encryption_in_transit_enabled: Indicates whether or not inter
+     cluster node communication is encrypted in transit. Default value: False .
+    :type is_encryption_in_transit_enabled: bool
+    """
+
+    _attribute_map = {
+        'is_encryption_in_transit_enabled': {'key': 'isEncryptionInTransitEnabled', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EncryptionInTransitProperties, self).__init__(**kwargs)
+        self.is_encryption_in_transit_enabled = kwargs.get('is_encryption_in_transit_enabled', False)
+
+
 class ErrorResponse(Model):
     """Describes the format of Error response.
 
@@ -1397,6 +1450,32 @@ class LocalizedName(Model):
         super(LocalizedName, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.localized_value = kwargs.get('localized_value', None)
+
+
+class NetworkSettings(Model):
+    """The network settings.
+
+    :param public_network_access: Specifies whether public network access is
+     enabled for inbound and outbound, or outbound only. Possible values
+     include: 'InboundAndOutbound', 'OutboundOnly'
+    :type public_network_access: str or
+     ~azure.mgmt.hdinsight.models.PublicNetworkAccess
+    :param outbound_only_public_network_access_type: The mechanism through
+     which the cluster will have outbound access to the public network.
+     Possible values include: 'PublicLoadBalancer', 'UDR'
+    :type outbound_only_public_network_access_type: str or
+     ~azure.mgmt.hdinsight.models.OutboundOnlyPublicNetworkAccessType
+    """
+
+    _attribute_map = {
+        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
+        'outbound_only_public_network_access_type': {'key': 'outboundOnlyPublicNetworkAccessType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NetworkSettings, self).__init__(**kwargs)
+        self.public_network_access = kwargs.get('public_network_access', None)
+        self.outbound_only_public_network_access_type = kwargs.get('outbound_only_public_network_access_type', None)
 
 
 class Operation(Model):
