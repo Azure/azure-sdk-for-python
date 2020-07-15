@@ -62,7 +62,6 @@ async def test_should_refresh():
 
 async def test_token_refresh_kwargs():
     client = AsyncAuthnClient(endpoint="http://foo")
-
     now = int(time.time())
 
     # do not need refresh
@@ -72,7 +71,6 @@ async def test_token_refresh_kwargs():
 
     # need refresh
     token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
-    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY - 1
     should_refresh = client.should_refresh(token)
     assert should_refresh
 
