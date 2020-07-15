@@ -243,7 +243,6 @@ def example_send_and_receive_sync():
             print("Time to live: {}".format(message.time_to_live))
             print("Sequence number: {}".format(message.sequence_number))
             print("Enqueued Sequence numger: {}".format(message.enqueued_sequence_number))
-            print("Partition ID: {}".format(message.partition_id))
             print("Partition Key: {}".format(message.partition_key))
             print("Properties: {}".format(message.properties))
             print("Delivery count: {}".format(message.delivery_count))

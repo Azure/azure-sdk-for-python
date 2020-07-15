@@ -30,7 +30,6 @@ async def message_processing(servicebus_client, queue_name):
                     print("Time to live: {}".format(message.time_to_live))
                     print("Sequence number: {}".format(message.sequence_number))
                     print("Enqueue Sequence number: {}".format(message.enqueued_sequence_number))
-                    print("Partition ID: {}".format(message.partition_id))
                     print("Partition Key: {}".format(message.partition_key))
                     print("Locked until: {}".format(message.locked_until_utc))
                     print("Lock Token: {}".format(message.lock_token))

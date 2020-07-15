@@ -24,7 +24,6 @@ from .constants import (
     _X_OPT_ENQUEUED_TIME,
     _X_OPT_SEQUENCE_NUMBER,
     _X_OPT_ENQUEUE_SEQUENCE_NUMBER,
-    _X_OPT_PARTITION_ID,
     _X_OPT_PARTITION_KEY,
     _X_OPT_VIA_PARTITION_KEY,
     _X_OPT_LOCKED_UNTIL,
@@ -775,35 +774,6 @@ class ReceivedMessageBase(PeekMessage):
             return functools.partial(self.message.modify, True, True)
         raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
 
-
-class ReceivedMessage(ReceivedMessageBase):
-    def _settle_message(
-            self,
-            settle_operation,
-            dead_letter_reason=None,
-            dead_letter_description=None,
-    ):
-        # type: (str, Optional[str], Optional[str]) -> None
-        try:
-            if not self._is_deferred_message:
-                try:
-                    self._settle_via_receiver_link(settle_operation,
-                                                   dead_letter_reason=dead_letter_reason,
-                                                   dead_letter_description=dead_letter_description)()
-                    return
-                except RuntimeError as exception:
-                    _LOGGER.info(
-                        "Message settling: %r has encountered an exception (%r)."
-                        "Trying to settle through management link",
-                        settle_operation,
-                        exception
-                    )
-            self._settle_via_mgmt_link(settle_operation,
-                                       dead_letter_reason=dead_letter_reason,
-                                       dead_letter_description=dead_letter_description)()
-        except Exception as e:
-            raise MessageSettleFailed(settle_operation, e)
-
     @property
     def _lock_expired(self):
         # type: () -> bool
@@ -862,6 +832,35 @@ class ReceivedMessage(ReceivedMessageBase):
             expiry_in_seconds = self.message.annotations[_X_OPT_LOCKED_UNTIL]/1000
             self._expiry = utc_from_timestamp(expiry_in_seconds)
         return self._expiry
+
+
+class ReceivedMessage(ReceivedMessageBase):
+    def _settle_message(
+            self,
+            settle_operation,
+            dead_letter_reason=None,
+            dead_letter_description=None,
+    ):
+        # type: (str, Optional[str], Optional[str]) -> None
+        try:
+            if not self._is_deferred_message:
+                try:
+                    self._settle_via_receiver_link(settle_operation,
+                                                   dead_letter_reason=dead_letter_reason,
+                                                   dead_letter_description=dead_letter_description)()
+                    return
+                except RuntimeError as exception:
+                    _LOGGER.info(
+                        "Message settling: %r has encountered an exception (%r)."
+                        "Trying to settle through management link",
+                        settle_operation,
+                        exception
+                    )
+            self._settle_via_mgmt_link(settle_operation,
+                                       dead_letter_reason=dead_letter_reason,
+                                       dead_letter_description=dead_letter_description)()
+        except Exception as e:
+            raise MessageSettleFailed(settle_operation, e)
 
     def complete(self):
         # type: () -> None
