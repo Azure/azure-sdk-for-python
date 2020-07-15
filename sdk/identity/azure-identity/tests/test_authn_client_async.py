@@ -49,8 +49,7 @@ async def test_should_refresh():
     assert not should_refresh
 
     # need refresh
-    token = AccessToken("token", now + 100)
-    client._last_refresh_time = now - 500
+    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
     should_refresh = client.should_refresh(token)
     assert should_refresh
 
