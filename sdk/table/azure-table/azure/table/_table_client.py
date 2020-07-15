@@ -60,7 +60,11 @@ class TableClient(StorageAccountHostsMixin):
         """
 
         if re.match("^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$", table_name) is None:
-            raise HttpResponseError(message="Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.")
+            raise HttpResponseError(
+                message="""Table names must be alphanumeric, cannot begin with a number,
+                    and must be between 3-63 characters long.
+                """
+            )
 
         try:
             if not account_url.lower().startswith('http'):

@@ -187,8 +187,11 @@ class TableServiceClient(StorageAccountHostsMixin):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         if re.match("^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$", table_name) is None:
-            raise HttpResponseError(message="Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.")
-        
+            raise HttpResponseError(
+                message="""Table names must be alphanumeric, cannot begin with a number,
+                    and must be between 3-63 characters long.
+                """
+            )  
         table_properties = TableProperties(table_name=table_name, **kwargs)
         self._client.table.create(table_properties)
         table = self.get_table_client(table=table_name)
@@ -212,7 +215,11 @@ class TableServiceClient(StorageAccountHostsMixin):
         :rtype: None
         """
         if re.match("^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$", table_name) is None:
-            raise HttpResponseError(message="Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.")
+            raise HttpResponseError(
+                message="""Table names must be alphanumeric, cannot begin with a number,
+                    and must be between 3-63 characters long.
+                """
+            )
 
         self._client.table.delete(table=table_name, request_id_parameter=request_id_parameter, **kwargs)
 
