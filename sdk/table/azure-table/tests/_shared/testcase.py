@@ -253,7 +253,7 @@ class TableTestCase(AzureMgmtTestCase):
     def generate_sas_token(self):
         fake_key = 'a'*30 + 'b'*30
 
-        return '?' + generate_account_shared_access_signature(
+        return '?' + generate_account_sas(
             account_name = 'test', # name of the storage account
             account_key = fake_key, # key for the storage account
             resource_types = ResourceTypes(object=True),

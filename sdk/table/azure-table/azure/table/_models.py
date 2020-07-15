@@ -140,7 +140,7 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy.from_generated(generated.retention_policy)
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint:disable=W0212
             # pylint: disable=protected-access
         )
 
