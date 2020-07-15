@@ -17,6 +17,16 @@ class Entity(dict):
 
     """
 
+    def set_metadata(self):
+        if 'Timestamp' in self.keys():
+            self['metadata'] = {'etag': self.pop('etag'), "timestamp": self.pop('Timestamp')}
+        else:
+            self['metadata'] = {'etag': self.pop('etag')}
+
+    def metadata(self):
+        metadata = self.pop('metadata')
+        return metadata
+
     def __getattr__(self, name):
         """
         :param name:name of entity entry

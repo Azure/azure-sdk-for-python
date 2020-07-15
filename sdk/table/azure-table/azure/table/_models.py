@@ -347,7 +347,7 @@ class TableEntityPropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [Entity(_convert_to_entity(t)) for t in self._response.value]
+        props_list = [_convert_to_entity(t) for t in self._response.value]
         next_entity = {}
         if self._headers['x-ms-continuation-NextPartitionKey'] or self._headers['x-ms-continuation-NextRowKey']:
             next_entity = {'PartitionKey': self._headers['x-ms-continuation-NextPartitionKey'],

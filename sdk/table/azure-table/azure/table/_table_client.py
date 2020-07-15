@@ -204,22 +204,6 @@ class TableClient(StorageAccountHostsMixin):
             process_table_error(error)
 
     @distributed_trace
-    def _set_metadata(
-            self,
-            entity
-    ):
-        """Creates metadata dictionary to be an entity tag
-        :param entity: Entity to be passed in
-        :type entity: Union[Entity, dict[str,str]]
-        :return Entity with metadata as one tag
-        :rtype Entity
-
-        """
-        metadata = {'etag': entity.pop('etag'), 'timestamp': entity.pop('Timestamp')}
-        entity['metadata'] = metadata
-        return entity
-
-    @distributed_trace
     def create_table(
             self,
             **kwargs  # type: Any
@@ -308,8 +292,7 @@ class TableClient(StorageAccountHostsMixin):
                 **kwargs
             )
             properties = _convert_to_entity(inserted_entity)
-            new_entity = self._set_metadata(properties)
-            return Entity(new_entity)
+            return properties
         except ValueError as error:
             process_table_error(error)
 
@@ -453,8 +436,7 @@ class TableClient(StorageAccountHostsMixin):
                                                                               query_options=query_options,
                                                                               **kwargs)
         properties = _convert_to_entity(entity.additional_properties)
-        new_entity = self._set_metadata(properties)
-        return Entity(new_entity)
+        return properties
 
     @distributed_trace
     def upsert_entity(  # pylint:disable=R1710

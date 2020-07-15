@@ -8,9 +8,6 @@ from typing import TYPE_CHECKING
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from xml.etree import ElementTree
-from azure.table._generated import models
-from xml.etree import ElementTree
 from azure.table._generated import models
 
 if TYPE_CHECKING:

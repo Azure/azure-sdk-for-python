@@ -144,6 +144,7 @@ def _convert_to_entity(entry_element):
         etag = 'W/"datetime\'' + url_quote(timestamp) + '\'"'
     entity['etag'] = etag
 
+    entity.set_metadata()
     return entity
 
 
