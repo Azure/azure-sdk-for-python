@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
 
-import azure.eventgrid._constants 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
@@ -18,8 +17,8 @@ if TYPE_CHECKING:
 from azure.eventgrid._models import CloudEvent, EventGridEvent
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid._generated._configuration import EventGridPublisherClientConfiguration
-from azure.eventgrid._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
+from azure.eventgrid._generated.event_grid_publisher_client._configuration import EventGridPublisherClientConfiguration
+from azure.eventgrid._generated.event_grid_publisher_client._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
 from azure.eventgrid import _constants as constants
 
 class EventGridPublisherClient(EventGridPublisherClientImpl):
