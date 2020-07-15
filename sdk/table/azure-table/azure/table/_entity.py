@@ -25,7 +25,9 @@ class Entity(dict):
 
     def metadata(self):
         metadata = self.pop('metadata')
-        return metadata
+        self['etag'] = metadata['etag']
+        self['timestamp'] = metadata['timestamp']
+        return self
 
     def __getattr__(self, name):
         """

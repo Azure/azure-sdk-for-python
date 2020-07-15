@@ -149,7 +149,7 @@ def _convert_to_entity(entry_element):
 
 
 def _extract_etag(response):
-    ''' Extracts the etag from the response headers. '''
+    """ Extracts the etag from the response headers. """
     if response and response.headers:
         return response.headers.get('etag')
 
