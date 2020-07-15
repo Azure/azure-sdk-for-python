@@ -75,6 +75,20 @@ def get_field_value(field, value, read_result):  # pylint: disable=too-many-retu
     return None
 
 
+class FieldValueType(str, Enum):
+    """Semantic data type of the field value.
+    """
+
+    STRING = "string"
+    DATE = "date"
+    TIME = "time"
+    PHONE_NUMBER = "phoneNumber"
+    NUMBER = "number"
+    INTEGER = "integer"
+    ARRAY = "array"
+    OBJECT = "object"
+
+
 class LengthUnit(str, Enum):
     """The unit used by the width, height and bounding box properties.
     For images, the unit is "pixel". For PDF, the unit is "inch".
@@ -188,14 +202,16 @@ class RecognizedForm(object):
 class FormField(object):
     """Represents a field recognized in an input form.
 
+    :ivar type: The type of the value found on FormField. Possible types include: 'string',
+        'date', 'time', 'phoneNumber', 'number', 'integer', 'object', or 'array'.
+    :vartype type: str or ~azure.ai.formrecognizer.FieldValueType
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and field elements for the field label.
     :ivar ~azure.ai.formrecognizer.FieldData value_data:
         Contains the text, bounding box, and field elements for the field value.
     :ivar str name: The unique name of the field or label.
     :ivar value:
-        The value for the recognized field. Possible types include: 'string',
-        'date', 'time', 'phoneNumber', 'number', 'integer', 'object', or 'array'.
+        The value for the recognized field.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
         :class:`~azure.ai.formrecognizer.FormField`, or list[:class:`~azure.ai.formrecognizer.FormField`]
     :ivar float confidence:
@@ -203,6 +219,7 @@ class FormField(object):
     """
 
     def __init__(self, **kwargs):
+        self.type = kwargs.get("type", None)
         self.label_data = kwargs.get("label_data", None)
         self.value_data = kwargs.get("value_data", None)
         self.name = kwargs.get("name", None)
@@ -212,6 +229,7 @@ class FormField(object):
     @classmethod
     def _from_generated(cls, field, value, read_result):
         return cls(
+            type=value.type,
             label_data=FieldData._from_generated(field, read_result),
             value_data=FieldData._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
@@ -222,6 +240,7 @@ class FormField(object):
     @classmethod
     def _from_generated_unlabeled(cls, field, idx, page, read_result):
         return cls(
+            type="string",  # unlabeled only returns string
             label_data=FieldData._from_generated_unlabeled(field.key, page, read_result),
             value_data=FieldData._from_generated_unlabeled(field.value, page, read_result),
             value=field.value.text,
@@ -230,8 +249,8 @@ class FormField(object):
         )
 
     def __repr__(self):
-        return "FormField(label_data={}, value_data={}, name={}, value={}, confidence={})".format(
-            repr(self.label_data), repr(self.value_data), self.name, repr(self.value), self.confidence
+        return "FormField(type={}, label_data={}, value_data={}, name={}, value={}, confidence={})".format(
+            self.type, repr(self.label_data), repr(self.value_data), self.name, repr(self.value), self.confidence
         )[:1024]
 
 
