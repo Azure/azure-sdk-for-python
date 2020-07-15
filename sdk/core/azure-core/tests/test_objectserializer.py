@@ -57,7 +57,11 @@ def test_deserialize_basic():
     serialized = b'{"a": 42, "b": "bar"}'
 
     serializer = JsonObjectSerializer(
+        deserializer_kwargs={
+            'object_hook': lambda d: Foo(d["a"], d["b"])
+        }
     )
 
     obj = serializer.deserialize(serialized, None)
-
+    assert obj.a == 42
+    assert obj.b == "bar"

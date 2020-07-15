@@ -82,6 +82,4 @@ class JsonObjectSerializer(ObjectSerializer):
             # Explain to mypy the correct type.
             data_as_str = cast(str, data)
 
-        obj = json.loads(data_as_str, **self.deserializer_kwargs)
-        # FIXME Python doesn't really have a cool way to map a dict to a class
-        return obj
+        return json.loads(data_as_str, **self.deserializer_kwargs)
