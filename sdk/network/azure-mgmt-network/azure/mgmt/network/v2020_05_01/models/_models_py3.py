@@ -2562,16 +2562,12 @@ class ApplicationRule(FirewallPolicyRule):
     :param protocols: Array of Application Protocols.
     :type protocols:
      list[~azure.mgmt.network.v2020_05_01.models.FirewallPolicyRuleApplicationProtocol]
-    :param target_urls: List of Urls for this rule condition.
-    :type target_urls: list[str]
     :param target_fqdns: List of FQDNs for this rule.
     :type target_fqdns: list[str]
     :param fqdn_tags: List of FQDN Tags for this rule.
     :type fqdn_tags: list[str]
     :param source_ip_groups: List of source IpGroups for this rule.
     :type source_ip_groups: list[str]
-    :param terminate_tls: Terminate TLS connections for this rule.
-    :type terminate_tls: bool
     """
 
     _validation = {
@@ -2585,23 +2581,19 @@ class ApplicationRule(FirewallPolicyRule):
         'source_addresses': {'key': 'sourceAddresses', 'type': '[str]'},
         'destination_addresses': {'key': 'destinationAddresses', 'type': '[str]'},
         'protocols': {'key': 'protocols', 'type': '[FirewallPolicyRuleApplicationProtocol]'},
-        'target_urls': {'key': 'targetUrls', 'type': '[str]'},
         'target_fqdns': {'key': 'targetFqdns', 'type': '[str]'},
         'fqdn_tags': {'key': 'fqdnTags', 'type': '[str]'},
         'source_ip_groups': {'key': 'sourceIpGroups', 'type': '[str]'},
-        'terminate_tls': {'key': 'terminateTLS', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str=None, description: str=None, source_addresses=None, destination_addresses=None, protocols=None, target_urls=None, target_fqdns=None, fqdn_tags=None, source_ip_groups=None, terminate_tls: bool=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, description: str=None, source_addresses=None, destination_addresses=None, protocols=None, target_fqdns=None, fqdn_tags=None, source_ip_groups=None, **kwargs) -> None:
         super(ApplicationRule, self).__init__(name=name, description=description, **kwargs)
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses
         self.protocols = protocols
-        self.target_urls = target_urls
         self.target_fqdns = target_fqdns
         self.fqdn_tags = fqdn_tags
         self.source_ip_groups = source_ip_groups
-        self.terminate_tls = terminate_tls
         self.rule_type = 'ApplicationRule'
 
 
@@ -3783,13 +3775,13 @@ class BackendAddressPool(SubResource):
 
     :param id: Resource ID.
     :type id: str
+    :param load_balancer_backend_addresses: An array of backend addresses.
+    :type load_balancer_backend_addresses:
+     list[~azure.mgmt.network.v2020_05_01.models.LoadBalancerBackendAddress]
     :ivar backend_ip_configurations: An array of references to IP addresses
      defined in network interfaces.
     :vartype backend_ip_configurations:
      list[~azure.mgmt.network.v2020_05_01.models.NetworkInterfaceIPConfiguration]
-    :param load_balancer_backend_addresses: An array of backend addresses.
-    :type load_balancer_backend_addresses:
-     list[~azure.mgmt.network.v2020_05_01.models.LoadBalancerBackendAddress]
     :ivar load_balancing_rules: An array of references to load balancing rules
      that use this backend address pool.
     :vartype load_balancing_rules:
@@ -3829,8 +3821,8 @@ class BackendAddressPool(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
         'load_balancer_backend_addresses': {'key': 'properties.loadBalancerBackendAddresses', 'type': '[LoadBalancerBackendAddress]'},
+        'backend_ip_configurations': {'key': 'properties.backendIPConfigurations', 'type': '[NetworkInterfaceIPConfiguration]'},
         'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
         'outbound_rule': {'key': 'properties.outboundRule', 'type': 'SubResource'},
         'outbound_rules': {'key': 'properties.outboundRules', 'type': '[SubResource]'},
@@ -3842,8 +3834,8 @@ class BackendAddressPool(SubResource):
 
     def __init__(self, *, id: str=None, load_balancer_backend_addresses=None, name: str=None, **kwargs) -> None:
         super(BackendAddressPool, self).__init__(id=id, **kwargs)
-        self.backend_ip_configurations = None
         self.load_balancer_backend_addresses = load_balancer_backend_addresses
+        self.backend_ip_configurations = None
         self.load_balancing_rules = None
         self.outbound_rule = None
         self.outbound_rules = None
@@ -8138,21 +8130,11 @@ class FirewallPolicy(Resource):
     :param threat_intel_whitelist: ThreatIntel Whitelist for Firewall Policy.
     :type threat_intel_whitelist:
      ~azure.mgmt.network.v2020_05_01.models.FirewallPolicyThreatIntelWhitelist
-    :param intrusion_system_mode: The operation mode for Intrusion system.
-     Possible values include: 'Enabled', 'Disabled'
-    :type intrusion_system_mode: str or
-     ~azure.mgmt.network.v2020_05_01.models.FirewallPolicyIntrusionSystemMode
-    :param transport_security: TLS Configuration definition.
-    :type transport_security:
-     ~azure.mgmt.network.v2020_05_01.models.FirewallPolicyTransportSecurity
     :param dns_settings: DNS Proxy Settings definition.
     :type dns_settings: ~azure.mgmt.network.v2020_05_01.models.DnsSettings
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
-    :param identity: The identity of the firewall policy.
-    :type identity:
-     ~azure.mgmt.network.v2020_05_01.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -8178,14 +8160,11 @@ class FirewallPolicy(Resource):
         'child_policies': {'key': 'properties.childPolicies', 'type': '[SubResource]'},
         'threat_intel_mode': {'key': 'properties.threatIntelMode', 'type': 'str'},
         'threat_intel_whitelist': {'key': 'properties.threatIntelWhitelist', 'type': 'FirewallPolicyThreatIntelWhitelist'},
-        'intrusion_system_mode': {'key': 'properties.intrusionSystemMode', 'type': 'str'},
-        'transport_security': {'key': 'properties.transportSecurity', 'type': 'FirewallPolicyTransportSecurity'},
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'DnsSettings'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, base_policy=None, threat_intel_mode=None, threat_intel_whitelist=None, intrusion_system_mode=None, transport_security=None, dns_settings=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, base_policy=None, threat_intel_mode=None, threat_intel_whitelist=None, dns_settings=None, **kwargs) -> None:
         super(FirewallPolicy, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.rule_collection_groups = None
         self.provisioning_state = None
@@ -8194,32 +8173,8 @@ class FirewallPolicy(Resource):
         self.child_policies = None
         self.threat_intel_mode = threat_intel_mode
         self.threat_intel_whitelist = threat_intel_whitelist
-        self.intrusion_system_mode = intrusion_system_mode
-        self.transport_security = transport_security
         self.dns_settings = dns_settings
         self.etag = None
-        self.identity = identity
-
-
-class FirewallPolicyCertificateAuthority(Model):
-    """Trusted Root certificates properties for tls.
-
-    :param key_vault_secret_id: Secret Id of (base-64 encoded unencrypted pfx)
-     'Secret' or 'Certificate' object stored in KeyVault.
-    :type key_vault_secret_id: str
-    :param name: Name of the CA certificate.
-    :type name: str
-    """
-
-    _attribute_map = {
-        'key_vault_secret_id': {'key': 'properties.keyVaultSecretId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(self, *, key_vault_secret_id: str=None, name: str=None, **kwargs) -> None:
-        super(FirewallPolicyCertificateAuthority, self).__init__(**kwargs)
-        self.key_vault_secret_id = key_vault_secret_id
-        self.name = name
 
 
 class FirewallPolicyRuleCollection(Model):
@@ -8473,56 +8428,6 @@ class FirewallPolicyThreatIntelWhitelist(Model):
         super(FirewallPolicyThreatIntelWhitelist, self).__init__(**kwargs)
         self.ip_addresses = ip_addresses
         self.fqdns = fqdns
-
-
-class FirewallPolicyTransportSecurity(Model):
-    """Configuration needed to perform TLS termination & initiation.
-
-    :param certificate_authority: The CA used for intermediate CA generation.
-    :type certificate_authority:
-     ~azure.mgmt.network.v2020_05_01.models.FirewallPolicyCertificateAuthority
-    :param excluded_domains: List of domains which are excluded from TLS
-     termination.
-    :type excluded_domains: list[str]
-    :param trusted_root_certificates: Certificates which are to be trusted by
-     the firewall.
-    :type trusted_root_certificates:
-     list[~azure.mgmt.network.v2020_05_01.models.FirewallPolicyTrustedRootCertificate]
-    """
-
-    _attribute_map = {
-        'certificate_authority': {'key': 'certificateAuthority', 'type': 'FirewallPolicyCertificateAuthority'},
-        'excluded_domains': {'key': 'excludedDomains', 'type': '[str]'},
-        'trusted_root_certificates': {'key': 'trustedRootCertificates', 'type': '[FirewallPolicyTrustedRootCertificate]'},
-    }
-
-    def __init__(self, *, certificate_authority=None, excluded_domains=None, trusted_root_certificates=None, **kwargs) -> None:
-        super(FirewallPolicyTransportSecurity, self).__init__(**kwargs)
-        self.certificate_authority = certificate_authority
-        self.excluded_domains = excluded_domains
-        self.trusted_root_certificates = trusted_root_certificates
-
-
-class FirewallPolicyTrustedRootCertificate(Model):
-    """Trusted Root certificates of a firewall policy.
-
-    :param key_vault_secret_id: Secret Id of (base-64 encoded unencrypted pfx)
-     the public certificate data stored in KeyVault.
-    :type key_vault_secret_id: str
-    :param name: Name of the trusted root certificate that is unique within a
-     firewall policy.
-    :type name: str
-    """
-
-    _attribute_map = {
-        'key_vault_secret_id': {'key': 'properties.keyVaultSecretId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(self, *, key_vault_secret_id: str=None, name: str=None, **kwargs) -> None:
-        super(FirewallPolicyTrustedRootCertificate, self).__init__(**kwargs)
-        self.key_vault_secret_id = key_vault_secret_id
-        self.name = name
 
 
 class FlowLog(Resource):
@@ -10349,125 +10254,6 @@ class LogSpecification(Model):
         self.blob_duration = blob_duration
 
 
-class ManagedRuleGroupOverride(Model):
-    """Defines a managed rule group override setting.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param rule_group_name: Required. The managed rule group to override.
-    :type rule_group_name: str
-    :param rules: List of rules that will be disabled. If none specified, all
-     rules in the group will be disabled.
-    :type rules:
-     list[~azure.mgmt.network.v2020_05_01.models.ManagedRuleOverride]
-    """
-
-    _validation = {
-        'rule_group_name': {'required': True},
-    }
-
-    _attribute_map = {
-        'rule_group_name': {'key': 'ruleGroupName', 'type': 'str'},
-        'rules': {'key': 'rules', 'type': '[ManagedRuleOverride]'},
-    }
-
-    def __init__(self, *, rule_group_name: str, rules=None, **kwargs) -> None:
-        super(ManagedRuleGroupOverride, self).__init__(**kwargs)
-        self.rule_group_name = rule_group_name
-        self.rules = rules
-
-
-class ManagedRuleOverride(Model):
-    """Defines a managed rule group override setting.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param rule_id: Required. Identifier for the managed rule.
-    :type rule_id: str
-    :param state: The state of the managed rule. Defaults to Disabled if not
-     specified. Possible values include: 'Disabled'
-    :type state: str or
-     ~azure.mgmt.network.v2020_05_01.models.ManagedRuleEnabledState
-    """
-
-    _validation = {
-        'rule_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'rule_id': {'key': 'ruleId', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-    }
-
-    def __init__(self, *, rule_id: str, state=None, **kwargs) -> None:
-        super(ManagedRuleOverride, self).__init__(**kwargs)
-        self.rule_id = rule_id
-        self.state = state
-
-
-class ManagedRulesDefinition(Model):
-    """Allow to exclude some variable satisfy the condition for the WAF check.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param exclusions: The Exclusions that are applied on the policy.
-    :type exclusions:
-     list[~azure.mgmt.network.v2020_05_01.models.OwaspCrsExclusionEntry]
-    :param managed_rule_sets: Required. The managed rule sets that are
-     associated with the policy.
-    :type managed_rule_sets:
-     list[~azure.mgmt.network.v2020_05_01.models.ManagedRuleSet]
-    """
-
-    _validation = {
-        'managed_rule_sets': {'required': True},
-    }
-
-    _attribute_map = {
-        'exclusions': {'key': 'exclusions', 'type': '[OwaspCrsExclusionEntry]'},
-        'managed_rule_sets': {'key': 'managedRuleSets', 'type': '[ManagedRuleSet]'},
-    }
-
-    def __init__(self, *, managed_rule_sets, exclusions=None, **kwargs) -> None:
-        super(ManagedRulesDefinition, self).__init__(**kwargs)
-        self.exclusions = exclusions
-        self.managed_rule_sets = managed_rule_sets
-
-
-class ManagedRuleSet(Model):
-    """Defines a managed rule set.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param rule_set_type: Required. Defines the rule set type to use.
-    :type rule_set_type: str
-    :param rule_set_version: Required. Defines the version of the rule set to
-     use.
-    :type rule_set_version: str
-    :param rule_group_overrides: Defines the rule group overrides to apply to
-     the rule set.
-    :type rule_group_overrides:
-     list[~azure.mgmt.network.v2020_05_01.models.ManagedRuleGroupOverride]
-    """
-
-    _validation = {
-        'rule_set_type': {'required': True},
-        'rule_set_version': {'required': True},
-    }
-
-    _attribute_map = {
-        'rule_set_type': {'key': 'ruleSetType', 'type': 'str'},
-        'rule_set_version': {'key': 'ruleSetVersion', 'type': 'str'},
-        'rule_group_overrides': {'key': 'ruleGroupOverrides', 'type': '[ManagedRuleGroupOverride]'},
-    }
-
-    def __init__(self, *, rule_set_type: str, rule_set_version: str, rule_group_overrides=None, **kwargs) -> None:
-        super(ManagedRuleSet, self).__init__(**kwargs)
-        self.rule_set_type = rule_set_type
-        self.rule_set_version = rule_set_version
-        self.rule_group_overrides = rule_group_overrides
-
-
 class ManagedServiceIdentity(Model):
     """Identity for the resource.
 
@@ -10543,52 +10329,6 @@ class ManagedServiceIdentityUserAssignedIdentitiesValue(Model):
         self.client_id = None
 
 
-class MatchCondition(Model):
-    """Define match conditions.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param match_variables: Required. List of match variables.
-    :type match_variables:
-     list[~azure.mgmt.network.v2020_05_01.models.MatchVariable]
-    :param operator: Required. The operator to be matched. Possible values
-     include: 'IPMatch', 'Equal', 'Contains', 'LessThan', 'GreaterThan',
-     'LessThanOrEqual', 'GreaterThanOrEqual', 'BeginsWith', 'EndsWith',
-     'Regex', 'GeoMatch'
-    :type operator: str or
-     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallOperator
-    :param negation_conditon: Whether this is negate condition or not.
-    :type negation_conditon: bool
-    :param match_values: Required. Match value.
-    :type match_values: list[str]
-    :param transforms: List of transforms.
-    :type transforms: list[str or
-     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallTransform]
-    """
-
-    _validation = {
-        'match_variables': {'required': True},
-        'operator': {'required': True},
-        'match_values': {'required': True},
-    }
-
-    _attribute_map = {
-        'match_variables': {'key': 'matchVariables', 'type': '[MatchVariable]'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negation_conditon': {'key': 'negationConditon', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
-    }
-
-    def __init__(self, *, match_variables, operator, match_values, negation_conditon: bool=None, transforms=None, **kwargs) -> None:
-        super(MatchCondition, self).__init__(**kwargs)
-        self.match_variables = match_variables
-        self.operator = operator
-        self.negation_conditon = negation_conditon
-        self.match_values = match_values
-        self.transforms = transforms
-
-
 class MatchedRule(Model):
     """Matched rule.
 
@@ -10608,35 +10348,6 @@ class MatchedRule(Model):
         super(MatchedRule, self).__init__(**kwargs)
         self.rule_name = rule_name
         self.action = action
-
-
-class MatchVariable(Model):
-    """Define match variables.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param variable_name: Required. Match Variable. Possible values include:
-     'RemoteAddr', 'RequestMethod', 'QueryString', 'PostArgs', 'RequestUri',
-     'RequestHeaders', 'RequestBody', 'RequestCookies'
-    :type variable_name: str or
-     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallMatchVariable
-    :param selector: The selector of match variable.
-    :type selector: str
-    """
-
-    _validation = {
-        'variable_name': {'required': True},
-    }
-
-    _attribute_map = {
-        'variable_name': {'key': 'variableName', 'type': 'str'},
-        'selector': {'key': 'selector', 'type': 'str'},
-    }
-
-    def __init__(self, *, variable_name, selector: str=None, **kwargs) -> None:
-        super(MatchVariable, self).__init__(**kwargs)
-        self.variable_name = variable_name
-        self.selector = selector
 
 
 class MetricSpecification(Model):
@@ -12220,47 +11931,6 @@ class OutboundRule(SubResource):
         self.type = None
 
 
-class OwaspCrsExclusionEntry(Model):
-    """Allow to exclude some variable satisfy the condition for the WAF check.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param match_variable: Required. The variable to be excluded. Possible
-     values include: 'RequestHeaderNames', 'RequestCookieNames',
-     'RequestArgNames'
-    :type match_variable: str or
-     ~azure.mgmt.network.v2020_05_01.models.OwaspCrsExclusionEntryMatchVariable
-    :param selector_match_operator: Required. When matchVariable is a
-     collection, operate on the selector to specify which elements in the
-     collection this exclusion applies to. Possible values include: 'Equals',
-     'Contains', 'StartsWith', 'EndsWith', 'EqualsAny'
-    :type selector_match_operator: str or
-     ~azure.mgmt.network.v2020_05_01.models.OwaspCrsExclusionEntrySelectorMatchOperator
-    :param selector: Required. When matchVariable is a collection, operator
-     used to specify which elements in the collection this exclusion applies
-     to.
-    :type selector: str
-    """
-
-    _validation = {
-        'match_variable': {'required': True},
-        'selector_match_operator': {'required': True},
-        'selector': {'required': True},
-    }
-
-    _attribute_map = {
-        'match_variable': {'key': 'matchVariable', 'type': 'str'},
-        'selector_match_operator': {'key': 'selectorMatchOperator', 'type': 'str'},
-        'selector': {'key': 'selector', 'type': 'str'},
-    }
-
-    def __init__(self, *, match_variable, selector_match_operator, selector: str, **kwargs) -> None:
-        super(OwaspCrsExclusionEntry, self).__init__(**kwargs)
-        self.match_variable = match_variable
-        self.selector_match_operator = selector_match_operator
-        self.selector = selector
-
-
 class P2SConnectionConfiguration(SubResource):
     """P2SConnectionConfiguration Resource.
 
@@ -12971,48 +12641,6 @@ class PeerExpressRouteCircuitConnection(SubResource):
         self.name = name
         self.etag = None
         self.type = None
-
-
-class PolicySettings(Model):
-    """Defines contents of a web application firewall global configuration.
-
-    :param state: The state of the policy. Possible values include:
-     'Disabled', 'Enabled'
-    :type state: str or
-     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallEnabledState
-    :param mode: The mode of the policy. Possible values include:
-     'Prevention', 'Detection'
-    :type mode: str or
-     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallMode
-    :param request_body_check: Whether to allow WAF to check request Body.
-    :type request_body_check: bool
-    :param max_request_body_size_in_kb: Maximum request body size in Kb for
-     WAF.
-    :type max_request_body_size_in_kb: int
-    :param file_upload_limit_in_mb: Maximum file upload size in Mb for WAF.
-    :type file_upload_limit_in_mb: int
-    """
-
-    _validation = {
-        'max_request_body_size_in_kb': {'maximum': 128, 'minimum': 8},
-        'file_upload_limit_in_mb': {'minimum': 0},
-    }
-
-    _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'request_body_check': {'key': 'requestBodyCheck', 'type': 'bool'},
-        'max_request_body_size_in_kb': {'key': 'maxRequestBodySizeInKb', 'type': 'int'},
-        'file_upload_limit_in_mb': {'key': 'fileUploadLimitInMb', 'type': 'int'},
-    }
-
-    def __init__(self, *, state=None, mode=None, request_body_check: bool=None, max_request_body_size_in_kb: int=None, file_upload_limit_in_mb: int=None, **kwargs) -> None:
-        super(PolicySettings, self).__init__(**kwargs)
-        self.state = state
-        self.mode = mode
-        self.request_body_check = request_body_check
-        self.max_request_body_size_in_kb = max_request_body_size_in_kb
-        self.file_upload_limit_in_mb = file_upload_limit_in_mb
 
 
 class PrepareNetworkPoliciesRequest(Model):
@@ -18858,157 +18486,3 @@ class VpnSiteLinkConnection(SubResource):
         self.name = name
         self.etag = None
         self.type = None
-
-
-class WebApplicationFirewallCustomRule(Model):
-    """Defines contents of a web application rule.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: The name of the resource that is unique within a policy. This
-     name can be used to access the resource.
-    :type name: str
-    :ivar etag: A unique read-only string that changes whenever the resource
-     is updated.
-    :vartype etag: str
-    :param priority: Required. Priority of the rule. Rules with a lower value
-     will be evaluated before rules with a higher value.
-    :type priority: int
-    :param rule_type: Required. The rule type. Possible values include:
-     'MatchRule', 'Invalid'
-    :type rule_type: str or
-     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallRuleType
-    :param match_conditions: Required. List of match conditions.
-    :type match_conditions:
-     list[~azure.mgmt.network.v2020_05_01.models.MatchCondition]
-    :param action: Required. Type of Actions. Possible values include:
-     'Allow', 'Block', 'Log'
-    :type action: str or
-     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallAction
-    """
-
-    _validation = {
-        'name': {'max_length': 128},
-        'etag': {'readonly': True},
-        'priority': {'required': True},
-        'rule_type': {'required': True},
-        'match_conditions': {'required': True},
-        'action': {'required': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'rule_type': {'key': 'ruleType', 'type': 'str'},
-        'match_conditions': {'key': 'matchConditions', 'type': '[MatchCondition]'},
-        'action': {'key': 'action', 'type': 'str'},
-    }
-
-    def __init__(self, *, priority: int, rule_type, match_conditions, action, name: str=None, **kwargs) -> None:
-        super(WebApplicationFirewallCustomRule, self).__init__(**kwargs)
-        self.name = name
-        self.etag = None
-        self.priority = priority
-        self.rule_type = rule_type
-        self.match_conditions = match_conditions
-        self.action = action
-
-
-class WebApplicationFirewallPolicy(Resource):
-    """Defines web application firewall policy.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Resource ID.
-    :type id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: Resource tags.
-    :type tags: dict[str, str]
-    :param policy_settings: The PolicySettings for policy.
-    :type policy_settings:
-     ~azure.mgmt.network.v2020_05_01.models.PolicySettings
-    :param custom_rules: The custom rules inside the policy.
-    :type custom_rules:
-     list[~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallCustomRule]
-    :ivar application_gateways: A collection of references to application
-     gateways.
-    :vartype application_gateways:
-     list[~azure.mgmt.network.v2020_05_01.models.ApplicationGateway]
-    :ivar provisioning_state: The provisioning state of the web application
-     firewall policy resource. Possible values include: 'Succeeded',
-     'Updating', 'Deleting', 'Failed'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.network.v2020_05_01.models.ProvisioningState
-    :ivar resource_state: Resource status of the policy. Resource status of
-     the policy. Possible values include: 'Creating', 'Enabling', 'Enabled',
-     'Disabling', 'Disabled', 'Deleting'
-    :vartype resource_state: str or
-     ~azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallPolicyResourceState
-    :param managed_rules: Required. Describes the managedRules structure.
-    :type managed_rules:
-     ~azure.mgmt.network.v2020_05_01.models.ManagedRulesDefinition
-    :ivar http_listeners: A collection of references to application gateway
-     http listeners.
-    :vartype http_listeners:
-     list[~azure.mgmt.network.v2020_05_01.models.SubResource]
-    :ivar path_based_rules: A collection of references to application gateway
-     path rules.
-    :vartype path_based_rules:
-     list[~azure.mgmt.network.v2020_05_01.models.SubResource]
-    :ivar etag: A unique read-only string that changes whenever the resource
-     is updated.
-    :vartype etag: str
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'application_gateways': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'resource_state': {'readonly': True},
-        'managed_rules': {'required': True},
-        'http_listeners': {'readonly': True},
-        'path_based_rules': {'readonly': True},
-        'etag': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'policy_settings': {'key': 'properties.policySettings', 'type': 'PolicySettings'},
-        'custom_rules': {'key': 'properties.customRules', 'type': '[WebApplicationFirewallCustomRule]'},
-        'application_gateways': {'key': 'properties.applicationGateways', 'type': '[ApplicationGateway]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
-        'managed_rules': {'key': 'properties.managedRules', 'type': 'ManagedRulesDefinition'},
-        'http_listeners': {'key': 'properties.httpListeners', 'type': '[SubResource]'},
-        'path_based_rules': {'key': 'properties.pathBasedRules', 'type': '[SubResource]'},
-        'etag': {'key': 'etag', 'type': 'str'},
-    }
-
-    def __init__(self, *, managed_rules, id: str=None, location: str=None, tags=None, policy_settings=None, custom_rules=None, **kwargs) -> None:
-        super(WebApplicationFirewallPolicy, self).__init__(id=id, location=location, tags=tags, **kwargs)
-        self.policy_settings = policy_settings
-        self.custom_rules = custom_rules
-        self.application_gateways = None
-        self.provisioning_state = None
-        self.resource_state = None
-        self.managed_rules = managed_rules
-        self.http_listeners = None
-        self.path_based_rules = None
-        self.etag = None
