@@ -8,7 +8,6 @@ import json
 from azure.identity import AzureCliCredential, CredentialUnavailableError
 from azure.identity._credentials.azure_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity._constants import DEFAULT_REFRESH_OFFSET
 
 import subprocess
 import pytest

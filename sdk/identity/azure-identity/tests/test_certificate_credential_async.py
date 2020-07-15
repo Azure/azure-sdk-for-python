@@ -9,7 +9,6 @@ from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import CertificateCredential
-from azure.identity._constants import DEFAULT_REFRESH_OFFSET
 
 from msal import TokenCache
 import pytest

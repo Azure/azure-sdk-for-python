@@ -10,7 +10,6 @@ from azure.identity import CredentialUnavailableError
 from azure.identity.aio import VSCodeCredential
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity._constants import DEFAULT_REFRESH_OFFSET
 import pytest
 
 from helpers import build_aad_response, mock_response, Request

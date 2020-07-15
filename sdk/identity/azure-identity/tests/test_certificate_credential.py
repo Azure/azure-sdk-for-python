@@ -9,7 +9,6 @@ from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import CertificateCredential
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
-from azure.identity._constants import DEFAULT_REFRESH_OFFSET
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes

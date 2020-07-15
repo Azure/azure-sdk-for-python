@@ -220,8 +220,8 @@ def test_should_refresh():
     assert should_refresh
 
     # not exceed cool down time, do not refresh
-    token = AccessToken("token", now + 100)
-    client._last_refresh_time = now - 5
+    token = AccessToken("token", now + DEFAULT_REFRESH_OFFSET - 1)
+    client._last_refresh_time = now - DEFAULT_TOKEN_REFRESH_RETRY_DELAY + 1
     should_refresh = client.should_refresh(token)
     assert not should_refresh
 
