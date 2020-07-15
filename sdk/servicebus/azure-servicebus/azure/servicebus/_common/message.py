@@ -1,4 +1,4 @@
-# ------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
@@ -8,7 +8,7 @@ import datetime
 import uuid
 import functools
 import logging
-from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable, Dict, Any
+from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable
 
 import uamqp.message
 from uamqp import types
@@ -63,8 +63,22 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     :param body: The data to send in a single message.
     :type body: str or bytes
+
+    :keyword dict properties: The user defined properties on the message.
+    :keyword str session_id: The session identifier of the message for a sessionful entity.
+    :keyword str message_id: The id to identify the message.
+    :keyword datetime.datetime scheduled_enqueue_time_utc: The utc scheduled enqueue time to the message.
+    :keyword datetime.timedelta time_to_live: The life duration of a message.
+    :keyword str content_type: The content type descriptor.
+    :keyword str correlation_id: The correlation identifier.
+    :keyword str label: The application specific label.
+    :keyword str partition_key: The partition key for sending a message to a partitioned entity.
+    :keyword str via_partition_key: The partition key for sending a message into an entity via a partitioned
+     transfer queue.
+    :keyword str to: The `to` address used for auto_forward chaining scenarios.
+    :keyword str reply_to: The address of an entity to send replies to.
+    :keyword str reply_to_session_id: The session identifier augmenting the `reply_to` address.
     :keyword str encoding: The encoding for string data. Default is UTF-8.
-    :keyword str session_id: An optional session ID for the message to be sent.
 
     .. admonition:: Example:
 
@@ -78,24 +92,39 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     """
 
     def __init__(self, body, **kwargs):
-        subject = kwargs.pop('subject', None)
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", 'UTF-8')
-        self._amqp_properties = uamqp.message.MessageProperties(encoding=self._encoding, subject=subject)
+        self._amqp_properties = uamqp.message.MessageProperties(encoding=self._encoding)
         self._amqp_header = uamqp.message.MessageHeader()
-        self._annotations = {}
-        self._app_properties = {}
 
-        self.session_id = kwargs.get("session_id", None)
         if 'message' in kwargs:
             self.message = kwargs['message']
-            self._annotations = self.message.annotations
-            self._app_properties = self.message.application_properties
             self._amqp_properties = self.message.properties
             self._amqp_header = self.message.header
         else:
             self._build_message(body)
+            self.properties = kwargs.pop("properties", None)
+            self.session_id = kwargs.pop("session_id", None)
+            self.message_id = kwargs.get("message_id", None)
+            self.content_type = kwargs.pop("content_type", None)
+            self.correlation_id = kwargs.pop("correlation_id", None)
+            self.to = kwargs.pop("to", None)
+            self.reply_to = kwargs.pop("reply_to", None)
+            self.reply_to_session_id = kwargs.pop("reply_to_session_id", None)
+            self.label = kwargs.pop("label", None)
+            scheduled_enqueue_time_utc = kwargs.pop("scheduled_enqueue_time_utc", None)
+            if scheduled_enqueue_time_utc:
+                self.scheduled_enqueue_time_utc = scheduled_enqueue_time_utc
+            time_to_live = kwargs.pop("time_to_live", None)
+            if time_to_live:
+                self.time_to_live = time_to_live
+            partition_key = kwargs.pop("partition_key", None)
+            if partition_key:
+                self.partition_key = partition_key
+            via_partition_key = kwargs.pop("via_partition_key", None)
+            if via_partition_key:
+                self.via_partition_key = via_partition_key
 
     def __str__(self):
         return str(self.message)
@@ -136,7 +165,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def properties(self):
         # type: () -> dict
-        """User defined properties on the message.
+        """The user defined properties on the message.
 
         :rtype: dict
         """
@@ -161,9 +190,12 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
         :rtype: str
         """
-        if self.message.annotations:
-            return self.message.annotations.get(_X_OPT_PARTITION_KEY)
-        return None
+        p_key = None
+        try:
+            p_key = self.message.annotations.get(_X_OPT_PARTITION_KEY)
+            return p_key.decode('UTF-8')
+        except (AttributeError, UnicodeDecodeError):
+            return p_key
 
     @partition_key.setter
     def partition_key(self, value):
@@ -186,9 +218,12 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
         :rtype: str
         """
-        if self.message.annotations:
-            return self.message.annotations.get(_X_OPT_VIA_PARTITION_KEY)
-        return None
+        via_p_key = None
+        try:
+            via_p_key = self.message.annotations.get(_X_OPT_VIA_PARTITION_KEY)
+            return via_p_key.decode('UTF-8')
+        except (AttributeError, UnicodeDecodeError):
+            return via_p_key
 
     @via_partition_key.setter
     def via_partition_key(self, value):
@@ -273,7 +308,10 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
         :rtype: str
         """
-        return self._amqp_properties.content_type if self._amqp_properties else None
+        try:
+            return self._amqp_properties.content_type.decode('UTF-8')
+        except (AttributeError, UnicodeDecodeError):
+            return self._amqp_properties.content_type
 
     @content_type.setter
     def content_type(self, val):
@@ -294,7 +332,10 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
         :rtype: str
         """
-        return self._amqp_properties.correlation_id if self._amqp_properties else None
+        try:
+            return self._amqp_properties.correlation_id.decode('UTF-8')
+        except (AttributeError, UnicodeDecodeError):
+            return self._amqp_properties.correlation_id
 
     @correlation_id.setter
     def correlation_id(self, val):
@@ -304,14 +345,17 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def label(self):
         # type: () -> str
-        """The application specific label
+        """The application specific label.
 
         This property enables the application to indicate the purpose of the message to the receiver in a standardized
         fashion, similar to an email subject line.
 
         :rtype: str
         """
-        return self._amqp_properties.subject if self._amqp_properties else None
+        try:
+            return self._amqp_properties.subject.decode('UTF-8')
+        except (AttributeError, UnicodeDecodeError):
+            return self._amqp_properties.subject
 
     @label.setter
     def label(self, val):
@@ -331,7 +375,10 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
         :rtype: str
         """
-        return self._amqp_properties.message_id if self._amqp_properties else None
+        try:
+            return self._amqp_properties.message_id.decode('UTF-8')
+        except (AttributeError, UnicodeDecodeError):
+            return self._amqp_properties.message_id
 
     @message_id.setter
     def message_id(self, val):
@@ -353,7 +400,10 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
         :rtype: str
         """
-        return self._amqp_properties.reply_to if self._amqp_properties else None
+        try:
+            return self._amqp_properties.reply_to.decode('UTF-8')
+        except (AttributeError, UnicodeDecodeError):
+            return self._amqp_properties.reply_to
 
     @reply_to.setter
     def reply_to(self, val):
@@ -374,7 +424,10 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
         :rtype: str
         """
-        return self._amqp_properties.reply_to_group_id if self._amqp_properties else None
+        try:
+            return self._amqp_properties.reply_to_group_id.decode('UTF-8')
+        except (AttributeError, UnicodeDecodeError):
+            return self._amqp_properties.reply_to_group_id
 
     @reply_to_session_id.setter
     def reply_to_session_id(self, val):
@@ -384,7 +437,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @property
     def to(self):
         # type: () -> str
-        """The "to" address.
+        """The `to` address.
 
         This property is reserved for future use in routing scenarios and presently ignored by the broker itself.
         Applications can use this value in rule-driven auto-forward chaining scenarios to indicate the intended
@@ -394,7 +447,10 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
         :rtype: str
         """
-        return self._amqp_properties.to if self._amqp_properties else None
+        try:
+            return self._amqp_properties.to.decode('UTF-8')
+        except (AttributeError, UnicodeDecodeError):
+            return self._amqp_properties.to
 
     @to.setter
     def to(self, val):

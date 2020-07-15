@@ -26,9 +26,9 @@ def message_processing(sb_client, queue_name, messages):
                 for message in receiver:
                     messages.append(message)
                     print("Message: {}".format(message))
-                    print("Time to live: {}".format(message.header.time_to_live))
+                    print("Time to live: {}".format(message.time_to_live))
                     print("Sequence number: {}".format(message.sequence_number))
-                    print("Enqueue Sequence number: {}".format(message.enqueue_sequence_number))
+                    print("Enqueue Sequence number: {}".format(message.enqueued_sequence_number))
                     print("Partition ID: {}".format(message.partition_id))
                     print("Partition Key: {}".format(message.partition_key))
                     print("Locked until: {}".format(message.locked_until_utc))

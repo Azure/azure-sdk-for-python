@@ -4,16 +4,15 @@
 
 **New Features**
 
-* Added new properties to Message: `content_type`, `correlation_id`, `label`,
+* Added new properties to Message, PeekMessage and ReceivedMessage: `content_type`, `correlation_id`, `label`,
 `message_id`, `reply_to`, `reply_to_session_id` and `to`. Please refer to the docstring for further information.
 
-* Add new properties to PeekedMessaged and ReceivedMessage: `dead_letter_error_description`,
-`dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`.
-Please refer to the docstring for further information.
+* Add new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
+`dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`. Please refer to the docstring for further information.
 
 **Breaking Changes**
 
-* Removed/Renamed several properties and instance variables on Message.
+* Removed/Renamed several properties and instance variables on Message (the changes applied to the inherited Message type PeekMessage and ReceivedMessage).
   - Renamed property `user_properties` to `properties`
       - The original instance variable `properties` which represents the AMQP properties now becomes an internal instance variable `_amqp_properties`.
   - Removed property `enqueue_sequence_number`.

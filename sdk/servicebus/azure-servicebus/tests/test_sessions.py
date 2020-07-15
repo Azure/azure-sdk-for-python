@@ -303,8 +303,10 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 for message in receiver:
                     count += 1
                     print_message(_logger, message)
-                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.dead_letter_reason == 'Testing reason'
+                    assert message.dead_letter_error_description == 'Testing description'
+                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     message.complete()
             assert count == 10
 
@@ -415,8 +417,10 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 for message in session:
                     print_message(_logger, message)
                     message.complete()
-                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.dead_letter_reason == 'Testing reason'
+                    assert message.dead_letter_error_description == 'Testing description'
+                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     count += 1
             assert count == 10
 
@@ -646,7 +650,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 messages = receiver.receive_messages(max_wait_time=30)
                 assert len(messages) == 1
                 print_message(_logger, messages[0])
-                #assert messages[0].header.delivery_count  # TODO confirm this with service
+                assert messages[0].delivery_count
                 messages[0].complete()
 
 
@@ -667,7 +671,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     content = str(uuid.uuid4())
                     message_id = uuid.uuid4()
                     message = Message(content, session_id=session_id)
-                    message.properties.message_id = message_id
+                    message.message_id = message_id
                     message.scheduled_enqueue_time_utc = enqueue_time
                     sender.send_messages(message)
 
@@ -680,7 +684,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
                 data = str(messages[0])
                 assert data == content
-                assert messages[0].properties.message_id == message_id
+                assert messages[0].message_id == message_id
                 assert messages[0].scheduled_enqueue_time_utc == enqueue_time
                 assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                 assert len(messages) == 1
@@ -704,10 +708,10 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     content = str(uuid.uuid4())
                     message_id_a = uuid.uuid4()
                     message_a = Message(content, session_id=session_id)
-                    message_a.properties.message_id = message_id_a
+                    message_a.message_id = message_id_a
                     message_id_b = uuid.uuid4()
                     message_b = Message(content, session_id=session_id)
-                    message_b.properties.message_id = message_id_b
+                    message_b.message_id = message_id_b
                     tokens = sender.schedule_messages([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
 
@@ -721,7 +725,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
                 data = str(messages[0])
                 assert data == content
-                assert messages[0].properties.message_id in (message_id_a, message_id_b)
+                assert messages[0].message_id in (message_id_a, message_id_b)
                 assert messages[0].scheduled_enqueue_time_utc == enqueue_time
                 assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                 assert len(messages) == 2
@@ -778,7 +782,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 session.session.set_session_state("first_state")
                 count = 0
                 for m in session:
-                    assert m.properties.group_id == session_id.encode('utf-8')
+                    assert m.group_id == session_id.encode('utf-8')
                     count += 1
                 session.session.get_session_state()
             assert count == 3
