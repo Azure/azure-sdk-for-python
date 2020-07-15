@@ -15,10 +15,10 @@ from msrest import Serializer, Deserializer
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import SubscriptionClientConfiguration
+from ._operations_mixin import SubscriptionClientOperationsMixin
 
 
-
-class SubscriptionClient(MultiApiClientMixin, SDKClient):
+class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin, SDKClient):
     """All resource groups and resources exist within subscriptions. These operation enable you get information about your subscriptions and tenants. A tenant is a dedicated instance of Azure Active Directory (Azure AD) for your organization.
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
