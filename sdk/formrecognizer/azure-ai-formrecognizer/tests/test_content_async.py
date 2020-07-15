@@ -54,7 +54,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
         poller = await client.begin_recognize_content(
             myfile,
-            content_type=FormContentType.application_pdf
+            content_type=FormContentType.APPLICATION_PDF
         )
         result = await poller.result()
         self.assertIsNotNone(result)

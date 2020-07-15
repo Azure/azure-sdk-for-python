@@ -64,7 +64,7 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
     async def close(self) -> None:
         await self._pipeline.__aexit__()
 
-    async def request_token(
+    async def request_token(  # pylint:disable=invalid-overridden-method
         self,
         scopes: "Iterable[str]",
         method: "Optional[str]" = "POST",

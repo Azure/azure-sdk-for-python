@@ -94,36 +94,36 @@ class LengthUnit(str, Enum):
     For images, the unit is "pixel". For PDF, the unit is "inch".
     """
 
-    pixel = "pixel"
-    inch = "inch"
+    PIXEL = "pixel"
+    INCH = "inch"
 
 
 class TrainingStatus(str, Enum):
     """Status of the training operation.
     """
 
-    succeeded = "succeeded"
-    partially_succeeded = "partiallySucceeded"
-    failed = "failed"
+    SUCCEEDED = "succeeded"
+    PARTIALLY_SUCCEEDED = "partiallySucceeded"
+    FAILED = "failed"
 
 
 class CustomFormModelStatus(str, Enum):
     """Status indicating the model's readiness for use.
     """
 
-    creating = "creating"
-    ready = "ready"
-    invalid = "invalid"
+    CREATING = "creating"
+    READY = "ready"
+    INVALID = "invalid"
 
 
 class FormContentType(str, Enum):
     """Content type for upload
     """
 
-    application_pdf = "application/pdf"  #: Content Type 'application/pdf'.
-    image_jpeg = "image/jpeg"  #: Content Type 'image/jpeg'.
-    image_png = "image/png"  #: Content Type 'image/png'.
-    image_tiff = "image/tiff"  #: Content Type 'image/tiff'.
+    APPLICATION_PDF = "application/pdf"  #: Content Type 'application/pdf'.
+    IMAGE_JPEG = "image/jpeg"  #: Content Type 'image/jpeg'.
+    IMAGE_PNG = "image/png"  #: Content Type 'image/png'.
+    IMAGE_TIFF = "image/tiff"  #: Content Type 'image/tiff'.
 
 
 class Point(namedtuple("Point", "x y")):
