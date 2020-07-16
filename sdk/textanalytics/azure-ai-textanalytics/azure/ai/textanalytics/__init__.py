@@ -26,8 +26,8 @@ from ._models import (
     TextDocumentBatchStatistics,
     SentenceSentiment,
     SentimentConfidenceScores,
-    SentenceAspect,
-    AspectOpinion
+    AspectSentiment,
+    OpinionSentiment
 )
 
 __all__ = [
@@ -51,8 +51,8 @@ __all__ = [
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
     'SentimentConfidenceScores',
-    'SentenceAspect',
-    'AspectOpinion'
+    'AspectSentiment',
+    'OpinionSentiment'
 ]
 
 __version__ = VERSION

@@ -637,12 +637,13 @@ class SentenceSentiment(DictMixin):
         and 1 for the sentence for all labels.
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar aspects: The list of aspects of the sentence. An aspect is a
-        key phrase of a sentence, for example the attributes of a product
-        or a service. Only returned if `show_aspects` is set to True in
-        call to `analyze_sentiment`
+    :ivar aspects: The list of aspects in this sentence. An aspect is a
+        key attribute of a product or a service. For example in
+        "The food at Hotel Foo is good", "food" is an aspect of
+        "Hotel Foo". This property is only returned if `show_aspects` is
+        set to True in the call to `analyze_sentiment`
     :vartype aspects:
-        list[~azure.ai.textanalytics.SentenceAspect]
+        list[~azure.ai.textanalytics.AspectSentiment]
     """
 
     def __init__(self, **kwargs):
@@ -658,7 +659,7 @@ class SentenceSentiment(DictMixin):
             sentiment=sentence.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
             aspects=(
-                [SentenceAspect._from_generated(aspect, results) for aspect in sentence.aspects]  # pylint: disable=protected-access
+                [AspectSentiment._from_generated(aspect, results) for aspect in sentence.aspects]  # pylint: disable=protected-access
                 if hasattr(sentence, "aspects") else None
             )
         )
@@ -671,11 +672,12 @@ class SentenceSentiment(DictMixin):
         )[:1024]
 
 
-class SentenceAspect(DictMixin):
-    """SentenceAspect contains the related opinions, predicted sentiment,
-    confidence scores and other information about an aspect of a sentence.
-    An aspect of a sentence is a key component of a sentence, for example
-    in the sentence "The food is good", "food" is an aspect.
+class AspectSentiment(DictMixin):
+    """AspectSentiment contains the related opinions, predicted sentiment,
+    confidence scores and other information about an aspect of a product.
+    An aspect of a product/service is a key component of that product/service.
+    For example in "The food at Hotel Foo is good", "food" is an aspect of
+    "Hotel Foo".
 
     :ivar str text: The aspect text.
     :ivar str sentiment: The predicted Sentiment for the aspect. Possible values
@@ -685,8 +687,8 @@ class SentenceAspect(DictMixin):
         for 'neutral' will always be 0
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar opinions: All of the opinions in the sentence related to this aspect.
-    :vartype opinions: list[~azure.ai.textanalytics.AspectOpinion]
+    :ivar opinions: All of the opinions related to this aspect.
+    :vartype opinions: list[~azure.ai.textanalytics.OpinionSentiment]
     :ivar int offset: The aspect offset from the start of the sentence.
     :ivar int length: The length of the aspect.
     """
@@ -723,14 +725,14 @@ class SentenceAspect(DictMixin):
             sentiment=aspect.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(aspect.confidence_scores),  # pylint: disable=protected-access
             opinions=[
-                AspectOpinion._from_generated(opinion) for opinion in cls._get_opinions(aspect.relations, results)  # pylint: disable=protected-access
+                OpinionSentiment._from_generated(opinion) for opinion in cls._get_opinions(aspect.relations, results)  # pylint: disable=protected-access
             ],
             offset=aspect.offset,
             length=aspect.length
         )
 
     def __repr__(self):
-        return "SentenceAspect(text={}, sentiment={}, confidence_scores={}, opinions={}, offset={}, length={})".format(
+        return "AspectSentiment(text={}, sentiment={}, confidence_scores={}, opinions={}, offset={}, length={})".format(
             self.text,
             self.sentiment,
             repr(self.confidence_scores),
@@ -740,8 +742,8 @@ class SentenceAspect(DictMixin):
         )[:1024]
 
 
-class AspectOpinion(DictMixin):
-    """AspectOpinion contains the predicted sentiment,
+class OpinionSentiment(DictMixin):
+    """OpinionSentiment contains the predicted sentiment,
     confidence scores and other information about an opinion of an aspect.
     For example, in the sentence "The food is good", the opinion of the
     aspect 'food' is 'good'.
@@ -780,7 +782,7 @@ class AspectOpinion(DictMixin):
         )
 
     def __repr__(self):
-        return "AspectOpinion(text={}, sentiment={}, confidence_scores={}, offset={}, length={}, is_negated={})".format(
+        return "OpinionSentiment(text={}, sentiment={}, confidence_scores={}, offset={}, length={}, is_negated={})".format(
             self.text,
             self.sentiment,
             repr(self.confidence_scores),

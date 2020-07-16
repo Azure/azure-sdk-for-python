@@ -378,11 +378,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
-        :keyword bool show_aspects: Whether to conduct aspect-based sentiment analysis.
-            Aspect-based sentiment analysis provides more granular analysis of sentiment and
-            opinions around specific aspects or attributes of a product or service.
+        :keyword bool show_aspects: Whether to conduct more granular analysis around the aspects of
+            a product or service (also known as aspect-based sentiment analysis). For example,
+            in the review "The food at Hotel Foo is good", "food" is an aspect of "Hotel Foo", and
+            setting `show_aspects` to True will go into the sentiment and opinions of "food".
             If set to true, the returned :class:`~azure.ai.textanalytics.SentenceSentiment` objects
-            will have property `aspects` containing the result of this analysis
+            will have property `aspects` containing the result of this analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will

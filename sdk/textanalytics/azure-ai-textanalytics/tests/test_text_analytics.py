@@ -112,7 +112,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
 
         aspect_opinion_confidence_score = _models.SentimentConfidenceScores(positive=0.5, negative=0.5)
 
-        aspect_opinion = _models.AspectOpinion(
+        aspect_opinion = _models.OpinionSentiment(
             text="opinion",
             sentiment="positive",
             confidence_scores=aspect_opinion_confidence_score,
@@ -121,7 +121,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
             is_negated=False
         )
 
-        sentence_aspect = _models.SentenceAspect(
+        sentence_aspect = _models.AspectSentiment(
             text="aspect",
             sentiment="positive",
             confidence_scores=aspect_opinion_confidence_score,
@@ -190,12 +190,12 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
                          "erroneous_document_count=3, transaction_count=4)", repr(text_document_batch_statistics))
 
         aspect_opinion_repr = (
-            "AspectOpinion(text=opinion, sentiment=positive, confidence_scores=SentimentConfidenceScores("
+            "OpinionSentiment(text=opinion, sentiment=positive, confidence_scores=SentimentConfidenceScores("
             "positive=0.5, neutral=0.0, negative=0.5), offset=3, length=7, is_negated=False)"
         )
         self.assertEqual(aspect_opinion_repr, repr(aspect_opinion))
         self.assertEqual(
-            "SentenceAspect(text=aspect, sentiment=positive, confidence_scores=SentimentConfidenceScores("
+            "AspectSentiment(text=aspect, sentiment=positive, confidence_scores=SentimentConfidenceScores("
             "positive=0.5, neutral=0.0, negative=0.5), opinions=[{}], offset=10, length=6)".format(aspect_opinion_repr),
             repr(sentence_aspect)
         )
