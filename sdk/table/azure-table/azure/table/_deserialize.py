@@ -11,6 +11,7 @@ from azure.table._entity import EntityProperty, EdmType, Entity
 from azure.table._shared._common_conversion import _decode_base64_to_bytes
 from azure.table._generated.models import TableProperties
 from azure.core.exceptions import ResourceExistsError
+from dateutil.tz import UTC
 
 from ._shared.models import TableErrorCode
 
@@ -54,8 +55,7 @@ def _from_entity_int32(value):
 
 def _from_entity_datetime(value):
     # TODO: Fix this
-    local_timezone = datetime.datetime.now(datetime.timezone(datetime.timedelta(0))).tzinfo
-    return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=local_timezone)
+    return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=UTC)
 
 
 def _from_entity_guid(value):
