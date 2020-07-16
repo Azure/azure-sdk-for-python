@@ -58,7 +58,6 @@ from azure.table._shared._error import (
 from azure.table._shared._error import (
     _ERROR_OBJECT_INVALID,
     _ERROR_DECRYPTION_FAILURE,
-    AzureException,
 )
 # from azure.storage._encryption import(
 #      _dict_to_encryption_data,
