@@ -113,18 +113,10 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.reply_to = kwargs.pop("reply_to", None)
             self.reply_to_session_id = kwargs.pop("reply_to_session_id", None)
             self.label = kwargs.pop("label", None)
-            scheduled_enqueue_time_utc = kwargs.pop("scheduled_enqueue_time_utc", None)
-            if scheduled_enqueue_time_utc:
-                self.scheduled_enqueue_time_utc = scheduled_enqueue_time_utc
-            time_to_live = kwargs.pop("time_to_live", None)
-            if time_to_live:
-                self.time_to_live = time_to_live
-            partition_key = kwargs.pop("partition_key", None)
-            if partition_key:
-                self.partition_key = partition_key
-            via_partition_key = kwargs.pop("via_partition_key", None)
-            if via_partition_key:
-                self.via_partition_key = via_partition_key
+            self.scheduled_enqueue_time_utc = kwargs.pop("scheduled_enqueue_time_utc", None)
+            self.time_to_live = kwargs.pop("time_to_live", None)
+            self.partition_key = kwargs.pop("partition_key", None)
+            self.via_partition_key = kwargs.pop("via_partition_key", None)
 
     def __str__(self):
         return str(self.message)
@@ -256,7 +248,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         # type: (datetime.timedelta) -> None
         if not self._amqp_header:
             self._amqp_header = uamqp.message.MessageHeader()
-        if isinstance(value, datetime.timedelta):
+        if value is None:
+            self._amqp_header.time_to_live = value
+        elif isinstance(value, datetime.timedelta):
             self._amqp_header.time_to_live = value.seconds * 1000
         else:
             self._amqp_header.time_to_live = int(value) * 1000

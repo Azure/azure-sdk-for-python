@@ -782,7 +782,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 session.session.set_session_state("first_state")
                 count = 0
                 for m in session:
-                    assert m.group_id == session_id.encode('utf-8')
+                    assert m.session_id == session_id
                     count += 1
                 session.session.get_session_state()
             assert count == 3

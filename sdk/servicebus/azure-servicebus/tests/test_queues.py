@@ -130,6 +130,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert message.message.delivery_tag is not None
                 assert message.lock_token == message.message.delivery_annotations.get(_X_OPT_LOCK_TOKEN)
                 assert message.lock_token == uuid.UUID(bytes_le=message.message.delivery_tag)
+                assert not message.scheduled_enqueue_time_utc
+                assert not message.time_to_live
                 count += 1
                 message.complete()
 
@@ -148,6 +150,14 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = []
                 for i in range(10):
                     message = Message("Handler message no. {}".format(i))
+                    message.partition_key = 'pkey'
+                    message.via_partition_key = 'vpkey'
+                    message.time_to_live = timedelta(seconds=60)
+                    message.scheduled_enqueue_time_utc = utc_now() + timedelta(seconds=60)
+                    message.partition_key = None
+                    message.via_partition_key = None
+                    message.time_to_live = None
+                    message.scheduled_enqueue_time_utc = None
                     messages.append(message)
                 sender.send_messages(messages)
 
@@ -164,6 +174,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     assert not message.via_partition_key
                     assert not message.to
                     assert not message.reply_to
+                    assert not message.scheduled_enqueue_time_utc
+                    assert not message.time_to_live
                     count += 1
                     message.complete()
 
@@ -189,6 +201,16 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                               mode=ReceiveSettleMode.ReceiveAndDelete, 
                                               idle_timeout=5) as receiver:
                 for message in receiver:
+                    assert not message.properties
+                    assert not message.label
+                    assert not message.content_type
+                    assert not message.correlation_id
+                    assert not message.partition_key
+                    assert not message.via_partition_key
+                    assert not message.to
+                    assert not message.reply_to
+                    assert not message.scheduled_enqueue_time_utc
+                    assert not message.time_to_live
                     messages.append(message)
                     with pytest.raises(MessageAlreadySettled):
                         message.complete()
