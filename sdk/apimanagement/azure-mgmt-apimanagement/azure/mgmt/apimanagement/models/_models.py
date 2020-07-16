@@ -3230,6 +3230,147 @@ class ConnectivityStatusContract(Model):
         self.last_status_change = kwargs.get('last_status_change', None)
 
 
+class ContentItemCollection(Model):
+    """Paged list of content items.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Collection of content items.
+    :vartype value: list[~azure.mgmt.apimanagement.models.ContentItemContract]
+    :ivar next_link: Next page link, if any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ContentItemContract]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContentItemCollection, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class ContentItemContract(Resource):
+    """Content type contract details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    :param properties: Properties of the content item.
+    :type properties: dict[str, object]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{object}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContentItemContract, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class ContentTypeCollection(Model):
+    """Paged list of content types.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Collection of content types.
+    :vartype value: list[~azure.mgmt.apimanagement.models.ContentTypeContract]
+    :ivar next_link: Next page link, if any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ContentTypeContract]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContentTypeCollection, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class ContentTypeContract(Resource):
+    """Content type contract details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type for API Management resource.
+    :vartype type: str
+    :param content_type_contract_id: Content type identifier
+    :type content_type_contract_id: str
+    :param content_type_contract_name: Content type name. Must be 1 to 250
+     characters long.
+    :type content_type_contract_name: str
+    :param description: Content type description.
+    :type description: str
+    :param schema: Content type schema.
+    :type schema: object
+    :param version: Content type version.
+    :type version: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'content_type_contract_id': {'key': 'properties.id', 'type': 'str'},
+        'content_type_contract_name': {'key': 'properties.name', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'schema': {'key': 'properties.schema', 'type': 'object'},
+        'version': {'key': 'properties.version', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContentTypeContract, self).__init__(**kwargs)
+        self.content_type_contract_id = kwargs.get('content_type_contract_id', None)
+        self.content_type_contract_name = kwargs.get('content_type_contract_name', None)
+        self.description = kwargs.get('description', None)
+        self.schema = kwargs.get('schema', None)
+        self.version = kwargs.get('version', None)
+
+
 class DeployConfigurationParameters(Model):
     """Deploy Tenant Configuration Contract.
 
@@ -6142,6 +6283,26 @@ class QuotaCounterValueContractProperties(Model):
         self.kb_transferred = kwargs.get('kb_transferred', None)
 
 
+class QuotaCounterValueUpdateContract(Model):
+    """Quota counter value details.
+
+    :param calls_count: Number of times Counter was called.
+    :type calls_count: int
+    :param kb_transferred: Data Transferred in KiloBytes.
+    :type kb_transferred: float
+    """
+
+    _attribute_map = {
+        'calls_count': {'key': 'properties.callsCount', 'type': 'int'},
+        'kb_transferred': {'key': 'properties.kbTransferred', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QuotaCounterValueUpdateContract, self).__init__(**kwargs)
+        self.calls_count = kwargs.get('calls_count', None)
+        self.kb_transferred = kwargs.get('kb_transferred', None)
+
+
 class RecipientEmailCollection(Model):
     """Paged Recipient User list representation.
 
@@ -6976,7 +7137,7 @@ class SubscriptionContract(Resource):
      value.
     :type secondary_key: str
     :param state_comment: Optional subscription comment added by an
-     administrator.
+     administrator when the state is changed to the 'rejected'.
     :type state_comment: str
     :param allow_tracing: Determines whether tracing is enabled
     :type allow_tracing: bool
@@ -7183,7 +7344,7 @@ class SubscriptionUpdateParameters(Model):
      'suspended', 'active', 'expired', 'submitted', 'rejected', 'cancelled'
     :type state: str or ~azure.mgmt.apimanagement.models.SubscriptionState
     :param state_comment: Comments describing subscription state change by the
-     administrator.
+     administrator when the state is changed to the 'rejected'.
     :type state_comment: str
     :param allow_tracing: Determines whether tracing can be enabled
     :type allow_tracing: bool
@@ -7620,7 +7781,7 @@ class UserCreateParameters(Model):
      password is generated.
     :type password: str
     :param app_type: Determines the type of application which send the create
-     user request. Default is old publisher portal. Possible values include:
+     user request. Default is legacy portal. Possible values include: 'portal',
      'developerPortal'
     :type app_type: str or ~azure.mgmt.apimanagement.models.AppType
     :param confirmation: Determines the type of confirmation e-mail that will
