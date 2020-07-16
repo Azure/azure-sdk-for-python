@@ -5,14 +5,15 @@
 # --------------------------------------------------------------------------
 # pylint: disable=unused-argument
 from uuid import UUID
-from dateutil import parser
+from dateutil.parser import parse
 from azure.table._shared import url_quote
 from azure.table._entity import EntityProperty, EdmType, Entity
 from azure.table._shared._common_conversion import _decode_base64_to_bytes
 from azure.table._generated.models import TableProperties
 from azure.core.exceptions import ResourceExistsError
 
-from ._shared.models import StorageErrorCode
+
+from ._shared.models import TableErrorCode
 
 
 def deserialize_metadata(response, _, headers):
@@ -30,7 +31,7 @@ def deserialize_table_properties(response, obj, headers):
 
 def deserialize_table_creation(response, _, headers):
     if response.status_code == 204:
-        error_code = StorageErrorCode.queue_already_exists
+        error_code = TableErrorCode.table_already_exists
         error = ResourceExistsError(
             message="Table already exists\nRequestId:{}\nTime:{}\nErrorCode:{}".format(
                 headers['x-ms-request-id'],
@@ -53,7 +54,7 @@ def _from_entity_int32(value):
 
 
 def _from_entity_datetime(value):
-    return parser.parse(value)
+    return parse(value)
 
 
 def _from_entity_guid(value):
@@ -144,11 +145,12 @@ def _convert_to_entity(entry_element):
         etag = 'W/"datetime\'' + url_quote(timestamp) + '\'"'
     entity['etag'] = etag
 
+    entity._set_metadata()  # pylint: disable = W0212
     return entity
 
 
 def _extract_etag(response):
-    ''' Extracts the etag from the response headers. '''
+    """ Extracts the etag from the response headers. """
     if response and response.headers:
         return response.headers.get('etag')
 

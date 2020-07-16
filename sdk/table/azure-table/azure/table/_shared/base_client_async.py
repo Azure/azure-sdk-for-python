@@ -32,7 +32,7 @@ from .policies import (
 )
 from .policies_async import AsyncStorageResponseHook
 
-from .response_handlers import process_storage_error, PartialBatchErrorException
+from .response_handlers import process_table_error, PartialBatchErrorException
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
@@ -147,7 +147,7 @@ class AsyncStorageAccountHostsMixin(object):
                 return AsyncList(parts_list)
             return parts
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

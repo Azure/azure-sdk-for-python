@@ -20,7 +20,7 @@ from azure.core.exceptions import (
     DecodeError)
 
 from .parser import _to_utc_datetime
-from .models import StorageErrorCode, UserDelegationKey, get_enum_value
+from .models import TableErrorCode, UserDelegationKey, get_enum_value
 
 
 if TYPE_CHECKING:
@@ -83,7 +83,7 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
     return response.http_response.location_mode, deserialized, response_headers
 
 
-def process_storage_error(storage_error):
+def process_table_error(storage_error):
     raise_error = HttpResponseError
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
@@ -103,32 +103,21 @@ def process_storage_error(storage_error):
 
     try:
         if error_code:
-            error_code = StorageErrorCode(error_code)
-            if error_code in [StorageErrorCode.condition_not_met,
-                              StorageErrorCode.blob_overwritten]:
+            error_code = TableErrorCode(error_code)
+            if error_code in [TableErrorCode.condition_not_met]:
                 raise_error = ResourceModifiedError
-            if error_code in [StorageErrorCode.invalid_authentication_info,
-                              StorageErrorCode.authentication_failed]:
+            if error_code in [TableErrorCode.invalid_authentication_info,
+                              TableErrorCode.authentication_failed]:
                 raise_error = ClientAuthenticationError
-            if error_code in [StorageErrorCode.resource_not_found,
-                              StorageErrorCode.cannot_verify_copy_source,
-                              StorageErrorCode.blob_not_found,
-                              StorageErrorCode.queue_not_found,
-                              StorageErrorCode.container_not_found,
-                              StorageErrorCode.parent_not_found,
-                              StorageErrorCode.share_not_found]:
+            if error_code in [TableErrorCode.resource_not_found,
+                              TableErrorCode.table_not_found]:
                 raise_error = ResourceNotFoundError
-            if error_code in [StorageErrorCode.account_already_exists,
-                              StorageErrorCode.account_being_created,
-                              StorageErrorCode.resource_already_exists,
-                              StorageErrorCode.resource_type_mismatch,
-                              StorageErrorCode.blob_already_exists,
-                              StorageErrorCode.queue_already_exists,
-                              StorageErrorCode.container_already_exists,
-                              StorageErrorCode.container_being_deleted,
-                              StorageErrorCode.queue_being_deleted,
-                              StorageErrorCode.share_already_exists,
-                              StorageErrorCode.share_being_deleted]:
+            if error_code in [TableErrorCode.account_already_exists,
+                              TableErrorCode.account_being_created,
+                              TableErrorCode.resource_already_exists,
+                              TableErrorCode.resource_type_mismatch,
+                              TableErrorCode.table_already_exists,
+                              TableErrorCode.table_being_deleted]:
                 raise_error = ResourceExistsError
     except ValueError:
         # Got an unknown error code

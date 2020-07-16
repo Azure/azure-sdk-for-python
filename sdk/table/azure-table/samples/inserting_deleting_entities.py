@@ -25,7 +25,7 @@ class InsertDeleteEntity(object):
             # inserted_entity type is dict[str,object]
             print(inserted_entity.items())  # print out key-value pair of entity
         except ResourceExistsError:
-            raise ResourceExistsError
+            print("EntityExists")
 
     def delete_entity(self):
 
@@ -37,4 +37,4 @@ class InsertDeleteEntity(object):
             table_client.delete_entity(table_entity_properties=self.entity)
 
         except ResourceNotFoundError:
-            raise ResourceNotFoundError
+            print("EntityDoesNotExists")

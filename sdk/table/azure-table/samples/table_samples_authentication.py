@@ -64,9 +64,9 @@ class TableAuthSamples(object):
         table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Create a SAS token to use for authentication of a client
-        from azure.table import generate_account_shared_access_signature, ResourceTypes, AccountSasPermissions
+        from azure.table import generate_account_sas, ResourceTypes, AccountSasPermissions
 
-        sas_token = generate_account_shared_access_signature(
+        sas_token = generate_account_sas(
             self.account_name,
             self.access_key,
             resource_types=ResourceTypes(service=True),

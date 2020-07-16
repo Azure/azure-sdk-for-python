@@ -17,13 +17,13 @@ class CreateDeleteTable(object):
 
     def sas_token_auth(self):
         from azure.table import TableServiceClient
-        from azure.table._shared.table_shared_access_signature import generate_account_shared_access_signature
+        from azure.table._shared.table_shared_access_signature import generate_account_sas
         from azure.table import ResourceTypes
         from azure.table import AccountSasPermissions
         import datetime
         import timedelta
 
-        token = generate_account_shared_access_signature(
+        token = generate_account_sas(
             account_name=self.account_name,
             account_key=self.account_key,
             resource_types=ResourceTypes(object=True),
@@ -39,22 +39,16 @@ class CreateDeleteTable(object):
 
         table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
 
-        try:
-            table_created = table_service_client.create_table(table_name=self.table_name)
-            print(table_created.table_name)
-        except ResourceExistsError:
-            raise ResourceExistsError
+        table_created = table_service_client.create_table(table_name=self.table_name)
+        print(table_created.table_name)
 
     def delete_table(self):
         from azure.table import TableServiceClient
         from azure.core.exceptions import ResourceNotFoundError
 
         table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-        try:
-            table_service_client.delete_table(table_name=self.table_name)
+        table_service_client.delete_table(table_name=self.table_name)
 
-        except ResourceNotFoundError:
-            raise ResourceNotFoundError
 
 
 if __name__ == '__main__':

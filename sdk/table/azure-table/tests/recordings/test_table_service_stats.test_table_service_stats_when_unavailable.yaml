@@ -9,23 +9,24 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 29 Jun 2020 16:16:45 GMT
+      - Wed, 15 Jul 2020 13:06:18 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 29 Jun 2020 16:16:45 GMT
+      - Wed, 15 Jul 2020 13:06:18 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
     uri: https://pyacrstoragestorname-secondary.table.core.windows.net/?restype=service&comp=stats
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication></StorageServiceStats>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Wed,
+        15 Jul 2020 13:03:59 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
     headers:
       content-type:
       - application/xml
       date:
-      - Mon, 29 Jun 2020 16:16:44 GMT
+      - Wed, 15 Jul 2020 13:06:17 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

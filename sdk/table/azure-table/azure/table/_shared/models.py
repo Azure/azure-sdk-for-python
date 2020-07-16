@@ -15,7 +15,7 @@ def get_enum_value(value):
         return value
 
 
-class StorageErrorCode(str, Enum):
+class TableErrorCode(str, Enum):
     # Generic storage values
     account_already_exists = "AccountAlreadyExists"
     account_being_created = "AccountBeingCreated"
@@ -61,123 +61,29 @@ class StorageErrorCode(str, Enum):
     unsupported_query_parameter = "UnsupportedQueryParameter"
     unsupported_http_verb = "UnsupportedHttpVerb"
 
-    # Blob values
-    append_position_condition_not_met = "AppendPositionConditionNotMet"
-    blob_already_exists = "BlobAlreadyExists"
-    blob_not_found = "BlobNotFound"
-    blob_overwritten = "BlobOverwritten"
-    blob_tier_inadequate_for_content_length = "BlobTierInadequateForContentLength"
-    block_count_exceeds_limit = "BlockCountExceedsLimit"
-    block_list_too_long = "BlockListTooLong"
-    cannot_change_to_lower_tier = "CannotChangeToLowerTier"
-    cannot_verify_copy_source = "CannotVerifyCopySource"
-    container_already_exists = "ContainerAlreadyExists"
-    container_being_deleted = "ContainerBeingDeleted"
-    container_disabled = "ContainerDisabled"
-    container_not_found = "ContainerNotFound"
-    content_length_larger_than_tier_limit = "ContentLengthLargerThanTierLimit"
-    copy_across_accounts_not_supported = "CopyAcrossAccountsNotSupported"
-    copy_id_mismatch = "CopyIdMismatch"
-    feature_version_mismatch = "FeatureVersionMismatch"
-    incremental_copy_blob_mismatch = "IncrementalCopyBlobMismatch"
-    incremental_copy_of_eralier_version_snapshot_not_allowed = "IncrementalCopyOfEralierVersionSnapshotNotAllowed"
-    incremental_copy_source_must_be_snapshot = "IncrementalCopySourceMustBeSnapshot"
-    infinite_lease_duration_required = "InfiniteLeaseDurationRequired"
-    invalid_blob_or_block = "InvalidBlobOrBlock"
-    invalid_blob_tier = "InvalidBlobTier"
-    invalid_blob_type = "InvalidBlobType"
-    invalid_block_id = "InvalidBlockId"
-    invalid_block_list = "InvalidBlockList"
-    invalid_operation = "InvalidOperation"
-    invalid_page_range = "InvalidPageRange"
-    invalid_source_blob_type = "InvalidSourceBlobType"
-    invalid_source_blob_url = "InvalidSourceBlobUrl"
-    invalid_version_for_page_blob_operation = "InvalidVersionForPageBlobOperation"
-    lease_already_present = "LeaseAlreadyPresent"
-    lease_already_broken = "LeaseAlreadyBroken"
-    lease_id_mismatch_with_blob_operation = "LeaseIdMismatchWithBlobOperation"
-    lease_id_mismatch_with_container_operation = "LeaseIdMismatchWithContainerOperation"
-    lease_id_mismatch_with_lease_operation = "LeaseIdMismatchWithLeaseOperation"
-    lease_id_missing = "LeaseIdMissing"
-    lease_is_breaking_and_cannot_be_acquired = "LeaseIsBreakingAndCannotBeAcquired"
-    lease_is_breaking_and_cannot_be_changed = "LeaseIsBreakingAndCannotBeChanged"
-    lease_is_broken_and_cannot_be_renewed = "LeaseIsBrokenAndCannotBeRenewed"
-    lease_lost = "LeaseLost"
-    lease_not_present_with_blob_operation = "LeaseNotPresentWithBlobOperation"
-    lease_not_present_with_container_operation = "LeaseNotPresentWithContainerOperation"
-    lease_not_present_with_lease_operation = "LeaseNotPresentWithLeaseOperation"
-    max_blob_size_condition_not_met = "MaxBlobSizeConditionNotMet"
-    no_pending_copy_operation = "NoPendingCopyOperation"
-    operation_not_allowed_on_incremental_copy_blob = "OperationNotAllowedOnIncrementalCopyBlob"
-    pending_copy_operation = "PendingCopyOperation"
-    previous_snapshot_cannot_be_newer = "PreviousSnapshotCannotBeNewer"
-    previous_snapshot_not_found = "PreviousSnapshotNotFound"
-    previous_snapshot_operation_not_supported = "PreviousSnapshotOperationNotSupported"
-    sequence_number_condition_not_met = "SequenceNumberConditionNotMet"
-    sequence_number_increment_too_large = "SequenceNumberIncrementTooLarge"
-    snapshot_count_exceeded = "SnapshotCountExceeded"
-    snaphot_operation_rate_exceeded = "SnaphotOperationRateExceeded"
-    snapshots_present = "SnapshotsPresent"
-    source_condition_not_met = "SourceConditionNotMet"
-    system_in_use = "SystemInUse"
-    target_condition_not_met = "TargetConditionNotMet"
-    unauthorized_blob_overwrite = "UnauthorizedBlobOverwrite"
-    blob_being_rehydrated = "BlobBeingRehydrated"
-    blob_archived = "BlobArchived"
-    blob_not_archived = "BlobNotArchived"
-
-    # Queue values
-    invalid_marker = "InvalidMarker"
-    message_not_found = "MessageNotFound"
-    message_too_large = "MessageTooLarge"
-    pop_receipt_mismatch = "PopReceiptMismatch"
-    queue_already_exists = "QueueAlreadyExists"
-    queue_being_deleted = "QueueBeingDeleted"
-    queue_disabled = "QueueDisabled"
-    queue_not_empty = "QueueNotEmpty"
-    queue_not_found = "QueueNotFound"
-
-    # File values
-    cannot_delete_file_or_directory = "CannotDeleteFileOrDirectory"
-    client_cache_flush_delay = "ClientCacheFlushDelay"
-    delete_pending = "DeletePending"
-    directory_not_empty = "DirectoryNotEmpty"
-    file_lock_conflict = "FileLockConflict"
-    invalid_file_or_directory_path_name = "InvalidFileOrDirectoryPathName"
-    parent_not_found = "ParentNotFound"
-    read_only_attribute = "ReadOnlyAttribute"
-    share_already_exists = "ShareAlreadyExists"
-    share_being_deleted = "ShareBeingDeleted"
-    share_disabled = "ShareDisabled"
-    share_not_found = "ShareNotFound"
-    sharing_violation = "SharingViolation"
-    share_snapshot_in_progress = "ShareSnapshotInProgress"
-    share_snapshot_count_exceeded = "ShareSnapshotCountExceeded"
-    share_snapshot_operation_not_supported = "ShareSnapshotOperationNotSupported"
-    share_has_snapshots = "ShareHasSnapshots"
-    container_quota_downgrade_not_allowed = "ContainerQuotaDowngradeNotAllowed"
-
-    # DataLake values
-    content_length_must_be_zero = 'ContentLengthMustBeZero'
-    path_already_exists = 'PathAlreadyExists'
-    invalid_flush_position = 'InvalidFlushPosition'
-    invalid_property_name = 'InvalidPropertyName'
-    invalid_source_uri = 'InvalidSourceUri'
-    unsupported_rest_version = 'UnsupportedRestVersion'
-    file_system_not_found = 'FilesystemNotFound'
-    path_not_found = 'PathNotFound'
-    rename_destination_parent_path_not_found = 'RenameDestinationParentPathNotFound'
-    source_path_not_found = 'SourcePathNotFound'
-    destination_path_is_being_deleted = 'DestinationPathIsBeingDeleted'
-    file_system_already_exists = 'FilesystemAlreadyExists'
-    file_system_being_deleted = 'FilesystemBeingDeleted'
-    invalid_destination_path = 'InvalidDestinationPath'
-    invalid_rename_source_path = 'InvalidRenameSourcePath'
-    invalid_source_or_destination_resource_type = 'InvalidSourceOrDestinationResourceType'
-    lease_is_already_broken = 'LeaseIsAlreadyBroken'
-    lease_name_mismatch = 'LeaseNameMismatch'
-    path_conflict = 'PathConflict'
-    source_path_is_being_deleted = 'SourcePathIsBeingDeleted'
+    # table error codes
+    duplicate_properties_specified = "DuplicatePropertiesSpecified"
+    entity_not_found = "EntityNotFound"
+    entity_already_exists = "EntityAlreadyExists"
+    entity_too_large = "EntityTooLarge"
+    host_information_not_present = "HostInformationNotPresent"
+    invalid_duplicate_row = "InvalidDuplicateRow"
+    invalid_value_type = "InvalidValueType"
+    json_format_not_supported = "JsonFormatNotSupported"
+    method_not_allowed = "MethodNotAllowed"
+    not_implemented = "NotImplemented"
+    properties_need_value = "PropertiesNeedValue"
+    property_name_invalid = "PropertyNameInvalid"
+    property_name_too_long = "PropertyNameTooLong"
+    property_value_too_large = "PropertyValueTooLarge"
+    table_already_exists = "TableAlreadyExists"
+    table_being_deleted = "TableBeingDeleted"
+    table_not_found = "TableNotFound"
+    too_many_properties = "TooManyProperties"
+    update_condition_not_satisfied = "UpdateConditionNotSatisfied"
+    x_method_incorrect_count = "XMethodIncorrectCount"
+    x_method_incorrect_value = "XMethodIncorrectValue"
+    x_method_not_using_post = "XMethodNotUsingPost"
 
 
 class DictMixin(object):
@@ -249,21 +155,15 @@ class ResourceTypes(object):
     :param bool service:
         Access to service-level APIs (e.g., Get/Set Service Properties,
         Get Service Stats, List Containers/Queues/Shares)
-    :param bool container:
-        Access to container-level APIs (e.g., Create/Delete Container,
-        Create/Delete Queue, Create/Delete Share,
-        List Blobs/Files and Directories)
     :param bool object:
         Access to object-level APIs for blobs, queue messages, and
         files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
     """
 
-    def __init__(self, service=False, container=False, object=False):  # pylint: disable=redefined-builtin
+    def __init__(self, service=False, object=False):  # pylint: disable=redefined-builtin
         self.service = service
-        self.container = container
         self.object = object
         self._str = (('s' if self.service else '') +
-                     ('c' if self.container else '') +
                      ('o' if self.object else ''))
 
     def __str__(self):
@@ -283,10 +183,9 @@ class ResourceTypes(object):
         :rtype: ~azure.table.ResourceTypes
         """
         res_service = 's' in string
-        res_container = 'c' in string
         res_object = 'o' in string
 
-        parsed = cls(res_service, res_container, res_object)
+        parsed = cls(res_service, res_object)
         parsed._str = string  # pylint: disable = protected-access
         return parsed
 
@@ -300,38 +199,37 @@ class AccountSasPermissions(object):
     entire service for a specific account and allow certain operations based on
     perms found here.
 
-    :param bool read:
+    :ivar bool read:
         Valid for all signed resources types (Service, Container, and Object).
         Permits read permissions to the specified resource type.
-    :param bool write:
+    :ivar bool write:
         Valid for all signed resources types (Service, Container, and Object).
         Permits write permissions to the specified resource type.
-    :param bool delete:
+    :ivar bool delete:
         Valid for Container and Object resource types, except for queue messages.
-    :param bool list:
+    :ivar bool list:
         Valid for Service and Container resource types only.
-    :param bool add:
+    :ivar bool add:
         Valid for the following Object resource types only: queue messages, and append blobs.
-    :param bool create:
+    :ivar bool create:
         Valid for the following Object resource types only: blobs and files.
         Users can create new blobs or files, but may not overwrite existing
         blobs or files.
-    :param bool update:
+    :ivar bool update:
         Valid for the following Object resource types only: queue messages.
-    :param bool process:
+    :ivar bool process:
         Valid for the following Object resource type only: queue messages.
     """
 
-    def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
-                 add=False, create=False, update=False, process=False):
-        self.read = read
-        self.write = write
-        self.delete = delete
-        self.list = list
-        self.add = add
-        self.create = create
-        self.update = update
-        self.process = process
+    def __init__(self, **kwargs):  # pylint: disable=redefined-builtin
+        self.read = kwargs.pop('read', None)
+        self.write = kwargs.pop('write', None)
+        self.delete = kwargs.pop('delete', None)
+        self.list = kwargs.pop('list', None)
+        self.add = kwargs.pop('add', None)
+        self.create = kwargs.pop('create', None)
+        self.update = kwargs.pop('update', None)
+        self.process = kwargs.pop('process', None)
         self._str = (('r' if self.read else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
@@ -367,7 +265,9 @@ class AccountSasPermissions(object):
         p_update = 'u' in permission
         p_process = 'p' in permission
 
-        parsed = cls(p_read, p_write, p_delete, p_list, p_add, p_create, p_update, p_process)
+        parsed = cls(
+            **dict(kwargs, read=p_read, write=p_write, delete=p_delete, list=p_list, add=p_add, create=p_create,
+                   update=p_update, process=p_process))
         parsed._str = permission  # pylint: disable = protected-access
         return parsed
 

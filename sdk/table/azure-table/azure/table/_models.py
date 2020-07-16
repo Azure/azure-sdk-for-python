@@ -6,9 +6,8 @@
 from enum import Enum
 
 from azure.table._deserialize import _convert_to_entity
-from azure.table._entity import Entity
 from azure.table._shared.models import Services
-from azure.table._shared.response_handlers import return_context_and_deserialized, process_storage_error
+from azure.table._shared.response_handlers import return_context_and_deserialized, process_table_error
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -101,7 +100,7 @@ class TableAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy.from_generated(generated.retention_policy)  # pylint:disable=W0212
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint:disable=W0212
             # pylint: disable=protected-access
         )
 
@@ -140,7 +139,7 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy.from_generated(generated.retention_policy)
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint:disable=W0212
             # pylint: disable=protected-access
         )
 
@@ -172,7 +171,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def from_generated(cls, generated, **kwargs):  # pylint:disable=W0613
+    def _from_generated(cls, generated, **kwargs):  # pylint:disable=W0613
         # type: (...) -> cls
         """The retention policy which determines how long the associated data should
             persist.
@@ -286,13 +285,11 @@ class TablePropertiesPaged(PageIterator):
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = [t for t in self._response.value]
-        # props_list = [TableProperties._from_generated(q) for q in self._response.value] # pylint: disable=protected-access
-        # return self._response.next_marker or None, props_list
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 
@@ -345,11 +342,11 @@ class TableEntityPropertiesPaged(PageIterator):
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [Entity(_convert_to_entity(t)) for t in self._response.value]
+        props_list = [_convert_to_entity(t) for t in self._response.value]
         next_entity = {}
         if self._headers['x-ms-continuation-NextPartitionKey'] or self._headers['x-ms-continuation-NextRowKey']:
             next_entity = {'PartitionKey': self._headers['x-ms-continuation-NextPartitionKey'],
@@ -360,31 +357,28 @@ class TableEntityPropertiesPaged(PageIterator):
 class TableSasPermissions(object):
     def __init__(
             self,
-            query=False,  # type: bool
-            add=False,  # type: bool
-            update=False,  # type: bool
-            delete=False,  # type: bool
-            _str=None  # type: str
+            _str=None,  # type: str
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
         """
-        :param bool query:
+        :ivar bool query:
             Get entities and query entities.
-        :param bool add:
+        :ivar bool add:
             Add entities. Add and Update permissions are required for upsert operations.
-        :param bool update:
+        :ivar bool update:
             Update entities. Add and Update permissions are required for upsert operations.
-        :param bool delete:
+        :ivar bool delete:
             Delete entities.
         :param str _str:
             A string representing the permissions.
         """
         if not _str:
             _str = ''
-        self.query = query or ('r' in _str)
-        self.add = add or ('a' in _str)
-        self.update = update or ('u' in _str)
-        self.delete = delete or ('d' in _str)
+        self.query = kwargs.pop('query', None) or ('r' in _str)
+        self.add = kwargs.pop('add', None) or ('a' in _str)
+        self.update = kwargs.pop('update', None) or ('u' in _str)
+        self.delete = kwargs.pop('delete', None) or ('d' in _str)
 
     def __or__(self, other):
         return TableSasPermissions(_str=str(self) + str(other))
@@ -398,11 +392,35 @@ class TableSasPermissions(object):
                 ('u' if self.update else '') +
                 ('d' if self.delete else ''))
 
+    @classmethod
+    def from_string(cls, permission, **kwargs):  # pylint:disable=W0613
+        """Create AccountSasPermissions from a string.
 
-TableSasPermissions.QUERY = TableSasPermissions(query=True)
-TableSasPermissions.ADD = TableSasPermissions(add=True)
-TableSasPermissions.UPDATE = TableSasPermissions(update=True)
-TableSasPermissions.DELETE = TableSasPermissions(delete=True)
+        To specify read, write, delete, etc. permissions you need only to
+        include the first letter of the word in the string. E.g. for read and write
+        permissions you would provide a string "rw".
+
+        :param str permission: Specify permissions in
+            the string with the first letter of the word.
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: A AccountSasPermissions object
+        :rtype: ~azure.table.AccountSasPermissions
+        """
+        p_query = 'r' in permission
+        p_add = 'a' in permission
+        p_delete = 'd' in permission
+        p_update = 'u' in permission
+
+        parsed = cls(
+            **dict(kwargs, query=p_query, add=p_add, delete=p_delete, update=p_update))
+        parsed._str = permission  # pylint: disable = W0201
+        return parsed
+
+
+TableSasPermissions.QUERY = TableSasPermissions(**dict(query=True))
+TableSasPermissions.ADD = TableSasPermissions(**dict(add=True))
+TableSasPermissions.UPDATE = TableSasPermissions(**dict(update=True))
+TableSasPermissions.DELETE = TableSasPermissions(**dict(delete=True))
 
 
 def service_stats_deserialize(generated):

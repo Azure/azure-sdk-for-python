@@ -416,7 +416,7 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_request_callback_signed_header(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -435,7 +435,7 @@ class StorageTableClientTest(TableTestCase):
         finally:
             service.delete_table(name)
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_response_callback(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

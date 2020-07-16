@@ -17,6 +17,19 @@ class Entity(dict):
 
     """
 
+    def _set_metadata(self):
+        if 'Timestamp' in self.keys():
+            self['metadata'] = {'etag': self.pop('etag'), "timestamp": self.pop('Timestamp')}
+        else:
+            self['metadata'] = {'etag': self.pop('etag')}
+
+    def metadata(self):
+        """Resets metadata to be a part of the entity"""
+        metadata = self.pop('metadata')
+        self['etag'] = metadata['etag']
+        self['timestamp'] = metadata['timestamp']
+        return self
+
     def __getattr__(self, name):
         """
         :param name:name of entity entry
@@ -58,17 +71,18 @@ class EntityProperty(object):
         entity.x = EntityProperty(EdmType.STRING, 'y')
     """
 
-    def __init__(self, type=None, value=None, encrypt=False):  # pylint:disable=W0622
+    def __init__(self,
+                 type=None,  # type: Union[str,EdmType] # pylint:disable=W0622
+                 value=None  # type: Any
+                 ):
         """
         Represents an Azure Table. Returned by list_tables.
 
-        :param str type: The type of the property.
-        :param any value: The value of the property.
-        :param bool encrypt: Indicates whether or not the property should be encrypted.
+        :param Union[str, EdmType] type: The type of the property.
+        :param Any value: The value of the property.
         """
         self.type = type
         self.value = value
-        self.encrypt = encrypt
 
 
 class Table(object):
@@ -85,26 +99,26 @@ class EdmType(object):
     to be stored by the Table service.
     """
 
-    BINARY = 'Edm.Binary'
+    BINARY = "Edm.Binary"
     ''' Represents byte data. Must be specified. '''
 
-    INT64 = 'Edm.Int64'
+    INT64 = "Edm.Int64"
     ''' Represents a number between -(2^31) and 2^31. This is the default type for Python numbers. '''
 
-    GUID = 'Edm.Guid'
+    GUID = "Edm.Guid"
     ''' Represents a GUID. Must be specified. '''
 
-    DATETIME = 'Edm.DateTime'
+    DATETIME = "Edm.DateTime"
     ''' Represents a date. This type will be inferred for Python datetime objects. '''
 
-    STRING = 'Edm.String'
+    STRING = "Edm.String"
     ''' Represents a string. This type will be inferred for Python strings. '''
 
-    INT32 = 'Edm.Int32'
+    INT32 = "Edm.Int32"
     ''' Represents a number between -(2^15) and 2^15. Must be specified or numbers will default to INT64. '''
 
-    DOUBLE = 'Edm.Double'
+    DOUBLE = "Edm.Double"
     ''' Represents a double. This type will be inferred for Python floating point numbers. '''
 
-    BOOLEAN = 'Edm.Boolean'
+    BOOLEAN = "Edm.Boolean"
     ''' Represents a boolean. This type will be inferred for Python bools. '''

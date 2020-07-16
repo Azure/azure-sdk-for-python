@@ -8,8 +8,6 @@ import functools
 import re
 from typing import Optional, Any
 
-from azure.table import QueryOptions
-
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -20,12 +18,12 @@ from azure.core.paging import ItemPaged
 from azure.table._deserialize import _convert_to_entity
 from azure.table._entity import Entity
 from azure.table._generated import AzureTable
-from azure.table._generated.models import AccessPolicy, SignedIdentifier, TableProperties
+from azure.table._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
 from azure.table._serialize import _get_match_headers, _add_entity_properties
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 
 from azure.table._shared.request_handlers import serialize_iso
-from azure.table._shared.response_handlers import process_storage_error
+from azure.table._shared.response_handlers import process_table_error
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.table._version import VERSION
 from azure.core.tracing.decorator import distributed_trace
@@ -97,7 +95,6 @@ class TableClient(StorageAccountHostsMixin):
     def from_connection_string(
             cls, conn_str,  # type: str
             table_name,  # type: str
-            credential=None,  # type: Union[str,TokenCredential]
             **kwargs  # type: Any
     ):
         # type: (...) -> TableClient
@@ -108,17 +105,11 @@ class TableClient(StorageAccountHostsMixin):
         :type conn_str: str
         :param table_name: The table name.
         :type table_name: str
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Union[str,TokenCredential]
         :returns: A table client.
         :rtype: ~azure.table.TableClient
         """
         account_url, secondary, credential = parse_connection_str(
-            conn_str, credential, 'table')
+            conn_str=conn_str, credential=None, service='table')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)  # type: ignore
@@ -183,7 +174,7 @@ class TableClient(StorageAccountHostsMixin):
                 cls=return_headers_and_deserialized,
                 **kwargs)
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
@@ -217,31 +208,7 @@ class TableClient(StorageAccountHostsMixin):
                 table_acl=signed_identifiers or None,
                 **kwargs)
         except HttpResponseError as error:
-            process_storage_error(error)
-
-    @distributed_trace
-    def get_table_properties(
-            self,
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> TableServiceProperties
-        """Gets the properties of an account's Table service,
-        including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
-
-        :return: TableServiceProperties
-        :rtype: TableServiceProperties
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        timeout = kwargs.pop('timeout', None)
-        request_id_parameter = kwargs.pop('request_id_parameter', None)
-        try:
-            response = self._client.service.get_properties(
-                timeout=timeout,
-                request_id_parameter=request_id_parameter,
-                **kwargs)
-            return response
-        except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     @distributed_trace
     def create_table(
@@ -257,31 +224,26 @@ class TableClient(StorageAccountHostsMixin):
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         table = self._client.table.create(table_properties)
-        return table
+        return table.table_name
 
     @distributed_trace
     def delete_table(
             self,
-            request_id_parameter=None,  # type: Optional[str]
             **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Creates a new table under the given account.
 
-        :param request_id_parameter: Request Id parameter
-        :type request_id_parameter: str
         :return: None
         :rtype: None
         """
-        self._client.table.delete(table=self.table_name, request_id_parameter=request_id_parameter, **kwargs)
+        self._client.table.delete(table=self.table_name, **kwargs)
 
     @distributed_trace
     def delete_entity(
             self,
             partition_key,  # type: str
             row_key,  # type: str
-            etag=None,  # type: Optional[object]
-            match_condition=None,  # type: Optional[MatchCondition]
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -291,16 +253,15 @@ class TableClient(StorageAccountHostsMixin):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :param etag: Etag of the entity
-        :type etag: str
-        :param match_condition: MatchCondition
-        :type match_condition: ~azure.core.MatchConditions
+        :ivar str etag: Etag of the entity
+        :ivar ~azure.core.MatchConditions match_condition: MatchCondition
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
+        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+                                                                match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
 
         self._client.table.delete_entity(
@@ -313,111 +274,143 @@ class TableClient(StorageAccountHostsMixin):
     @distributed_trace
     def create_entity(
             self,
-            table_entity_properties,  # type: dict[str,str]
+            entity,  # type: Union[Entity, dict[str,str]]
             **kwargs  # type: Any
     ):
         # type: (...) -> Entity
         """Insert entity in a table.
 
-        :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, str]
+        :param entity: The properties for the table entity.
+        :type entity: Union[Entity, dict[str,str]]
         :return: Entity mapping str to azure.table.EntityProperty
         :rtype: ~azure.table.Entity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if table_entity_properties:
-
-            if "PartitionKey" in table_entity_properties and "RowKey" in table_entity_properties:
-                table_entity_properties = _add_entity_properties(table_entity_properties)
-            else:
-                raise ValueError
+        if "PartitionKey" in entity and "RowKey" in entity:
+            entity = _add_entity_properties(entity)
+            # TODO: Remove - and run test to see what happens with the service
+        else:
+            raise ValueError
         try:
-            # TODO: table name?
             inserted_entity = self._client.table.insert_entity(
                 table=self.table_name,
-                table_entity_properties=table_entity_properties,
+                table_entity_properties=entity,
                 **kwargs
             )
             properties = _convert_to_entity(inserted_entity)
-            return Entity(properties)
+            return properties
         except ValueError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     @distributed_trace
     def update_entity(  # pylint:disable=R1710
             self,
-            mode,  # type: Any
-            table_entity_properties,  # type: dict[str,str]
-            partition_key=None,  # type: Optional[str]
-            row_key=None,  # type: Optional[str]
-            etag=None,  # type: Optional[object]
-            match_condition=None,  # type: Optional[MatchCondition]
+            entity,  # type: Union[Entity, dict[str,str]]
+            mode=UpdateMode.merge,  # type: UpdateMode
             **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Update entity in a table.
 
+        :param entity: The properties for the table entity.
+        :type entity: Union[Entity, dict[str,str]]
         :param mode: Merge or Replace entity
         :type mode: ~azure.table.UpdateMode
-        :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, str]
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
-        :param etag: Etag of the entity
-        :type etag: str
-        :param match_condition: MatchCondition
-        :type match_condition: ~azure.core.MatchConditions
+        :ivar str partition_key: The partition key of the entity.
+        :ivar str row_key: The row key of the entity.
+        :ivar str etag: Etag of the entity
+        :ivar ~azure.core.MatchConditions match_condition: MatchCondition
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
+        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+                                                                match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
 
-        if table_entity_properties:
-            partition_key = table_entity_properties['PartitionKey']
-            row_key = table_entity_properties['RowKey']
-            table_entity_properties = _add_entity_properties(table_entity_properties)
+        partition_key = entity['PartitionKey']
+        row_key = entity['RowKey']
+        entity = _add_entity_properties(entity)
 
         if mode is UpdateMode.replace:
             self._client.table.update_entity(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                table_entity_properties=table_entity_properties,
+                table_entity_properties=entity,
                 if_match=if_match or if_not_match or "*",
                 **kwargs)
         if mode is UpdateMode.merge:
             self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
                                             row_key=row_key, if_match=if_match or if_not_match or "*",
-                                            table_entity_properties=table_entity_properties, **kwargs)
+                                            table_entity_properties=entity, **kwargs)
 
     @distributed_trace
-    def query_entities(
+    def list_entities(
             self,
-            results_per_page=None,
-            select=None,
-            filter=None,    # pylint: disable=W0622
             **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[Entity]
-        """Queries entities in a table.
+        """Lists entities in a table.
 
-        :param results_per_page: Number of entities per page in return ItemPaged
-        :type results_per_page: int
-        :param select: Specify desired properties of an entity to return certain entities
-        :type select: str
-        :param filter: Specify a filter to return certain entities
-        :type filter: str
+        :ivar int results_per_page: Number of entities per page in return ItemPaged
+        :ivar str select: Specify desired properties of an entity to return certain entities
+        :ivar str filter: Specify a filter to return certain entities
+        :ivar dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
         :rtype: ItemPaged[Entity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        query_options = QueryOptions(top=results_per_page, select=select, filter=filter)
+        parameters = kwargs.pop('parameters', None)
+        filter = kwargs.pop('filter', None)  # pylint: disable = W0622
+        if parameters:
+            filter_start = filter.split('@')[0]
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
+
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
+                                     filter=filter)
+
+        command = functools.partial(
+            self._client.table.query_entities,
+            **kwargs)
+        return ItemPaged(
+            command, results_per_page=query_options, table=self.table_name,
+            page_iterator_class=TableEntityPropertiesPaged
+        )
+
+    @distributed_trace
+    def query_entities(
+            self,
+            filter,  # type: str  # pylint: disable = W0622
+            **kwargs
+    ):
+        # type: (...) -> ItemPaged[Entity]
+        """Lists entities in a table.
+
+        :param filter: Specify a filter to return certain entities
+        :type: str
+        :ivar int results_per_page: Number of entities per page in return ItemPaged
+        :ivar str select: Specify desired properties of an entity to return certain entities
+        :ivar dict parameters: Dictionary for formatting query with additional, user defined parameters
+        :return: Query of table entities
+        :rtype: ItemPaged[Entity]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        parameters = kwargs.pop('parameters', None)
+        if parameters:
+            filter_start = filter.split('@')[0]
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
+
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
+                                     filter=filter)
 
         command = functools.partial(
             self._client.table.query_entities,
@@ -432,9 +425,6 @@ class TableClient(StorageAccountHostsMixin):
             self,
             partition_key,  # type: str
             row_key,  # type: str
-            results_per_page=None,
-            select=None,
-            filter=None,     # pylint: disable=W0622
             **kwargs  # type: Any
     ):
         # type: (...) -> Entity
@@ -444,43 +434,48 @@ class TableClient(StorageAccountHostsMixin):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :param results_per_page: Number of entities per page in return ItemPaged
-        :type results_per_page: int
-        :param select: Specify desired properties of an entity to return certain entities
-        :type select: str
-        :param filter: Specify a filter to return certain entities
-        :type filter: str
+        :ivar int results_per_page: Number of entities per page in return ItemPaged
+        :ivar str select: Specify desired properties of an entity to return certain entities
+        :ivar str filter: Specify a filter to return certain entities
+        :ivar dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Entity mapping str to azure.table.EntityProperty
         :rtype: ~azure.table.Entity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        parameters = kwargs.pop('parameters', None)
+        filter = kwargs.pop('filter', None)  # pylint: disable = W0622
+        if parameters:
+            filter_start = filter.split('@')[0]
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
 
-        query_options = QueryOptions(top=results_per_page, select=select, filter=filter)
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
+                                     filter=filter)
+
         entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
                                                                               partition_key=partition_key,
                                                                               row_key=row_key,
                                                                               query_options=query_options,
                                                                               **kwargs)
         properties = _convert_to_entity(entity.additional_properties)
-        return Entity(properties)
+        return properties
 
     @distributed_trace
     def upsert_entity(  # pylint:disable=R1710
             self,
-            mode,  # type: Any
-            table_entity_properties,  # type: dict[str,str]
-            partition_key=None,  # type: Optional[str]
-            row_key=None,  # type: Optional[str]
+            entity,  # type: Union[Entity, dict[str,str]]
+            mode=UpdateMode.merge,  # type: UpdateMode
             **kwargs  # type: Any
     ):
-        # type: (...) -> Entity or None
-        # TODO: Return type will need to change
+        # type: (...) -> None
         """Update/Merge or Insert entity into table.
 
+        :param entity: The properties for the table entity.
+        :type entity: Union[Entity, dict[str,str]]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.table.UpdateMode
-        :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, str]
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
@@ -490,45 +485,38 @@ class TableClient(StorageAccountHostsMixin):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if table_entity_properties:
-            partition_key = table_entity_properties['PartitionKey']
-            row_key = table_entity_properties['RowKey']
-            table_entity_properties = _add_entity_properties(table_entity_properties)
+        partition_key = entity['PartitionKey']
+        row_key = entity['RowKey']
+        entity = _add_entity_properties(entity)
 
         if mode is UpdateMode.merge:
             try:
-                merged_entity = self._client.table.merge_entity(
+                self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=table_entity_properties,
+                    table_entity_properties=entity,
                     **kwargs
                 )
-                return merged_entity
             except ResourceNotFoundError:
-                insert_entity = self.create_entity(
+                self.create_entity(
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=table_entity_properties,
+                    table_entity_properties=entity,
                     **kwargs
                 )
-                properties = _convert_to_entity(insert_entity)
-                return Entity(properties)
         if mode is UpdateMode.replace:
             try:
-                update_entity = self._client.table.update_entity(
+                self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=table_entity_properties,
+                    table_entity_properties=entity,
                     **kwargs)
-                return update_entity
             except ResourceNotFoundError:
-                insert_entity = self.create_entity(
+                self.create_entity(
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=table_entity_properties,
+                    table_entity_properties=entity,
                     **kwargs
                 )
-                properties = _convert_to_entity(insert_entity)
-                return Entity(properties)

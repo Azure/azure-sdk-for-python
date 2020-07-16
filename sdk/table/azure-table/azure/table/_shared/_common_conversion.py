@@ -7,8 +7,8 @@ import base64
 import hashlib
 import hmac
 from io import (SEEK_SET)
+from datetime import tzinfo
 import six
-from dateutil.tz import tzutc
 from azure.table._shared.parser import _str
 
 
@@ -51,7 +51,7 @@ def _datetime_to_utc_string(value):
         return None
 
     if value.tzinfo:
-        value = value.astimezone(tzutc())
+        value = value.astimezone(tzinfo())
 
     return value.strftime('%a, %d %b %Y %H:%M:%S GMT')
 

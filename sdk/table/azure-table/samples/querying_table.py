@@ -1,6 +1,3 @@
-from azure.table._generated.models import QueryOptions
-
-
 class QueryTable(object):
     connection_string = "DefaultEndpointsProtocol=https;AccountName=example;AccountKey=fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK==;EndpointSuffix=core.windows.net"
     table_name = "NAME"
