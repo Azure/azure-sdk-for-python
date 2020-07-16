@@ -11,6 +11,7 @@ import pytest
 import time
 import uuid
 from datetime import datetime, timedelta
+import calendar
 
 import uamqp
 from azure.servicebus import ServiceBusClient, AutoLockRenew, TransportType
@@ -1366,7 +1367,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             auto_lock_renew.register(renewable=MockReceivedMessage())
 
     def test_queue_message_properties(self):
-        scheduled_enqueue_time = utc_now() + timedelta(seconds=20)
+        scheduled_enqueue_time = (utc_now() + timedelta(seconds=20)).replace(microsecond=0)
         message = Message(
             body='data',
             properties={'key': 'value'},
@@ -1395,7 +1396,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
         message.partition_key = 'updated'
         message.via_partition_key = 'updated'
-        new_scheduled_time = utc_now() + timedelta(hours=5)
+        new_scheduled_time = (utc_now() + timedelta(hours=5)).replace(microsecond=0)
         message.scheduled_enqueue_time_utc = new_scheduled_time
         assert message.partition_key == 'updated'
         assert message.via_partition_key == 'updated'
@@ -1409,7 +1410,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert message.via_partition_key is None
         assert message.scheduled_enqueue_time_utc is None
 
-        timestamp = new_scheduled_time.timestamp() * 1000
+        try:
+            timestamp = new_scheduled_time.timestamp() * 1000
+        except AttributeError:
+            timestamp = calendar.timegm(new_scheduled_time.timetuple()) * 1000
 
         uamqp_received_message = uamqp.message.Message(
             body=b'data',
