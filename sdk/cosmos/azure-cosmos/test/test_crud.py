@@ -2631,6 +2631,10 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(read_permission.id, created_permission.id)
 
     def test_create_container_with_analytical_store_off(self):
+        # don't run test, for the time being, if running against the emulator
+        if 'localhost' in self.host or '127.0.0.1' in self.host:
+            return
+
         created_db = self.databaseForTest
         collection_id = 'test_create_container_with_analytical_store_off_' + str(uuid.uuid4())
         collection_indexing_policy = {'indexingMode': 'consistent'}
@@ -2644,6 +2648,10 @@ class CRUDTests(unittest.TestCase):
         self.assertTrue(ttl_key not in properties or properties[ttl_key] == None)
 
     def test_create_container_with_analytical_store_on(self):
+        # don't run test, for the time being, if running against the emulator
+        if 'localhost' in self.host or '127.0.0.1' in self.host:
+            return
+
         created_db = self.databaseForTest
         collection_id = 'test_create_container_with_analytical_store_on_' + str(uuid.uuid4())
         collection_indexing_policy = {'indexingMode': 'consistent'}
