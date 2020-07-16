@@ -145,7 +145,7 @@ def _convert_to_entity(entry_element):
         etag = 'W/"datetime\'' + url_quote(timestamp) + '\'"'
     entity['etag'] = etag
 
-    entity._set_metadata()
+    entity._set_metadata()  # pylint: disable = W0212
     return entity
 
 

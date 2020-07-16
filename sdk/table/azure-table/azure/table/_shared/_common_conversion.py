@@ -7,8 +7,8 @@ import base64
 import hashlib
 import hmac
 from io import (SEEK_SET)
-import six
 from datetime import tzinfo
+import six
 from azure.table._shared.parser import _str
 
 
