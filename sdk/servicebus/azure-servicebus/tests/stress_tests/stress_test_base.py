@@ -55,7 +55,9 @@ class StressTestRunner:
                  message_size = 10,
                  idle_timeout = 10,
                  send_delay = .01,
-                 receive_delay = 0):
+                 receive_delay = 0,
+                 should_complete_messages = True,
+                 max_batch_size = 1):
         self.senders = senders
         self.receivers = receivers
         self.duration=duration
@@ -65,6 +67,8 @@ class StressTestRunner:
         self.idle_timeout = idle_timeout
         self.send_delay = send_delay
         self.receive_delay = receive_delay
+        self.should_complete_messages = should_complete_messages
+        self.max_batch_size = max_batch_size
 
         # Because of pickle we need to create a state object and not just pass around ourselves.
         # If we ever require multiple runs of this one after another, just make Run() reset this.
@@ -144,14 +148,15 @@ class StressTestRunner:
         with receiver:
             while end_time > datetime.utcnow():
                 if self.receive_type == ReceiveType.pull:
-                    batch = receiver.receive_messages()
+                    batch = receiver.receive_messages(max_batch_size=self.max_batch_size)
                 elif self.receive_type == ReceiveType.push:
                     batch = receiver
 
                 for message in batch:
                     self.OnReceive(self._state, message)
                     try:
-                        message.complete()
+                        if self.should_complete_messages:
+                            message.complete()
                     except MessageAlreadySettled: # It may have been settled in the plugin callback.
                         pass
                     self._state.total_received += 1
