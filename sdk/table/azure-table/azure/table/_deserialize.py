@@ -4,13 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=unused-argument
-from ast import parse
 from uuid import UUID
+from dateutil.parser import parse
 from azure.table._shared import url_quote
 from azure.table._entity import EntityProperty, EdmType, Entity
 from azure.table._shared._common_conversion import _decode_base64_to_bytes
 from azure.table._generated.models import TableProperties
 from azure.core.exceptions import ResourceExistsError
+
 
 from ._shared.models import TableErrorCode
 

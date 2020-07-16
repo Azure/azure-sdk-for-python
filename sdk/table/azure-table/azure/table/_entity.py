@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
+
 from ._shared._error import _ERROR_ATTRIBUTE_MISSING
 
 
@@ -17,13 +19,14 @@ class Entity(dict):
 
     """
 
-    def set_metadata(self):
+    def _set_metadata(self):
         if 'Timestamp' in self.keys():
             self['metadata'] = {'etag': self.pop('etag'), "timestamp": self.pop('Timestamp')}
         else:
             self['metadata'] = {'etag': self.pop('etag')}
 
     def metadata(self):
+        """Resets metadata to be a part of the entity"""
         metadata = self.pop('metadata')
         self['etag'] = metadata['etag']
         self['timestamp'] = metadata['timestamp']

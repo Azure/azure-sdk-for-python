@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 16 Jul 2020 13:03:39 GMT
+      - Thu, 16 Jul 2020 15:26:23 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 16 Jul 2020 13:03:39 GMT
+      - Thu, 16 Jul 2020 15:26:23 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 16 Jul 2020 13:03:37 GMT
+      - Thu, 16 Jul 2020 15:26:21 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttablefb67146a')
       server:
@@ -50,7 +50,7 @@ interactions:
 - request:
     body: '{"PartitionKey": "pkfb67146a", "RowKey": "rkfb67146a", "age": "abc", "sex":
       "female", "sign": "aquarius", "birthday": "1991-10-04T00:00:00Z", "birthday@odata.type":
-      "Edm.DateTime"}'
+      "EdmType.DATETIME"}'
     headers:
       Accept:
       - '*/*'
@@ -59,38 +59,36 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '180'
+      - '184'
       Content-Type:
       - application/json
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 16 Jul 2020 13:03:40 GMT
+      - Thu, 16 Jul 2020 15:26:24 GMT
       If-Match:
       - '*'
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 16 Jul 2020 13:03:40 GMT
+      - Thu, 16 Jul 2020 15:26:24 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
     uri: https://storagename.table.core.windows.net/uttablefb67146a(PartitionKey='pkfb67146a',RowKey='rkfb67146a')
   response:
     body:
-      string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>ResourceNotFound</code><message
-        xml:lang="en-US">The specified resource does not exist.
+      string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>InvalidInput</code><message
+        xml:lang="en-US">An error occurred while processing this request.
 
-        RequestId:b75f1887-a002-000d-3271-5b0b04000000
+        RequestId:eca16e7f-3002-00ee-2685-5be781000000
 
-        Time:2020-07-16T13:03:38.9559600Z</message></error>'
+        Time:2020-07-16T15:26:23.1298643Z</message></error>'
     headers:
-      cache-control:
-      - no-cache
       content-type:
       - application/xml;charset=utf-8
       date:
-      - Thu, 16 Jul 2020 13:03:37 GMT
+      - Thu, 16 Jul 2020 15:26:22 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -100,8 +98,8 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     status:
-      code: 404
-      message: Not Found
+      code: 400
+      message: Bad Request
 - request:
     body: null
     headers:
@@ -114,11 +112,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 16 Jul 2020 13:03:40 GMT
+      - Thu, 16 Jul 2020 15:26:24 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 16 Jul 2020 13:03:40 GMT
+      - Thu, 16 Jul 2020 15:26:24 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -132,7 +130,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 16 Jul 2020 13:03:38 GMT
+      - Thu, 16 Jul 2020 15:26:22 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

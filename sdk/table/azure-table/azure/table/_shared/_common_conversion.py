@@ -8,8 +8,9 @@ import hashlib
 import hmac
 from io import (SEEK_SET)
 import six
+from dateutil.tz import tzutc
 from azure.table._shared.parser import _str
-from pandas._libs.tslibs.tzconversion import tzutc
+
 
 from ._error import (
     _ERROR_VALUE_SHOULD_BE_BYTES_OR_STREAM,
