@@ -5,18 +5,32 @@
 
 API_VERSION_PARAM_NAME = "api-version"
 API_VERSION = "2017-04"
-ENTRY_TAG = "{http://www.w3.org/2005/Atom}entry"
-CONTENT_TAG = "{http://www.w3.org/2005/Atom}content"
-QUEUE_DESCRIPTION_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}QueueDescription"
-COUNT_DETAILS_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}CountDetails"
-TITLE_TAG = "{http://www.w3.org/2005/Atom}title"
-
 ENTITY_TYPE_QUEUES = "queues"
 ENTITY_TYPE_TOPICS = "topics"
-
 LIST_OP_SKIP = "$skip"
 LIST_OP_TOP = "$top"
 
-SQL_COMPATIBILITY_LEVEL = "20"
+XML_SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema"
+XML_SCHEMA_INSTANCE_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance"
 
+SB_XML_NAMESPACE = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+ENTRY_TAG = "{http://www.w3.org/2005/Atom}entry"
+CONTENT_TAG = "{http://www.w3.org/2005/Atom}content"
+
+RULE_KEY_VALUE = "KeyValueOfstringanyType"
+RULE_KEY = "Key"
+RULE_VALUE = "Value"
+RULE_VALUE_TYPE = "type"
+RULE_VALUE_TYPE_XML_PREFIX = "d6p1"
+SQL_COMPATIBILITY_LEVEL = "20"
 INT_MAX_VALUE_CSHARP = 2147483647  # C# int max value
+
+RULE_DESCRIPTION_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}RuleDescription"
+RULE_FILTER_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Filter"
+RULE_FILTER_COR_PROPERTIES_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Properties"
+RULE_PARAMETERS_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Parameters"
+RULE_ACTION_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Action"
+RULE_KEY_VALUE_TAG = "{{{}}}{}".format(SB_XML_NAMESPACE, RULE_KEY_VALUE)
+RULE_KEY_TAG = "{{{}}}{}".format(SB_XML_NAMESPACE, RULE_KEY)
+RULE_VALUE_TAG = "{{{}}}{}".format(SB_XML_NAMESPACE, RULE_VALUE)
+RULE_VALUE_TYPE_TAG = "{{{}}}{}".format(XML_SCHEMA_INSTANCE_NAMESPACE, RULE_VALUE_TYPE)
