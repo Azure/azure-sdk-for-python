@@ -12,7 +12,6 @@ import logging
 from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable
 
 import uamqp.message
-from uamqp import types
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
