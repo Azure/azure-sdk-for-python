@@ -116,6 +116,30 @@ class StorageTableTest(TableTestCase):
         # self.assertEqual(existing[0], [table_name])
         ts.delete_table(table_name)
 
+    @GlobalStorageAccountPreparer()
+    def test_create_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        # table_name = self._get_table_reference()
+        # btable_client = ts.get_table_client(table_name)
+        invalid_table_name = "$&#*_(%&@*(_("
+
+        # Assert
+        with self.assertRaises(HttpResponseError):
+            ts.create_table(invalid_table_name)
+
+    @GlobalStorageAccountPreparer()
+    def test_delete_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        # table_name = self._get_table_reference()
+        # btable_client = ts.get_table_client(table_name)
+        invalid_table_name = "$&#*_(%&@*(_("
+
+        # Assert
+        with self.assertRaises(HttpResponseError):
+            ts.delete_table(invalid_table_name)    
+
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_tables(self, resource_group, location, storage_account, storage_account_key):
