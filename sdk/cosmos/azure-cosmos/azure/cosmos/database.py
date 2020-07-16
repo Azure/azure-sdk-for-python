@@ -172,8 +172,8 @@ class DatabaseProxy(object):
         :param offer_throughput: The provisioned throughput for this offer.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :param analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of None leaves 
-            analytical storage off and a value of -1 turns analytical storage on with no TTL.
+        :param analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -266,8 +266,8 @@ class DatabaseProxy(object):
         :param offer_throughput: The provisioned throughput for this offer.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
-        :param analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of None leaves 
-            analytical storage off and a value of -1 turns analytical storage on with no TTL.  
+        :param analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
