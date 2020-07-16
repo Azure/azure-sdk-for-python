@@ -7,8 +7,7 @@ For a more complete view of Azure libraries, see the [Github repo](https://githu
 
 # Usage
 
-For code examples, see [{{package_pprint_name}}](https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}})
-on docs.microsoft.com.
+This is a template project purely for engineering use and doesn't have code examples on docs.ms.com.
 
 
 # Provide Feedback
