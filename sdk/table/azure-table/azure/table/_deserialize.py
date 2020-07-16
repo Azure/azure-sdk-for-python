@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=unused-argument
-import parser
+from ast import parse
 from uuid import UUID
 from azure.table._shared import url_quote
 from azure.table._entity import EntityProperty, EdmType, Entity
@@ -53,7 +53,7 @@ def _from_entity_int32(value):
 
 
 def _from_entity_datetime(value):
-    return parser.parse(value)
+    return parse(value)
 
 
 def _from_entity_guid(value):
