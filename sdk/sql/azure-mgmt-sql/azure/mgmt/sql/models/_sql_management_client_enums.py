@@ -657,26 +657,6 @@ class PauseDelayTimeUnit(str, Enum):
     minutes = "Minutes"
 
 
-class ManagedDatabaseStatus(str, Enum):
-
-    online = "Online"
-    offline = "Offline"
-    shutdown = "Shutdown"
-    creating = "Creating"
-    inaccessible = "Inaccessible"
-    restoring = "Restoring"
-    updating = "Updating"
-
-
-class ManagedDatabaseCreateMode(str, Enum):
-
-    default = "Default"
-    restore_external_backup = "RestoreExternalBackup"
-    point_in_time_restore = "PointInTimeRestore"
-    recovery = "Recovery"
-    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
-
-
 class SyncGroupLogType(str, Enum):
 
     all = "All"
@@ -727,6 +707,26 @@ class SyncMemberState(str, Enum):
     reprovisioning = "Reprovisioning"
     reprovision_failed = "ReprovisionFailed"
     un_reprovisioned = "UnReprovisioned"
+
+
+class ManagedDatabaseStatus(str, Enum):
+
+    online = "Online"
+    offline = "Offline"
+    shutdown = "Shutdown"
+    creating = "Creating"
+    inaccessible = "Inaccessible"
+    restoring = "Restoring"
+    updating = "Updating"
+
+
+class ManagedDatabaseCreateMode(str, Enum):
+
+    default = "Default"
+    restore_external_backup = "RestoreExternalBackup"
+    point_in_time_restore = "PointInTimeRestore"
+    recovery = "Recovery"
+    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
 
 
 class LongTermRetentionDatabaseState(str, Enum):
