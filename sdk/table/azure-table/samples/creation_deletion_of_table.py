@@ -17,13 +17,13 @@ class CreateDeleteTable(object):
 
     def sas_token_auth(self):
         from azure.table import TableServiceClient
-        from azure.table._shared.table_shared_access_signature import generate_account_shared_access_signature
+        from azure.table._shared.table_shared_access_signature import generate_account_sas
         from azure.table import ResourceTypes
         from azure.table import AccountSasPermissions
         import datetime
         import timedelta
 
-        token = generate_account_shared_access_signature(
+        token = generate_account_sas(
             account_name=self.account_name,
             account_key=self.account_key,
             resource_types=ResourceTypes(object=True),
