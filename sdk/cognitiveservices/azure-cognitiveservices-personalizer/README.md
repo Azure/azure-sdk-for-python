@@ -17,7 +17,7 @@ For a more complete set of Azure libraries, see the
 ## Usage
 
 [Quickstart: Personalize client library for
-Python](https://docs.microsoft.com/azure/cognitive-services/personalizer/python-quickstart-commandline-feedback-loop)
+Python](https://docs.microsoft.com/azure/cognitive-services/personalizer/sdk-learning-loop?pivots=programming-language-python)
 
 ## Documentation
 
