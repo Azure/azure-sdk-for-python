@@ -782,14 +782,16 @@ class OpinionSentiment(DictMixin):
         )
 
     def __repr__(self):
-        return "OpinionSentiment(text={}, sentiment={}, confidence_scores={}, offset={}, length={}, is_negated={})".format(
-            self.text,
-            self.sentiment,
-            repr(self.confidence_scores),
-            self.offset,
-            self.length,
-            self.is_negated
-        )[:1024]
+        return (
+            "OpinionSentiment(text={}, sentiment={}, confidence_scores={}, offset={}, length={}, is_negated={})".format(
+                self.text,
+                self.sentiment,
+                repr(self.confidence_scores),
+                self.offset,
+                self.length,
+                self.is_negated
+            )[:1024]
+        )
 
 
 class SentimentConfidenceScores(DictMixin):
