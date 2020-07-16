@@ -66,7 +66,7 @@ def deserialize_value(value, value_type):
     if value_type in ("int", "long"):
         value = int(value)
     elif value_type == "boolean":
-        value = True if value.lower() == "true" else False
+        value = value.lower() == "true"
     elif value_type == "double":
         value = float(value)
     elif value_type == "datetime":
@@ -84,6 +84,8 @@ def serialize_value_type(value):
         return "int" if value <= constants.INT_MAX_VALUE_CSHARP else "long", str(value)
     if value_type == float:
         return "double", str(value)
+    if value_type == bool:
+        return "boolean", str(value)
     if value_type == datetime:
         return "datetime", isodate.datetime_isoformat(value)
     if value_type == timedelta:
