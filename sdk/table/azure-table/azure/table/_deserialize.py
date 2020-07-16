@@ -4,14 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=unused-argument
+import datetime
 from uuid import UUID
-from dateutil.parser import parse
 from azure.table._shared import url_quote
 from azure.table._entity import EntityProperty, EdmType, Entity
 from azure.table._shared._common_conversion import _decode_base64_to_bytes
 from azure.table._generated.models import TableProperties
 from azure.core.exceptions import ResourceExistsError
-
 
 from ._shared.models import TableErrorCode
 
@@ -54,7 +53,9 @@ def _from_entity_int32(value):
 
 
 def _from_entity_datetime(value):
-    return parse(value)
+    # TODO: Fix this
+    local_timezone = datetime.datetime.now(datetime.timezone(datetime.timedelta(0))).tzinfo
+    return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=local_timezone)
 
 
 def _from_entity_guid(value):
@@ -119,7 +120,9 @@ def _convert_to_entity(entry_element):
     # Timestamp is a known property
     timestamp = properties.pop('Timestamp', None)
     if timestamp:
-        entity['Timestamp'] = _from_entity_datetime(timestamp)
+        # TODO: verify change here
+        # entity['Timestamp'] = _from_entity_datetime(timestamp)
+        entity['Timestamp'] = timestamp
 
     for name, value in properties.items():
         mtype = edmtypes.get(name)

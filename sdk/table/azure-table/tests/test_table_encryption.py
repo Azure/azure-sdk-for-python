@@ -59,14 +59,6 @@ from azure.table._shared._error import (
     _ERROR_OBJECT_INVALID,
     _ERROR_DECRYPTION_FAILURE,
 )
-# from azure.storage._encryption import(
-#      _dict_to_encryption_data,
-#     _generate_AES_CBC_cipher,
-# )
-# from azure.storage._common_conversion import(
-#     _decode_base64_to_bytes,
-#     _encode_base64,
-# )
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
