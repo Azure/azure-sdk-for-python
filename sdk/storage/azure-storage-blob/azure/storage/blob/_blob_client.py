@@ -11,9 +11,9 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlsplit, quote, unquote
 except ImportError:
-    from urlparse import urlparse # type: ignore
+    from urlparse import urlsplit # type: ignore
     from urllib2 import quote, unquote # type: ignore
 
 import six
@@ -142,7 +142,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 account_url = "https://" + account_url
         except AttributeError:
             raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
+        parsed_url = urlsplit(account_url.rstrip('/'))
 
         if not (container_name and blob_name):
             raise ValueError("Please specify a container name and blob name.")
@@ -204,23 +204,21 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_url = "https://" + blob_url
         except AttributeError:
             raise ValueError("Blob URL must be a string.")
-        parsed_url = urlparse(blob_url.rstrip('/'))
+        parsed_url = urlsplit(blob_url.rstrip('/'))
 
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(blob_url))
 
-        path_blob = parsed_url.path.lstrip('/').split('/')
-        account_path = ""
-        if len(path_blob) > 2:
-            account_path = "/" + "/".join(path_blob[:-2])
-        account_url = "{}://{}{}?{}".format(
+        account_url = "{}://{}/".format(
             parsed_url.scheme,
-            parsed_url.netloc.rstrip('/'),
-            account_path,
-            parsed_url.query)
-        container_name, blob_name = unquote(path_blob[-2]), unquote(path_blob[-1])
-        if not container_name or not blob_name:
+            parsed_url.netloc)
+        if parsed_url.query:
+            account_url += "?{}".format(parsed_url.query)
+
+        path_blob = parsed_url.path.lstrip('/').split('/', maxsplit=1)
+        if len(path_blob) < 2 or path_blob[1] == '':
             raise ValueError("Invalid URL. Provide a blob_url with a valid blob and container name.")
+        container_name, blob_name = unquote(path_blob[0]), unquote(path_blob[1])
 
         path_snapshot, _ = parse_query(parsed_url.query)
         if snapshot:
