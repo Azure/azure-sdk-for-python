@@ -5,12 +5,7 @@
 # --------------------------------------------------------------------------
 from sys import version_info
 
-from azure.common import (
-    AzureHttpError,
-    AzureConflictHttpError,
-    AzureMissingResourceHttpError,
-    AzureException,
-)
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.table._shared.parser import _str
 
 from ._constants import (
@@ -102,7 +97,7 @@ _ERROR_DATA_NOT_ENCRYPTED = 'Encryption required, but received data does not con
 def _dont_fail_on_exist(error):
     """ don't throw exception if the resource exists.
     This is called by create_* APIs with fail_on_exist=False"""
-    if isinstance(error, AzureConflictHttpError):  # pylint: disable=R1705
+    if isinstance(error, ResourceExistsError):  # pylint: disable=R1705
         return False
     else:
         raise error
@@ -111,7 +106,7 @@ def _dont_fail_on_exist(error):
 def _dont_fail_not_exist(error):
     """ don't throw exception if the resource doesn't exist.
     This is called by create_* APIs with fail_on_exist=False"""
-    if isinstance(error, AzureMissingResourceHttpError):  # pylint: disable=R1705
+    if isinstance(error, ResourceNotFoundError):  # pylint: disable=R1705
         return False
     else:
         raise error
@@ -129,7 +124,7 @@ def _http_error_handler(http_error):
     if http_error.respbody is not None:
         message += '\n' + http_error.respbody.decode('utf-8-sig')
 
-    ex = AzureHttpError(message, http_error.status)
+    ex = HttpResponseError(message, http_error.status)
     ex.error_code = error_code
 
     raise ex
@@ -152,12 +147,12 @@ def _validate_not_none(param_name, param):
 
 def _validate_content_match(server_md5, computed_md5):
     if server_md5 != computed_md5:
-        raise AzureException(_ERROR_MD5_MISMATCH.format(server_md5, computed_md5))
+        raise Exception(_ERROR_MD5_MISMATCH.format(server_md5, computed_md5))
 
 
 def _validate_access_policies(identifiers):
     if identifiers and len(identifiers) > 5:
-        raise AzureException(_ERROR_TOO_MANY_ACCESS_POLICIES)
+        raise Exception(_ERROR_TOO_MANY_ACCESS_POLICIES)
 
 
 def _validate_key_encryption_key_wrap(kek):
@@ -219,7 +214,7 @@ def _wrap_exception(ex, desired_type):
         return desired_type('{}: {}'.format(ex.__class__.__name__, msg))
 
 
-class AzureSigningError(AzureException):
+class AzureSigningError(Exception):
     """
     Represents a fatal error when attempting to sign a request.
     In general, the cause of this exception is user error. For example, the given account key is not valid.
