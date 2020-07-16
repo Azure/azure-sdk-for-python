@@ -200,7 +200,7 @@ class InteractiveCredential(PublicClientCredential):
         # type: (**Any) -> AuthenticationRecord
         """Interactively authenticate a user.
 
-        :keyword Sequence[str] scopes: scopes to request during authentication, such as those provided by
+        :keyword Iterable[str] scopes: scopes to request during authentication, such as those provided by
           :func:`AuthenticationRequiredError.scopes`. If provided, successful authentication will cache an access token
           for these scopes.
         :rtype: ~azure.identity.AuthenticationRecord
