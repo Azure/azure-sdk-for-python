@@ -91,7 +91,6 @@ def unpack_custom_analyzer(custom_analyzer):
     return CustomAnalyzer(
         name=custom_analyzer.name,
         odata_type=custom_analyzer.odata_type,
-        tokenizer=custom_analyzer.tokenizer,
         tokenizer_name=custom_analyzer.tokenizer,
         token_filters=custom_analyzer.token_filters,
         char_filters=custom_analyzer.char_filters
