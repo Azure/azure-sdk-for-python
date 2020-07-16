@@ -4,8 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from ._generated.models._models import LanguageInput
-from ._generated.models._models import MultiLanguageInput
+from ._generated.v3_0.models._models import LanguageInput
+from ._generated.v3_0.models._models import MultiLanguageInput
 
 
 class DictMixin(object):

@@ -1,7 +1,11 @@
 
 # Release History
 
-## 1.7.1 (Unreleased)
+## 1.8.0 (Unreleased)
+
+### Features
+
+- Support params as list for exploding parameters  #12410
 
 
 ## 1.7.0 (2020-07-06)

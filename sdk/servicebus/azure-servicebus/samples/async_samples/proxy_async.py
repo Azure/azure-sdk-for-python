@@ -29,7 +29,7 @@ HTTP_PROXY = {
 
 
 async def send_single_message(sender):
-    message = Message("DATA" * 64)
+    message = Message("Single Message")
     await sender.send_messages(message)
 
 

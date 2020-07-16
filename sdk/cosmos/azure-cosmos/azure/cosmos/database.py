@@ -22,8 +22,9 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Mapping, Union, cast, Iterable, Optional
+from typing import Any, List, Dict, Union, cast, Iterable, Optional
 
+import warnings
 import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
@@ -34,6 +35,7 @@ from .offer import Offer
 from .http_constants import StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
+from .documents import IndexingMode
 
 __all__ = ("DatabaseProxy",)
 
@@ -204,6 +206,11 @@ class DatabaseProxy(object):
         if partition_key is not None:
             definition["partitionKey"] = partition_key
         if indexing_policy is not None:
+            if indexing_policy.get("indexingMode") is IndexingMode.Lazy:
+                warnings.warn(
+                    "Lazy indexing mode has been deprecated. Mode will be set to consistent indexing by the backend.",
+                    DeprecationWarning
+                )
             definition["indexingPolicy"] = indexing_policy
         if default_ttl is not None:
             definition["defaultTtl"] = default_ttl
@@ -345,10 +352,11 @@ class DatabaseProxy(object):
         """
         if isinstance(container, ContainerProxy):
             id_value = container.id
-        elif isinstance(container, Mapping):
-            id_value = container["id"]
         else:
-            id_value = container
+            try:
+                id_value = container["id"]
+            except TypeError:
+                id_value = container
 
         return ContainerProxy(self.client_connection, self.database_link, id_value)
 
@@ -565,10 +573,11 @@ class DatabaseProxy(object):
         """
         if isinstance(user, UserProxy):
             id_value = user.id
-        elif isinstance(user, Mapping):
-            id_value = user["id"]
         else:
-            id_value = user
+            try:
+                id_value = user["id"]
+            except TypeError:
+                id_value = user
 
         return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
 

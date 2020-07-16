@@ -68,9 +68,9 @@ class ServiceOperations:
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: FileSystemList or the result of cls(response)
-        :rtype: ~azure.storage.file.datalake.models.FileSystemList
+        :rtype: ~azure.storage.filedatalake.models.FileSystemList
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         # Construct URL

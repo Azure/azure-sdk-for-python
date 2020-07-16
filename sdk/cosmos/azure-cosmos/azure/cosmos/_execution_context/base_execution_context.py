@@ -81,7 +81,7 @@ class _QueryExecutionContextBase(object):
         """Returns itself as an iterator"""
         return self
 
-    def next(self):
+    def __next__(self):
         """Return the next query result.
 
         :return: The next query result.
@@ -100,10 +100,6 @@ class _QueryExecutionContextBase(object):
             raise StopIteration
 
         return self._buffer.popleft()
-
-    def __next__(self):
-        # supports python 3 iterator
-        return self.next()
 
     def _fetch_items_helper_no_retries(self, fetch_function):
         """Fetches more items and doesn't retry on failure
@@ -137,6 +133,8 @@ class _QueryExecutionContextBase(object):
             return self._fetch_items_helper_no_retries(fetch_function)
 
         return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback)
+
+    next = __next__  # Python 2 compatibility.
 
 
 class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
