@@ -42,7 +42,11 @@ from .constants import (
     MESSAGE_RENEW_LOCK,
     DEADLETTERNAME,
     PROPERTIES_DEAD_LETTER_REASON,
-    PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION
+    PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION,
+    ANNOTATION_SYMBOL_PARTITION_KEY,
+    ANNOTATION_SYMBOL_VIA_PARTITION_KEY,
+    ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
+    ANNOTATION_SYMBOL_KEY_MAP
 )
 from ..exceptions import (
     MessageAlreadySettled,
@@ -131,6 +135,24 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         else:
             self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
 
+    def _set_message_annotations(self, key, value):
+        if not self.message.annotations:
+            self.message.annotations = {}
+
+        if isinstance(self, ReceivedMessage):
+            try:
+                del self.message.annotations[key]
+            except KeyError:
+                pass
+
+        if value is None:
+            try:
+                del self.message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]]
+            except KeyError:
+                pass
+        else:
+            self.message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]] = value
+
     @property
     def session_id(self):
         # type: () -> str
@@ -184,7 +206,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         """
         p_key = None
         try:
-            p_key = self.message.annotations.get(_X_OPT_PARTITION_KEY)
+            p_key = self.message.annotations.get(_X_OPT_PARTITION_KEY) or \
+                self.message.annotations.get(ANNOTATION_SYMBOL_PARTITION_KEY)
             return p_key.decode('UTF-8')
         except (AttributeError, UnicodeDecodeError):
             return p_key
@@ -192,9 +215,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @partition_key.setter
     def partition_key(self, value):
         # type: (str) -> None
-        if not self.message.annotations:
-            self.message.annotations = {}
-        self.message.annotations[types.AMQPSymbol(_X_OPT_PARTITION_KEY)] = value
+        self._set_message_annotations(_X_OPT_PARTITION_KEY, value)
 
     @property
     def via_partition_key(self):
@@ -212,7 +233,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         """
         via_p_key = None
         try:
-            via_p_key = self.message.annotations.get(_X_OPT_VIA_PARTITION_KEY)
+            via_p_key = self.message.annotations.get(_X_OPT_VIA_PARTITION_KEY) or \
+                self.message.annotations.get(ANNOTATION_SYMBOL_VIA_PARTITION_KEY)
             return via_p_key.decode('UTF-8')
         except (AttributeError, UnicodeDecodeError):
             return via_p_key
@@ -220,9 +242,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     @via_partition_key.setter
     def via_partition_key(self, value):
         # type: (str) -> None
-        if not self.message.annotations:
-            self.message.annotations = {}
-        self.message.annotations[types.AMQPSymbol(_X_OPT_VIA_PARTITION_KEY)] = value
+        self._set_message_annotations(_X_OPT_VIA_PARTITION_KEY, value)
 
     @property
     def time_to_live(self):
@@ -268,10 +288,14 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         :rtype: ~datetime.datetime
         """
         if self.message.annotations:
-            timestamp = self.message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME)
+            timestamp = self.message.annotations.get(_X_OPT_SCHEDULED_ENQUEUE_TIME) or \
+                self.message.annotations.get(ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME)
             if timestamp:
-                in_seconds = timestamp/1000.0
-                return utc_from_timestamp(in_seconds)
+                try:
+                    in_seconds = timestamp/1000.0
+                    return utc_from_timestamp(in_seconds)
+                except TypeError:
+                    return timestamp
         return None
 
     @scheduled_enqueue_time_utc.setter
@@ -279,9 +303,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         # type: (datetime.datetime) -> None
         if not self._amqp_properties.message_id:
             self._amqp_properties.message_id = str(uuid.uuid4())
-        if not self.message.annotations:
-            self.message.annotations = {}
-        self.message.annotations[types.AMQPSymbol(_X_OPT_SCHEDULED_ENQUEUE_TIME)] = value
+        self._set_message_annotations(_X_OPT_SCHEDULED_ENQUEUE_TIME, value)
 
     @property
     def body(self):

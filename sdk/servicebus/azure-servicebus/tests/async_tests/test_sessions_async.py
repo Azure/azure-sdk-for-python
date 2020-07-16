@@ -648,7 +648,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 if messages:
                     data = str(messages[0])
                     assert data == content
-                    assert messages[0].properties.message_id in (message_id_a, message_id_b)
+                    assert messages[0].message_id in (message_id_a, message_id_b)
                     assert messages[0].scheduled_enqueue_time_utc == enqueue_time
                     assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                     assert len(messages) == 2

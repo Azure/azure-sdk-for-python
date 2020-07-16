@@ -12,9 +12,16 @@ import time
 import uuid
 from datetime import datetime, timedelta
 
+import uamqp
 from azure.servicebus import ServiceBusClient, AutoLockRenew, TransportType
 from azure.servicebus._common.message import Message, PeekMessage, ReceivedMessage, BatchMessage
-from azure.servicebus._common.constants import ReceiveSettleMode, _X_OPT_LOCK_TOKEN
+from azure.servicebus._common.constants import (
+    ReceiveSettleMode,
+    _X_OPT_LOCK_TOKEN,
+    _X_OPT_PARTITION_KEY,
+    _X_OPT_VIA_PARTITION_KEY,
+    _X_OPT_SCHEDULED_ENQUEUE_TIME
+)
 from azure.servicebus._common.utils import utc_now
 from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
@@ -1357,6 +1364,84 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
         with pytest.raises(ServiceBusError):
             auto_lock_renew.register(renewable=MockReceivedMessage())
+
+    def test_queue_message_properties(self):
+        scheduled_enqueue_time = utc_now() + timedelta(seconds=20)
+        message = Message(
+            body='data',
+            properties={'key': 'value'},
+            label='label',
+            content_type='application/text',
+            correlation_id='cid',
+            message_id='mid',
+            partition_key='pk',
+            via_partition_key='via_pk',
+            to='to',
+            reply_to='reply_to',
+            scheduled_enqueue_time_utc=scheduled_enqueue_time
+        )
+
+        assert message.properties
+        assert message.properties['key'] == 'value'
+        assert message.label == 'label'
+        assert message.content_type == 'application/text'
+        assert message.correlation_id == 'cid'
+        assert message.message_id == 'mid'
+        assert message.partition_key == 'pk'
+        assert message.via_partition_key == 'via_pk'
+        assert message.to == 'to'
+        assert message.reply_to == 'reply_to'
+        assert message.scheduled_enqueue_time_utc == scheduled_enqueue_time
+
+        message.partition_key = 'updated'
+        message.via_partition_key = 'updated'
+        new_scheduled_time = utc_now() + timedelta(hours=5)
+        message.scheduled_enqueue_time_utc = new_scheduled_time
+        assert message.partition_key == 'updated'
+        assert message.via_partition_key == 'updated'
+        assert message.scheduled_enqueue_time_utc == new_scheduled_time
+
+        message.partition_key = None
+        message.via_partition_key = None
+        message.scheduled_enqueue_time_utc = None
+
+        assert message.partition_key is None
+        assert message.via_partition_key is None
+        assert message.scheduled_enqueue_time_utc is None
+
+        timestamp = new_scheduled_time.timestamp() * 1000
+
+        uamqp_received_message = uamqp.message.Message(
+            body=b'data',
+            annotations={
+                _X_OPT_PARTITION_KEY: b'r_key',
+                _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
+                _X_OPT_SCHEDULED_ENQUEUE_TIME: timestamp,
+            },
+            properties=uamqp.message.MessageProperties()
+        )
+        received_message = ReceivedMessage(uamqp_received_message)
+        assert received_message.partition_key == 'r_key'
+        assert received_message.via_partition_key == 'r_via_key'
+        assert received_message.scheduled_enqueue_time_utc == new_scheduled_time
+
+        new_scheduled_time = utc_now() + timedelta(hours=1, minutes=49, seconds=32)
+
+        received_message.partition_key = 'new_r_key'
+        received_message.via_partition_key = 'new_r_via_key'
+        received_message.scheduled_enqueue_time_utc = new_scheduled_time
+
+        assert received_message.partition_key == 'new_r_key'
+        assert received_message.via_partition_key == 'new_r_via_key'
+        assert received_message.scheduled_enqueue_time_utc == new_scheduled_time
+
+        received_message.partition_key = None
+        received_message.via_partition_key = None
+        received_message.scheduled_enqueue_time_utc = None
+
+        assert message.partition_key is None
+        assert message.via_partition_key is None
+        assert message.scheduled_enqueue_time_utc is None
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 from enum import Enum
 
-from uamqp import constants
+from uamqp import constants, types
 
 VENDOR = b"com.microsoft"
 DATETIMEOFFSET_EPOCH = 621355968000000000
@@ -113,6 +113,17 @@ class ReceiveSettleMode(Enum):
 
 class SessionFilter(Enum):
     NextAvailable = 0
+
+
+ANNOTATION_SYMBOL_PARTITION_KEY = types.AMQPSymbol(_X_OPT_PARTITION_KEY)
+ANNOTATION_SYMBOL_VIA_PARTITION_KEY = types.AMQPSymbol(_X_OPT_VIA_PARTITION_KEY)
+ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME = types.AMQPSymbol(_X_OPT_SCHEDULED_ENQUEUE_TIME)
+
+ANNOTATION_SYMBOL_KEY_MAP = {
+    _X_OPT_PARTITION_KEY: ANNOTATION_SYMBOL_PARTITION_KEY,
+    _X_OPT_VIA_PARTITION_KEY: ANNOTATION_SYMBOL_VIA_PARTITION_KEY,
+    _X_OPT_SCHEDULED_ENQUEUE_TIME: ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME
+}
 
 
 NEXT_AVAILABLE = SessionFilter.NextAvailable
