@@ -75,7 +75,7 @@ def prep_if_none_match(etag, match_condition):
     return None
 
 
-def pack_custom_analyzer(custom_analyzer):
+def pack_custom_analyzer(custom_analyzer, **kwargs):    # pylint: disable=unused-argument
     # type: (CustomAnalyzer) -> _CustomAnalyzer
     return _CustomAnalyzer(
         odata_type=custom_analyzer.odata_type,
@@ -85,7 +85,7 @@ def pack_custom_analyzer(custom_analyzer):
     )
 
 
-def unpack_custom_analyzer(custom_analyzer):
+def unpack_custom_analyzer(custom_analyzer, **kwargs):  # pylint: disable=unused-argument
     # type: (_CustomAnalyzer) -> CustomAnalyzer
     return _CustomAnalyzer(
         odata_type=custom_analyzer.odata_type,
