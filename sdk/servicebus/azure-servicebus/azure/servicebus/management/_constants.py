@@ -18,3 +18,5 @@ LIST_OP_SKIP = "$skip"
 LIST_OP_TOP = "$top"
 
 SQL_COMPATIBILITY_LEVEL = "20"
+
+INT_MAX_VALUE_CSHARP = 2147483647  # C# int max value
