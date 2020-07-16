@@ -7,12 +7,16 @@ class TableErrorHandling:
 
     def create_table_if_exists(self):
         from azure.table import TableServiceClient
+        from azure.core.exceptions import ResourceExistsError
 
         # create table
         table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
+        try:
+            # try to create existing table, ResourceExistsError will be thrown
+            table_service_client.create_table(table_name=self.table_name)
+        except ResourceExistsError:
+            print("TableExists")
 
-        # try to create existing table, ResourceExistsError will be thrown
-        table_service_client.create_table(table_name=self.table_name)
 
 if __name__ == '__main__':
     sample = TableErrorHandling()
