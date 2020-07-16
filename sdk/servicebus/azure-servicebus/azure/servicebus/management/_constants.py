@@ -9,22 +9,21 @@ ENTITY_TYPE_QUEUES = "queues"
 ENTITY_TYPE_TOPICS = "topics"
 LIST_OP_SKIP = "$skip"
 LIST_OP_TOP = "$top"
+INT_MAX_VALUE_CSHARP = 2147483647  # C# int max value
 
 XML_SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema"
 XML_SCHEMA_INSTANCE_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance"
+ATOM_ENTRY_TAG = "{http://www.w3.org/2005/Atom}entry"
+ATOM_CONTENT_TAG = "{http://www.w3.org/2005/Atom}content"
 
 SB_XML_NAMESPACE = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-ENTRY_TAG = "{http://www.w3.org/2005/Atom}entry"
-CONTENT_TAG = "{http://www.w3.org/2005/Atom}content"
 
 RULE_KEY_VALUE = "KeyValueOfstringanyType"
 RULE_KEY = "Key"
 RULE_VALUE = "Value"
 RULE_VALUE_TYPE = "type"
 RULE_VALUE_TYPE_XML_PREFIX = "d6p1"
-SQL_COMPATIBILITY_LEVEL = "20"
-INT_MAX_VALUE_CSHARP = 2147483647  # C# int max value
-
+RULE_SQL_COMPATIBILITY_LEVEL = "20"
 RULE_DESCRIPTION_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}RuleDescription"
 RULE_FILTER_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Filter"
 RULE_FILTER_COR_PROPERTIES_TAG = "{http://schemas.microsoft.com/netservices/2010/10/servicebus/connect}Properties"

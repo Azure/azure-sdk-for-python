@@ -19,7 +19,7 @@ from ._generated.models import QueueDescription as InternalQueueDescription, \
     KeyValue
 
 from ._model_workaround import adjust_attribute_map
-from ._constants import SQL_COMPATIBILITY_LEVEL
+from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 
 adjust_attribute_map()
 
@@ -671,7 +671,7 @@ class SqlRuleFilter(object):
         internal_entity = InternalSqlFilter(sql_expression=self.sql_expression)
         internal_entity.parameters = [KeyValue(key=key, value=value) for key, value in self.parameters.items()] \
             if self.parameters else None
-        internal_entity.compatibility_level = SQL_COMPATIBILITY_LEVEL
+        internal_entity.compatibility_level = RULE_SQL_COMPATIBILITY_LEVEL
         internal_entity.requires_preprocessing = self.requires_preprocessing
         return internal_entity
 
@@ -684,7 +684,7 @@ class TrueRuleFilter(SqlRuleFilter):
         internal_entity = InternalTrueFilter()
         internal_entity.sql_expression = self.sql_expression
         internal_entity.requires_preprocessing = True
-        internal_entity.compatibility_level = SQL_COMPATIBILITY_LEVEL
+        internal_entity.compatibility_level = RULE_SQL_COMPATIBILITY_LEVEL
 
         return internal_entity
 
@@ -697,7 +697,7 @@ class FalseRuleFilter(SqlRuleFilter):
         internal_entity = InternalFalseFilter()
         internal_entity.sql_expression = self.sql_expression
         internal_entity.requires_preprocessing = True
-        internal_entity.compatibility_level = SQL_COMPATIBILITY_LEVEL
+        internal_entity.compatibility_level = RULE_SQL_COMPATIBILITY_LEVEL
         return internal_entity
 
 
@@ -720,7 +720,7 @@ class SqlRuleAction(object):
         internal_entity = InternalSqlRuleAction(sql_expression=self.sql_expression)
         internal_entity.parameters = [KeyValue(key=key, value=value) for key, value in self.parameters.items()] \
             if self.parameters else None
-        internal_entity.compatibility_level = SQL_COMPATIBILITY_LEVEL
+        internal_entity.compatibility_level = RULE_SQL_COMPATIBILITY_LEVEL
         internal_entity.requires_preprocessing = self.requires_preprocessing
         return internal_entity
 

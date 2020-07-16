@@ -93,8 +93,10 @@ async def extract_rule_data_template(feed_class, convert, feed_element):
     """Special version of function extrat_data_template for Rule.
 
     Pass both the XML entry element and the rule instance to function `convert`. Rule needs to extract
-    KeyValue from XML Element and set to Rule model instance manually. The msrest serialization/deserialization
+    KeyValue from XML Element and set to Rule model instance manually. The autorest/msrest serialization/deserialization
     doesn't work for this special part.
+    After autorest is enhanced, this method can be removed.
+    Refer to autorest issue https://github.com/Azure/autorest/issues/3535
     """
     deserialized = feed_class.deserialize(feed_element)
     next_link = None
@@ -102,7 +104,8 @@ async def extract_rule_data_template(feed_class, convert, feed_element):
         next_link = deserialized.link[1].href
     if deserialized.entry:
         list_of_entities = [
-            convert(*x) if convert else x for x in zip(feed_element.findall(constants.ENTRY_TAG), deserialized.entry)
+            convert(*x) if convert else x for x in zip(feed_element.findall(
+                constants.ATOM_ENTRY_TAG), deserialized.entry)
         ]
     else:
         list_of_entities = []

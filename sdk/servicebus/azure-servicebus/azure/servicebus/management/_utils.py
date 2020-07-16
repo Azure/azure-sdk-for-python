@@ -25,7 +25,8 @@ def extract_rule_data_template(feed_class, convert, feed_element):
         next_link = deserialized.link[1].href
     if deserialized.entry:
         list_of_entities = [
-            convert(*x) if convert else x for x in zip(feed_element.findall(constants.ENTRY_TAG), deserialized.entry)
+            convert(*x) if convert else x for x in zip(
+                feed_element.findall(constants.ATOM_ENTRY_TAG), deserialized.entry)
         ]
     else:
         list_of_entities = []
@@ -107,7 +108,7 @@ def deserialize_key_values(root, parameters):
 
 
 def deserialize_rule_key_values(entry_ele, rule_description):
-    content = entry_ele.find(constants.CONTENT_TAG)
+    content = entry_ele.find(constants.ATOM_CONTENT_TAG)
     if content:
         correlation_filter_properties_ele = content\
             .find(constants.RULE_DESCRIPTION_TAG) \
@@ -147,7 +148,7 @@ def serialize_key_values(root, kvs):
 
 
 def serialize_rule_key_values(entry_ele, rule_descrpiton):
-    content = entry_ele.find(constants.CONTENT_TAG)
+    content = entry_ele.find(constants.ATOM_CONTENT_TAG)
     if content:
         correlation_filter_parameters_ele = content\
             .find(constants.RULE_DESCRIPTION_TAG) \
