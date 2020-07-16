@@ -546,7 +546,7 @@ class StorageTableClientTest(TableTestCase):
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_create_table_client_with_complete_url(self, resource_group, location, storage_account, storage_account_key):
+    def test_create_table_client_with_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         table_url = "https://{}.table.core.windows.net:443/foo".format(storage_account.name)
         invalid_table_name = "$&#*_(%&@*(_("
