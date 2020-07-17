@@ -120,9 +120,7 @@ class StorageTableTest(TableTestCase):
     def test_create_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
-        # table_name = self._get_table_reference()
-        # btable_client = ts.get_table_client(table_name)
-        invalid_table_name = "$&#*_(%&@*(_("
+        invalid_table_name = "my_table"
         
         with pytest.raises(ValueError) as excinfo:
             ts.create_table(invalid_table_name)
@@ -133,9 +131,7 @@ class StorageTableTest(TableTestCase):
     def test_delete_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
-        # table_name = self._get_table_reference()
-        # btable_client = ts.get_table_client(table_name)
-        invalid_table_name = "$&#*_(%&@*(_("
+        invalid_table_name = "my_table"
         
         with pytest.raises(ValueError) as excinfo:
             ts.create_table(invalid_table_name)

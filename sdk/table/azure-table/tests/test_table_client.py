@@ -549,7 +549,7 @@ class StorageTableClientTest(TableTestCase):
     def test_create_table_client_with_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         table_url = "https://{}.table.core.windows.net:443/foo".format(storage_account.name)
-        invalid_table_name = "$&#*_(%&@*(_("
+        invalid_table_name = "my_table"
         
         # Assert
         with pytest.raises(ValueError) as excinfo:
