@@ -17,6 +17,7 @@ from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 # )
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase
 
+from azure.core.exceptions import HttpResponseError
 # ------------------------------------------------------------------------------
 SERVICES = {
     #TableServiceClient: 'table',
@@ -542,6 +543,22 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.table_name, 'bar')
         self.assertEqual(service.account_name, storage_account.name)
+
+    # @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_create_table_client_with_invalid_name(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        table_url = "https://{}.table.core.windows.net:443/foo".format(storage_account.name)
+        invalid_table_name = "my_table"
+        
+        # Assert
+        with pytest.raises(ValueError) as excinfo:
+            service = TableClient(account_url=table_url, table_name=invalid_table_name, credential=storage_account_key)
+            
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
+
+        # with self.assertRaises(ValueError):
+        #     service = TableClient(account_url=table_url, table_name=invalid_table_name, credential=storage_account_key)
 
     #@pytest.mark.skip("pending")
     def test_error_with_malformed_conn_str(self):

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
+import re
 from typing import Any
 
 from azure.core.pipeline import Pipeline
@@ -26,6 +27,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.table._table_client import TableClient
+from azure.table._shared._error import _validate_table_name
 
 
 class TableServiceClient(StorageAccountHostsMixin):
@@ -177,6 +179,8 @@ class TableServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.table.TableClient
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        _validate_table_name(table_name)
+
         table_properties = TableProperties(table_name=table_name, **kwargs)
         self._client.table.create(table_properties)
         table = self.get_table_client(table_name=table_name)
@@ -196,6 +200,8 @@ class TableServiceClient(StorageAccountHostsMixin):
         :return: None
         :rtype: None
         """
+        _validate_table_name(table_name)
+
         self._client.table.delete(table=table_name, **kwargs)
 
     @distributed_trace

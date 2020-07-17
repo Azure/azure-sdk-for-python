@@ -33,10 +33,10 @@ or [Azure CLI](https://docs.microsoft.com/azure/storage/common/storage-quickstar
 ```bash
 # Create a new resource group to hold the storage account -
 # if using an existing resource group, skip this step
-az group create --name my-resource-group --location westus2
+az group create --name MyResourceGroup --location westus2
 
 # Create the storage account
-az storage account create -n my-storage-account-name -g my-resource-group
+az storage account create -n mystorageaccount -g MyResourceGroup
 ```
 
 ### Create the client
@@ -48,7 +48,7 @@ you to access the storage account:
 ```python
 from azure.table import TableServiceClient
 
-service = TableServiceClient(account_url="https://<my-storage-account-name>.table.core.windows.net/", credential=credential)
+service = TableServiceClient(account_url="https://<mystorageaccount>.table.core.windows.net/", credential=credential)
 ```
 
 #### Looking up the account URL
@@ -59,7 +59,7 @@ or [Azure CLI](https://docs.microsoft.com/cli/azure/storage/account?view=azure-c
 
 ```bash
 # Get the table service URL for the storage account
-az storage account show -n my-storage-account-name -g my-resource-group --query "primaryEndpoints.table"
+az storage account show -n mystorageaccount -g MyResourceGroup --query "primaryEndpoints.table"
 ```
 
 #### Types of credentials
@@ -89,7 +89,7 @@ The `credential` parameter may be provided in a number of different forms, depen
    (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
    section or by running the following Azure CLI command:
 
-    ```az storage account keys list -g MyResourceGroup -n MyStorageAccount```
+    ```az storage account keys list -g MyResourceGroup -n mystorageaccount```
 
     Use the key as the credential parameter to authenticate the client:
     ```python
@@ -112,7 +112,7 @@ service = TableServiceClient.from_connection_string(conn_str=connection_string)
 The connection string to your storage account can be found in the Azure Portal under the "Access Keys" section or by running the following CLI command:
 
 ```bash
-az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
+az storage account show-connection-string -g MyResourceGroup -n mystorageaccount
 ```
 
 ## Key concepts
@@ -158,16 +158,16 @@ Create a table in your storage account
 ```python
 from azure.table import TableServiceClient
 
-table = TableServiceClient.from_connection_string(conn_str="<connection_string>")
-table.create_table(table_name="myTable")
+table_service_client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
+table_service_client.create_table(table_name="myTable")
 ```
 
 Use the async client to create a table
 ```python
 from azure.table.aio import TableServiceClient
 
-table = TableServiceClient.from_connection_string(conn_str="<connection_string>")
-await table.create_table(table_name="myTable")
+table_service_client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
+await table_service_client.create_table(table_name="myTable")
 ```
 
 ### Creating entities
@@ -178,8 +178,8 @@ from azure.table import TableClient
 
 my_entity = {'PartitionKey':'part','RowKey':'row'}
 
-table = TableClient.from_connection_string(conn_str="<connection_string>", table_name="my_table")
-entity = table.create_entity(table_entity_properties=my_entity)
+table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="myTable")
+entity = table_client.create_entity(entity=my_entity)
 ```
 
 Create entities asynchronously
@@ -187,10 +187,16 @@ Create entities asynchronously
 ```python
 from azure.table.aio import TableClient
 
-my_entity = {'PartitionKey':'part','RowKey':'row'}
+my_entity = {
+    'PartitionKey': 'color',
+    'RowKey': 'brand',
+    'text': 'Marker',
+    'color': 'Purple',
+    'price': '5',
+}
 
-table = TableClient.from_connection_string(conn_str="<connection_string>", table_name="my_table")
-entity = await table.create_entity(table_entity_properties=my_entity)
+table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
+entity = await table_client.create_entity(entity=my_entity)
 ```
 
 ### Querying entities
@@ -199,8 +205,10 @@ Querying entities in the table
 ```python
 from azure.table import TableClient
 
-table = TableClient.from_connection_string(conn_str="<connection_string>", table_name="my_table")
-entity = table.query_entities(results_per_page=3)
+my_filter = "text eq Marker"
+
+table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
+entity = table_client.query_entities(filter=my_filter)
 ```
 
 Querying entities asynchronously
@@ -208,8 +216,10 @@ Querying entities asynchronously
 ```python
 from azure.table.aio import TableClient
 
-table = TableClient.from_connection_string(conn_str="<connection_string>", table_name="my_table")
-entity = await table.query_entities(results_per_page=3)
+my_filter = "text eq Marker"
+
+table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
+entity = await table_client.query_entities(filter=my_filter)
 ```
 
 ## Optional Configuration

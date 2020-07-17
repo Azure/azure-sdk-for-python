@@ -116,6 +116,28 @@ class StorageTableTest(TableTestCase):
         # self.assertEqual(existing[0], [table_name])
         ts.delete_table(table_name)
 
+    @GlobalStorageAccountPreparer()
+    def test_create_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        invalid_table_name = "my_table"
+        
+        with pytest.raises(ValueError) as excinfo:
+            ts.create_table(invalid_table_name)
+            
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
+
+    @GlobalStorageAccountPreparer()
+    def test_delete_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        invalid_table_name = "my_table"
+        
+        with pytest.raises(ValueError) as excinfo:
+            ts.create_table(invalid_table_name)
+            
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
+
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_query_tables(self, resource_group, location, storage_account, storage_account_key):
