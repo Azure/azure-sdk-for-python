@@ -6,7 +6,7 @@
 
 from ._text_analytics_client import TextAnalyticsClient
 from ._version import VERSION
-from ._base_client import ApiVersion
+from ._multiapi import ApiVersion
 from ._models import (
     DetectLanguageInput,
     TextDocumentInput,
@@ -26,6 +26,9 @@ from ._models import (
     TextDocumentBatchStatistics,
     SentenceSentiment,
     SentimentConfidenceScores,
+)
+
+from ._generated.v3_2_preview_1.models import(
     HealthJobTaskResponse,
     HealthcareBatchResult,
     HealthcareBatchResultItem,

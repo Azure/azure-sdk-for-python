@@ -8,6 +8,13 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Union
 
+class ApiVersion(str, Enum):
+    """Text Analytics API versions supported by this package"""
+
+    #: this is the default version
+    V3_0 = "v3.0"
+    V3_1_preview_1 = "v3.1-preview.1"
+    V3_2_preview_1 = "v3.2-preview.1"
 
 def load_generated_api(api_version, aio=False):
     try:

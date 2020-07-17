@@ -12,11 +12,13 @@ from typing import (  # pylint: disable=unused-import
     Dict,
     TYPE_CHECKING
 )
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
+from azure.core.polling import AsyncLROPoller
 from azure.core.async_paging import AsyncItemPaged
 from ._base_client_async import AsyncTextAnalyticsClientBase
-from ._base_client import ApiVersion
+from .._base_client import ApiVersion
 from .._request_handlers import _validate_batch_input
 from .._response_handlers import (
     process_batch_error,
@@ -427,7 +429,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace
-    def get_healthcare_results(
+    def get_healthcare_results(  # type: ignore
         self,
         job_id: str,
         skip: Optional[int] = None,
@@ -471,11 +473,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace_async
-    async def begin_health(
+    async def begin_health(  # type: ignore
         self,
         source_url: str,
         model_version: Optional[str] = None,
-        string_index_type: Optional[Union[str, "models.Enum0"]] = "unicodecodepoint",
         storage_source: Optional[str] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
@@ -488,10 +489,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param model_version: (Optional) This value indicates which model will be used for scoring. If
          a model-version is not specified, the API should default to the latest, non-preview version.
         :type model_version: str
-        :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
-         Defaults to Unicode Code Points. For additional information see https://aka.ms/text-analytics-
-         offsets.
-        :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.Enum0
         :param storage_source: The prefix for the blob folder container inputs, if applicable.
         :type storage_source: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -499,7 +496,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -509,6 +507,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             raise NotImplementedError(
                 "The endpoint begin_health is only available for v3.2-preview.1"
             )
+
+        string_index_type = "unicodecodepoint"
 
         try:
             return await self._client.begin_health(
@@ -522,7 +522,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace_async
-    async def get_healthcare_job(
+    async def get_healthcare_job(  # type: ignore
         self,
         job_id: str,
         show_stats: Optional[bool] = None,
@@ -556,7 +556,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace_async
-    async def begin_delete_healthcare_job(
+    async def begin_delete_healthcare_job(  # type: ignore
         self,
         job_id: str,
         **kwargs
@@ -570,7 +570,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -588,5 +589,3 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             )
         except HttpResponseError as error:
             process_batch_error(error)
-
-

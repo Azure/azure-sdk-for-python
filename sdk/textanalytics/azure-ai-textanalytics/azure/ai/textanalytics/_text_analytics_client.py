@@ -26,6 +26,7 @@ from ._response_handlers import (
 )
 
 if TYPE_CHECKING:
+    from azure.core.polling import LROPoller
     from azure.core.credentials import TokenCredential, AzureKeyCredential
     from azure.core.paging import ItemPaged
     from ._models import (
@@ -426,7 +427,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace
-    def get_healthcare_results(
+    def get_healthcare_results(  # type: ignore
         self,
         job_id,  # type: str
         skip=None,  # type: Optional[int]
@@ -434,7 +435,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged["HealthJobTaskResponse"]
+        # type: (...) -> ItemPaged[HealthJobTaskResponse]
         """get_healthcare_results.
 
         :param job_id: Job identifier.
@@ -470,7 +471,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_batch_error(error)
 
     @distributed_trace
-    def begin_health(
+    def begin_health(  # type: ignore
         self,
         source_url,  # type: str
         model_version=None,  # type: Optional[str]
@@ -494,7 +495,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if
+         no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -513,13 +515,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version,
                 string_index_type,
                 storage_source,
-                **kwargs  #
+                **kwargs
             )
         except HttpResponseError as error:
             process_batch_error(error)
 
     @distributed_trace
-    def get_healthcare_job(
+    def get_healthcare_job(  # type: ignore
         self,
         job_id,  # type: str
         show_stats=None,  # type: Optional[bool]
@@ -546,7 +548,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         try:
             return self._client.get_healthcare_job(
-                self,
                 job_id,
                 show_stats,
                 **kwargs
@@ -554,7 +555,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_batch_error(error)
 
-    def begin_delete_healthcare_job(
+    def begin_delete_healthcare_job(  # type: ignore
         self,
         job_id,  # type: str
         **kwargs  # type: Any
@@ -569,7 +570,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -581,7 +583,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             )
         try:
             return self._client.begin_delete_healthcare_job(
-                self,
                 job_id,
                 **kwargs
             )

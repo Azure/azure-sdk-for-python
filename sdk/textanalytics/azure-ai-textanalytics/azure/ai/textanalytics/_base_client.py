@@ -3,20 +3,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from enum import Enum
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from ._policies import TextAnalyticsResponseHookPolicy
 from ._user_agent import USER_AGENT
-from ._multiapi import load_generated_api
-
-class ApiVersion(str, Enum):
-    """Text Analytics API versions supported by this package"""
-
-    #: this is the default version
-    V3_0 = "v3.0"
-    V3_1_preview_1 = "v3.1-preview.1"
-    V3_2_preview_1 = "v3.2-preview.1"
+from ._multiapi import load_generated_api, ApiVersion
 
 
 def _authentication_policy(credential):
