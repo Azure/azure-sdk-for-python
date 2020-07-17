@@ -1897,8 +1897,10 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :type free_offer_expiration_time: datetime
     :ivar resource_group: Resource group of the App Service plan.
     :vartype resource_group: str
-    :param reserved: If Linux app service plan <code>true</code>,
-     <code>false</code> otherwise. Default value: False .
+    :param reserved: This needs to set to <code>true</code> when creating a
+     Linux App Service Plan, along with <code>kind</code> set to
+     <code>Linux</code>. It should be <code>false</code> otherwise. Default
+     value: False .
     :type reserved: bool
     :param is_xenon: Obsolete: If Hyper-V container app service plan
      <code>true</code>, <code>false</code> otherwise. Default value: False .
