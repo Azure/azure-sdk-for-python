@@ -130,12 +130,30 @@ def deserialize_rule_key_values(entry_ele, rule_description):
             deserialize_key_values(sql_action_parameters_ele, rule_description.action.parameters)
 
 
-def serialize_key_values(root, kvs):
-    root.clear()
-    if kvs:
-        for key, value in kvs.items():
+def serialize_key_values(xml_parent, key_values):
+    """serialize a dict to xml Element and put it under xml_parent
+
+    The serialized XML is like:
+
+    <KeyValueOfstringanyType>
+        <Key>key_string</Key>
+        <Value xmlns:d6p1="http://www.w3.org/2001/XMLSchema" xsi:type="d6p1:string">str1</Value>
+    </KeyValueOfstringanyType>
+    <KeyValueOfstringanyType>
+        <Key>key_int</Key>
+        <Value xmlns:d6p1="http://www.w3.org/2001/XMLSchema" xsi:type="d6p1:int">2</Value>
+    </KeyValueOfstringanyType>
+    ...
+
+    :param xml_parent: The parent xml Element for the serialized xml.
+    :param key_values: The dict that contains the key values.
+    :return: `xml_parent` is mutated. The returned value is `None`.
+    """
+    xml_parent.clear()
+    if key_values:
+        for key, value in key_values.items():
             value_type, value_in_str = serialize_value_type(value)
-            key_value_ele = SubElement(root, QName(constants.SB_XML_NAMESPACE, constants.RULE_KEY_VALUE))
+            key_value_ele = SubElement(xml_parent, QName(constants.SB_XML_NAMESPACE, constants.RULE_KEY_VALUE))
             key_ele = SubElement(key_value_ele, QName(constants.SB_XML_NAMESPACE, constants.RULE_KEY))
             key_ele.text = key
             type_qname = QName(constants.XML_SCHEMA_INSTANCE_NAMESPACE, "type")
@@ -148,6 +166,12 @@ def serialize_key_values(root, kvs):
 
 
 def serialize_rule_key_values(entry_ele, rule_descripiton):
+    """Serialize a rule's filter and action that have key values into xml.
+
+    CorrelationRuleFilter.properties, SqlRuleFilter.parameters and SqlRuleAction.parameters may contain
+    data (dict is not empty). Serialize them to XML.
+
+    """
     content = entry_ele.find(constants.ATOM_CONTENT_TAG)
     if content:
         correlation_filter_parameters_ele = content\
