@@ -3,7 +3,7 @@
 - Added deprecation warning for "lazy" indexing mode. The backend no longer allows creating containers with this mode and will set them to consistent instead.
 - Fix for bug where options headers were not added to upsert_item function. Issue #11791 - thank you @aalapatirvbd.
 - Fixed error raised when a non string ID is used in an item. It now raises TypeError rather than AttributeError. Issue #11793 - thank you @Rabbit994.
-- Added the ability to set the analytical storage TTL we creating a new container.
+- Added the ability to set the analytical storage TTL when creating a new container.
 
 ** Bug fixes **
 - Fixed support for dicts as inputs for get_client APIs.
@@ -246,5 +246,4 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
 ## 1.0.1
 
 - Supports proxy connection
-
 
