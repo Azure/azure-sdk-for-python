@@ -21,6 +21,7 @@ from azure.table._generated import AzureTable
 from azure.table._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
 from azure.table._serialize import _get_match_headers, _add_entity_properties
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
+from azure.table._shared._error import _validate_table_name
 
 from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import process_table_error
@@ -57,11 +58,7 @@ class TableClient(StorageAccountHostsMixin):
         :returns: None
         """
 
-        if re.match("^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$", table_name) is None:
-            raise HttpResponseError(
-                message="""Table names must be alphanumeric, cannot begin with a number,
-                    and must be between 3-63 characters long."""
-            )
+        _validate_table_name(table_name)
 
         try:
             if not account_url.lower().startswith('http'):

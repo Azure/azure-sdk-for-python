@@ -27,6 +27,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.table._table_client import TableClient
+from azure.table._shared._error import _validate_table_name
 
 
 class TableServiceClient(StorageAccountHostsMixin):
@@ -178,11 +179,7 @@ class TableServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.table.TableClient
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if re.match("^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$", table_name) is None:
-            raise HttpResponseError(
-                message="""Table names must be alphanumeric, cannot begin with a number,
-                    and must be between 3-63 characters long."""
-            )
+        _validate_table_name(table_name)
 
         table_properties = TableProperties(table_name=table_name, **kwargs)
         self._client.table.create(table_properties)
@@ -203,11 +200,7 @@ class TableServiceClient(StorageAccountHostsMixin):
         :return: None
         :rtype: None
         """
-        if re.match("^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$", table_name) is None:
-            raise HttpResponseError(
-                message="""Table names must be alphanumeric, cannot begin with a number,
-                    and must be between 3-63 characters long."""
-            )
+        _validate_table_name(table_name)
 
         self._client.table.delete(table=table_name, **kwargs)
 

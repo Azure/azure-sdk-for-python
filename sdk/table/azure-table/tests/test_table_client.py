@@ -552,8 +552,13 @@ class StorageTableClientTest(TableTestCase):
         invalid_table_name = "$&#*_(%&@*(_("
         
         # Assert
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(ValueError) as excinfo:
             service = TableClient(account_url=table_url, table_name=invalid_table_name, credential=storage_account_key)
+            
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
+
+        # with self.assertRaises(ValueError):
+        #     service = TableClient(account_url=table_url, table_name=invalid_table_name, credential=storage_account_key)
 
     #@pytest.mark.skip("pending")
     def test_error_with_malformed_conn_str(self):

@@ -158,16 +158,16 @@ Create a table in your storage account
 ```python
 from azure.table import TableServiceClient
 
-client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
-client.create_table(table_name="myTable")
+table_service_client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
+table_service_client.create_table(table_name="myTable")
 ```
 
 Use the async client to create a table
 ```python
 from azure.table.aio import TableServiceClient
 
-client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
-await client.create_table(table_name="myTable")
+table_service_client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
+await table_service_client.create_table(table_name="myTable")
 ```
 
 ### Creating entities
@@ -178,8 +178,8 @@ from azure.table import TableClient
 
 my_entity = {'PartitionKey':'part','RowKey':'row'}
 
-table = TableClient.from_connection_string(conn_str="<connection_string>", table_name="myTable")
-entity = table.create_entity(table_entity_properties=my_entity)
+table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="myTable")
+entity = table_client.create_entity(entity=my_entity)
 ```
 
 Create entities asynchronously
@@ -187,10 +187,16 @@ Create entities asynchronously
 ```python
 from azure.table.aio import TableClient
 
-my_entity = {'PartitionKey':'part','RowKey':'row'}
+my_entity = {
+    'PartitionKey': 'color',
+    'RowKey': 'brand',
+    'text': 'Marker',
+    'color': 'Purple',
+    'price': '5',
+}
 
-table = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
-entity = await table.create_entity(table_entity_properties=my_entity)
+table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
+entity = await table_client.create_entity(entity=my_entity)
 ```
 
 ### Querying entities
@@ -199,8 +205,10 @@ Querying entities in the table
 ```python
 from azure.table import TableClient
 
-table = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
-entity = table.query_entities(results_per_page=3)
+my_filter = "text eq Marker"
+
+table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
+entity = table_client.query_entities(filter=my_filter)
 ```
 
 Querying entities asynchronously
@@ -208,8 +216,10 @@ Querying entities asynchronously
 ```python
 from azure.table.aio import TableClient
 
-table = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
-entity = await table.query_entities(results_per_page=3)
+my_filter = "text eq Marker"
+
+table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
+entity = await table_client.query_entities(filter=my_filter)
 ```
 
 ## Optional Configuration

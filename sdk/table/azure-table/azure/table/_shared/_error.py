@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from sys import version_info
+from re import match
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.table._shared.parser import _str
@@ -212,6 +213,13 @@ def _wrap_exception(ex, desired_type):
         # However, we can keep the previous error type and message
         # TODO: In the future we will log the trace
         return desired_type('{}: {}'.format(ex.__class__.__name__, msg))
+
+
+def _validate_table_name(table_name):
+    if match("^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$", table_name) is None:
+        raise ValueError(
+            "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."
+        )
 
 
 class AzureSigningError(Exception):
