@@ -9,6 +9,7 @@ import argparse
 import os
 import sys
 import logging
+from os import path
 
 # import common_task module
 root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
