@@ -7,7 +7,6 @@ import base64
 import hashlib
 import hmac
 from io import (SEEK_SET)
-from datetime import tzinfo
 import six
 from azure.table._shared.parser import _str
 
@@ -49,9 +48,6 @@ def _datetime_to_utc_string(value):
     # If a date is passed in without timezone info, it is assumed to be UTC.
     if value is None:
         return None
-
-    if value.tzinfo:
-        value = value.astimezone(tzinfo())
 
     return value.strftime('%a, %d %b %Y %H:%M:%S GMT')
 
