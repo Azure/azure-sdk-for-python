@@ -10,7 +10,7 @@ from .._internal import AadClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, Sequence
+    from typing import Any, Iterable, Optional
     from azure.core.credentials import AccessToken
 
 
@@ -88,7 +88,7 @@ class AuthorizationCodeCredential(AsyncCredentialBase):
 
         return token
 
-    async def _redeem_refresh_token(self, scopes: "Sequence[str]", **kwargs: "Any") -> "Optional[AccessToken]":
+    async def _redeem_refresh_token(self, scopes: "Iterable[str]", **kwargs: "Any") -> "Optional[AccessToken]":
         for refresh_token in self._client.get_cached_refresh_tokens(scopes):
             if "secret" not in refresh_token:
                 continue
