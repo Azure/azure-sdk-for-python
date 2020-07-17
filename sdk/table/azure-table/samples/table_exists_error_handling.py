@@ -11,6 +11,7 @@ class TableErrorHandling:
 
         # create table
         table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
+        table_service_client.create_table(table_name=self.table_name)
         try:
             # try to create existing table, ResourceExistsError will be thrown
             table_service_client.create_table(table_name=self.table_name)
