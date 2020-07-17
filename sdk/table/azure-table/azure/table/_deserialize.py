@@ -6,13 +6,11 @@
 # pylint: disable=unused-argument
 import datetime
 from uuid import UUID
-from dateutil.tz import tzutc
 from azure.table._shared import url_quote
 from azure.table._entity import EntityProperty, EdmType, Entity
 from azure.table._shared._common_conversion import _decode_base64_to_bytes
 from azure.table._generated.models import TableProperties
 from azure.core.exceptions import ResourceExistsError
-
 
 from ._shared.models import TableErrorCode
 
@@ -54,14 +52,25 @@ def _from_entity_int32(value):
     return EntityProperty(EdmType.INT32, int(value))
 
 
+zero = datetime.timedelta(0)  # same as 00:00
+
+
+class Timezone(datetime.tzinfo):  # pylint: disable : W0223
+
+    def utcoffset(self, dt):
+        return zero
+
+    def dst(self, dt):
+        return zero
+
+    def tzname(self, dt):
+        return
+
+
 def _from_entity_datetime(value):
     # TODO: Fix this
-    # now = datetime.datetime.utcnow().astimezone()
-    # local_now = datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ').astimezone()
-    # local_timezone = datetime.datetime.now(datetime.timezone(datetime.timedelta(0))).tzinfo
-    # return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=local_now.tzinfo)
-    return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ').\
-        replace(tzinfo=tzutc())
+    return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ'). \
+        replace(tzinfo=Timezone())
 
 
 def _from_entity_guid(value):
