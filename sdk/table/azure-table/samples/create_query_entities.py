@@ -19,7 +19,7 @@ class CreateODataQuery(object):
 
         table_client = TableClient(account_url=self.account_url, table_name=self.table_name, credential=self.access_key)
         try:
-            queried_entities = table_client.query_entities(filter=self.name_filter)
+            queried_entities = table_client.query_entities(filter=self.name_filter, select="brand,color")
 
             # queried_entities type is ItemPaged
             for entity_chosen in list(queried_entities):

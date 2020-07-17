@@ -18,11 +18,11 @@ class UpdateEntity(object):
     def update_entity(self):
         from azure.table import TableClient
         from azure.core.exceptions import HttpResponseError
-        from azure.table._models import UpdateMode
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
-            table_client.update_entity(mode=UpdateMode.merge, table_entity_properties=self.entity)
+            # defaults to UpdateMode.merge
+            table_client.update_entity(entity=self.entity)
         except HttpResponseError as e:
             print(e.response)
 
@@ -33,6 +33,6 @@ class UpdateEntity(object):
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
-            table_client.upsert_entity(mode=UpdateMode.replace, table_entity_properties=self.entity)
+            table_client.upsert_entity(entity=self.entity, mode=UpdateMode.replace)
         except HttpResponseError as e:
             print(e.response)

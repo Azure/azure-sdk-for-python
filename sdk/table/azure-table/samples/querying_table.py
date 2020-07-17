@@ -17,7 +17,7 @@ class QueryTable(object):
         my_table = table_service_client.create_table(table_name=self.table_name)
         print(my_table)
         # Query tables
-        queried_tables = table_service_client.query_tables(filter=self.name_filter)
+        queried_tables = table_service_client.query_tables(filter=self.name_filter, results_per_page=10)
         # table_client.query_tables() returns an itemPaged
         # queried_tables is a list of filtered tables
 

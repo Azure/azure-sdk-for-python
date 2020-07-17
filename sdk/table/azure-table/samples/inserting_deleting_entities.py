@@ -21,7 +21,7 @@ class InsertDeleteEntity(object):
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
-            inserted_entity = table_client.create_entity(table_entity_properties=self.entity)
+            inserted_entity = table_client.create_entity(entity=self.entity)
             # inserted_entity type is dict[str,object]
             print(inserted_entity.items())  # print out key-value pair of entity
         except ResourceExistsError:
@@ -34,7 +34,7 @@ class InsertDeleteEntity(object):
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
-            table_client.delete_entity(table_entity_properties=self.entity)
+            table_client.delete_entity(entity=self.entity)
 
         except ResourceNotFoundError:
             print("EntityDoesNotExists")
