@@ -98,6 +98,9 @@ _X_OPT_LOCKED_UNTIL = b'x-opt-locked-until'
 _X_OPT_LOCK_TOKEN = b'x-opt-lock-token'
 _X_OPT_SCHEDULED_ENQUEUE_TIME = b'x-opt-scheduled-enqueue-time'
 
+MAX_USER_AGENT_LENGTH = 512
+USER_AGENT_PREFIX = "azsdk-python-servicebus"
+
 
 DEAD_LETTER_QUEUE_SUFFIX = '/$DeadLetterQueue'
 TRANSFER_DEAD_LETTER_QUEUE_SUFFIX = '/$Transfer' + DEAD_LETTER_QUEUE_SUFFIX

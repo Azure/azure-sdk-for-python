@@ -109,6 +109,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
 
     .. admonition:: Example:
 
@@ -276,6 +277,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
         :rtype: ~azure.servicebus.ServiceBusSenderClient
 
         .. admonition:: Example:
