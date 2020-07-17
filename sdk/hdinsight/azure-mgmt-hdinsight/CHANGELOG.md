@@ -1,10 +1,16 @@
 # Release History
 
+## 1.6.0 (2020-07-17)
+
+**Features**
+
+  - Added operation group VirtualMachinesOperations
+
 ## 1.5.1 (2020-06-11)
 
 **Bugfixes**
-  - Fix the List Response
 
+  - Fix the List Response
 
 ## 1.5.0 (2020-05-29)
 
