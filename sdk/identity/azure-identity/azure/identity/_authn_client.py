@@ -90,7 +90,7 @@ class AuthnClientBase(ABC):
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes))
         for token in tokens:
             expires_on = int(token["expires_on"])
-            if expires_on - self._token_refresh_retry_delay > int(time.time()):
+            if expires_on > int(time.time()):
                 return AccessToken(token["secret"], expires_on)
         return None
 
