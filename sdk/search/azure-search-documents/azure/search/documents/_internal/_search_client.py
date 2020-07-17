@@ -6,6 +6,7 @@
 from typing import cast, List, TYPE_CHECKING
 
 import six
+import threading
 
 from azure.core.tracing.decorator import distributed_trace
 from .._api_versions import validate_api_version
@@ -60,6 +61,10 @@ class SearchClient(HeadersMixin):
     :type index_name: str
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword bool auto_flush: if enable auto flush. Default to True
+    :keyword int batch_size: batch size. It only takes affect when auto_flush is on
+    :keyword int delay: how many seconds if there is no changes that triggers auto flush.
+        It only takes affect when auto_flush is on
     :keyword str api_version: The Search API version to use for requests.
 
     .. admonition:: Example:
@@ -73,18 +78,24 @@ class SearchClient(HeadersMixin):
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
+    _FLUSH_TIMEOUT = 120
 
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, AzureKeyCredential, **Any) -> None
 
         api_version = kwargs.pop('api_version', None)
         validate_api_version(api_version)
+        self._auto_flush = kwargs.pop('auto_flush', True)
+        self._index_documents_batch = IndexDocumentsBatch()
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._credential = credential  # type: AzureKeyCredential
         self._client = SearchIndexClient(
             endpoint=endpoint, index_name=index_name, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: SearchIndexClient
+        self._timer = threading.Timer(self._FLUSH_TIMEOUT, self.flush)  # if there is no changes in 2 mins, flush
+        if self._auto_flush:
+            self._timer.start()
 
     def __repr__(self):
         # type: () -> str
@@ -98,6 +109,58 @@ class SearchClient(HeadersMixin):
 
         """
         return self._client.close()
+
+    def enable_auto_flush(self):
+        # type: () -> None
+        """Enable auto flush
+
+        """
+        if not self._auto_flush:
+            self._auto_flush = True
+            self._timer = threading.Timer(self._FLUSH_TIMEOUT, self.flush)
+            self._timer.start()
+
+    def disable_auto_flush(self):
+        # type: () -> None
+        """Disable auto flush
+
+        """
+        if self._auto_flush:
+            self._auto_flush = False
+            self._timer.cancel()
+
+    def flush(self, raise_error=False):
+        # type: (bool) -> bool
+        """Retrieve a document from the Azure search index by its key.
+
+        :param bool raise_error: raise error if there are failures during flushing
+            Default to False which re-queue the failed tasks and retry on next flush.
+        :rtype:  bool
+        """
+        # get actions
+        pass
+
+        # index
+        # re-queue if needed
+        pass
+
+    def _flush_if_needed(self):
+        # type: () -> bool
+        """ Every time when a new action is queued, if auto_flush is True, this method
+            will be triggered. It checks the actions already queued and flushes them if:
+            1. There are 10 actions queued
+            2.
+
+        :param bool raise_error: raise error if there are failures during flushing
+            Default to False which re-queue the failed tasks and retry on next flush.
+        :rtype:  bool
+        """
+        # get actions
+        pass
+
+        # index
+        # re-queue if needed
+        pass
 
     @distributed_trace
     def get_document_count(self, **kwargs):
@@ -433,6 +496,19 @@ class SearchClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
+
+    def queue_upload_documents_actions(self, documents, **kwargs):
+        # type: (List[dict], **Any) -> None
+        """Queue upload documents action.
+
+        :param documents: A list of documents to upload.
+        :type documents: List[dict]
+        """
+        self._index_documents_batch.queue_upload_actions(documents)
+        # reset the timer
+        self._timer.cancel()
+        self._timer = threading.Timer(self._FLUSH_TIMEOUT, self.flush)
+        self._timer.start()
 
     def delete_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
