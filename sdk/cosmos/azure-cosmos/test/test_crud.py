@@ -2640,6 +2640,35 @@ class CRUDTests(unittest.TestCase):
         ttl_key = "analyticalStorageTtl"
         self.assertTrue(ttl_key in properties and properties[ttl_key] == -1)
 
+    def test_create_container_if_not_exists_with_analytical_store_on(self):
+        # don't run test, for the time being, if running against the emulator
+        if 'localhost' in self.host or '127.0.0.1' in self.host:
+            return
+
+        # first, try when we know the container doesn't exist.
+        created_db = self.databaseForTest
+        collection_id = 'test_create_container_if_not_exists_with_analytical_store_on_' + str(uuid.uuid4())
+        collection_indexing_policy = {'indexingMode': 'consistent'}
+        created_recorder = RecordDiagnostics()
+        created_collection = created_db.create_container_if_not_exists(id=collection_id,
+                                                                       analytical_storage_ttl=-1,
+                                                                       indexing_policy=collection_indexing_policy,
+                                                                       partition_key=PartitionKey(path="/pk", kind="Hash"),
+                                                                       response_hook=created_recorder)
+        properties = created_collection.read()
+        ttl_key = "analyticalStorageTtl"
+        self.assertTrue(ttl_key in properties and properties[ttl_key] == -1)
+
+        # next, try when we know the container DOES exist. This way both code paths are tested.
+        created_collection = created_db.create_container_if_not_exists(id=collection_id,
+                                                                       analytical_storage_ttl=-1,
+                                                                       indexing_policy=collection_indexing_policy,
+                                                                       partition_key=PartitionKey(path="/pk", kind="Hash"),
+                                                                       response_hook=created_recorder)
+        properties = created_collection.read()
+        ttl_key = "analyticalStorageTtl"
+        self.assertTrue(ttl_key in properties and properties[ttl_key] == -1)
+
     def _MockExecuteFunction(self, function, *args, **kwargs):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
                                     if HttpHeaders.PartitionKey in args[4].headers else '')
