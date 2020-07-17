@@ -278,7 +278,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
-    
+
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         try:
             container_proxy = self.get_container_client(id)
