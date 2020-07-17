@@ -14,7 +14,7 @@ from typing import (  # pylint: disable=unused-import
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-from ._base_client import TextAnalyticsClientBase
+from ._base_client import TextAnalyticsClientBase, ApiVersion
 from ._request_handlers import _validate_batch_input
 from ._response_handlers import (
     process_batch_error,
@@ -27,6 +27,7 @@ from ._response_handlers import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
+    from azure.core.paging import ItemPaged
     from ._models import (
         DetectLanguageInput,
         TextDocumentInput,
@@ -36,6 +37,11 @@ if TYPE_CHECKING:
         ExtractKeyPhrasesResult,
         AnalyzeSentimentResult,
         DocumentError,
+    )
+
+    from ._generated.v3_2_preview_1.models import(
+        HealthJobTaskResponse,
+        JobResponse
     )
 
 
@@ -414,6 +420,169 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 show_stats=show_stats,
                 cls=kwargs.pop("cls", sentiment_result),
+                **kwargs
+            )
+        except HttpResponseError as error:
+            process_batch_error(error)
+
+    @distributed_trace
+    def get_healthcare_results(
+        self,
+        job_id,  # type: str
+        skip=None,  # type: Optional[int]
+        top=None,  # type: Optional[int]
+        show_stats=None,  # type: Optional[bool]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> ItemPaged["HealthJobTaskResponse"]
+        """get_healthcare_results.
+
+        :param job_id: Job identifier.
+        :type job_id: str
+        :param skip: Skip the $skip entries in the collection. When both $top and $skip are supplied,
+         $skip is applied first.
+        :type skip: int
+        :param top: Take the $top entries in the collection. When both $top and $skip are supplied,
+         $skip is applied first.
+        :type top: int
+        :param show_stats: (Optional) if set to true, response will contain input and document level
+         statistics.
+        :type show_stats: bool
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either HealthJobTaskResponse or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.textanalytics.HealthJobTaskResponse]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        if self._api_version != ApiVersion.V3_2_preview_1:
+            raise NotImplementedError(
+                "The endpoint get_healthcare_results is only available for v3.2-preview.1"
+            )
+
+        try:
+            return self._client.get_healthcare_results(  # type: ignore
+                job_id,
+                skip,
+                top,
+                show_stats,
+                **kwargs
+            )
+        except HttpResponseError as error:
+            process_batch_error(error)
+
+    @distributed_trace
+    def begin_health(
+        self,
+        source_url,  # type: str
+        model_version=None,  # type: Optional[str]
+        storage_source=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """Health.
+
+        The API returns a list of recognized healthcare entities and relations for each valid document.
+
+        :param source_url: The container URI where inputs are stored.
+        :type source_url: str
+        :param model_version: (Optional) This value indicates which model will be used for scoring. If
+         a model-version is not specified, the API should default to the latest, non-preview version.
+        :type model_version: str
+        :param storage_source: The prefix for the blob folder container inputs, if applicable.
+        :type storage_source: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        if self._api_version != ApiVersion.V3_2_preview_1:
+            raise NotImplementedError(
+                "The endpoint begin_health is only available for v3.2-preview.1"
+            )
+
+        string_index_type = "unicodecodepoint"
+
+        try:
+            return self._client.begin_health(
+                source_url,
+                model_version,
+                string_index_type,
+                storage_source,
+                **kwargs  #
+            )
+        except HttpResponseError as error:
+            process_batch_error(error)
+
+    @distributed_trace
+    def get_healthcare_job(
+        self,
+        job_id,  # type: str
+        show_stats=None,  # type: Optional[bool]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "JobResponse"
+        """Get details of the healthcare prediction job specified by the jobId.
+
+        :param job_id: Job identifier.
+        :type job_id: str
+        :param show_stats: (Optional) if set to true, response will contain input and document level
+         statistics.
+        :type show_stats: bool
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: JobResponse, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.JobResponse
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
+        if self._api_version != ApiVersion.V3_2_preview_1:
+            raise NotImplementedError(
+                "The endpoint get_healthcare_job is only available for v3.2-preview.1"
+            )
+
+        try:
+            return self._client.get_healthcare_job(
+                self,
+                job_id,
+                show_stats,
+                **kwargs
+            )
+        except HttpResponseError as error:
+            process_batch_error(error)
+
+    def begin_delete_healthcare_job(
+        self,
+        job_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """Cancel healthcare prediction job.
+
+        :param job_id: Job identifier.
+        :type job_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        if self._api_version != ApiVersion.V3_2_preview_1:
+            raise NotImplementedError(
+                "The endpoint begin_delete_healthcare_job is only available for v3.2-preview.1"
+            )
+        try:
+            return self._client.begin_delete_healthcare_job(
+                self,
+                job_id,
                 **kwargs
             )
         except HttpResponseError as error:
