@@ -59,15 +59,16 @@ from azure.table._shared._error import (
     _ERROR_OBJECT_INVALID,
     _ERROR_DECRYPTION_FAILURE,
 )
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.ciphers.algorithms import AES
-from cryptography.hazmat.primitives.ciphers.modes import CBC
-from cryptography.hazmat.primitives.padding import PKCS7
-from cryptography.hazmat.primitives.ciphers import Cipher
-from cryptography.hazmat.primitives.hashes import (
-    Hash,
-    SHA256,
-)
+#Encyption not supported yet
+# from cryptography.hazmat.backends import default_backend
+# from cryptography.hazmat.primitives.ciphers.algorithms import AES
+# from cryptography.hazmat.primitives.ciphers.modes import CBC
+# from cryptography.hazmat.primitives.padding import PKCS7
+# from cryptography.hazmat.primitives.ciphers import Cipher
+# from cryptography.hazmat.primitives.hashes import (
+#     Hash,
+#     SHA256,
+# )
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
