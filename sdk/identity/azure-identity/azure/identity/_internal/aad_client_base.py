@@ -16,6 +16,7 @@ from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from . import get_default_authority, normalize_authority
+from .._constants import DEFAULT_TOKEN_REFRESH_RETRY_DELAY, DEFAULT_REFRESH_OFFSET
 
 try:
     from typing import TYPE_CHECKING
@@ -48,13 +49,16 @@ class AadClientBase(ABC):
         self._cache = cache or TokenCache()
         self._client_id = client_id
         self._pipeline = self._build_pipeline(**kwargs)
+        self._token_refresh_retry_delay = DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+        self._token_refresh_offset = DEFAULT_REFRESH_OFFSET
+        self._last_refresh_time = 0
 
     def get_cached_access_token(self, scopes, query=None):
         # type: (Iterable[str], Optional[dict]) -> Optional[AccessToken]
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes), query=query)
         for token in tokens:
             expires_on = int(token["expires_on"])
-            if expires_on - 300 > int(time.time()):
+            if expires_on > int(time.time()):
                 return AccessToken(token["secret"], expires_on)
         return None
 
@@ -62,6 +66,19 @@ class AadClientBase(ABC):
         # type: (Iterable[str]) -> List[dict]
         """Assumes all cached refresh tokens belong to the same user"""
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
+
+    def should_refresh(self, token):
+        # type: (AccessToken) -> bool
+        """ check if the token needs refresh or not
+        """
+        expires_on = int(token.expires_on)
+        now = int(time.time())
+        if expires_on - now > self._token_refresh_offset:
+            return False
+        if now - self._last_refresh_time < self._token_refresh_retry_delay:
+            return False
+        return True
+
 
     @abc.abstractmethod
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
@@ -85,6 +102,7 @@ class AadClientBase(ABC):
 
     def _process_response(self, response, request_time):
         # type: (PipelineResponse, int) -> AccessToken
+        self._last_refresh_time = request_time   # no matter succeed or not, update the last refresh time
 
         content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
