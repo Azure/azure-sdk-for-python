@@ -130,28 +130,37 @@ class ImdsCredential(_AsyncManagedIdentityBase):
 
         token = self._client.get_cached_token(scopes)
         if not token:
-            resource = scopes[0]
-            if resource.endswith("/.default"):
-                resource = resource[: -len("/.default")]
-            params = {"api-version": "2018-02-01", "resource": resource, **self._identity_config}
-
+            token = await self._refresh_token(*scopes)
+        elif self._client.should_refresh(token):
             try:
-                token = await self._client.request_token(scopes, method="GET", params=params)
-            except HttpResponseError as ex:
-                # 400 in response to a token request indicates managed identity is disabled,
-                # or the identity with the specified client_id is not available
-                if ex.status_code == 400:
-                    self._endpoint_available = False
-                    message = "ManagedIdentityCredential authentication unavailable. "
-                    if self._identity_config:
-                        message += "The requested identity has not been assigned to this resource."
-                    else:
-                        message += "No identity has been assigned to this resource."
-                    raise CredentialUnavailableError(message=message) from ex
+                token = await self._refresh_token(*scopes)
+            except Exception:  # pylint: disable=broad-except
+                pass
 
-                # any other error is unexpected
-                raise ClientAuthenticationError(message=ex.message, response=ex.response) from None
+        return token
 
+    async def _refresh_token(self, *scopes):
+        resource = scopes[0]
+        if resource.endswith("/.default"):
+            resource = resource[: -len("/.default")]
+        params = {"api-version": "2018-02-01", "resource": resource, **self._identity_config}
+
+        try:
+            token = await self._client.request_token(scopes, method="GET", params=params)
+        except HttpResponseError as ex:
+            # 400 in response to a token request indicates managed identity is disabled,
+            # or the identity with the specified client_id is not available
+            if ex.status_code == 400:
+                self._endpoint_available = False
+                message = "ManagedIdentityCredential authentication unavailable. "
+                if self._identity_config:
+                    message += "The requested identity has not been assigned to this resource."
+                else:
+                    message += "No identity has been assigned to this resource."
+                raise CredentialUnavailableError(message=message) from ex
+
+            # any other error is unexpected
+            raise ClientAuthenticationError(message=ex.message, response=ex.response) from None
         return token
 
 
@@ -184,17 +193,26 @@ class MsiCredential(_AsyncManagedIdentityBase):
 
         token = self._client.get_cached_token(scopes)
         if not token:
-            resource = scopes[0]
-            if resource.endswith("/.default"):
-                resource = resource[: -len("/.default")]
+            token = await self._refresh_token(*scopes)
+        elif self._client.should_refresh(token):
+            try:
+                token = await self._refresh_token(*scopes)
+            except Exception:  # pylint: disable=broad-except
+                pass
+        return token
 
-            secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
-            if secret:
-                # MSI_ENDPOINT and MSI_SECRET set -> App Service
-                token = await self._request_app_service_token(scopes=scopes, resource=resource, secret=secret)
-            else:
-                # only MSI_ENDPOINT set -> legacy-style MSI (Cloud Shell)
-                token = await self._request_legacy_token(scopes=scopes, resource=resource)
+    async def _refresh_token(self, *scopes):
+        resource = scopes[0]
+        if resource.endswith("/.default"):
+            resource = resource[: -len("/.default")]
+
+        secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
+        if secret:
+            # MSI_ENDPOINT and MSI_SECRET set -> App Service
+            token = await self._request_app_service_token(scopes=scopes, resource=resource, secret=secret)
+        else:
+            # only MSI_ENDPOINT set -> legacy-style MSI (Cloud Shell)
+            token = await self._request_legacy_token(scopes=scopes, resource=resource)
         return token
 
     async def _request_app_service_token(self, scopes, resource, secret):

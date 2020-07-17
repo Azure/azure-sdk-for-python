@@ -64,7 +64,15 @@ class AuthorizationCodeCredential(object):
             self._authorization_code = None  # auth codes are single-use
             return token
 
-        token = self._client.get_cached_access_token(scopes) or self._redeem_refresh_token(scopes, **kwargs)
+        token = self._client.get_cached_access_token(scopes)
+        if not token:
+            token = self._redeem_refresh_token(scopes, **kwargs)
+        elif self._client.should_refresh(token):
+            try:
+                self._redeem_refresh_token(scopes, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
+
         if not token:
             raise ClientAuthenticationError(
                 message="No authorization code, cached access token, or refresh token available."

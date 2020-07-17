@@ -94,7 +94,7 @@ def test_cache_refresh_token():
 def test_no_obtain_token_if_cached():
     expected_token = AccessToken("token", 42)
 
-    mock_client = mock.Mock(spec=object)
+    mock_client = mock.Mock(should_refresh=lambda _: False)
     mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.get_cached_access_token = mock.Mock(return_value="VALUE")
 
@@ -106,7 +106,7 @@ def test_no_obtain_token_if_cached():
 
 @pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
 def test_segfault():
-    from azure.identity._credentials.linux_vscode_adapter import _get_refresh_token
+    from azure.identity._internal.linux_vscode_adapter import _get_refresh_token
     _get_refresh_token("test", "test")
 
 
