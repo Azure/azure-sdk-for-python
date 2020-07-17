@@ -5,7 +5,7 @@
 import time
 
 from azure.core.credentials import AccessToken
-from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.managed_identity import MsiCredential
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest

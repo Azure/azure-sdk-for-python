@@ -7,7 +7,7 @@ from unittest import mock
 
 from azure.core.credentials import AccessToken
 from azure.identity.aio import ManagedIdentityCredential
-from azure.identity._constants import Endpoints, EnvironmentVariables, DEFAULT_REFRESH_OFFSET
+from azure.identity._constants import Endpoints, EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 
 import pytest

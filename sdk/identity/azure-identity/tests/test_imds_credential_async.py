@@ -9,7 +9,7 @@ from unittest import mock
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
-from azure.identity._constants import Endpoints, DEFAULT_REFRESH_OFFSET
+from azure.identity._constants import Endpoints
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio._credentials.managed_identity import ImdsCredential
 import pytest

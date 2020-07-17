@@ -7,7 +7,7 @@ import time
 from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import ClientSecretCredential
-from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest

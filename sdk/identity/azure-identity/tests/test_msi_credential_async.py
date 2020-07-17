@@ -6,7 +6,7 @@ import time
 from unittest import mock
 
 from azure.core.credentials import AccessToken
-from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio._credentials.managed_identity import MsiCredential
 import pytest

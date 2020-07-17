@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
-from azure.identity._constants import EnvironmentVariables, DEFAULT_REFRESH_OFFSET
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import ClientSecretCredential
 from msal import TokenCache
