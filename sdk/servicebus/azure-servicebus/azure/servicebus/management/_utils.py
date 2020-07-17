@@ -70,9 +70,9 @@ def deserialize_value(value, value_type):
         value = value.lower() == "true"
     elif value_type == "double":
         value = float(value)
-    elif value_type == "datetime":
+    elif value_type == "dateTime":
         value = isodate.parse_datetime(value)
-    elif value == "duration":
+    elif value_type == "duration":
         value = isodate.parse_duration(value)
     return value
 
@@ -86,15 +86,15 @@ def serialize_value_type(value):
     if value_type == float:
         return "double", str(value)
     if value_type == bool:
-        return "boolean", str(value)
+        return "boolean", str(value).lower()
     if value_type == datetime:
-        return "datetime", isodate.datetime_isoformat(value)
+        return "dateTime", isodate.datetime_isoformat(value)
     if value_type == timedelta:
         return "duration", isodate.duration_isoformat(value)
     raise ValueError("value {} of type {} is not supported for the key value".format(value, value_type))
 
 
-def deserialize_key_values(root, parameters):
+def deserialize_key_values(root, key_values):
     key_values_ele = root.findall(constants.RULE_KEY_VALUE_TAG)
     for key_value_ele in key_values_ele:
         key_ele = key_value_ele.find(constants.RULE_KEY_TAG)
@@ -104,7 +104,7 @@ def deserialize_key_values(root, parameters):
         value_type = value_ele.attrib[constants.RULE_VALUE_TYPE_TAG]
         value_type = value_type.split(":")[1]
         value = deserialize_value(value, value_type)
-        parameters[key] = value
+        key_values[key] = value
 
 
 def deserialize_rule_key_values(entry_ele, rule_description):
@@ -147,7 +147,7 @@ def serialize_key_values(root, kvs):
             value_ele.attrib["xmlns:"+constants.RULE_VALUE_TYPE_XML_PREFIX] = constants.XML_SCHEMA_NAMESPACE
 
 
-def serialize_rule_key_values(entry_ele, rule_descrpiton):
+def serialize_rule_key_values(entry_ele, rule_descripiton):
     content = entry_ele.find(constants.ATOM_CONTENT_TAG)
     if content:
         correlation_filter_parameters_ele = content\
@@ -155,16 +155,16 @@ def serialize_rule_key_values(entry_ele, rule_descrpiton):
             .find(constants.RULE_FILTER_TAG) \
             .find(constants.RULE_FILTER_COR_PROPERTIES_TAG)
         if correlation_filter_parameters_ele:
-            serialize_key_values(correlation_filter_parameters_ele, rule_descrpiton.filter.properties)
+            serialize_key_values(correlation_filter_parameters_ele, rule_descripiton.filter.properties)
         sql_filter_parameters_ele = content\
             .find(constants.RULE_DESCRIPTION_TAG) \
             .find(constants.RULE_FILTER_TAG) \
             .find(constants.RULE_PARAMETERS_TAG)
         if sql_filter_parameters_ele:
-            serialize_key_values(sql_filter_parameters_ele, rule_descrpiton.filter.parameters)
+            serialize_key_values(sql_filter_parameters_ele, rule_descripiton.filter.parameters)
         sql_action_parameters_ele = content\
             .find(constants.RULE_DESCRIPTION_TAG) \
             .find(constants.RULE_ACTION_TAG) \
             .find(constants.RULE_PARAMETERS_TAG)
         if sql_action_parameters_ele:
-            serialize_key_values(sql_action_parameters_ele, rule_descrpiton.action.parameters)
+            serialize_key_values(sql_action_parameters_ele, rule_descripiton.action.parameters)

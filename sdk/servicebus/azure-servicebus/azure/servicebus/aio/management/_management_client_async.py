@@ -734,7 +734,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
                 rule_name,
                 request_body, api_version=constants.API_VERSION, **kwargs)
         entry = RuleDescriptionEntry.deserialize(entry_ele)
-        result = entry.content.rule_description
+        result = RuleDescription._from_internal_entity(rule_name, entry.content.rule_description)
         deserialize_rule_key_values(entry_ele, result)
         return result
 
