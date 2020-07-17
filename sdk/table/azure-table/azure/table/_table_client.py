@@ -362,11 +362,10 @@ class TableClient(StorageAccountHostsMixin):
         parameters = kwargs.pop('parameters', None)
         filter = kwargs.pop('filter', None)  # pylint: disable = W0622
         if parameters:
-            filter_start = filter.split('@')[0]
             selected = filter.split('@')[1]
             for key, value in parameters.items():
                 if key == selected:
-                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
+                    filter = filter.split('@')[0].replace('@', value)  # pylint: disable = W0622
 
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
                                      filter=filter)
@@ -441,11 +440,10 @@ class TableClient(StorageAccountHostsMixin):
         parameters = kwargs.pop('parameters', None)
         filter = kwargs.pop('filter', None)  # pylint: disable = W0622
         if parameters:
-            filter_start = filter.split('@')[0]
             selected = filter.split('@')[1]
             for key, value in parameters.items():
                 if key == selected:
-                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
+                    filter = filter.split('@')[0].replace('@', value)  # pylint: disable = W0622
 
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
                                      filter=filter)

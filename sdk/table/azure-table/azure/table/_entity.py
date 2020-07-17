@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from enum import Enum
+
 from ._shared._error import _ERROR_ATTRIBUTE_MISSING
 
 
@@ -97,7 +99,7 @@ class Table(object):
     """
 
 
-class EdmType(object):
+class EdmType(str, Enum):
     """
     Used by :class:`~.EntityProperty` to represent the type of the entity property
     to be stored by the Table service.
