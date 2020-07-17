@@ -23,7 +23,7 @@ class Entity(dict):
         else:
             self['metadata'] = {'etag': self.pop('etag')}
 
-    def metadata(self, **kwargs):
+    def metadata(self, **kwargs):  # pylint: disable = W0613
         # type: (...) -> Entity
         """Resets metadata to be a part of the entity
         :return Entity with metadata

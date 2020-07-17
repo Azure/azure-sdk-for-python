@@ -17,7 +17,6 @@ import six
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .encryption import get_blob_encryptor_and_padder
 from .uploads import SubStream, IterStreamer  # pylint: disable=unused-import
 
 
@@ -52,16 +51,16 @@ async def upload_data_chunks(
         chunk_size=None,
         max_concurrency=None,
         stream=None,
-        encryption_options=None,
+     #   encryption_options=None,
         **kwargs):
 
-    if encryption_options:
-        encryptor, padder = get_blob_encryptor_and_padder(
-            encryption_options.get('cek'),
-            encryption_options.get('vector'),
-            uploader_class is not PageBlobChunkUploader)
-        kwargs['encryptor'] = encryptor
-        kwargs['padder'] = padder
+ #   if encryption_options:
+ #       encryptor, padder = get_blob_encryptor_and_padder(
+ #           encryption_options.get('cek'),
+ #           encryption_options.get('vector'),
+ #           uploader_class is not PageBlobChunkUploader)
+ #       kwargs['encryptor'] = encryptor
+ #       kwargs['padder'] = padder
 
     parallel = max_concurrency > 1
     if parallel and 'modified_access_conditions' in kwargs:

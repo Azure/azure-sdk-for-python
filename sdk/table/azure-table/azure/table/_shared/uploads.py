@@ -18,7 +18,6 @@ from azure.core.tracing.common import with_current_context
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .encryption import get_blob_encryptor_and_padder
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
@@ -52,16 +51,16 @@ def upload_data_chunks(
         max_concurrency=None,
         stream=None,
         validate_content=None,
-        encryption_options=None,
+   #     encryption_options=None,
         **kwargs):
 
-    if encryption_options:
-        encryptor, padder = get_blob_encryptor_and_padder(
-            encryption_options.get('cek'),
-            encryption_options.get('vector'),
-            uploader_class is not PageBlobChunkUploader)
-        kwargs['encryptor'] = encryptor
-        kwargs['padder'] = padder
+   # if encryption_options:
+    #    encryptor, padder = get_blob_encryptor_and_padder(
+   #         encryption_options.get('cek'),
+  #          encryption_options.get('vector'),
+    #        uploader_class is not PageBlobChunkUploader)
+     #   kwargs['encryptor'] = encryptor
+     #   kwargs['padder'] = padder
 
     parallel = max_concurrency > 1
     if parallel and 'modified_access_conditions' in kwargs:

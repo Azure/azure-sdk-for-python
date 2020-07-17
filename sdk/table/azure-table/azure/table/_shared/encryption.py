@@ -4,12 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os
-from os import urandom
-from json import (
-    dumps,
-    loads,
-)
 from collections import OrderedDict
 
 #Not supported yet
@@ -18,8 +12,6 @@ from collections import OrderedDict
 # from cryptography.hazmat.primitives.ciphers.algorithms import AES
 # from cryptography.hazmat.primitives.ciphers.modes import CBC
 # from cryptography.hazmat.primitives.padding import PKCS7
-
-from azure.core.exceptions import HttpResponseError
 
 from .._version import VERSION
 from . import encode_base64, decode_base64_to_bytes
@@ -195,23 +187,6 @@ def _dict_to_encryption_data(encryption_data_dict):
 
     return encryption_data
 
-
-def _generate_AES_CBC_cipher(cek, iv):
-    '''
-    Generates and returns an encryption cipher for AES CBC using the given cek and iv.
-
-    :param bytes[] cek: The content encryption key for the cipher.
-    :param bytes[] iv: The initialization vector for the cipher.
-    :return: A cipher for encrypting in AES256 CBC.
-    :rtype: ~cryptography.hazmat.primitives.ciphers.Cipher
-    '''
-
-   # backend = default_backend()
-   # algorithm = AES(cek)
-   # mode = CBC(iv)
-   # return Cipher(algorithm, mode, backend)
-
-
 def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resolver=None):
     '''
     Extracts and returns the content_encryption_key stored in the encryption_data object
@@ -253,4 +228,3 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
     _validate_not_none('content_encryption_key', content_encryption_key)
 
     return content_encryption_key
-
