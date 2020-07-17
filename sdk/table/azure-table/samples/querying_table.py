@@ -22,4 +22,4 @@ class QueryTable(object):
         # queried_tables is a list of filtered tables
 
         for table in queried_tables:
-            print(table.table_name)
+            print(table)

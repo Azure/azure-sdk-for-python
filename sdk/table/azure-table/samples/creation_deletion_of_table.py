@@ -38,17 +38,21 @@ class CreateDeleteTable(object):
         from azure.core.exceptions import ResourceExistsError
 
         table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-
-        table_created = table_service_client.create_table(table_name=self.table_name)
-        print(table_created.table_name)
+        try:
+            table_created = table_service_client.create_table(table_name=self.table_name)
+            print(table_created.table_name)
+        except ResourceExistsError:
+            print("TableExists")
 
     def delete_table(self):
         from azure.table import TableServiceClient
         from azure.core.exceptions import ResourceNotFoundError
 
         table_service_client = TableServiceClient(account_url=self.account_url, credential=self.access_key)
-        table_service_client.delete_table(table_name=self.table_name)
-
+        try:
+            table_service_client.delete_table(table_name=self.table_name)
+        except ResourceNotFoundError:
+            print("TableNotFound")
 
 
 if __name__ == '__main__':
