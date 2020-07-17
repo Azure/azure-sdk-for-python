@@ -499,7 +499,7 @@ class SearchClient(HeadersMixin):
 
     def queue_upload_documents_actions(self, documents, **kwargs):
         # type: (List[dict], **Any) -> None
-        """Queue upload documents action.
+        """Queue upload documents actions.
 
         :param documents: A list of documents to upload.
         :type documents: List[dict]
@@ -543,6 +543,20 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
+    def queue_delete_documents_actions(self, documents, **kwargs):
+        # type: (List[dict], **Any) -> None
+        """Queue delete documents actions
+        
+        :param documents: A list of documents to delete.
+        :type documents: List[dict]
+        """
+        batch = IndexDocumentsBatch()
+        batch.add_delete_actions(documents)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        results = self.index_documents(batch, **kwargs)
+        return cast(List[IndexingResult], results)
+
     def merge_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Merge documents in to existing documents in the Azure search index.
@@ -572,6 +586,20 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
+    def queue_merge_documents_actions(self, documents, **kwargs):
+        # type: (List[dict], **Any) -> None
+        """Queue merge documents actions
+
+        :param documents: A list of documents to merge.
+        :type documents: List[dict]
+        """
+        batch = IndexDocumentsBatch()
+        batch.add_merge_actions(documents)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        results = self.index_documents(batch, **kwargs)
+        return cast(List[IndexingResult], results)
+
     def merge_or_upload_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Merge documents in to existing documents in the Azure search index,
@@ -584,6 +612,20 @@ class SearchClient(HeadersMixin):
         :param documents: A list of documents to merge or upload.
         :type documents: List[dict]
         :rtype:  List[IndexingResult]
+        """
+        batch = IndexDocumentsBatch()
+        batch.add_merge_or_upload_actions(documents)
+
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        results = self.index_documents(batch, **kwargs)
+        return cast(List[IndexingResult], results)
+
+    def queue_merge_or_upload_documents_actions(self, documents, **kwargs):
+        # type: (List[dict], **Any) -> None
+        """Queue merge documents or upload documents actions
+
+        :param documents: A list of documents to merge or upload.
+        :type documents: List[dict]
         """
         batch = IndexDocumentsBatch()
         batch.add_merge_or_upload_actions(documents)
