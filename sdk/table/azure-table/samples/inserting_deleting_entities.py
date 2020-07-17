@@ -31,10 +31,27 @@ class InsertDeleteEntity(object):
 
         from azure.table import TableClient
         from azure.core.exceptions import ResourceNotFoundError
+        from azure.core import MatchConditions
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
+
+        # Create entity to delete (to showcase etag)
+        entity_created = table_client.create_entity(entity=self.entity)
+
+        # show without calling metadata, cannot access etag
         try:
-            table_client.delete_entity(entity=self.entity)
+            entity_created.etag
+        except AttributeError:
+            print("Need to get metadata of entity")
+
+        # In order to access etag as a part of the entity, need to call metadata on the entity
+        entity_created.metadata()
+
+        # Can now get etag
+        etag = entity_created.etag
+
+        try:
+            table_client.delete_entity(entity=self.entity, etag=etag, match_condition=MatchConditions.IfNotModified)
 
         except ResourceNotFoundError:
             print("EntityDoesNotExists")
