@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 import functools
-import re
 from typing import Any
 
 from azure.core.pipeline import Pipeline

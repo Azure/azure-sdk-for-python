@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 from azure.table._models import TableServices
 from azure.table._shared._common_conversion import _sign_string
+from azure.table._shared._error import _validate_not_none
 from azure.table._shared.constants import X_MS_VERSION
-from azure.table._shared.encryption import _validate_not_none
 from azure.table._shared.shared_access_signature import _SharedAccessHelper, SharedAccessSignature, QueryStringConstants
 
 

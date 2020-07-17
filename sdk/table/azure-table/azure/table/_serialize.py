@@ -169,7 +169,7 @@ _EDM_TO_ENTITY_CONVERSIONS = {
 
 
 def _add_entity_properties(source):
-    ''' Converts an entity object to json to send.
+    """ Converts an entity object to json to send.
     The entity format is:
     {
        "Address":"Mountain View",
@@ -185,7 +185,7 @@ def _add_entity_properties(source):
        "PartitionKey":"mypartitionkey",
        "RowKey":"myrowkey"
     }
-    '''
+    """
 
     properties = {}
 
@@ -211,7 +211,7 @@ def _add_entity_properties(source):
         if value is not None:
             properties[name] = value
             if mtype:
-                properties[name + '@odata.type'] = mtype
+                properties[name + '@odata.type'] = mtype.value
 
     # generate the entity_body
     return properties
