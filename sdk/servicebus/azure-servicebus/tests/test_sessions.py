@@ -53,7 +53,18 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             session_id = str(uuid.uuid4())
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(3):
-                    message = Message("Handler message no. {}".format(i), session_id=session_id)
+                    message = Message("Handler message no. {}".format(i))
+                    message.session_id = session_id
+                    message.properties = {'key': 'value'}
+                    message.label = 'label'
+                    message.content_type = 'application/text'
+                    message.correlation_id = 'cid'
+                    message.message_id = str(i)
+                    message.partition_key = 'pk'
+                    message.via_partition_key = 'via_pk'
+                    message.to = 'to'
+                    message.reply_to = 'reply_to'
+                    message.reply_to_session_id = 'reply_to_session_id'
                     sender.send_messages(message)
 
             with pytest.raises(ServiceBusConnectionError):
@@ -63,7 +74,21 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 count = 0
                 for message in session:
                     print_message(_logger, message)
+                    assert message.delivery_count == 0
+                    assert message.properties
+                    assert message.properties[b'key'] == b'value'
+                    assert message.label == 'label'
+                    assert message.content_type == 'application/text'
+                    assert message.correlation_id == 'cid'
+                    assert message.message_id == str(count)
+                    assert message.partition_key == 'pk'
+                    assert message.via_partition_key == 'via_pk'
+                    assert message.to == 'to'
+                    assert message.reply_to == 'reply_to'
+                    assert message.sequence_number
+                    assert message.enqueued_time_utc
                     assert message.session_id == session_id
+                    assert message.reply_to_session_id == 'reply_to_session_id'
                     count += 1
                     message.complete()
 

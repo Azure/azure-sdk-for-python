@@ -140,6 +140,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert message.lock_token == uuid.UUID(bytes_le=message.message.delivery_tag)
                 assert not message.scheduled_enqueue_time_utc
                 assert not message.time_to_live
+                assert not message.session_id
+                assert not message.reply_to_session_id
                 count += 1
                 message.complete()
 
@@ -166,6 +168,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.via_partition_key = None
                     message.time_to_live = None
                     message.scheduled_enqueue_time_utc = None
+                    message.session_id = None
                     messages.append(message)
                 sender.send_messages(messages)
 
@@ -184,6 +187,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     assert not message.reply_to
                     assert not message.scheduled_enqueue_time_utc
                     assert not message.time_to_live
+                    assert not message.session_id
+                    assert not message.reply_to_session_id
                     count += 1
                     message.complete()
 
@@ -219,6 +224,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     assert not message.reply_to
                     assert not message.scheduled_enqueue_time_utc
                     assert not message.time_to_live
+                    assert not message.session_id
+                    assert not message.reply_to_session_id
                     messages.append(message)
                     with pytest.raises(MessageAlreadySettled):
                         message.complete()
@@ -1371,6 +1378,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         message = Message(
             body='data',
             properties={'key': 'value'},
+            session_id='sid',
             label='label',
             content_type='application/text',
             correlation_id='cid',
@@ -1379,6 +1387,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             via_partition_key='via_pk',
             to='to',
             reply_to='reply_to',
+            reply_to_session_id='reply_to_sid',
             scheduled_enqueue_time_utc=scheduled_enqueue_time
         )
 
@@ -1392,6 +1401,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert message.via_partition_key == 'via_pk'
         assert message.to == 'to'
         assert message.reply_to == 'reply_to'
+        assert message.session_id == 'sid'
+        assert message.reply_to_session_id == 'reply_to_sid'
         assert message.scheduled_enqueue_time_utc == scheduled_enqueue_time
 
         message.partition_key = 'updated'
