@@ -29,7 +29,7 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, Sequence, Union
+    from typing import Any, Iterable, List, Optional, Union
     from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineResponse
     from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
@@ -50,7 +50,7 @@ class AadClientBase(ABC):
         self._pipeline = self._build_pipeline(**kwargs)
 
     def get_cached_access_token(self, scopes, query=None):
-        # type: (Sequence[str], Optional[dict]) -> Optional[AccessToken]
+        # type: (Iterable[str], Optional[dict]) -> Optional[AccessToken]
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes), query=query)
         for token in tokens:
             expires_on = int(token["expires_on"])
@@ -59,7 +59,7 @@ class AadClientBase(ABC):
         return None
 
     def get_cached_refresh_tokens(self, scopes):
-        # type: (Sequence[str]) -> Sequence[dict]
+        # type: (Iterable[str]) -> List[dict]
         """Assumes all cached refresh tokens belong to the same user"""
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
 
@@ -136,7 +136,7 @@ class AadClientBase(ABC):
         return token
 
     def _get_auth_code_request(self, scopes, code, redirect_uri, client_secret=None):
-        # type: (Sequence[str], str, str, Optional[str]) -> HttpRequest
+        # type: (Iterable[str], str, str, Optional[str]) -> HttpRequest
         data = {
             "client_id": self._client_id,
             "code": code,
@@ -153,7 +153,7 @@ class AadClientBase(ABC):
         return request
 
     def _get_client_certificate_request(self, scopes, certificate):
-        # type: (Sequence[str], AadClientCertificate) -> HttpRequest
+        # type: (Iterable[str], AadClientCertificate) -> HttpRequest
         assertion = self._get_jwt_assertion(certificate)
         data = {
             "client_assertion": assertion,
@@ -169,7 +169,7 @@ class AadClientBase(ABC):
         return request
 
     def _get_client_secret_request(self, scopes, secret):
-        # type: (Sequence[str], str) -> HttpRequest
+        # type: (Iterable[str], str) -> HttpRequest
         data = {
             "client_id": self._client_id,
             "client_secret": secret,
@@ -207,7 +207,7 @@ class AadClientBase(ABC):
         return jwt_bytes.decode("utf-8")
 
     def _get_refresh_token_request(self, scopes, refresh_token):
-        # type: (Sequence[str], str) -> HttpRequest
+        # type: (Iterable[str], str) -> HttpRequest
         data = {
             "grant_type": "refresh_token",
             "refresh_token": refresh_token,
