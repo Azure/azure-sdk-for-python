@@ -94,8 +94,26 @@ def serialize_value_type(value):
     raise ValueError("value {} of type {} is not supported for the key value".format(value, value_type))
 
 
-def deserialize_key_values(root, key_values):
-    key_values_ele = root.findall(constants.RULE_KEY_VALUE_TAG)
+def deserialize_key_values(xml_parent, key_values):
+    """deserialize xml Element and replace the values in dict key_values with correct data types.
+
+    The deserialized XML is like:
+
+    <KeyValueOfstringanyType>
+        <Key>key_string</Key>
+        <Value xmlns:d6p1="http://www.w3.org/2001/XMLSchema" xsi:type="d6p1:string">str1</Value>
+    </KeyValueOfstringanyType>
+    <KeyValueOfstringanyType>
+        <Key>key_int</Key>
+        <Value xmlns:d6p1="http://www.w3.org/2001/XMLSchema" xsi:type="d6p1:int">2</Value>
+    </KeyValueOfstringanyType>
+    ...
+
+    :param xml_parent: The parent xml Element that contains some children of <KeyValueOfstringanyType>.
+    :param key_values: The dict that contains the key values. The value could have wrong data types.
+    :return: This method returns `None`. It will update each value of key_values to correct value type.
+    """
+    key_values_ele = xml_parent.findall(constants.RULE_KEY_VALUE_TAG)
     for key_value_ele in key_values_ele:
         key_ele = key_value_ele.find(constants.RULE_KEY_TAG)
         value_ele = key_value_ele.find(constants.RULE_VALUE_TAG)
