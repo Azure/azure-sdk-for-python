@@ -5,9 +5,11 @@
 #--------------------------------------------------------------------------
 import logging
 import pytest
+from datetime import datetime, timedelta
 
 import msrest
 from azure.servicebus.management import ServiceBusManagementClient, RuleDescription, CorrelationRuleFilter, SqlRuleFilter, TrueRuleFilter, FalseRuleFilter, SqlRuleAction
+from azure.servicebus.management._constants import INT_MAX_VALUE_CSHARP
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
@@ -33,11 +35,22 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
         rule_name_2 = 'test_rule_2'
         rule_name_3 = 'test_rule_3'
 
-        correlation_fitler = CorrelationRuleFilter(correlation_id='testcid')
-        sql_rule_action = SqlRuleAction(sql_expression="SET Priority = 'low'")
+        correlation_fitler = CorrelationRuleFilter(correlation_id='testcid', properties={
+            "key_string": "str1",
+            "key_int": 2,
+            "key_long": INT_MAX_VALUE_CSHARP + 3,
+            "key_bool": False,
+            "key_datetime": datetime(2020, 7, 5, 11, 12, 13),
+            "key_duration": timedelta(days=1, hours=2, minutes=3)
+        })
+        sql_rule_action = SqlRuleAction(sql_expression="SET Priority = @param", parameters={
+            "@param": datetime(2020, 7, 5, 11, 12, 13),
+        })
         rule_1 = RuleDescription(name=rule_name_1, filter=correlation_fitler, action=sql_rule_action)
 
-        sql_filter = SqlRuleFilter("Priority = 'low'")
+        sql_filter = SqlRuleFilter("Priority = @param1", parameters={
+            "@param1": "str1",
+        })
         rule_2 = RuleDescription(name=rule_name_2, filter=sql_filter)
 
         bool_filter = TrueRuleFilter()
@@ -49,25 +62,51 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
 
             mgmt_service.create_rule(topic_name, subscription_name, rule_1)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_1)
+            rule_properties = rule_desc.filter.properties
             assert type(rule_desc.filter) == CorrelationRuleFilter
             assert rule_desc.filter.correlation_id == 'testcid'
-            assert rule_desc.action.sql_expression == "SET Priority = 'low'"
+            assert rule_desc.action.sql_expression == "SET Priority = @param"
+            assert rule_desc.action.parameters["@param"] == datetime(2020, 7, 5, 11, 12, 13)
+            assert rule_properties["key_string"] == "str1"
+            assert rule_properties["key_int"] == 2
+            assert rule_properties["key_long"] == INT_MAX_VALUE_CSHARP + 3
+            assert rule_properties["key_bool"] is False
+            assert rule_properties["key_datetime"] == datetime(2020, 7, 5, 11, 12, 13)
+            assert rule_properties["key_duration"] == timedelta(days=1, hours=2, minutes=3)
+
 
             mgmt_service.create_rule(topic_name, subscription_name, rule_2)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_2)
             assert type(rule_desc.filter) == SqlRuleFilter
-            assert rule_desc.filter.sql_expression == "Priority = 'low'"
+            assert rule_desc.filter.sql_expression == "Priority = @param1"
+            assert rule_desc.filter.parameters["@param1"] == "str1"
 
             mgmt_service.create_rule(topic_name, subscription_name, rule_3)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_3)
             assert type(rule_desc.filter) == TrueRuleFilter
 
         finally:
-            mgmt_service.delete_rule(topic_name, subscription_name, rule_name_1)
-            mgmt_service.delete_rule(topic_name, subscription_name, rule_name_2)
-            mgmt_service.delete_rule(topic_name, subscription_name, rule_name_3)
-            mgmt_service.delete_subscription(topic_name, subscription_name)
-            mgmt_service.delete_topic(topic_name)
+            try:
+                mgmt_service.delete_rule(topic_name, subscription_name, rule_name_1)
+            except:
+                pass
+            try:
+                mgmt_service.delete_rule(topic_name, subscription_name, rule_name_2)
+            except:
+                pass
+            try:
+                mgmt_service.delete_rule(topic_name, subscription_name, rule_name_3)
+            except:
+                pass
+            try:
+                mgmt_service.delete_subscription(topic_name, subscription_name)
+            except:
+                pass
+            try:
+                mgmt_service.delete_topic(topic_name)
+            except:
+                pass
+
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
