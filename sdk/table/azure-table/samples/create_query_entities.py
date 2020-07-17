@@ -22,7 +22,7 @@ class CreateODataQuery(object):
             queried_entities = table_client.query_entities(filter=self.name_filter, select="brand,color")
 
             # queried_entities type is ItemPaged
-            for entity_chosen in list(queried_entities):
+            for entity_chosen in queried_entities:
                 # create a list of the entities and iterate through them to print each one out
                 # calls to the service to get more entities are made without user knowledge
                 print(entity_chosen)
