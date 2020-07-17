@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 17 Jul 2020 15:42:22 GMT
+      - Fri, 17 Jul 2020 17:08:47 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 17 Jul 2020 15:42:22 GMT
+      - Fri, 17 Jul 2020 17:08:47 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 17 Jul 2020 15:42:21 GMT
+      - Fri, 17 Jul 2020 17:08:48 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttable66111670')
       server:
@@ -67,27 +67,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 17 Jul 2020 15:42:22 GMT
+      - Fri, 17 Jul 2020 17:08:48 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 17 Jul 2020 15:42:22 GMT
+      - Fri, 17 Jul 2020 17:08:48 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/uttable66111670
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable66111670/@Element","odata.etag":"W/\"datetime''2020-07-17T15%3A42%3A22.6727944Z''\"","PartitionKey":"pk66111670","RowKey":"rk66111670","Timestamp":"2020-07-17T15:42:22.6727944Z","EmptyByte":"","EmptyUnicode":"","SpacesOnlyByte":"   ","SpacesOnlyUnicode":"   ","SpacesBeforeByte":"   Text","SpacesBeforeUnicode":"   Text","SpacesAfterByte":"Text   ","SpacesAfterUnicode":"Text   ","SpacesBeforeAndAfterByte":"   Text   ","SpacesBeforeAndAfterUnicode":"   Text   "}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable66111670/@Element","odata.etag":"W/\"datetime''2020-07-17T17%3A08%3A48.3204395Z''\"","PartitionKey":"pk66111670","RowKey":"rk66111670","Timestamp":"2020-07-17T17:08:48.3204395Z","EmptyByte":"","EmptyUnicode":"","SpacesOnlyByte":"   ","SpacesOnlyUnicode":"   ","SpacesBeforeByte":"   Text","SpacesBeforeUnicode":"   Text","SpacesAfterByte":"Text   ","SpacesAfterUnicode":"Text   ","SpacesBeforeAndAfterByte":"   Text   ","SpacesBeforeAndAfterUnicode":"   Text   "}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 17 Jul 2020 15:42:21 GMT
+      - Fri, 17 Jul 2020 17:08:48 GMT
       etag:
-      - W/"datetime'2020-07-17T15%3A42%3A22.6727944Z'"
+      - W/"datetime'2020-07-17T17%3A08%3A48.3204395Z'"
       location:
       - https://storagename.table.core.windows.net/uttable66111670(PartitionKey='pk66111670',RowKey='rk66111670')
       server:
@@ -113,27 +113,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 17 Jul 2020 15:42:22 GMT
+      - Fri, 17 Jul 2020 17:08:48 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 17 Jul 2020 15:42:22 GMT
+      - Fri, 17 Jul 2020 17:08:48 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
     uri: https://storagename.table.core.windows.net/uttable66111670(PartitionKey='pk66111670',RowKey='rk66111670')
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable66111670/@Element","odata.etag":"W/\"datetime''2020-07-17T15%3A42%3A22.6727944Z''\"","PartitionKey":"pk66111670","RowKey":"rk66111670","Timestamp":"2020-07-17T15:42:22.6727944Z","EmptyByte":"","EmptyUnicode":"","SpacesOnlyByte":"   ","SpacesOnlyUnicode":"   ","SpacesBeforeByte":"   Text","SpacesBeforeUnicode":"   Text","SpacesAfterByte":"Text   ","SpacesAfterUnicode":"Text   ","SpacesBeforeAndAfterByte":"   Text   ","SpacesBeforeAndAfterUnicode":"   Text   "}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable66111670/@Element","odata.etag":"W/\"datetime''2020-07-17T17%3A08%3A48.3204395Z''\"","PartitionKey":"pk66111670","RowKey":"rk66111670","Timestamp":"2020-07-17T17:08:48.3204395Z","EmptyByte":"","EmptyUnicode":"","SpacesOnlyByte":"   ","SpacesOnlyUnicode":"   ","SpacesBeforeByte":"   Text","SpacesBeforeUnicode":"   Text","SpacesAfterByte":"Text   ","SpacesAfterUnicode":"Text   ","SpacesBeforeAndAfterByte":"   Text   ","SpacesBeforeAndAfterUnicode":"   Text   "}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 17 Jul 2020 15:42:21 GMT
+      - Fri, 17 Jul 2020 17:08:48 GMT
       etag:
-      - W/"datetime'2020-07-17T15%3A42%3A22.6727944Z'"
+      - W/"datetime'2020-07-17T17%3A08%3A48.3204395Z'"
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -157,11 +157,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 17 Jul 2020 15:42:22 GMT
+      - Fri, 17 Jul 2020 17:08:48 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 17 Jul 2020 15:42:22 GMT
+      - Fri, 17 Jul 2020 17:08:48 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -175,7 +175,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 17 Jul 2020 15:42:22 GMT
+      - Fri, 17 Jul 2020 17:08:48 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

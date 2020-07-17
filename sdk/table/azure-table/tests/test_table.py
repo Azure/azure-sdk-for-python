@@ -123,7 +123,7 @@ class StorageTableTest(TableTestCase):
         invalid_table_name = "my_table"
         
         with pytest.raises(ValueError) as excinfo:
-            ts.create_table(invalid_table_name)
+            ts.create_table(table_name=invalid_table_name)
             
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
 
@@ -247,7 +247,7 @@ class StorageTableTest(TableTestCase):
 
         # Assert
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_unicode_create_table_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

@@ -47,5 +47,5 @@ __all__ = [
     'EntityProperty',
     'EdmType',
     'RetentionPolicy',
-    'generate_table_sas'
+    'generate_table_sas',
 ]

@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 import functools
-import re
 from typing import Optional, Any
 
 try:
