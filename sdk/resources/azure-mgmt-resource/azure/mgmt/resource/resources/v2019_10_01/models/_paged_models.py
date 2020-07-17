@@ -12,19 +12,19 @@
 from msrest.paging import Paged
 
 
-class OperationPaged(Paged):
+class Operation1Paged(Paged):
     """
-    A paging container for iterating over a list of :class:`Operation <azure.mgmt.resource.resources.v2019_10_01.models.Operation>` object
+    A paging container for iterating over a list of :class:`Operation1 <azure.mgmt.resource.resources.v2019_10_01.models.Operation1>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Operation]'}
+        'current_page': {'key': 'value', 'type': '[Operation1]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(OperationPaged, self).__init__(*args, **kwargs)
+        super(Operation1Paged, self).__init__(*args, **kwargs)
 class DeploymentExtendedPaged(Paged):
     """
     A paging container for iterating over a list of :class:`DeploymentExtended <azure.mgmt.resource.resources.v2019_10_01.models.DeploymentExtended>` object
