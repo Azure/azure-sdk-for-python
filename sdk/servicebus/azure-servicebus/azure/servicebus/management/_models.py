@@ -606,6 +606,27 @@ class RuleDescription(object):
 
 
 class CorrelationRuleFilter(object):
+    """Represents the correlation filter expression.
+
+    :param correlation_id: Identifier of the correlation.
+    :type correlation_id: str
+    :param message_id: Identifier of the message.
+    :type message_id: str
+    :param to: Address to send to.
+    :type to: str
+    :param reply_to: Address of the queue to reply to.
+    :type reply_to: str
+    :param label: Application specific label.
+    :type label: str
+    :param session_id: Session identifier.
+    :type session_id: str
+    :param reply_to_session_id: Session identifier to reply to.
+    :type reply_to_session_id: str
+    :param content_type: Content type of the message.
+    :type content_type: str
+    :param properties: dictionary object for custom filters
+    :type properties: dict[str, str]
+    """
     def __init__(self, **kwargs):
         self.correlation_id = kwargs.get('correlation_id', None)
         self.message_id = kwargs.get('message_id', None)
@@ -653,7 +674,16 @@ class CorrelationRuleFilter(object):
 
 
 class SqlRuleFilter(object):
-    def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=None):
+    """Represents a filter which is a composition of an expression and an action
+    that is executed in the pub/sub pipeline.
+
+    :param sql_expression: The SQL expression. e.g. MyProperty='ABC'
+    :type sql_expression: str
+    :param requires_preprocessing: Value that indicates whether the rule
+     filter requires preprocessing. Default value: True .
+    :type requires_preprocessing: bool
+    """
+    def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=True):
         self.sql_expression = sql_expression
         self.parameters = parameters
         self.requires_preprocessing = requires_preprocessing
@@ -677,6 +707,8 @@ class SqlRuleFilter(object):
 
 
 class TrueRuleFilter(SqlRuleFilter):
+    """A sql filter with a sql expression that is always True
+    """
     def __init__(self):
         super(TrueRuleFilter, self).__init__("1=1", None, True)
 
@@ -690,6 +722,8 @@ class TrueRuleFilter(SqlRuleFilter):
 
 
 class FalseRuleFilter(SqlRuleFilter):
+    """A sql filter with a sql expression that is always True
+    """
     def __init__(self):
         super(FalseRuleFilter, self).__init__("1>1", None, True)
 
@@ -702,7 +736,16 @@ class FalseRuleFilter(SqlRuleFilter):
 
 
 class SqlRuleAction(object):
-    def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=None):
+    """Represents set of actions written in SQL language-based syntax that is
+    performed against a ServiceBus.Messaging.BrokeredMessage .
+
+    :param sql_expression: SQL expression. e.g. MyProperty='ABC'
+    :type sql_expression: str
+    :param requires_preprocessing: Value that indicates whether the rule
+     action requires preprocessing. Default value: True .
+    :type requires_preprocessing: bool
+    """
+    def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=True):
         self.sql_expression = sql_expression
         self.parameters = parameters
         self.requires_preprocessing = requires_preprocessing
