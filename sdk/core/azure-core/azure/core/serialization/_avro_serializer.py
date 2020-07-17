@@ -24,24 +24,23 @@
 #
 # --------------------------------------------------------------------------
 from typing import cast, IO
-import json
 
 from ._object_serializer import ObjectSerializer
 
 
-class JsonObjectSerializer(ObjectSerializer):
+class AvroObjectSerializer(ObjectSerializer):
 
-    def __init__(self, **kwargs):
-        """A JSON serializer using json lib from Python.
+    def __init__(self, codec=None):
+        """A Avro serializer using avro lib from Apache.
 
-        :keyword serializer_kwargs: Kwargs passed so json.dump at each serialization
-        :paramtype dict[str, any]:
-        :keyword deserializer_kwargs: Kwargs passed so json.load(s) at each deserialization
-        :paramtype dict[str, any]:
-
+        :param str codec: The writer codec. If None, let the avro library decides.
         """
-        self.serializer_kwargs = kwargs.pop("serializer_kwargs", {})
-        self.deserializer_kwargs = kwargs.pop("deserializer_kwargs", {})
+        try:
+            import avro
+        except ImportError:
+            raise ImportError("In order to create a AvroObjectSerializer you need to install the 'avro' library")
+
+        self._writer_codec = codec
 
     def serialize(
         self,
@@ -56,8 +55,21 @@ class JsonObjectSerializer(ObjectSerializer):
         :type stream: BinaryIO
         :param value: An object to serialize
         """
-        bytes_value = json.dumps(value, **self.serializer_kwargs).encode("utf-8")
-        stream.write(bytes_value)
+        from avro.datafile import DataFileWriter
+        from avro.io import DatumWriter
+
+        kwargs = {}
+        if self._writer_codec:
+            kwargs['codec'] = self._writer_codec
+
+        writer = DataFileWriter(
+            stream,
+            DatumWriter(),
+            schema,
+            **kwargs
+        )
+        writer.append(value)
+        writer.flush()
 
     def deserialize(
         self,
@@ -73,14 +85,22 @@ class JsonObjectSerializer(ObjectSerializer):
         :returns: An instanciated object
         :rtype: ObjectType
         """
-        if hasattr(data, 'read'):
-            # Assume a stream
-            data = cast(IO, data).read()
+        if not hasattr(data, 'read'):
+            from io import BytesIO
+            data = BytesIO(data)
 
-        if isinstance(data, bytes):
-            data_as_str = data.decode(encoding='utf-8-sig')
-        else:
-            # Explain to mypy the correct type.
-            data_as_str = cast(str, data)
+        from avro.datafile import DataFileReader
+        from avro.io import DatumReader
 
-        return json.loads(data_as_str, **self.deserializer_kwargs)
+        reader = DataFileReader(
+            data,
+            DatumReader()
+        )
+        obj = next(reader)
+        try:
+            next(reader)
+            raise ValueError("This avro stream is multiple object stream")
+        except StopIteration:
+            pass
+        reader.close()
+        return obj

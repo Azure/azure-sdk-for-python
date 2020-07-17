@@ -25,5 +25,10 @@
 # --------------------------------------------------------------------------
 from ._object_serializer import ObjectSerializer
 from ._json_object_serializer import JsonObjectSerializer
+from ._avro_serializer import AvroObjectSerializer
 
-__all__ = ['ObjectSerializer', 'JsonObjectSerializer']
+__all__ = [
+    'ObjectSerializer',
+    'JsonObjectSerializer',
+    'AvroObjectSerializer'
+]

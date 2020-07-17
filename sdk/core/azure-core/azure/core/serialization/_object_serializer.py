@@ -42,6 +42,7 @@ class ObjectSerializer(ABC):
         self,
         stream,  # type: BinaryIO
         value,  # type: ObjectType
+        schema,  # type: Type[ObjectType]
     ):
         # type: (...) -> None
         """Convert the provided value to it's binary representation and write it to the stream.

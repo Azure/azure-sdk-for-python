@@ -25,7 +25,13 @@
 # --------------------------------------------------------------------------
 from io import BytesIO
 
-from azure.core.serialization import ObjectSerializer, JsonObjectSerializer
+import avro.schema
+
+from azure.core.serialization import (
+    ObjectSerializer,
+    JsonObjectSerializer,
+    AvroObjectSerializer,
+)
 
 
 def test_serialize_basic():
@@ -43,7 +49,7 @@ def test_serialize_basic():
 
     stream = BytesIO()
 
-    serializer.serialize(stream, Foo(42, "bar"))
+    serializer.serialize(stream, Foo(42, "bar"), None)
 
     assert stream.getvalue() == b'{"a": 42, "b": "bar"}'
 
@@ -65,3 +71,57 @@ def test_deserialize_basic():
     obj = serializer.deserialize(serialized, None)
     assert obj.a == 42
     assert obj.b == "bar"
+
+
+def test_serialize_basic_avro():
+
+    avro_schema_bytes = b"""
+{"namespace": "example.avro",
+ "type": "record",
+ "name": "User",
+ "fields": [
+     {"name": "name", "type": "string"},
+     {"name": "favorite_number",  "type": ["int", "null"]},
+     {"name": "favorite_color", "type": ["string", "null"]}
+ ]
+}"""
+
+    schema = avro.schema.parse(avro_schema_bytes)
+
+    serializer = AvroObjectSerializer()
+
+    stream = BytesIO()
+
+    serializer.serialize(
+        stream,
+        {"name": "Ben", "favorite_number": 7, "favorite_color": "red"},
+        schema
+    )
+
+    print(stream.getvalue())
+    assert stream.getvalue().startswith(b'Obj\x01\x04\x14')
+
+
+def test_deserialize_basic_avro():
+
+    serialized_avro = b'Obj\x01\x04\x14avro.codec\x08null\x16avro.schema\xba\x03{"type": "record", "name": "User", "namespace": "example.avro", "fields": [{"type": "string", "name": "name"}, {"type": ["int", "null"], "name": "favorite_number"}, {"type": ["string", "null"], "name": "favorite_color"}]}\x00\xda\xb1\xaa~\xd6\xd0\nME$\xbb\xe4L\xf6\xaf\xdc\x02\x16\x06Ben\x00\x0e\x00\x06red\xda\xb1\xaa~\xd6\xd0\nME$\xbb\xe4L\xf6\xaf\xdc'
+
+    avro_schema_bytes = b"""
+{"namespace": "example.avro",
+ "type": "record",
+ "name": "User",
+ "fields": [
+     {"name": "name", "type": "string"},
+     {"name": "favorite_number",  "type": ["int", "null"]},
+     {"name": "favorite_color", "type": ["string", "null"]}
+ ]
+}"""
+    schema = avro.schema.parse(avro_schema_bytes)
+
+    deserializer = AvroObjectSerializer()
+
+    obj = deserializer.deserialize(serialized_avro, schema)
+
+    assert obj['name'] == "Ben"
+    assert obj['favorite_number'] == 7
+    assert obj['favorite_color'] == "red"
