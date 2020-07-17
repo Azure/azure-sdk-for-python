@@ -68,7 +68,7 @@ class Timezone(datetime.tzinfo):  # pylint: disable : W0223
 
 
 def _from_entity_datetime(value):
-    # TODO: Fix this
+    # # TODO: Fix this
     return datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ'). \
         replace(tzinfo=Timezone())
 

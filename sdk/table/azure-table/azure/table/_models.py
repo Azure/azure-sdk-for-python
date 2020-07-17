@@ -71,11 +71,11 @@ class TableAnalyticsLogging(GeneratedLogging):
 
    All required parameters must be populated in order to send to Azure.
 
-   :ivar str version: Required. The version of Storage Analytics to configure.
-   :ivar bool delete: Required. Indicates whether all delete requests should be logged.
-   :ivar bool read: Required. Indicates whether all read requests should be logged.
-   :ivar bool write: Required. Indicates whether all write requests should be logged.
-   :ivar ~azure.table.RetentionPolicy retention_policy: Required.
+   :keyword str version: Required. The version of Storage Analytics to configure.
+   :keyword bool delete: Required. Indicates whether all delete requests should be logged.
+   :keyword bool read: Required. Indicates whether all read requests should be logged.
+   :keyword bool write: Required. Indicates whether all write requests should be logged.
+   :keyword ~azure.table.RetentionPolicy retention_policy: Required.
        The retention policy for the metrics.
    """
 
@@ -110,11 +110,11 @@ class Metrics(GeneratedMetrics):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar str version: The version of Storage Analytics to configure.
-    :ivar bool enabled: Required. Indicates whether metrics are enabled for the service.
-    :ivar bool include_ap_is: Indicates whether metrics should generate summary
+    :keyword str version: The version of Storage Analytics to configure.
+    :keyword bool enabled: Required. Indicates whether metrics are enabled for the service.
+    :keyword bool include_ap_is: Indicates whether metrics should generate summary
         statistics for called API operations.
-    :ivar ~azure.table.RetentionPolicy retention_policy: Required.
+    :keyword ~azure.table.RetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
     """
 
@@ -247,12 +247,12 @@ class CorsRule(GeneratedCorsRule):
 class TablePropertiesPaged(PageIterator):
     """An iterable of Table properties.
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A queue name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
+    :keyword str service_endpoint: The service URL.
+    :keyword str prefix: A queue name prefix being used to filter the list.
+    :keyword str marker: The continuation token of the current page of results.
+    :keyword int results_per_page: The maximum number of results retrieved per API call.
+    :keyword str next_marker: The continuation token to retrieve the next page of results.
+    :keyword str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only queues whose names
@@ -296,12 +296,12 @@ class TablePropertiesPaged(PageIterator):
 class TableEntityPropertiesPaged(PageIterator):
     """An iterable of TableEntity properties.
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A queue name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
+    :keyword str service_endpoint: The service URL.
+    :keyword str prefix: A queue name prefix being used to filter the list.
+    :keyword str marker: The continuation token of the current page of results.
+    :keyword int results_per_page: The maximum number of results retrieved per API call.
+    :keyword str next_marker: The continuation token to retrieve the next page of results.
+    :keyword str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only queues whose names
@@ -362,13 +362,13 @@ class TableSasPermissions(object):
     ):
         # type: (...) -> None
         """
-        :ivar bool query:
+        :keyword bool query:
             Get entities and query entities.
-        :ivar bool add:
+        :keyword bool add:
             Add entities. Add and Update permissions are required for upsert operations.
-        :ivar bool update:
+        :keyword bool update:
             Update entities. Add and Update permissions are required for upsert operations.
-        :ivar bool delete:
+        :keyword bool delete:
             Delete entities.
         :param str _str:
             A string representing the permissions.

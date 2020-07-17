@@ -23,8 +23,12 @@ class Entity(dict):
         else:
             self['metadata'] = {'etag': self.pop('etag')}
 
-    def metadata(self):
-        """Resets metadata to be a part of the entity"""
+    def metadata(self, **kwargs):
+        # type: (...) -> Entity
+        """Resets metadata to be a part of the entity
+        :return Entity with metadata
+        :rtype Entity
+        """
         metadata = self.pop('metadata')
         self['etag'] = metadata['etag']
         self['timestamp'] = metadata['timestamp']

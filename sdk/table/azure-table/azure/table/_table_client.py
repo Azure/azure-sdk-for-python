@@ -246,8 +246,8 @@ class TableClient(StorageAccountHostsMixin):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :ivar str etag: Etag of the entity
-        :ivar ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword str etag: Etag of the entity
+        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -310,10 +310,10 @@ class TableClient(StorageAccountHostsMixin):
         :type entity: Union[Entity, dict[str,str]]
         :param mode: Merge or Replace entity
         :type mode: ~azure.table.UpdateMode
-        :ivar str partition_key: The partition key of the entity.
-        :ivar str row_key: The row key of the entity.
-        :ivar str etag: Etag of the entity
-        :ivar ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword str partition_key: The partition key of the entity.
+        :keyword str row_key: The row key of the entity.
+        :keyword str etag: Etag of the entity
+        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -348,10 +348,10 @@ class TableClient(StorageAccountHostsMixin):
         # type: (...) -> ItemPaged[Entity]
         """Lists entities in a table.
 
-        :ivar int results_per_page: Number of entities per page in return ItemPaged
-        :ivar str select: Specify desired properties of an entity to return certain entities
-        :ivar str filter: Specify a filter to return certain entities
-        :ivar dict parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword int results_per_page: Number of entities per page in return ItemPaged
+        :keyword str select: Specify desired properties of an entity to return certain entities
+        :keyword str filter: Specify a filter to return certain entities
+        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
         :rtype: ItemPaged[Entity]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -387,9 +387,9 @@ class TableClient(StorageAccountHostsMixin):
 
         :param filter: Specify a filter to return certain entities
         :type: str
-        :ivar int results_per_page: Number of entities per page in return ItemPaged
-        :ivar str select: Specify desired properties of an entity to return certain entities
-        :ivar dict parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword int results_per_page: Number of entities per page in return ItemPaged
+        :keyword str select: Specify desired properties of an entity to return certain entities
+        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
         :rtype: ItemPaged[Entity]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -427,10 +427,10 @@ class TableClient(StorageAccountHostsMixin):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :ivar int results_per_page: Number of entities per page in return ItemPaged
-        :ivar str select: Specify desired properties of an entity to return certain entities
-        :ivar str filter: Specify a filter to return certain entities
-        :ivar dict parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword int results_per_page: Number of entities per page in return ItemPaged
+        :keyword str select: Specify desired properties of an entity to return certain entities
+        :keyword str filter: Specify a filter to return certain entities
+        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Entity mapping str to azure.table.EntityProperty
         :rtype: ~azure.table.Entity
         :raises: ~azure.core.exceptions.HttpResponseError
