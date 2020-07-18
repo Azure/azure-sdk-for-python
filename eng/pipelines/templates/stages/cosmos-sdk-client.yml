@@ -41,7 +41,7 @@ stages:
           vmImage: $(OSVmImage)
 
         steps:
-          - template: eng/pipelines/templates/steps/cosmos-emulator.yml@azure-sdk-tools
+          - template: ../steps/cosmos-emulator.yml
             parameters:
               EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
               StartParameters: ${{ parameters.EmulatorStartParameters }}

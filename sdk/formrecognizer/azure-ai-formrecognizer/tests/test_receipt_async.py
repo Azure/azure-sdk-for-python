@@ -55,7 +55,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
         poller = await client.begin_recognize_receipts(
             myfile,
-            content_type=FormContentType.image_png
+            content_type=FormContentType.IMAGE_PNG
         )
         result = await poller.result()
         self.assertIsNotNone(result)

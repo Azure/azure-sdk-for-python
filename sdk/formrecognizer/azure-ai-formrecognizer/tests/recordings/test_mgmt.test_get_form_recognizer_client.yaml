@@ -9,20 +9,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models?op=summary
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models?op=summary
   response:
     body:
-      string: '{"summary": {"count": 0, "limit": 5000, "lastUpdatedDateTime": "2020-06-11T16:08:28Z"}}'
+      string: '{"summary": {"count": 17, "limit": 5000, "lastUpdatedDateTime": "2020-07-10T18:50:20Z"}}'
     headers:
       apim-request-id:
-      - 914409e3-8a35-4268-be3a-a4a1cb0182b8
+      - a7f65ef4-b059-4655-90d3-386decb30920
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 11 Jun 2020 16:08:28 GMT
+      - Fri, 10 Jul 2020 18:50:19 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -30,7 +29,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '47'
+      - '676'
     status:
       code: 200
       message: OK
@@ -48,28 +47,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 2831e81c-424d-4419-bd4d-e4f811741cd7
+      - c04503eb-f1bc-42bf-9cc7-06102ec9df7a
       content-length:
       - '0'
       date:
-      - Thu, 11 Jun 2020 16:08:29 GMT
+      - Fri, 10 Jul 2020 18:50:21 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/2831e81c-424d-4419-bd4d-e4f811741cd7
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/c04503eb-f1bc-42bf-9cc7-06102ec9df7a
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '1056'
+      - '469'
     status:
       code: 202
       message: Accepted
@@ -83,14 +81,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/2831e81c-424d-4419-bd4d-e4f811741cd7
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/c04503eb-f1bc-42bf-9cc7-06102ec9df7a
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T16:08:29Z",
-        "lastUpdatedDateTime": "2020-06-11T16:08:33Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:50:20Z",
+        "lastUpdatedDateTime": "2020-07-10T18:50:23Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0.6893, "width": 1688, "height":
         3000, "unit": "pixel", "language": "en"}], "documentResults": [{"docType":
         "prebuilt:receipt", "pageRange": [1, 1], "fields": {"ReceiptType": {"type":
@@ -133,11 +130,11 @@ interactions:
         "page": 1, "confidence": 0.985}}}]}}'
     headers:
       apim-request-id:
-      - d667c030-dc6c-4fc7-91d7-d80719464768
+      - 44fcc890-2ff7-4b2c-a971-a4a88a1aed18
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 11 Jun 2020 16:08:34 GMT
+      - Fri, 10 Jul 2020 18:50:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -145,7 +142,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '26'
+      - '22'
     status:
       code: 200
       message: OK
@@ -159,20 +156,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models?op=summary
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models?op=summary
   response:
     body:
-      string: '{"summary": {"count": 0, "limit": 5000, "lastUpdatedDateTime": "2020-06-11T16:08:35Z"}}'
+      string: '{"summary": {"count": 17, "limit": 5000, "lastUpdatedDateTime": "2020-07-10T18:50:26Z"}}'
     headers:
       apim-request-id:
-      - d79562b4-7b79-4428-a8ab-e4254024aeb7
+      - d80e160a-828d-4126-9537-1e827aa8a882
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 11 Jun 2020 16:08:35 GMT
+      - Fri, 10 Jul 2020 18:50:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -180,7 +176,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '11'
+      - '12'
     status:
       code: 200
       message: OK

@@ -6,9 +6,9 @@
 from typing import Any
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from ._policies_async import AsyncTextAnalyticsResponseHookPolicy
-from .._generated.aio import TextAnalyticsClient
+from .._policies import TextAnalyticsResponseHookPolicy
 from .._user_agent import USER_AGENT
+from .._multiapi import load_generated_api
 
 
 def _authentication_policy(credential):
@@ -27,15 +27,16 @@ def _authentication_policy(credential):
 
 class AsyncTextAnalyticsClientBase(object):
     def __init__(self, endpoint, credential, **kwargs):
-        self._client = TextAnalyticsClient(
+        api_version = kwargs.pop("api_version", None)
+        _TextAnalyticsClient = load_generated_api(api_version, aio=True)
+        self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,
             sdk_moniker=USER_AGENT,
             authentication_policy=_authentication_policy(credential),
-            custom_hook_policy=AsyncTextAnalyticsResponseHookPolicy(**kwargs),
+            custom_hook_policy=TextAnalyticsResponseHookPolicy(**kwargs),
             **kwargs
         )
-
 
     async def __aenter__(self) -> "AsyncTextAnalyticsClientBase":
         await self._client.__aenter__()
