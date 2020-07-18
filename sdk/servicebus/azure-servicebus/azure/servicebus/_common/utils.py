@@ -104,7 +104,7 @@ def create_properties():
 
 def renewable_start_time(renewable):
     try:
-        return renewable.received_timestamp_utc
+        return renewable._received_timestamp_utc  # pylint: disable=protected-access
     except AttributeError:
         pass
     try:
@@ -205,9 +205,9 @@ class AutoLockRenew(object):
     def _renewable(self, renewable):
         if self._shutdown.is_set():
             return False
-        if hasattr(renewable, 'settled') and renewable.settled:
+        if hasattr(renewable, '_settled') and renewable._settled:  # pylint: disable=protected-access
             return False
-        if renewable.expired:
+        if renewable._lock_expired:  # pylint: disable=protected-access
             return False
         return True
 

@@ -255,8 +255,10 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 async for message in receiver:
                     count += 1
                     print_message(_logger, message)
-                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.dead_letter_reason == 'Testing reason'
+                    assert message.dead_letter_error_description == 'Testing description'
+                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await message.complete()
             assert count == 10
 
@@ -355,8 +357,10 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 count = 0
                 async for message in session:
                     print_message(_logger, message)
-                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.dead_letter_reason == 'Testing reason'
+                    assert message.dead_letter_error_description == 'Testing description'
+                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await message.complete()
                     count += 1
             assert count == 10
@@ -447,7 +451,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 try:
                     for m in messages:
                         with pytest.raises(TypeError):
-                            expired = m.expired
+                            expired = m._lock_expired
                         assert m.locked_until_utc is None
                         assert m.lock_token is not None
                     time.sleep(5)
@@ -487,9 +491,9 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                         if not messages:
                             await asyncio.sleep(45)
                             print("First sleep {}".format(session.session.locked_until_utc - utc_now()))
-                            assert not session.session.expired
+                            assert not session.session._lock_expired
                             with pytest.raises(TypeError):
-                                message.expired
+                                message._lock_expired
                             assert message.locked_until_utc is None
                             with pytest.raises(TypeError):
                                 await message.renew_lock()
@@ -500,7 +504,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                         elif len(messages) == 1:
                             await asyncio.sleep(45)
                             print("Second sleep {}".format(session.session.locked_until_utc - utc_now()))
-                            assert session.session.expired
+                            assert session.session._lock_expired
                             assert isinstance(session.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
                                 await message.complete()
@@ -559,10 +563,10 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 print_message(_logger, messages[0])
                 await asyncio.sleep(60) #TODO: Was 30, but then lock isn't expired.
                 with pytest.raises(TypeError):
-                    messages[0].expired
+                    messages[0]._lock_expired
                 with pytest.raises(TypeError):
                     await messages[0].renew_lock()
-                assert receiver.session.expired
+                assert receiver.session._lock_expired
                 with pytest.raises(SessionLockExpired):
                     await messages[0].complete()
                 with pytest.raises(SessionLockExpired):
@@ -572,7 +576,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 messages = await receiver.receive_messages(max_wait_time=30)
                 assert len(messages) == 1
                 print_message(_logger, messages[0])
-                #assert messages[0].header.delivery_count  # TODO confirm this with service
+                assert messages[0].delivery_count
                 await messages[0].complete()
 
 
@@ -591,7 +595,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 content = str(uuid.uuid4())
                 message_id = uuid.uuid4()
                 message = Message(content, session_id=session_id)
-                message.properties.message_id = message_id
+                message.message_id = message_id
                 message.scheduled_enqueue_time_utc = enqueue_time
                 await sender.send_messages(message)
 
@@ -604,7 +608,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 if messages:
                     data = str(messages[0])
                     assert data == content
-                    assert messages[0].properties.message_id == message_id
+                    assert messages[0].message_id == message_id
                     assert messages[0].scheduled_enqueue_time_utc == enqueue_time
                     assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                     assert len(messages) == 1
@@ -629,10 +633,10 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 content = str(uuid.uuid4())
                 message_id_a = uuid.uuid4()
                 message_a = Message(content, session_id=session_id)
-                message_a.properties.message_id = message_id_a
+                message_a.message_id = message_id_a
                 message_id_b = uuid.uuid4()
                 message_b = Message(content, session_id=session_id)
-                message_b.properties.message_id = message_id_b
+                message_b.message_id = message_id_b
                 tokens = await sender.schedule_messages([message_a, message_b], enqueue_time)
                 assert len(tokens) == 2
 
@@ -644,7 +648,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 if messages:
                     data = str(messages[0])
                     assert data == content
-                    assert messages[0].properties.message_id in (message_id_a, message_id_b)
+                    assert messages[0].message_id in (message_id_a, message_id_b)
                     assert messages[0].scheduled_enqueue_time_utc == enqueue_time
                     assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                     assert len(messages) == 2
@@ -707,7 +711,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 await session.session.set_session_state("first_state")
                 count = 0
                 async for m in session:
-                    assert m.properties.group_id == session_id.encode('utf-8')
+                    assert m.session_id == session_id
                     count += 1
                 await session.session.get_session_state()
             assert count == 3
