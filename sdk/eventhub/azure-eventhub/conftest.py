@@ -77,7 +77,7 @@ def resource_group():
     try:
         SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
     except KeyError:
-        pytest.skip('AZURE_SUBSCRIPTION_ID defined')
+        pytest.skip('AZURE_SUBSCRIPTION_ID undefined')
         return
     resource_client = ResourceManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
     resource_group_name = RES_GROUP_PREFIX + str(uuid.uuid4())
