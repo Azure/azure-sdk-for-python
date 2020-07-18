@@ -127,22 +127,7 @@ class MsalCredential(ABC):
         return app
 
 
-class PublicClientCredential(MsalCredential):
-    """Wraps an MSAL PublicClientApplication with the TokenCredential API"""
-
-    @abc.abstractmethod
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
-        pass
-
-    def _get_app(self):
-        # type: () -> msal.PublicClientApplication
-        if not self._msal_app:
-            self._msal_app = self._create_app(msal.PublicClientApplication)
-        return self._msal_app
-
-
-class InteractiveCredential(PublicClientCredential):
+class InteractiveCredential(MsalCredential):
     def __init__(self, **kwargs):
         self._disable_automatic_authentication = kwargs.pop("disable_automatic_authentication", False)
         self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
@@ -200,7 +185,7 @@ class InteractiveCredential(PublicClientCredential):
         # type: (**Any) -> AuthenticationRecord
         """Interactively authenticate a user.
 
-        :keyword Sequence[str] scopes: scopes to request during authentication, such as those provided by
+        :keyword Iterable[str] scopes: scopes to request during authentication, such as those provided by
           :func:`AuthenticationRequiredError.scopes`. If provided, successful authentication will cache an access token
           for these scopes.
         :rtype: ~azure.identity.AuthenticationRecord
@@ -246,3 +231,9 @@ class InteractiveCredential(PublicClientCredential):
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> dict
         """Request an access token via a non-silent MSAL token acquisition method, returning that method's result"""
+
+    def _get_app(self):
+        # type: () -> msal.PublicClientApplication
+        if not self._msal_app:
+            self._msal_app = self._create_app(msal.PublicClientApplication)
+        return self._msal_app

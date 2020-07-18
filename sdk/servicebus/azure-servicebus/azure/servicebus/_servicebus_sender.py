@@ -72,9 +72,9 @@ class SenderMixin(object):
                 message = Message._from_received_message(message)
             message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
-            message_data[MGMT_REQUEST_MESSAGE_ID] = message.properties.message_id
-            if message.properties.group_id:
-                message_data[MGMT_REQUEST_SESSION_ID] = message.properties.group_id
+            message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
+            if message.session_id:
+                message_data[MGMT_REQUEST_SESSION_ID] = message.session_id
             if message.partition_key:
                 message_data[MGMT_REQUEST_PARTITION_KEY] = message.partition_key
             if message.via_partition_key:
