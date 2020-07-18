@@ -126,3 +126,14 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             with pytest.raises(ServiceBusError):
                 with client.get_queue_sender(wrong_queue.name) as sender:
                     sender.send_messages(Message("test"))
+
+    def test_sb_client_wrong_user_agent(self):
+        mock_conn_str = 'Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=fake;SharedAccessKey=fake'
+
+        ServiceBusClient.from_connection_string(mock_conn_str, user_agent='d' * 24)
+
+        with pytest.raises(ValueError):
+            ServiceBusClient.from_connection_string(mock_conn_str, user_agent='have space in')
+
+        with pytest.raises(ValueError):
+            ServiceBusClient.from_connection_string(mock_conn_str, user_agent='d'*25)
