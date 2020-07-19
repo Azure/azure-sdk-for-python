@@ -1156,13 +1156,15 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 for i in range(20):
                     yield Message("Message no. {}".format(i))
 
-            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+
+            async with sender, receiver:
                 message = BatchMessage()
                 for each in message_content():
                     message.add(each)
                 await sender.send_messages(message)
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 receive_counter = 0
                 message_received_cnt = 0
                 while message_received_cnt < 20:
@@ -1173,6 +1175,26 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message_received_cnt += len(messages)
                     for m in messages:
                         print_message(_logger, m)
+                        await sender.send_messages(message)
+                        await m.complete()
+
+                assert message_received_cnt == 20
+                # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
+                assert receive_counter < 10  # Dynamic link credit issuing come info effect
+
+                # received resent messages
+
+                receive_counter = 0
+                message_received_cnt = 0
+                while message_received_cnt < 20:
+                    messages = await receiver.receive_messages(max_batch_size=20, max_wait_time=5)
+                    if not messages:
+                        break
+                    receive_counter += 1
+                    message_received_cnt += len(messages)
+                    for m in messages:
+                        print_message(_logger, m)
+                        await sender.send_messages(message)
                         await m.complete()
 
                 assert message_received_cnt == 20

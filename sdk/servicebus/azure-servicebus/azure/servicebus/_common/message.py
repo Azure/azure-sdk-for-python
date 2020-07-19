@@ -154,6 +154,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     @classmethod
     def _from_received_message(cls, received_message):
+        # type: (Message) -> Message
         amqp_message = received_message.message
         amqp_body = amqp_message._body
 
@@ -162,8 +163,23 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         else:
             # amqp_body is type of uamqp.message.ValueBody
             body = amqp_body.data
-        # TODO: other properties to be copied from the received message
-        return cls(body=body)
+
+        return cls(
+            body=body,
+            content_type=received_message.content_type,
+            correlation_id=received_message.correlation_id,
+            label=received_message.label,
+            message_id=received_message.message_id,
+            partition_key=received_message.partition_key,
+            properties=received_message.properties,
+            reply_to=received_message.reply_to,
+            reply_to_session_id=received_message.reply_to_session_id,
+            session_id=received_message.session_id,
+            scheduled_enqueue_time_utc=received_message.scheduled_enqueue_time_utc,
+            time_to_live=received_message.time_to_live,
+            to=received_message.to,
+            via_partition_key=received_message.via_partition_key
+        )
 
     @property
     def session_id(self):
@@ -529,7 +545,7 @@ class BatchMessage(object):
             if not isinstance(each, Message):
                 raise ValueError("Only Message or an iterable object containing Message objects are accepted."
                                  "Received instead: {}".format(each.__class__.__name__))
-            if isinstance(each, (PeekMessage, ReceivedMessage)):
+            if isinstance(each, (PeekMessage, ReceivedMessageBase)):
                 each = Message._from_received_message(each)  # pylint: disable=protected-access
             self.add(each)
 
@@ -555,7 +571,7 @@ class BatchMessage(object):
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
         """
-        if isinstance(message, (PeekMessage, ReceivedMessage)):
+        if isinstance(message, (PeekMessage, ReceivedMessageBase)):
             message = Message._from_received_message(message)  # pylint: disable=protected-access
 
         message_size = message.message.get_message_encoded_size()

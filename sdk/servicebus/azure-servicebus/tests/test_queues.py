@@ -744,23 +744,65 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
-    
-            with sb_client.get_queue_receiver(servicebus_queue.name,
-                                           idle_timeout=5, 
-                                           mode=ReceiveSettleMode.PeekLock) as receiver:
-                with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                    for i in range(5):
-                        message = Message("Test message no. {}".format(i))
-                        sender.send_messages(message)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name,
+                                           idle_timeout=5,
+                                           mode=ReceiveSettleMode.PeekLock)
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            with receiver, sender:
+                for i in range(5):
+                    message = Message(
+                        body="Test message",
+                        properties={'key': 'value'},
+                        label='label',
+                        content_type='application/text',
+                        correlation_id='cid',
+                        message_id='mid',
+                        partition_key='pk',
+                        via_partition_key='via_pk',
+                        to='to',
+                        reply_to='reply_to',
+                        time_to_live=timedelta(seconds=60)
+                    )
+                    sender.send_messages(message)
     
                 messages = receiver.peek_messages(5)
                 assert len(messages) > 0
                 assert all(isinstance(m, PeekMessage) for m in messages)
                 for message in messages:
                     print_message(_logger, message)
+                    assert b''.join(message.body) == b'Test message'
+                    assert message.properties[b'key'] == b'value'
+                    assert message.label == 'label'
+                    assert message.content_type == 'application/text'
+                    assert message.correlation_id == 'cid'
+                    assert message.message_id == 'mid'
+                    assert message.partition_key == 'pk'
+                    assert message.via_partition_key == 'via_pk'
+                    assert message.to == 'to'
+                    assert message.reply_to == 'reply_to'
+                    assert message.time_to_live == timedelta(seconds=60)
                     with pytest.raises(AttributeError):
                         message.complete()
-    
+
+                    sender.send_messages(message)
+
+                cnt = 0
+                for message in receiver:
+                    assert b''.join(message.body) == b'Test message'
+                    assert message.properties[b'key'] == b'value'
+                    assert message.label == 'label'
+                    assert message.content_type == 'application/text'
+                    assert message.correlation_id == 'cid'
+                    assert message.message_id == 'mid'
+                    assert message.partition_key == 'pk'
+                    assert message.via_partition_key == 'via_pk'
+                    assert message.to == 'to'
+                    assert message.reply_to == 'reply_to'
+                    assert message.time_to_live == timedelta(seconds=60)
+                    message.complete()
+                    cnt += 1
+                assert cnt == 10
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1469,15 +1511,29 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             def message_content():
                 for i in range(20):
-                    yield Message("Message no. {}".format(i))
+                    yield Message(
+                        body="Test message",
+                        properties={'key': 'value'},
+                        label='label',
+                        content_type='application/text',
+                        correlation_id='cid',
+                        message_id='mid',
+                        partition_key='pk',
+                        via_partition_key='via_pk',
+                        to='to',
+                        reply_to='reply_to',
+                        time_to_live=timedelta(seconds=60)
+                    )
 
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+
+            with sender, receiver:
                 message = BatchMessage()
                 for each in message_content():
                     message.add(each)
                 sender.send_messages(message)
 
-            with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 receive_counter = 0
                 message_received_cnt = 0
                 while message_received_cnt < 20:
@@ -1486,9 +1542,48 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         break
                     receive_counter += 1
                     message_received_cnt += len(messages)
-                    for m in messages:
-                        print_message(_logger, m)
-                        m.complete()
+                    for message in messages:
+                        print_message(_logger, message)
+                        assert b''.join(message.body) == b'Test message'
+                        assert message.properties[b'key'] == b'value'
+                        assert message.label == 'label'
+                        assert message.content_type == 'application/text'
+                        assert message.correlation_id == 'cid'
+                        assert message.message_id == 'mid'
+                        assert message.partition_key == 'pk'
+                        assert message.via_partition_key == 'via_pk'
+                        assert message.to == 'to'
+                        assert message.reply_to == 'reply_to'
+                        assert message.time_to_live == timedelta(seconds=60)
+                        message.complete()
+                        sender.send_messages(message)  # resending received message
+
+                assert message_received_cnt == 20
+                # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
+                assert receive_counter < 10  # Dynamic link credit issuing come info effect
+
+                receive_counter = 0
+                message_received_cnt = 0
+                while message_received_cnt < 20:
+                    messages = receiver.receive_messages(max_batch_size=20, max_wait_time=5)
+                    if not messages:
+                        break
+                    receive_counter += 1
+                    message_received_cnt += len(messages)
+                    for message in messages:
+                        print_message(_logger, message)
+                        assert b''.join(message.body) == b'Test message'
+                        assert message.properties[b'key'] == b'value'
+                        assert message.label == 'label'
+                        assert message.content_type == 'application/text'
+                        assert message.correlation_id == 'cid'
+                        assert message.message_id == 'mid'
+                        assert message.partition_key == 'pk'
+                        assert message.via_partition_key == 'via_pk'
+                        assert message.to == 'to'
+                        assert message.reply_to == 'reply_to'
+                        assert message.time_to_live == timedelta(seconds=60)
+                        message.complete()
 
                 assert message_received_cnt == 20
                 # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration

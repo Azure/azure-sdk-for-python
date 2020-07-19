@@ -13,7 +13,7 @@ from uamqp.authentication.common import AMQPAuth
 
 from ._base_handler import BaseHandler, ServiceBusSharedKeyCredential, _convert_connection_string_to_kwargs
 from ._common import mgmt_handlers
-from ._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
+from ._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage, ReceivedMessageBase
 from .exceptions import (
     OperationTimeoutError,
     _ServiceBusErrorPolicy,
@@ -68,7 +68,7 @@ class SenderMixin(object):
             if not isinstance(message, Message):
                 raise ValueError("Scheduling batch messages only supports iterables containing Message Objects."
                                  " Received instead: {}".format(message.__class__.__name__))
-            if isinstance(message, (PeekMessage,ReceivedMessage)):
+            if isinstance(message, (PeekMessage, ReceivedMessageBase)):
                 message = Message._from_received_message(message)
             message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
@@ -335,7 +335,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
             raise ValueError("A BatchMessage or list of Message must have at least one Message")
 
-        if isinstance(message, (PeekMessage, ReceivedMessage)):
+        if isinstance(message, (PeekMessage, ReceivedMessageBase)):
             message = Message._from_received_message(message)  # pylint: disable=protected-access
 
         self._do_retryable_operation(
