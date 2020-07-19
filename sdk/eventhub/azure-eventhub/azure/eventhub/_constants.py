@@ -35,7 +35,7 @@ EPOCH_SYMBOL = b"com.microsoft:epoch"
 TIMEOUT_SYMBOL = b"com.microsoft:timeout"
 RECEIVER_RUNTIME_METRIC_SYMBOL = b"com.microsoft:enable-receiver-runtime-metric"
 
-MAX_USER_AGENT_LENGTH = 512
+MAX_USER_AGENT_LENGTH = 24
 ALL_PARTITIONS = "all-partitions"
 CONTAINER_PREFIX = "eventhub.pysdk-"
 JWT_TOKEN_SCOPE = "https://eventhubs.azure.net//.default"

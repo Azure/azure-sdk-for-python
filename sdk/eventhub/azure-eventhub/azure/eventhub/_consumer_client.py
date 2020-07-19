@@ -61,7 +61,7 @@ class EventHubConsumerClient(ClientBase):
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
      The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-    :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
+    :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
      Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
      by a while-loop calling internal receive method in each iteration. In the `receive` case,
@@ -199,7 +199,7 @@ class EventHubConsumerClient(ClientBase):
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
-        :keyword str user_agent: The user agent that should be appended to the built-in user agent string.
+        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3. The context of `retry_total` in receiving is special: The `receive` method is implemented
          by a while-loop calling internal receive method in each iteration. In the `receive` case,

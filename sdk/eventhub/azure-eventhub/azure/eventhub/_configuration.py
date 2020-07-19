@@ -6,10 +6,22 @@ from typing import Optional, Dict
 
 from uamqp.constants import TransportType
 
+from ._constants import MAX_USER_AGENT_LENGTH
+
 
 class Configuration(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.user_agent = kwargs.get("user_agent")  # type: Optional[str]
+        if self.user_agent:
+            if len(self.user_agent) > MAX_USER_AGENT_LENGTH:
+                raise ValueError(
+                    "The user-agent string cannot be more than {} in length."
+                    "The length of the provided string is: {}".format(
+                        MAX_USER_AGENT_LENGTH, len(self.user_agent)
+                    )
+                )
+            if ' ' in self.user_agent:
+                raise ValueError("The user-agent string must not contain a space.")
         self.retry_total = kwargs.get("retry_total", 3)  # type: int
         self.max_retries = self.retry_total  # type: int
         self.backoff_factor = kwargs.get("retry_backoff_factor", 0.8)  # type: float

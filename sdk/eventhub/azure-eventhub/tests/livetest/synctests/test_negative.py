@@ -124,3 +124,12 @@ def test_create_batch_with_too_large_size_sync(connection_str):
     with client:
         with pytest.raises(ValueError):
             client.create_batch(max_size_in_bytes=5 * 1024 * 1024)
+
+
+@pytest.mark.liveTest
+def test_create_client_invalid_user_agent_string(connection_str):
+    with pytest.raises(ValueError):
+        EventHubProducerClient.from_connection_string(connection_str, user_agent='D'*25)
+
+    with pytest.raises(ValueError):
+        EventHubConsumerClient.from_connection_string(connection_str, user_agent='a b')

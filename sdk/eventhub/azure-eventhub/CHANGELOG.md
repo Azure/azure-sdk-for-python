@@ -2,6 +2,10 @@
 
 ## 5.2.0b2 (Unreleased)
 
+**Bug fixes**
+
+- Fixed bug where user specified user agent string was appended to the built-in user agent string which should be placed front instead.
+
 
 ## 5.2.0b1 (2020-07-06)
 
