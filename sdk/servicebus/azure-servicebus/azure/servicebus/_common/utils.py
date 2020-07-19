@@ -102,7 +102,7 @@ def create_properties(user_agent=None):
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.
 
-    :param str user_agent: The user agent that should be appended to the built-in user agent string.
+    :param str user_agent: If specified, this will be added in front of the built-in user agent string.
 
     :rtype: dict
     """
