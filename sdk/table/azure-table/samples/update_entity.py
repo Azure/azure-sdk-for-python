@@ -17,22 +17,20 @@ class UpdateEntity(object):
 
     def update_entity(self):
         from azure.table import TableClient
-        from azure.core.exceptions import HttpResponseError
+        from azure.core.exceptions import ResourceNotFoundError
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
         try:
             # defaults to UpdateMode.merge
             table_client.update_entity(entity=self.entity)
-        except HttpResponseError as e:
-            print(e.response)
+        except ResourceNotFoundError:
+            print("Entity does not exist")
 
     def upsert_entity(self):
         from azure.table import TableClient
-        from azure.core.exceptions import HttpResponseError
         from azure.table._models import UpdateMode
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key)
-        try:
-            table_client.upsert_entity(entity=self.entity, mode=UpdateMode.replace)
-        except HttpResponseError as e:
-            print(e.response)
+
+        table_client.upsert_entity(entity=self.entity, mode=UpdateMode.replace)
+        # no error will be thrown - it will insert
