@@ -15,6 +15,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
+from typing import List, Union
 
 from uamqp import authentication
 
@@ -27,6 +28,7 @@ from .constants import (
     DEAD_LETTER_QUEUE_SUFFIX,
     TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
 )
+from .message import BatchMessage
 
 _log = logging.getLogger(__name__)
 
@@ -156,6 +158,25 @@ def generate_dead_letter_entity_name(
     )
 
     return entity_name
+
+
+def copy_messages_if_needed(messages):
+    # pylint: disable=protected-access
+    if isinstance(messages, BatchMessage):
+        return messages
+    try:
+        msgs_to_return = []
+        for each in messages:
+            try:
+                msgs_to_return.append(each._to_outgoing_message())
+            except AttributeError:
+                msgs_to_return.append(each)
+        return msgs_to_return
+    except TypeError:
+        try:
+            return messages._to_outgoing_message()
+        except AttributeError:
+            return messages
 
 
 class AutoLockRenew(object):
