@@ -112,7 +112,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
         poller = await client.begin_recognize_receipts_from_url(
             self.receipt_url_jpg,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         result = await poller.result()
@@ -163,7 +163,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
         poller = await client.begin_recognize_receipts_from_url(
             self.receipt_url_png,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
         result = await poller.result()
@@ -203,11 +203,11 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
-    async def test_receipt_url_include_text_content(self, client):
+    async def test_receipt_url_include_field_elements(self, client):
 
         poller = await client.begin_recognize_receipts_from_url(
             self.receipt_url_jpg,
-            include_text_content=True
+            include_field_elements=True
         )
         result = await poller.result()
 
@@ -218,10 +218,10 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         for field, value in receipt.__dict__.items():
             if field not in ["page_range", "pages", "fields", "form_type"]:
                 field = getattr(receipt, field)
-                self.assertTextContentHasValues(field.value_data.text_content, receipt.page_range.first_page_number)
+                self.assertTextContentHasValues(field.value_data.field_elements, receipt.page_range.first_page_number)
 
         for field, value in receipt.fields.items():
-            self.assertTextContentHasValues(value.value_data.text_content, receipt.page_range.first_page_number)
+            self.assertTextContentHasValues(value.value_data.field_elements, receipt.page_range.first_page_number)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -278,7 +278,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
     @GlobalClientPreparer()
     async def test_receipt_multipage_url(self, client):
 
-        poller = await client.begin_recognize_receipts_from_url(self.multipage_url_pdf, include_text_content=True)
+        poller = await client.begin_recognize_receipts_from_url(self.multipage_url_pdf, include_field_elements=True)
         result = await poller.result()
 
         self.assertEqual(len(result), 3)
@@ -321,7 +321,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
         poller = await client.begin_recognize_receipts_from_url(
             self.multipage_url_pdf,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
 

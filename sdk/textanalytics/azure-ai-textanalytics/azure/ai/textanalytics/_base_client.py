@@ -8,7 +8,7 @@ from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from ._policies import TextAnalyticsResponseHookPolicy
 from ._user_agent import USER_AGENT
-from ._generated import TextAnalyticsClient
+from ._multiapi import load_generated_api
 
 def _authentication_policy(credential):
     authentication_policy = None
@@ -26,7 +26,9 @@ def _authentication_policy(credential):
 
 class TextAnalyticsClientBase(object):
     def __init__(self, endpoint, credential, **kwargs):
-        self._client = TextAnalyticsClient(
+        api_version = kwargs.pop("api_version", None)
+        _TextAnalyticsClient = load_generated_api(api_version)
+        self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,
             sdk_moniker=USER_AGENT,

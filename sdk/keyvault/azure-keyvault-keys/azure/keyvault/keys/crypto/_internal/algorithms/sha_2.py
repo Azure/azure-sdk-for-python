@@ -11,6 +11,7 @@ from ..transform import DigestTransform
 
 class _Sha2DigestTransform(DigestTransform):
     def __init__(self, algorithm):
+        super(_Sha2DigestTransform, self).__init__()
         self._digest = hashes.Hash(algorithm=algorithm, backend=default_backend())
 
     def update(self, data):

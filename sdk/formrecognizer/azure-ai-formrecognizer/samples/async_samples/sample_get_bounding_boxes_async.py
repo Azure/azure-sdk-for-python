@@ -51,7 +51,7 @@ class GetBoundingBoxesSampleAsync(object):
             # Make sure your form's type is included in the list of form types the custom model can recognize
             with open(path_to_sample_forms, "rb") as f:
                 poller = await form_recognizer_client.begin_recognize_custom_forms(
-                    model_id=model_id, form=f, include_text_content=True
+                    model_id=model_id, form=f, include_field_elements=True
                 )
 
             forms = await poller.result()
@@ -79,9 +79,9 @@ class GetBoundingBoxesSampleAsync(object):
                             print("...Cell[{}][{}] has text '{}' with confidence {} based on the following words: ".format(
                                 cell.row_index, cell.column_index, cell.text, cell.confidence
                             ))
-                            # text_content is only populated if you set include_text_content to True in your function call to recognize_custom_forms
+                            # field_elements is only populated if you set include_field_elements to True in your function call to recognize_custom_forms
                             # It is a heterogeneous list of FormWord and FormLine.
-                            for content in cell.text_content:
+                            for content in cell.field_elements:
                                 if isinstance(content, FormWord):
                                     print("......Word '{}' within bounding box '{}' has a confidence of {}".format(
                                         content.text,

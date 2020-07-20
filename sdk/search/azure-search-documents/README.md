@@ -48,7 +48,7 @@ Use the Azure.Search.Documents client library to:
 Install the Azure Cognitive Search client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-search-documents --pre
+pip install azure-search-documents
 ```
 
 ### Prerequisites
@@ -94,7 +94,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 
-index_name = "nycjobs";
+index_name = "nycjobs"
 # Get the service endpoint and API key from the environment
 endpoint = os.environ["SEARCH_ENDPOINT"]
 key = os.environ["SEARCH_API_KEY"]
@@ -183,6 +183,13 @@ These are just a few of the basics - please [check out our Samples](samples) for
 much more.
 
 
+* [Querying](#querying)
+* [Creating an index](#creating-an-index)
+* [Adding documents to your index](#adding-documents-to-your-index)
+* [Retrieving a specific document from your index](#retrieving-a-specific-document-from-your-index)
+* [Async APIs](#async-apis)
+
+
 ### Querying
 
 Let's start by importing our namespaces.
@@ -218,7 +225,7 @@ for result in results:
 ```
 
 
-### Create an index
+### Creating an index
 
 You can use the `SearchIndexClient` to create a search index. Fields can be
 defined using convenient `SimpleField`, `SearchableField`, or `ComplexField`
@@ -268,6 +275,38 @@ result = client.create_index(index)
 ```
 
 
+### Adding documents to your index
+
+You can `Upload`, `Merge`, `MergeOrUpload`, and `Delete` multiple documents from
+an index in a single batched request.  There are
+[a few special rules for merging](https://docs.microsoft.com/rest/api/searchservice/addupdate-or-delete-documents#document-actions)
+to be aware of.
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents import SearchClient
+
+index_name = "hotels"
+endpoint = os.environ["SEARCH_ENDPOINT"]
+key = os.environ["SEARCH_API_KEY"]
+
+DOCUMENT = {
+    'Category': 'Hotel',
+    'hotelId': '1000',
+    'rating': 4.0,
+    'rooms': [],
+    'hotelName': 'Azure Inn',
+}
+
+search_client = SearchClient(endpoint, index_name, AzureKeyCredential(key))
+
+result = client.upload_documents(documents=[DOCUMENT])
+
+print("Upload of new document succeeded: {}".format(result[0].succeeded))
+```
+
+
 ### Retrieve a specific document from an index
 
 In addition to querying for documents using keywords and optional filters,
@@ -295,36 +334,6 @@ print("    Category: {}".format(result["Category"]))
 ```
 
 
-### Adding documents to your index
-
-You can `Upload`, `Merge`, `MergeOrUpload`, and `Delete` multiple documents from
-an index in a single batched request.  There are
-[a few special rules for merging](https://docs.microsoft.com/rest/api/searchservice/addupdate-or-delete-documents#document-actions)
-to be aware of.
-
-```python
-import os
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-
-index_name = "hotels"
-endpoint = os.environ["SEARCH_ENDPOINT"]
-key = os.environ["SEARCH_API_KEY"]
-
-DOCUMENT = {
-    'Category': 'Hotel',
-    'HotelId': '1000',
-    'Rating': 4.0,
-    'Rooms': [],
-    'HotelName': 'Azure Inn',
-}
-
-result = client.upload_documents(documents=[DOCUMENT])
-
-print("Upload of new document succeeded: {}".format(result[0].succeeded))
-```
-
-
 ### Async APIs
 This library includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
@@ -343,8 +352,10 @@ async with client:
   results = await client.search(search_text="hotel")
   async for result in results:
     print("{}: {})".format(result["hotelId"], result["hotelName"]))
+
 ...
 
+```
 
 ## Troubleshooting
 
