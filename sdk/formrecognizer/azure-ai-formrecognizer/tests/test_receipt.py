@@ -51,7 +51,7 @@ class TestReceiptFromStream(FormRecognizerTest):
             myfile = fd.read()
         poller = client.begin_recognize_receipts(
             myfile,
-            content_type=FormContentType.image_png
+            content_type=FormContentType.IMAGE_PNG
         )
         result = poller.result()
         self.assertIsNotNone(result)
@@ -149,7 +149,7 @@ class TestReceiptFromStream(FormRecognizerTest):
 
         poller = client.begin_recognize_receipts(
             receipt=myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
 
@@ -203,7 +203,7 @@ class TestReceiptFromStream(FormRecognizerTest):
 
         poller = client.begin_recognize_receipts(
             receipt=myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
 
@@ -297,10 +297,10 @@ class TestReceiptFromStream(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
-    def test_receipt_jpg_include_text_content(self, client):
+    def test_receipt_jpg_include_field_elements(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
-        poller = client.begin_recognize_receipts(receipt, include_text_content=True)
+        poller = client.begin_recognize_receipts(receipt, include_field_elements=True)
 
         result = poller.result()
         self.assertEqual(len(result), 1)
@@ -310,10 +310,10 @@ class TestReceiptFromStream(FormRecognizerTest):
         for field, value in receipt.__dict__.items():
             if field not in ["receipt_items", "page_range", "pages", "fields", "form_type"]:
                 form_field = getattr(receipt, field)
-                self.assertTextContentHasValues(form_field.value_data.text_content, receipt.page_range.first_page_number)
+                self.assertTextContentHasValues(form_field.value_data.field_elements, receipt.page_range.first_page_number)
 
         for field, value in receipt.fields.items():
-            self.assertTextContentHasValues(value.value_data.text_content, receipt.page_range.first_page_number)
+            self.assertTextContentHasValues(value.value_data.field_elements, receipt.page_range.first_page_number)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -321,7 +321,7 @@ class TestReceiptFromStream(FormRecognizerTest):
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
             receipt = fd.read()
-        poller = client.begin_recognize_receipts(receipt, include_text_content=True)
+        poller = client.begin_recognize_receipts(receipt, include_field_elements=True)
         result = poller.result()
 
         self.assertEqual(len(result), 3)
@@ -367,7 +367,7 @@ class TestReceiptFromStream(FormRecognizerTest):
 
         poller = client.begin_recognize_receipts(
             receipt=myfile,
-            include_text_content=True,
+            include_field_elements=True,
             cls=callback
         )
 

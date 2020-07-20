@@ -25,8 +25,7 @@ QUEUE_NAME = "sb_mgmt_demo_queue"
 
 def create_queue(servicebus_mgmt_client):
     print("-- Create Queue")
-    queue_description = QueueDescription()
-    queue_description.queue_name = QUEUE_NAME
+    queue_description = QueueDescription(QUEUE_NAME)
     # You can adjust the settings of a queue when creating.
     # Please refer to the QueueDescription class for available settings.
     queue_description.max_delivery_count = 10
@@ -46,17 +45,15 @@ def delete_queue(servicebus_mgmt_client):
 
 def list_queues(servicebus_mgmt_client):
     print("-- List Queues")
-    queues = servicebus_mgmt_client.list_queues()
-    print("Number of Queues in the ServiceBus Namespace:", len(queues))
-    for queue_description in queues:
-        print("Queue Name:", queue_description.queue_name)
+    for queue_description in servicebus_mgmt_client.list_queues():
+        print("Queue Name:", queue_description.name)
     print("")
 
 
 def get_and_update_queue(servicebus_mgmt_client):
     print("-- Get and Update Queue")
     queue_description = servicebus_mgmt_client.get_queue(QUEUE_NAME)
-    print("Queue Name:", queue_description.queue_name)
+    print("Queue Name:", queue_description.name)
     print("Queue Settings:")
     print("Auto Delete on Idle:", queue_description.auto_delete_on_idle)
     print("Default Message Time to Live:", queue_description.default_message_time_to_live)
@@ -70,7 +67,7 @@ def get_and_update_queue(servicebus_mgmt_client):
 def get_queue_runtime_info(servicebus_mgmt_client):
     print("-- Get Queue Runtime Info")
     queue_runtime_info = servicebus_mgmt_client.get_queue_runtime_info(QUEUE_NAME)
-    print("Queue Name:", queue_runtime_info.queue_name)
+    print("Queue Name:", queue_runtime_info.name)
     print("Queue Runtime Info:")
     print("Updated at:", queue_runtime_info.updated_at)
     print("Size in Bytes:", queue_runtime_info.size_in_bytes)
@@ -79,10 +76,9 @@ def get_queue_runtime_info(servicebus_mgmt_client):
     print("")
 
 
-servicebus_mgmt_client = ServiceBusManagementClient.from_connection_string(CONNECTION_STR)
-
-create_queue(servicebus_mgmt_client)
-list_queues(servicebus_mgmt_client)
-get_and_update_queue(servicebus_mgmt_client)
-get_queue_runtime_info(servicebus_mgmt_client)
-delete_queue(servicebus_mgmt_client)
+with ServiceBusManagementClient.from_connection_string(CONNECTION_STR) as servicebus_mgmt_client:
+    create_queue(servicebus_mgmt_client)
+    list_queues(servicebus_mgmt_client)
+    get_and_update_queue(servicebus_mgmt_client)
+    get_queue_runtime_info(servicebus_mgmt_client)
+    delete_queue(servicebus_mgmt_client)

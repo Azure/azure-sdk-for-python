@@ -41,7 +41,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageBlockBlobTestAsync(AsyncStorageTestCase):
+class StorageBlockBlobAsyncTest(AsyncStorageTestCase):
     async def _setup(self, storage_account, key):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
@@ -166,6 +166,28 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         copy_props = await dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True)
 
         # Assert
+        self.assertIsNotNone(copy_props)
+        self.assertIsNotNone(copy_props['copy_id'])
+        self.assertEqual('success', copy_props['copy_status'])
+
+        # Verify content
+        content = await (await dest_blob.download_blob()).readall()
+        self.assertEqual(self.source_blob_data, content)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_sync_copy_blob_returns_vid(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._setup(storage_account, storage_account_key)
+        dest_blob_name = self.get_resource_name('destblob')
+        dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
+
+        # Act
+        copy_props = await dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True)
+
+        # Assert
+        self.assertIsNotNone(copy_props['version_id'])
         self.assertIsNotNone(copy_props)
         self.assertIsNotNone(copy_props['copy_id'])
         self.assertEqual('success', copy_props['copy_status'])
