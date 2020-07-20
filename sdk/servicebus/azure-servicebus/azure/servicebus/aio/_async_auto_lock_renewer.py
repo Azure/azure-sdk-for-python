@@ -76,7 +76,7 @@ class AutoLockRenew:
                                renewable: "Union[ReceivedMessage, ServiceBusSession]",
                                starttime: datetime.datetime,
                                timeout: int,
-                               on_lock_renew_failure: "Optional[Callable[[Union[ServiceBusSession, ReceivedMessage]], Awaitable[None]]]"=None) -> None:
+                               on_lock_renew_failure: "Optional[Callable[[Union[ServiceBusSession, ReceivedMessage], Optional[Exception]], Awaitable[None]]]"=None) -> None:
         _log.debug("Running async lock auto-renew for %r seconds", timeout)
         error = None
         clean_shutdown = False # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
@@ -101,7 +101,7 @@ class AutoLockRenew:
             renewable.auto_renew_error = error
         finally:
             if on_lock_renew_failure and not clean_shutdown:
-                await on_lock_renew_failure(renewable)
+                await on_lock_renew_failure(renewable, error)
 
     def register(self,
                  renewable: "Union[ReceivedMessage, ServiceBusSession]",

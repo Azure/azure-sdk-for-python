@@ -478,7 +478,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await sender.send_messages(message)
 
             results = []
-            async def lock_lost_callback(renewable):
+            async def lock_lost_callback(renewable, error):
                 results.append(renewable)
 
             renewer = AutoLockRenew()

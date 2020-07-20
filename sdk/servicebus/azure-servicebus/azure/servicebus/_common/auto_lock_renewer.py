@@ -98,7 +98,7 @@ class AutoLockRenew(object):
             renewable.auto_renew_error = error
         finally:
             if on_lock_renew_failure and not clean_shutdown:
-                on_lock_renew_failure(renewable)
+                on_lock_renew_failure(renewable, error)
 
     def register(self, renewable, timeout=300, on_lock_renew_failure=None):
         """Register a renewable entity for automatic lock renewal.
@@ -108,7 +108,7 @@ class AutoLockRenew(object):
          ~azure.servicebus.ServiceBusSession
         :param float timeout: A time in seconds that the lock should be maintained for.
          Default value is 300 (5 minutes).
-        :param Optional[Callable[[Union[~azure.servicebus.ServiceBusSession, ReceivedMessage]], Awaitable[None]]] on_lock_renew_failure: 
+        :param Optional[Callable[[Union[~azure.servicebus.ServiceBusSession, ReceivedMessage], Optional[Exception]], Awaitable[None]]] on_lock_renew_failure: 
          A callback may be specified to be called when the lock is lost on the renewable that is being registered.
          Default value is None (no callback).
         """

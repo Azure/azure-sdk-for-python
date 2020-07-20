@@ -1108,8 +1108,11 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     async def test_async_queue_mock_auto_lock_renew_callback(self):
         results = []
-        async def callback_mock(renewable):
+        errors = []
+        async def callback_mock(renewable, error):
             results.append(renewable)
+            if error:
+                errors.append(error)
 
         auto_lock_renew = AutoLockRenew()
         auto_lock_renew.renew_period = 1 # So we can run the test fast.
@@ -1118,6 +1121,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
             await asyncio.sleep(3)
             assert len(results) and results[-1].expired == True
+            assert not errors
 
         auto_lock_renew = AutoLockRenew()
         auto_lock_renew.renew_period = 1
@@ -1125,6 +1129,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             auto_lock_renew.register(renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
             await asyncio.sleep(3)
             assert len(results) == 1
+            assert not errors
 
         auto_lock_renew = AutoLockRenew()
         auto_lock_renew.renew_period = 1
@@ -1134,6 +1139,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             message.settled = True
             await asyncio.sleep(3)
             assert len(results) == 1
+            assert not errors
 
         auto_lock_renew = AutoLockRenew()
         auto_lock_renew.renew_period = 1
@@ -1142,6 +1148,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
             await asyncio.sleep(3)
             assert len(results) == 2 and results[-1].expired == True
+            assert errors[-1]
 
         auto_lock_renew = AutoLockRenew()
         auto_lock_renew.renew_period = 1
@@ -1151,6 +1158,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             await auto_lock_renew.close()
             await asyncio.sleep(3)
             assert len(results) == 2
+            assert len(errors) == 1
 
         auto_lock_renew = AutoLockRenew()
         auto_lock_renew.renew_period = 1
@@ -1160,6 +1168,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             message._receiver._running = False
             await asyncio.sleep(3)
             assert len(results) == 2
+            assert len(errors) == 1
 
 
     @pytest.mark.asyncio

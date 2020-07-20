@@ -547,7 +547,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     sender.send_messages(message)
 
             results = []
-            def lock_lost_callback(renewable):
+            def lock_lost_callback(renewable, error):
                 results.append(renewable)
 
             renewer = AutoLockRenew()
