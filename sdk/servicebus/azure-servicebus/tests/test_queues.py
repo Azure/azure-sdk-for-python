@@ -1234,28 +1234,36 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
-            with sb_client.get_queue_receiver(servicebus_queue.name,
-                                              prefetch=20) as receiver:
-                with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                    content = str(uuid.uuid4())
-                    message_id_a = uuid.uuid4()
-                    message_a = Message(content)
-                    message_a.message_id = message_id_a
-                    message_id_b = uuid.uuid4()
-                    message_b = Message(content)
-                    message_b.message_id = message_id_b
-                    message_arry = [message_a, message_b]
-                    for message in message_arry:
-                        message.properties = {'key': 'value'}
-                        message.label = 'label'
-                        message.content_type = 'application/text'
-                        message.correlation_id = 'cid'
-                        message.partition_key = 'pk'
-                        message.via_partition_key = 'via_pk'
-                        message.to = 'to'
-                        message.reply_to = 'reply_to'
-                    tokens = sender.schedule_messages(message_arry, enqueue_time)
-                    assert len(tokens) == 2
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, prefetch=20)
+
+            with sender, receiver:
+                content = str(uuid.uuid4())
+                message_id_a = uuid.uuid4()
+                message_a = Message(content)
+                message_a.message_id = message_id_a
+                message_id_b = uuid.uuid4()
+                message_b = Message(content)
+                message_b.message_id = message_id_b
+                message_arry = [message_a, message_b]
+                for message in message_arry:
+                    message.properties = {'key': 'value'}
+                    message.label = 'label'
+                    message.content_type = 'application/text'
+                    message.correlation_id = 'cid'
+                    message.partition_key = 'pk'
+                    message.via_partition_key = 'via_pk'
+                    message.to = 'to'
+                    message.reply_to = 'reply_to'
+
+                sender.send_messages(message_arry)
+
+                received_messages = receiver.receive_messages(max_batch_size=2, max_wait_time=5)
+                for message in received_messages:
+                    message.complete()
+
+                tokens = sender.schedule_messages(received_messages, enqueue_time)
+                assert len(tokens) == 2
     
                 messages = receiver.receive_messages(max_wait_time=120)
                 messages.extend(receiver.receive_messages(max_wait_time=5))

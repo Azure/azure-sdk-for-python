@@ -156,7 +156,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     def _from_received_message(cls, received_message):
         # type: (Message) -> Message
         amqp_message = received_message.message
-        amqp_body = amqp_message._body
+        amqp_body = amqp_message._body  # pylint: disable=protected-access
 
         if isinstance(amqp_body, uamqp.message.DataBody):
             body = b''.join(amqp_body.data)

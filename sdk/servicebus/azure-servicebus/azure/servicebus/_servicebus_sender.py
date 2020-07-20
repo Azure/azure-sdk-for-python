@@ -69,7 +69,7 @@ class SenderMixin(object):
                 raise ValueError("Scheduling batch messages only supports iterables containing Message Objects."
                                  " Received instead: {}".format(message.__class__.__name__))
             if isinstance(message, (PeekMessage, ReceivedMessageBase)):
-                message = Message._from_received_message(message)
+                message = Message._from_received_message(message)  # pylint: disable=protected-access
             message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
