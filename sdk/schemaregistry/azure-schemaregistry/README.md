@@ -1,0 +1,1 @@
+## azure-schemaregistry is under construction
