@@ -95,7 +95,7 @@ class EnvironmentCredential(object):
             else:
                 _LOGGER.info("No environment configuration found.")
 
-    @log_get_token(_LOGGER, "EnvironmentCredential")
+    @log_get_token("EnvironmentCredential")
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.

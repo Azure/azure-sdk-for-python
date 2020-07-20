@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
-
 from .. import CredentialUnavailableError
 from .._constants import AZURE_CLI_CLIENT_ID
 from .._internal import AadClient
@@ -19,8 +17,6 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any
     from .._internal import AadClientBase
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class SharedTokenCacheCredential(SharedTokenCacheBase):
@@ -41,7 +37,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         is unavailable. Defaults to False.
     """
 
-    @log_get_token(_LOGGER, "SharedTokenCacheCredential")
+    @log_get_token("SharedTokenCacheCredential")
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type (*str, **Any) -> AccessToken
         """Get an access token for `scopes` from the shared cache.

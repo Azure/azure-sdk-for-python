@@ -8,11 +8,12 @@ import logging
 from six import raise_from
 from azure.core.exceptions import ClientAuthenticationError
 
+_LOGGER = logging.getLogger(__name__)
 
-def log_get_token(logger, class_name):
+
+def log_get_token(class_name):
     """Adds logging around get_token calls.
 
-    :param logging.RootLogger logger: logger instance which will receive messages
     :param str class_name: required for the sake of Python 2.7, which lacks an easy way to get the credential's class
         name from the decorated function
     """
@@ -24,10 +25,10 @@ def log_get_token(logger, class_name):
         def wrapper(*args, **kwargs):
             try:
                 token = fn(*args, **kwargs)
-                logger.info("%s succeeded", qualified_name)
+                _LOGGER.info("%s succeeded", qualified_name)
                 return token
             except Exception as ex:
-                logger.warning("%s failed: %s", qualified_name, ex, exc_info=logger.isEnabledFor(logging.DEBUG))
+                _LOGGER.warning("%s failed: %s", qualified_name, ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
                 raise
 
         return wrapper

@@ -60,7 +60,7 @@ class ManagedIdentityCredential(object):
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
 
-    @log_get_token(_LOGGER, "ManagedIdentityCredential")
+    @log_get_token("ManagedIdentityCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.

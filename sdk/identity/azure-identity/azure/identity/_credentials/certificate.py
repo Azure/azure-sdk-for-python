@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
 from typing import TYPE_CHECKING
 
 from .._internal import AadClient, CertificateCredentialBase
@@ -11,8 +10,6 @@ from .._internal.decorators import log_get_token
 if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
     from typing import Any
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class CertificateCredential(CertificateCredentialBase):
@@ -34,7 +31,7 @@ class CertificateCredential(CertificateCredentialBase):
           is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
-    @log_get_token(_LOGGER, "CertificateCredential")
+    @log_get_token("CertificateCredential")
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
