@@ -32,12 +32,6 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 pip uninstall azure
 ```
 
-## Usage
-
-For code examples, see [DocumentDB
-Management](https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-documentdb.html)
-on readthedocs.org.
-
 ## Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in
