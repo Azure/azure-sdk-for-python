@@ -21,6 +21,7 @@ def raise_error(response, errors, message):
     message += "({}) {}\n".format(errors[0]["code"], errors[0]["message"])
     error = HttpResponseError(message=message, response=response)
     error.error = ODataV4Format(errors[0])
+    error.error.message = message
     raise error
 
 
