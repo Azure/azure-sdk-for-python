@@ -6,7 +6,6 @@
 
 - Fixed bug where user specified user agent string was appended to the built-in user agent string which should be placed front instead.
 
-
 ## 5.2.0b1 (2020-07-06)
 
 **New Features**

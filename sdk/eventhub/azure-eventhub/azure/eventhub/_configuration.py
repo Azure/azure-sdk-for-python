@@ -3,25 +3,28 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from typing import Optional, Dict
+import logging
 
 from uamqp.constants import TransportType
 
-from ._constants import MAX_USER_AGENT_LENGTH
+from ._constants import MAX_USER_DEFINED_USER_AGENT_LENGTH
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class Configuration(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.user_agent = kwargs.get("user_agent")  # type: Optional[str]
         if self.user_agent:
-            if len(self.user_agent) > MAX_USER_AGENT_LENGTH:
-                raise ValueError(
-                    "The user-agent string cannot be more than {} in length."
+            if len(self.user_agent) > MAX_USER_DEFINED_USER_AGENT_LENGTH:
+                _LOGGER.warning(
+                    "The user-defined user-agent string cannot be more than {} in length."
                     "The length of the provided string is: {}".format(
-                        MAX_USER_AGENT_LENGTH, len(self.user_agent)
+                        MAX_USER_DEFINED_USER_AGENT_LENGTH, len(self.user_agent)
                     )
                 )
             if ' ' in self.user_agent:
-                raise ValueError("The user-agent string must not contain a space.")
+                _LOGGER.warning("The user-agent string must not contain a space.")
         self.retry_total = kwargs.get("retry_total", 3)  # type: int
         self.max_retries = self.retry_total  # type: int
         self.backoff_factor = kwargs.get("retry_backoff_factor", 0.8)  # type: float

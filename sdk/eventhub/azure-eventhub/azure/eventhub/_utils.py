@@ -92,6 +92,14 @@ def create_properties(user_agent=None):
     if user_agent:
         final_user_agent = "{} {}".format(user_agent, final_user_agent)
 
+    if len(final_user_agent) > MAX_USER_AGENT_LENGTH:
+        raise ValueError(
+            "The user-agent string cannot be more than {} in length."
+            "Current user_agent string is: {} with length: {}".format(
+                MAX_USER_AGENT_LENGTH, final_user_agent, len(final_user_agent)
+            )
+        )
+
     properties[types.AMQPSymbol("user-agent")] = final_user_agent
     return properties
 
