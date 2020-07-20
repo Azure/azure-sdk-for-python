@@ -94,12 +94,12 @@ from ._long_term_retention_managed_instance_backups_operations import LongTermRe
 from ._managed_instance_long_term_retention_policies_operations import ManagedInstanceLongTermRetentionPoliciesOperations
 from ._workload_groups_operations import WorkloadGroupsOperations
 from ._workload_classifiers_operations import WorkloadClassifiersOperations
-from ._managed_database_restore_details_operations import ManagedDatabaseRestoreDetailsOperations
-from ._managed_databases_operations import ManagedDatabasesOperations
 from ._server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from ._managed_instance_operations import ManagedInstanceOperations
 from ._sync_groups_operations import SyncGroupsOperations
 from ._sync_members_operations import SyncMembersOperations
+from ._managed_database_restore_details_operations import ManagedDatabaseRestoreDetailsOperations
+from ._managed_databases_operations import ManagedDatabasesOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -187,10 +187,10 @@ __all__ = [
     'ManagedInstanceLongTermRetentionPoliciesOperations',
     'WorkloadGroupsOperations',
     'WorkloadClassifiersOperations',
-    'ManagedDatabaseRestoreDetailsOperations',
-    'ManagedDatabasesOperations',
     'ServerAzureADAdministratorsOperations',
     'ManagedInstanceOperations',
     'SyncGroupsOperations',
     'SyncMembersOperations',
+    'ManagedDatabaseRestoreDetailsOperations',
+    'ManagedDatabasesOperations',
 ]
