@@ -345,7 +345,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         parameters = self._models.CertificateImportParameters(
             base64_encoded_certificate=base64_encoded_certificate,
             password=kwargs.pop("password", None),
-            certificate_policy=policy._to_certificate_policy_bundle(),
+            certificate_policy=policy._to_certificate_policy_bundle() if policy else None,
             certificate_attributes=attributes,
             tags=None,
         )
@@ -353,10 +353,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         bundle = await self._client.import_certificate(
             vault_base_url=self.vault_url,
             certificate_name=certificate_name,
-            base64_encoded_certificate=base64_encoded_certificate,
-            password=password,
-            certificate_policy=policy._to_certificate_policy_bundle() if policy else None,
-            certificate_attributes=attributes,
+            parameters=parameters,
             error_map=_error_map,
             **kwargs
         )

@@ -368,7 +368,7 @@ class CertificateClient(KeyVaultClientBase):
 
         parameters = self._models.CertificateImportParameters(
             base64_encoded_certificate=base64_encoded_certificate,
-            password=password,
+            password=kwargs.pop("password", None),
             certificate_policy=policy._to_certificate_policy_bundle() if policy else None,
             certificate_attributes=attributes,
             tags=None,
