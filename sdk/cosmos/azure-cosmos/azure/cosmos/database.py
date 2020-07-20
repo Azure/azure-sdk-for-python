@@ -178,7 +178,8 @@ class DatabaseProxy(object):
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
-            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -273,7 +274,8 @@ class DatabaseProxy(object):
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
-            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
