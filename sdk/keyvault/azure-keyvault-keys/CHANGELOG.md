@@ -37,7 +37,7 @@ as a context manager, a `KeyClient` closes opened sockets on exit.
 ### Breaking changes:
 - Removed `KeyClient.get_cryptography_client()` and `CryptographyClient.get_key()`
 - Moved the optional parameters of several methods into kwargs (
-[docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html)
+[docs](https://azure.github.io/azure-sdk-for-python/ref/Keyvault.html#azure-keyvault-keys)
 detail the new keyword arguments):
   - `create_key` now has positional parameters `name` and `key_type`
   - `create_ec_key` and `create_rsa_key` now have one positional parameter, `name`
@@ -70,7 +70,7 @@ been renamed to `KeyCurveName`, `KeyOperation`, and `KeyType`, respectively.
 - `Key` now has attribute `properties`, which holds certain properties of the
 key, such as `version`. This changes the shape of the returned `Key` type,
 as certain properties of `Key` (such as `version`) have to be accessed
-through the `properties` property. See the updated [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html)
+through the `properties` property. See the updated [docs](https://azure.github.io/azure-sdk-for-python/ref/Keyvault.html#azure-keyvault-keys)
 for details.
 - `update_key` has been renamed to `update_key_properties`
 - The `vault_url` parameter of `KeyClient` has been renamed to `vault_endpoint`
