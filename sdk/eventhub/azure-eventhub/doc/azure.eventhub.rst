@@ -45,6 +45,10 @@ azure.eventhub package
         :members:
         :undoc-members:
         :inherited-members:
+    .. autoclass:: azure.eventhub.LoadBalancingStrategy
+        :members:
+        :undoc-members:
+        :inherited-members:
 
 
 Subpackages

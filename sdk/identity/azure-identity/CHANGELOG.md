@@ -1,6 +1,9 @@
 # Release History
 
-## 1.4.0b6 (Unreleased)
+## 1.4.0b7 (Unreleased)
+
+
+## 1.4.0b6 (2020-07-07)
 - `AzureCliCredential` no longer raises an exception due to unexpected output
   from the CLI when run by PyCharm (thanks @NVolcz)
   ([#11362](https://github.com/Azure/azure-sdk-for-python/pull/11362))

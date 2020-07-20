@@ -22,7 +22,7 @@ QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 def schedule_single_message(sender):
     message = Message("Message to be scheduled")
     scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
-    sequence_number = sender.schedule(message, scheduled_time_utc)
+    sequence_number = sender.schedule_messages(message, scheduled_time_utc)
     return sequence_number
 
 
@@ -32,7 +32,7 @@ def schedule_multiple_messages(sender):
         messages_to_schedule.append(Message("Message to be scheduled"))
 
     scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
-    sequence_numbers = sender.schedule(messages_to_schedule, scheduled_time_utc)
+    sequence_numbers = sender.schedule_messages(messages_to_schedule, scheduled_time_utc)
     return sequence_numbers
 
 

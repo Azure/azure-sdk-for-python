@@ -1,13 +1,24 @@
-# Change Log azure-ai-formrecognizer
+# Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b5 (Unreleased)
 
 **Breaking Changes**
 
-- Remove `RecognizedReceipts` Class.
+- Values are now capitalized for enums `FormContentType`, `LengthUnit`, `TrainingStatus`, and `CustomFormModelStatus`
+
+## 1.0.0b4 (2020-07-07)
+
+**Breaking Changes**
+
+- `RecognizedReceipts` class has been removed.
 - `begin_recognize_receipts` and `begin_recognize_receipts_from_url` now return `RecognizedForm`.
-- `requested_on` renamed to `training_started_on` and `completed_on` renamed to `training_completed_on` on `CustomFormModel`
-and `CustomFormModelInfo`
+- `requested_on` has been renamed to `training_started_on` and `completed_on` renamed to `training_completed_on` on `
+CustomFormModel` and `CustomFormModelInfo`
+- `FieldText` has been renamed to `FieldData`
+- `FormContent` has been renamed to `FormElement`
+- Parameter `include_text_content` has been renamed to `include_field_elements` for 
+`begin_recognize_receipts`, `begin_recognize_receipts_from_url`, `begin_recognize_custom_forms`, and `begin_recognize_custom_forms_from_url`
+- `text_content` has been renamed to `field_elements` on `FieldData` and `FormTableCell`
 
 **Fixes and improvements**
 

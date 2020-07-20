@@ -125,6 +125,8 @@ See the full details regarding [authentication][cognitive_authentication] of cog
  - Recognizing common fields from US receipts, using a pre-trained receipt model on the Form Recognizer service. These fields and meta-data are returned in a collection of `RecognizedForm` objects.
  - Recognizing form content, including tables, lines and words, without the need to train a model. Form content is returned in a collection of `FormPage` objects.
 
+Sample code snippets are provided to illustrate using a FormRecognizerClient [here](#recognize-forms-using-a-custom-model "Recognize Forms Using a Custom Model").
+
 ### FormTrainingClient
 `FormTrainingClient` provides operations for:
 
@@ -134,6 +136,8 @@ See the full details regarding [authentication][cognitive_authentication] of cog
 - Copying a custom model from one Form Recognizer resource to another.
 
 Please note that models can also be trained using a graphical user interface such as the [Form Recognizer Labeling Tool][fr-labeling-tool].
+
+Sample code snippets are provided to illustrate using a FormTrainingClient [here](#train-a-model "Train a model").
 
 ### Long-Running Operations
 Long-running operations are operations which consist of an initial request sent to the service to start an operation,
@@ -189,7 +193,7 @@ all the recognize methods.
 
 
 ```
-form_url_jpg = "<url_of_the_form>"
+form_url = "<url_of_the_form>"
 poller = form_recognizer_client.begin_recognize_custom_forms_from_url(model_id=model_id, form_url=form_url)
 result = poller.result()
 ```
@@ -350,7 +354,7 @@ describes available configurations for retries, logging, transport protocols, an
 ## Troubleshooting
 
 ### General
-Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_ref_docs].
+Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
 
 ### Logging
 This library uses the standard
@@ -442,6 +446,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
+[azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [python_logging]: https://docs.python.org/3/library/logging.html
 [multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
