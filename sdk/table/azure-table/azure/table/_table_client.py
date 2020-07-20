@@ -390,7 +390,7 @@ class TableClient(StorageAccountHostsMixin):
         """Lists entities in a table.
 
         :param filter: Specify a filter to return certain entities
-        :type: str
+        :type filter : str
         :keyword int results_per_page: Number of entities per page in return ItemPaged
         :keyword str select: Specify desired properties of an entity to return certain entities
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
