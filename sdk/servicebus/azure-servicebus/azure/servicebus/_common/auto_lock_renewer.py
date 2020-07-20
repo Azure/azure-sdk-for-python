@@ -48,7 +48,7 @@ class AutoLockRenew(object):
     """
 
     def __init__(self, executor=None, max_workers=None):
-        self.executor = executor or ThreadPoolExecutor(max_workers=max_workers)
+        self._executor = executor or ThreadPoolExecutor(max_workers=max_workers)
         self._shutdown = threading.Event()
         self.sleep_time = 1
         self.renew_period = 10
@@ -116,7 +116,7 @@ class AutoLockRenew(object):
             raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         starttime = renewable_start_time(renewable)
-        self.executor.submit(self._auto_lock_renew, renewable, starttime, timeout, on_lock_renew_failure)
+        self._executor.submit(self._auto_lock_renew, renewable, starttime, timeout, on_lock_renew_failure)
 
     def close(self, wait=True):
         """Cease autorenewal by shutting down the thread pool to clean up any remaining lock renewal threads.
@@ -125,4 +125,4 @@ class AutoLockRenew(object):
         :type wait: bool
         """
         self._shutdown.set()
-        self.executor.shutdown(wait=wait)
+        self._executor.shutdown(wait=wait)

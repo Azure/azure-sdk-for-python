@@ -48,7 +48,7 @@ class AutoLockRenew:
     def __init__(self, loop: Optional[asyncio.BaseEventLoop] = None) -> None:
         self._shutdown = asyncio.Event()
         self._futures = []
-        self.loop = loop or get_running_loop()
+        self._loop = loop or get_running_loop()
         self.sleep_time = 1
         self.renew_period = 10
 
@@ -121,7 +121,7 @@ class AutoLockRenew:
             raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         starttime = renewable_start_time(renewable)
-        renew_future = asyncio.ensure_future(self._auto_lock_renew(renewable, starttime, timeout, on_lock_renew_failure), loop=self.loop)
+        renew_future = asyncio.ensure_future(self._auto_lock_renew(renewable, starttime, timeout, on_lock_renew_failure), loop=self._loop)
         self._futures.append(renew_future)
 
     async def close(self) -> None:
