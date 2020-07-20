@@ -30,6 +30,7 @@ from azure.table._shared._error import _validate_table_name
 
 
 class TableServiceClient(StorageAccountHostsMixin):
+    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
     def __init__(
             self, account_url,  # type: str
             credential=None,  # type: Union[str,TokenCredential]

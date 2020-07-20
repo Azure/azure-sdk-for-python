@@ -139,7 +139,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return self._format_url(self._hosts[LocationMode.PRIMARY])
 
     @property
-    def primary_hostname(self):
+    def _primary_hostname(self):
         """The hostname of the primary endpoint.
 
         :type: str
@@ -183,7 +183,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return self._location_mode
 
     @_location_mode.setter
-    def location_mode(self, value):
+    def _location_mode(self, value):
         if self._hosts.get(value):
             self._location_mode = value
             self._client._config.url = self.url  # pylint: disable=protected-access

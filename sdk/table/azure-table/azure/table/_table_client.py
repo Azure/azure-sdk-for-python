@@ -34,6 +34,7 @@ from ._shared.response_handlers import return_headers_and_deserialized
 
 
 class TableClient(StorageAccountHostsMixin):
+    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
     def __init__(
             self, account_url,  # type: str
             table_name,  # type: str
@@ -54,6 +55,7 @@ class TableClient(StorageAccountHostsMixin):
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
         :type credential: Union[str,TokenCredential]
+
         :returns: None
         """
 

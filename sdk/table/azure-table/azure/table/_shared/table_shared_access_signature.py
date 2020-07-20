@@ -64,12 +64,36 @@ def generate_account_sas(
     """
     _validate_not_none('account_name', account_name)
     _validate_not_none('account_key', account_key)
-    # TODO: from_string for permissions
+    permission = _from_string(permission)
     sas = TableSharedAccessSignature(account_name, account_key)
     return sas.generate_account(TableServices(), resource_types, permission,
                                 expiry, start=kwargs.pop('start', None),
                                 ip_address_or_range=kwargs.pop('ip_address_or_range', None),
                                 protocol=kwargs.pop('protocol', None))
+
+
+def _from_string(cls, permission, **kwargs):  # pylint:disable=W0613
+    """Create AccountSasPermissions from a string.
+
+        To specify read, write, delete, etc. permissions you need only to
+        include the first letter of the word in the string. E.g. for read and write
+        permissions you would provide a string "rw".
+
+        :param str permission: Specify permissions in
+            the string with the first letter of the word.
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: A AccountSasPermissions object
+        :rtype: ~azure.table.AccountSasPermissions
+        """
+    p_query = 'r' in permission
+    p_add = 'a' in permission
+    p_delete = 'd' in permission
+    p_update = 'u' in permission
+
+    parsed = cls(
+        **dict(kwargs, query=p_query, add=p_add, delete=p_delete, update=p_update))
+    parsed._str = permission  # pylint: disable = W0201
+    return parsed
 
 
 def generate_table_sas(
