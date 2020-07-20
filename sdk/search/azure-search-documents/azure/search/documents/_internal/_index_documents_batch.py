@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
+from threading import Lock
 
 from ._generated.models import IndexAction
 
@@ -31,6 +32,7 @@ class IndexDocumentsBatch(object):
     def __init__(self):
         # type: () -> None
         self._actions = []  # type: List[IndexAction]
+        self._lock = Lock()
 
     def __repr__(self):
         # type: () -> str
@@ -110,10 +112,30 @@ class IndexDocumentsBatch(object):
         """
         return list(self._actions)
 
+    def dequeue_actions(self):
+        # type: () -> List[IndexAction]
+        """Get the list of currently configured index actions and clear it.
+
+        :rtype: List[IndexAction]
+        """
+        with self._lock:
+            result = self._actions.copy()
+            self._actions.clear()
+        return result
+
+    def Enqueue_actions(self, new_actions):
+        # type: (List[IndexAction]) -> None
+        """Enqueue a list of configured index actions.
+           This is used for the case of partial success
+        """
+        with self._lock:
+            self._actions.extend(new_actions)
+
     def _extend_batch(self, documents, action_type):
         # type: (List[dict], str) -> None
         new_actions = [
             IndexAction(additional_properties=document, action_type=action_type)
             for document in documents
         ]
-        self._actions.extend(new_actions)
+        with self._lock:
+            self._actions.extend(new_actions)

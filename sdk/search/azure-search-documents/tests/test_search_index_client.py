@@ -246,7 +246,7 @@ class TestSearchClient(object):
         client.index_documents(batch, extra="foo")
         assert mock_index.called
         assert mock_index.call_args[0] == ()
-        assert len(mock_index.call_args[1]) == 3
+        assert len(mock_index.call_args[1]) == 4
         assert mock_index.call_args[1]["headers"] == client._headers
         assert mock_index.call_args[1]["extra"] == "foo"
         index_documents = mock_index.call_args[1]["batch"]
