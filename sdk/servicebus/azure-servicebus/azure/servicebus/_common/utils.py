@@ -102,7 +102,7 @@ def create_properties():
 
 def renewable_start_time(renewable):
     try:
-        return renewable.received_timestamp_utc
+        return renewable._received_timestamp_utc  # pylint: disable=protected-access
     except AttributeError:
         pass
     try:

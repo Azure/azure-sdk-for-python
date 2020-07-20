@@ -65,11 +65,11 @@ class AutoLockRenew(object):
     def _renewable(self, renewable):
         if self._shutdown.is_set():
             return False
-        if hasattr(renewable, 'settled') and renewable.settled:
+        if hasattr(renewable, '_settled') and renewable._settled:
             return False
         if not renewable._receiver._running:
             return False
-        if renewable.expired:
+        if renewable._lock_expired:
             return False
         return True
 
@@ -86,10 +86,10 @@ class AutoLockRenew(object):
                     _log.debug("%r seconds or less until lock expires - auto renewing.", self.renew_period)
                     renewable.renew_lock()
                 time.sleep(self.sleep_time)
-            clean_shutdown = not renewable.expired
+            clean_shutdown = not renewable._lock_expired
         except AutoLockRenewTimeout as e:
             renewable.auto_renew_error = e
-            clean_shutdown = not renewable.expired
+            clean_shutdown = not renewable._lock_expired
         except Exception as e:  # pylint: disable=broad-except
             _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
             error = AutoLockRenewFailed(

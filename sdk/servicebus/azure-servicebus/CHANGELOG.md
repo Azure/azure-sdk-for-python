@@ -4,6 +4,27 @@
 
 **New Features**
 
+* Added new properties to Message, PeekMessage and ReceivedMessage: `content_type`, `correlation_id`, `label`,
+`message_id`, `reply_to`, `reply_to_session_id` and `to`. Please refer to the docstring for further information.
+
+* Add new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
+`dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`. Please refer to the docstring for further information.
+
+**Breaking Changes**
+
+* Removed/Renamed several properties and instance variables on Message (the changes applied to the inherited Message type PeekMessage and ReceivedMessage).
+  - Renamed property `user_properties` to `properties`
+      - The original instance variable `properties` which represents the AMQP properties now becomes an internal instance variable `_amqp_properties`.
+  - Removed property `enqueue_sequence_number`.
+  - Removed property `annotations`.
+  - Removed instance variable `header`.
+
+* Removed several properties and instance variables on PeekMessage and ReceivedMessage.
+  - Removed proeprty `partition_id` on both type.
+  - Removed instance variable `received_timestamp_utc` on both type.
+  - Removed property `settled` on `PeekMessage`.
+  - Removed property `expired` on `ReceivedMessage`.
+
 * Add `on_lock_renew_failure` as a parameter to `AutoLockRenew.register`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion)
 
 **Breaking Changes**

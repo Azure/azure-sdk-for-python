@@ -64,9 +64,9 @@ class AutoLockRenew:
     def _renewable(self, renewable: "Union[ReceivedMessage, ServiceBusSession]") -> bool:
         if self._shutdown.is_set():
             return False
-        if hasattr(renewable, 'settled') and renewable.settled:
+        if hasattr(renewable, '_settled') and renewable._settled:
             return False
-        if renewable.expired:
+        if renewable._lock_expired:
             return False
         if not renewable._receiver._running:
             return False
@@ -89,10 +89,10 @@ class AutoLockRenew:
                     _log.debug("%r seconds or less until lock expires - auto renewing.", self.renew_period)
                     await renewable.renew_lock()
                 await asyncio.sleep(self.sleep_time)
-            clean_shutdown = not renewable.expired
+            clean_shutdown = not renewable._lock_expired
         except AutoLockRenewTimeout as e:
             renewable.auto_renew_error = e
-            clean_shutdown = not renewable.expired
+            clean_shutdown = not renewable._lock_expired
         except Exception as e:  # pylint: disable=broad-except
             _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
             error = AutoLockRenewFailed(
