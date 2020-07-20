@@ -202,7 +202,7 @@ class RecognizedForm(object):
 class FormField(object):
     """Represents a field recognized in an input form.
 
-    :ivar type: The type of the value found on FormField. Possible types include: 'string',
+    :ivar type: The type of `value` found on FormField. Possible types include: 'string',
         'date', 'time', 'phoneNumber', 'number', 'integer', 'object', or 'array'.
     :vartype type: str or ~azure.ai.formrecognizer.FieldValueType
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
@@ -211,7 +211,7 @@ class FormField(object):
         Contains the text, bounding box, and field elements for the field value.
     :ivar str name: The unique name of the field or label.
     :ivar value:
-        The value for the recognized field.
+        The value for the recognized field. Its semantic data type is described by `type`.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
         :class:`~azure.ai.formrecognizer.FormField`, or list[:class:`~azure.ai.formrecognizer.FormField`]
     :ivar float confidence:
