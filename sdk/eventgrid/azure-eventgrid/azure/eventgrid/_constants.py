@@ -4,3 +4,4 @@
 # --------------------------------------------------------------------------------------------
 
 EVENTGRID_KEY_HEADER = 'aeg-sas-key'
+EVENTGRID_TOKEN_HEADER = 'aeg-sas-token'

@@ -6,22 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._publisher_client import EventGridPublisherClient, EventGridPublisherClientConfiguration
-from ._decoder import EventGridDecoder
-from ._models import (
-    CloudEvent,
-    EventGridEvent,
-    EventContainer,
-    EventBatch
-)
+from ._publisher_client import EventGridPublisherClient
+from ._consumer import EventGridConsumer
+from ._common import generate_shared_access_signature
+from ._models import CloudEvent, CustomEvent, EventGridEvent, DeserializedEvent
 from .version import VERSION
 
-__all__ = ['EventGridPublisherClient', 'EventGridPublisherClientConfiguration', 'EventGridDecoder', 'CloudEvent', 'EventGridEvent', 'EventContainer', 'EventBatch']
+__all__ = ['EventGridPublisherClient', 'EventGridConsumer', 'CloudEvent', 'CustomEvent', 'DeserializedEvent', 'EventGridEvent', 'generate_shared_access_signature']
 __version__ = VERSION
-
-try:
-    from ._patch import patch_sdk
-    patch_sdk()
-except ImportError:
-    print('cannot import')
-    pass

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._event_grid_publisher_client import EventGridPublisherClient
+
 __all__ = ['EventGridPublisherClient']
 
 try:
