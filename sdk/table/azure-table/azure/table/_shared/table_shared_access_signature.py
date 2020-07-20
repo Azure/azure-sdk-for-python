@@ -9,10 +9,11 @@ from azure.table._shared._error import _validate_not_none
 from azure.table._shared.constants import X_MS_VERSION
 from azure.table._shared.shared_access_signature import _SharedAccessHelper, SharedAccessSignature, QueryStringConstants
 
+
 def generate_account_sas(
         account_name,  # type:str
         account_key,  # type:str
-        resource_types,   # type:ResourceTypes
+        resource_types,  # type:ResourceTypes
         permission,  # type:Union[str,AccountSasPermissions]
         expiry,  # type:Union[datetime,str]
         **kwargs  # type:Any
@@ -56,14 +57,14 @@ def generate_account_sas(
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
-    :keyword str protocol:
+    :keyword Union[str, SASProtocol] protocol:
         Specifies the protocol permitted for a request made.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
     _validate_not_none('account_name', account_name)
     _validate_not_none('account_key', account_key)
-    # TODO: Call from string factory function
+    # TODO: from_string for permissions
     sas = TableSharedAccessSignature(account_name, account_key)
     return sas.generate_account(TableServices(), resource_types, permission,
                                 expiry, start=kwargs.pop('start', None),
@@ -115,7 +116,7 @@ def generate_table_sas(
            For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
            restricts the request to those IP addresses.
        :keyword str policy_id: Access policy ID.
-       :keyword str protocol:
+       :keyword Union[str, SASProtocol] protocol:
            Specifies the protocol permitted for a request made.
        :keyword str end_rk: End row key
        :keyword str end_pk: End partition key
@@ -161,7 +162,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
         """
         super(TableSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
 
-    def generate_table(self, table_name, permission=None,   # pylint: disable = W0613
+    def generate_table(self, table_name, permission=None,  # pylint: disable = W0613
                        expiry=None, start=None, policy_id=None,
                        ip_address_or_range=None, protocol=None,
                        start_pk=None, start_rk=None,

@@ -13,7 +13,7 @@ from azure.table._table_service_client import TableServiceClient
 from ._models import (
     AccessPolicy,
     Metrics,
-    RetentionPolicy, TableAnalyticsLogging, TableSasPermissions, CorsRule, UpdateMode,
+    RetentionPolicy, TableAnalyticsLogging, TableSasPermissions, CorsRule, UpdateMode, SASProtocol,
 )
 from ._shared.models import (
     LocationMode,
@@ -48,4 +48,5 @@ __all__ = [
     'EdmType',
     'RetentionPolicy',
     'generate_table_sas',
+    'SASProtocol'
 ]

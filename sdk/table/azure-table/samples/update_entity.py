@@ -19,7 +19,7 @@ class UpdateEntity(object):
         from azure.table import TableClient
         from azure.core.exceptions import ResourceNotFoundError
 
-        table_client = TableClient(account_url=self.account_url, credential=self.access_key)
+        table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
         try:
             # defaults to UpdateMode.merge
             table_client.update_entity(entity=self.entity)
@@ -30,7 +30,7 @@ class UpdateEntity(object):
         from azure.table import TableClient
         from azure.table._models import UpdateMode
 
-        table_client = TableClient(account_url=self.account_url, credential=self.access_key)
+        table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
 
         table_client.upsert_entity(entity=self.entity, mode=UpdateMode.replace)
         # no error will be thrown - it will insert

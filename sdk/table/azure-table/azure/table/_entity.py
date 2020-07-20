@@ -26,15 +26,15 @@ class Entity(dict):
             self['metadata'] = {'etag': self.pop('etag')}
 
     def metadata(self, **kwargs):  # pylint: disable = W0613
-        # type: (...) -> Entity
+        # type: (...) -> Dict[str,Any]
         """Resets metadata to be a part of the entity
-        :return Entity with metadata
-        :rtype Entity
+        :return Dict of entity metadata
+        :rtype Dict[str, Any]
         """
         metadata = self.pop('metadata')
         self['etag'] = metadata['etag']
         self['timestamp'] = metadata['timestamp']
-        return self
+        return metadata
 
     def __getattr__(self, name):
         """

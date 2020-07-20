@@ -470,3 +470,8 @@ class TablePayloadFormat(object):
 class UpdateMode(str, Enum):
     replace = "replace"
     merge = "merge"
+
+
+class SASProtocol(str, Enum):
+    https = "https"
+    http = "http"

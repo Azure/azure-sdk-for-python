@@ -38,7 +38,7 @@ class SharedAccessSignature(object):
 
     def generate_account(self, services, resource_types, permission, expiry, start=None,
                          ip_address_or_range=None, protocol=None):
-        """
+        '''
         Generates a shared access signature for the account.
         Use the returned signature with the sas_token parameter of the service
         or to create a new account object.
@@ -78,10 +78,10 @@ class SharedAccessSignature(object):
             or address range specified on the SAS token, the request is not authenticated.
             For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
             restricts the request to those IP addresses.
-        :param str protocol:
+        :param Union[str, SASProtocol] protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
-        """
+        '''
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip_address_or_range, protocol, self.x_ms_version)
         sas.add_account(services, resource_types)
