@@ -58,6 +58,42 @@ class ApiOperationDisplay(Model):
         self.resource = kwargs.get('resource', None)
 
 
+class AscOperation(Model):
+    """The status of operation.
+
+    :param id: The operation Id.
+    :type id: str
+    :param name: The operation name.
+    :type name: str
+    :param start_time: The start time of the operation.
+    :type start_time: str
+    :param end_time: The end time of the operation.
+    :type end_time: str
+    :param status: The status of the operation.
+    :type status: str
+    :param error: The error detail of the operation if any.
+    :type error: ~azure.mgmt.storagecache.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'end_time': {'key': 'endTime', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AscOperation, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.status = kwargs.get('status', None)
+        self.error = kwargs.get('error', None)
+
+
 class Cache(Model):
     """A Cache instance. Follows Azure Resource Manager standards:
     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
@@ -517,6 +553,26 @@ class CloudErrorBody(Model):
         self.details = kwargs.get('details', None)
         self.message = kwargs.get('message', None)
         self.target = kwargs.get('target', None)
+
+
+class ErrorResponse(Model):
+    """Describes the format of Error response.
+
+    :param code: Error code
+    :type code: str
+    :param message: Error message indicating why the operation failed.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
 
 
 class KeyVaultKeyReference(Model):
