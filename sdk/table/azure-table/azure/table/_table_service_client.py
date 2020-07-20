@@ -112,12 +112,12 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
-        # type: (...) -> dict[str,TableServiceProperties]
+        # type: (...) -> dict[str,Any]
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :return: Dictionary of service properties
-        :rtype:dict[str, TableServiceProperties]
+        :rtype:dict[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timeout = kwargs.pop('timeout', None)

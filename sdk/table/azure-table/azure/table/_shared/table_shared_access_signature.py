@@ -9,12 +9,11 @@ from azure.table._shared._error import _validate_not_none
 from azure.table._shared.constants import X_MS_VERSION
 from azure.table._shared.shared_access_signature import _SharedAccessHelper, SharedAccessSignature, QueryStringConstants
 
-
 def generate_account_sas(
         account_name,  # type:str
         account_key,  # type:str
         resource_types,   # type:ResourceTypes
-        permission,  # type:AccountSasPermissions
+        permission,  # type:Union[str,AccountSasPermissions]
         expiry,  # type:Union[datetime,str]
         **kwargs  # type:Any
 ):
@@ -36,7 +35,7 @@ def generate_account_sas(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: AccountSasPermissions
+    :type permission: Union[str, AccountSasPermissions]
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -51,7 +50,7 @@ def generate_account_sas(
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :keyword str ip:
+    :keyword str ip_address_or_range:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
         or address range specified on the SAS token, the request is not authenticated.
@@ -64,10 +63,11 @@ def generate_account_sas(
     """
     _validate_not_none('account_name', account_name)
     _validate_not_none('account_key', account_key)
-
+    # TODO: Call from string factory function
     sas = TableSharedAccessSignature(account_name, account_key)
     return sas.generate_account(TableServices(), resource_types, permission,
-                                expiry, start=kwargs.pop('start', None), ip=kwargs.pop('ip', None),
+                                expiry, start=kwargs.pop('start', None),
+                                ip_address_or_range=kwargs.pop('ip_address_or_range', None),
                                 protocol=kwargs.pop('protocol', None))
 
 
@@ -108,7 +108,7 @@ def generate_table_sas(
            storage service receives the request. Azure will always convert values
            to UTC. If a date is passed in without timezone info, it is assumed to
            be UTC.
-       :keyword str ip:
+       :keyword str ip_address_or_range:
            Specifies an IP address or a range of IP addresses from which to accept requests.
            If the IP address from which the request originates does not match the IP address
            or address range specified on the SAS token, the request is not authenticated.
@@ -132,7 +132,7 @@ def generate_table_sas(
         expiry=kwargs.pop('expiry', None),
         start=kwargs.pop('start', None),
         policy_id=kwargs.pop('policy_id', None),
-        ip=kwargs.pop('ip', None),
+        ip=kwargs.pop('ip_address_or_range', None),
         protocol=kwargs.pop('protocol', None),
         start_pk=kwargs.pop('start_pk', None),
         start_rk=kwargs.pop('start_rk', None),
@@ -163,7 +163,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
 
     def generate_table(self, table_name, permission=None,   # pylint: disable = W0613
                        expiry=None, start=None, policy_id=None,
-                       ip=None, protocol=None,
+                       ip_address_or_range=None, protocol=None,
                        start_pk=None, start_rk=None,
                        end_pk=None, end_rk=None, **kwargs):
         """
@@ -197,7 +197,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
             A unique value up to 64 characters in length that correlates to a
             stored access policy. To create a stored access policy, use
             set_table_service_properties.
-        :param str ip:
+        :param str ip_address_or_range:
             Specifies an IP address or a range of IP addresses from which to accept requests.
             If the IP address from which the request originates does not match the IP address
             or address range specified on the SAS token, the request is not authenticated.
@@ -227,7 +227,7 @@ class TableSharedAccessSignature(SharedAccessSignature):
             there is no upper bound on the table entities that can be accessed.
         """
         sas = _TableSharedAccessHelper()
-        sas.add_base(permission, expiry, start, ip, protocol, X_MS_VERSION)
+        sas.add_base(permission, expiry, start, ip_address_or_range, protocol, X_MS_VERSION)
         sas.add_id(policy_id)
         sas.add_table_access_ranges(table_name, start_pk, start_rk, end_pk, end_rk)
 

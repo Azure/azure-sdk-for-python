@@ -16,29 +16,29 @@ from ._constants import DEFAULT_X_MS_VERSION
 
 
 class SharedAccessSignature(object):
-    '''
+    """
     Provides a factory for creating account access
     signature tokens with an account name and account key. Users can either
     use the factory or can construct the appropriate service and use the
     generate_*_shared_access_signature method directly.
-    '''
+    """
 
     def __init__(self, account_name, account_key, x_ms_version=DEFAULT_X_MS_VERSION):
-        '''
+        """
         :param str account_name:
             The storage account name used to generate the shared access signatures.
         :param str account_key:
             The access key to generate the shares access signatures.
         :param str x_ms_version:
             The service version used to generate the shared access signatures.
-        '''
+        """
         self.account_name = account_name
         self.account_key = account_key
         self.x_ms_version = x_ms_version
 
     def generate_account(self, services, resource_types, permission, expiry, start=None,
-                         ip=None, protocol=None):
-        '''
+                         ip_address_or_range=None, protocol=None):
+        """
         Generates a shared access signature for the account.
         Use the returned signature with the sas_token parameter of the service
         or to create a new account object.
@@ -72,7 +72,7 @@ class SharedAccessSignature(object):
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
         :type start: datetime or str
-        :param str ip:
+        :param str ip_address_or_range:
             Specifies an IP address or a range of IP addresses from which to accept requests.
             If the IP address from which the request originates does not match the IP address
             or address range specified on the SAS token, the request is not authenticated.
@@ -81,9 +81,9 @@ class SharedAccessSignature(object):
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
-        '''
+        """
         sas = _SharedAccessHelper()
-        sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
+        sas.add_base(permission, expiry, start, ip_address_or_range, protocol, self.x_ms_version)
         sas.add_account(services, resource_types)
         sas.add_account_signature(self.account_name, self.account_key)
 
