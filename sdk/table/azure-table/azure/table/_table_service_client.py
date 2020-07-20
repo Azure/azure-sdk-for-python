@@ -209,15 +209,15 @@ class TableServiceClient(StorageAccountHostsMixin):
             filter=None,  # pylint: disable=W0622
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged
+        # type: (...) -> ItemPaged[str]
         """Queries tables under the given account.
 
-        :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword str select: Specify desired properties of an entity to return certain entities
-        :param filter: Specify a filter to return certain entities
+        :keyword int results_per_page: Number of tables per page in return ItemPaged
+        :keyword str select: Specify desired properties of a table to return certain tables
+        :param filter: Specify a filter to return certain tables
         :type filter: str
         :return: A query of tables
-        :rtype: ItemPaged
+        :rtype: ItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
@@ -234,14 +234,14 @@ class TableServiceClient(StorageAccountHostsMixin):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged
+        # type: (...) -> ItemPaged[str]
         """Queries tables under the given account.
 
-        :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword str select: Specify desired properties of an entity to return certain entities
-        :keyword str filter: Specify desired filter for entities
+        :keyword int results_per_page: Number of tables per page in return ItemPaged
+        :keyword str select: Specify desired properties of a table to return certain tables
+        :keyword str filter: Specify desired filter for tables
         :return: A query of tables
-        :rtype: ItemPaged
+        :rtype: ItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
