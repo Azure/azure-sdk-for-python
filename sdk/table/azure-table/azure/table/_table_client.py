@@ -34,6 +34,7 @@ from ._shared.response_handlers import return_headers_and_deserialized
 
 
 class TableClient(StorageAccountHostsMixin):
+    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
     def __init__(
             self, account_url,  # type: str
             table_name,  # type: str
@@ -54,6 +55,7 @@ class TableClient(StorageAccountHostsMixin):
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
         :type credential: Union[str,TokenCredential]
+
         :returns: None
         """
 
@@ -388,7 +390,7 @@ class TableClient(StorageAccountHostsMixin):
         """Lists entities in a table.
 
         :param filter: Specify a filter to return certain entities
-        :type: str
+        :type filter : str
         :keyword int results_per_page: Number of entities per page in return ItemPaged
         :keyword str select: Specify desired properties of an entity to return certain entities
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
@@ -429,24 +431,13 @@ class TableClient(StorageAccountHostsMixin):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :keyword int results_per_page: Number of entities per page in return ItemPaged
         :keyword str select: Specify desired properties of an entity to return certain entities
-        :keyword str filter: Specify a filter to return certain entities
-        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Entity mapping str to azure.table.EntityProperty
         :rtype: ~azure.table.Entity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        parameters = kwargs.pop('parameters', None)
-        filter = kwargs.pop('filter', None)  # pylint: disable = W0622
-        if parameters:
-            selected = filter.split('@')[1]
-            for key, value in parameters.items():
-                if key == selected:
-                    filter = filter.split('@')[0].replace('@', value)  # pylint: disable = W0622
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
-                                     filter=filter)
+        query_options = QueryOptions(select=kwargs.pop('select', None))
 
         entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
                                                                               partition_key=partition_key,

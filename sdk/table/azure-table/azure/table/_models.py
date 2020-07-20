@@ -289,7 +289,7 @@ class TablePropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [t for t in self._response.value]
+        props_list = [t for t in self._response.value.table_name]
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 
@@ -393,7 +393,9 @@ class TableSasPermissions(object):
                 ('d' if self.delete else ''))
 
     @classmethod
-    def from_string(cls, permission, **kwargs):  # pylint:disable=W0613
+    def from_string(cls,
+                    permission,  # type: str
+                    **kwargs):  # pylint:disable=W0613
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -470,3 +472,8 @@ class TablePayloadFormat(object):
 class UpdateMode(str, Enum):
     replace = "replace"
     merge = "merge"
+
+
+class SASProtocol(str, Enum):
+    https = "https"
+    http = "http"

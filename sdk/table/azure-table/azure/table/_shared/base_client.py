@@ -131,7 +131,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return self._format_url(self._hosts[self._location_mode])
 
     @property
-    def primary_endpoint(self):
+    def _primary_endpoint(self):
         """The full primary endpoint URL.
 
         :type: str
@@ -139,7 +139,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return self._format_url(self._hosts[LocationMode.PRIMARY])
 
     @property
-    def primary_hostname(self):
+    def _primary_hostname(self):
         """The hostname of the primary endpoint.
 
         :type: str
@@ -147,7 +147,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return self._hosts[LocationMode.PRIMARY]
 
     @property
-    def secondary_endpoint(self):
+    def _secondary_endpoint(self):
         """The full secondary endpoint URL if configured.
 
         If not available a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
@@ -161,7 +161,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return self._format_url(self._hosts[LocationMode.SECONDARY])
 
     @property
-    def secondary_hostname(self):
+    def _secondary_hostname(self):
         """The hostname of the secondary endpoint.
 
         If not available this will be None. To explicitly specify a secondary hostname, use the optional
@@ -172,7 +172,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return self._hosts[LocationMode.SECONDARY]
 
     @property
-    def location_mode(self):
+    def _location_mode(self):
         """The location mode that the client is currently using.
 
         By default this will be "primary". Options include "primary" and "secondary".
@@ -182,8 +182,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
         return self._location_mode
 
-    @location_mode.setter
-    def location_mode(self, value):
+    @_location_mode.setter
+    def _location_mode(self, value):
         if self._hosts.get(value):
             self._location_mode = value
             self._client._config.url = self.url  # pylint: disable=protected-access

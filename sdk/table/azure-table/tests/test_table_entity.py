@@ -1221,7 +1221,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_timezone(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1239,8 +1239,8 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             self.assertIsNotNone(resp)
             # times are not equal because request is made after
-        #  self.assertEqual(resp.date.astimezone(tzutc()), local_date.astimezone(tzutc()))
-        # self.assertEqual(resp.date.astimezone(local_tz), local_date)
+            self.assertEqual(resp.date.astimezone(tzutc()), local_date.astimezone(tzutc()))
+            self.assertEqual(resp.date.astimezone(local_tz), local_date)
         finally:
             self._tear_down()
 

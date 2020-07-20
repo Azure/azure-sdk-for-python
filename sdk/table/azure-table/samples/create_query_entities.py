@@ -17,7 +17,7 @@ class CreateODataQuery(object):
         from azure.table import TableClient
         from azure.core.exceptions import HttpResponseError
 
-        table_client = TableClient(account_url=self.account_url, table_name=self.table_name, credential=self.access_key)
+        table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
         try:
             queried_entities = table_client.query_entities(filter=self.name_filter, select="brand,color")
 

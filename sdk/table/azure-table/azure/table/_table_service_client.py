@@ -30,6 +30,7 @@ from azure.table._shared._error import _validate_table_name
 
 
 class TableServiceClient(StorageAccountHostsMixin):
+    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
     def __init__(
             self, account_url,  # type: str
             credential=None,  # type: Union[str,TokenCredential]
@@ -112,12 +113,12 @@ class TableServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
-        # type: (...) -> dict[str,TableServiceProperties]
+        # type: (...) -> dict[str,Any]
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :return: Dictionary of service properties
-        :rtype:dict[str, TableServiceProperties]
+        :rtype:dict[str, Any]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timeout = kwargs.pop('timeout', None)
@@ -209,15 +210,15 @@ class TableServiceClient(StorageAccountHostsMixin):
             filter=None,  # pylint: disable=W0622
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged
+        # type: (...) -> ItemPaged[str]
         """Queries tables under the given account.
 
-        :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword str select: Specify desired properties of an entity to return certain entities
-        :param filter: Specify a filter to return certain entities
+        :keyword int results_per_page: Number of tables per page in return ItemPaged
+        :keyword str select: Specify desired properties of a table to return certain tables
+        :param filter: Specify a filter to return certain tables
         :type filter: str
         :return: A query of tables
-        :rtype: ItemPaged
+        :rtype: ItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
@@ -234,14 +235,14 @@ class TableServiceClient(StorageAccountHostsMixin):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged
+        # type: (...) -> ItemPaged[str]
         """Queries tables under the given account.
 
-        :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword str select: Specify desired properties of an entity to return certain entities
-        :keyword str filter: Specify desired filter for entities
+        :keyword int results_per_page: Number of tables per page in return ItemPaged
+        :keyword str select: Specify desired properties of a table to return certain tables
+        :keyword str filter: Specify desired filter for tables
         :return: A query of tables
-        :rtype: ItemPaged
+        :rtype: ItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
