@@ -6,7 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-import warnings
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -61,11 +60,12 @@ class SearchServiceClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
+            header_parameters['x-ms-client-request-id'] = \
+                self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

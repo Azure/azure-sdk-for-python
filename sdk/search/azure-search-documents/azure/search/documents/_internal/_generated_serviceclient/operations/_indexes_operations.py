@@ -17,7 +17,7 @@ from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -65,7 +65,7 @@ class IndexesOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchIndex"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
@@ -86,11 +86,12 @@ class IndexesOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
+            header_parameters['x-ms-client-request-id'] = \
+                self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

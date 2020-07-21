@@ -36,7 +36,7 @@ class SearchServiceClient(SearchServiceClientOperationsMixin):
         self,
         endpoint,  # type: str
         **kwargs  # type: Any
-    ):
+    ):  # pylint: disable=missing-client-constructor-parameter-credential
         # type: (...) -> None
         base_url = '{endpoint}'
         self._config = SearchServiceClientConfiguration(endpoint, **kwargs)

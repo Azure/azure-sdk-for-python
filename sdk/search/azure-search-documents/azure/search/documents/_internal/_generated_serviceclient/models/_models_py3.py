@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Union
 import msrest.serialization
 
 
@@ -14,7 +14,12 @@ class TokenFilter(msrest.serialization.Model):
     """Base type for token filters.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AsciiFoldingTokenFilter, CjkBigramTokenFilter, CommonGramTokenFilter, DictionaryDecompounderTokenFilter, EdgeNGramTokenFilter, EdgeNGramTokenFilterV2, ElisionTokenFilter, KeepTokenFilter, KeywordMarkerTokenFilter, LengthTokenFilter, LimitTokenFilter, NGramTokenFilter, NGramTokenFilterV2, PatternCaptureTokenFilter, PatternReplaceTokenFilter, PhoneticTokenFilter, ShingleTokenFilter, SnowballTokenFilter, StemmerOverrideTokenFilter, StemmerTokenFilter, StopwordsTokenFilter, SynonymTokenFilter, TruncateTokenFilter, UniqueTokenFilter, WordDelimiterTokenFilter.
+    sub-classes are: AsciiFoldingTokenFilter, CjkBigramTokenFilter, CommonGramTokenFilter,
+    DictionaryDecompounderTokenFilter, EdgeNGramTokenFilter, EdgeNGramTokenFilterV2, ElisionTokenFilter,
+    KeepTokenFilter, KeywordMarkerTokenFilter, LengthTokenFilter, LimitTokenFilter, NGramTokenFilter,
+    NGramTokenFilterV2, PatternCaptureTokenFilter, PatternReplaceTokenFilter, PhoneticTokenFilter,
+    ShingleTokenFilter, SnowballTokenFilter, StemmerOverrideTokenFilter, StemmerTokenFilter,
+    StopwordsTokenFilter, SynonymTokenFilter, TruncateTokenFilter, UniqueTokenFilter, WordDelimiterTokenFilter.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -38,7 +43,33 @@ class TokenFilter(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Azure.Search.AsciiFoldingTokenFilter': 'AsciiFoldingTokenFilter', '#Microsoft.Azure.Search.CjkBigramTokenFilter': 'CjkBigramTokenFilter', '#Microsoft.Azure.Search.CommonGramTokenFilter': 'CommonGramTokenFilter', '#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter': 'DictionaryDecompounderTokenFilter', '#Microsoft.Azure.Search.EdgeNGramTokenFilter': 'EdgeNGramTokenFilter', '#Microsoft.Azure.Search.EdgeNGramTokenFilterV2': 'EdgeNGramTokenFilterV2', '#Microsoft.Azure.Search.ElisionTokenFilter': 'ElisionTokenFilter', '#Microsoft.Azure.Search.KeepTokenFilter': 'KeepTokenFilter', '#Microsoft.Azure.Search.KeywordMarkerTokenFilter': 'KeywordMarkerTokenFilter', '#Microsoft.Azure.Search.LengthTokenFilter': 'LengthTokenFilter', '#Microsoft.Azure.Search.LimitTokenFilter': 'LimitTokenFilter', '#Microsoft.Azure.Search.NGramTokenFilter': 'NGramTokenFilter', '#Microsoft.Azure.Search.NGramTokenFilterV2': 'NGramTokenFilterV2', '#Microsoft.Azure.Search.PatternCaptureTokenFilter': 'PatternCaptureTokenFilter', '#Microsoft.Azure.Search.PatternReplaceTokenFilter': 'PatternReplaceTokenFilter', '#Microsoft.Azure.Search.PhoneticTokenFilter': 'PhoneticTokenFilter', '#Microsoft.Azure.Search.ShingleTokenFilter': 'ShingleTokenFilter', '#Microsoft.Azure.Search.SnowballTokenFilter': 'SnowballTokenFilter', '#Microsoft.Azure.Search.StemmerOverrideTokenFilter': 'StemmerOverrideTokenFilter', '#Microsoft.Azure.Search.StemmerTokenFilter': 'StemmerTokenFilter', '#Microsoft.Azure.Search.StopwordsTokenFilter': 'StopwordsTokenFilter', '#Microsoft.Azure.Search.SynonymTokenFilter': 'SynonymTokenFilter', '#Microsoft.Azure.Search.TruncateTokenFilter': 'TruncateTokenFilter', '#Microsoft.Azure.Search.UniqueTokenFilter': 'UniqueTokenFilter', '#Microsoft.Azure.Search.WordDelimiterTokenFilter': 'WordDelimiterTokenFilter'}
+        'odata_type': {
+            '#Microsoft.Azure.Search.AsciiFoldingTokenFilter': 'AsciiFoldingTokenFilter',
+            '#Microsoft.Azure.Search.CjkBigramTokenFilter': 'CjkBigramTokenFilter',
+            '#Microsoft.Azure.Search.CommonGramTokenFilter': 'CommonGramTokenFilter',
+            '#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter': 'DictionaryDecompounderTokenFilter',
+            '#Microsoft.Azure.Search.EdgeNGramTokenFilter': 'EdgeNGramTokenFilter',
+            '#Microsoft.Azure.Search.EdgeNGramTokenFilterV2': 'EdgeNGramTokenFilterV2',
+            '#Microsoft.Azure.Search.ElisionTokenFilter': 'ElisionTokenFilter',
+            '#Microsoft.Azure.Search.KeepTokenFilter': 'KeepTokenFilter',
+            '#Microsoft.Azure.Search.KeywordMarkerTokenFilter': 'KeywordMarkerTokenFilter',
+            '#Microsoft.Azure.Search.LengthTokenFilter': 'LengthTokenFilter',
+            '#Microsoft.Azure.Search.LimitTokenFilter': 'LimitTokenFilter',
+            '#Microsoft.Azure.Search.NGramTokenFilter': 'NGramTokenFilter',
+            '#Microsoft.Azure.Search.NGramTokenFilterV2': 'NGramTokenFilterV2',
+            '#Microsoft.Azure.Search.PatternCaptureTokenFilter': 'PatternCaptureTokenFilter',
+            '#Microsoft.Azure.Search.PatternReplaceTokenFilter': 'PatternReplaceTokenFilter',
+            '#Microsoft.Azure.Search.PhoneticTokenFilter': 'PhoneticTokenFilter',
+            '#Microsoft.Azure.Search.ShingleTokenFilter': 'ShingleTokenFilter',
+            '#Microsoft.Azure.Search.SnowballTokenFilter': 'SnowballTokenFilter',
+            '#Microsoft.Azure.Search.StemmerOverrideTokenFilter': 'StemmerOverrideTokenFilter',
+            '#Microsoft.Azure.Search.StemmerTokenFilter': 'StemmerTokenFilter',
+            '#Microsoft.Azure.Search.StopwordsTokenFilter': 'StopwordsTokenFilter',
+            '#Microsoft.Azure.Search.SynonymTokenFilter': 'SynonymTokenFilter',
+            '#Microsoft.Azure.Search.TruncateTokenFilter': 'TruncateTokenFilter',
+            '#Microsoft.Azure.Search.UniqueTokenFilter': 'UniqueTokenFilter',
+            '#Microsoft.Azure.Search.WordDelimiterTokenFilter': 'WordDelimiterTokenFilter'
+        }
     }
 
     def __init__(
@@ -53,7 +84,9 @@ class TokenFilter(msrest.serialization.Model):
 
 
 class Similarity(msrest.serialization.Model):
-    """Base type for similarity algorithms. Similarity algorithms are used to calculate scores that tie queries to documents. The higher the score, the more relevant the document is to that specific query. Those scores are used to rank the search results.
+    """Base type for similarity algorithms. Similarity algorithms are used to calculate scores that
+    tie queries to documents. The higher the score, the more relevant the document is to that specific
+    query. Those scores are used to rank the search results.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: BM25Similarity, ClassicSimilarity.
@@ -73,7 +106,8 @@ class Similarity(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Azure.Search.BM25Similarity': 'BM25Similarity', '#Microsoft.Azure.Search.ClassicSimilarity': 'ClassicSimilarity'}
+        'odata_type': {'#Microsoft.Azure.Search.BM25Similarity': 'BM25Similarity',
+                       '#Microsoft.Azure.Search.ClassicSimilarity': 'ClassicSimilarity'}
     }
 
     def __init__(
@@ -88,7 +122,9 @@ class LexicalTokenizer(msrest.serialization.Model):
     """Base type for tokenizers.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ClassicTokenizer, EdgeNGramTokenizer, KeywordTokenizer, KeywordTokenizerV2, MicrosoftLanguageStemmingTokenizer, MicrosoftLanguageTokenizer, NGramTokenizer, PathHierarchyTokenizerV2, PatternTokenizer, LuceneStandardTokenizer, LuceneStandardTokenizerV2, UaxUrlEmailTokenizer.
+    sub-classes are: ClassicTokenizer, EdgeNGramTokenizer, KeywordTokenizer, KeywordTokenizerV2,
+    MicrosoftLanguageStemmingTokenizer, MicrosoftLanguageTokenizer, NGramTokenizer, PathHierarchyTokenizerV2,
+    PatternTokenizer, LuceneStandardTokenizer, LuceneStandardTokenizerV2, UaxUrlEmailTokenizer.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -112,7 +148,20 @@ class LexicalTokenizer(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Azure.Search.ClassicTokenizer': 'ClassicTokenizer', '#Microsoft.Azure.Search.EdgeNGramTokenizer': 'EdgeNGramTokenizer', '#Microsoft.Azure.Search.KeywordTokenizer': 'KeywordTokenizer', '#Microsoft.Azure.Search.KeywordTokenizerV2': 'KeywordTokenizerV2', '#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer': 'MicrosoftLanguageStemmingTokenizer', '#Microsoft.Azure.Search.MicrosoftLanguageTokenizer': 'MicrosoftLanguageTokenizer', '#Microsoft.Azure.Search.NGramTokenizer': 'NGramTokenizer', '#Microsoft.Azure.Search.PathHierarchyTokenizerV2': 'PathHierarchyTokenizerV2', '#Microsoft.Azure.Search.PatternTokenizer': 'PatternTokenizer', '#Microsoft.Azure.Search.StandardTokenizer': 'LuceneStandardTokenizer', '#Microsoft.Azure.Search.StandardTokenizerV2': 'LuceneStandardTokenizerV2', '#Microsoft.Azure.Search.UaxUrlEmailTokenizer': 'UaxUrlEmailTokenizer'}
+        'odata_type': {
+            '#Microsoft.Azure.Search.ClassicTokenizer': 'ClassicTokenizer',
+            '#Microsoft.Azure.Search.EdgeNGramTokenizer': 'EdgeNGramTokenizer',
+            '#Microsoft.Azure.Search.KeywordTokenizer': 'KeywordTokenizer',
+            '#Microsoft.Azure.Search.KeywordTokenizerV2': 'KeywordTokenizerV2',
+            '#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer': 'MicrosoftLanguageStemmingTokenizer',
+            '#Microsoft.Azure.Search.MicrosoftLanguageTokenizer': 'MicrosoftLanguageTokenizer',
+            '#Microsoft.Azure.Search.NGramTokenizer': 'NGramTokenizer',
+            '#Microsoft.Azure.Search.PathHierarchyTokenizerV2': 'PathHierarchyTokenizerV2',
+            '#Microsoft.Azure.Search.PatternTokenizer': 'PatternTokenizer',
+            '#Microsoft.Azure.Search.StandardTokenizer': 'LuceneStandardTokenizer',
+            '#Microsoft.Azure.Search.StandardTokenizerV2': 'LuceneStandardTokenizerV2',
+            '#Microsoft.Azure.Search.UaxUrlEmailTokenizer': 'UaxUrlEmailTokenizer'
+        }
     }
 
     def __init__(
@@ -189,7 +238,12 @@ class LexicalAnalyzer(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Azure.Search.CustomAnalyzer': 'CustomAnalyzer', '#Microsoft.Azure.Search.PatternAnalyzer': 'PatternAnalyzer', '#Microsoft.Azure.Search.StandardAnalyzer': 'LuceneStandardAnalyzer', '#Microsoft.Azure.Search.StopAnalyzer': 'StopAnalyzer'}
+        'odata_type': {
+            '#Microsoft.Azure.Search.CustomAnalyzer': 'CustomAnalyzer',
+            '#Microsoft.Azure.Search.PatternAnalyzer': 'PatternAnalyzer',
+            '#Microsoft.Azure.Search.StandardAnalyzer': 'LuceneStandardAnalyzer',
+            '#Microsoft.Azure.Search.StopAnalyzer': 'StopAnalyzer'
+        }
     }
 
     def __init__(
