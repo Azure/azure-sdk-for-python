@@ -1,5 +1,5 @@
 # Release History
 
-## 0.1.0 (1970-01-01)
+## 1.0.0rc (2020-07-21)
 
 * Initial Release
