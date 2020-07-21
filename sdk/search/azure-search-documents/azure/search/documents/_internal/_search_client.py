@@ -136,12 +136,11 @@ class SearchClient(HeadersMixin):
         return self._client.close()
 
     def flush(self, raise_error=False):
-        # type: (bool) -> bool
+        # type: (bool) -> None
         """Flush the batch.
 
         :param bool raise_error: raise error if there are failures during flushing
             Default to False which re-queue the failed tasks and retry on next flush.
-        :rtype:  bool
         """
         # get actions
         actions = self._index_documents_batch.dequeue_actions()
