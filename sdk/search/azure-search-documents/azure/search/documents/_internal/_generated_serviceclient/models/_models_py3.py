@@ -362,6 +362,7 @@ class SearchError(msrest.serialization.Model):
 
 
 class SearchField(msrest.serialization.Model):
+    # pylint: disable=too-many-instance-attributes
     """Represents a field in an index definition, which describes the name, data type, and search behavior of a field.
 
     All required parameters must be populated in order to send to Azure.
@@ -554,6 +555,7 @@ class SearchField(msrest.serialization.Model):
 
 
 class SearchIndex(msrest.serialization.Model):
+    # pylint: disable=too-many-instance-attributes
     """Represents a search index definition, which describes the fields and search behavior of an index.
 
     All required parameters must be populated in order to send to Azure.
@@ -651,4 +653,3 @@ class SearchIndex(msrest.serialization.Model):
         self.encryption_key = encryption_key
         self.similarity = similarity
         self.e_tag = e_tag
-
