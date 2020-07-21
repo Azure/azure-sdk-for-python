@@ -1010,6 +1010,7 @@ class TableOperations:
         if request_id_parameter is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = 'application/xml'
 
         # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]

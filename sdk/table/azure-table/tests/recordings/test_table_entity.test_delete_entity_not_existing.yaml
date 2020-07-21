@@ -15,11 +15,19 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:26 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Tue, 21 Jul 2020 15:27:26 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:20 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 02 Jul 2020 17:24:20 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +41,11 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:24 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:17 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       location:
       - https://storagename.table.core.windows.net/Tables('uttablef9b6145a')
       server:
@@ -61,13 +73,21 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:26 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:21 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       If-Match:
       - '*'
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:26 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:21 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -77,16 +97,26 @@ interactions:
       string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>ResourceNotFound</code><message
         xml:lang="en-US">The specified resource does not exist.
 
+<<<<<<< HEAD
         RequestId:fe2359a9-8002-000e-6073-5f73d3000000
 
         Time:2020-07-21T15:27:25.1842817Z</message></error>'
+=======
+        RequestId:81c2201c-5002-0032-6b95-505a14000000
+
+        Time:2020-07-02T17:24:18.3862366Z</message></error>'
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/xml;charset=utf-8
       date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:24 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:17 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -110,11 +140,19 @@ interactions:
       Content-Length:
       - '0'
       Date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:26 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Tue, 21 Jul 2020 15:27:26 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:21 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 02 Jul 2020 17:24:21 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -128,7 +166,11 @@ interactions:
       content-length:
       - '0'
       date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:24 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:17 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

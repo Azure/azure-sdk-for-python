@@ -15,11 +15,19 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:37 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Tue, 21 Jul 2020 15:27:37 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:33 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 02 Jul 2020 17:24:33 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +41,11 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:36 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:29 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       location:
       - https://storagename.table.core.windows.net/Tables('uttable97d21773')
       server:
@@ -132,11 +144,19 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:38 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Tue, 21 Jul 2020 15:27:38 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:33 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 02 Jul 2020 17:24:33 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -145,14 +165,22 @@ interactions:
     body:
       string: '{"odata.error":{"code":"TooManyProperties","message":{"lang":"en-US","value":"The
         entity contains more properties than allowed. Each entity can include up to
+<<<<<<< HEAD
         252 properties to store data. Each entity also has 3 system properties.\nRequestId:187f7aae-5002-009b-5c73-5f9b66000000\nTime:2020-07-21T15:27:36.8860062Z"}}}'
+=======
+        252 properties to store data. Each entity also has 3 system properties.\nRequestId:51a6b8a4-d002-0061-7695-507920000000\nTime:2020-07-02T17:24:31.0016748Z"}}}'
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:36 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:30 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -176,11 +204,19 @@ interactions:
       Content-Length:
       - '0'
       Date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:38 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Tue, 21 Jul 2020 15:27:38 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:33 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 02 Jul 2020 17:24:33 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -194,7 +230,11 @@ interactions:
       content-length:
       - '0'
       date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:36 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:30 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

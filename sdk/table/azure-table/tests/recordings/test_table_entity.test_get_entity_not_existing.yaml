@@ -15,11 +15,19 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:31 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Tue, 21 Jul 2020 15:27:31 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:26 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 02 Jul 2020 17:24:26 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +41,11 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:30 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:23 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       location:
       - https://storagename.table.core.windows.net/Tables('uttablebf5d1327')
       server:
@@ -59,11 +71,19 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:32 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Tue, 21 Jul 2020 15:27:32 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:27 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 02 Jul 2020 17:24:27 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -71,14 +91,22 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
+<<<<<<< HEAD
         specified resource does not exist.\nRequestId:da632c91-2002-0017-1073-5ff368000000\nTime:2020-07-21T15:27:30.5411074Z"}}}'
+=======
+        specified resource does not exist.\nRequestId:a138bbec-b002-002a-0495-508573000000\nTime:2020-07-02T17:24:24.3825185Z"}}}'
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:30 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:23 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -102,11 +130,19 @@ interactions:
       Content-Length:
       - '0'
       Date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:32 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
       - Tue, 21 Jul 2020 15:27:32 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:27 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 02 Jul 2020 17:24:27 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -120,7 +156,11 @@ interactions:
       content-length:
       - '0'
       date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 15:27:30 GMT
+=======
+      - Thu, 02 Jul 2020 17:24:23 GMT
+>>>>>>> 8bdf4dab46b1d77ee840080c15bb142508964575
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
