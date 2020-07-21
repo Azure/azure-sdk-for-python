@@ -32,12 +32,6 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 pip uninstall azure
 ```
 
-## Usage
-
-For code examples, see [Server Manager
-Management](https://docs.microsoft.com/python/api/overview/azure/server-manager)
-on docs.microsoft.com.
-
 ## Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in
