@@ -8,35 +8,28 @@
 
 from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+from azure.core import PipelineClient
 
 from ._configuration import SearchServiceClientConfiguration
 from .operations import IndexesOperations
 from .operations import SearchServiceClientOperationsMixin
 from . import models
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any
+
+
 
 class SearchServiceClient(SearchServiceClientOperationsMixin):
-    """Client that can be used to manage and query indexes and documents, as well as manage other resources, on a search service.
+    """Client that can be used to manage and query indexes and documents,
+        as well as manage other resources, on a search service.
 
-    :ivar data_sources: DataSourcesOperations operations
-    :vartype data_sources: azure.search.documents.indexes.operations.DataSourcesOperations
-    :ivar indexers: IndexersOperations operations
-    :vartype indexers: azure.search.documents.indexes.operations.IndexersOperations
-    :ivar skillsets: SkillsetsOperations operations
-    :vartype skillsets: azure.search.documents.indexes.operations.SkillsetsOperations
-    :ivar synonym_maps: SynonymMapsOperations operations
-    :vartype synonym_maps: azure.search.documents.indexes.operations.SynonymMapsOperations
-    :ivar indexes: IndexesOperations operations
-    :vartype indexes: azure.search.documents.indexes.operations.IndexesOperations
     :param endpoint: The endpoint URL of the search service.
     :type endpoint: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :keyword int polling_interval: Default waiting time between two polls
+        for LRO operations if no Retry-After header is present.
     """
 
     def __init__(

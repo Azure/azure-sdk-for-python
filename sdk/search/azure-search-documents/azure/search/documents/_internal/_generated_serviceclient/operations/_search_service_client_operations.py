@@ -41,7 +41,7 @@ class SearchServiceClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceStatistics"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id

@@ -9,7 +9,7 @@ from threading import Lock
 from ._generated.models import IndexAction
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
+    # pylint:disable=unused-import,ungrouped-imports
     from typing import List
 
 

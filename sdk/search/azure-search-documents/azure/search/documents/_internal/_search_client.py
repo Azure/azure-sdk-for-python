@@ -104,6 +104,7 @@ class SearchClient(HeadersMixin):
             self._timer.start()
 
     def cleanup(self):
+        # type: () -> None
         if self._auto_flush:
             self._timer.cancel()
 
