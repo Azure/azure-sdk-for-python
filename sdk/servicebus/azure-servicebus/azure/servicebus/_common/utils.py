@@ -28,7 +28,6 @@ from .constants import (
     DEAD_LETTER_QUEUE_SUFFIX,
     TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
 )
-from .message import BatchMessage
 
 _log = logging.getLogger(__name__)
 
@@ -162,8 +161,6 @@ def generate_dead_letter_entity_name(
 
 def copy_messages_if_needed(messages):
     # pylint: disable=protected-access
-    if isinstance(messages, BatchMessage):
-        return messages
     try:
         msgs_to_return = []
         for each in messages:
