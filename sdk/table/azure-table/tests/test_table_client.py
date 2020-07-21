@@ -398,7 +398,7 @@ class StorageTableClientTest(TableTestCase):
         service = TableServiceClient(account_url=custom_account_url)
         self.assertEqual(service.account_name, None)
         self.assertEqual(service.credential, None)
-        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
         # mine doesnt have a question mark at the end
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
