@@ -52,7 +52,7 @@ __all__ = [
     'SentenceSentiment',
     'SentimentConfidenceScores',
     'AspectSentiment',
-    'OpinionSentiment'
+    'OpinionSentiment',
 ]
 
 __version__ = VERSION
