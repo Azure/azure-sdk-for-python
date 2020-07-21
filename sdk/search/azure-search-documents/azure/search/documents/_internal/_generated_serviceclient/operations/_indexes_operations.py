@@ -49,6 +49,7 @@ class IndexesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.SearchIndex"
+        # pylint: disable=protected-access
         """Retrieves an index definition.
 
         :param index_name: The name of the index to retrieve.
@@ -90,7 +91,7 @@ class IndexesOperations(object):
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = \
-            self._client._pipeline.run(request, stream=False, **kwargs) # pylint: disable=protected-access
+            self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

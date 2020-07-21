@@ -37,11 +37,12 @@ class SearchServiceClient(SearchServiceClientOperationsMixin):
         Retry-After header is present.
     """
 
+    # pylint: disable=missing-client-constructor-parameter-credential
     def __init__(
         self,
         endpoint: str,
         **kwargs: Any
-    ) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
+    ) -> None:
         base_url = '{endpoint}'
         self._config = SearchServiceClientConfiguration(endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)

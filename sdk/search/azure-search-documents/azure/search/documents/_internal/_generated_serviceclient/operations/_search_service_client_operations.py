@@ -28,6 +28,7 @@ class SearchServiceClientOperationsMixin(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.ServiceStatistics"
+        # pylint: disable=protected-access
         """Gets service level statistics for a search service.
 
         :param request_options: Parameter group.
@@ -66,7 +67,7 @@ class SearchServiceClientOperationsMixin(object):
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = \
-            self._client._pipeline.run(request, stream=False, **kwargs) # pylint: disable=protected-access
+            self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
