@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
+import logging
 import os
 from typing import TYPE_CHECKING
 
@@ -10,15 +11,18 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
-from azure.identity._credentials.managed_identity import _ManagedIdentityBase
 from .base import AsyncCredentialBase
 from .._authn_client import AsyncAuthnClient
+from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._constants import Endpoints, EnvironmentVariables
+from ..._credentials.managed_identity import _ManagedIdentityBase
 
 if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.configuration import Configuration
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ManagedIdentityCredential(AsyncCredentialBase):
@@ -37,8 +41,10 @@ class ManagedIdentityCredential(AsyncCredentialBase):
     def __init__(self, **kwargs: "Any") -> None:
         self._credential = None
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            _LOGGER.info("%s will use MSI", self.__class__.__name__)
             self._credential = MsiCredential(**kwargs)
         else:
+            _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
 
     async def __aenter__(self):
@@ -51,6 +57,7 @@ class ManagedIdentityCredential(AsyncCredentialBase):
         if self._credential:
             await self._credential.__aexit__()
 
+    @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 
@@ -120,6 +127,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
             except Exception:  # pylint:disable=broad-except
                 # if anything else was raised, assume the endpoint is unavailable
                 self._endpoint_available = False
+                _LOGGER.info("No response from the IMDS endpoint.")
 
         if not self._endpoint_available:
             message = "ManagedIdentityCredential authentication unavailable, no managed identity endpoint found."
