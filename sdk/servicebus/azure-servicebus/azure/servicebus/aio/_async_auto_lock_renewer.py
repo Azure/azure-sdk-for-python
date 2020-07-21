@@ -50,7 +50,7 @@ class AutoLockRenew:
 
     def __init__(self, loop: Optional[asyncio.BaseEventLoop] = None) -> None:
         self._shutdown = asyncio.Event()
-        self._futures = [] # type: List[asyncio.Future] 
+        self._futures = [] # type: List[asyncio.Future]
         self._loop = loop or get_running_loop()
         self._sleep_time = 1
         self._renew_period = 10
