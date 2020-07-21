@@ -537,7 +537,7 @@ class SearchField(msrest.serialization.Model):
         synonym_maps: Optional[List[str]] = None,
         fields: Optional[List["SearchField"]] = None,
         **kwargs
-    ):
+    ):  # pylint: disable=redefined-builtin
         super(SearchField, self).__init__(**kwargs)
         self.name = name
         self.type = type
