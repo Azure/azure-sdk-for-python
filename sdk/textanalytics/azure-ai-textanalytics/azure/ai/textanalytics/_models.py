@@ -124,6 +124,35 @@ class RecognizeEntitiesResult(DictMixin):
             .format(self.id, repr(self.entities), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
 
 
+class RecognizePiiEntitiesResult(DictMixin):
+    """RecognizePiiEntitiesResult is a result object which contains
+    the recognized Personally Identifiable Information (PII) entities
+    from a particular document.
+    :ivar str id: Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document.
+    :ivar entities: Recognized PII entities in the document.
+    :vartype entities:
+        list[~azure.ai.textanalytics.PiiEntity]
+    :ivar statistics: If show_stats=true was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics:
+        ~azure.ai.textanalytics.TextDocumentStatistics
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a RecognizePiiEntitiesResult.
+    """
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id", None)
+        self.entities = kwargs.get("entities", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.is_error = False
+
+    def __repr__(self):
+        return "RecognizePiiEntitiesResult(id={}, entities={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.entities), repr(self.statistics), self.is_error)[:1024]
+
+
 class DetectLanguageResult(DictMixin):
     """DetectLanguageResult is a result object which contains
     the detected language of a particular document.
@@ -192,6 +221,46 @@ class CategorizedEntity(DictMixin):
         return "CategorizedEntity(text={}, category={}, subcategory={}, confidence_score={})".format(
             self.text, self.category, self.subcategory, self.confidence_score
         )[:1024]
+
+class PiiEntity(DictMixin):
+    """PiiEntity contains information about a Personally Identifiable
+    Information (PII) entity found in text.
+    :ivar str text: Entity text as appears in the request.
+    :ivar str category: Entity category, such as Financial Account
+        Identification/Social Security Number/Phone Number, etc.
+    :ivar str subcategory: Entity subcategory, such as Credit Card/EU
+        Phone number/ABA Routing Numbers, etc.
+    :ivar int offset: Start position (in Unicode characters) for the
+        entity text.
+    :ivar int length: Length (in Unicode characters) for the entity
+        text.
+    :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
+        entity.
+    """
+
+    def __init__(self, **kwargs):
+        self.text = kwargs.get('text', None)
+        self.category = kwargs.get('category', None)
+        self.subcategory = kwargs.get('subcategory', None)
+        self.offset = kwargs.get('offset', None)
+        self.length = kwargs.get('length', None)
+        self.confidence_score = kwargs.get('confidence_score', None)
+
+    @classmethod
+    def _from_generated(cls, entity):
+        return cls(
+            text=entity.text,
+            category=entity.type,
+            subcategory=entity.subtype,
+            offset=entity.offset,
+            length=entity.length,
+            confidence_score=entity.score,
+        )
+
+    def __repr__(self):
+        return "PiiEntity(text={}, category={}, subcategory={}, offset={}, length={}, " \
+               "confidence_score={})".format(self.text, self.category, self.subcategory, self.offset,
+                                  self.length, self.confidence_score)[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -429,10 +498,11 @@ class DocumentError(DictMixin):
     def __getattr__(self, attr):
         result_set = set()
         result_set.update(
-            RecognizeEntitiesResult().keys()
+            RecognizeEntitiesResult().keys() + RecognizePiiEntitiesResult().keys()
             + DetectLanguageResult().keys() + RecognizeLinkedEntitiesResult().keys()
             + AnalyzeSentimentResult().keys() + ExtractKeyPhrasesResult().keys()
         )
+        result_set.update()
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
             raise AttributeError(
