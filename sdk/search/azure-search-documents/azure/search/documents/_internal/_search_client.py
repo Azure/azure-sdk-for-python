@@ -12,7 +12,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from .._api_versions import validate_api_version
 from ._generated import SearchIndexClient
-from ..indexes import SearchIndexClient as _SearchIndexClient
+from ._generated_serviceclient import SearchServiceClient
 from ._generated.models import IndexBatch, IndexingResult
 from ._search_documents_error import RequestTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
@@ -134,8 +134,9 @@ class SearchClient(HeadersMixin):
             results = self._index_documents_actions(actions=actions)
             # re-queue 207:
             if not self._index_key:
-                client = _SearchIndexClient(self._endpoint, self._credential)
-                result = client.get_index(self._index_name)
+                client = SearchServiceClient(self._endpoint)
+                kwargs = {"headers": self._merge_client_headers({})}
+                result = client.indexes.get(self._index_name, **kwargs)
                 if not result:
                     # Cannot find the index
                     self._index_key = ""
