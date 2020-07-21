@@ -8,7 +8,6 @@ from ... import CredentialUnavailableError
 from ..._constants import AZURE_CLI_CLIENT_ID
 from ..._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 from .._internal.aad_client import AadClient
-from .._internal.exception_wrapper import wrap_exceptions
 from .base import AsyncCredentialBase
 
 if TYPE_CHECKING:
@@ -46,7 +45,6 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
         if self._client:
             await self._client.__aexit__()
 
-    @wrap_exceptions
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Get an access token for `scopes` from the shared cache.
 
@@ -64,6 +62,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
         """
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
+
+        if not self._initialized:
+            self._initialize()
 
         if not self._client:
             raise CredentialUnavailableError(message="Shared token cache unavailable")

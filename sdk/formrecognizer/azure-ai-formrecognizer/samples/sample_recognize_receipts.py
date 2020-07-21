@@ -10,7 +10,12 @@
 FILE: sample_recognize_receipts.py
 
 DESCRIPTION:
-    This sample demonstrates how to recognize US sales receipts from a file.
+    This sample demonstrates how to recognize and extract common fields from US receipts,
+    using a pre-trained receipt model. For a suggested approach to extracting information
+    from receipts, see sample_strongly_typed_recognized_form.py.
+
+    See fields found on a receipt here:
+    https://aka.ms/formrecognizer/receiptfields
 
 USAGE:
     python sample_recognize_receipts.py

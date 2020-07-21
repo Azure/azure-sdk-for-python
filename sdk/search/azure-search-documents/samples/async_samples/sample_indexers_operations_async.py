@@ -27,7 +27,12 @@ connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes.models import (
-    SearchIndexerDataContainer, SearchIndex, SearchIndexer, SimpleField, SearchFieldDataType
+    SearchIndexerDataContainer,
+    SearchIndexerDataSourceConnection,
+    SearchIndex,
+    SearchIndexer,
+    SimpleField,
+    SearchFieldDataType
 )
 from azure.search.documents.indexes.aio import SearchIndexerClient, SearchIndexClient
 
@@ -35,7 +40,7 @@ indexers_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
 
 async def create_indexer():
     # create an index
-    index_name = "hotels"
+    index_name = "indexer-hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double)
@@ -48,16 +53,21 @@ async def create_indexer():
     # [START create_indexer_async]
     # create a datasource
     container = SearchIndexerDataContainer(name='searchcontainer')
-    async with ind_client:
-        data_source = await ind_client.create_datasource(
-            name="async-indexer-datasource",
-            type="azureblob",
-            connection_string=connection_string,
-            container=container
-        )
+    data_source_connection = SearchIndexerDataSourceConnection(
+        name="indexer-datasource",
+        type="azureblob",
+        connection_string=connection_string,
+        container=container
+    )
+    async with indexers_client:
+        data_source = await indexers_client.create_data_source_connection(data_source_connection)
 
     # create an indexer
-    indexer = SearchIndexer(name="async-sample-indexer", data_source_name="async-indexer-datasource", target_index_name="hotels")
+    indexer = SearchIndexer(
+        name="async-sample-indexer",
+        data_source_name="async-indexer-datasource",
+        target_index_name="indexer-hotels"
+    )
     async with indexers_client:
         result = await indexers_client.create_indexer(indexer)
     print("Create new Indexer - async-sample-indexer")

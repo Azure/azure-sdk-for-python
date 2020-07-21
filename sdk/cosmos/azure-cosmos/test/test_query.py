@@ -349,55 +349,55 @@ class QueryTest(unittest.TestCase):
         padded_docs = self._pad_with_none(documents, distinct_field)
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),   #nosec
+                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),   # nosec
                                 results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, True),
                                 is_select=False,
                                 fields=[distinct_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (distinct_field, pk_field, pk_field, distinct_field),   #nosec
+                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (distinct_field, pk_field, pk_field, distinct_field),   # nosec
                                 results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, pk_field, distinct_field), distinct_field, pk_field, True),
                                 is_select=False,
                                 fields=[distinct_field, pk_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (distinct_field, pk_field, distinct_field, pk_field),   #nosec
+                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (distinct_field, pk_field, distinct_field, pk_field),   # nosec
                                 results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, pk_field), distinct_field, pk_field, True),
                                 is_select=False,
                                 fields=[distinct_field, pk_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct value c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field), #nosec
+                                query='SELECT distinct value c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field), # nosec
                                 results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, True),
                                 is_select=False,
                                 fields=[distinct_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c' % (distinct_field), #nosec
+                                query='SELECT distinct c.%s from c' % (distinct_field), # nosec
                                 results=self._get_distinct_docs(padded_docs, distinct_field, None, False),
                                 is_select=True,
                                 fields=[distinct_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field), #nosec
+                                query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field), # nosec
                                 results=self._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
                                 is_select=True,
                                 fields=[distinct_field, pk_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct value c.%s from c' % (distinct_field),   #nosec
+                                query='SELECT distinct value c.%s from c' % (distinct_field),   # nosec
                                 results=self._get_distinct_docs(padded_docs, distinct_field, None, True),
                                 is_select=True,
                                 fields=[distinct_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (different_field, different_field), #nosec
+                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (different_field, different_field), # nosec
                                 results=[],
                                 is_select=True,
                                 fields=[different_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c' % (different_field),    #nosec
+                                query='SELECT distinct c.%s from c' % (different_field),    # nosec
                                 results=['None'],
                                 is_select=True,
                                 fields=[different_field])
@@ -459,7 +459,8 @@ class QueryTest(unittest.TestCase):
             {'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0, 'f3': 100000000000000000.00},
             {'f3': 100000000000000000.0, 'f5': {'f6': {'f7': 2}}, 'f2': '\'value', 'f1': 1, 'f4': [1, 2.0, '3']}
         ]
-        self.OriginalExecuteFunction = _QueryExecutionContextBase.next
+        self.OriginalExecuteFunction = _QueryExecutionContextBase.__next__
+        _QueryExecutionContextBase.__next__ = self._MockNextFunction
         _QueryExecutionContextBase.next = self._MockNextFunction
 
         self._validate_distinct_on_different_types_and_field_orders(
@@ -518,6 +519,7 @@ class QueryTest(unittest.TestCase):
             get_mock_result=lambda x, i: (i, x[i])
         )
 
+        _QueryExecutionContextBase.__next__ = self.OriginalExecuteFunction
         _QueryExecutionContextBase.next = self.OriginalExecuteFunction
 
     def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results, get_mock_result):

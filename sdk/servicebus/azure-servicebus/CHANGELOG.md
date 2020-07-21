@@ -1,7 +1,47 @@
 # Release History
 
-## 7.0.0b4 (Unreleased)
+## 7.0.0b5 (Unreleased)
 
+**New Features**
+
+* Added new properties to Message, PeekMessage and ReceivedMessage: `content_type`, `correlation_id`, `label`,
+`message_id`, `reply_to`, `reply_to_session_id` and `to`. Please refer to the docstring for further information.
+
+* Add new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
+`dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`. Please refer to the docstring for further information.
+
+**Breaking Changes**
+
+* Removed/Renamed several properties and instance variables on Message (the changes applied to the inherited Message type PeekMessage and ReceivedMessage).
+  - Renamed property `user_properties` to `properties`
+      - The original instance variable `properties` which represents the AMQP properties now becomes an internal instance variable `_amqp_properties`.
+  - Removed property `enqueue_sequence_number`.
+  - Removed property `annotations`.
+  - Removed instance variable `header`.
+
+* Removed several properties and instance variables on PeekMessage and ReceivedMessage.
+  - Removed proeprty `partition_id` on both type.
+  - Removed instance variable `received_timestamp_utc` on both type.
+  - Removed property `settled` on `PeekMessage`.
+  - Removed property `expired` on `ReceivedMessage`.
+
+
+## 7.0.0b4 (2020-07-06)
+
+**New Features**
+
+* Added support for management of topics, subscriptions, and rules.
+* `receive_messages()` (formerly `receive()`) now supports receiving a batch of messages (`max_batch_size` > 1) without the need to set `prefetch` parameter during `ServiceBusReceiver` initialization.
+
+**BugFixes**
+
+* Fixed bug where sync AutoLockRenew does not shutdown itself timely.
+* Fixed bug where async AutoLockRenew does not support context manager.
+
+**Breaking Changes**
+
+* Renamed `receive()`, `peek()` `schedule()` and `send()` to `receive_messages()`, `peek_messages()`, `schedule_messages()` and `send_messages()` to align with other service bus SDKs.
+* `receive_messages()` (formerly `receive()`) no longer raises a `ValueError` if `max_batch_size` is less than the `prefetch` parameter set during `ServiceBusReceiver` initialization.
 
 ## 7.0.0b3 (2020-06-08)
 

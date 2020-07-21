@@ -104,7 +104,7 @@ class SearchClientTest(AzureMgmtTestCase):
         results = client.search(search_text="hotel")
         assert results.get_count() is None
 
-        results = client.search(search_text="hotel", include_total_result_count=True)
+        results = client.search(search_text="hotel", include_total_count=True)
         assert results.get_count() == 7
 
     @ResourceGroupPreparer(random_name_enabled=True)

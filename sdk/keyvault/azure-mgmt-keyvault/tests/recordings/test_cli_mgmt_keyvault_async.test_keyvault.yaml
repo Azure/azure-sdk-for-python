@@ -1,0 +1,1080 @@
+interactions:
+- request:
+    body: 'b''{"location": "eastus", "properties": {"tenantId": "00000000-0000-0000-0000-000000000000",
+      "sku": {"family": "A", "name": "standard"}, "accessPolicies": [{"tenantId":
+      "00000000-0000-0000-0000-000000000000", "objectId": "00000000-0000-0000-0000-000000000000",
+      "permissions": {"keys": ["encrypt", "decrypt", "wrapKey", "unwrapKey", "sign",
+      "verify", "get", "list", "create", "update", "import", "delete", "backup", "restore",
+      "recover", "purge"], "secrets": ["get", "list", "set", "delete", "backup", "restore",
+      "recover", "purge"], "certificates": ["get", "list", "delete", "create", "import",
+      "update", "managecontacts", "getissuers", "listissuers", "setissuers", "deleteissuers",
+      "manageissuers", "recover", "purge"]}}], "enabledForDeployment": true, "enabledForDiskEncryption":
+      true, "enabledForTemplateDeployment": true}}'''
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '823'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz?api-version=2019-09-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz","name":"myValtZikfikxyzz","type":"Microsoft.KeyVault/vaults","location":"eastus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"enableSoftDelete":true,"vaultUri":"https://myValtZikfikxyzz.vault.azure.net","provisioningState":"RegisteringDns"}}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:18 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-ms-ratelimit-remaining-subscription-writes: '1197'
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/vra53ahg2dkl4ogaogg2spj5iddbgeewhd67uhzbued73tzlvcw3p3x5fb47f3ippwlbykcwo3u/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz?api-version=2019-09-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz","name":"myValtZikfikxyzz","type":"Microsoft.KeyVault/vaults","location":"eastus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"enableSoftDelete":true,"vaultUri":"https://myvaltzikfikxyzz.vault.azure.net/","provisioningState":"Succeeded"}}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:48 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/vra53ahg2dkl4ogaogg2spj5iddbgeewhd67uhzbued73tzlvcw3p3x5fb47f3ippwlbykcwo3u/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz?api-version=2019-09-01
+- request:
+    body: 'b''{"properties": {"accessPolicies": [{"tenantId": "00000000-0000-0000-0000-000000000000",
+      "objectId": "00000000-0000-0000-0000-000000000000", "permissions": {"keys":
+      ["encrypt"], "secrets": ["get"], "certificates": ["get"]}}]}}'''
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '225'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz/accessPolicies/add?api-version=2019-09-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz/accessPolicies/","type":"Microsoft.KeyVault/vaults/accessPolicies","properties":{"accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}]}}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:49 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-ms-ratelimit-remaining-subscription-writes: '1196'
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/vra53ahg2dkl4ogaogg2spj5iddbgeewhd67uhzbued73tzlvcw3p3x5fb47f3ippwlbykcwo3u/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz/accessPolicies/add?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz?api-version=2019-09-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz","name":"myValtZikfikxyzz","type":"Microsoft.KeyVault/vaults","location":"eastus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"enableSoftDelete":true,"vaultUri":"https://myvaltzikfikxyzz.vault.azure.net/","provisioningState":"Succeeded"}}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:49 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/vra53ahg2dkl4ogaogg2spj5iddbgeewhd67uhzbued73tzlvcw3p3x5fb47f3ippwlbykcwo3u/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz","name":"myValtZikfikxyzz","type":"Microsoft.KeyVault/vaults","location":"eastus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"enableSoftDelete":true,"vaultUri":"https://myvaltzikfikxyzz.vault.azure.net/","provisioningState":"Succeeded"}}],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01&$skiptoken=bXlWYWx0WmlrZmlreHl6eg=="}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:50 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/vra53ahg2dkl4ogaogg2spj5iddbgeewhd67uhzbued73tzlvcw3p3x5fb47f3ippwlbykcwo3u/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01&$skiptoken=bXlWYWx0WmlrZmlreHl6eg==
+  response:
+    body:
+      string: '{"value":[]}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:50 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/vra53ahg2dkl4ogaogg2spj5iddbgeewhd67uhzbued73tzlvcw3p3x5fb47f3ippwlbykcwo3u/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01&$skiptoken=bXlWYWx0WmlrZmlreHl6eg==
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/deletedVaults?api-version=2019-09-01
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/test-changlong","name":"test-changlong","type":"Microsoft.KeyVault/deletedVaults","properties":{"vaultId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-changlong/providers/Microsoft.KeyVault/vaults/test-changlong","location":"eastus","tags":{},"deletionDate":"2020-06-12T07:38:10Z","scheduledPurgeDate":"2020-09-10T07:38:10Z"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/keyvaultxyzxxxxx","name":"keyvaultxyzxxxxx","type":"Microsoft.KeyVault/deletedVaults","properties":{"vaultId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testgroupx/providers/Microsoft.KeyVault/vaults/keyvaultxyzxxxxx","location":"eastus","tags":{},"deletionDate":"2020-05-12T09:10:06Z","scheduledPurgeDate":"2020-08-10T09:10:06Z"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/keyvaultxyzxxxx","name":"keyvaultxyzxxxx","type":"Microsoft.KeyVault/deletedVaults","properties":{"vaultId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testgroupx/providers/Microsoft.KeyVault/vaults/keyvaultxyzxxxx","location":"eastus","tags":{},"deletionDate":"2020-05-12T08:22:10Z","scheduledPurgeDate":"2020-08-10T08:22:10Z"}}],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/deletedVaults?api-version=2019-09-01&%24skiptoken=HY1ba4MwAEb%2fSxh702jq5gXKELSwrUbUxD3bGDsXb5jY2pT%2b98rgezlwON8dDHxVx3YQEgR3EIcFoQUIwK9Skwwg7KuhOvOeD8qs9DJzk409lMtJsrmdVDsOEvqo8d9qrzF27N01HBs5hm8z1%2fBYY7msPjXIseE0j5e25rOEScvmUY6NMr%2f5rayWTsGad1zx%2bh%2fkRzW1xmUzt%2fgeWbZvWNvs1xcptsdR8GFPRfmTl18kp%2fmBxCUtqJ8eaUeb6NNOyHlNdHhLSYhSQjXWDGGCvcyi1%2bxP7FKaoISEK45CnWlhYSKuWOeHTFOUWThKaQwejyc%3d"}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '927'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:52 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000; includeSubDomains
+      vary: Accept-Encoding
+      x-content-type-options: nosniff
+      x-ms-original-request-ids: 8e68c799-efe4-4a5d-a169-3390eb3f2af9
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/deletedVaults?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/deletedVaults?api-version=2019-09-01&$skiptoken=HY1ba4MwAEb/Sxh702jq5gXKELSwrUbUxD3bGDsXb5jY2pT%2B98rgezlwON8dDHxVx3YQEgR3EIcFoQUIwK9Skwwg7KuhOvOeD8qs9DJzk409lMtJsrmdVDsOEvqo8d9qrzF27N01HBs5hm8z1/BYY7msPjXIseE0j5e25rOEScvmUY6NMr/5rayWTsGad1zx%2Bh/kRzW1xmUzt/geWbZvWNvs1xcptsdR8GFPRfmTl18kp/mBxCUtqJ8eaUeb6NNOyHlNdHhLSYhSQjXWDGGCvcyi1%2BxP7FKaoISEK45CnWlhYSKuWOeHTFOUWThKaQwejyc%3D
+  response:
+    body:
+      string: '{"value":[]}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '133'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:53 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000; includeSubDomains
+      vary: Accept-Encoding
+      x-content-type-options: nosniff
+      x-ms-original-request-ids: 6b5e9021-1b1a-4cb4-9e57-f1c93c6b0ff3
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/deletedVaults?api-version=2019-09-01&$skiptoken=HY1ba4MwAEb/Sxh702jq5gXKELSwrUbUxD3bGDsXb5jY2pT%2B98rgezlwON8dDHxVx3YQEgR3EIcFoQUIwK9Skwwg7KuhOvOeD8qs9DJzk409lMtJsrmdVDsOEvqo8d9qrzF27N01HBs5hm8z1/BYY7msPjXIseE0j5e25rOEScvmUY6NMr/5rayWTsGad1zx%2Bh/kRzW1xmUzt/geWbZvWNvs1xcptsdR8GFPRfmTl18kp/mBxCUtqJ8eaUeb6NNOyHlNdHhLSYhSQjXWDGGCvcyi1%2BxP7FKaoISEK45CnWlhYSKuWOeHTFOUWThKaQwejyc%3D
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz","name":"myValtZikfikxyzz","type":"Microsoft.KeyVault/vaults","location":"eastus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"enableSoftDelete":true,"vaultUri":"https://myvaltzikfikxyzz.vault.azure.net/","provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/git2gridtesting/providers/Microsoft.KeyVault/vaults/git2gridkv","name":"git2gridkv","type":"Microsoft.KeyVault/vaults","location":"centralus","tags":{},"properties":{"sku":{"family":"A","name":"Standard"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"7b5d64cb-f02f-4b19-ab5d-60dca4916c54","permissions":{"keys":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore"],"secrets":["Get","List","Set","Delete","Recover","Backup","Restore"],"certificates":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore","ManageContacts","ManageIssuers","GetIssuers","ListIssuers","SetIssuers","DeleteIssuers"]}}],"enabledForDeployment":false,"enabledForDiskEncryption":false,"enabledForTemplateDeployment":false,"vaultUri":"https://git2gridkv.vault.azure.net/","provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-for-node/providers/Microsoft.KeyVault/vaults/node-sdk-kv","name":"node-sdk-kv","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"Standard"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"52bcebf6-9dc1-4a9a-8b3b-6962bb22a6aa","permissions":{"keys":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore"],"secrets":["Get","List","Set","Delete","Recover","Backup","Restore"],"certificates":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore","ManageContacts","ManageIssuers","GetIssuers","ListIssuers","SetIssuers","DeleteIssuers"]}}],"enabledForDeployment":false,"enabledForDiskEncryption":false,"enabledForTemplateDeployment":false,"vaultUri":"https://node-sdk-kv.vault.azure.net/","provisioningState":"Succeeded"}}],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/vaults?%24top=1&api-version=2019-09-01&%24skiptoken=1VLNbqMwGHwXVPVUAnZIEyJFq7LrJLtNiGocHLgZY1pifrzYkJSq777pYR%2bi0qc5jEYzmtH3YTXianZlI7W1%2fLDQU0SOkbW03oxReuk4NWvYq6hFYyZs7Dsx4W3t6D7TvCuVKdtGOz4s%2fFm%2bKOwpf5zbHoCe7QM%2btxe8cOc8zwroAUd17VDmotPOvuRdq9vCTJ7Fe8z6yjjDF%2bofd6ZVK3DPVGkPN%2bXNfAVd4Nvu7cD9nZa3xFaKZhWJbii5CJgW%2bQOp%2fT6NrjKTqiUVPrDNeptMK4aneCSSz7KqOh3ojAmpHhM3H%2fZ0fTrWJs0o1rR6kxlQiJJQxvAVUjqj2VqhZKpktA3GdAMOe9cdX06qwuvUUKrwHqi%2fpAnOEfo9JjJ%2fDil6J%2bewFNK7ppJfwzg1uAklboJLQv4wvkEj%2bxVXWb3wrQfrJwoJftp9z5HZvr5cCAVSfI14DhhF3iWJOcjqdJtuA4mR6hMININopMRd3QpT9B1eKjkpwOuj4RB3O5oOvAR9BnFVbGZDuvnPG2h9fv4D"}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '1727'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:53 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000; includeSubDomains
+      vary: Accept-Encoding
+      x-content-type-options: nosniff
+      x-ms-original-request-ids: 30ca9ed8-3dd8-4ad3-bf57-a629df4f8280
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01&$skiptoken=1VLNbqMwGHwXVPVUAnZIEyJFq7LrJLtNiGocHLgZY1pifrzYkJSq777pYR%2Bi0qc5jEYzmtH3YTXianZlI7W1/LDQU0SOkbW03oxReuk4NWvYq6hFYyZs7Dsx4W3t6D7TvCuVKdtGOz4s/Fm%2BKOwpf5zbHoCe7QM%2Btxe8cOc8zwroAUd17VDmotPOvuRdq9vCTJ7Fe8z6yjjDF%2Bofd6ZVK3DPVGkPN%2BXNfAVd4Nvu7cD9nZa3xFaKZhWJbii5CJgW%2BQOp/T6NrjKTqiUVPrDNeptMK4aneCSSz7KqOh3ojAmpHhM3H/Z0fTrWJs0o1rR6kxlQiJJQxvAVUjqj2VqhZKpktA3GdAMOe9cdX06qwuvUUKrwHqi/pAnOEfo9JjJ/Dil6J%2BewFNK7ppJfwzg1uAklboJLQv4wvkEj%2BxVXWb3wrQfrJwoJftp9z5HZvr5cCAVSfI14DhhF3iWJOcjqdJtuA4mR6hMININopMRd3QpT9B1eKjkpwOuj4RB3O5oOvAR9BnFVbGZDuvnPG2h9fv4D
+  response:
+    body:
+      string: '{"value":[]}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '133'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:54 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000; includeSubDomains
+      vary: Accept-Encoding
+      x-content-type-options: nosniff
+      x-ms-original-request-ids: 1ec36214-2005-4d58-94a1-3acd9ad7981d
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01&$skiptoken=1VLNbqMwGHwXVPVUAnZIEyJFq7LrJLtNiGocHLgZY1pifrzYkJSq777pYR%2Bi0qc5jEYzmtH3YTXianZlI7W1/LDQU0SOkbW03oxReuk4NWvYq6hFYyZs7Dsx4W3t6D7TvCuVKdtGOz4s/Fm%2BKOwpf5zbHoCe7QM%2Btxe8cOc8zwroAUd17VDmotPOvuRdq9vCTJ7Fe8z6yjjDF%2Bofd6ZVK3DPVGkPN%2BXNfAVd4Nvu7cD9nZa3xFaKZhWJbii5CJgW%2BQOp/T6NrjKTqiUVPrDNeptMK4aneCSSz7KqOh3ojAmpHhM3H/Z0fTrWJs0o1rR6kxlQiJJQxvAVUjqj2VqhZKpktA3GdAMOe9cdX06qwuvUUKrwHqi/pAnOEfo9JjJ/Dil6J%2BewFNK7ppJfwzg1uAklboJLQv4wvkEj%2BxVXWb3wrQfrJwoJftp9z5HZvr5cCAVSfI14DhhF3iWJOcjqdJtuA4mR6hMININopMRd3QpT9B1eKjkpwOuj4RB3O5oOvAR9BnFVbGZDuvnPG2h9fv4D
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz","name":"myValtZikfikxyzz","type":"Microsoft.KeyVault/vaults","location":"eastus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"enableSoftDelete":true,"vaultUri":"https://myvaltzikfikxyzz.vault.azure.net/","provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/git2gridtesting/providers/Microsoft.KeyVault/vaults/git2gridkv","name":"git2gridkv","type":"Microsoft.KeyVault/vaults","location":"centralus","tags":{},"properties":{"sku":{"family":"A","name":"Standard"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"7b5d64cb-f02f-4b19-ab5d-60dca4916c54","permissions":{"keys":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore"],"secrets":["Get","List","Set","Delete","Recover","Backup","Restore"],"certificates":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore","ManageContacts","ManageIssuers","GetIssuers","ListIssuers","SetIssuers","DeleteIssuers"]}}],"enabledForDeployment":false,"enabledForDiskEncryption":false,"enabledForTemplateDeployment":false,"vaultUri":"https://git2gridkv.vault.azure.net/","provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azure-sdk-for-node/providers/Microsoft.KeyVault/vaults/node-sdk-kv","name":"node-sdk-kv","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"Standard"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"52bcebf6-9dc1-4a9a-8b3b-6962bb22a6aa","permissions":{"keys":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore"],"secrets":["Get","List","Set","Delete","Recover","Backup","Restore"],"certificates":["Get","List","Update","Create","Import","Delete","Recover","Backup","Restore","ManageContacts","ManageIssuers","GetIssuers","ListIssuers","SetIssuers","DeleteIssuers"]}}],"enabledForDeployment":false,"enabledForDiskEncryption":false,"enabledForTemplateDeployment":false,"vaultUri":"https://node-sdk-kv.vault.azure.net/","provisioningState":"Succeeded"}}],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/vaults?%24top=1&api-version=2019-09-01&%24skiptoken=1ZLNbptAFIXfBUVZBeMZ7DhYsiq7xrhuQIqNmTC7YWYoGM%2bPGLCBKO9esuqmD9BKV3dzjs7Vd3Q%2fLMm75rWUlbGWH5a%2fPsXnk7W0iqbRZuk4gkjyiwsumwkZ2ppPqBKOaTND61I3pZLG8WDuzdlLbrv0eWHPAJzZHqAL%2b4Xm0wVlWQ5nwNG1upWM18YJS1oro%2fJm8pP3CWmvjXP72ubbQ6P0CjwSXdq30TmGr%2bAUePZ0HPD4YKrxoqq4XDF5KKI4KkhAexw0Jgo8mSJP4uEw0EABgo5VKtgVvzOFt6nLUPGcyuSKt3Rge22YiNzQXQ98m4j08ubiS6TpfuNmwWFOYORmQwTyAMwTsTNspzWBWBO3mHOpVtaT9d2P4uP69d%2fv6cTrW0n5hhjOnmLhtfjUkVDc7zECFUe79%2fNlQ5A%2fu6cJBZnAe7zfVEdftykEhkB%2fQPH0Cxj5%2f8NX%2fI0Wo%2f26G2kSFoT9WR7CBGiYwqpj6Ed%2fFp04DglEFfuju2%2b99fn5Gw%3d%3d"}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '1702'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:54 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000; includeSubDomains
+      vary: Accept-Encoding
+      x-content-type-options: nosniff
+      x-ms-original-request-ids: 811de193-caae-44a8-bff0-ead6e1beae85
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01&$skiptoken=1ZLNbptAFIXfBUVZBeMZ7DhYsiq7xrhuQIqNmTC7YWYoGM%2BPGLCBKO9esuqmD9BKV3dzjs7Vd3Q/LMm75rWUlbGWH5a/PsXnk7W0iqbRZuk4gkjyiwsumwkZ2ppPqBKOaTND61I3pZLG8WDuzdlLbrv0eWHPAJzZHqAL%2B4Xm0wVlWQ5nwNG1upWM18YJS1oro/Jm8pP3CWmvjXP72ubbQ6P0CjwSXdq30TmGr%2BAUePZ0HPD4YKrxoqq4XDF5KKI4KkhAexw0Jgo8mSJP4uEw0EABgo5VKtgVvzOFt6nLUPGcyuSKt3Rge22YiNzQXQ98m4j08ubiS6TpfuNmwWFOYORmQwTyAMwTsTNspzWBWBO3mHOpVtaT9d2P4uP69d/v6cTrW0n5hhjOnmLhtfjUkVDc7zECFUe79/NlQ5A/u6cJBZnAe7zfVEdftykEhkB/QPH0Cxj5/8NX/I0Wo/26G2kSFoT9WR7CBGiYwqpj6Ed/Fp04DglEFfuju2%2B99fn5Gw%3D%3D
+  response:
+    body:
+      string: '{"value":[]}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-length: '133'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:55 GMT
+      expires: '-1'
+      pragma: no-cache
+      strict-transport-security: max-age=31536000; includeSubDomains
+      vary: Accept-Encoding
+      x-content-type-options: nosniff
+      x-ms-original-request-ids: 954cb531-1a99-4441-bf6d-21bcb09f45d2
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/vaults?$top=1&api-version=2019-09-01&$skiptoken=1ZLNbptAFIXfBUVZBeMZ7DhYsiq7xrhuQIqNmTC7YWYoGM%2BPGLCBKO9esuqmD9BKV3dzjs7Vd3Q/LMm75rWUlbGWH5a/PsXnk7W0iqbRZuk4gkjyiwsumwkZ2ppPqBKOaTND61I3pZLG8WDuzdlLbrv0eWHPAJzZHqAL%2B4Xm0wVlWQ5nwNG1upWM18YJS1oro/Jm8pP3CWmvjXP72ubbQ6P0CjwSXdq30TmGr%2BAUePZ0HPD4YKrxoqq4XDF5KKI4KkhAexw0Jgo8mSJP4uEw0EABgo5VKtgVvzOFt6nLUPGcyuSKt3Rge22YiNzQXQ98m4j08ubiS6TpfuNmwWFOYORmQwTyAMwTsTNspzWBWBO3mHOpVtaT9d2P4uP69d/v6cTrW0n5hhjOnmLhtfjUkVDc7zECFUe79/NlQ5A/u6cJBZnAe7zfVEdftykEhkB/QPH0Cxj5/8NX/I0Wo/26G2kSFoT9WR7CBGiYwqpj6Ed/Fp04DglEFfuju2%2B99fn5Gw%3D%3D
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.KeyVault/operations?api-version=2019-09-01
+  response:
+    body:
+      string: '{"value":[{"name":"Microsoft.KeyVault/register/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Subscription","operation":"Register Subscription","description":"Registers
+        a subscription"},"isDataAction":false},{"name":"Microsoft.KeyVault/unregister/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Subscription","operation":"Unregister Subscription","description":"Unregisters
+        a subscription"},"isDataAction":false},{"name":"Microsoft.KeyVault/operations/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Operations","operation":"Available Key Vault Operations","description":"Lists
+        operations available on Microsoft.KeyVault resource provider"},"isDataAction":false},{"name":"Microsoft.KeyVault/locations/operationResults/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Long Run Operation Result","operation":"Check Operation
+        Result","description":"Check the result of a long run operation"},"isDataAction":false},{"name":"Microsoft.KeyVault/checkNameAvailability/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Name Availability","operation":"Check Name Availability","description":"Checks
+        that a key vault name is valid and is not in use"},"isDataAction":false},{"name":"Microsoft.KeyVault/locations/deleteVirtualNetworkOrSubnets/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Location","operation":"Delete virtual network or subnets
+        notification","description":"Notifies Microsoft.KeyVault that a virtual network
+        or subnet is being deleted"},"isDataAction":false},{"name":"Microsoft.KeyVault/vaults/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Key Vault","operation":"View Key Vault","description":"View
+        the properties of a key vault"},"isDataAction":false},{"name":"Microsoft.KeyVault/vaults/write","display":{"provider":"Microsoft
+        Key Vault","resource":"Key Vault","operation":"Update Key Vault","description":"Create
+        a new key vault or update the properties of an existing key vault"},"isDataAction":false},{"name":"Microsoft.KeyVault/vaults/delete","display":{"provider":"Microsoft
+        Key Vault","resource":"Key Vault","operation":"Delete Key Vault","description":"Delete
+        a key vault"},"isDataAction":false},{"name":"Microsoft.KeyVault/vaults/deploy/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key Vault","operation":"Use Vault for Azure Deployments","description":"Enables
+        access to secrets in a key vault when deploying Azure resources"},"isDataAction":false},{"name":"Microsoft.KeyVault/vaults/accessPolicies/write","display":{"provider":"Microsoft
+        Key Vault","resource":"Access Policy","operation":"Update Access Policy","description":"Update
+        an existing access policy by merging or replacing, or add a new access policy
+        to a vault."},"isDataAction":false},{"origin":"system","name":"Microsoft.KeyVault/vaults/providers/Microsoft.Insights/logDefinitions/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Key Vault Log Definition","operation":"Read log definition","description":"Gets
+        the available logs for a key vault"},"isDataAction":false,"properties":{"serviceSpecification":{"logSpecifications":[{"name":"AuditEvent","displayName":"Audit
+        Logs","blobDuration":"PT1H"}]}}},{"origin":"system","name":"Microsoft.KeyVault/vaults/providers/Microsoft.Insights/diagnosticSettings/Read","display":{"provider":"Microsoft
+        Key Vault","resource":"Key Vault Diagnostic Settings","operation":"Read diagnostic
+        setting","description":"Gets the diagnostic setting for the resource"},"isDataAction":false},{"origin":"system","name":"Microsoft.KeyVault/vaults/providers/Microsoft.Insights/diagnosticSettings/Write","display":{"provider":"Microsoft
+        Key Vault","resource":"Key Vault Diagnostic Settings","operation":"Write diagnostic
+        setting","description":"Creates or updates the diagnostic setting for the
+        resource"},"isDataAction":false},{"origin":"system","name":"Microsoft.KeyVault/vaults/privateLinkResources/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Key Vault","operation":"Get private link resources","description":"Get
+        the available private link resources for the specified instance of Key Vault"},"isDataAction":false},{"origin":"system","name":"Microsoft.KeyVault/vaults/PrivateEndpointConnectionsApproval/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Private Endpoint Connection","operation":"Approve or
+        reject a Private Endpoint connection","description":"Approve or reject a connection
+        to a Private Endpoint resource of Microsoft.Network provider"},"isDataAction":false},{"origin":"system","name":"Microsoft.KeyVault/vaults/privateEndpointConnectionProxies/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Private Endpoint Connection Proxy","operation":"View
+        state of Private Endpoint Connection Proxy","description":"View the state
+        of a connection proxy to a Private Endpoint resource of Microsoft.Network
+        provider"},"isDataAction":false},{"origin":"system","name":"Microsoft.KeyVault/vaults/privateEndpointConnectionProxies/write","display":{"provider":"Microsoft
+        Key Vault","resource":"Private Endpoint Connection Proxy","operation":"Change
+        state of Private Endpoint Connection Proxy","description":"Change the state
+        of a connection proxy to a Private Endpoint resource of Microsoft.Network
+        provider"},"isDataAction":false},{"origin":"system","name":"Microsoft.KeyVault/vaults/privateEndpointConnectionProxies/delete","display":{"provider":"Microsoft
+        Key Vault","resource":"Private Endpoint Connection Proxy","operation":"Delete
+        a Private Endpoint Connection Proxy","description":"Delete a connection proxy
+        to a Private Endpoint resource of Microsoft.Network provider"},"isDataAction":false},{"origin":"system","name":"Microsoft.KeyVault/vaults/privateEndpointConnectionProxies/validate/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Private Endpoint Connection Proxy","operation":"Validate
+        a Private Endpoint Connection Proxy","description":"Validate a connection
+        proxy to a Private Endpoint resource of Microsoft.Network provider"},"isDataAction":false},{"origin":"system","name":"Microsoft.KeyVault/vaults/privateEndpointConnections/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Private Endpoint Connection","operation":"View state
+        of Private Endpoint connection","description":"View the state of a connection
+        to a Private Endpoint resource of Microsoft.Network provider"},"isDataAction":false},{"origin":"system","name":"Microsoft.KeyVault/vaults/privateEndpointConnections/write","display":{"provider":"Microsoft
+        Key Vault","resource":"Private Endpoint Connection","operation":"Change state
+        of Private Endpoint connection","description":"Change the state of a connection
+        to a Private Endpoint resource of Microsoft.Network provider"},"isDataAction":false},{"origin":"system","name":"Microsoft.KeyVault/vaults/privateEndpointConnections/delete","display":{"provider":"Microsoft
+        Key Vault","resource":"Private Endpoint Connection","operation":"Delete a
+        Private Endpoint connection","description":"Delete a connection to a Private
+        Endpoint resource of Microsoft.Network provider"},"isDataAction":false},{"name":"Microsoft.KeyVault/deletedVaults/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Soft Deleted Key Vault","operation":"View Soft Deleted
+        Vaults","description":"View the properties of soft deleted key vaults"},"isDataAction":false},{"name":"Microsoft.KeyVault/locations/deletedVaults/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Soft Deleted Key Vault","operation":"View Soft Deleted
+        Key Vault","description":"View the properties of a soft deleted key vault"},"isDataAction":false},{"name":"Microsoft.KeyVault/locations/deletedVaults/purge/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Soft Deleted Key Vault","operation":"Purge Soft Deleted
+        Key Vault","description":"Purge a soft deleted key vault"},"isDataAction":false},{"name":"Microsoft.KeyVault/vaults/certificatecas/delete","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate Issuer","operation":"Delete Certificate
+        Issuer","description":"Delete Certificate Issuer"},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/certificatecas/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate Issuer","operation":"Read Certificate Issuer","description":"Read
+        Certificate Issuer"},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/certificatecas/write","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate Issuer","operation":"Write Certificate
+        Issuer","description":"Write Certificate Issuer"},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/certificatecontacts/write","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate Contact","operation":"Manage Certificate
+        Contact","description":"Manage Certificate Contact"},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/certificates/delete","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate","operation":"Delete Certificate","description":"Delete
+        a certificate."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/certificates/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate","operation":"Read Certificate Properties","description":"List
+        certificates in a specified key vault, or get information about a certificate."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/certificates/backup/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate","operation":"Backup Certificate","description":"Create
+        the backup file of a certificate. The file can used to restore the certificate
+        in a Key Vault of same subscription. Restrictions may apply."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/certificates/purge/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate","operation":"Purge Certificate","description":"Purges
+        a certificate, making it unrecoverable."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/certificates/update/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate","operation":"Update Certificate","description":"Updates
+        the specified attributes associated with the given certificate."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/certificates/create/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate","operation":"Create Certificate","description":"Creates
+        a new certificate."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/certificates/import/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate","operation":"Import Certificate","description":"Imports
+        an existing valid certificate, containing a private key, into Azure Key Vault.
+        The certificate to be imported can be in either PFX or PEM format."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/certificates/recover/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate","operation":"Recover Certificate","description":"Recovers
+        the deleted certificate. The operation performs the reversal of the Delete
+        operation. The operation is applicable in vaults enabled for soft-delete,
+        and must be issued during the retention interval."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/certificates/restore/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Certificate","operation":"Restore Certificate","description":"Restores
+        a backed up certificate, and all its versions, to a vault."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Read Key Properties and Public Key","description":"List
+        keys in the specified vault, or read properties and public material of a key.
+        For asymmetric keys, this operation exposes public key and includes ability
+        to perform public key algorithms such as encrypt and verify signature. Private
+        keys and symmetric keys are never exposed."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/update/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Update Key","description":"Updates
+        the specified attributes associated with the given key."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/create/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Create Key","description":"Creates
+        a new key."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/import/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Import Key","description":"Imports
+        an externally created key, stores it, and returns key parameters and attributes
+        to the client."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/recover/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Recover Key","description":"Recovers
+        the deleted key. The operation performs the reversal of the Delete operation.
+        The operation is applicable in vaults enabled for soft-delete, and must be
+        issued during the retention interval."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/restore/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Restore Key","description":"Restores
+        a backed up key, and all its versions, to a vault."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/delete","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Delete Key","description":"Delete
+        a key."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/backup/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Backup Key","description":"Create
+        the backup file of a key. The file can used to restore the key in a Key Vault
+        of same subscription. Restrictions may apply."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/purge/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Purge Key","description":"Purges
+        a key, making it unrecoverable."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/encrypt/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Encrypt with Key","description":"Encrypt
+        plaintext with a key. Note that if the key is asymmetric, this operation can
+        be performed by principals with read access."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/decrypt/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Decrypt with Key","description":"Decrypt
+        ciphertext with a key."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/wrap/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Wrap with Key","description":"Wrap
+        a symmetric key with a Key Vault key. Note that if the Key Vault key is asymmetric,
+        this operation can be performed with read access."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/unwrap/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Unwrap with Key","description":"Unwrap
+        a symmetric key with a Key Vault key."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/sign/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Sign with Key","description":"Sign
+        a hash with a key."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/keys/verify/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Key","operation":"Verify With Key","description":"Verify
+        a hash. Note that if the key is asymmetric, this operation can be performed
+        by principals with read access."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/secrets/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Secret","operation":"Read Secret Properties","description":"View
+        the properties of a secret, but not its value."},"isDataAction":false},{"name":"Microsoft.KeyVault/vaults/secrets/write","display":{"provider":"Microsoft
+        Key Vault","resource":"Secret","operation":"Write Secret","description":"Create
+        a new secret or update the value of an existing secret."},"isDataAction":false},{"name":"Microsoft.KeyVault/vaults/secrets/delete","display":{"provider":"Microsoft
+        Key Vault","resource":"Secret","operation":"Delete Secret","description":"Delete
+        a secret."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/secrets/backup/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Secret","operation":"Backup Secret","description":"Create
+        the backup file of a secret. The file can used to restore the secret in a
+        Key Vault of same subscription. Restrictions may apply."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/secrets/purge/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Secret","operation":"Purge Secret","description":"Purges
+        a secret, making it unrecoverable."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/secrets/update/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Secret","operation":"Update Secret","description":"Updates
+        the specified attributes associated with the given secret."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/secrets/recover/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Secret","operation":"Recover Secret","description":"Recovers
+        the deleted secret. The operation performs the reversal of the Delete operation.
+        The operation is applicable in vaults enabled for soft-delete, and must be
+        issued during the retention interval."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/secrets/restore/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Secret","operation":"Restore Secret","description":"Restores
+        a backed up secret, and all its versions, to a vault."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/secrets/readMetadata/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Secret","operation":"List or Read Secret Properties","description":"List
+        or view the properties of a secret, but not its value."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/secrets/getSecret/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Secret","operation":"Get Secret","description":"Get
+        the value of a secret."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/secrets/setSecret/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Secret","operation":"Create Secret","description":"Create
+        new secret."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/storageaccounts/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Managed Storage Account","operation":"Read Managed
+        Storage Account","description":"Read definition of managed storage accounts
+        and SAS."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/storageaccounts/set/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Managed Storage Account","operation":"Set Managed Storage
+        Account","description":"Create or update the definition of a managed storage
+        account."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/storageaccounts/delete","display":{"provider":"Microsoft
+        Key Vault","resource":"Managed Storage Account","operation":"Delete Managed
+        Storage Account","description":"Delete the definition of a managed storage
+        account."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/storageaccounts/backup/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Managed Storage Account","operation":"Backup Managed
+        Storage Account","description":"Create a backup of the definition of a managed
+        storage account and its SAS (Shared Access Signature)."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/storageaccounts/purge/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Managed Storage Account","operation":"Purge Managed
+        Storage Account or SAS","description":"Purge the soft-deleted definition of
+        a managed storage account or SAS (Shared Access Signature)."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/storageaccounts/regeneratekey/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Managed Storage Account","operation":"Regenerate Key
+        of Managed Storage Account","description":"Regenerate the access key of a
+        managed storage account."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/storageaccounts/recover/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Managed Storage Account","operation":"Recover Managed
+        Storage Account or SAS","description":"Recover the soft-deleted definition
+        of a managed storage account or SAS (Shared Access Signature)."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/storageaccounts/restore/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Managed Storage Account","operation":"Restore Managed
+        Storage Account","description":"Restores the definition of a managed storage
+        account and its SAS (Shared Access Signature)."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/storageaccounts/sas/set/action","display":{"provider":"Microsoft
+        Key Vault","resource":"Managed Storage Account","operation":"Set SAS Definition
+        for Managed Storage Account","description":"Create or update the SAS (Shared
+        Access Signature) definition for a managed storage account."},"isDataAction":true},{"name":"Microsoft.KeyVault/vaults/storageaccounts/sas/delete","display":{"provider":"Microsoft
+        Key Vault","resource":"Managed Storage Account","operation":"Delete SAS Definition
+        for Managed Storage Account","description":"Delete the SAS (Shared Access
+        Signature) definition for a managed storage account."},"isDataAction":true},{"name":"Microsoft.KeyVault/hsmPools/read","display":{"provider":"Microsoft
+        Key Vault","resource":"HSM pool","operation":"View HSM pool","description":"View
+        the properties of an HSM pool"},"isDataAction":false},{"name":"Microsoft.KeyVault/hsmPools/write","display":{"provider":"Microsoft
+        Key Vault","resource":"HSM pool","operation":"Create or Update HSM pool","description":"Create
+        a new HSM pool of update the properties of an existing HSM pool"},"isDataAction":false},{"name":"Microsoft.KeyVault/hsmPools/delete","display":{"provider":"Microsoft
+        Key Vault","resource":"HSM pool","operation":"Delete HSM pool","description":"Delete
+        an HSM pool"},"isDataAction":false},{"name":"Microsoft.KeyVault/hsmPools/joinVault/action","display":{"provider":"Microsoft
+        Key Vault","resource":"HSM pool","operation":"Join KeyVault to HSM pool","description":"Join
+        a key vault to an HSM pool"},"isDataAction":false},{"name":"Microsoft.KeyVault/vaults/eventGridFilters/read","display":{"provider":"Microsoft
+        Key Vault","resource":"EventGrid Subscription for Key Vault","operation":"View
+        EventGrid Subscription for Key Vault notification","description":"Notifies
+        Microsoft.KeyVault that an EventGrid Subscription for Key Vault is being viewed"},"isDataAction":false},{"name":"Microsoft.KeyVault/vaults/eventGridFilters/write","display":{"provider":"Microsoft
+        Key Vault","resource":"EventGrid Subscription for Key Vault","operation":"Create
+        EventGrid Subscription for Key Vault notification","description":"Notifies
+        Microsoft.KeyVault that a new EventGrid Subscription for Key Vault is being
+        created"},"isDataAction":false},{"name":"Microsoft.KeyVault/vaults/eventGridFilters/delete","display":{"provider":"Microsoft
+        Key Vault","resource":"EventGrid Subscription for Key Vault","operation":"Delete
+        EventGrid Subscription for Key Vault notification","description":"Notifies
+        Microsoft.KeyVault that an EventGrid Subscription for Key Vault is being deleted"},"isDataAction":false},{"origin":"system","name":"Microsoft.KeyVault/vaults/providers/Microsoft.Insights/metricDefinitions/read","display":{"provider":"Microsoft
+        Key Vault","resource":"Key Vault Metric Definition","operation":"Read metric
+        definition","description":"Gets the available metrics for a key vault"},"isDataAction":false,"properties":{"serviceSpecification":{"metricSpecifications":[{"name":"ServiceApiHit","displayName":"Total
+        Service Api Hits","displayDescription":"Number of total service api hits","unit":"Count","aggregationType":"Count","dimensions":[{"name":"ActivityType","displayName":"Activity
+        Type","toBeExportedForShoebox":true},{"name":"ActivityName","displayName":"Activity
+        Name","toBeExportedForShoebox":true}],"fillGapWithZero":true},{"name":"ServiceApiLatency","displayName":"Overall
+        Service Api Latency","displayDescription":"Overall latency of service api
+        requests","unit":"Milliseconds","aggregationType":"Average","dimensions":[{"name":"ActivityType","displayName":"Activity
+        Type","toBeExportedForShoebox":true},{"name":"ActivityName","displayName":"Activity
+        Name","toBeExportedForShoebox":true},{"name":"StatusCode","displayName":"Status
+        Code","toBeExportedForShoebox":true},{"name":"StatusCodeClass","displayName":"Status
+        Code Class","toBeExportedForShoebox":true}],"fillGapWithZero":false},{"name":"ServiceApiResult","displayName":"Total
+        Service Api Results","displayDescription":"Number of total service api results","unit":"Count","aggregationType":"Count","dimensions":[{"name":"ActivityType","displayName":"Activity
+        Type","toBeExportedForShoebox":true},{"name":"ActivityName","displayName":"Activity
+        Name","toBeExportedForShoebox":true},{"name":"StatusCode","displayName":"Status
+        Code","toBeExportedForShoebox":true},{"name":"StatusCodeClass","displayName":"Status
+        Code Class","toBeExportedForShoebox":true}],"fillGapWithZero":true},{"name":"SaturationShoebox","displayName":"Overall
+        Vault Saturation","displayDescription":"Vault capacity used","unit":"Percent","aggregationType":"Average","supportedAggregationTypes":["Average"],"lockAggregationType":"Average","dimensions":[{"name":"ActivityType","displayName":"Activity
+        Type","toBeExportedForShoebox":true},{"name":"ActivityName","displayName":"Activity
+        Name","toBeExportedForShoebox":true},{"name":"TransactionType","displayName":"Transaction
+        Type","toBeExportedForShoebox":true}],"fillGapWithZero":false},{"name":"Availability","displayName":"Overall
+        Vault Availability","displayDescription":"Vault requests availability","unit":"Percent","aggregationType":"Average","dimensions":[{"name":"ActivityType","displayName":"Activity
+        Type","toBeExportedForShoebox":true},{"name":"ActivityName","displayName":"Activity
+        Name","toBeExportedForShoebox":true},{"name":"StatusCode","displayName":"Status
+        Code","toBeExportedForShoebox":true},{"name":"StatusCodeClass","displayName":"Status
+        Code Class","toBeExportedForShoebox":true}],"fillGapWithZero":false}]}}}]}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:55 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/providers/Microsoft.KeyVault/operations?api-version=2019-09-01
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz?api-version=2019-09-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz","name":"myValtZikfikxyzz","type":"Microsoft.KeyVault/vaults","location":"eastus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"enableSoftDelete":true,"vaultUri":"https://myvaltzikfikxyzz.vault.azure.net/","provisioningState":"Succeeded"}}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:56 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-ms-ratelimit-remaining-subscription-writes: '1195'
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/vra53ahg2dkl4ogaogg2spj5iddbgeewhd67uhzbued73tzlvcw3p3x5fb47f3ippwlbykcwo3u/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz?api-version=2019-09-01
+- request:
+    body: '{"name": "sample-vault", "type": "Microsoft.KeyVault/vaults"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/checkNameAvailability?api-version=2019-09-01
+  response:
+    body:
+      string: '{"nameAvailable":false,"reason":"AlreadyExists","message":"The name
+        ''sample-vault'' is already in use."}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:13:57 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/checkNameAvailability?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz?api-version=2019-09-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Tue, 21 Jul 2020 08:14:02 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-ms-ratelimit-remaining-subscription-deletes: '14998'
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/resourceGroups/vra53ahg2dkl4ogaogg2spj5iddbgeewhd67uhzbued73tzlvcw3p3x5fb47f3ippwlbykcwo3u/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxyzz?api-version=2019-09-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxyzz","name":"myValtZikfikxyzz","type":"Microsoft.KeyVault/deletedVaults","properties":{"vaultId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.KeyVault/vaults/myValtZikfikxyzz","location":"eastus","tags":{},"deletionDate":"2020-07-21T08:13:58Z","scheduledPurgeDate":"2020-10-19T08:13:58Z"}}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:14:03 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxyzz?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxyzz/purge?api-version=2019-09-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Tue, 21 Jul 2020 08:14:03 GMT
+      expires: '-1'
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-ms-ratelimit-remaining-subscription-writes: '1199'
+      x-powered-by: ASP.NET
+    status:
+      code: 202
+      message: Accepted
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/locations/eastus/deletedVaults/myValtZikfikxyzz/purge?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+  response:
+    body:
+      string: '{"createdDateTime":"2020-07-21 08:14:04Z","status":"NotStarted"}'
+    headers:
+      cache-control: no-cache
+      content-length: '64'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:14:10 GMT
+      expires: '-1'
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 202
+      message: Accepted
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+  response:
+    body:
+      string: '{"createdDateTime":"2020-07-21 08:14:04Z","status":"NotStarted"}'
+    headers:
+      cache-control: no-cache
+      content-length: '64'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:14:15 GMT
+      expires: '-1'
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 202
+      message: Accepted
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+  response:
+    body:
+      string: '{"createdDateTime":"2020-07-21 08:14:04Z","status":"NotStarted"}'
+    headers:
+      cache-control: no-cache
+      content-length: '64'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:14:20 GMT
+      expires: '-1'
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 202
+      message: Accepted
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+  response:
+    body:
+      string: '{"createdDateTime":"2020-07-21 08:14:04Z","status":"NotStarted"}'
+    headers:
+      cache-control: no-cache
+      content-length: '64'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:14:25 GMT
+      expires: '-1'
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 202
+      message: Accepted
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+  response:
+    body:
+      string: '{"createdDateTime":"2020-07-21 08:14:04Z","status":"NotStarted"}'
+    headers:
+      cache-control: no-cache
+      content-length: '64'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:14:31 GMT
+      expires: '-1'
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 202
+      message: Accepted
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+  response:
+    body:
+      string: '{"createdDateTime":"2020-07-21 08:14:04Z","status":"NotStarted"}'
+    headers:
+      cache-control: no-cache
+      content-length: '64'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:14:36 GMT
+      expires: '-1'
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 202
+      message: Accepted
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+  response:
+    body:
+      string: '{"createdDateTime":"2020-07-21 08:14:04Z","status":"NotStarted"}'
+    headers:
+      cache-control: no-cache
+      content-length: '64'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:14:41 GMT
+      expires: '-1'
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 202
+      message: Accepted
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+  response:
+    body:
+      string: '{"createdDateTime":"2020-07-21 08:14:04Z","status":"NotStarted"}'
+    headers:
+      cache-control: no-cache
+      content-length: '64'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:14:47 GMT
+      expires: '-1'
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 202
+      message: Accepted
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+  response:
+    body:
+      string: '{"createdDateTime":"2020-07-21 08:14:04Z","status":"NotStarted"}'
+    headers:
+      cache-control: no-cache
+      content-length: '64'
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:14:52 GMT
+      expires: '-1'
+      location: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 202
+      message: Accepted
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-azure-mgmt-keyvault/7.0.0b2 Python/3.8.1 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+  response:
+    body:
+      string: '{"createdDateTime":"2020-07-21 08:14:04Z","lastActionDateTime":"2020-07-21
+        08:14:56Z","status":"Succeeded"}'
+    headers:
+      cache-control: no-cache
+      content-encoding: gzip
+      content-type: application/json; charset=utf-8
+      date: Tue, 21 Jul 2020 08:14:57 GMT
+      expires: '-1'
+      pragma: no-cache
+      server: Microsoft-IIS/10.0
+      strict-transport-security: max-age=31536000; includeSubDomains
+      transfer-encoding: chunked
+      vary: Accept-Encoding
+      x-aspnet-version: 4.0.30319
+      x-content-type-options: nosniff
+      x-ms-keyvault-service-version: 1.1.0.283
+      x-powered-by: ASP.NET
+    status:
+      code: 200
+      message: OK
+    url: https://management.azure.com/subscriptions/92f95d8f-3c67-4124-91c7-8cf07cdbf241/providers/Microsoft.KeyVault/locations/eastus/operationResults/VVR8MDYzNzMwOTE2MDQ1NTI2NDk2MHw4NTExNzM2MzlFQkI0NzY2Qjc1RDA0MzdFNzgyQjRDMw?api-version=2019-09-01
+version: 1

@@ -13,13 +13,11 @@ import logging
 from os import path
 from subprocess import check_call
 
-from pip._internal.operations import freeze
-
 # import common_task module
 root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
 common_task_path = path.abspath(path.join(root_dir, "scripts", "devops_tasks"))
 sys.path.append(common_task_path)
-from common_tasks import process_glob_string
+from common_tasks import process_glob_string, get_installed_packages
 from tox_helper_tasks import get_package_details
 
 EXCLUDED_PKGS = [
@@ -34,10 +32,10 @@ logging.getLogger().setLevel(logging.INFO)
 # This script verifies installed package version and ensure all installed pacakges are dev build version
 
 
-def get_installed_packages(pkg_name_to_exclude):
+def get_installed_azure_packages(pkg_name_to_exclude):
     # This method returns a list of installed azure sdk packages
     installed_pkgs = [
-        p.split("==")[0] for p in freeze.freeze() if p.startswith("azure-")
+        p.split("==")[0] for p in get_installed_packages() if p.startswith("azure-")
     ]
 
     # Get valid list of Azure SDK packages in repo
@@ -100,7 +98,7 @@ def install_packages(packages):
 
 def install_dev_build_packages(pkg_name_to_exclude):
     # Uninstall GA version and reinstall dev build version of dependent packages
-    azure_pkgs = get_installed_packages(pkg_name_to_exclude)
+    azure_pkgs = get_installed_azure_packages(pkg_name_to_exclude)
     uninstall_packages(azure_pkgs)
     install_packages(azure_pkgs)
 

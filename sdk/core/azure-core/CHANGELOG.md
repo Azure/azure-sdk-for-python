@@ -1,8 +1,25 @@
 
 # Release History
 
-## 1.6.1 (Unreleased)
+## 1.8.0 (Unreleased)
 
+### Features
+
+- Support params as list for exploding parameters  #12410
+
+
+## 1.7.0 (2020-07-06)
+
+### Bug fixes
+
+- `AzureKeyCredentialPolicy` will now accept (and ignore) passed in kwargs  #11963
+- Better error messages if passed endpoint is incorrect  #12106
+- Do not JSON encore a string if content type is "text"  #12137
+
+### Features
+
+- Added `http_logging_policy` property on the `Configuration` object, allowing users to individually
+set the http logging policy of the config  #12218
 
 ## 1.6.0 (2020-06-03)
 

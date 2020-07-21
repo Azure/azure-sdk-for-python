@@ -22,7 +22,7 @@ interactions:
       api-key:
       - C02F3671BBF7211EEE91673DC882584B
     method: PUT
-    uri: https://searchaa3a127a.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+    uri: https://searchaa3a127a.search.windows.net/indexes('hotels')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchaa3a127a.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7EC940BA55393\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
@@ -42,7 +42,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://searchaa3a127a.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+      - https://searchaa3a127a.search.windows.net/indexes('hotels')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -79,7 +79,7 @@ interactions:
       api-key:
       - C02F3671BBF7211EEE91673DC882584B
     method: PUT
-    uri: https://searchaa3a127a.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+    uri: https://searchaa3a127a.search.windows.net/indexes('hotels')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchaa3a127a.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7EC940BEEC61E\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'

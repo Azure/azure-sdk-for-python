@@ -114,7 +114,7 @@ class PipelineClient(PipelineClientBase):
                 config.custom_hook_policy,
                 config.logging_policy,
                 DistributedTracingPolicy(**kwargs),
-                HttpLoggingPolicy(**kwargs)
+                config.http_logging_policy or HttpLoggingPolicy(**kwargs)
             ]
 
         if not transport:

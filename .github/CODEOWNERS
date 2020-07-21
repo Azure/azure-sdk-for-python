@@ -9,7 +9,7 @@
 /sdk/ @mayurid @lmazuel
 
 # Core
-/sdk/core/                                                           @lmazuel @xiangyan99 @johanste
+/sdk/core/                                                           @lmazuel @xiangyan99 @johanste @rakshith91
 /sdk/core/azure-core/                                                @xiangyan99 @lmazuel
 
 # Service team
@@ -25,7 +25,7 @@
 /sdk/containerinstance/                                              @samkreter @xizhamsft
 /sdk/containerregistry/                                              @djyou
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
-/sdk/cosmos/                                                         @shurd
+/sdk/cosmos/                                                         @southpolesteve @zfoster
 /sdk/datafactory/                                                    @hvermis
 /sdk/datalake/                                                       @ro-joowan
 /sdk/datadatamigration/                                              @vchske
@@ -33,12 +33,13 @@
 /sdk/hdinsight/                                                      @idear1203
 /sdk/machinelearningcompute/                                         @shutchings
 /sdk/recoveryservices/                                               @DheerendraRathor
+/sdk/search/                                                         @xiangyan99 @rakshith91
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
 /sql/sql/                                                            @jaredmoo
 /sdk/servicebus/                                                     @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
 /sdk/synapse/                                                        @aim-for-better @idear1203
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft
-/sdk/formrecognizer/                                                 @kristapratico @iscai-msft
+/sdk/formrecognizer/                                                 @kristapratico @iscai-msft @rakshith91
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve

@@ -55,7 +55,6 @@ class UsernamePasswordCredential(InteractiveCredential):
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> dict
         app = self._get_app()
-        with self._adapter:
-            return app.acquire_token_by_username_password(
-                username=self._username, password=self._password, scopes=list(scopes)
-            )
+        return app.acquire_token_by_username_password(
+            username=self._username, password=self._password, scopes=list(scopes)
+        )

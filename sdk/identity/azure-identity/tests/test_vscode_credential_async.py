@@ -4,6 +4,7 @@
 # ------------------------------------
 from unittest import mock
 
+import sys
 from azure.core.credentials import AccessToken
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import VSCodeCredential
@@ -96,7 +97,7 @@ async def test_cache_refresh_token():
 async def test_no_obtain_token_if_cached():
     expected_token = AccessToken("token", 42)
 
-    mock_client = mock.Mock(spec=object)
+    mock_client = mock.Mock(should_refresh=lambda _: False)
     token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.obtain_token_by_refresh_token = wrap_in_future(token_by_refresh_token)
     mock_client.get_cached_access_token = mock.Mock(return_value="VALUE")

@@ -164,7 +164,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         )
         update_params = VaultCreateOrUpdateParameters(location=location,
                                                       properties=vault.properties)
-        vault = self.vault_mgmt_client.vaults.create_or_update(resource_group.name, vault.name, update_params).result()
+        vault = self.vault_mgmt_client.vaults.begin_create_or_update(resource_group.name, vault.name, update_params).result()
         self.assertIsNotNone(vault)
 
         # create keyclient

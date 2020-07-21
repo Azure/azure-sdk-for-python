@@ -11,16 +11,14 @@ from ..._credentials.vscode_credential import get_credentials
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, Optional
+    from typing import Any
     from azure.core.credentials import AccessToken
 
 
 class VSCodeCredential(AsyncCredentialBase):
-    """Authenticates by redeeming a refresh token previously saved by VS Code
+    """Authenticates by redeeming a refresh token previously saved by VS Code"""
 
-        """
-
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: "Any") -> None:
         self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
         self._refresh_token = None
 
@@ -52,9 +50,16 @@ class VSCodeCredential(AsyncCredentialBase):
             raise ValueError("'get_token' requires at least one scope")
 
         token = self._client.get_cached_access_token(scopes)
-        if token:
-            return token
+        if not token:
+            token = await self._redeem_refresh_token(scopes, **kwargs)
+        elif self._client.should_refresh(token):
+            try:
+                await self._redeem_refresh_token(scopes, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
+        return token
 
+    async def _redeem_refresh_token(self, scopes: "Sequence[str]", **kwargs: "Any") -> "Optional[AccessToken]":
         if not self._refresh_token:
             self._refresh_token = get_credentials()
             if not self._refresh_token:

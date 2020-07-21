@@ -10,7 +10,7 @@ from ._search_service_client import SearchServiceClient
 __all__ = ['SearchServiceClient']
 
 try:
-    from ._patch import patch_sdk
+    from ._patch import patch_sdk  # type: ignore
     patch_sdk()
 except ImportError:
     pass

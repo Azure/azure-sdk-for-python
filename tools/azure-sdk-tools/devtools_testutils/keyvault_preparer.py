@@ -103,7 +103,7 @@ class KeyVaultPreparer(AzureMgmtPreparer):
             retries = 4
             for i in range(retries):
                 try:
-                    vault = self.client.vaults.create_or_update(group, name, parameters).result()
+                    vault = self.client.vaults.begin_create_or_update(group, name, parameters).result()
                     break
                 except Exception as ex:
                     if "VaultAlreadyExists" in str(ex):

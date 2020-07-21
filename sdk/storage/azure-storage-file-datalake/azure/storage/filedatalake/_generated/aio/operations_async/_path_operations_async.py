@@ -51,7 +51,7 @@ class PathOperations:
          The value must be "file" or "directory". Possible values include:
          'directory', 'file'
         :type resource: str or
-         ~azure.storage.file.datalake.models.PathResourceType
+         ~azure.storage.filedatalake.models.PathResourceType
         :param continuation: Optional.  When deleting a directory, the number
          of paths that are deleted with each invocation is limited.  If the
          number of paths to be deleted exceeds this limit, a continuation token
@@ -63,7 +63,7 @@ class PathOperations:
          parameter determines the behavior of the rename operation. The value
          must be "legacy" or "posix", and the default value will be "posix".
          Possible values include: 'legacy', 'posix'
-        :type mode: str or ~azure.storage.file.datalake.models.PathRenameMode
+        :type mode: str or ~azure.storage.filedatalake.models.PathRenameMode
         :param rename_source: An optional file or directory to be renamed.
          The value must have the following format: "/{filesystem}/{path}".  If
          "x-ms-properties" is specified, the properties will overwrite the
@@ -115,25 +115,25 @@ class PathOperations:
         :type timeout: int
         :param path_http_headers: Additional parameters for the operation
         :type path_http_headers:
-         ~azure.storage.file.datalake.models.PathHTTPHeaders
+         ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
-         ~azure.storage.file.datalake.models.LeaseAccessConditions
+         ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~azure.storage.file.datalake.models.ModifiedAccessConditions
+         ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :param source_modified_access_conditions: Additional parameters for
          the operation
         :type source_modified_access_conditions:
-         ~azure.storage.file.datalake.models.SourceModifiedAccessConditions
+         ~azure.storage.filedatalake.models.SourceModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         cache_control = None
@@ -264,7 +264,7 @@ class PathOperations:
             return cls(response, None, response_headers)
     create.metadata = {'url': '/{filesystem}/{path}'}
 
-    async def update(self, action, body, position=None, retain_uncommitted_data=None, close=None, content_length=None, properties=None, owner=None, group=None, permissions=None, acl=None, request_id=None, timeout=None, path_http_headers=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def update(self, action, body, mode=None, max_records=None, continuation=None, position=None, retain_uncommitted_data=None, close=None, content_length=None, properties=None, owner=None, group=None, permissions=None, acl=None, request_id=None, timeout=None, path_http_headers=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """Append Data | Flush Data | Set Properties | Set Access Control.
 
         Uploads data to be appended to a file, flushes (writes) previously
@@ -276,19 +276,41 @@ class PathOperations:
 
         :param action: The action must be "append" to upload data to be
          appended to a file, "flush" to flush previously uploaded data to a
-         file, "setProperties" to set the properties of a file or directory, or
+         file, "setProperties" to set the properties of a file or directory,
          "setAccessControl" to set the owner, group, permissions, or access
-         control list for a file or directory.  Note that Hierarchical
-         Namespace must be enabled for the account in order to use access
-         control.  Also note that the Access Control List (ACL) includes
+         control list for a file or directory, or  "setAccessControlRecursive"
+         to set the access control list for a directory recursively. Note that
+         Hierarchical Namespace must be enabled for the account in order to use
+         access control.  Also note that the Access Control List (ACL) includes
          permissions for the owner, owning group, and others, so the
          x-ms-permissions and x-ms-acl request headers are mutually exclusive.
          Possible values include: 'append', 'flush', 'setProperties',
-         'setAccessControl'
+         'setAccessControl', 'setAccessControlRecursive'
         :type action: str or
-         ~azure.storage.file.datalake.models.PathUpdateAction
+         ~azure.storage.filedatalake.models.PathUpdateAction
         :param body: Initial data
         :type body: Generator
+        :param mode: Optional. Valid and Required for
+         "SetAccessControlRecursive" operation.  Mode "set" sets POSIX access
+         control rights on files and directories, "modify" modifies one or more
+         POSIX access control rights  that pre-exist on files and directories,
+         "remove" removes one or more POSIX access control rights  that were
+         present earlier on files and directories. Possible values include:
+         'set', 'modify', 'remove'
+        :type mode: str or
+         ~azure.storage.filedatalake.models.PathSetAccessControlRecursiveMode
+        :param max_records: Optional. Valid for "SetAccessControlRecursive"
+         operation. It specifies the maximum number of files or directories on
+         which the acl change will be applied. If omitted or greater than
+         2,000, the request will process up to 2,000 items
+        :type max_records: int
+        :param continuation: Optional. The number of paths processed with each
+         invocation is limited. If the number of paths to be processed exceeds
+         this limit, a continuation token is returned in the response header
+         x-ms-continuation. When a continuation token is  returned in the
+         response, it must be percent-encoded and specified in a subsequent
+         invocation of setAcessControlRecursive operation.
+        :type continuation: str
         :param position: This parameter allows the caller to upload data in
          parallel and control the order in which it is appended to the file.
          It is required when uploading data to be appended to the file and when
@@ -366,21 +388,23 @@ class PathOperations:
         :type timeout: int
         :param path_http_headers: Additional parameters for the operation
         :type path_http_headers:
-         ~azure.storage.file.datalake.models.PathHTTPHeaders
+         ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
-         ~azure.storage.file.datalake.models.LeaseAccessConditions
+         ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~azure.storage.file.datalake.models.ModifiedAccessConditions
+         ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: SetAccessControlRecursiveResponse or the result of
+         cls(response)
+        :rtype:
+         ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         content_md5 = None
@@ -427,6 +451,12 @@ class PathOperations:
         # Construct parameters
         query_parameters = {}
         query_parameters['action'] = self._serialize.query("action", action, 'PathUpdateAction')
+        if mode is not None:
+            query_parameters['mode'] = self._serialize.query("mode", mode, 'PathSetAccessControlRecursiveMode')
+        if max_records is not None:
+            query_parameters['maxRecords'] = self._serialize.query("max_records", max_records, 'int', minimum=1)
+        if continuation is not None:
+            query_parameters['continuation'] = self._serialize.query("continuation", continuation, 'str')
         if position is not None:
             query_parameters['position'] = self._serialize.query("position", position, 'long')
         if retain_uncommitted_data is not None:
@@ -438,6 +468,7 @@ class PathOperations:
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/octet-stream'
         if content_length is not None:
             header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long', minimum=0)
@@ -488,8 +519,11 @@ class PathOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise models.StorageErrorException(response, self._deserialize)
 
-        if cls:
-            response_headers = {
+        header_dict = {}
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('SetAccessControlRecursiveResponse', response)
+            header_dict = {
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
@@ -503,11 +537,16 @@ class PathOperations:
                 'Content-Type': self._deserialize('str', response.headers.get('Content-Type')),
                 'Content-MD5': self._deserialize('str', response.headers.get('Content-MD5')),
                 'x-ms-properties': self._deserialize('str', response.headers.get('x-ms-properties')),
+                'x-ms-continuation': self._deserialize('str', response.headers.get('x-ms-continuation')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
-            return cls(response, None, response_headers)
+
+        if cls:
+            return cls(response, deserialized, header_dict)
+
+        return deserialized
     update.metadata = {'url': '/{filesystem}/{path}'}
 
     async def lease(self, x_ms_lease_action, x_ms_lease_duration=None, x_ms_lease_break_period=None, proposed_lease_id=None, request_id=None, timeout=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
@@ -533,7 +572,7 @@ class PathOperations:
          release a lease. Possible values include: 'acquire', 'break',
          'change', 'renew', 'release'
         :type x_ms_lease_action: str or
-         ~azure.storage.file.datalake.models.PathLeaseAction
+         ~azure.storage.filedatalake.models.PathLeaseAction
         :param x_ms_lease_duration: The lease duration is required to acquire
          a lease, and specifies the duration of the lease in seconds.  The
          lease duration must be between 15 and 60 seconds or -1 for infinite
@@ -561,17 +600,17 @@ class PathOperations:
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
-         ~azure.storage.file.datalake.models.LeaseAccessConditions
+         ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~azure.storage.file.datalake.models.ModifiedAccessConditions
+         ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -679,17 +718,17 @@ class PathOperations:
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
-         ~azure.storage.file.datalake.models.LeaseAccessConditions
+         ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~azure.storage.file.datalake.models.ModifiedAccessConditions
+         ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: object or the result of cls(response)
         :rtype: Generator
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -827,7 +866,7 @@ class PathOperations:
          otherwise the properties are returned. Possible values include:
          'getAccessControl', 'getStatus'
         :type action: str or
-         ~azure.storage.file.datalake.models.PathGetPropertiesAction
+         ~azure.storage.filedatalake.models.PathGetPropertiesAction
         :param upn: Optional. Valid only when Hierarchical Namespace is
          enabled for the account. If "true", the user identity values returned
          in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
@@ -849,17 +888,17 @@ class PathOperations:
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
-         ~azure.storage.file.datalake.models.LeaseAccessConditions
+         ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~azure.storage.file.datalake.models.ModifiedAccessConditions
+         ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -978,17 +1017,17 @@ class PathOperations:
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
-         ~azure.storage.file.datalake.models.LeaseAccessConditions
+         ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~azure.storage.file.datalake.models.ModifiedAccessConditions
+         ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -1091,17 +1130,17 @@ class PathOperations:
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
-         ~azure.storage.file.datalake.models.LeaseAccessConditions
+         ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~azure.storage.file.datalake.models.ModifiedAccessConditions
+         ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -1180,6 +1219,108 @@ class PathOperations:
             return cls(response, None, response_headers)
     set_access_control.metadata = {'url': '/{filesystem}/{path}'}
 
+    async def set_access_control_recursive(self, mode, timeout=None, continuation=None, max_records=None, acl=None, request_id=None, *, cls=None, **kwargs):
+        """Set the access control list for a path and subpaths.
+
+        :param mode: Mode "set" sets POSIX access control rights on files and
+         directories, "modify" modifies one or more POSIX access control rights
+         that pre-exist on files and directories, "remove" removes one or more
+         POSIX access control rights  that were present earlier on files and
+         directories. Possible values include: 'set', 'modify', 'remove'
+        :type mode: str or
+         ~azure.storage.filedatalake.models.PathSetAccessControlRecursiveMode
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>
+        :type timeout: int
+        :param continuation: Optional.  When deleting a directory, the number
+         of paths that are deleted with each invocation is limited.  If the
+         number of paths to be deleted exceeds this limit, a continuation token
+         is returned in this response header.  When a continuation token is
+         returned in the response, it must be specified in a subsequent
+         invocation of the delete operation to continue deleting the directory.
+        :type continuation: str
+        :param max_records: Optional. It specifies the maximum number of files
+         or directories on which the acl change will be applied. If omitted or
+         greater than 2,000, the request will process up to 2,000 items
+        :type max_records: int
+        :param acl: Sets POSIX access control rights on files and directories.
+         The value is a comma-separated list of access control entries. Each
+         access control entry (ACE) consists of a scope, a type, a user or
+         group identifier, and permissions in the format
+         "[scope:][type]:[id]:[permissions]".
+        :type acl: str
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: SetAccessControlRecursiveResponse or the result of
+         cls(response)
+        :rtype:
+         ~azure.storage.filedatalake.models.SetAccessControlRecursiveResponse
+        :raises:
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        action = "setAccessControlRecursive"
+
+        # Construct URL
+        url = self.set_access_control_recursive.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        if continuation is not None:
+            query_parameters['continuation'] = self._serialize.query("continuation", continuation, 'str')
+        query_parameters['mode'] = self._serialize.query("mode", mode, 'PathSetAccessControlRecursiveMode')
+        if max_records is not None:
+            query_parameters['maxRecords'] = self._serialize.query("max_records", max_records, 'int', minimum=1)
+        query_parameters['action'] = self._serialize.query("action", action, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if acl is not None:
+            header_parameters['x-ms-acl'] = self._serialize.header("acl", acl, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        header_dict = {}
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('SetAccessControlRecursiveResponse', response)
+            header_dict = {
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+                'x-ms-continuation': self._deserialize('str', response.headers.get('x-ms-continuation')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+            }
+
+        if cls:
+            return cls(response, deserialized, header_dict)
+
+        return deserialized
+    set_access_control_recursive.metadata = {'url': '/{filesystem}/{path}'}
+
     async def flush_data(self, timeout=None, position=None, retain_uncommitted_data=None, close=None, content_length=None, request_id=None, path_http_headers=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """Set the owner, group, permissions, or access control list for a path.
 
@@ -1232,21 +1373,21 @@ class PathOperations:
         :type request_id: str
         :param path_http_headers: Additional parameters for the operation
         :type path_http_headers:
-         ~azure.storage.file.datalake.models.PathHTTPHeaders
+         ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
-         ~azure.storage.file.datalake.models.LeaseAccessConditions
+         ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~azure.storage.file.datalake.models.ModifiedAccessConditions
+         ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         content_md5 = None
@@ -1387,17 +1528,17 @@ class PathOperations:
         :type request_id: str
         :param path_http_headers: Additional parameters for the operation
         :type path_http_headers:
-         ~azure.storage.file.datalake.models.PathHTTPHeaders
+         ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
-         ~azure.storage.file.datalake.models.LeaseAccessConditions
+         ~azure.storage.filedatalake.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<azure.storage.file.datalake.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.filedatalake.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         transactional_content_hash = None
