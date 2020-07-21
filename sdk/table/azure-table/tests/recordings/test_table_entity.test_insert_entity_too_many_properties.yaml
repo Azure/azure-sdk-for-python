@@ -1,0 +1,207 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable97d21773"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 21 Jul 2020 15:27:37 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 21 Jul 2020 15:27:37 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://storagename.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable97d21773"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Tue, 21 Jul 2020 15:27:36 GMT
+      location:
+      - https://storagename.table.core.windows.net/Tables('uttable97d21773')
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"PartitionKey": "pk97d21773", "RowKey": "rk97d21773", "key0": "value0",
+      "key1": "value1", "key2": "value2", "key3": "value3", "key4": "value4", "key5":
+      "value5", "key6": "value6", "key7": "value7", "key8": "value8", "key9": "value9",
+      "key10": "value10", "key11": "value11", "key12": "value12", "key13": "value13",
+      "key14": "value14", "key15": "value15", "key16": "value16", "key17": "value17",
+      "key18": "value18", "key19": "value19", "key20": "value20", "key21": "value21",
+      "key22": "value22", "key23": "value23", "key24": "value24", "key25": "value25",
+      "key26": "value26", "key27": "value27", "key28": "value28", "key29": "value29",
+      "key30": "value30", "key31": "value31", "key32": "value32", "key33": "value33",
+      "key34": "value34", "key35": "value35", "key36": "value36", "key37": "value37",
+      "key38": "value38", "key39": "value39", "key40": "value40", "key41": "value41",
+      "key42": "value42", "key43": "value43", "key44": "value44", "key45": "value45",
+      "key46": "value46", "key47": "value47", "key48": "value48", "key49": "value49",
+      "key50": "value50", "key51": "value51", "key52": "value52", "key53": "value53",
+      "key54": "value54", "key55": "value55", "key56": "value56", "key57": "value57",
+      "key58": "value58", "key59": "value59", "key60": "value60", "key61": "value61",
+      "key62": "value62", "key63": "value63", "key64": "value64", "key65": "value65",
+      "key66": "value66", "key67": "value67", "key68": "value68", "key69": "value69",
+      "key70": "value70", "key71": "value71", "key72": "value72", "key73": "value73",
+      "key74": "value74", "key75": "value75", "key76": "value76", "key77": "value77",
+      "key78": "value78", "key79": "value79", "key80": "value80", "key81": "value81",
+      "key82": "value82", "key83": "value83", "key84": "value84", "key85": "value85",
+      "key86": "value86", "key87": "value87", "key88": "value88", "key89": "value89",
+      "key90": "value90", "key91": "value91", "key92": "value92", "key93": "value93",
+      "key94": "value94", "key95": "value95", "key96": "value96", "key97": "value97",
+      "key98": "value98", "key99": "value99", "key100": "value100", "key101": "value101",
+      "key102": "value102", "key103": "value103", "key104": "value104", "key105":
+      "value105", "key106": "value106", "key107": "value107", "key108": "value108",
+      "key109": "value109", "key110": "value110", "key111": "value111", "key112":
+      "value112", "key113": "value113", "key114": "value114", "key115": "value115",
+      "key116": "value116", "key117": "value117", "key118": "value118", "key119":
+      "value119", "key120": "value120", "key121": "value121", "key122": "value122",
+      "key123": "value123", "key124": "value124", "key125": "value125", "key126":
+      "value126", "key127": "value127", "key128": "value128", "key129": "value129",
+      "key130": "value130", "key131": "value131", "key132": "value132", "key133":
+      "value133", "key134": "value134", "key135": "value135", "key136": "value136",
+      "key137": "value137", "key138": "value138", "key139": "value139", "key140":
+      "value140", "key141": "value141", "key142": "value142", "key143": "value143",
+      "key144": "value144", "key145": "value145", "key146": "value146", "key147":
+      "value147", "key148": "value148", "key149": "value149", "key150": "value150",
+      "key151": "value151", "key152": "value152", "key153": "value153", "key154":
+      "value154", "key155": "value155", "key156": "value156", "key157": "value157",
+      "key158": "value158", "key159": "value159", "key160": "value160", "key161":
+      "value161", "key162": "value162", "key163": "value163", "key164": "value164",
+      "key165": "value165", "key166": "value166", "key167": "value167", "key168":
+      "value168", "key169": "value169", "key170": "value170", "key171": "value171",
+      "key172": "value172", "key173": "value173", "key174": "value174", "key175":
+      "value175", "key176": "value176", "key177": "value177", "key178": "value178",
+      "key179": "value179", "key180": "value180", "key181": "value181", "key182":
+      "value182", "key183": "value183", "key184": "value184", "key185": "value185",
+      "key186": "value186", "key187": "value187", "key188": "value188", "key189":
+      "value189", "key190": "value190", "key191": "value191", "key192": "value192",
+      "key193": "value193", "key194": "value194", "key195": "value195", "key196":
+      "value196", "key197": "value197", "key198": "value198", "key199": "value199",
+      "key200": "value200", "key201": "value201", "key202": "value202", "key203":
+      "value203", "key204": "value204", "key205": "value205", "key206": "value206",
+      "key207": "value207", "key208": "value208", "key209": "value209", "key210":
+      "value210", "key211": "value211", "key212": "value212", "key213": "value213",
+      "key214": "value214", "key215": "value215", "key216": "value216", "key217":
+      "value217", "key218": "value218", "key219": "value219", "key220": "value220",
+      "key221": "value221", "key222": "value222", "key223": "value223", "key224":
+      "value224", "key225": "value225", "key226": "value226", "key227": "value227",
+      "key228": "value228", "key229": "value229", "key230": "value230", "key231":
+      "value231", "key232": "value232", "key233": "value233", "key234": "value234",
+      "key235": "value235", "key236": "value236", "key237": "value237", "key238":
+      "value238", "key239": "value239", "key240": "value240", "key241": "value241",
+      "key242": "value242", "key243": "value243", "key244": "value244", "key245":
+      "value245", "key246": "value246", "key247": "value247", "key248": "value248",
+      "key249": "value249", "key250": "value250", "key251": "value251", "key252":
+      "value252", "key253": "value253", "key254": "value254"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '5444'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 21 Jul 2020 15:27:38 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 21 Jul 2020 15:27:38 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://storagename.table.core.windows.net/uttable97d21773
+  response:
+    body:
+      string: '{"odata.error":{"code":"TooManyProperties","message":{"lang":"en-US","value":"The
+        entity contains more properties than allowed. Each entity can include up to
+        252 properties to store data. Each entity also has 3 system properties.\nRequestId:187f7aae-5002-009b-5c73-5f9b66000000\nTime:2020-07-21T15:27:36.8860062Z"}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Tue, 21 Jul 2020 15:27:36 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 21 Jul 2020 15:27:38 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 21 Jul 2020 15:27:38 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://storagename.table.core.windows.net/Tables('uttable97d21773')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 21 Jul 2020 15:27:36 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 204
+      message: No Content
+version: 1

@@ -15,7 +15,8 @@ from datetime import (
     timedelta,
 )
 
-from azure.table._models import TableSasPermissions, UpdateMode, AccessPolicy
+from azure.table._models import TableSasPermissions, UpdateMode, AccessPolicy, TableAnalyticsLogging, Metrics, CorsRule, \
+    RetentionPolicy
 from azure.table._shared.models import ResourceTypes, AccountSasPermissions
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
@@ -76,6 +77,32 @@ class StorageTableTest(TableTestCase):
             pass
 
     # --Test cases for tables --------------------------------------------------
+    @pytest.mark.skip("pending")
+    @GlobalStorageAccountPreparer()
+    def test_create_properties(self, resource_group, location, storage_account, storage_account_key):
+        # # Arrange
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        table_name = self._get_table_reference()
+        # Act
+        created = ts.create_table(table_name)
+
+        # Assert
+        assert created.table_name == table_name
+
+        properties = ts.get_service_properties()
+        print(properties)
+        ts.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
+        # have to wait for return to service
+        p = ts.get_service_properties()
+        # have to wait for return to service
+        ts.set_service_properties(minute_metrics= Metrics(enabled=True, include_apis=True,
+                                 retention_policy=RetentionPolicy(enabled=True, days=5)))
+
+        ps = ts.get_service_properties()
+        print(ps)
+        print(p)
+        ts.delete_table(table_name)
+
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_create_table(self, resource_group, location, storage_account, storage_account_key):
@@ -121,22 +148,24 @@ class StorageTableTest(TableTestCase):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         invalid_table_name = "my_table"
-        
+
         with pytest.raises(ValueError) as excinfo:
             ts.create_table(table_name=invalid_table_name)
-            
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            excinfo)
 
     @GlobalStorageAccountPreparer()
     def test_delete_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         invalid_table_name = "my_table"
-        
+
         with pytest.raises(ValueError) as excinfo:
             ts.create_table(invalid_table_name)
-            
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            excinfo)
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
