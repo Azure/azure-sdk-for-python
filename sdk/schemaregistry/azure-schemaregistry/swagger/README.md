@@ -26,5 +26,5 @@ enable-xml: false
 vanilla: true
 clear-output-folder: true
 python: true
-package-version: "1.0.0-beta"
+package-version: "1.0.0b1"
 ```
