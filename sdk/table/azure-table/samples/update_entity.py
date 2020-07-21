@@ -32,5 +32,5 @@ class UpdateEntity(object):
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
 
-        table_client.upsert_entity(entity=self.entity, mode=UpdateMode.replace)
+        table_client.upsert_entity(entity=self.entity, mode=UpdateMode.REPLACE)
         # no error will be thrown - it will insert
