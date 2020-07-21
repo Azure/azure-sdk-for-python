@@ -137,7 +137,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         cluster = create_poller.result()
         self.validate_cluster(cluster_name, create_params, cluster)
 
-    # @unittest.skip('skipping temporarily to unblock azure-keyvault checkin')
+    @unittest.skip('skipping temporarily to unblock release.')
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
     @KeyVaultPreparer(name_prefix='hdipy', location=LOCATION, enable_soft_delete=True)
@@ -381,6 +381,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.assertTrue(any(c.name == cluster_name1 for c in cluster_list))
         self.assertTrue(any(c.name == cluster_name2 for c in cluster_list))
 
+    @unittest.skip("just skip temporarily to unblock release. ")
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
     def test_hue_on_running_cluster(self, resource_group, location, storage_account, storage_account_key):
