@@ -4,24 +4,21 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .._shared.response_handlers import return_headers_and_deserialized
 from .base_client import StorageAccountHostsMixin
 
 class TableServiceClientBase(StorageAccountHostsMixin):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
     def __init__(
-            self, 
-            parsed_url,  # type: Any
-            # account_url,  # type: str
+            self, parsed_url,  # type: Any
             service, # type: str
             credential=None,  # type: Union[str,TokenCredential]
             **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Create TableServiceClient from a Credential.
+        """Create TableServiceClientBase class for sync and async code.
 
-        :param account_url:
-            A url to an Azure Storage account.
+        :param parsed_url:
+            A parsed url to an Azure Storage account.
         :type account_url: str
         :param credential:
             The credentials with which to authenticate. This is optional if the

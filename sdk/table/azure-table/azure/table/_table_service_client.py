@@ -17,8 +17,7 @@ except ImportError:
 from azure.table._generated import AzureTable
 from azure.table._generated.models import TableProperties, TableServiceProperties, QueryOptions
 from azure.table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
-from azure.table._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, \
-    TransportWrapper
+from azure.table._shared.base_client import parse_connection_str, parse_query, TransportWrapper
 from azure.table._shared.models import LocationMode
 from azure.table._shared.response_handlers import process_table_error
 from azure.table._version import VERSION

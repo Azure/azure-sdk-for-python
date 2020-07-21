@@ -4,18 +4,16 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .._shared.response_handlers import return_headers_and_deserialized
+# from .._shared.response_handlers import return_headers_and_deserialized
 from .base_client import StorageAccountHostsMixin
 
 class TableClientBase(StorageAccountHostsMixin):
     def __init__(
-        self, 
-        parsed_url, # type: str
+        self, parsed_url, # type: str
         service, # type: str
         credential=None, # type: Union[str,TokenCredential]
         **kwargs # type: Any
     ):
-        # type: (...) -> None
         # type: (...) -> None
         """Create TableClientBase from a Credential.
 
@@ -58,8 +56,8 @@ class TableClientBase(StorageAccountHostsMixin):
         # self._client = AzureTable(self.url, pipeline=self._pipeline)
         # self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
+    # def _format_url(self, hostname):
+    #     """Format the endpoint URL according to the current location
+    #     mode hostname.
+    #     """
+    #     return "{}://{}{}".format(self.scheme, hostname, self._query_str)

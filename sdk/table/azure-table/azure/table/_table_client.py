@@ -19,7 +19,7 @@ from azure.table._entity import Entity
 from azure.table._generated import AzureTable
 from azure.table._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
 from azure.table._serialize import _get_match_headers, _add_entity_properties
-from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
+from azure.table._shared.base_client import parse_query, parse_connection_str
 from azure.table._shared._error import _validate_table_name
 from azure.table._shared.table_client_base import TableClientBase
 
