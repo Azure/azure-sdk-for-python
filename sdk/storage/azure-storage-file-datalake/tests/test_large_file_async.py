@@ -36,7 +36,7 @@ class LargeFileTest(StorageTestCase):
         super(LargeFileTest, self).setUp()
         url = self._get_account_url()
         self.payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = format_shared_key_credential([self.settings.STORAGE_DATA_LAKE_ACCOUNT_NAME, "dummy"],
+        credential_policy = format_shared_key_credential(self.settings.STORAGE_DATA_LAKE_ACCOUNT_NAME,
                                                          self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY)
         self.dsc = DataLakeServiceClient(url,
                                          credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,

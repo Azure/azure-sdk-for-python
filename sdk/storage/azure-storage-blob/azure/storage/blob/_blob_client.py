@@ -213,6 +213,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if ".core." in parsed_url.netloc:
             # .core. is indicating non-customized url. Blob name with directory info can also be parsed.
             path_blob = parsed_url.path.lstrip('/').split('/', 1)
+        elif "localhost" in parsed_url.netloc or "127.0.0.1" in parsed_url.netloc:
+            path_blob = parsed_url.path.lstrip('/').split('/', 2)
+            account_path += path_blob[0]
         else:
             # for customized url. blob name that has directory info cannot be parsed.
             path_blob = parsed_url.path.lstrip('/').split('/')
