@@ -383,7 +383,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             in the review "The food at Hotel Foo is good", "food" is an aspect of "Hotel Foo", and
             setting `show_aspects` to True will go into the sentiment and opinions of "food".
             If set to true, the returned :class:`~azure.ai.textanalytics.SentenceSentiment` objects
-            will have property `aspects` containing the result of this analysis.
+            will have property `aspects` containing the result of this analysis. Only available for
+            API version v3.1-preview.1.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -393,6 +394,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
+        .. versionadded:: v3.1-preview.1
+            The *show_aspects* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
