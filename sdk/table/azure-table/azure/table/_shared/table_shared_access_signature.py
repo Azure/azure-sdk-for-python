@@ -64,7 +64,8 @@ def generate_account_sas(
     """
     _validate_not_none('account_name', account_name)
     _validate_not_none('account_key', account_key)
-    permission = _from_string(permission)
+    # TODO: fix this
+    # permission = _from_string(permission=permission) or permission  # pylint:disable=W0212
     sas = TableSharedAccessSignature(account_name, account_key)
     return sas.generate_account(TableServices(), resource_types, permission,
                                 expiry, start=kwargs.pop('start', None),
@@ -72,7 +73,7 @@ def generate_account_sas(
                                 protocol=kwargs.pop('protocol', None))
 
 
-def _from_string(cls, permission, **kwargs):  # pylint:disable=W0613
+def _from_string(permission, **kwargs):  # pylint:disable=W0613
     """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -90,9 +91,8 @@ def _from_string(cls, permission, **kwargs):  # pylint:disable=W0613
     p_delete = 'd' in permission
     p_update = 'u' in permission
 
-    parsed = cls(
-        **dict(kwargs, query=p_query, add=p_add, delete=p_delete, update=p_update))
-    parsed._str = permission  # pylint: disable = W0201
+    parsed = dict(kwargs, query=p_query, add=p_add, delete=p_delete, update=p_update)
+    parsed._str = permission  # pylint: disable = W0212
     return parsed
 
 

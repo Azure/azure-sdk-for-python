@@ -172,7 +172,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return self._hosts[LocationMode.SECONDARY]
 
     @property
-    def _location_mode(self):
+    def location_mode(self):
         """The location mode that the client is currently using.
 
         By default this will be "primary". Options include "primary" and "secondary".
@@ -182,8 +182,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
         return self._location_mode
 
-    @_location_mode.setter
-    def _location_mode(self, value):
+    @location_mode.setter
+    def location_mode(self, value):
         if self._hosts.get(value):
             self._location_mode = value
             self._client._config.url = self.url  # pylint: disable=protected-access

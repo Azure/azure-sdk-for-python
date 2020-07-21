@@ -389,8 +389,7 @@ class TableClient(StorageAccountHostsMixin):
         # type: (...) -> ItemPaged[Entity]
         """Lists entities in a table.
 
-        :param filter: Specify a filter to return certain entities
-        :type filter : str
+        :param str filter: Specify a filter to return certain entities
         :keyword int results_per_page: Number of entities per page in return ItemPaged
         :keyword str select: Specify desired properties of an entity to return certain entities
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
@@ -465,8 +464,8 @@ class TableClient(StorageAccountHostsMixin):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :return: Entity mapping str to azure.table.EntityProperty or None
-        :rtype: ~azure.table.Entity or None
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
