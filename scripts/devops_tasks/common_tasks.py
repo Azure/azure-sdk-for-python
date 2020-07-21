@@ -22,7 +22,7 @@ import re
 import pdb
 
 # Assumes the presence of setuptools
-from pkg_resources import parse_version, parse_requirements, Requirement
+from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
@@ -421,3 +421,14 @@ def find_tools_packages(root_path):
     pkgs = [os.path.basename(os.path.dirname(p)) for p in glob.glob(glob_string)]
     logging.info("Packages in tools: {}".format(pkgs))
     return pkgs
+
+
+def get_installed_packages(paths = None):
+    """Find packages in default or given lib paths
+    """
+    # WorkingSet returns installed packages in given path
+    # working_set returns installed packages in default path
+    # if paths is set then find installed packages from given paths
+    ws = WorkingSet(paths) if paths else working_set  
+    return ["{0}=={1}".format(p.project_name, p.version) for p in ws]
+

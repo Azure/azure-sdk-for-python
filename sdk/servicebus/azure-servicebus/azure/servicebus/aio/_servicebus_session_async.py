@@ -97,8 +97,10 @@ class ServiceBusSession(BaseSession):
 
         This operation must be performed periodically in order to retain a lock on the
         session to continue message processing.
-        Once the lock is lost the connection will be closed. This operation can
-        also be performed as a threaded background task by registering the session
+
+        Once the lock is lost the connection will be closed; an expired lock cannot be renewed.
+
+        This operation can also be performed as a threaded background task by registering the session
         with an `azure.servicebus.aio.AutoLockRenew` instance.
 
         .. admonition:: Example:

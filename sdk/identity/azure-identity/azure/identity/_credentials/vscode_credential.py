@@ -4,16 +4,18 @@
 # ------------------------------------
 import sys
 from typing import TYPE_CHECKING
+
 from .._exceptions import CredentialUnavailableError
 from .._constants import AZURE_VSCODE_CLIENT_ID
 from .._internal.aad_client import AadClient
+from .._internal.decorators import log_get_token
 
 if sys.platform.startswith("win"):
-    from .win_vscode_adapter import get_credentials
+    from .._internal.win_vscode_adapter import get_credentials
 elif sys.platform.startswith("darwin"):
-    from .macos_vscode_adapter import get_credentials
+    from .._internal.macos_vscode_adapter import get_credentials
 else:
-    from .linux_vscode_adapter import get_credentials
+    from .._internal.linux_vscode_adapter import get_credentials
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -29,6 +31,7 @@ class VSCodeCredential(object):
         self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
         self._refresh_token = None
 
+    @log_get_token("VSCodeCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
@@ -47,9 +50,17 @@ class VSCodeCredential(object):
 
         token = self._client.get_cached_access_token(scopes)
 
-        if token:
-            return token
+        if not token:
+            token = self._redeem_refresh_token(scopes, **kwargs)
+        elif self._client.should_refresh(token):
+            try:
+                self._redeem_refresh_token(scopes, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
+        return token
 
+    def _redeem_refresh_token(self, scopes, **kwargs):
+        # type: (Sequence[str], **Any) -> Optional[AccessToken]
         if not self._refresh_token:
             self._refresh_token = get_credentials()
             if not self._refresh_token:

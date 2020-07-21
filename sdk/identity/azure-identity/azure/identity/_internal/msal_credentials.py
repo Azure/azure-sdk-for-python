@@ -2,9 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Credentials wrapping MSAL applications and delegating token acquisition and caching to them.
-This entails monkeypatching MSAL's OAuth client with an adapter substituting an azure-core pipeline for Requests.
-"""
 import abc
 import base64
 import json
@@ -16,12 +13,11 @@ from six.moves.urllib_parse import urlparse
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
-from .exception_wrapper import wrap_exceptions
-from .msal_transport_adapter import MsalTransportAdapter
+from .msal_client import MsalClient
 from .persistent_cache import load_user_cache
 from .._constants import KnownAuthorities
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
-from .._internal import get_default_authority, normalize_authority
+from .._internal import get_default_authority, normalize_authority, wrap_exceptions
 from .._auth_record import AuthenticationRecord
 
 try:
@@ -37,7 +33,6 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports,unused-import
     from typing import Any, Mapping, Optional, Type, Union
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -102,7 +97,7 @@ class MsalCredential(ABC):
             else:
                 self._cache = msal.TokenCache()
 
-        self._adapter = kwargs.pop("msal_adapter", None) or MsalTransportAdapter(**kwargs)
+        self._client = MsalClient(**kwargs)
 
         # postpone creating the wrapped application because its initializer uses the network
         self._msal_app = None  # type: Optional[msal.ClientApplication]
@@ -119,69 +114,18 @@ class MsalCredential(ABC):
 
     def _create_app(self, cls):
         # type: (Type[msal.ClientApplication]) -> msal.ClientApplication
-        """Creates an MSAL application, patching msal.authority to use an azure-core pipeline during tenant discovery"""
-
-        # MSAL application initializers use msal.authority to send AAD tenant discovery requests
-        with self._adapter:
-            # MSAL's "authority" is a URL e.g. https://login.microsoftonline.com/common
-            app = cls(
-                client_id=self._client_id,
-                client_credential=self._client_credential,
-                authority="{}/{}".format(self._authority, self._tenant_id),
-                token_cache=self._cache,
-            )
-
-        # monkeypatch the app to replace requests.Session with MsalTransportAdapter
-        app.client.session.close()
-        app.client.session = self._adapter
+        app = cls(
+            client_id=self._client_id,
+            client_credential=self._client_credential,
+            authority="{}/{}".format(self._authority, self._tenant_id),
+            token_cache=self._cache,
+            http_client=self._client,
+        )
 
         return app
 
 
-class ConfidentialClientCredential(MsalCredential):
-    """Wraps an MSAL ConfidentialClientApplication with the TokenCredential API"""
-
-    @wrap_exceptions
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
-
-        # MSAL requires scopes be a list
-        scopes = list(scopes)  # type: ignore
-        now = int(time.time())
-
-        # First try to get a cached access token or if a refresh token is cached, redeem it for an access token.
-        # Failing that, acquire a new token.
-        app = self._get_app()
-        result = app.acquire_token_silent(scopes, account=None) or app.acquire_token_for_client(scopes)
-
-        if "access_token" not in result:
-            raise ClientAuthenticationError(message="authentication failed: {}".format(result.get("error_description")))
-
-        return AccessToken(result["access_token"], now + int(result["expires_in"]))
-
-    def _get_app(self):
-        # type: () -> msal.ConfidentialClientApplication
-        if not self._msal_app:
-            self._msal_app = self._create_app(msal.ConfidentialClientApplication)
-        return self._msal_app
-
-
-class PublicClientCredential(MsalCredential):
-    """Wraps an MSAL PublicClientApplication with the TokenCredential API"""
-
-    @abc.abstractmethod
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
-        pass
-
-    def _get_app(self):
-        # type: () -> msal.PublicClientApplication
-        if not self._msal_app:
-            self._msal_app = self._create_app(msal.PublicClientApplication)
-        return self._msal_app
-
-
-class InteractiveCredential(PublicClientCredential):
+class InteractiveCredential(MsalCredential):
     def __init__(self, **kwargs):
         self._disable_automatic_authentication = kwargs.pop("disable_automatic_authentication", False)
         self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
@@ -213,33 +157,50 @@ class InteractiveCredential(PublicClientCredential):
           configured not to begin this automatically. Call :func:`authenticate` to begin interactive authentication.
         """
         if not scopes:
-            raise ValueError("'get_token' requires at least one scope")
+            message = "'get_token' requires at least one scope"
+            _LOGGER.warning("%s.get_token failed: %s", self.__class__.__name__, message)
+            raise ValueError(message)
 
         allow_prompt = kwargs.pop("_allow_prompt", not self._disable_automatic_authentication)
         try:
-            return self._acquire_token_silent(*scopes, **kwargs)
-        except AuthenticationRequiredError:
-            if not allow_prompt:
+            token = self._acquire_token_silent(*scopes, **kwargs)
+            _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
+            return token
+        except Exception as ex:  # pylint:disable=broad-except
+            if not (isinstance(ex, AuthenticationRequiredError) and allow_prompt):
+                _LOGGER.warning(
+                    "%s.get_token failed: %s",
+                    self.__class__.__name__,
+                    ex,
+                    exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+                )
                 raise
 
         # silent authentication failed -> authenticate interactively
         now = int(time.time())
 
-        result = self._request_token(*scopes, **kwargs)
-        if "access_token" not in result:
-            message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
-            raise ClientAuthenticationError(message=message)
+        try:
+            result = self._request_token(*scopes, **kwargs)
+            if "access_token" not in result:
+                message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
+                raise ClientAuthenticationError(message=message)
 
-        # this may be the first authentication, or the user may have authenticated a different identity
-        self._auth_record = _build_auth_record(result)
+            # this may be the first authentication, or the user may have authenticated a different identity
+            self._auth_record = _build_auth_record(result)
+        except Exception as ex:  # pylint:disable=broad-except
+            _LOGGER.warning(
+                "%s.get_token failed: %s", self.__class__.__name__, ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+            )
+            raise
 
+        _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
     def authenticate(self, **kwargs):
         # type: (**Any) -> AuthenticationRecord
         """Interactively authenticate a user.
 
-        :keyword Sequence[str] scopes: scopes to request during authentication, such as those provided by
+        :keyword Iterable[str] scopes: scopes to request during authentication, such as those provided by
           :func:`AuthenticationRequiredError.scopes`. If provided, successful authentication will cache an access token
           for these scopes.
         :rtype: ~azure.identity.AuthenticationRecord
@@ -285,3 +246,9 @@ class InteractiveCredential(PublicClientCredential):
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> dict
         """Request an access token via a non-silent MSAL token acquisition method, returning that method's result"""
+
+    def _get_app(self):
+        # type: () -> msal.PublicClientApplication
+        if not self._msal_app:
+            self._msal_app = self._create_app(msal.PublicClientApplication)
+        return self._msal_app
