@@ -413,7 +413,7 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.account_name, None)
         self.assertEqual(service.table_name, "foo")
         self.assertEqual(service.credential, None)
-        self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+        self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
     @pytest.mark.skip("pending")
