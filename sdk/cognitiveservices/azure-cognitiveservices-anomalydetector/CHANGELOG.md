@@ -4,7 +4,7 @@
 
 **Features**
 
-  - Added operation group AnomalyDetectorClientOperationsMixin
+  - Added `change_point_detect` method to the client.
   - Added new models `ChangePointDetectRequest` and `ChangePointDetectResponse`
 
 ## 0.2.0 (2019-04-12)
