@@ -243,9 +243,12 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(model.training_documents), 1)
         self.assertEqual(model.training_documents[0].document_name, "subfolder/Form_6.jpg")  # we filtered for only subfolders
 
-        with self.assertRaises(HttpResponseError):
+        try:
             poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False, prefix="xxx")
             model = await poller.result()
+        except HttpResponseError as e:
+            self.assertIsNotNone(e.error.code)
+            self.assertIsNotNone(e.error.message)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True)

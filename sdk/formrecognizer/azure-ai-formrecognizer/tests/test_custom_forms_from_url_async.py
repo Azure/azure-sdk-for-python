@@ -62,9 +62,12 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     async def test_passing_bad_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
-        with self.assertRaises(HttpResponseError):
+        try:
             poller = await client.begin_recognize_custom_forms_from_url(model_id="xx", form_url="https://badurl.jpg")
             result = await poller.result()
+        except HttpResponseError as e:
+            self.assertIsNotNone(e.error.code)
+            self.assertIsNotNone(e.error.message)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_pass_stream_into_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):

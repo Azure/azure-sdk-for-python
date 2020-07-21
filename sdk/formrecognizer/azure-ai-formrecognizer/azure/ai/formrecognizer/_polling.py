@@ -18,10 +18,9 @@ if TYPE_CHECKING:
 
 
 def raise_error(response, errors, message):
-    message += "({}) {}\n".format(errors[0]["code"], errors[0]["message"])
-    error = HttpResponseError(message=message, response=response)
+    error_message = "({}) {}{}".format(errors[0]["code"], errors[0]["message"], message)
+    error = HttpResponseError(message=error_message, response=response)
     error.error = ODataV4Format(errors[0])
-    error.error.message = message
     raise error
 
 
@@ -53,7 +52,7 @@ class TrainingPolling(LocationPolling):
                 if train_result:
                     errors = train_result.get("errors")
                     if errors:
-                        message = "Invalid model created with ID={}\n".format(body["modelInfo"]["modelId"])
+                        message = "\nInvalid model created with ID={}".format(body["modelInfo"]["modelId"])
                         raise_error(response, errors, message)
                 return "Failed"
             if status.lower() != "creating":
