@@ -114,6 +114,20 @@ class SearchClient(HeadersMixin):
             repr(self._endpoint), repr(self._index_name)
         )[:1024]
 
+    @property
+    def actions(self):
+        # type: () -> List[IndexAction]
+        """The list of currently configured index actions in queue.
+
+        :rtype: List[IndexAction]
+        """
+        return self._index_documents_batch.actions
+
+    @property
+    def batch_size(self):
+        # type: () -> int
+        return self._batch_size
+
     def close(self):
         # type: () -> None
         """Close the :class:`~azure.search.SearchClient` session.

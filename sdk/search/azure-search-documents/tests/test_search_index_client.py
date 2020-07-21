@@ -252,3 +252,36 @@ class TestSearchClient(object):
         index_documents = mock_index.call_args[1]["batch"]
         assert isinstance(index_documents, IndexBatch)
         assert index_documents.actions == batch.actions
+
+    def test_search_client_kwargs(self):
+        client = SearchClient("endpoint", "index name", CREDENTIAL, window=100, batch_size=100)
+
+        assert client.batch_size == 100
+        assert client._window == 100
+        assert client._auto_flush
+        client.cleanup()
+
+    def test_batch_queue(self):
+        client = SearchClient("endpoint", "index name", CREDENTIAL)
+
+        assert client._index_documents_batch
+        client.queue_upload_documents_actions(["upload1"])
+        client.queue_delete_documents_actions(["delete1", "delete2"])
+        client.queue_merge_documents_actions(["merge1", "merge2", "merge3"])
+        client.queue_merge_or_upload_documents_actions(["merge_or_upload1"])
+        assert len(client.actions) == 7
+        actions = client._index_documents_batch.dequeue_actions()
+        assert len(client.actions) == 0
+        client._index_documents_batch.enqueue_actions(actions)
+        assert len(client.actions) == 7
+
+    @mock.patch(
+        "azure.search.documents._internal._search_client.SearchClient.flush"
+    )
+    def test_flush_if_needed(self, mock_flush):
+        client = SearchClient("endpoint", "index name", CREDENTIAL, window=1000, batch_size=2)
+
+        client.queue_upload_documents_actions(["upload1"])
+        client.queue_delete_documents_actions(["delete1", "delete2"])
+        assert mock_flush.called
+        client.cleanup()
