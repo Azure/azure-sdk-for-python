@@ -27,9 +27,10 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.table._table_client import TableClient
 from azure.table._shared._error import _validate_table_name
+from azure.table._shared.table_service_client_base import TableServiceClientBase
 
 
-class TableServiceClient(StorageAccountHostsMixin):
+class TableServiceClient(TableServiceClientBase):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
     def __init__(
             self, account_url,  # type: str

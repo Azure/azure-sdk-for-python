@@ -21,6 +21,7 @@ from azure.table._generated.models import AccessPolicy, SignedIdentifier, TableP
 from azure.table._serialize import _get_match_headers, _add_entity_properties
 from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
 from azure.table._shared._error import _validate_table_name
+from azure.table._shared.table_client_base import TableClientBase
 
 from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import process_table_error
@@ -33,7 +34,7 @@ from ._models import TableEntityPropertiesPaged, UpdateMode
 from ._shared.response_handlers import return_headers_and_deserialized
 
 
-class TableClient(StorageAccountHostsMixin):
+class TableClient(TableClientBase):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
     def __init__(
             self, account_url,  # type: str
