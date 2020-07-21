@@ -62,12 +62,11 @@ class TestCopyModel(FormRecognizerTest):
         # give an incorrect region
         target = client.get_copy_authorization(resource_region="eastus", resource_id=resource_id)
 
-        try:
+        with pytest.raises(HttpResponseError) as e:
             poller = client.begin_copy_model(model.model_id, target=target)
             copy = poller.result()
-        except HttpResponseError as e:
-            self.assertIsNotNone(e.error.code)
-            self.assertIsNotNone(e.error.message)
+        self.assertIsNotNone(e.value.error.code)
+        self.assertIsNotNone(e.value.error.message)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True, copy=True)

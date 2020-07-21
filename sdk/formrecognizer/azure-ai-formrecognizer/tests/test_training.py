@@ -237,12 +237,11 @@ class TestTraining(FormRecognizerTest):
         self.assertEqual(len(model.training_documents), 1)
         self.assertEqual(model.training_documents[0].document_name, "subfolder/Form_6.jpg")  # we filtered for only subfolders
 
-        try:
+        with pytest.raises(HttpResponseError) as e:
             poller = client.begin_training(training_files_url=container_sas_url, use_training_labels=False, prefix="xxx")
             model = poller.result()
-        except HttpResponseError as e:
-            self.assertIsNotNone(e.error.code)
-            self.assertIsNotNone(e.error.message)
+        self.assertIsNotNone(e.value.error.code)
+        self.assertIsNotNone(e.value.error.message)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True)
