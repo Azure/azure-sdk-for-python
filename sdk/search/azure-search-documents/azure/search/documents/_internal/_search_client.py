@@ -99,7 +99,7 @@ class SearchClient(HeadersMixin):
         self._client = SearchIndexClient(
             endpoint=endpoint, index_name=index_name, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: SearchIndexClient
-        self._timer = threading.Timer(self._window, self.flush)  # if there is no changes in 2 mins, flush
+        self._timer = threading.Timer(self._window, self.flush)
         if self._auto_flush:
             self._timer.start()
 
@@ -123,7 +123,7 @@ class SearchClient(HeadersMixin):
 
     def flush(self, raise_error=False):
         # type: (bool) -> bool
-        """Retrieve a document from the Azure search index by its key.
+        """Flush the batch.
 
         :param bool raise_error: raise error if there are failures during flushing
             Default to False which re-queue the failed tasks and retry on next flush.
@@ -163,13 +163,18 @@ class SearchClient(HeadersMixin):
 
     def _flush_if_needed(self):
         # type: () -> bool
-        """ Every time when a new action is queued, if auto_flush is True, this method
+        """ Every time when a new action is queued, this method
             will be triggered. It checks the actions already queued and flushes them if:
-            1. There are self._batch_size actions queued
+            1. Auto_flush is on
+            2. There are self._batch_size actions queued
         """
-        # get actions
         if not self._auto_flush:
             return
+
+        # reset the timer
+        self._timer.cancel()
+        self._timer = threading.Timer(self._window, self.flush)
+        self._timer.start()
 
         if len(self._index_documents_batch.actions) < self._batch_size:
             return
@@ -519,11 +524,6 @@ class SearchClient(HeadersMixin):
         :type documents: List[dict]
         """
         self._index_documents_batch.add_upload_actions(documents)
-        # reset the timer
-        if self._auto_flush:
-            self._timer.cancel()
-            self._timer = threading.Timer(self._window, self.flush)
-            self._timer.start()
         self._flush_if_needed()
 
     def delete_documents(self, documents, **kwargs):
@@ -567,11 +567,6 @@ class SearchClient(HeadersMixin):
         :type documents: List[dict]
         """
         self._index_documents_batch.add_delete_actions(documents)
-        # reset the timer
-        if self._auto_flush:
-            self._timer.cancel()
-            self._timer = threading.Timer(self._window, self.flush)
-            self._timer.start()
         self._flush_if_needed()
 
     def merge_documents(self, documents, **kwargs):
@@ -611,11 +606,6 @@ class SearchClient(HeadersMixin):
         :type documents: List[dict]
         """
         self._index_documents_batch.add_merge_actions(documents)
-        # reset the timer
-        if self._auto_flush:
-            self._timer.cancel()
-            self._timer = threading.Timer(self._window, self.flush)
-            self._timer.start()
         self._flush_if_needed()
 
     def merge_or_upload_documents(self, documents, **kwargs):
@@ -646,11 +636,6 @@ class SearchClient(HeadersMixin):
         :type documents: List[dict]
         """
         self._index_documents_batch.add_merge_or_upload_actions(documents)
-        # reset the timer
-        if self._auto_flush:
-            self._timer.cancel()
-            self._timer = threading.Timer(self._window, self.flush)
-            self._timer.start()
         self._flush_if_needed()
 
     @distributed_trace
