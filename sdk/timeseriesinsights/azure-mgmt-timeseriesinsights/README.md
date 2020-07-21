@@ -15,12 +15,6 @@ library.
 For a more complete set of Azure libraries, see the
 [azure](https://pypi.python.org/pypi/azure) bundle package.
 
-## Usage
-
-For code examples, see [TimeSeriesInsights
-Management](https://docs.microsoft.com/python/api/overview/azure/timeseriesinsights)
-on docs.microsoft.com.
-
 ## Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in
