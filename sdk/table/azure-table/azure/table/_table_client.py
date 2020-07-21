@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any
+from typing import Optional, Any, Union
 
 try:
     from urllib.parse import urlparse, unquote
@@ -285,7 +285,7 @@ class TableClient(TableClientBase):
     def update_entity(  # pylint:disable=R1710
             self,
             entity,  # type: Union[Entity, dict[str,str]]
-            mode=UpdateMode.merge,  # type: UpdateMode
+            mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -320,7 +320,7 @@ class TableClient(TableClientBase):
                 table_entity_properties=entity,
                 if_match=if_match or if_not_match or "*",
                 **kwargs)
-        if mode is UpdateMode.merge:
+        if mode is UpdateMode.MERGE:
             self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
                                             row_key=row_key, if_match=if_match or if_not_match or "*",
                                             table_entity_properties=entity, **kwargs)
@@ -430,7 +430,7 @@ class TableClient(TableClientBase):
     def upsert_entity(  # pylint:disable=R1710
             self,
             entity,  # type: Union[Entity, dict[str,str]]
-            mode=UpdateMode.merge,  # type: UpdateMode
+            mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -453,7 +453,7 @@ class TableClient(TableClientBase):
         row_key = entity['RowKey']
         entity = _add_entity_properties(entity)
 
-        if mode is UpdateMode.merge:
+        if mode is UpdateMode.MERGE:
             try:
                 self._client.table.merge_entity(
                     table=self.table_name,

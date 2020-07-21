@@ -21,7 +21,7 @@ class UpdateEntity(object):
 
         table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
         try:
-            # defaults to UpdateMode.merge
+            # defaults to UpdateMode.MERGE
             table_client.update_entity(entity=self.entity)
         except ResourceNotFoundError:
             print("Entity does not exist")

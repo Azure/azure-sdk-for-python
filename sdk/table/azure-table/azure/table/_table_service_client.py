@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Any
+from typing import Any, Union
 
 from azure.core.pipeline import Pipeline
 

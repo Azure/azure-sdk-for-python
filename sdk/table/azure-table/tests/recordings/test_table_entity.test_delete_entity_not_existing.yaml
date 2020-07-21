@@ -15,11 +15,19 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 19:13:41 GMT
+=======
+      - Tue, 21 Jul 2020 19:17:58 GMT
+>>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
       User-Agent:
       - azsdk-python-storage-table/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 19:13:41 GMT
+=======
+      - Tue, 21 Jul 2020 19:17:58 GMT
+>>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
       x-ms-version:
       - 12.0.0b1
     method: POST
@@ -31,12 +39,116 @@ interactions:
         \ <code>InvalidHeaderValue</code>\r\n  <message xml:lang=\"en-US\">The value
         for one of the HTTP headers is not in the correct format.\nRequestId:1d353987-5002-0031-4393-5ffeb9000000\nTime:2020-07-21T19:13:41.4710403Z</message>\r\n</error>"
     headers:
+<<<<<<< HEAD
+=======
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Tue, 21 Jul 2020 19:17:56 GMT
+      location:
+      - https://storagename.table.core.windows.net/Tables('uttablef9b6145a')
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 21 Jul 2020 19:17:58 GMT
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 21 Jul 2020 19:17:58 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://storagename.table.core.windows.net/uttablef9b6145a(PartitionKey='pkf9b6145a',RowKey='rkf9b6145a')
+  response:
+    body:
+      string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>ResourceNotFound</code><message
+        xml:lang="en-US">The specified resource does not exist.
+
+        RequestId:94ce405d-f002-0073-5693-5f7ac9000000
+
+        Time:2020-07-21T19:17:57.1170804Z</message></error>'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/xml;charset=utf-8
+      date:
+      - Tue, 21 Jul 2020 19:17:57 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 21 Jul 2020 19:17:58 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 21 Jul 2020 19:17:58 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://storagename.table.core.windows.net/Tables('uttablef9b6145a')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+>>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
       content-length:
       - '371'
       content-type:
       - application/xml
       date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 19:13:41 GMT
+=======
+      - Tue, 21 Jul 2020 19:17:57 GMT
+>>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
       server:
       - Microsoft-HTTPAPI/2.0
     status:

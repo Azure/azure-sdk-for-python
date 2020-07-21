@@ -11,28 +11,49 @@ interactions:
       Content-Length:
       - '0'
       Date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 19:13:29 GMT
+=======
+      - Tue, 21 Jul 2020 19:20:44 GMT
+>>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
       User-Agent:
       - azsdk-python-storage-table/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 19:13:29 GMT
+=======
+      - Tue, 21 Jul 2020 19:20:44 GMT
+>>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
       x-ms-version:
       - 12.0.0b1
     method: DELETE
     uri: https://storagename.table.core.windows.net/Tables('pytablesynca12c1b7c')
   response:
     body:
+<<<<<<< HEAD
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\r\n<error
         xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\r\n
         \ <code>InvalidHeaderValue</code>\r\n  <message xml:lang=\"en-US\">The value
         for one of the HTTP headers is not in the correct format.\nRequestId:0ed2def6-7002-0019-4793-5f9f11000000\nTime:2020-07-21T19:13:30.2933732Z</message>\r\n</error>"
+=======
+      string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>ResourceNotFound</code><message
+        xml:lang="en-US">The specified resource does not exist.
+
+        RequestId:a4830164-f002-003f-4a94-5fe32f000000
+
+        Time:2020-07-21T19:20:43.1774674Z</message></error>'
+>>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
     headers:
       content-length:
       - '371'
       content-type:
       - application/xml
       date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 19:13:30 GMT
+=======
+      - Tue, 21 Jul 2020 19:20:42 GMT
+>>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
       server:
       - Microsoft-HTTPAPI/2.0
     status:

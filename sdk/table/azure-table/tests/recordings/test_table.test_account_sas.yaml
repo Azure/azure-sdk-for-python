@@ -15,11 +15,19 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 19:13:28 GMT
+=======
+      - Tue, 21 Jul 2020 19:20:41 GMT
+>>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
       User-Agent:
       - azsdk-python-storage-table/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Tue, 21 Jul 2020 19:13:28 GMT
+=======
+      - Tue, 21 Jul 2020 19:20:41 GMT
+>>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
       x-ms-version:
       - 12.0.0b1
     method: POST
@@ -31,12 +39,199 @@ interactions:
         \ <code>InvalidHeaderValue</code>\r\n  <message xml:lang=\"en-US\">The value
         for one of the HTTP headers is not in the correct format.\nRequestId:d75f2e2b-c002-009a-6893-5f8173000000\nTime:2020-07-21T19:13:28.4977219Z</message>\r\n</error>"
     headers:
+<<<<<<< HEAD
       content-length:
       - '371'
       content-type:
       - application/xml
       date:
       - Tue, 21 Jul 2020 19:13:28 GMT
+=======
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Tue, 21 Jul 2020 19:20:40 GMT
+      location:
+      - https://storagename.table.core.windows.net/Tables('pytablesync99dc0b08')
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"PartitionKey": "test", "RowKey": "test1", "text": "hello"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '60'
+      Content-Type:
+      - application/json
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 21 Jul 2020 19:20:42 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 21 Jul 2020 19:20:42 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: PATCH
+    uri: https://storagename.table.core.windows.net/pytablesync99dc0b08(PartitionKey='test',RowKey='test1')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 21 Jul 2020 19:20:40 GMT
+      etag:
+      - W/"datetime'2020-07-21T19%3A20%3A40.830294Z'"
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: '{"PartitionKey": "test", "RowKey": "test2", "text": "hello"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '60'
+      Content-Type:
+      - application/json
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 21 Jul 2020 19:20:42 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 21 Jul 2020 19:20:42 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: PATCH
+    uri: https://storagename.table.core.windows.net/pytablesync99dc0b08(PartitionKey='test',RowKey='test2')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 21 Jul 2020 19:20:40 GMT
+      etag:
+      - W/"datetime'2020-07-21T19%3A20%3A40.9173529Z'"
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 21 Jul 2020 19:20:42 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 21 Jul 2020 19:20:42 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: GET
+    uri: https://storagename.table.core.windows.net/pytablesync99dc0b08()?st=2020-07-21T19%3A19%3A42Z&se=2020-07-21T20%3A20%3A42Z&sp=r&sv=2019-07-07&ss=t&srt=o&sig=xoaCvEpwtgcsbNd4nTHvprnYGpvSMMeoEz3cYlWasco%3D
+  response:
+    body:
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#pytablesync99dc0b08","value":[{"odata.etag":"W/\"datetime''2020-07-21T19%3A20%3A40.830294Z''\"","PartitionKey":"test","RowKey":"test1","Timestamp":"2020-07-21T19:20:40.830294Z","text":"hello"},{"odata.etag":"W/\"datetime''2020-07-21T19%3A20%3A40.9173529Z''\"","PartitionKey":"test","RowKey":"test2","Timestamp":"2020-07-21T19:20:40.9173529Z","text":"hello"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-type:
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date:
+      - Tue, 21 Jul 2020 19:20:41 GMT
+      server:
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 21 Jul 2020 19:20:42 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 21 Jul 2020 19:20:42 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://storagename.table.core.windows.net/Tables('pytablesync99dc0b08')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Tue, 21 Jul 2020 19:20:41 GMT
+>>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
       server:
       - Microsoft-HTTPAPI/2.0
     status:

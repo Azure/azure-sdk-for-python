@@ -156,7 +156,7 @@ class TableEntitySamples(object):
 
             # Try merge, and merge since already in table
             created.text = "NewMarker"
-            merged_entity = table.upsert_entity(mode=UpdateMode.merge, table_entity_properties=entity)
+            merged_entity = table.upsert_entity(mode=UpdateMode.MERGE, table_entity_properties=entity)
             print(merged_entity)
             # [END upsert_entity]
 
@@ -190,7 +190,7 @@ class TableEntitySamples(object):
 
             # Merge the entity
             replaced.color = "Blue"
-            table.update_entity(mode=UpdateMode.merge, table_entity_properties=replaced)
+            table.update_entity(mode=UpdateMode.MERGE, table_entity_properties=replaced)
 
             # Get the merged entity
             merged = table.get_entity(

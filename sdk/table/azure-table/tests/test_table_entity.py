@@ -811,7 +811,7 @@ class StorageTableEntityTest(TableTestCase):
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             with self.assertRaises(HttpResponseError):
                 self.table.update_entity(
-                    mode=UpdateMode.merge,
+                    mode=UpdateMode.MERGE,
                     entity=sent_entity,
                     etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
                     match_condition=MatchConditions.IfNotModified)
@@ -831,7 +831,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.upsert_entity(mode=UpdateMode.merge, entity=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
@@ -851,7 +851,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = self.table.upsert_entity(mode=UpdateMode.merge, entity=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
@@ -912,7 +912,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.update_entity(mode=UpdateMode.merge, entity=sent_entity)
+            resp = self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
@@ -932,7 +932,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             with self.assertRaises(ResourceNotFoundError):
-                self.table.update_entity(mode=UpdateMode.merge, entity=sent_entity)
+                self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
         finally:
@@ -949,7 +949,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             resp = self.table.update_entity(
-                mode=UpdateMode.merge,
+                mode=UpdateMode.MERGE,
                 entity=sent_entity,
                 etag=etag,
                 match_condition=MatchConditions.IfNotModified)
@@ -972,7 +972,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             with self.assertRaises(HttpResponseError):
-                self.table.update_entity(mode=UpdateMode.merge,
+                self.table.update_entity(mode=UpdateMode.MERGE,
                                          entity=sent_entity,
                                          etag='W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
                                          match_condition=MatchConditions.IfNotModified)
@@ -1118,7 +1118,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.upsert_entity(mode=UpdateMode.merge, entity=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
@@ -1128,7 +1128,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity['newField'] = 'newFieldValue'
-            resp = self.table.update_entity(mode=UpdateMode.merge, entity=sent_entity)
+            resp = self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
