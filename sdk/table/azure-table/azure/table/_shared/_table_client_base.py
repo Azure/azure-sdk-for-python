@@ -14,29 +14,29 @@ from azure.table._shared.base_client import parse_query
 from .base_client import StorageAccountHostsMixin
 
 class TableClientBase(StorageAccountHostsMixin):
+    """Create TableClientBase from a Credential.
+
+    :param account_url:
+        A url to an Azure Storage account.
+    :type account_url: str
+    :param table_name: The table name.
+    :type table_name: str
+    :param credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token, or the connection string already has shared
+        access key values. The value can be a SAS token string, an account shared access
+        key.
+    :type credential: Union[str,TokenCredential]
+
+    :returns: None
+    """
     def __init__(
         self, account_url, # type: str
         table_name, # type: str
-        credential=None, # type: Union[str,TokenCredential]
+        credential=None, # type: str
         **kwargs # type: Any
     ):
         # type: (...) -> None
-        """Create TableClientBase from a Credential.
-
-        :param account_url:
-            A url to an Azure Storage account.
-        :type account_url: str
-        :param table_name: The table name.
-        :type table_name: str
-        :param credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Union[str,TokenCredential]
-
-        :returns: None
-        """
 
         _validate_table_name(table_name)
 
