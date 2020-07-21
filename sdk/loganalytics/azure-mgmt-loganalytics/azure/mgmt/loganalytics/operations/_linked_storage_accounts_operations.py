@@ -50,7 +50,7 @@ class LinkedStorageAccountsOperations(object):
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param data_source_type: Linked storage accounts type. Possible values
-         include: 'CustomLogs', 'AzureWatson'
+         include: 'CustomLogs', 'AzureWatson', 'Query', 'Ingestion', 'Alerts'
         :type data_source_type: str or
          ~azure.mgmt.loganalytics.models.DataSourceType
         :param storage_account_ids: Linked storage accounts resources ids.
@@ -127,7 +127,7 @@ class LinkedStorageAccountsOperations(object):
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param data_source_type: Linked storage accounts type. Possible values
-         include: 'CustomLogs', 'AzureWatson'
+         include: 'CustomLogs', 'AzureWatson', 'Query', 'Ingestion', 'Alerts'
         :type data_source_type: str or
          ~azure.mgmt.loganalytics.models.DataSourceType
         :param dict custom_headers: headers that will be added to the request
@@ -187,7 +187,7 @@ class LinkedStorageAccountsOperations(object):
         :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param data_source_type: Linked storage accounts type. Possible values
-         include: 'CustomLogs', 'AzureWatson'
+         include: 'CustomLogs', 'AzureWatson', 'Query', 'Ingestion', 'Alerts'
         :type data_source_type: str or
          ~azure.mgmt.loganalytics.models.DataSourceType
         :param dict custom_headers: headers that will be added to the request

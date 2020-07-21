@@ -868,7 +868,7 @@ class LinkedStorageAccountsResource(ProxyResource):
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
     :ivar data_source_type: Linked storage accounts type. Possible values
-     include: 'CustomLogs', 'AzureWatson'
+     include: 'CustomLogs', 'AzureWatson', 'Query', 'Ingestion', 'Alerts'
     :vartype data_source_type: str or
      ~azure.mgmt.loganalytics.models.DataSourceType
     :param storage_account_ids: Linked storage accounts resources ids.
