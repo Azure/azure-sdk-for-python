@@ -51,6 +51,7 @@ class InsertDeleteEntity(object):
         etag = metadata['etag']
 
         try:
+            # will delete if match_condition and etag are satisfied
             table_client.delete_entity(entity=self.entity, etag=etag, match_condition=MatchConditions.IfNotModified)
 
         except ResourceNotFoundError:
