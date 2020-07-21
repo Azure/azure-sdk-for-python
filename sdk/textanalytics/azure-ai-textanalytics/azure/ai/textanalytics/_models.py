@@ -9,6 +9,8 @@ from ._generated.v3_0.models._models import (
     MultiLanguageInput
 )
 
+def _get_indices(relation):
+    return [int(s) for s in re.findall(r"\d+", relation)]
 
 class DictMixin(object):
 
@@ -708,7 +710,7 @@ class AspectSentiment(DictMixin):
         opinion_relations = [r.ref for r in relations if r.relation_type == "opinion"]
         opinions = []
         for opinion_relation in opinion_relations:
-            nums = [int(s) for s in re.findall(r"\d+", opinion_relation)]
+            nums = _get_indices(opinion_relation)
             document_index = nums[0]
             sentence_index = nums[1]
             opinion_index = nums[2]
