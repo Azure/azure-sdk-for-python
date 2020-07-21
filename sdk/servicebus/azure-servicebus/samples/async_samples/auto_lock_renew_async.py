@@ -18,6 +18,7 @@ import asyncio
 
 from azure.servicebus import Message
 from azure.servicebus.aio import ServiceBusClient, AutoLockRenew
+from azure.servicebus.exceptions import MessageLockExpired
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
@@ -95,7 +96,7 @@ async def renew_lock_with_lock_renewal_failure_callback():
             renewer._sleep_time = 40
             async with servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch=10) as receiver:
 
-                def on_lock_renew_failure_callback(renewable, error):
+                async def on_lock_renew_failure_callback(renewable, error):
                     # If auto-lock-renewal fails, this function will be called.
                     # If failure is due to an error, the second argument will be populated, otherwise
                     # it will default to `None`.

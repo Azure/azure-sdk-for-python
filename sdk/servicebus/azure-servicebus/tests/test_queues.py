@@ -1348,7 +1348,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 errors.append(error)
 
         auto_lock_renew = AutoLockRenew()
-        auto_lock_renew.renew_period = 1 # So we can run the test fast.
+        auto_lock_renew._renew_period = 1 # So we can run the test fast.
         with auto_lock_renew: # Check that it is called when the object expires for any reason (silent renew failure)
             message = MockReceivedMessage(prevent_renew_lock=True)
             auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
@@ -1359,7 +1359,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         del results[:]
         del errors[:]
         auto_lock_renew = AutoLockRenew()
-        auto_lock_renew.renew_period = 1
+        auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that in normal operation it does not get called
             auto_lock_renew.register(renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
             time.sleep(3)
@@ -1369,7 +1369,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         del results[:]
         del errors[:]
         auto_lock_renew = AutoLockRenew()
-        auto_lock_renew.renew_period = 1
+        auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that when a message is settled, it will not get called even after expiry
             message = MockReceivedMessage(prevent_renew_lock=True)
             auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
@@ -1381,7 +1381,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         del results[:]
         del errors[:]
         auto_lock_renew = AutoLockRenew()
-        auto_lock_renew.renew_period = 1
+        auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that it is called when there is an overt renew failure
             message = MockReceivedMessage(exception_on_renew_lock=True)
             auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
@@ -1392,7 +1392,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         del results[:]
         del errors[:]
         auto_lock_renew = AutoLockRenew()
-        auto_lock_renew.renew_period = 1
+        auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that it is not called when the renewer is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
             auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
@@ -1404,7 +1404,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         del results[:]
         del errors[:]
         auto_lock_renew = AutoLockRenew()
-        auto_lock_renew.renew_period = 1
+        auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that it is not called when the receiver is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
             auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
@@ -1416,7 +1416,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
     def test_queue_mock_no_reusing_auto_lock_renew(self):
         auto_lock_renew = AutoLockRenew()
-        auto_lock_renew.renew_period = 1 # So we can run the test fast.
+        auto_lock_renew._renew_period = 1 # So we can run the test fast.
         with auto_lock_renew:
             auto_lock_renew.register(renewable=MockReceivedMessage())
             time.sleep(3)
@@ -1429,7 +1429,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             auto_lock_renew.register(renewable=MockReceivedMessage())
 
         auto_lock_renew = AutoLockRenew()
-        auto_lock_renew.renew_period = 1
+        auto_lock_renew._renew_period = 1
 
         with auto_lock_renew:
             auto_lock_renew.register(renewable=MockReceivedMessage())

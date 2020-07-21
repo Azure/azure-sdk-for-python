@@ -29,6 +29,7 @@
 
 **Breaking Changes**
 
+* `AutoLockRenew.sleep_time` and `AutoLockRenew.renew_period` have been made internal as `_sleep_time` and `_renew_period` respectively, as it is not expected a user will have to interact with them.
 * `AutoLockRenew.shutdown` is now `AutoLockRenew.close` to normalize with other equivelent behaviors.
 
 ## 7.0.0b4 (2020-07-06)

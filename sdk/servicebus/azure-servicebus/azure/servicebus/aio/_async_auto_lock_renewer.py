@@ -50,10 +50,10 @@ class AutoLockRenew:
 
     def __init__(self, loop: Optional[asyncio.BaseEventLoop] = None) -> None:
         self._shutdown = asyncio.Event()
-        self._futures: List[asyncio.Task] = []
+        self._futures = [] # type: List[asyncio.Future] 
         self._loop = loop or get_running_loop()
-        self.sleep_time = 1
-        self.renew_period = 10
+        self._sleep_time = 1
+        self._renew_period = 10
 
     async def __aenter__(self) -> "AutoLockRenew":
         if self._shutdown.is_set():
@@ -68,7 +68,7 @@ class AutoLockRenew:
         # pylint: disable=protected-access
         if self._shutdown.is_set():
             return False
-        if hasattr(renewable, '_settled') and renewable._settled:
+        if hasattr(renewable, '_settled') and renewable._settled: # type: ignore
             return False
         if renewable._lock_expired:
             return False
@@ -83,20 +83,21 @@ class AutoLockRenew:
                                on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None) -> None:
         # pylint: disable=protected-access
         _log.debug("Running async lock auto-renew for %r seconds", timeout)
-        error = None
+        error = None # type: Optional[Exception]
         clean_shutdown = False # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
         try:
             while self._renewable(renewable):
                 if (utc_now() - starttime) >= datetime.timedelta(seconds=timeout):
                     _log.debug("Reached auto lock renew timeout - letting lock expire.")
                     raise AutoLockRenewTimeout("Auto-renew period ({} seconds) elapsed.".format(timeout))
-                if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=self.renew_period):
-                    _log.debug("%r seconds or less until lock expires - auto renewing.", self.renew_period)
+                if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=self._renew_period):
+                    _log.debug("%r seconds or less until lock expires - auto renewing.", self._renew_period)
                     await renewable.renew_lock()
-                await asyncio.sleep(self.sleep_time)
+                await asyncio.sleep(self._sleep_time)
             clean_shutdown = not renewable._lock_expired
-        except AutoLockRenewTimeout as error:
-            renewable.auto_renew_error = error
+        except AutoLockRenewTimeout as e:
+            error = e
+            renewable.auto_renew_error = e
             clean_shutdown = not renewable._lock_expired
         except Exception as e:  # pylint: disable=broad-except
             _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)

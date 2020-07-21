@@ -55,8 +55,8 @@ class AutoLockRenew(object):
     def __init__(self, executor=None, max_workers=None):
         self._executor = executor or ThreadPoolExecutor(max_workers=max_workers)
         self._shutdown = threading.Event()
-        self.sleep_time = 1
-        self.renew_period = 10
+        self._sleep_time = 1
+        self._renew_period = 10
 
     def __enter__(self):
         if self._shutdown.is_set():
@@ -89,13 +89,14 @@ class AutoLockRenew(object):
                 if (utc_now() - starttime) >= datetime.timedelta(seconds=timeout):
                     _log.debug("Reached auto lock renew timeout - letting lock expire.")
                     raise AutoLockRenewTimeout("Auto-renew period ({} seconds) elapsed.".format(timeout))
-                if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=self.renew_period):
-                    _log.debug("%r seconds or less until lock expires - auto renewing.", self.renew_period)
+                if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=self._renew_period):
+                    _log.debug("%r seconds or less until lock expires - auto renewing.", self._renew_period)
                     renewable.renew_lock()
-                time.sleep(self.sleep_time)
+                time.sleep(self._sleep_time)
             clean_shutdown = not renewable._lock_expired
-        except AutoLockRenewTimeout as error:
-            renewable.auto_renew_error = error
+        except AutoLockRenewTimeout as e:
+            error = e
+            renewable.auto_renew_error = e
             clean_shutdown = not renewable._lock_expired
         except Exception as e:  # pylint: disable=broad-except
             _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)

@@ -519,7 +519,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                             messages.append(message)
 
             # While we're testing autolockrenew and sessions, let's make sure we don't call the lock-lost callback when a session exits.
-            renewer.renew_period = 1
+            renewer._renew_period = 1
             session = None
 
             async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
