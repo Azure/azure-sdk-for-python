@@ -15,7 +15,8 @@ from datetime import (
     timedelta,
 )
 
-from azure.table._models import TableSasPermissions, UpdateMode, AccessPolicy, TableAnalyticsLogging
+from azure.table._models import TableSasPermissions, UpdateMode, AccessPolicy, TableAnalyticsLogging, Metrics, CorsRule, \
+    RetentionPolicy
 from azure.table._shared.models import ResourceTypes, AccountSasPermissions
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
@@ -76,17 +77,12 @@ class StorageTableTest(TableTestCase):
             pass
 
     # --Test cases for tables --------------------------------------------------
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_create_properties(self, resource_group, location, storage_account, storage_account_key):
         # # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
-        # response = ts.create_table(table_name)
-        # assert response.table_name == table_name
-
         table_name = self._get_table_reference()
-        # table_client = ts.get_table_client(table_name)
-
         # Act
         created = ts.create_table(table_name)
 
@@ -95,15 +91,16 @@ class StorageTableTest(TableTestCase):
 
         properties = ts.get_service_properties()
         print(properties)
-        ts.set_service_properties(analytics_logging=TableAnalyticsLogging(delete=True),
-                                  minute_metrics=properties['minute_metrics'])
-
+        ts.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
+        # have to wait for return to service
         p = ts.get_service_properties()
+        # have to wait for return to service
+        ts.set_service_properties(minute_metrics= Metrics(enabled=True, include_apis=True,
+                                 retention_policy=RetentionPolicy(enabled=True, days=5)))
+
+        ps = ts.get_service_properties()
+        print(ps)
         print(p)
-        assert p["hour_metrics"] == properties["hour_metrics"]
-        # existing = list(ts.query_tables("TableName eq '{}'".format(table_name)))
-        # This is causing problems
-        # self.assertEqual(existing, [table_name])
         ts.delete_table(table_name)
 
     # @pytest.mark.skip("pending")
