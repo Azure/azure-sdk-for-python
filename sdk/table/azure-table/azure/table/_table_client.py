@@ -19,8 +19,8 @@ from azure.table._entity import Entity
 from azure.table._generated import AzureTable
 from azure.table._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
 from azure.table._serialize import _get_match_headers, _add_entity_properties
-from azure.table._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
-from azure.table._shared._error import _validate_table_name
+from azure.table._shared.base_client import parse_connection_str
+from azure.table._shared._table_client_base import TableClientBase
 
 from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import process_table_error
@@ -33,7 +33,7 @@ from ._models import TableEntityPropertiesPaged, UpdateMode
 from ._shared.response_handlers import return_headers_and_deserialized
 
 
-class TableClient(StorageAccountHostsMixin):
+class TableClient(TableClientBase):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
     def __init__(
             self, account_url,  # type: str
@@ -58,27 +58,7 @@ class TableClient(StorageAccountHostsMixin):
 
         :returns: None
         """
-
-        _validate_table_name(table_name)
-
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not table_name:
-            raise ValueError("Please specify a table name.")
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(parsed_url))
-
-        _, sas_token = parse_query(parsed_url.query)
-        if not sas_token and not credential:
-            raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
-
-        self.table_name = table_name
-        self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(TableClient, self).__init__(parsed_url, service='table', credential=credential, **kwargs)
+        super(TableClient, self).__init__(account_url, table_name, credential=credential, **kwargs)
 
         self._client = AzureTable(self.url, pipeline=self._pipeline)
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
