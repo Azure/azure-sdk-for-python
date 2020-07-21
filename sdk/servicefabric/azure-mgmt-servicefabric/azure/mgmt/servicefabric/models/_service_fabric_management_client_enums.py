@@ -20,10 +20,26 @@ class ProvisioningState(str, Enum):
     canceled = "Canceled"
 
 
+class ManagedIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"  #: Indicates that system assigned identity is associated with the resource.
+    user_assigned = "UserAssigned"  #: Indicates that user assigned identity is associated with the resource.
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"  #: Indicates that both system assigned and user assigned identity are associated with the resource.
+    none = "None"  #: Indicates that no identity is associated with the resource.
+
+
 class ArmUpgradeFailureAction(str, Enum):
 
     rollback = "Rollback"  #: Indicates that a rollback of the upgrade will be performed by Service Fabric if the upgrade fails.
     manual = "Manual"  #: Indicates that a manual repair will need to be performed by the administrator if the upgrade fails. Service Fabric will not proceed to the next upgrade domain automatically.
+
+
+class RollingUpgradeMode(str, Enum):
+
+    invalid = "Invalid"  #: Indicates the upgrade mode is invalid. All Service Fabric enumerations have the invalid type. The value is zero.
+    unmonitored_auto = "UnmonitoredAuto"  #: The upgrade will proceed automatically without performing any health monitoring. The value is 1
+    unmonitored_manual = "UnmonitoredManual"  #: The upgrade will stop after completing each upgrade domain, giving the opportunity to manually monitor health before proceeding. The value is 2
+    monitored = "Monitored"  #: The upgrade will stop after completing each upgrade domain and automatically monitor health before proceeding. The value is 3
 
 
 class ServiceCorrelationScheme(str, Enum):
