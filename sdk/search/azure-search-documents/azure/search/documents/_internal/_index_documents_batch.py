@@ -123,7 +123,7 @@ class IndexDocumentsBatch(object):
             self._actions.clear()
         return result
 
-    def Enqueue_actions(self, new_actions):
+    def enqueue_actions(self, new_actions):
         # type: (List[IndexAction]) -> None
         """Enqueue a list of configured index actions.
            This is used for the case of partial success

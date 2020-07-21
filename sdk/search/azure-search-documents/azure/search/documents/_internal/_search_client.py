@@ -88,7 +88,7 @@ class SearchClient(HeadersMixin):
         validate_api_version(api_version)
         self._batch_size = kwargs.pop('batch_size', self._DEFAULT_BATCH_SIZE)
         self._window = kwargs.pop('window', self._DEFAULT_WINDOW)
-        self._auto_flush = True if self._window > 0 else False
+        self._auto_flush = self._window > 0
         self._index_documents_batch = IndexDocumentsBatch()
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
@@ -101,7 +101,6 @@ class SearchClient(HeadersMixin):
         if self._auto_flush:
             self._timer.start()
 
-    # Deleting (Calling destructor)
     def __del__(self):
         if self._auto_flush:
             self._timer.cancel()
@@ -130,10 +129,31 @@ class SearchClient(HeadersMixin):
         # get actions
         actions = self._index_documents_batch.dequeue_actions()
         try:
-            self._index_documents_actions(actions=actions)
-            # if 207:
+            results = self._index_documents_actions(actions=actions)
+            # re-queue 207:
+            if not self._index_key:
+                client = SearchIndexClient(self._endpoint, self._credential)
+                result = client.get_index(self._index_name)
+                if not result:
+                    # Cannot find the index
+                    self._index_key = ""
+                else:
+                    for field in result.fields:
+                        if field.key:
+                            self._index_key = field.name
+                            break
+
+            for result in results:
+                if result.status_code == 207:
+                    requeue = [x for x in actions if x[self._index_key]==result.key]
+                    self._index_documents_batch.enqueue_actions(requeue)
+
+            if raise_error:
+                raise
+
         except Exception:   # pylint: disable=broad-except
-            #re-queue failed tasks
+            # Do we want to re-queue these failures?
+            self._index_documents_batch.enqueue_actions(actions)
             if raise_error:
                 raise
 
@@ -487,8 +507,8 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
-    def queue_upload_documents_actions(self, documents, **kwargs):
-        # type: (List[dict], **Any) -> None
+    def queue_upload_documents_actions(self, documents):
+        # type: (List[dict]) -> None
         """Queue upload documents actions.
 
         :param documents: A list of documents to upload.
@@ -535,10 +555,10 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
-    def queue_delete_documents_actions(self, documents, **kwargs):
-        # type: (List[dict], **Any) -> None
+    def queue_delete_documents_actions(self, documents):
+        # type: (List[dict]) -> None
         """Queue delete documents actions
-        
+
         :param documents: A list of documents to delete.
         :type documents: List[dict]
         """
@@ -579,8 +599,8 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
-    def queue_merge_documents_actions(self, documents, **kwargs):
-        # type: (List[dict], **Any) -> None
+    def queue_merge_documents_actions(self, documents):
+        # type: (List[dict]) -> None
         """Queue merge documents actions
 
         :param documents: A list of documents to merge.
@@ -614,8 +634,8 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
-    def queue_merge_or_upload_documents_actions(self, documents, **kwargs):
-        # type: (List[dict], **Any) -> None
+    def queue_merge_or_upload_documents_actions(self, documents):
+        # type: (List[dict]) -> None
         """Queue merge documents or upload documents actions
 
         :param documents: A list of documents to merge or upload.
