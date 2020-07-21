@@ -35,7 +35,7 @@ class SearchServiceClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ServiceStatistics"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
@@ -55,11 +55,13 @@ class SearchServiceClientOperationsMixin:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         if _x_ms_client_request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
+            header_parameters['x-ms-client-request-id'] = \
+                self._serialize.header("x_ms_client_request_id", _x_ms_client_request_id, 'str')
         header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = \
+            await self._client._pipeline.run(request, stream=False, **kwargs)   # pylint: disable=protected-access
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

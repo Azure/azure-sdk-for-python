@@ -8,8 +8,8 @@
 
 from typing import Any
 
-from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
+from azure.core import AsyncPipelineClient
 
 from ._configuration_async import SearchServiceClientConfiguration
 from .operations_async import IndexesOperations
@@ -18,7 +18,8 @@ from .. import models
 
 
 class SearchServiceClient(SearchServiceClientOperationsMixin):
-    """Client that can be used to manage and query indexes and documents, as well as manage other resources, on a search service.
+    """Client that can be used to manage and query indexes and documents, as well as manage other resources,
+        on a search service.
 
     :ivar data_sources: DataSourcesOperations operations
     :vartype data_sources: azure.search.documents.indexes.aio.operations_async.DataSourcesOperations
@@ -32,14 +33,15 @@ class SearchServiceClient(SearchServiceClientOperationsMixin):
     :vartype indexes: azure.search.documents.indexes.aio.operations_async.IndexesOperations
     :param endpoint: The endpoint URL of the search service.
     :type endpoint: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+        Retry-After header is present.
     """
 
     def __init__(
         self,
         endpoint: str,
         **kwargs: Any
-    ) -> None:
+    ) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
         base_url = '{endpoint}'
         self._config = SearchServiceClientConfiguration(endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)

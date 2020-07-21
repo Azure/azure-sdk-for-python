@@ -65,7 +65,8 @@ class SearchServiceClientOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client.run(request, stream=False, **kwargs)
+        pipeline_response = \
+            self._client._pipeline.run(request, stream=False, **kwargs) # pylint: disable=protected-access
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
