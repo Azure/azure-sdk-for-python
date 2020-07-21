@@ -5,12 +5,14 @@
 # --------------------------------------------------------------------------
 from typing import cast, List, TYPE_CHECKING
 
-import six
 import threading
+import six
 
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import HttpResponseError
 from .._api_versions import validate_api_version
 from ._generated import SearchIndexClient
+from ..indexes import SearchIndexClient as _SearchIndexClient
 from ._generated.models import IndexBatch, IndexingResult
 from ._search_documents_error import RequestTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
@@ -101,7 +103,7 @@ class SearchClient(HeadersMixin):
         if self._auto_flush:
             self._timer.start()
 
-    def __del__(self):
+    def cleanup(self):
         if self._auto_flush:
             self._timer.cancel()
 
@@ -132,7 +134,7 @@ class SearchClient(HeadersMixin):
             results = self._index_documents_actions(actions=actions)
             # re-queue 207:
             if not self._index_key:
-                client = SearchIndexClient(self._endpoint, self._credential)
+                client = _SearchIndexClient(self._endpoint, self._credential)
                 result = client.get_index(self._index_name)
                 if not result:
                     # Cannot find the index
@@ -145,11 +147,11 @@ class SearchClient(HeadersMixin):
 
             for result in results:
                 if result.status_code == 207:
-                    requeue = [x for x in actions if x[self._index_key]==result.key]
+                    requeue = [x for x in actions if x.get(self._index_key) == result.key]
                     self._index_documents_batch.enqueue_actions(requeue)
 
             if raise_error:
-                raise
+                raise HttpResponseError(message="Some actions failed. Failed actions are re-queued.")
 
         except Exception:   # pylint: disable=broad-except
             # Do we want to re-queue these failures?
