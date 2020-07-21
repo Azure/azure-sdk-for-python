@@ -470,8 +470,8 @@ class TablePayloadFormat(object):
 
 
 class UpdateMode(str, Enum):
-    replace = "replace"
-    merge = "merge"
+    REPLACE = "replace"
+    MERGE = "merge"
 
 
 class SASProtocol(str, Enum):
