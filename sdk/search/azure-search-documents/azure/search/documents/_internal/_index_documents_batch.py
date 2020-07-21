@@ -120,7 +120,7 @@ class IndexDocumentsBatch(object):
         """
         with self._lock:
             result = list(self._actions)
-            self._actions.clear()
+            self._actions = []
         return result
 
     def enqueue_actions(self, new_actions):
