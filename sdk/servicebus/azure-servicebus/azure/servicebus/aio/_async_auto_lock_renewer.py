@@ -7,13 +7,16 @@
 import asyncio
 import logging
 import datetime
-import functools
-from typing import Optional, Iterable, Any
+from typing import Optional, Iterable, Any, Union, Callable, Awaitable, List
 
+from ._async_message import ReceivedMessage
 from ._servicebus_session_async import ServiceBusSession
 from .._common.utils import renewable_start_time, utc_now
 from ._async_utils import get_running_loop
 from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed, ServiceBusError
+
+AsyncLockRenewFailureCallback = Callable[[Union[ServiceBusSession, ReceivedMessage],
+                                     Optional[Exception]], Awaitable[None]]
 
 _log = logging.getLogger(__name__)
 
@@ -47,7 +50,7 @@ class AutoLockRenew:
 
     def __init__(self, loop: Optional[asyncio.BaseEventLoop] = None) -> None:
         self._shutdown = asyncio.Event()
-        self._futures = []
+        self._futures: List[asyncio.Task] = []
         self._loop = loop or get_running_loop()
         self.sleep_time = 1
         self.renew_period = 10
@@ -61,7 +64,8 @@ class AutoLockRenew:
     async def __aexit__(self, *args: Iterable[Any]) -> None:
         await self.close()
 
-    def _renewable(self, renewable: "Union[ReceivedMessage, ServiceBusSession]") -> bool:
+    def _renewable(self, renewable: Union[ReceivedMessage, ServiceBusSession]) -> bool:
+        # pylint: disable=protected-access
         if self._shutdown.is_set():
             return False
         if hasattr(renewable, '_settled') and renewable._settled:
@@ -73,10 +77,11 @@ class AutoLockRenew:
         return True
 
     async def _auto_lock_renew(self,
-                               renewable: "Union[ReceivedMessage, ServiceBusSession]",
+                               renewable: Union[ReceivedMessage, ServiceBusSession],
                                starttime: datetime.datetime,
-                               timeout: int,
-                               on_lock_renew_failure: "Optional[Callable[[Union[ServiceBusSession, ReceivedMessage], Optional[Exception]], Awaitable[None]]]"=None) -> None:
+                               timeout: float,
+                               on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None) -> None:
+        # pylint: disable=protected-access
         _log.debug("Running async lock auto-renew for %r seconds", timeout)
         error = None
         clean_shutdown = False # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
@@ -90,8 +95,8 @@ class AutoLockRenew:
                     await renewable.renew_lock()
                 await asyncio.sleep(self.sleep_time)
             clean_shutdown = not renewable._lock_expired
-        except AutoLockRenewTimeout as e:
-            renewable.auto_renew_error = e
+        except AutoLockRenewTimeout as error:
+            renewable.auto_renew_error = error
             clean_shutdown = not renewable._lock_expired
         except Exception as e:  # pylint: disable=broad-except
             _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
@@ -104,24 +109,26 @@ class AutoLockRenew:
                 await on_lock_renew_failure(renewable, error)
 
     def register(self,
-                 renewable: "Union[ReceivedMessage, ServiceBusSession]",
+                 renewable: Union[ReceivedMessage, ServiceBusSession],
                  timeout: float = 300,
-                 on_lock_renew_failure: "Optional[Callable[[Union[ServiceBusSession, ReceivedMessage]], Awaitable[None]]]" = None) -> None:
+                 on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None) -> None:
         """Register a renewable entity for automatic lock renewal.
 
         :param renewable: A locked entity that needs to be renewed.
         :type renewable: Union[~azure.servicebus.aio.ReceivedMessage,~azure.servicebus.aio.ServiceBusSession]
         :param float timeout: A time in seconds that the lock should be maintained for.
          Default value is 300 (5 minutes).
-        :param Optional[Callable[[Union[~azure.servicebus.aio.ServiceBusSession, ReceivedMessage]], Awaitable[None]]] on_lock_renew_failure: 
-         A callback may be specified to be called when the lock is lost on the renewable that is being registered.
+        :param Optional[AsyncLockRenewFailureCallback] on_lock_renew_failure:
+         An async callback may be specified to be called when the lock is lost on the renewable being registered.
          Default value is None (no callback).
         """
         if self._shutdown.is_set():
             raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         starttime = renewable_start_time(renewable)
-        renew_future = asyncio.ensure_future(self._auto_lock_renew(renewable, starttime, timeout, on_lock_renew_failure), loop=self._loop)
+        renew_future = asyncio.ensure_future(
+            self._auto_lock_renew(renewable, starttime, timeout, on_lock_renew_failure),
+            loop=self._loop)
         self._futures.append(renew_future)
 
     async def close(self) -> None:

@@ -11,7 +11,6 @@ import functools
 
 from uamqp import authentication
 
-from .._common.utils import renewable_start_time, utc_now
 from .._common.constants import (
     JWT_TOKEN_SCOPE,
     TOKEN_TYPE_JWT,

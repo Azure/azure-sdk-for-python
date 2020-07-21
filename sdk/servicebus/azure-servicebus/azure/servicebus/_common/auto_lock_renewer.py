@@ -4,17 +4,22 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import sys
 import datetime
 import logging
 import threading
 import time
-import functools
 from concurrent.futures import ThreadPoolExecutor
+from typing import TYPE_CHECKING
 
 from .._servicebus_session import ServiceBusSession
 from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusError
 from .utils import renewable_start_time, utc_now
+
+if TYPE_CHECKING:
+    from typing import Callable, Union, Optional, Awaitable
+    from .message import ReceivedMessage
+    LockRenewFailureCallback = Callable[[Union[ServiceBusSession, ReceivedMessage],
+                                         Optional[Exception]], None]
 
 _log = logging.getLogger(__name__)
 
@@ -63,6 +68,7 @@ class AutoLockRenew(object):
         self.close()
 
     def _renewable(self, renewable):
+        # pylint: disable=protected-access
         if self._shutdown.is_set():
             return False
         if hasattr(renewable, '_settled') and renewable._settled:
@@ -74,6 +80,7 @@ class AutoLockRenew(object):
         return True
 
     def _auto_lock_renew(self, renewable, starttime, timeout, on_lock_renew_failure=None):
+        # pylint: disable=protected-access
         _log.debug("Running lock auto-renew thread for %r seconds", timeout)
         error = None
         clean_shutdown = False # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
@@ -87,8 +94,8 @@ class AutoLockRenew(object):
                     renewable.renew_lock()
                 time.sleep(self.sleep_time)
             clean_shutdown = not renewable._lock_expired
-        except AutoLockRenewTimeout as e:
-            renewable.auto_renew_error = e
+        except AutoLockRenewTimeout as error:
+            renewable.auto_renew_error = error
             clean_shutdown = not renewable._lock_expired
         except Exception as e:  # pylint: disable=broad-except
             _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
@@ -108,7 +115,7 @@ class AutoLockRenew(object):
          ~azure.servicebus.ServiceBusSession
         :param float timeout: A time in seconds that the lock should be maintained for.
          Default value is 300 (5 minutes).
-        :param Optional[Callable[[Union[~azure.servicebus.ServiceBusSession, ReceivedMessage], Optional[Exception]], Awaitable[None]]] on_lock_renew_failure: 
+        :param Optional[LockRenewFailureCallback] on_lock_renew_failure:
          A callback may be specified to be called when the lock is lost on the renewable that is being registered.
          Default value is None (no callback).
         """

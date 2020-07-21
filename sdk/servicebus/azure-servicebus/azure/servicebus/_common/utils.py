@@ -7,8 +7,6 @@
 import sys
 import datetime
 import logging
-import threading
-import time
 import functools
 try:
     from urlparse import urlparse
