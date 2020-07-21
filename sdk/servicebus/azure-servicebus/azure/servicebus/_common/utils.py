@@ -10,22 +10,25 @@ import logging
 import threading
 import time
 import functools
+import platform
+from typing import Optional, Dict
 try:
     from urlparse import urlparse
 except ImportError:
     from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
 
-from uamqp import authentication
+from uamqp import authentication, types
 
 from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusError
-from .._version import VERSION as sdk_version
+from .._version import VERSION
 from .constants import (
     JWT_TOKEN_SCOPE,
     TOKEN_TYPE_JWT,
     TOKEN_TYPE_SASTOKEN,
     DEAD_LETTER_QUEUE_SUFFIX,
-    TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
+    TRANSFER_DEAD_LETTER_QUEUE_SUFFIX,
+    USER_AGENT_PREFIX
 )
 
 _log = logging.getLogger(__name__)
@@ -93,12 +96,33 @@ def build_uri(address, entity):
     return address
 
 
-def create_properties():
+def create_properties(user_agent=None):
+    # type: (Optional[str]) -> Dict[types.AMQPSymbol, str]
+    """
+    Format the properties with which to instantiate the connection.
+    This acts like a user agent over HTTP.
+
+    :param str user_agent: If specified, this will be added in front of the built-in user agent string.
+
+    :rtype: dict
+    """
     properties = {}
-    properties["product"] = "servicebus.python"
-    properties["version"] = sdk_version
-    properties["framework"] = "Python {}.{}.{}".format(*sys.version_info[0:3])
-    properties["platform"] = sys.platform
+    properties[types.AMQPSymbol("product")] = USER_AGENT_PREFIX
+    properties[types.AMQPSymbol("version")] = VERSION
+    framework = "Python/{}.{}.{}".format(
+        sys.version_info[0], sys.version_info[1], sys.version_info[2]
+    )
+    properties[types.AMQPSymbol("framework")] = framework
+    platform_str = platform.platform()
+    properties[types.AMQPSymbol("platform")] = platform_str
+
+    final_user_agent = "{}/{} {} ({})".format(
+        USER_AGENT_PREFIX, VERSION, framework, platform_str
+    )
+    if user_agent:
+        final_user_agent = "{} {}".format(user_agent, final_user_agent)
+
+    properties[types.AMQPSymbol("user-agent")] = final_user_agent
     return properties
 
 
