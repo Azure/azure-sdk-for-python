@@ -6,6 +6,10 @@
 
 - Values are now capitalized for enums `FormContentType`, `LengthUnit`, `TrainingStatus`, and `CustomFormModelStatus`
 
+**New features**
+
+- `FormField` now has attribute `type` which contains the semantic data type of the field value
+
 **Fixes and improvements**
 
 - Fixes a bug where error code and message weren't being returned on `HttpResponseError` if operation failed during polling

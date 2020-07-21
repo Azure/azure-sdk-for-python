@@ -102,7 +102,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
                 credentials.append(shared_cache)
             except Exception as ex:  # pylint:disable=broad-except
-                # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
             credentials.append(VSCodeCredential())
@@ -124,6 +123,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
           `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
-            return self._successful_credential.get_token(*scopes, **kwargs)
+            token = self._successful_credential.get_token(*scopes, **kwargs)
+            _LOGGER.info(
+                "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
+            )
+            return token
 
         return super(DefaultAzureCredential, self).get_token(*scopes, **kwargs)

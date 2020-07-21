@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
 import time
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
@@ -39,7 +38,7 @@ async def test_request_url(authority):
         await client.request_token(("scope",))
 
 
-async def test_should_refresh():
+def test_should_refresh():
     client = AsyncAuthnClient(endpoint="http://foo")
     now = int(time.time())
 
