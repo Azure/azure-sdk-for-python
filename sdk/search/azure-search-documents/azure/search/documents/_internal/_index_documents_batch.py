@@ -119,7 +119,7 @@ class IndexDocumentsBatch(object):
         :rtype: List[IndexAction]
         """
         with self._lock:
-            result = self._actions.copy()
+            result = list(self._actions)
             self._actions.clear()
         return result
 
