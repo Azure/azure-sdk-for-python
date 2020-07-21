@@ -5,21 +5,20 @@ from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.table import VERSION
-from azure.table._deserialization import _convert_to_entity
 from azure.table._entity import Entity
 from azure.table._generated.aio._azure_table_async import AzureTable
 from azure.table._generated.models import SignedIdentifier, TableProperties, QueryOptions
 from azure.table._models import AccessPolicy
-from azure.table._serialization import _add_entity_properties
-from azure.table._serialize import _get_match_headers
 from azure.table._shared.base_client import parse_connection_str
 from azure.table._shared.base_client_async import AsyncStorageAccountHostsMixin
 from azure.table._shared.policies_async import ExponentialRetry
 from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import return_headers_and_deserialized, process_storage_error
 from azure.table._table_client import TableClient as TableClientBase
-from azure.table._aio._models import TableEntityPropertiesPaged, UpdateMode
 
+from .._models import TableEntityPropertiesPaged, UpdateMode
+from .._deserialize import _convert_to_entity
+from .._serialize import _add_entity_properties, _get_match_headers
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     """A client to interact with a specific Queue.

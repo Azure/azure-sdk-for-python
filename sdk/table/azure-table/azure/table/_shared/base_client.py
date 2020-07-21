@@ -54,7 +54,7 @@ from .policies import (
     ExponentialRetry,
 )
 from .._version import VERSION
-from .response_handlers import process_table_error, PartialBatchErrorException
+from .response_handlers import process_storage_error, PartialBatchErrorException
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -297,7 +297,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 return iter(parts)
             return parts
         except HttpResponseError as error:
-            process_table_error(error)
+            process_storage_error(error)
 
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created

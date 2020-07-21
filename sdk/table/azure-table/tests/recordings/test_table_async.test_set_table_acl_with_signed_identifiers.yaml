@@ -11,117 +11,28 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 10 Jul 2020 13:57:54 GMT
+      - Tue, 21 Jul 2020 19:13:38 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 10 Jul 2020 13:57:54 GMT
+      - Tue, 21 Jul 2020 19:13:38 GMT
       x-ms-version:
-      - '2019-07-07'
+      - 12.0.0b1
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"pytableasyncd261181d"}'
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\r\n<error
+        xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\r\n
+        \ <code>InvalidHeaderValue</code>\r\n  <message xml:lang=\"en-US\">The value
+        for one of the HTTP headers is not in the correct format.\nRequestId:b6c3c315-1002-007d-7f93-5f6e89000000\nTime:2020-07-21T19:13:38.7331828Z</message>\r\n</error>"
     headers:
-      cache-control: no-cache
-      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Fri, 10 Jul 2020 13:57:53 GMT
-      location: https://storagename.table.core.windows.net/Tables('pytableasyncd261181d')
-      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
-    status:
-      code: 201
-      message: Created
-    url: https://pyacrstoragebjh2owqp36cz.table.core.windows.net/Tables
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-07-10T13:52:54Z</Start><Expiry>2020-07-10T14:57:54Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
-    headers:
-      Accept:
-      - application/xml
-      Content-Length:
-      - '257'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 10 Jul 2020 13:57:54 GMT
-      User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Fri, 10 Jul 2020 13:57:54 GMT
-      x-ms-version:
-      - '2019-07-07'
-    method: PUT
-    uri: https://storagename.table.core.windows.net/pytableasyncd261181d?comp=acl
-  response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      date: Fri, 10 Jul 2020 13:57:53 GMT
-      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-07-07'
-    status:
-      code: 204
-      message: No Content
-    url: https://pyacrstoragebjh2owqp36cz.table.core.windows.net/pytableasyncd261181d?comp=acl
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Date:
-      - Fri, 10 Jul 2020 13:57:55 GMT
-      User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Fri, 10 Jul 2020 13:57:55 GMT
-      x-ms-version:
-      - '2019-07-07'
-    method: GET
-    uri: https://storagename.table.core.windows.net/pytableasyncd261181d?comp=acl
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2020-07-10T13:52:54.0000000Z</Start><Expiry>2020-07-10T14:57:54.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
-    headers:
+      content-length: '371'
       content-type: application/xml
-      date: Fri, 10 Jul 2020 13:57:53 GMT
-      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding: chunked
-      x-ms-version: '2019-07-07'
+      date: Tue, 21 Jul 2020 19:13:37 GMT
+      server: Microsoft-HTTPAPI/2.0
     status:
-      code: 200
-      message: OK
-    url: https://pyacrstoragebjh2owqp36cz.table.core.windows.net/pytableasyncd261181d?comp=acl
-- request:
-    body: null
-    headers:
-      Date:
-      - Fri, 10 Jul 2020 13:57:55 GMT
-      User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Fri, 10 Jul 2020 13:57:55 GMT
-      x-ms-version:
-      - '2019-07-07'
-    method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('pytableasyncd261181d')
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control: no-cache
-      content-length: '0'
-      date: Fri, 10 Jul 2020 13:57:53 GMT
-      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
-    status:
-      code: 204
-      message: No Content
-    url: https://pyacrstoragebjh2owqp36cz.table.core.windows.net/Tables('pytableasyncd261181d')
+      code: 400
+      message: The value for one of the HTTP headers is not in the correct format.
+    url: https://pyacrstoragepr42k4akq5hh.table.core.windows.net/Tables
 version: 1

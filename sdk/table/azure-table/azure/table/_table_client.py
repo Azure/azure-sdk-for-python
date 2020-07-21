@@ -23,7 +23,7 @@ from azure.table._shared.base_client import parse_connection_str
 from azure.table._shared._table_client_base import TableClientBase
 
 from azure.table._shared.request_handlers import serialize_iso
-from azure.table._shared.response_handlers import process_table_error
+from azure.table._shared.response_handlers import process_storage_error
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.table._version import VERSION
 from azure.core.tracing.decorator import distributed_trace
@@ -152,7 +152,7 @@ class TableClient(TableClientBase):
                 cls=return_headers_and_deserialized,
                 **kwargs)
         except HttpResponseError as error:
-            process_table_error(error)
+            process_storage_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
@@ -186,7 +186,7 @@ class TableClient(TableClientBase):
                 table_acl=signed_identifiers or None,
                 **kwargs)
         except HttpResponseError as error:
-            process_table_error(error)
+            process_storage_error(error)
 
     @distributed_trace
     def create_table(
@@ -279,7 +279,7 @@ class TableClient(TableClientBase):
             properties = _convert_to_entity(inserted_entity)
             return properties
         except ValueError as error:
-            process_table_error(error)
+            process_storage_error(error)
 
     @distributed_trace
     def update_entity(  # pylint:disable=R1710

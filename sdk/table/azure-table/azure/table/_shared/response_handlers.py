@@ -83,7 +83,7 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
     return response.http_response.location_mode, deserialized, response_headers
 
 
-def process_table_error(storage_error):
+def process_storage_error(storage_error):
     raise_error = HttpResponseError
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message

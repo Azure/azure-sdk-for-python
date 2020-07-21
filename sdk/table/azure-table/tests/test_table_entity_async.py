@@ -16,7 +16,6 @@ from datetime import datetime, timedelta
 
 from azure.table import generate_table_sas
 from azure.table._generated.models import QueryOptions
-from azure.table.aio._models import UpdateMode
 from azure.table._generated.aio import TableServiceClient
 from dateutil.tz import tzutc, tzoffset
 from math import isnan
@@ -28,7 +27,7 @@ from azure.core.exceptions import (
     ResourceExistsError)
 
 from azure.table._entity import Entity, EntityProperty, EdmType
-from azure.table._models import TableSasPermissions, AccessPolicy
+from azure.table import TableSasPermissions, AccessPolicy, UpdateMode
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 

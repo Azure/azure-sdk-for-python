@@ -10,7 +10,7 @@ from _shared.testcase import GlobalStorageAccountPreparer
 from azure.table import AccessPolicy, TableSasPermissions, ResourceTypes, AccountSasPermissions
 from azure.table._generated.aio import TableServiceClient
 from azure.table._generated.models import QueryOptions
-from azure.table._shared.table_shared_access_signature import generate_account_shared_access_signature
+from azure.table._shared.table_shared_access_signature import generate_account_sas
 
 TEST_TABLE_PREFIX = 'pytableasync'
 
@@ -352,7 +352,7 @@ class TableTestAsync(AsyncTableTestCase):
             entity['RowKey'] = 'test2'
             await table.upsert_insert_merge_entity(table_entity_properties=entity)
 
-            token = generate_account_shared_access_signature(
+            token = generate_account_sas(
                 storage_account.name,
                 storage_account_key,
                 resource_types=ResourceTypes(container=True),
