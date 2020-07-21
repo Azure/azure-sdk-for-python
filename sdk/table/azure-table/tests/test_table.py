@@ -428,10 +428,10 @@ class StorageTableTest(TableTestCase):
                 'RowKey': 'test1',
                 'text': 'hello',
             }
-            table.upsert_entity(mode=UpdateMode.merge, entity=entity)
+            table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
             entity['RowKey'] = 'test2'
-            table.upsert_entity(mode=UpdateMode.merge, entity=entity)
+            table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
 
             token = generate_account_sas(
                 storage_account.name,
