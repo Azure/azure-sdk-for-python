@@ -94,7 +94,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 
-index_name = "nycjobs";
+index_name = "nycjobs"
 # Get the service endpoint and API key from the environment
 endpoint = os.environ["SEARCH_ENDPOINT"]
 key = os.environ["SEARCH_API_KEY"]
@@ -293,11 +293,13 @@ key = os.environ["SEARCH_API_KEY"]
 
 DOCUMENT = {
     'Category': 'Hotel',
-    'HotelId': '1000',
-    'Rating': 4.0,
-    'Rooms': [],
-    'HotelName': 'Azure Inn',
+    'hotelId': '1000',
+    'rating': 4.0,
+    'rooms': [],
+    'hotelName': 'Azure Inn',
 }
+
+search_client = SearchClient(endpoint, index_name, AzureKeyCredential(key))
 
 result = client.upload_documents(documents=[DOCUMENT])
 

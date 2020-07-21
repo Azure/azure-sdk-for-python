@@ -5,6 +5,7 @@
 from typing import TYPE_CHECKING
 
 from .._internal import AadClient, CertificateCredentialBase
+from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
@@ -30,6 +31,7 @@ class CertificateCredential(CertificateCredentialBase):
           is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
+    @log_get_token("CertificateCredential")
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
@@ -48,6 +50,11 @@ class CertificateCredential(CertificateCredentialBase):
         token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
         if not token:
             token = self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
+        elif self._client.should_refresh(token):
+            try:
+                self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
         return token
 
     def _get_auth_client(self, tenant_id, client_id, **kwargs):

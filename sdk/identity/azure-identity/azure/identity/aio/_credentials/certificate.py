@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from .base import AsyncCredentialBase
 from .._internal import AadClient
+from .._internal.decorators import log_get_token_async
 from ..._internal import CertificateCredentialBase
 
 if TYPE_CHECKING:
@@ -37,7 +38,8 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
 
         await self._client.__aexit__()
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    @log_get_token_async
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
@@ -54,6 +56,11 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
         token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
         if not token:
             token = await self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
+        elif self._client.should_refresh(token):
+            try:
+                await self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
         return token
 
     def _get_auth_client(self, tenant_id, client_id, **kwargs):

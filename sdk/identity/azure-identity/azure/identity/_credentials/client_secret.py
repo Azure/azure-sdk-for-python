@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from .._internal import AadClient, ClientSecretCredentialBase
+from .._internal.decorators import log_get_token
 
 try:
     from typing import TYPE_CHECKING
@@ -31,6 +32,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
           is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
+    @log_get_token("ClientSecretCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
@@ -49,6 +51,11 @@ class ClientSecretCredential(ClientSecretCredentialBase):
         token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
         if not token:
             token = self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
+        elif self._client.should_refresh(token):
+            try:
+                self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
         return token
 
     def _get_auth_client(self, tenant_id, client_id, **kwargs):

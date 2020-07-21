@@ -6,10 +6,11 @@ from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from .._internal.aad_client import AadClient
+from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, Sequence
+    from typing import Any, Iterable, Optional
     from azure.core.credentials import AccessToken
 
 
@@ -38,6 +39,7 @@ class AuthorizationCodeCredential(object):
         self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
         self._redirect_uri = redirect_uri
 
+    @log_get_token("AuthorizationCodeCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
@@ -64,7 +66,15 @@ class AuthorizationCodeCredential(object):
             self._authorization_code = None  # auth codes are single-use
             return token
 
-        token = self._client.get_cached_access_token(scopes) or self._redeem_refresh_token(scopes, **kwargs)
+        token = self._client.get_cached_access_token(scopes)
+        if not token:
+            token = self._redeem_refresh_token(scopes, **kwargs)
+        elif self._client.should_refresh(token):
+            try:
+                self._redeem_refresh_token(scopes, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
+
         if not token:
             raise ClientAuthenticationError(
                 message="No authorization code, cached access token, or refresh token available."
@@ -73,7 +83,7 @@ class AuthorizationCodeCredential(object):
         return token
 
     def _redeem_refresh_token(self, scopes, **kwargs):
-        # type: (Sequence[str], **Any) -> Optional[AccessToken]
+        # type: (Iterable[str], **Any) -> Optional[AccessToken]
         for refresh_token in self._client.get_cached_refresh_tokens(scopes):
             if "secret" not in refresh_token:
                 continue
