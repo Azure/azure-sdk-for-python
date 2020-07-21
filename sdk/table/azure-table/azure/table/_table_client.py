@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any
+from typing import Optional, Any, Union
 
 try:
     from urllib.parse import urlparse, unquote

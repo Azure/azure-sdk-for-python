@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Union
+
 from azure.table._shared.models import AccountSasPermissions
 from azure.table._models import TableServices
 from azure.table._shared._common_conversion import _sign_string
