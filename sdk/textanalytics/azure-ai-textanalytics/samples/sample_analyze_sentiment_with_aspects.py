@@ -7,18 +7,19 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_aspect_based_sentiment_analysis.py
+FILE: sample_analyze_sentiment_with_aspects.py
 
 DESCRIPTION:
-    This sample demonstrates how to conduct aspect based sentiment analysis using the text
-    analytics library. This feature is only available for clients with api version v3.1-preview.1.
+    This sample demonstrates how to analyze sentiment on a more granular level, looking into the
+    individual aspects of a review (aspect based sentiment analysis).
+    This feature is only available for clients with api version v3.1-preview.1.
 
     In this sample, we will be a customer who is trying to figure out whether they should stay
     at a specific hotel. We will be looking at which aspects of the hotel are good, and which are
     not.
 
 USAGE:
-    python sample_aspect_based_sentiment_analysis.py
+    python sample_analyze_sentiment_with_aspects.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
@@ -28,8 +29,8 @@ USAGE:
 import os
 
 
-class AspectBasedSentimentAnalysisSample(object):
-    def aspect_based_sentiment_analysis(self):
+class AnalyzeSentimentWithAspectsSample(object):
+    def analyze_sentiment_with_aspects(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient, ApiVersion
 
@@ -39,10 +40,10 @@ class AspectBasedSentimentAnalysisSample(object):
         text_analytics_client = TextAnalyticsClient(
             endpoint=endpoint,
             credential=AzureKeyCredential(key),
-            api_version=ApiVersion.V3_1_preview_1
+            api_version=ApiVersion.V3_1_PREVIEW_1
         )
 
-        # In this sample we will be combing through the reviews of a potential hotel to stay at: Hotel Foo.
+        print("In this sample we will be combing through the reviews of a potential hotel to stay at: Hotel Foo.")
 
         print(
             "I first found a handful of reviews for Hotel Foo. Let's see if I want to stay here."
@@ -63,7 +64,7 @@ class AspectBasedSentimentAnalysisSample(object):
         positive_reviews = [doc for doc in doc_result if doc.sentiment == "positive"]
         negative_reviews = [doc for doc in doc_result if doc.sentiment == "negative"]
         print("...We have {} positive reviews and {} negative reviews. ".format(len(positive_reviews), len(negative_reviews)))
-        print("\nLooks more positive than negative, but still pretty mixed, so I'm going to drill deeper into aspects of each review")
+        print("\nLooks more positive than negative, but still pretty mixed, so I'm going to drill deeper into the individual aspects of each review")
 
         print("\nIn order to do that, I'm going to sort them based on whether people have positive, mixed, or negative feelings about these aspects")
         positive_aspects = []
@@ -105,5 +106,5 @@ class AspectBasedSentimentAnalysisSample(object):
 
 
 if __name__ == '__main__':
-    sample = AspectBasedSentimentAnalysisSample()
-    sample.aspect_based_sentiment_analysis()
+    sample = AnalyzeSentimentWithAspectsSample()
+    sample.analyze_sentiment_with_aspects()
