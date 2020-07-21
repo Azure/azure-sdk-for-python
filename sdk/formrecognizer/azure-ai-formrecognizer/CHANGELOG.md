@@ -6,6 +6,10 @@
 
 - Values are now capitalized for enums `FormContentType`, `LengthUnit`, `TrainingStatus`, and `CustomFormModelStatus`
 
+**New features**
+
+- `FormField` now has attribute `type` which contains the semantic data type of the field value
+
 ## 1.0.0b4 (2020-07-07)
 
 **Breaking Changes**
