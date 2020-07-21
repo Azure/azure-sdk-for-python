@@ -4,12 +4,18 @@
 # license information.
 # --------------------------------------------------------------------------
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+
+from azure.table._shared.base_client import parse_query
 from .base_client import StorageAccountHostsMixin
 
 class TableServiceClientBase(StorageAccountHostsMixin):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
     def __init__(
-            self, parsed_url,  # type: Any
+            self, account_url,  # type: Any
             service, # type: str
             credential=None,  # type: Union[str,TokenCredential]
             **kwargs  # type: Any
@@ -29,19 +35,17 @@ class TableServiceClientBase(StorageAccountHostsMixin):
         :returns: None
         """
 
-        # try:
-        #     if not account_url.lower().startswith('http'):
-        #         account_url = "https://" + account_url
-        # except AttributeError:
-        #     raise ValueError("Account URL must be a string.")
-        # parsed_url = urlparse(account_url.rstrip('/'))
-        # if not parsed_url.netloc:
-        #     raise ValueError("Invalid URL: {}".format(account_url))
+        try:
+            if not account_url.lower().startswith('http'):
+                account_url = "https://" + account_url
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
+        parsed_url = urlparse(account_url.rstrip('/'))
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(account_url))
 
-        # _, sas_token = parse_query(parsed_url.query)
-        # if not sas_token and not credential:
-        #     raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
-        # self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(TableServiceClientBase, self).__init__(parsed_url, service='table', credential=credential, **kwargs)
-        # self._client = AzureTable(self.url, pipeline=self._pipeline)
-        # self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
+        _, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
+        self._query_str, credential = self._format_query_string(sas_token, credential)
+        super(TableServiceClientBase, self).__init__(parsed_url, service=service, credential=credential, **kwargs)

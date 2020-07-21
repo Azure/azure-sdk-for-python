@@ -4,13 +4,19 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# from .._shared.response_handlers import return_headers_and_deserialized
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+
+from azure.table._shared._error import _validate_table_name
+from azure.table._shared.base_client import parse_query
 from .base_client import StorageAccountHostsMixin
 
 class TableClientBase(StorageAccountHostsMixin):
     def __init__(
-        self, parsed_url, # type: str
-        service, # type: str
+        self, account_url, # type: str
+        table_name, # type: str
         credential=None, # type: Union[str,TokenCredential]
         **kwargs # type: Any
     ):
@@ -32,32 +38,23 @@ class TableClientBase(StorageAccountHostsMixin):
         :returns: None
         """
 
-        # _validate_table_name(table_name)
+        _validate_table_name(table_name)
 
-        # try:
-        #     if not account_url.lower().startswith('http'):
-        #         account_url = "https://" + account_url
-        # except AttributeError:
-        #     raise ValueError("Account URL must be a string.")
-        # parsed_url = urlparse(account_url.rstrip('/'))
-        # if not table_name:
-        #     raise ValueError("Please specify a table name.")
-        # if not parsed_url.netloc:
-        #     raise ValueError("Invalid URL: {}".format(parsed_url))
+        try:
+            if not account_url.lower().startswith('http'):
+                account_url = "https://" + account_url
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
+        parsed_url = urlparse(account_url.rstrip('/'))
+        if not table_name:
+            raise ValueError("Please specify a table name.")
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(parsed_url))
 
-        # _, sas_token = parse_query(parsed_url.query)
-        # if not sas_token and not credential:
-        #     raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
+        _, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
 
-        # self.table_name = table_name
-        # self._query_str, credential = self._format_query_string(sas_token, credential)
+        self.table_name = table_name
+        self._query_str, credential = self._format_query_string(sas_token, credential)
         super(TableClientBase, self).__init__(parsed_url, service='table', credential=credential, **kwargs)
-
-        # self._client = AzureTable(self.url, pipeline=self._pipeline)
-        # self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
-
-    # def _format_url(self, hostname):
-    #     """Format the endpoint URL according to the current location
-    #     mode hostname.
-    #     """
-    #     return "{}://{}{}".format(self.scheme, hostname, self._query_str)

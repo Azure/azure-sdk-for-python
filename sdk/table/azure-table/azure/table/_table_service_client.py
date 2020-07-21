@@ -9,15 +9,10 @@ from typing import Any
 
 from azure.core.pipeline import Pipeline
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse  # type: ignore
-
 from azure.table._generated import AzureTable
 from azure.table._generated.models import TableProperties, TableServiceProperties, QueryOptions
 from azure.table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
-from azure.table._shared.base_client import parse_connection_str, parse_query, TransportWrapper
+from azure.table._shared.base_client import parse_connection_str, TransportWrapper
 from azure.table._shared.models import LocationMode
 from azure.table._shared.response_handlers import process_table_error
 from azure.table._version import VERSION
@@ -51,20 +46,7 @@ class TableServiceClient(TableServiceClientBase):
         :returns: None
         """
 
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
-
-        _, sas_token = parse_query(parsed_url.query)
-        if not sas_token and not credential:
-            raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
-        self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(TableServiceClient, self).__init__(parsed_url, service='table', credential=credential, **kwargs)
+        super(TableServiceClient, self).__init__(account_url, service='table', credential=credential, **kwargs)
         self._client = AzureTable(self.url, pipeline=self._pipeline)
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
