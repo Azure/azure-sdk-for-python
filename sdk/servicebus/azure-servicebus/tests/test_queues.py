@@ -213,7 +213,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                               mode=ReceiveSettleMode.ReceiveAndDelete, 
-                                              idle_timeout=5) as receiver:
+                                              idle_timeout=8) as receiver:
                 for message in receiver:
                     assert not message.properties
                     assert not message.label

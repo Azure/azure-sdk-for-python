@@ -149,7 +149,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await sender.send_messages(message)
 
             messages = []
-            async with sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5) as receiver:
+            async with sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=8) as receiver:
                 async for message in receiver:
                     messages.append(message)
                     with pytest.raises(MessageAlreadySettled):
