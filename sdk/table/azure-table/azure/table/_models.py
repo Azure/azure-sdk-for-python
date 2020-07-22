@@ -289,7 +289,7 @@ class TablePropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [t for t in self._response.value]
+        props_list = [Table(t) for t in self._response.value]
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 
@@ -451,6 +451,16 @@ def service_properties_deserialize(generated):
 class TableServices(Services):
     def __str__(self):
         return 't'
+
+
+class Table(object):
+    """
+    Represents an Azure Table. Returned by list_tables.
+
+    :ivar str name: The name of the table.
+    """
+    def __init__(self, table):
+        self.table = table
 
 
 class TablePayloadFormat(object):

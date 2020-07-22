@@ -91,14 +91,6 @@ class EntityProperty(object):
         self.value = value
 
 
-class Table(object):
-    """
-    Represents an Azure Table. Returned by list_tables.
-
-    :ivar str name: The name of the table.
-    """
-
-
 class EdmType(str, Enum):
     """
     Used by :class:`~.EntityProperty` to represent the type of the entity property

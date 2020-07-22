@@ -8,6 +8,7 @@ import functools
 from typing import Any, Union
 
 from azure.core.pipeline import Pipeline
+from azure.table._models import Table
 
 from azure.table._generated import AzureTable
 from azure.table._generated.models import TableProperties, TableServiceProperties, QueryOptions
@@ -192,7 +193,7 @@ class TableServiceClient(TableServiceClientBase):
             filter=None,  # pylint: disable=W0622
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[str]
+        # type: (...) -> ItemPaged[Table]
         """Queries tables under the given account.
         :param filter: Specify a filter to return certain tables
         :type filter: str
@@ -200,7 +201,7 @@ class TableServiceClient(TableServiceClientBase):
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: A query of tables
-        :rtype: ItemPaged[str]
+        :rtype: ItemPaged[Table]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
@@ -233,7 +234,7 @@ class TableServiceClient(TableServiceClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[str]
+        # type: (...) -> ItemPaged[Table]
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
@@ -241,7 +242,7 @@ class TableServiceClient(TableServiceClientBase):
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :keyword str filter: Specify desired filter for tables
         :return: A query of tables
-        :rtype: ItemPaged[str]
+        :rtype: ItemPaged[Table]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
