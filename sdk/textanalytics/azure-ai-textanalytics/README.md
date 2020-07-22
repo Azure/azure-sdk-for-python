@@ -4,6 +4,7 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 * Sentiment Analysis
 * Named Entity Recognition
 * Linked Entity Recognition
+* Personally Identifiable Information (PII) Entity Recognition
 * Language Detection
 * Key Phrase Extraction
 
@@ -184,6 +185,7 @@ The following section provides several code snippets covering some of the most c
 * [Analyze Sentiment](#analyze-sentiment "Analyze sentiment")
 * [Recognize Entities](#recognize-entities "Recognize entities")
 * [Recognize Linked Entities](#recognize-linked-entities "Recognize linked entities")
+* [Recognize PII Entities](#recognize-pii-entities "Recognize pii entities")
 * [Extract Key Phrases](#extract-key-phrases "Extract key phrases")
 * [Detect Language](#detect-language "Detect language")
 
@@ -289,6 +291,35 @@ The returned response is a heterogeneous list of result and error objects: list[
 
 Please refer to the service documentation for a conceptual discussion of [entity linking][linked_entity_recognition]
 and [supported types][linked_entities_categories].
+
+### Recognize PII entities
+[recognize_pii_entities][recognize_pii_entities] recognizes and categorizes Personally Identifiable Information (PII) entities in its input text, such as
+Social Security Numbers, bank account information, credit card numbers, and more.
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient, ApiVersion
+
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential, api_version=ApiVersion.V3_1_preview_1)
+
+documents = [
+    "The employee's SSN is 555-55-5555.",
+    "The employee's phone number is 555-55-5555."
+]
+response = text_analytics_client.recognize_pii_entities(documents, language="en")
+result = [doc for doc in response if not doc.is_error]
+for doc in result:
+    for entity in doc.entities:
+        print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
+              "\tConfidence Score: \t", entity.confidence_score)
+```
+
+The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]
+
+Please refer to the service documentation for [supported PII entity types][pii_entity_categories].
 
 ### Extract key phrases
 [extract_key_phrases][extract_key_phrases] determines the main talking points in its input text. For example, for the input text "The food was delicious and there were wonderful staff", the API returns: "food" and "wonderful staff".
@@ -412,6 +443,7 @@ Authenticate the client with a Cognitive Services/Text Analytics API key or a to
 In a batch of documents:
 * Analyze sentiment: [sample_analyze_sentiment.py][analyze_sentiment_sample] ([async version][analyze_sentiment_sample_async])
 * Recognize entities: [sample_recognize_entities.py][recognize_entities_sample] ([async version][recognize_entities_sample_async])
+* Recognize personally identifiable information: [sample_recognize_pii_entities.py][recognize_pii_entities_sample] ([async version][recognize_pii_entities_sample_async])
 * Recognize linked entities: [sample_recognize_linked_entities.py][recognize_linked_entities_sample] ([async version][recognize_linked_entities_sample_async])
 * Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
 * Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
@@ -458,6 +490,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [document_error]: https://aka.ms/azsdk-python-textanalytics-documenterror
 [detect_language_result]: https://aka.ms/azsdk-python-textanalytics-detectlanguageresult
 [recognize_entities_result]: https://aka.ms/azsdk-python-textanalytics-recognizeentitiesresult
+[recognize_pii_entities_result]: https://aka.ms/azsdk-python-textanalytics-recognizepiientitiesresult
 [recognize_linked_entities_result]: https://aka.ms/azsdk-python-textanalytics-recognizelinkedentitiesresult
 [analyze_sentiment_result]: https://aka.ms/azsdk-python-textanalytics-analyzesentimentresult
 [extract_key_phrases_result]: https://aka.ms/azsdk-python-textanalytics-extractkeyphrasesresult
@@ -477,6 +510,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [key_phrase_extraction]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-keyword-extraction
 [linked_entities_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general
 [linked_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking
+[pii_entity_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=personal
 [named_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking
 [named_entity_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general
 
@@ -496,6 +530,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [recognize_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_entities_async.py
 [recognize_linked_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_linked_entities.py
 [recognize_linked_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
+[recognize_pii_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
+[recognize_pii_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
