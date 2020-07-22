@@ -63,9 +63,11 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         # give an incorrect region
         target = await client.get_copy_authorization(resource_region="eastus", resource_id=resource_id)
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError) as e:
             poller = await client.begin_copy_model(model.model_id, target=target)
             copy = await poller.result()
+        self.assertIsNotNone(e.value.error.code)
+        self.assertIsNotNone(e.value.error.message)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True, copy=True)
