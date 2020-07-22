@@ -51,6 +51,6 @@ setup(
         'azure.data',
     ],
     install_requires=[
-        'azure-nspkg>=2.0.0',
+        'azure-nspkg>=1.0.0',
     ]
 )
