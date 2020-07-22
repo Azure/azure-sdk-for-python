@@ -14,10 +14,10 @@ from math import (
 )
 
 from azure.core import MatchConditions
-from azure.data.tables._entity import EdmType, EntityProperty
-from azure.data.tables._models import TablePayloadFormat
-from azure.data.tables._shared._common_conversion import _to_str, _encode_base64, _to_utc_datetime
-from azure.data.tables._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
+from ._entity import EdmType, EntityProperty
+from ._models import TablePayloadFormat
+from ._shared._common_conversion import _to_str, _encode_base64, _to_utc_datetime
+from ._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
 
 

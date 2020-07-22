@@ -8,21 +8,21 @@ import functools
 from typing import Any, Union
 
 from azure.core.pipeline import Pipeline
-from azure.data.tables._models import Table
+from ._models import Table
 
-from azure.data.tables._generated import AzureTable
-from azure.data.tables._generated.models import TableProperties, TableServiceProperties, QueryOptions
-from azure.data.tables._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
-from azure.data.tables._shared.base_client import parse_connection_str, TransportWrapper
-from azure.data.tables._shared.models import LocationMode
-from azure.data.tables._shared.response_handlers import process_table_error
-from azure.data.tables._version import VERSION
+from ._generated import AzureTable
+from ._generated.models import TableProperties, TableServiceProperties, QueryOptions
+from ._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
+from ._shared.base_client import parse_connection_str, TransportWrapper
+from ._shared.models import LocationMode
+from ._shared.response_handlers import process_table_error
+from ._version import VERSION
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.data.tables._table_client import TableClient
-from azure.data.tables._shared._error import _validate_table_name
-from azure.data.tables._shared._table_service_client_base import TableServiceClientBase
+from ._table_client import TableClient
+from ._shared._error import _validate_table_name
+from ._shared._table_service_client_base import TableServiceClientBase
 
 
 class TableServiceClient(TableServiceClientBase):

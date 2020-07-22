@@ -14,18 +14,18 @@ except ImportError:
     from urllib2 import unquote  # type: ignore
 
 from azure.core.paging import ItemPaged
-from azure.data.tables._deserialize import _convert_to_entity
-from azure.data.tables._entity import TableEntity
-from azure.data.tables._generated import AzureTable
-from azure.data.tables._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
-from azure.data.tables._serialize import _get_match_headers, _add_entity_properties
-from azure.data.tables._shared.base_client import parse_connection_str
-from azure.data.tables._shared._table_client_base import TableClientBase
+from ._deserialize import _convert_to_entity
+from ._entity import TableEntity
+from ._generated import AzureTable
+from ._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
+from ._serialize import _get_match_headers, _add_entity_properties
+from ._shared.base_client import parse_connection_str
+from ._shared._table_client_base import TableClientBase
 
-from azure.data.tables._shared.request_handlers import serialize_iso
-from azure.data.tables._shared.response_handlers import process_table_error
+from ._shared.request_handlers import serialize_iso
+from ._shared.response_handlers import process_table_error
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.data.tables._version import VERSION
+from ._version import VERSION
 from azure.core.tracing.decorator import distributed_trace
 
 from ._models import TableEntityPropertiesPaged, UpdateMode

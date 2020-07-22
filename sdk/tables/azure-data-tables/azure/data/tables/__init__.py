@@ -3,12 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
-from azure.data.tables._generated.models import TableServiceStats
-from azure.data.tables._shared.table_shared_access_signature import generate_table_sas, \
+from ._entity import TableEntity, EntityProperty, EdmType
+from ._generated.models import TableServiceStats
+from ._shared.table_shared_access_signature import generate_table_sas, \
     generate_account_sas
-from azure.data.tables._table_client import TableClient
-from azure.data.tables._table_service_client import TableServiceClient
+from ._table_client import TableClient
+from ._table_service_client import TableServiceClient
 
 from ._models import (
     AccessPolicy,

@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 from enum import Enum
 
-from azure.data.tables._deserialize import _convert_to_entity
-from azure.data.tables._shared.models import Services
-from azure.data.tables._shared.response_handlers import return_context_and_deserialized, process_table_error
+from ._deserialize import _convert_to_entity
+from ._shared.models import Services
+from ._shared.response_handlers import return_context_and_deserialized, process_table_error
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._generated.models import AccessPolicy as GenAccessPolicy
