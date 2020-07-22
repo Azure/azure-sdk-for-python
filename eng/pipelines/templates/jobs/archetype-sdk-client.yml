@@ -65,7 +65,7 @@ jobs:
       - 'Build'
 
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'ubuntu-18.04'
 
     steps:
     - template: ../steps/analyze.yml
