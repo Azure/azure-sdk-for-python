@@ -1,6 +1,12 @@
 # Release History
 
-## 1.4.0b7 (Unreleased)
+## 1.4.0b7 (2020-07-22)
+- `DefaultAzureCredential` has a new optional keyword argument,
+`visual_studio_code_tenant_id`, which sets the tenant the credential should
+authenticate in when authenticating as the Azure user signed in to Visual
+Studio Code.
+- Renamed `AuthenticationRecord.deserialize` positional parameter `json_string`
+to `data`.
 
 
 ## 1.4.0b6 (2020-07-07)
