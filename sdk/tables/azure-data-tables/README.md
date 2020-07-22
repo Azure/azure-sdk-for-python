@@ -1,6 +1,8 @@
-# Azure Table client library for Python
+# Azure Data Tables client library for Python
 
-Azure Table is a NoSQL data storing service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS. 
+Azure Data Tables is a NoSQL data storing service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS. 
+Tables scale as needed to support the amount of data inserted, and allow for the storing of data with non-complex accessing. 
+The Azure Data Tables client can be used to access Azure Storage or Cosmos Storage accounts.
 
 Common uses of Azure Table include:
 
