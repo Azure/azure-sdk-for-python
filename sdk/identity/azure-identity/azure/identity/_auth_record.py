@@ -43,11 +43,14 @@ class AuthenticationRecord(object):
         return self._username
 
     @classmethod
-    def deserialize(cls, json_string):
+    def deserialize(cls, data):
         # type: (str) -> AuthenticationRecord
-        """Deserialize a record from JSON"""
+        """Deserialize a record.
 
-        deserialized = json.loads(json_string)
+        :param str data: a serialized record
+        """
+
+        deserialized = json.loads(data)
 
         return cls(
             authority=deserialized["authority"],
@@ -59,7 +62,10 @@ class AuthenticationRecord(object):
 
     def serialize(self):
         # type: () -> str
-        """Serialize the record to JSON"""
+        """Serialize the record.
+
+        :rtype: str
+        """
 
         record = {
             "authority": self._authority,
