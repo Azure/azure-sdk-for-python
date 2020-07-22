@@ -100,7 +100,7 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
     ):
         # type: (str, Any) -> None
         self.name = name
-        self._internal_qd = None
+        self._internal_qd = None  # type: Optional[InternalQueueDescription]
 
         self.authorization_rules = kwargs.get('authorization_rules', None)
         self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
@@ -209,7 +209,7 @@ class QueueRuntimeInfo(object):
     ):
         # type: (str, Any) -> None
         self.name = name
-        self._internal_qr = None
+        self._internal_qr = None  # type: Optional[InternalQueueDescription]
 
         self.accessed_at = kwargs.get('accessed_at', None)
         self.created_at = kwargs.get('created_at', None)
@@ -296,7 +296,7 @@ class TopicDescription(object):  # pylint:disable=too-many-instance-attributes
     ):
         # type: (str, Any) -> None
         self.name = name
-        self._internal_td = None
+        self._internal_td = None  # type: Optional[InternalTopicDescription]
 
         self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
         self.max_size_in_megabytes = kwargs.get('max_size_in_megabytes', None)
@@ -387,7 +387,7 @@ class TopicRuntimeInfo(object):
     ):
         # type: (str, Any) -> None
         self.name = name
-        self._internal_td = None
+        self._internal_td = None  # type: Optional[InternalTopicDescription]
         self.created_at = kwargs.get('created_at', None)
         self.updated_at = kwargs.get('updated_at', None)
         self.accessed_at = kwargs.get('accessed_at', None)
@@ -460,7 +460,7 @@ class SubscriptionDescription(object):  # pylint:disable=too-many-instance-attri
     def __init__(self, name, **kwargs):
         # type: (str, Any) -> None
         self.name = name
-        self._internal_sd = None
+        self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
 
         self.lock_duration = kwargs.get('lock_duration', None)
         self.requires_session = kwargs.get('requires_session', None)
@@ -540,7 +540,7 @@ class SubscriptionRuntimeInfo(object):
     """
     def __init__(self, name, **kwargs):
         # type: (str, Any) -> None
-        self._internal_sd = None
+        self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
         self.name = name
 
         self.message_count = kwargs.get('message_count', None)
@@ -584,7 +584,7 @@ class RuleDescription(object):
         self.created_at = kwargs.get('created_at', None)
         self.name = name
 
-        self._internal_rule = None
+        self._internal_rule = None  # type: Optional[InternalRuleDescription]
 
     @classmethod
     def _from_internal_entity(cls, name, internal_rule):
@@ -597,7 +597,6 @@ class RuleDescription(object):
         rule.action = RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity(internal_rule.action) \
             if internal_rule.action and isinstance(internal_rule.action, tuple(RULE_CLASS_MAPPING.keys())) else None
         rule.created_at = internal_rule.created_at
-        rule.name = internal_rule.name
 
         return rule
 
@@ -605,7 +604,7 @@ class RuleDescription(object):
         # type: () -> InternalRuleDescription
         if not self._internal_rule:
             self._internal_rule = InternalRuleDescription()
-        self._internal_rule.filter = self.filter._to_internal_entity() if self.filter else TRUE_FILTER
+        self._internal_rule.filter = self.filter._to_internal_entity() if self.filter else TRUE_FILTER  # type: ignore
         self._internal_rule.action = self.action._to_internal_entity() if self.action else EMPTY_RULE_ACTION
         self._internal_rule.created_at = self.created_at
         self._internal_rule.name = self.name
@@ -666,6 +665,7 @@ class CorrelationRuleFilter(object):
         return correlation_filter
 
     def _to_internal_entity(self):
+        # type: () -> InternalCorrelationFilter
         internal_entity = InternalCorrelationFilter()
         internal_entity.correlation_id = self.correlation_id
 
@@ -710,9 +710,11 @@ class SqlRuleFilter(object):
         return sql_rule_filter
 
     def _to_internal_entity(self):
+        # type: () -> InternalSqlFilter
         internal_entity = InternalSqlFilter(sql_expression=self.sql_expression)
-        internal_entity.parameters = [KeyValue(key=key, value=value) for key, value in self.parameters.items()] \
-            if self.parameters else None
+        internal_entity.parameters = [
+            KeyValue(key=key, value=value) for key, value in self.parameters.items()  # type: ignore
+        ] if self.parameters else None
         internal_entity.compatibility_level = RULE_SQL_COMPATIBILITY_LEVEL
         internal_entity.requires_preprocessing = self.requires_preprocessing
         return internal_entity
