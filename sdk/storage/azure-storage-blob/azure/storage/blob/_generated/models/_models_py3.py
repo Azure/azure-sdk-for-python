@@ -409,7 +409,7 @@ class BlobPropertiesInternal(Model):
         'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123', 'xml': {'name': 'AccessTierChangeTime'}},
         'tag_count': {'key': 'TagCount', 'type': 'int', 'xml': {'name': 'TagCount'}},
         'expires_on': {'key': 'Expiry-Time', 'type': 'rfc-1123', 'xml': {'name': 'Expiry-Time'}},
-        'is_sealed': {'key': 'IsSealed', 'type': 'bool', 'xml': {'name': 'IsSealed'}},
+        'is_sealed': {'key': 'Sealed', 'type': 'bool', 'xml': {'name': 'Sealed'}},
         'rehydrate_priority': {'key': 'RehydratePriority', 'type': 'str', 'xml': {'name': 'RehydratePriority'}},
     }
     _xml_map = {
@@ -1723,6 +1723,9 @@ class SourceModifiedAccessConditions(Model):
     :param source_if_none_match: Specify an ETag value to operate only on
      blobs without a matching value.
     :type source_if_none_match: str
+    :param source_if_tags: Specify a SQL where clause on blob tags to operate
+     only on blobs with a matching value.
+    :type source_if_tags: str
     """
 
     _attribute_map = {
@@ -1730,16 +1733,18 @@ class SourceModifiedAccessConditions(Model):
         'source_if_unmodified_since': {'key': '', 'type': 'rfc-1123', 'xml': {'name': 'source_if_unmodified_since'}},
         'source_if_match': {'key': '', 'type': 'str', 'xml': {'name': 'source_if_match'}},
         'source_if_none_match': {'key': '', 'type': 'str', 'xml': {'name': 'source_if_none_match'}},
+        'source_if_tags': {'key': '', 'type': 'str', 'xml': {'name': 'source_if_tags'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, source_if_modified_since=None, source_if_unmodified_since=None, source_if_match: str=None, source_if_none_match: str=None, **kwargs) -> None:
+    def __init__(self, *, source_if_modified_since=None, source_if_unmodified_since=None, source_if_match: str=None, source_if_none_match: str=None, source_if_tags: str=None, **kwargs) -> None:
         super(SourceModifiedAccessConditions, self).__init__(**kwargs)
         self.source_if_modified_since = source_if_modified_since
         self.source_if_unmodified_since = source_if_unmodified_since
         self.source_if_match = source_if_match
         self.source_if_none_match = source_if_none_match
+        self.source_if_tags = source_if_tags
 
 
 class StaticWebsite(Model):
