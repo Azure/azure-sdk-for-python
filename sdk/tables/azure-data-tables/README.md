@@ -72,11 +72,11 @@ The `credential` parameter may be provided in a number of different forms, depen
    You can generate a SAS token from the Azure Portal under "Shared access signature" or use one of the `generate_sas()`
    functions to create a sas token for the storage account or queue:
 
-    ```python
+```python
     from datetime import datetime, timedelta
-    from azure.data.tables import TableServiceClient, generate_account_shared_access_signature, ResourceTypes, AccountSasPermissions
+    from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
     
-    sas_token = generate_account_shared_access_signature(
+    sas_token = generate_account_sas(
         account_name="<storage-account-name>",
         account_key="<account-access-key>",
         resource_types=ResourceTypes(service=True),
@@ -85,7 +85,7 @@ The `credential` parameter may be provided in a number of different forms, depen
     )
     
     table_service_client = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net", credential=sas_token)
-    ```
+```
 
 2. To use a storage account [shared key](https://docs.microsoft.com/rest/api/storageservices/authenticate-with-shared-key/)
    (aka account key or access key), provide the key as a string. This can be found in the Azure Portal under the "Access Keys" 
@@ -165,14 +165,6 @@ table_service_client = TableServiceClient.from_connection_string(conn_str="<conn
 table_service_client.create_table(table_name="myTable")
 ```
 
-Use the async client to create a table
-```python
-from azure.data.tables.aio import TableServiceClient
-
-table_service_client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
-await table_service_client.create_table(table_name="myTable")
-```
-
 ### Creating entities
 Create entities in the table
 
@@ -185,23 +177,6 @@ table_client = TableClient.from_connection_string(conn_str="<connection_string>"
 entity = table_client.create_entity(entity=my_entity)
 ```
 
-Create entities asynchronously
-
-```python
-from azure.data.tables.aio import TableClient
-
-my_entity = {
-    'PartitionKey': 'color',
-    'RowKey': 'brand',
-    'text': 'Marker',
-    'color': 'Purple',
-    'price': '5',
-}
-
-table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
-entity = await table_client.create_entity(entity=my_entity)
-```
-
 ### Querying entities
 Querying entities in the table
 
@@ -212,17 +187,6 @@ my_filter = "text eq Marker"
 
 table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
 entity = table_client.query_entities(filter=my_filter)
-```
-
-Querying entities asynchronously
-
-```python
-from azure.data.tables.aio import TableClient
-
-my_filter = "text eq Marker"
-
-table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
-entity = await table_client.query_entities(filter=my_filter)
 ```
 
 ## Optional Configuration
