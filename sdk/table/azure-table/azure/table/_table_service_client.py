@@ -50,11 +50,11 @@ class TableServiceClient(TableServiceClientBase):
         self._client = AzureTable(self.url, pipeline=self._pipeline)
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+    # def _format_url(self, hostname):
+    #     """Format the endpoint URL according to the current location
+    #     mode hostname.
+    #     """
+    #     return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(

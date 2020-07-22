@@ -73,6 +73,30 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertTrue(created)
         await ts.delete_table(table_name=table_name)
 
+    @GlobalStorageAccountPreparer()
+    async def test_create_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        invalid_table_name = "my_table"
+
+        with pytest.raises(ValueError) as excinfo:
+            await ts.create_table(table_name=invalid_table_name)
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            excinfo)
+
+    @GlobalStorageAccountPreparer()
+    async def test_delete_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        invalid_table_name = "my_table"
+
+        with pytest.raises(ValueError) as excinfo:
+            await ts.create_table(invalid_table_name)
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            excinfo)
+
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_list_tables(self, resource_group, location, storage_account, storage_account_key):
@@ -206,9 +230,13 @@ class TableTestAsync(AsyncTableTestCase):
         table_name = u'啊齄丂狛狜'
 
         # Act
-        with self.assertRaises(HttpResponseError):
-            # not supported - table name must be alphanumeric, lowercase
-            await ts.create_table(table_name)
+        # with self.assertRaises(HttpResponseError):
+
+        with pytest.raises(ValueError) as excinfo:
+            await ts.create_table(table_name=table_name)
+
+        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            excinfo)
 
         # Assert
 

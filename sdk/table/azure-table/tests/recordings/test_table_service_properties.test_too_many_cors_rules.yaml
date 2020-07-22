@@ -21,11 +21,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Wed, 22 Jul 2020 13:42:31 GMT
+      - Wed, 22 Jul 2020 16:56:05 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 22 Jul 2020 13:42:31 GMT
+      - Wed, 22 Jul 2020 16:56:05 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -35,16 +35,16 @@ interactions:
       string: '<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code>InvalidXmlDocument</m:code><m:message
         xml:lang="en-US">XML specified is not syntactically valid.
 
-        RequestId:a6ccd7eb-1002-001f-722d-60d11a000000
+        RequestId:05c59a2f-7002-0067-1848-604208000000
 
-        Time:2020-07-22T13:42:32.0937892Z</m:message></m:error>'
+        Time:2020-07-22T16:56:05.6510404Z</m:message></m:error>'
     headers:
       content-length:
       - '327'
       content-type:
       - application/xml
       date:
-      - Wed, 22 Jul 2020 13:42:31 GMT
+      - Wed, 22 Jul 2020 16:56:05 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

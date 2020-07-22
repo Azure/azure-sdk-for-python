@@ -49,3 +49,9 @@ class TableServiceClientBase(StorageAccountHostsMixin):
             raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(TableServiceClientBase, self).__init__(parsed_url, service=service, credential=credential, **kwargs)
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)

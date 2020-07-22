@@ -14,11 +14,13 @@ from azure.table._shared.base_client_async import AsyncStorageAccountHostsMixin
 from azure.table._shared.policies_async import ExponentialRetry
 from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import return_headers_and_deserialized, process_storage_error
-from azure.table._table_client import TableClient as TableClientBase
+# from azure.table._table_client import TableClient as TableClientBase
 
-from .._models import TableEntityPropertiesPaged, UpdateMode
+from .._models import UpdateMode# TableEntityPropertiesPaged, 
+from ._models import TableEntityPropertiesPaged
 from .._deserialize import _convert_to_entity
 from .._serialize import _add_entity_properties, _get_match_headers
+from .._shared._table_client_base import TableClientBase
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     """A client to interact with a specific Queue.
@@ -242,7 +244,6 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             else:
                 raise ValueError
         try:
-
             inserted_entity = await self._client.table.insert_entity(
                 table=self.table_name,
                 table_entity_properties=table_entity_properties,
@@ -291,7 +292,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             row_key = table_entity_properties['RowKey']
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
-        if mode is UpdateMode.replace:
+        if mode is UpdateMode.REPLACE:
             await self._client.table.update_entity(
                 table=self.table_name,
                 partition_key=partition_key,
@@ -299,7 +300,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 table_entity_properties=table_entity_properties,
                 if_match=if_match or if_not_match or "*",
                 **kwargs)
-        if mode is UpdateMode.merge:
+        if mode is UpdateMode.MERGE:
             await self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
                                                   row_key=row_key, if_match=if_match or if_not_match or "*",
                                                   table_entity_properties=table_entity_properties, **kwargs)
@@ -400,7 +401,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             row_key = table_entity_properties['RowKey']
             table_entity_properties = _add_entity_properties(table_entity_properties)
 
-        if mode is UpdateMode.merge:
+        if mode is UpdateMode.MERGE:
             try:
                 await self._client.table.merge_entity(
                     table=self.table_name,
@@ -416,7 +417,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     table_entity_properties=table_entity_properties,
                     **kwargs
                 )
-        if mode is UpdateMode.replace:
+        if mode is UpdateMode.REPLACE:
             try:
                 await self._client.table.update_entity(
                     table=self.table_name,

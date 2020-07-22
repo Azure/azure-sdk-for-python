@@ -11,9 +11,11 @@ from azure.table._models import service_stats_deserialize, service_properties_de
 from azure.table._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from azure.table._shared.policies_async import ExponentialRetry
 from azure.table._shared.response_handlers import process_storage_error
-from azure.table._table_service_client import TableServiceClient as TableServiceClientBase
+# from azure.table._table_service_client import TableServiceClient as TableServiceClientBase
 from azure.table.aio._table_client_async import TableClient
-from .._models import TablePropertiesPaged
+# from .._models import TablePropertiesPaged
+from ._models import TablePropertiesPaged
+from .._shared._table_service_client_base import TableServiceClientBase
 
 
 class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
@@ -65,6 +67,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         loop = kwargs.pop('loop', None)
         super(TableServiceClient, self).__init__(  # type: ignore
             account_url,
+            service='table',
             credential=credential,
             loop=loop,
             **kwargs)

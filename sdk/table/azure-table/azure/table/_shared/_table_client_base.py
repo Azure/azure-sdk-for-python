@@ -58,3 +58,9 @@ class TableClientBase(StorageAccountHostsMixin):
         self.table_name = table_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(TableClientBase, self).__init__(parsed_url, service='table', credential=credential, **kwargs)
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
