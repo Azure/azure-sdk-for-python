@@ -6,20 +6,15 @@ parameters:
 
 steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.8'
+    displayName: 'Use Python 3.7'
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
     inputs:
-     versionSpec: '3.8'
+     versionSpec: '3.7'
 
   - script: |
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
-
-  - task: DownloadPipelineArtifact@0
-    inputs:
-      artifactName: 'artifacts'
-      targetPath: $(Build.ArtifactStagingDirectory)
 
   - task: PythonScript@0
     displayName: 'Run Api Stub Generation'

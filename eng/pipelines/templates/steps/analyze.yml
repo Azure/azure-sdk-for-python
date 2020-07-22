@@ -10,6 +10,11 @@ steps:
     inputs:
      versionSpec: '$(PythonVersion)'
 
+  - task: DownloadPipelineArtifact@0
+    inputs:
+      artifactName: 'artifacts'
+      targetPath: $(Build.ArtifactStagingDirectory)
+
   - script: |
      pip install -r eng/ci_tools.txt
      ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/eng/.docsettings.yml
