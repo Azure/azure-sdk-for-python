@@ -1,5 +1,8 @@
 # Release History
 
+## 1.4.0b8 (Unreleased)
+
+
 ## 1.4.0b7 (2020-07-22)
 - `DefaultAzureCredential` has a new optional keyword argument,
 `visual_studio_code_tenant_id`, which sets the tenant the credential should
