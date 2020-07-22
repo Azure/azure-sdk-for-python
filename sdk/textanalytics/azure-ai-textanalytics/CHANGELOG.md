@@ -2,6 +2,10 @@
 
 ## 1.0.1 (Unreleased)
 
+**New featurest**
+
+- We have added an endpoint `recognize_pii_entities` which returns entities containing personal information for a batch of documents. Only available for version v3.1-preview.1 and up.
+
 
 ## 1.0.0 (2020-06-09)
 

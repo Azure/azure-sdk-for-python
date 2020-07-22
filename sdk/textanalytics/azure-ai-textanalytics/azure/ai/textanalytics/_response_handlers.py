@@ -24,7 +24,9 @@ from ._models import (
     DocumentError,
     SentimentConfidenceScores,
     TextAnalyticsError,
-    TextAnalyticsWarning
+    TextAnalyticsWarning,
+    RecognizePiiEntitiesResult,
+    PiiEntity,
 )
 
 def _get_too_many_documents_error(obj):
@@ -161,4 +163,13 @@ def sentiment_result(sentiment):
         statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
         confidence_scores=SentimentConfidenceScores._from_generated(sentiment.confidence_scores),  # pylint: disable=protected-access
         sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
+    )
+
+@prepare_result
+def pii_entities_result(entity):
+    return RecognizePiiEntitiesResult(
+        id=entity.id,
+        entities=[PiiEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
+        warnings=[TextAnalyticsWarning._from_generated(w) for w in entity.warnings],  # pylint: disable=protected-access
+        statistics=TextDocumentStatistics._from_generated(entity.statistics),  # pylint: disable=protected-access
     )
