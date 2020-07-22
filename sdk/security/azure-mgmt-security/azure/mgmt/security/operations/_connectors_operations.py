@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class AdaptiveApplicationControlsOperations(object):
-    """AdaptiveApplicationControlsOperations operations.
+class ConnectorsOperations(object):
+    """ConnectorsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class AdaptiveApplicationControlsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version for the operation. Constant value: "2020-01-01".
+    :ivar api_version: API version for the operation. Constant value: "2020-01-01-preview".
     """
 
     models = models
@@ -35,88 +35,89 @@ class AdaptiveApplicationControlsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-01-01"
+        self.api_version = "2020-01-01-preview"
 
         self.config = config
 
     def list(
-            self, include_path_recommendations=None, summary=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of application control machine groups for the subscription.
+            self, custom_headers=None, raw=False, **operation_config):
+        """Cloud accounts connectors of a subscription.
 
-        :param include_path_recommendations: Include the policy rules
-        :type include_path_recommendations: bool
-        :param summary: Return output in a summarized form
-        :type summary: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AdaptiveApplicationControlGroups or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.security.models.AdaptiveApplicationControlGroups
-         or ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of ConnectorSetting
+        :rtype:
+         ~azure.mgmt.security.models.ConnectorSettingPaged[~azure.mgmt.security.models.ConnectorSetting]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = self.list.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if include_path_recommendations is not None:
-            query_parameters['includePathRecommendations'] = self._serialize.query("include_path_recommendations", include_path_recommendations, 'bool')
-        if summary is not None:
-            query_parameters['summary'] = self._serialize.query("summary", summary, 'bool')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('AdaptiveApplicationControlGroups', response)
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
 
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            header_dict = {}
+        deserialized = models.ConnectorSettingPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/applicationWhitelistings'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors'}
 
     def get(
-            self, group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an application control VM/server group.
+            self, connector_name, custom_headers=None, raw=False, **operation_config):
+        """Details of a specific cloud account connector.
 
-        :param group_name: Name of an application control machine group
-        :type group_name: str
+        :param connector_name: Name of the cloud account connector
+        :type connector_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AdaptiveApplicationControlGroup or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.security.models.AdaptiveApplicationControlGroup or
+        :return: ConnectorSetting or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.ConnectorSetting or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -124,8 +125,7 @@ class AdaptiveApplicationControlsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
-            'groupName': self._serialize.url("group_name", group_name, 'str')
+            'connectorName': self._serialize.url("connector_name", connector_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -154,41 +154,49 @@ class AdaptiveApplicationControlsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AdaptiveApplicationControlGroup', response)
+            deserialized = self._deserialize('ConnectorSetting', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/applicationWhitelistings/{groupName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors/{connectorName}'}
 
-    def put(
-            self, group_name, body, custom_headers=None, raw=False, **operation_config):
-        """Update an application control machine group.
+    def create_or_update(
+            self, connector_name, hybrid_compute_settings=None, authentication_details=None, custom_headers=None, raw=False, **operation_config):
+        """Create a cloud account connector or update an existing one. Connect to
+        your AWS cloud account using either account credentials or role-based
+        authentication.
 
-        :param group_name: Name of an application control machine group
-        :type group_name: str
-        :param body:
-        :type body:
-         ~azure.mgmt.security.models.AdaptiveApplicationControlGroup
+        :param connector_name: Name of the cloud account connector
+        :type connector_name: str
+        :param hybrid_compute_settings: Settings for hybrid compute
+         management, these settings are relevant only Arc autoProvision (Hybrid
+         Compute).
+        :type hybrid_compute_settings:
+         ~azure.mgmt.security.models.HybridComputeSettingsProperties
+        :param authentication_details: Settings for authentication management,
+         these settings are relevant only for the cloud connector.
+        :type authentication_details:
+         ~azure.mgmt.security.models.AuthenticationDetailsProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AdaptiveApplicationControlGroup or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.security.models.AdaptiveApplicationControlGroup or
+        :return: ConnectorSetting or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.ConnectorSetting or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        connector_setting = models.ConnectorSetting(hybrid_compute_settings=hybrid_compute_settings, authentication_details=authentication_details)
+
         # Construct URL
-        url = self.put.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
-            'groupName': self._serialize.url("group_name", group_name, 'str')
+            'connectorName': self._serialize.url("connector_name", connector_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -208,7 +216,7 @@ class AdaptiveApplicationControlsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'AdaptiveApplicationControlGroup')
+        body_content = self._serialize.body(connector_setting, 'ConnectorSetting')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -221,21 +229,21 @@ class AdaptiveApplicationControlsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AdaptiveApplicationControlGroup', response)
+            deserialized = self._deserialize('ConnectorSetting', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    put.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/applicationWhitelistings/{groupName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors/{connectorName}'}
 
     def delete(
-            self, group_name, custom_headers=None, raw=False, **operation_config):
-        """Delete an application control machine group.
+            self, connector_name, custom_headers=None, raw=False, **operation_config):
+        """Delete a cloud account connector from a subscription.
 
-        :param group_name: Name of an application control machine group
-        :type group_name: str
+        :param connector_name: Name of the cloud account connector
+        :type connector_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -249,8 +257,7 @@ class AdaptiveApplicationControlsOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
-            'groupName': self._serialize.url("group_name", group_name, 'str')
+            'connectorName': self._serialize.url("connector_name", connector_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -271,7 +278,7 @@ class AdaptiveApplicationControlsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -279,4 +286,4 @@ class AdaptiveApplicationControlsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/applicationWhitelistings/{groupName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/connectors/{connectorName}'}
