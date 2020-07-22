@@ -10,10 +10,11 @@
 FILE: table_samples_authentication.py
 
 DESCRIPTION:
-    These samples demonstrate authenticating a client via a connection string,
-    shared access key, token credential from Azure Active Directory, or by
-    generating a sas token with which the returned signature can be used with
-    the credential parameter of any TableServiceClient or TableClient.
+    These samples demonstrate authenticating a client via:
+        * connection string
+        * shared access key
+        * generating a sas token with which the returned signature can be used with
+    the credential parameter of any TableServiceClient or TableClient
 
 USAGE:
     python table_samples_authentication.py
