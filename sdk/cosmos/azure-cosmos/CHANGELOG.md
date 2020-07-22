@@ -3,7 +3,7 @@
 - Added deprecation warning for "lazy" indexing mode. The backend no longer allows creating containers with this mode and will set them to consistent instead.
 
 **New features**
-- Added the ability to set the analytical storage TTL when creating a new container.
+- Added  the ability to set the analytical storage TTL when creating a new container.
 
 **Bug fixes**
 - Fixed support for dicts as inputs for get_client APIs.
