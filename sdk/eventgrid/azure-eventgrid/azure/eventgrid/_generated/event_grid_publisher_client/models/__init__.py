@@ -9,12 +9,28 @@
 try:
     from ._models_py3 import CloudEvent
     from ._models_py3 import EventGridEvent
+    from ._models_py3 import StorageBlobCreatedEventData
+    from ._models_py3 import StorageBlobDeletedEventData
+    from ._models_py3 import StorageBlobRenamedEventData
+    from ._models_py3 import StorageDirectoryCreatedEventData
+    from ._models_py3 import StorageDirectoryDeletedEventData
+    from ._models_py3 import StorageDirectoryRenamedEventData
+    from ._models_py3 import StorageLifecyclePolicyActionSummaryDetail
+    from ._models_py3 import StorageLifecyclePolicyCompletedEventData
     from ._models_py3 import SubscriptionDeletedEventData
     from ._models_py3 import SubscriptionValidationEventData
     from ._models_py3 import SubscriptionValidationResponse
 except (SyntaxError, ImportError):
     from ._models import CloudEvent  # type: ignore
     from ._models import EventGridEvent  # type: ignore
+    from ._models import StorageBlobCreatedEventData  # type: ignore
+    from ._models import StorageBlobDeletedEventData  # type: ignore
+    from ._models import StorageBlobRenamedEventData  # type: ignore
+    from ._models import StorageDirectoryCreatedEventData  # type: ignore
+    from ._models import StorageDirectoryDeletedEventData  # type: ignore
+    from ._models import StorageDirectoryRenamedEventData  # type: ignore
+    from ._models import StorageLifecyclePolicyActionSummaryDetail  # type: ignore
+    from ._models import StorageLifecyclePolicyCompletedEventData  # type: ignore
     from ._models import SubscriptionDeletedEventData  # type: ignore
     from ._models import SubscriptionValidationEventData  # type: ignore
     from ._models import SubscriptionValidationResponse  # type: ignore
@@ -22,6 +38,14 @@ except (SyntaxError, ImportError):
 __all__ = [
     'CloudEvent',
     'EventGridEvent',
+    'StorageBlobCreatedEventData',
+    'StorageBlobDeletedEventData',
+    'StorageBlobRenamedEventData',
+    'StorageDirectoryCreatedEventData',
+    'StorageDirectoryDeletedEventData',
+    'StorageDirectoryRenamedEventData',
+    'StorageLifecyclePolicyActionSummaryDetail',
+    'StorageLifecyclePolicyCompletedEventData',
     'SubscriptionDeletedEventData',
     'SubscriptionValidationEventData',
     'SubscriptionValidationResponse',

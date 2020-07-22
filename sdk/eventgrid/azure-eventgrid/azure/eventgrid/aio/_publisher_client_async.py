@@ -13,7 +13,7 @@ from msrest import Deserializer, Serializer
 
 from .._models import CloudEvent, EventGridEvent
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.credentials import AzureKeyCredential
 from .._generated.event_grid_publisher_client.aio._event_grid_publisher_client_async import EventGridPublisherClient as EventGridPublisherClientAsync
 from .. import _constants as constants
 
@@ -42,16 +42,16 @@ class EventGridPublisherClient(object):
         self._topic_hostname = topic_hostname
 
 
-    async def publish_events(
+    async def send(
         self,
         events,
         **kwargs
     ):
-        # type: (Union[List[CloudEvent], List[EventGridEvent], List[CustomEvent]], Any) -> None
+        # type: (Union[List[CloudEvent], List[EventGridEvent], List[CustomEvent], dict], Any) -> None
         """Sends event data to topic hostname specified during client initialization.
 
-        :param  events: A list of `CloudEvent` or `EventGridEvent` to be sent
-        :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent]]
+        :param  events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent. If a dict is sent, it will be interpreted as a CloudEvent.
+        :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent], dict]
         :rtype: None
          """
 

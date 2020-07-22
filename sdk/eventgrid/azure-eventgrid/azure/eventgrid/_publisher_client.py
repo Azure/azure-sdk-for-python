@@ -47,11 +47,11 @@ class EventGridPublisherClient(object):
         events,
         **kwargs
     ):
-        # type: (Union[List[CloudEvent], List[EventGridEvent], List[CustomEvent]], Any) -> None
+        # type: (Union[List[CloudEvent], List[EventGridEvent], List[CustomEvent], dict], Any) -> None
         """Sends event data to topic hostname specified during client initialization.
 
-        :param  events: A list of `CloudEvent` or `EventGridEvent` to be sent
-        :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent]]
+        :param  events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent. If a dict is sent, it will be interpreted as a CloudEvent.
+        :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent], dict]
         :rtype: None
          """
 

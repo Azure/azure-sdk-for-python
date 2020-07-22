@@ -8,7 +8,7 @@
 
 from ._publisher_client import EventGridPublisherClient
 from ._consumer import EventGridConsumer
-from ._common import generate_shared_access_signature
+from ._helpers import generate_shared_access_signature
 from ._models import CloudEvent, CustomEvent, EventGridEvent, DeserializedEvent
 from .version import VERSION
 

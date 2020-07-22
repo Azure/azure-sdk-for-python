@@ -7,8 +7,10 @@ from typing import Optional
 from dateutil.tz import tzutc
 import datetime as dt
 import uuid
+import json
 
-from ._generated.event_grid_publisher_client.models._models import EventGridEvent as InternalEventGridEvent, \
+from ._generated.event_grid_publisher_client.models._models import StorageBlobCreatedEventData, \
+    EventGridEvent as InternalEventGridEvent, \
     CloudEvent as InternalCloudEvent
 
 class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attributes
@@ -161,13 +163,15 @@ class DictMixin(object):
 
 class DeserializedEvent(DictMixin):
     """The container for the deserialized event model and mapping of event envelope properties.
+        :param dict args: dict
     """
     # class variable
-    #_event_type_mappings = {}
+    #_event_type_mappings = {'Microsoft.Storage.BlobCreated': StorageBlobCreatedEventData()}
 
     def __init__(self, *args, **kwargs):
         # type: (Any) -> None
         self._update(*args, **kwargs)
+        self._model = None
 
     def _update(self, *args, **kwargs):
         for k, v in dict(*args, **kwargs).items():
@@ -185,11 +189,35 @@ class DeserializedEvent(DictMixin):
 
         :rtype: Union[CloudEvent, EventGridEvent]
         """
-        
-        pass
+        if not self._model:
+            if 'specversion' in self.keys():
+                self._model = CloudEvent(**self)
+                self._model.time = dt.datetime.strptime(self._model.time, "%Y-%m-%dT%H:%M:%S.%fZ")
+                # replace all below, only for demo
+                if self['type'] == "Microsoft.Storage.BlobCreated":
+                    self._model.data = self._model.data.replace("'", "\"")
+                    self._model.data = self._model.data.replace("None", 'null')
+                    print(self._model.data)
+                    data_dict = json.loads(self._model.data)
+                    self._model.data = StorageBlobCreatedEventData(**data_dict)
+                else:
+                    self._model.data = None
+            else:
+                self._model = EventGridEvent(**self)
+                self._model.event_time = dt.datetime.strptime(self._model.time, "%Y-%m-%dT%H:%M:%S.%fZ")
+                if self['event_type'] == "Microsoft.Storage.BlobCreated":
+                    self._model.data = self._model.data.replace("'", "\"")
+                    self._model.data = self._model.data.replace("None", 'null')
+                    data_dict = json.loads(self._model.data)
+                    self._model.data = StorageBlobCreatedEventData(**data_dict)
+                else:
+                    self._model.data = None
+
+        return self._model
     
 class CustomEvent(DictMixin):
     """The wrapper class for a CustomEvent, to be used when publishing events.
+       :param dict args: dict
     """
 
     def __init__(self, *args, **kwargs):

@@ -9,13 +9,16 @@
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
+from azure.servicebus import ReceivedMessage
 from msrest import Deserializer, Serializer
+import json
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
 from ._models import DeserializedEvent
+from ._helpers import generate_shared_access_signature
 from . import _constants as constants
 
 class EventGridConsumer:
@@ -29,7 +32,7 @@ class EventGridConsumer:
         pass
 
     def deserialize_events(self, events, **kwargs):
-        # type: (azure.eventhub.EventData, azure.functions.EventGridEvent, azure.servicebus.Message, azure.functions.HttpRequest, azure.storage.queue.QueueMessage) -> List[models.DeserializedEvent]
+        # type: (azure.eventhub.EventData, azure.functions.EventGridEvent, azure.servicebus.message.ReceivedMessage, azure.functions.HttpRequest, azure.storage.queue.QueueMessage) -> List[models.DeserializedEvent]
         """A message of a list of events in CloudEvent/EventGridEvent format from an event handler will be parsed and returned as a list of
         EventContainer objects.
         :param events: The event handler message to be deserialized.
@@ -38,4 +41,8 @@ class EventGridConsumer:
 
         :raise: :class:`ValueError`, when events are not of CloudEvent or EventGridEvent format.
         """
-        pass
+        if isinstance(events, ReceivedMessage):
+            dict_event = json.loads(str(events))
+            return [DeserializedEvent(dict_event)]
+
+        return None
