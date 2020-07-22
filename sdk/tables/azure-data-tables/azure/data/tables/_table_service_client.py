@@ -158,7 +158,7 @@ class TableServiceClient(TableServiceClientBase):
 
         :param table_name: The Table name.
         :type table_name: str
-        :return: TableClient, or the result of cls(response)
+        :return: TableClient
         :rtype: ~azure.data.tables.TableClient
         :raises: ~azure.core.exceptions.HttpResponseError
         """
