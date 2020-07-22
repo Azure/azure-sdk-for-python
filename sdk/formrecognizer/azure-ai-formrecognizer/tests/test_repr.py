@@ -59,23 +59,23 @@ def form_table(form_table_cell):
     return model, model_repr
 
 @pytest.fixture
-def field_text(bounding_box, form_word, form_line):
+def field_data(bounding_box, form_word, form_line):
     model = _models.FieldData(page_number=1, text="This is text.", bounding_box=bounding_box[0], field_elements=[form_word[0], form_line[0]])
     model_repr = "FieldData(page_number=1, text=This is text., bounding_box={}, field_elements=[{}, {}])".format(bounding_box[1], form_word[1], form_line[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
-def form_field_two(field_text):
-    model = _models.FormField(label_data=field_text[0], value_data=field_text[0], name="form_field_two", value="value", confidence=0)
-    model_repr = "FormField(label_data={}, value_data={}, name=form_field_two, value='value', confidence=0)".format(field_text[1], field_text[1])[:1024]
+def form_field_two(field_data):
+    model = _models.FormField(type="string", label_data=field_data[0], value_data=field_data[0], name="form_field_two", value="value", confidence=0)
+    model_repr = "FormField(type=string, label_data={}, value_data={}, name=form_field_two, value='value', confidence=0)".format(field_data[1], field_data[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
-def form_field_one(field_text, form_field_two):
-    model = _models.FormField(label_data=field_text[0], value_data=field_text[0], name="form_field_one", value=form_field_two[0], confidence=1.0)
-    model_repr = "FormField(label_data={}, value_data={}, name=form_field_one, value={}, confidence=1.0)".format(field_text[1], field_text[1], form_field_two[1])[:1024]
+def form_field_one(field_data, form_field_two):
+    model = _models.FormField(type="string", label_data=field_data[0], value_data=field_data[0], name="form_field_one", value=form_field_two[0], confidence=1.0)
+    model_repr = "FormField(type=string, label_data={}, value_data={}, name=form_field_one, value={}, confidence=1.0)".format(field_data[1], field_data[1], form_field_two[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 

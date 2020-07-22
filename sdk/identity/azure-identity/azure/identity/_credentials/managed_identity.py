@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 import os
 
 import six
@@ -21,6 +22,7 @@ from azure.core.pipeline.policies import (
 from .. import CredentialUnavailableError
 from .._authn_client import AuthnClient
 from .._constants import Endpoints, EnvironmentVariables
+from .._internal.decorators import log_get_token
 from .._internal.user_agent import USER_AGENT
 
 try:
@@ -31,6 +33,8 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Type
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ManagedIdentityCredential(object):
@@ -50,10 +54,13 @@ class ManagedIdentityCredential(object):
         # type: (**Any) -> None
         self._credential = None
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            _LOGGER.info("%s will use MSI", self.__class__.__name__)
             self._credential = MsiCredential(**kwargs)
         else:
+            _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
 
+    @log_get_token("ManagedIdentityCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
@@ -160,6 +167,7 @@ class ImdsCredential(_ManagedIdentityBase):
             except Exception:  # pylint:disable=broad-except
                 # if anything else was raised, assume the endpoint is unavailable
                 self._endpoint_available = False
+                _LOGGER.info("No response from the IMDS endpoint.")
 
         if not self._endpoint_available:
             message = "ManagedIdentityCredential authentication unavailable, no managed identity endpoint found."
