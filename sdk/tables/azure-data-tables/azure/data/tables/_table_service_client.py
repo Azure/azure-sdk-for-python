@@ -154,7 +154,7 @@ class TableServiceClient(TableServiceClientBase):
             **kwargs  # type: Any
     ):
         # type: (...) -> TableClient
-        """Creates a new table under the given account.
+        """Creates a new table under the current account.
 
         :param table_name: The Table name.
         :type table_name: str
@@ -176,7 +176,7 @@ class TableServiceClient(TableServiceClientBase):
             **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Creates a new table under the given account.
+        """Deletes the table under the current account
 
         :param table_name: The Table name.
         :type table_name: str

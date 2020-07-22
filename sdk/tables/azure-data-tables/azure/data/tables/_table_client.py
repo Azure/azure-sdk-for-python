@@ -195,7 +195,7 @@ class TableClient(TableClientBase):
             **kwargs  # type: Any
     ):
         # type: (...) -> str
-        """Creates a new table under the given account.
+        """Creates a new table under the current account.
 
         :return: Table created
         :rtype: str
@@ -211,7 +211,7 @@ class TableClient(TableClientBase):
             **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Creates a new table under the given account.
+        """Deletes the table under the current account.
 
         :return: None
         :rtype: None
