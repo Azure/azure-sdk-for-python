@@ -3,21 +3,24 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+# Generated API parameters
 API_VERSION_PARAM_NAME = "api-version"
 API_VERSION = "2017-04"
 ENTITY_TYPE_QUEUES = "queues"
 ENTITY_TYPE_TOPICS = "topics"
 LIST_OP_SKIP = "$skip"
 LIST_OP_TOP = "$top"
-INT_MAX_VALUE_CSHARP = 2147483647  # C# int max value
 
+# XML namespace and tags
 XML_SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema"
 XML_SCHEMA_INSTANCE_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance"
 ATOM_ENTRY_TAG = "{http://www.w3.org/2005/Atom}entry"
 ATOM_CONTENT_TAG = "{http://www.w3.org/2005/Atom}content"
 
+# ServiceBus XML namespace
 SB_XML_NAMESPACE = "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
 
+# Rule XML tags
 RULE_KEY_VALUE = "KeyValueOfstringanyType"
 RULE_KEY = "Key"
 RULE_VALUE = "Value"
@@ -33,3 +36,4 @@ RULE_KEY_VALUE_TAG = "{{{}}}{}".format(SB_XML_NAMESPACE, RULE_KEY_VALUE)
 RULE_KEY_TAG = "{{{}}}{}".format(SB_XML_NAMESPACE, RULE_KEY)
 RULE_VALUE_TAG = "{{{}}}{}".format(SB_XML_NAMESPACE, RULE_VALUE)
 RULE_VALUE_TYPE_TAG = "{{{}}}{}".format(XML_SCHEMA_INSTANCE_NAMESPACE, RULE_VALUE_TYPE)
+INT32_MAX_VALUE = 2147483647  # int32 max value used to tell if a Python int is an int32 or long in other languages

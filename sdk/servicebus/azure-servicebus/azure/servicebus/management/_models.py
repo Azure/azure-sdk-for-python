@@ -5,7 +5,8 @@
 # pylint:disable=protected-access
 from collections import OrderedDict
 from copy import deepcopy
-from typing import Type, Dict
+from datetime import datetime, timedelta
+from typing import Type, Dict, Any, Union, Optional
 from msrest.serialization import Model
 
 from ._generated.models import QueueDescription as InternalQueueDescription, \
@@ -97,6 +98,7 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         name,
         **kwargs
     ):
+        # type: (str, Any) -> None
         self.name = name
         self._internal_qd = None
 
@@ -205,6 +207,7 @@ class QueueRuntimeInfo(object):
         name,
         **kwargs
     ):
+        # type: (str, Any) -> None
         self.name = name
         self._internal_qr = None
 
@@ -291,6 +294,7 @@ class TopicDescription(object):  # pylint:disable=too-many-instance-attributes
         name,
         **kwargs
     ):
+        # type: (str, Any) -> None
         self.name = name
         self._internal_td = None
 
@@ -381,6 +385,7 @@ class TopicRuntimeInfo(object):
         name,
         **kwargs
     ):
+        # type: (str, Any) -> None
         self.name = name
         self._internal_td = None
         self.created_at = kwargs.get('created_at', None)
@@ -453,6 +458,7 @@ class SubscriptionDescription(object):  # pylint:disable=too-many-instance-attri
      ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
     """
     def __init__(self, name, **kwargs):
+        # type: (str, Any) -> None
         self.name = name
         self._internal_sd = None
 
@@ -533,6 +539,7 @@ class SubscriptionRuntimeInfo(object):
 
     """
     def __init__(self, name, **kwargs):
+        # type: (str, Any) -> None
         self._internal_sd = None
         self.name = name
 
@@ -571,6 +578,7 @@ class RuleDescription(object):
     """
 
     def __init__(self, name, **kwargs):
+        # type: (str, Any) -> None
         self.filter = kwargs.get('filter', None)
         self.action = kwargs.get('action', None)
         self.created_at = kwargs.get('created_at', None)
@@ -628,6 +636,7 @@ class CorrelationRuleFilter(object):
     :type properties: dict[str, str]
     """
     def __init__(self, **kwargs):
+        # type: (Any) -> None
         self.correlation_id = kwargs.get('correlation_id', None)
         self.message_id = kwargs.get('message_id', None)
         self.to = kwargs.get('to', None)
@@ -679,11 +688,14 @@ class SqlRuleFilter(object):
 
     :param sql_expression: The SQL expression. e.g. MyProperty='ABC'
     :type sql_expression: str
+    :param parameters: Sets the value of the sql expression parameters if any.
+    :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
     :param requires_preprocessing: Value that indicates whether the rule
      filter requires preprocessing. Default value: True .
     :type requires_preprocessing: bool
     """
     def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=True):
+        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]], bool) -> None
         self.sql_expression = sql_expression
         self.parameters = parameters
         self.requires_preprocessing = requires_preprocessing
@@ -741,11 +753,14 @@ class SqlRuleAction(object):
 
     :param sql_expression: SQL expression. e.g. MyProperty='ABC'
     :type sql_expression: str
+    :param parameters: Sets the value of the sql expression parameters if any.
+    :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
     :param requires_preprocessing: Value that indicates whether the rule
      action requires preprocessing. Default value: True .
     :type requires_preprocessing: bool
     """
     def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=True):
+        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]], bool) -> None
         self.sql_expression = sql_expression
         self.parameters = parameters
         self.requires_preprocessing = requires_preprocessing

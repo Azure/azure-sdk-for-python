@@ -693,7 +693,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
                 "Rule('Topic: {}, Subscription: {}, Rule {}') does not exist".format(
                     subscription_name, topic_name, rule_name))
         rule_description = RuleDescription._from_internal_entity(rule_name, entry.content.rule_description)
-        deserialize_rule_key_values(entry_ele, rule_description)
+        deserialize_rule_key_values(entry_ele, rule_description)  # to remove after #3535 is released.
         return rule_description
 
     async def create_rule(
@@ -735,7 +735,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
                 request_body, api_version=constants.API_VERSION, **kwargs)
         entry = RuleDescriptionEntry.deserialize(entry_ele)
         result = RuleDescription._from_internal_entity(rule_name, entry.content.rule_description)
-        deserialize_rule_key_values(entry_ele, result)
+        deserialize_rule_key_values(entry_ele, result)  # to remove after #3535 is released.
         return result
 
     async def update_rule(
@@ -830,9 +830,12 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             subscription_name = subscription
 
         def entry_to_rule(ele, entry):
+            """
+            `ele` will be removed after #3535 is released.
+            """
             rule = entry.content.rule_description
             rule_description = RuleDescription._from_internal_entity(entry.title, rule)
-            deserialize_rule_key_values(ele, rule_description)
+            deserialize_rule_key_values(ele, rule_description)  # to remove after #3535 is released.
             return rule_description
 
         extract_data = functools.partial(

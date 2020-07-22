@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 
 import msrest
 from azure.servicebus.management import ServiceBusManagementClient, RuleDescription, CorrelationRuleFilter, SqlRuleFilter, TrueRuleFilter, FalseRuleFilter, SqlRuleAction
-from azure.servicebus.management._constants import INT_MAX_VALUE_CSHARP
+from azure.servicebus.management._constants import INT32_MAX_VALUE
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
@@ -38,7 +38,7 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
         correlation_fitler = CorrelationRuleFilter(correlation_id='testcid', properties={
             "key_string": "str1",
             "key_int": 2,
-            "key_long": INT_MAX_VALUE_CSHARP + 3,
+            "key_long": INT32_MAX_VALUE + 3,
             "key_bool": False,
             "key_datetime": datetime(2020, 7, 5, 11, 12, 13),
             "key_duration": timedelta(days=1, hours=2, minutes=3)
@@ -69,7 +69,7 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
             assert rule_desc.action.parameters["@param"] == datetime(2020, 7, 5, 11, 12, 13)
             assert rule_properties["key_string"] == "str1"
             assert rule_properties["key_int"] == 2
-            assert rule_properties["key_long"] == INT_MAX_VALUE_CSHARP + 3
+            assert rule_properties["key_long"] == INT32_MAX_VALUE + 3
             assert rule_properties["key_bool"] is False
             assert rule_properties["key_datetime"] == datetime(2020, 7, 5, 11, 12, 13)
             assert rule_properties["key_duration"] == timedelta(days=1, hours=2, minutes=3)

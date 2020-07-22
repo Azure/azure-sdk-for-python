@@ -19,6 +19,14 @@ from ._handle_response_error import _handle_response_error
 
 
 def extract_rule_data_template(feed_class, convert, feed_element):
+    """Special version of function extrat_data_template for Rule.
+
+    Pass both the XML entry element and the rule instance to function `convert`. Rule needs to extract
+    KeyValue from XML Element and set to Rule model instance manually. The autorest/msrest serialization/deserialization
+    doesn't work for this special part.
+    After autorest is enhanced, this method can be removed.
+    Refer to autorest issue https://github.com/Azure/autorest/issues/3535
+    """
     deserialized = feed_class.deserialize(feed_element)
     next_link = None
     if deserialized.link and len(deserialized.link) == 2:
@@ -43,6 +51,12 @@ def extract_data_template(feed_class, convert, feed_element):
 
 
 def get_next_template(list_func, *args, **kwargs):
+    """Call list_func to get the XML data and deserialize it to XML ElementTree.
+
+    azure.core.async_paging.AsyncItemPaged will call `extract_data_template` and use the returned
+    XML ElementTree to call a partial function created from `extrat_data_template`.
+
+    """
     start_index = kwargs.pop("start_index", 0)
     max_page_size = kwargs.pop("max_page_size", 100)
     api_version = constants.API_VERSION
@@ -82,7 +96,7 @@ def serialize_value_type(value):
     if value_type == str:
         return "string", value
     if value_type == int:
-        return "int" if value <= constants.INT_MAX_VALUE_CSHARP else "long", str(value)
+        return "int" if value <= constants.INT32_MAX_VALUE else "long", str(value)
     if value_type == float:
         return "double", str(value)
     if value_type == bool:
@@ -109,6 +123,9 @@ def deserialize_key_values(xml_parent, key_values):
     </KeyValueOfstringanyType>
     ...
 
+    After autorest is enhanced, this method can be removed.
+    Refer to autorest issue https://github.com/Azure/autorest/issues/3535
+
     :param xml_parent: The parent xml Element that contains some children of <KeyValueOfstringanyType>.
     :param key_values: The dict that contains the key values. The value could have wrong data types.
     :return: This method returns `None`. It will update each value of key_values to correct value type.
@@ -126,6 +143,14 @@ def deserialize_key_values(xml_parent, key_values):
 
 
 def deserialize_rule_key_values(entry_ele, rule_description):
+    """Deserialize a rule's filter and action that have key values from xml.
+
+    CorrelationRuleFilter.properties, SqlRuleFilter.parameters and SqlRuleAction.parameters may contain
+    data (dict is not empty).
+
+    After autorest is enhanced, this method can be removed.
+    Refer to autorest issue https://github.com/Azure/autorest/issues/3535
+    """
     content = entry_ele.find(constants.ATOM_CONTENT_TAG)
     if content:
         correlation_filter_properties_ele = content\
@@ -166,6 +191,9 @@ def serialize_key_values(xml_parent, key_values):
     :param xml_parent: The parent xml Element for the serialized xml.
     :param key_values: The dict that contains the key values.
     :return: `xml_parent` is mutated. The returned value is `None`.
+
+    After autorest is enhanced, this method can be removed.
+    Refer to autorest issue https://github.com/Azure/autorest/issues/3535
     """
     xml_parent.clear()
     if key_values:
@@ -189,6 +217,8 @@ def serialize_rule_key_values(entry_ele, rule_descripiton):
     CorrelationRuleFilter.properties, SqlRuleFilter.parameters and SqlRuleAction.parameters may contain
     data (dict is not empty). Serialize them to XML.
 
+    After autorest is enhanced, this method can be removed.
+    Refer to autorest issue https://github.com/Azure/autorest/issues/3535
     """
     content = entry_ele.find(constants.ATOM_CONTENT_TAG)
     if content:
