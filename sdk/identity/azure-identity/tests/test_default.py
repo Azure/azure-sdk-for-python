@@ -221,6 +221,30 @@ def test_shared_cache_username():
     assert token.token == expected_access_token
 
 
+def test_vscode_tenant_id():
+    """the credential should allow configuring a tenant ID for VSCodeCredential by kwarg or environment"""
+
+    expected_args = {"tenant_id": "the-tenant"}
+
+    with patch(DefaultAzureCredential.__module__ + ".VSCodeCredential") as mock_credential:
+        DefaultAzureCredential(visual_studio_code_tenant_id=expected_args["tenant_id"])
+    mock_credential.assert_called_once_with(**expected_args)
+
+    # tenant id can also be specified in $AZURE_TENANT_ID
+    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: expected_args["tenant_id"]}, clear=True):
+        with patch(DefaultAzureCredential.__module__ + ".VSCodeCredential") as mock_credential:
+            DefaultAzureCredential()
+    mock_credential.assert_called_once_with(**expected_args)
+
+    # keyword argument should override environment variable
+    with patch.dict(
+        os.environ, {EnvironmentVariables.AZURE_TENANT_ID: "not-" + expected_args["tenant_id"]}, clear=True
+    ):
+        with patch(DefaultAzureCredential.__module__ + ".VSCodeCredential") as mock_credential:
+            DefaultAzureCredential(visual_studio_code_tenant_id=expected_args["tenant_id"])
+    mock_credential.assert_called_once_with(**expected_args)
+
+
 @patch(DefaultAzureCredential.__module__ + ".SharedTokenCacheCredential")
 def test_default_credential_shared_cache_use(mock_credential):
     mock_credential.supported = Mock(return_value=False)
@@ -265,7 +289,7 @@ def test_interactive_browser_tenant_id():
     def validate_tenant_id(credential):
         assert len(credential.call_args_list) == 1, "InteractiveBrowserCredential should be instantiated once"
         _, kwargs = credential.call_args
-        assert kwargs == {'tenant_id': tenant_id}
+        assert kwargs == {"tenant_id": tenant_id}
 
     with patch(DefaultAzureCredential.__module__ + ".InteractiveBrowserCredential") as mock_credential:
         DefaultAzureCredential(exclude_interactive_browser_credential=False, interactive_browser_tenant_id=tenant_id)
@@ -280,5 +304,7 @@ def test_interactive_browser_tenant_id():
     # keyword argument should override environment variable
     with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: "not-" + tenant_id}, clear=True):
         with patch(DefaultAzureCredential.__module__ + ".InteractiveBrowserCredential") as mock_credential:
-            DefaultAzureCredential(exclude_interactive_browser_credential=False, interactive_browser_tenant_id=tenant_id)
+            DefaultAzureCredential(
+                exclude_interactive_browser_credential=False, interactive_browser_tenant_id=tenant_id
+            )
     validate_tenant_id(mock_credential)

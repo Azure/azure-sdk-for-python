@@ -54,6 +54,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Defaults to the value of environment variable AZURE_USERNAME, if any.
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
+    :keyword str visual_studio_code_tenant_id: Tenant ID to use when authenticating with
+        :class:`~azure.identity.VSCodeCredential`.
     """
 
     def __init__(self, **kwargs: "Any") -> None:
@@ -63,6 +65,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
             "shared_cache_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
+        )
+
+        vscode_tenant_id = kwargs.pop(
+            "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
         exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
@@ -87,7 +93,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 # transitive dependency pywin32 doesn't support 3.8 (https://github.com/mhammond/pywin32/issues/1431)
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VSCodeCredential())
+            credentials.append(VSCodeCredential(tenant_id=vscode_tenant_id))
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential())
 
