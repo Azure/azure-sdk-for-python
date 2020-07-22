@@ -10,7 +10,7 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/table/
+    - sdk/tables/
     - sdk/core/
     - tools/
     - eng/
@@ -25,7 +25,7 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/table/
+    - sdk/tables/
     - sdk/core/
     - tools/
     - eng/
@@ -34,8 +34,8 @@ pr:
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: table
+    ServiceDirectory: tables
     Artifacts:
-    - name: azure_table
-      safeName: azuretable
+    - name: azure_data_tables
+      safeName: azuredatatables
 
