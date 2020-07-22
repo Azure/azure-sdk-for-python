@@ -16,6 +16,11 @@ steps:
     displayName: 'Prep Environment'
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
 
+  - task: DownloadPipelineArtifact@0
+    inputs:
+      artifactName: 'artifacts'
+      targetPath: $(Build.ArtifactStagingDirectory)
+
   - task: PythonScript@0
     displayName: 'Run Api Stub Generation'
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
