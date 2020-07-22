@@ -552,7 +552,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsInstance(props, BlobProperties)
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
         self.assertEqual(props.size, len(self.byte_data))
-        self.assertEqual(props.blob_rehydrate_priority, 'High')
+        self.assertEqual(props.rehydrate_priority, 'High')
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

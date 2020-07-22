@@ -1,0 +1,365 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: http://storagename.blob.core.windows.net/utcontainerf5d0141c?timeout=5&restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:184f6665-101e-009c-1079-60e0c6000000\nTime:2020-07-22T22:46:44.7568271Z</Message></Error>"
+    headers:
+      content-length:
+      - '230'
+      content-type:
+      - application/xml
+      date:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ContainerAlreadyExists
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 409
+      message: The specified container already exists.
+- request:
+    body: abc
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '3'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: http://storagename.blob.core.windows.net/utcontainerf5d0141c/blobtodeletef5d0141c
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - kAFQmDzST7DWlj99KOF/cg==
+      date:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      etag:
+      - '"0x8D82E911C0C2516"'
+      last-modified:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - 6/rBP7vK5QU=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-12-12'
+      x-ms-version-id:
+      - '2020-07-22T22:46:44.8628774Z'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: efgefgefg
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '9'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: http://storagename.blob.core.windows.net/utcontainerf5d0141c/blobtodeletef5d0141c
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - LwUN1IS2UwVvUUUHy5h2Cg==
+      date:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      etag:
+      - '"0x8D82E911C196DF1"'
+      last-modified:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64:
+      - 6NGkC2oKplY=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-12-12'
+      x-ms-version-id:
+      - '2020-07-22T22:46:44.9499393Z'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-access-tier:
+      - Cool
+      x-ms-date:
+      - Wed, 22 Jul 2020 22:46:45 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: http://storagename.blob.core.windows.net/utcontainerf5d0141c/blobtodeletef5d0141c?comp=tier
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-access-tier:
+      - Cool
+      x-ms-date:
+      - Wed, 22 Jul 2020 22:46:45 GMT
+      x-ms-rehydrate-priority:
+      - High
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: http://storagename.blob.core.windows.net/utcontainerf5d0141c/blobtodeletef5d0141c?versionid=2020-07-22T22%3A46%3A44.8628774Z&comp=tier
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 22 Jul 2020 22:46:45 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-access-tier:
+      - Hot
+      x-ms-date:
+      - Wed, 22 Jul 2020 22:46:45 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: http://storagename.blob.core.windows.net/utcontainerf5d0141c/blobtodeletef5d0141c?versionid=2020-07-22T22%3A46%3A44.8628774Z&comp=tier
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 22 Jul 2020 22:46:45 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 22 Jul 2020 22:46:45 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: HEAD
+    uri: http://storagename.blob.core.windows.net/utcontainerf5d0141c/blobtodeletef5d0141c?versionid=2020-07-22T22%3A46%3A44.8628774Z
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '3'
+      content-md5:
+      - kAFQmDzST7DWlj99KOF/cg==
+      content-type:
+      - application/octet-stream
+      date:
+      - Wed, 22 Jul 2020 22:46:45 GMT
+      etag:
+      - '"0x8D82E911C0C2516"'
+      last-modified:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-change-time:
+      - Wed, 22 Jul 2020 22:46:45 GMT
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-12-12'
+      x-ms-version-id:
+      - '2020-07-22T22:46:44.8628774Z'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Wed, 22 Jul 2020 22:46:45 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: HEAD
+    uri: http://storagename.blob.core.windows.net/utcontainerf5d0141c/blobtodeletef5d0141c
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '9'
+      content-md5:
+      - LwUN1IS2UwVvUUUHy5h2Cg==
+      content-type:
+      - application/octet-stream
+      date:
+      - Wed, 22 Jul 2020 22:46:45 GMT
+      etag:
+      - '"0x8D82E911C196DF1"'
+      last-modified:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier:
+      - Cool
+      x-ms-access-tier-change-time:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Wed, 22 Jul 2020 22:46:44 GMT
+      x-ms-is-current-version:
+      - 'true'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-12-12'
+      x-ms-version-id:
+      - '2020-07-22T22:46:44.9499393Z'
+    status:
+      code: 200
+      message: OK
+version: 1

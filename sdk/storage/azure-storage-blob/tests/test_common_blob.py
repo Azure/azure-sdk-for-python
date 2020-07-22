@@ -466,7 +466,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsInstance(props, BlobProperties)
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
         self.assertEqual(props.size, len(self.byte_data))
-        self.assertEqual(props.blob_rehydrate_priority, 'High')
+        self.assertEqual(props.rehydrate_priority, 'High')
 
     # This test is to validate that the ErrorCode is retrieved from the header during a
     # HEAD request.
@@ -2166,5 +2166,29 @@ class StorageCommonBlobTest(StorageTestCase):
             bsc.get_service_properties()
             assert transport.session is not None
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_set_blob_tier_for_a_version(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        blob_name = self.get_resource_name("blobtodelete")
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        data_for_the_first_version = "abc"
+        data_for_the_second_version = "efgefgefg"
+        resp = blob.upload_blob(data_for_the_first_version, overwrite=True)
+        self.assertIsNotNone(resp['version_id'])
+        blob.upload_blob(data_for_the_second_version, overwrite=True)
+        blob.set_standard_blob_tier(StandardBlobTier.Cool)
+        blob.set_standard_blob_tier(StandardBlobTier.Cool, rehydrate_priority=RehydratePriority.high, version_id=resp['version_id'])
+        blob.set_standard_blob_tier(StandardBlobTier.Hot, version_id=resp['version_id'])
+        # Act
+        props = blob.get_blob_properties(version_id=resp['version_id'])
+        origin_props = blob.get_blob_properties()
+
+        # Assert
+        self.assertIsInstance(props, BlobProperties)
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
+        self.assertEqual(props.size, len(data_for_the_first_version))
+        self.assertEqual(props.blob_tier, 'Hot')
+        self.assertEqual(origin_props.blob_tier, 'Cool')
 
 #------------------------------------------------------------------------------
