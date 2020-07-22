@@ -1,6 +1,6 @@
 # Azure Table client library for Python
 
-Azure Table is a service for storing data that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS. 
+Azure Table is a NoSQL data storing service that can be accessed from anywhere in the world via authenticated calls using HTTP or HTTPS. 
 
 Common uses of Azure Table include:
 
@@ -117,7 +117,8 @@ az storage account show-connection-string -g MyResourceGroup -n mystorageaccount
 
 ## Key concepts
 The following components make up the Azure Table Service:
-* The storage account and a table within the storage account, which contains a set of entities
+* The storage account
+* A table within the storage account, which contains a set of entities
 * An entity within a table, as a dictionary
 
 The Azure Table client library for Python allows you to interact with each of these components through the
