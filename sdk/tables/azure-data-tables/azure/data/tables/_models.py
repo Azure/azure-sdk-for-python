@@ -289,7 +289,10 @@ class TablePropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [Table(t) for t in self._response.value]
+        props_list = []
+        for t in self._response.value:
+            props_list.append(Table(t))
+        # props_list = [Table(t) for t in self._response.value]
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 

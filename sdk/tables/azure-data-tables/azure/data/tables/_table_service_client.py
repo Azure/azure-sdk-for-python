@@ -190,7 +190,7 @@ class TableServiceClient(TableServiceClientBase):
     @distributed_trace
     def query_tables(
             self,
-            filter=None,  # pylint: disable=W0622
+            filter,  # pylint: disable=W0622
             **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[Table]
@@ -246,6 +246,7 @@ class TableServiceClient(TableServiceClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
+        filter = kwargs.pop('filter', None)
         if parameters:
             filter_start = filter.split('@')[0]
             selected = filter.split('@')[1]

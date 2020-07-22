@@ -169,7 +169,7 @@ class StorageTableTest(TableTestCase):
         table = self._create_table(ts)
 
         # Act
-        tables = list(ts.query_tables())
+        tables = list(ts.list_tables())
 
         # Assert
         self.assertIsNotNone(tables)
@@ -206,8 +206,14 @@ class StorageTableTest(TableTestCase):
             self._create_table(ts, prefix + str(i), table_list)
 
         # Act
-        big_page = list(next(ts.query_tables().by_page()))
-        small_page = list(next(ts.query_tables(results_per_page=3).by_page()))
+        small_page = []
+        big_page = []
+        for s in next(ts.list_tables(results_per_page=3).by_page()):
+            small_page.append(s)
+        for t in next(ts.list_tables().by_page()):
+            big_page.append(t)
+        # big_page = list(next(ts.query_tables().by_page()))
+        # small_page = list(next(ts.query_tables(results_per_page=3).by_page()))
 
         # Assert
         self.assertEqual(len(small_page), 3)
@@ -226,9 +232,9 @@ class StorageTableTest(TableTestCase):
         # table_names.sort()
 
         # Act
-        generator1 = ts.query_tables(results_per_page=2).by_page()
+        generator1 = ts.list_tables(results_per_page=2).by_page()
         next(generator1)
-        generator2 = ts.query_tables(results_per_page=2).by_page(
+        generator2 = ts.list_tables(results_per_page=2).by_page(
             continuation_token=generator1.continuation_token)
         next(generator2)
 
