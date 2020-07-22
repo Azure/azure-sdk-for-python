@@ -505,7 +505,7 @@ version before installing the latest release.
 * Azure Storage has moved.
     https://github.com/Azure/azure-storage-python
 
-    http://azure-storage.readthedocs.org/en/latest/
+    https://azure.github.io/azure-sdk-for-python/ref/Storage.html
 
 **Bugfixes**
 
