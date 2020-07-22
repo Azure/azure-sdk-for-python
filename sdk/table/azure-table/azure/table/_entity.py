@@ -8,14 +8,14 @@ from enum import Enum
 from ._shared._error import _ERROR_ATTRIBUTE_MISSING
 
 
-class Entity(dict):
+class TableEntity(dict):
     """
     An entity object. Can be accessed as a dict or as an obj. The attributes of
     the entity will be created dynamically. For example, the following are both
     valid::
-        entity = Entity()
-        entity.a = 'b'
-        entity['x'] = 'y'
+        TableEntity = TableEntity()
+        TableEntity.a = 'b'
+        TableEntity['x'] = 'y'
 
     """
 
@@ -40,13 +40,13 @@ class Entity(dict):
         """
         :param name:name of entity entry
         :type name: str
-        :return: Entity dictionary
+        :return: TableEntity dictionary
         :rtype: dict[str,str]
         """
         try:
             return self[name]
         except KeyError:
-            raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
+            raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('TableEntity', name))
 
     __setattr__ = dict.__setitem__
 

@@ -15,7 +15,7 @@ except ImportError:
 
 from azure.core.paging import ItemPaged
 from azure.table._deserialize import _convert_to_entity
-from azure.table._entity import Entity
+from azure.table._entity import TableEntity
 from azure.table._generated import AzureTable
 from azure.table._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
 from azure.table._serialize import _get_match_headers, _add_entity_properties
@@ -252,16 +252,16 @@ class TableClient(TableClientBase):
     @distributed_trace
     def create_entity(
             self,
-            entity,  # type: Union[Entity, dict[str,str]]
+            entity,  # type: Union[TableEntity, dict[str,str]]
             **kwargs  # type: Any
     ):
-        # type: (...) -> Entity
+        # type: (...) -> TableEntity
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[Entity, dict[str,str]]
-        :return: Entity mapping str to azure.table.EntityProperty
-        :rtype: ~azure.table.Entity
+        :type entity: Union[TableEntity, dict[str,str]]
+        :return: TableEntity mapping str to azure.table.EntityProperty
+        :rtype: ~azure.table.TableEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -278,13 +278,13 @@ class TableClient(TableClientBase):
             )
             properties = _convert_to_entity(inserted_entity)
             return properties
-        except ValueError as error:
+        except ResourceNotFoundError as error:
             process_table_error(error)
 
     @distributed_trace
     def update_entity(  # pylint:disable=R1710
             self,
-            entity,  # type: Union[Entity, dict[str,str]]
+            entity,  # type: Union[TableEntity, dict[str,str]]
             mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
@@ -292,7 +292,7 @@ class TableClient(TableClientBase):
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[Entity, dict[str,str]]
+        :type entity: Union[TableEntity, dict[str,str]]
         :param mode: Merge or Replace entity
         :type mode: ~azure.table.UpdateMode
         :keyword str partition_key: The partition key of the entity.
@@ -330,7 +330,7 @@ class TableClient(TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[Entity]
+        # type: (...) -> ItemPaged[TableEntity]
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities per page in return ItemPaged
@@ -338,7 +338,7 @@ class TableClient(TableClientBase):
         :keyword str filter: Specify a filter to return certain entities
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
-        :rtype: ItemPaged[Entity]
+        :rtype: ItemPaged[TableEntity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
@@ -366,7 +366,7 @@ class TableClient(TableClientBase):
             filter,  # type: str  # pylint: disable = W0622
             **kwargs
     ):
-        # type: (...) -> ItemPaged[Entity]
+        # type: (...) -> ItemPaged[TableEntity]
         """Lists entities in a table.
 
         :param str filter: Specify a filter to return certain entities
@@ -374,7 +374,7 @@ class TableClient(TableClientBase):
         :keyword str select: Specify desired properties of an entity to return certain entities
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
-        :rtype: ItemPaged[Entity]
+        :rtype: ItemPaged[TableEntity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
@@ -403,7 +403,7 @@ class TableClient(TableClientBase):
             row_key,  # type: str
             **kwargs  # type: Any
     ):
-        # type: (...) -> Entity
+        # type: (...) -> TableEntity
         """Queries entities in a table.
 
         :param partition_key: The partition key of the entity.
@@ -412,7 +412,7 @@ class TableClient(TableClientBase):
         :type row_key: str
         :keyword str select: Specify desired properties of an entity to return certain entities
         :return: Entity mapping str to azure.table.EntityProperty
-        :rtype: ~azure.table.Entity
+        :rtype: ~azure.table.TableEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -429,7 +429,7 @@ class TableClient(TableClientBase):
     @distributed_trace
     def upsert_entity(  # pylint:disable=R1710
             self,
-            entity,  # type: Union[Entity, dict[str,str]]
+            entity,  # type: Union[TableEntity, dict[str,str]]
             mode=UpdateMode.MERGE,  # type: UpdateMode
             **kwargs  # type: Any
     ):
@@ -437,13 +437,9 @@ class TableClient(TableClientBase):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[Entity, dict[str,str]]
+        :type entity: Union[TableEntity, dict[str,str]]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.table.UpdateMode
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
