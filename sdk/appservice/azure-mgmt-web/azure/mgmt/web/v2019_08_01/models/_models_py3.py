@@ -1897,8 +1897,10 @@ class AppServicePlanPatchResource(ProxyOnlyResource):
     :type free_offer_expiration_time: datetime
     :ivar resource_group: Resource group of the App Service plan.
     :vartype resource_group: str
-    :param reserved: If Linux app service plan <code>true</code>,
-     <code>false</code> otherwise. Default value: False .
+    :param reserved: This needs to set to <code>true</code> when creating a
+     Linux App Service Plan, along with <code>kind</code> set to
+     <code>Linux</code>. It should be <code>false</code> otherwise. Default
+     value: False .
     :type reserved: bool
     :param is_xenon: Obsolete: If Hyper-V container app service plan
      <code>true</code>, <code>false</code> otherwise. Default value: False .
@@ -9616,6 +9618,12 @@ class SiteConfig(Model):
     :param http_logging_enabled: <code>true</code> if HTTP logging is enabled;
      otherwise, <code>false</code>.
     :type http_logging_enabled: bool
+    :param acr_use_managed_identity_creds: Flag to use Managed Identity Creds
+     for ACR pull
+    :type acr_use_managed_identity_creds: bool
+    :param acr_user_managed_identity_id: If using user managed identity, the
+     user managed identity ClientId
+    :type acr_user_managed_identity_id: str
     :param logs_directory_size_limit: HTTP logs directory size limit.
     :type logs_directory_size_limit: int
     :param detailed_error_logging_enabled: <code>true</code> if detailed error
@@ -9748,6 +9756,8 @@ class SiteConfig(Model):
         'remote_debugging_enabled': {'key': 'remoteDebuggingEnabled', 'type': 'bool'},
         'remote_debugging_version': {'key': 'remoteDebuggingVersion', 'type': 'str'},
         'http_logging_enabled': {'key': 'httpLoggingEnabled', 'type': 'bool'},
+        'acr_use_managed_identity_creds': {'key': 'acrUseManagedIdentityCreds', 'type': 'bool'},
+        'acr_user_managed_identity_id': {'key': 'acrUserManagedIdentityID', 'type': 'str'},
         'logs_directory_size_limit': {'key': 'logsDirectorySizeLimit', 'type': 'int'},
         'detailed_error_logging_enabled': {'key': 'detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'publishingUsername', 'type': 'str'},
@@ -9791,7 +9801,7 @@ class SiteConfig(Model):
         'health_check_path': {'key': 'healthCheckPath', 'type': 'str'},
     }
 
-    def __init__(self, *, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, power_shell_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, api_management_config=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, scm_ip_security_restrictions=None, scm_ip_security_restrictions_use_main: bool=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, pre_warmed_instance_count: int=None, health_check_path: str=None, **kwargs) -> None:
+    def __init__(self, *, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, power_shell_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, acr_use_managed_identity_creds: bool=None, acr_user_managed_identity_id: str=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, api_management_config=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, scm_ip_security_restrictions=None, scm_ip_security_restrictions_use_main: bool=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, pre_warmed_instance_count: int=None, health_check_path: str=None, **kwargs) -> None:
         super(SiteConfig, self).__init__(**kwargs)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
@@ -9807,6 +9817,8 @@ class SiteConfig(Model):
         self.remote_debugging_enabled = remote_debugging_enabled
         self.remote_debugging_version = remote_debugging_version
         self.http_logging_enabled = http_logging_enabled
+        self.acr_use_managed_identity_creds = acr_use_managed_identity_creds
+        self.acr_user_managed_identity_id = acr_user_managed_identity_id
         self.logs_directory_size_limit = logs_directory_size_limit
         self.detailed_error_logging_enabled = detailed_error_logging_enabled
         self.publishing_username = publishing_username
@@ -9896,6 +9908,12 @@ class SiteConfigResource(ProxyOnlyResource):
     :param http_logging_enabled: <code>true</code> if HTTP logging is enabled;
      otherwise, <code>false</code>.
     :type http_logging_enabled: bool
+    :param acr_use_managed_identity_creds: Flag to use Managed Identity Creds
+     for ACR pull
+    :type acr_use_managed_identity_creds: bool
+    :param acr_user_managed_identity_id: If using user managed identity, the
+     user managed identity ClientId
+    :type acr_user_managed_identity_id: str
     :param logs_directory_size_limit: HTTP logs directory size limit.
     :type logs_directory_size_limit: int
     :param detailed_error_logging_enabled: <code>true</code> if detailed error
@@ -10035,6 +10053,8 @@ class SiteConfigResource(ProxyOnlyResource):
         'remote_debugging_enabled': {'key': 'properties.remoteDebuggingEnabled', 'type': 'bool'},
         'remote_debugging_version': {'key': 'properties.remoteDebuggingVersion', 'type': 'str'},
         'http_logging_enabled': {'key': 'properties.httpLoggingEnabled', 'type': 'bool'},
+        'acr_use_managed_identity_creds': {'key': 'properties.acrUseManagedIdentityCreds', 'type': 'bool'},
+        'acr_user_managed_identity_id': {'key': 'properties.acrUserManagedIdentityID', 'type': 'str'},
         'logs_directory_size_limit': {'key': 'properties.logsDirectorySizeLimit', 'type': 'int'},
         'detailed_error_logging_enabled': {'key': 'properties.detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'properties.publishingUsername', 'type': 'str'},
@@ -10078,7 +10098,7 @@ class SiteConfigResource(ProxyOnlyResource):
         'health_check_path': {'key': 'properties.healthCheckPath', 'type': 'str'},
     }
 
-    def __init__(self, *, kind: str=None, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, power_shell_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, api_management_config=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, scm_ip_security_restrictions=None, scm_ip_security_restrictions_use_main: bool=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, pre_warmed_instance_count: int=None, health_check_path: str=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, power_shell_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, acr_use_managed_identity_creds: bool=None, acr_user_managed_identity_id: str=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, api_management_config=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, scm_ip_security_restrictions=None, scm_ip_security_restrictions_use_main: bool=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, pre_warmed_instance_count: int=None, health_check_path: str=None, **kwargs) -> None:
         super(SiteConfigResource, self).__init__(kind=kind, **kwargs)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
@@ -10094,6 +10114,8 @@ class SiteConfigResource(ProxyOnlyResource):
         self.remote_debugging_enabled = remote_debugging_enabled
         self.remote_debugging_version = remote_debugging_version
         self.http_logging_enabled = http_logging_enabled
+        self.acr_use_managed_identity_creds = acr_use_managed_identity_creds
+        self.acr_user_managed_identity_id = acr_user_managed_identity_id
         self.logs_directory_size_limit = logs_directory_size_limit
         self.detailed_error_logging_enabled = detailed_error_logging_enabled
         self.publishing_username = publishing_username
