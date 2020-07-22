@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "hello world", "language": "en"}, {"id":
+      "1", "text": "I did not like the hotel we stayed at.", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '150'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false
+  response:
+    body:
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocument","message":"Request
+        contains duplicated Ids. Make sure each document has a unique Id."}}}'
+    headers:
+      apim-request-id: 73cafbd2-e328-49d4-8ec6-abd0d4e32361
+      content-type: application/json; charset=utf-8
+      date: Wed, 22 Jul 2020 17:58:00 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '5'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false
+version: 1

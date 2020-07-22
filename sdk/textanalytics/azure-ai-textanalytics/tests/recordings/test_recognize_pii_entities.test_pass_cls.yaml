@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: '{"documents": [{"id": "1", "text": "I had a wonderful experience! The rooms
-      were wonderful and the staff was helpful.", "countryHint": "US"}]}'
+    body: '{"documents": [{"id": "0", "text": "Test passing cls to endpoint", "language":
+      "en"}]}'
     headers:
       Accept:
       - application/json
@@ -10,25 +10,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '142'
+      - '86'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/languages?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/recognition/pii?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - c32e5f90-ac5f-4368-985e-89e8a436a74c
+      - 5aacd6e8-9005-4b19-a482-1782ce5663b8
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Wed, 22 Jul 2020 18:06:04 GMT
+      - Wed, 22 Jul 2020 15:42:26 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -36,7 +36,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '80'
     status:
       code: 200
       message: OK

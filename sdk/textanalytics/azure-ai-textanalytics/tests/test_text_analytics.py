@@ -32,6 +32,8 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
 
         categorized_entity = _models.CategorizedEntity(text="Bill Gates", category="Person", subcategory="Age", confidence_score=0.899)
 
+        pii_entity = _models.PiiEntity(text="555-55-5555", category="SSN", subcategory=None, confidence_score=0.899)
+
         text_document_statistics = _models.TextDocumentStatistics(character_count=14, transaction_count=18)
 
         warnings = [_models.TextAnalyticsWarning(code="LongWordsInDocument", message="The document contains very long words (longer than 64 characters). These words will be truncated and may result in unreliable model predictions.")]
@@ -39,6 +41,14 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         recognize_entities_result = _models.RecognizeEntitiesResult(
             id="1",
             entities=[categorized_entity],
+            warnings=warnings,
+            statistics=text_document_statistics,
+            is_error=False
+        )
+
+        recognize_pii_entities_result = _models.RecognizePiiEntitiesResult(
+            id="1",
+            entities=[pii_entity],
             warnings=warnings,
             statistics=text_document_statistics,
             is_error=False
@@ -113,6 +123,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual("DetectedLanguage(name=English, iso6391_name=en, confidence_score=1.0)", repr(detected_language))
         self.assertEqual("CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, confidence_score=0.899)",
                          repr(categorized_entity))
+        self.assertEqual("PiiEntity(text=555-55-5555, category=SSN, subcategory=None, confidence_score=0.899)", repr(pii_entity))
         self.assertEqual("TextDocumentStatistics(character_count=14, transaction_count=18)",
                          repr(text_document_statistics))
         self.assertEqual("RecognizeEntitiesResult(id=1, entities=[CategorizedEntity(text=Bill Gates, category=Person, "
@@ -121,6 +132,12 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
                          "These words will be truncated and may result in unreliable model predictions.)], "
                          "statistics=TextDocumentStatistics(character_count=14, transaction_count=18), "
                          "is_error=False)", repr(recognize_entities_result))
+        self.assertEqual("RecognizePiiEntitiesResult(id=1, entities=[PiiEntity(text=555-55-5555, category=SSN, "
+                         "subcategory=None, confidence_score=0.899)], "
+                         "warnings=[TextAnalyticsWarning(code=LongWordsInDocument, message=The document contains very long words (longer than 64 characters). "
+                         "These words will be truncated and may result in unreliable model predictions.)], "
+                         "statistics=TextDocumentStatistics(character_count=14, transaction_count=18), "
+                         "is_error=False)", repr(recognize_pii_entities_result))
         self.assertEqual("DetectLanguageResult(id=1, primary_language=DetectedLanguage(name=English, "
                          "iso6391_name=en, confidence_score=1.0), "
                          "warnings=[TextAnalyticsWarning(code=LongWordsInDocument, message=The document contains very long words (longer than 64 characters). "
