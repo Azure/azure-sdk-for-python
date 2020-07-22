@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 from .base import AsyncCredentialBase
 from .._internal import AadClient
+from .._internal.decorators import log_get_token_async
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -51,6 +52,7 @@ class AuthorizationCodeCredential(AsyncCredentialBase):
         self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
         self._redirect_uri = redirect_uri
 
+    @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token for `scopes`.
 

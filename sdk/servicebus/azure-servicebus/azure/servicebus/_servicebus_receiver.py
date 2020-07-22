@@ -79,6 +79,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
     :keyword int prefetch: The maximum number of messages to cache with each request to the service.
      This setting is only for advanced performance tuning. Increasing this value will improve message throughput
      performance but increase the chance that messages will expire while they are cached if they're not
@@ -290,6 +291,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
         :keyword int prefetch: The maximum number of messages to cache with each request to the service.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
          performance but increase the chance that messages will expire while they are cached if they're not

@@ -9,11 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import AnomalyDetectorClientConfiguration
-from ._anomaly_detector_client import AnomalyDetectorClient
-__all__ = ['AnomalyDetectorClient', 'AnomalyDetectorClientConfiguration']
+from ._anomaly_detector_client_operations import AnomalyDetectorClientOperationsMixin
 
-from .version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'AnomalyDetectorClientOperationsMixin',
+]

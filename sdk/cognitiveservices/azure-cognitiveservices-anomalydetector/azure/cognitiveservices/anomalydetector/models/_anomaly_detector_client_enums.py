@@ -20,3 +20,4 @@ class Granularity(str, Enum):
     daily = "daily"
     hourly = "hourly"
     minutely = "minutely"
+    secondly = "secondly"
