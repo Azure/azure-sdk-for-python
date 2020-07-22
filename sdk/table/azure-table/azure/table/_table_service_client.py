@@ -203,12 +203,13 @@ class TableServiceClient(TableServiceClientBase):
         :rtype: ItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
+        query_options = QueryOptions(#top=kwargs.pop('results_per_page', None), #select=kwargs.pop('select', None),
+                                     top=kwargs.pop('results_per_page', None),
                                      filter=filter)
-        command = functools.partial(self._client.table.query,
+        command = functools.partial(self._client.table.query, query_options=query_options,
                                     **kwargs)
         return ItemPaged(
-            command, results_per_page=query_options,
+            command, #results_per_page=query_options,
             page_iterator_class=TablePropertiesPaged
         )
 

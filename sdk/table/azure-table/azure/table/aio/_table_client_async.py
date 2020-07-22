@@ -14,9 +14,8 @@ from azure.table._shared.base_client_async import AsyncStorageAccountHostsMixin
 from azure.table._shared.policies_async import ExponentialRetry
 from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import return_headers_and_deserialized, process_storage_error
-# from azure.table._table_client import TableClient as TableClientBase
 
-from .._models import UpdateMode# TableEntityPropertiesPaged, 
+from .._models import UpdateMode 
 from ._models import TableEntityPropertiesPaged
 from .._deserialize import _convert_to_entity
 from .._serialize import _add_entity_properties, _get_match_headers

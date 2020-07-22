@@ -9,11 +9,11 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Wed, 22 Jul 2020 18:01:16 GMT
+      - Wed, 22 Jul 2020 23:12:55 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 22 Jul 2020 18:01:16 GMT
+      - Wed, 22 Jul 2020 23:12:55 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -21,12 +21,12 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Wed,
-        22 Jul 2020 17:59:14 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
+        22 Jul 2020 23:10:48 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
     headers:
       content-type:
       - application/xml
       date:
-      - Wed, 22 Jul 2020 18:01:16 GMT
+      - Wed, 22 Jul 2020 23:12:55 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

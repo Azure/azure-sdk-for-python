@@ -136,7 +136,7 @@ class TableTestAsync(AsyncTableTestCase):
         # table.delete_table()
         await ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     # TODO: the small_page is getting 16, can't figure it out, skipping for now
     @GlobalStorageAccountPreparer()
     async def test_list_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
@@ -153,14 +153,24 @@ class TableTestAsync(AsyncTableTestCase):
             big_page.append(t)
 
         small_page = []
-        async for s in ts.list_tables(query_options=QueryOptions(top=3)):#.by_page():
+        async for s in ts.query_tables(filter=None, results_per_page=3).by_page():
             small_page.append(s)
 
+        self.assertEqual(len(small_page), 2)
+
+        first_page = []
+        async for item in small_page[0]:
+            first_page.append(item)
+
+        second_page = []
+        async for item in small_page[1]:
+            second_page.append(item)
         # Assert
-        self.assertEqual(len(small_page), 3)
+        self.assertEqual(len(first_page), 3)
+        self.assertEqual(len(second_page), 1)
         self.assertGreaterEqual(len(big_page), 4)
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_list_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -413,9 +423,9 @@ class TableTestAsync(AsyncTableTestCase):
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table = (self._get_table_reference())
         init_locale = locale.getlocale()
-        if os.name is "nt":
+        if os.name == "nt":
             culture = "Spanish_Spain"
-        elif os.name is 'posix':
+        elif os.name == 'posix':
             culture = 'es_ES.UTF-8'
         else:
             culture = 'es_ES.utf8'

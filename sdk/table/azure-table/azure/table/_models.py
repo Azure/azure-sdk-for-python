@@ -280,7 +280,7 @@ class TablePropertiesPaged(PageIterator):
         try:
             return self._command(
                 next_table_name=continuation_token or None,
-                query_options=self.results_per_page or None,
+                # query_options=self.results_per_page or None,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode
             )

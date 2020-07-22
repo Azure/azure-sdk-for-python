@@ -11,9 +11,7 @@ from azure.table._models import service_stats_deserialize, service_properties_de
 from azure.table._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from azure.table._shared.policies_async import ExponentialRetry
 from azure.table._shared.response_handlers import process_storage_error
-# from azure.table._table_service_client import TableServiceClient as TableServiceClientBase
 from azure.table.aio._table_client_async import TableClient
-# from .._models import TablePropertiesPaged
 from ._models import TablePropertiesPaged
 from .._shared._table_service_client_base import TableServiceClientBase
 
@@ -207,19 +205,39 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :rtype: ~AsyncItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        filter = kwargs.pop('filter', None)  # pylint: disable = W0622
+        parameters = kwargs.pop('parameters', None)
+        if parameters:
+            filter_start = filter.split('@')[0]
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
+
+        temp_select = kwargs.pop('select', None)
+        select = ""
+        if temp_select is not None:
+            if len(list(temp_select)) > 1:
+                for i in temp_select:
+                    select += i + ","
+                temp_select = None
+
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
+                                     filter=filter)
+
         command = functools.partial(
             self._client.table.query,
+            query_options=query_options,
             **kwargs)
         return AsyncItemPaged(
-            command, results_per_page=query_options,
+            command,
             page_iterator_class=TablePropertiesPaged
         )
 
     @distributed_trace
     def query_tables(
             self,
-            # query_options=None,
-            filter=None,
+            filter: str,
             **kwargs
     ):
         # type: (...) -> ItemPaged
@@ -229,15 +247,32 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :type query_options: ~azure.table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AsyncItemPaged, or the result of cls(response)
-        :rtype: ~AsyncItemPaged
+        :rtype: ~AsyncItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
-                                     filter=filter)
-        command = functools.partial(self._client.table.query,
+
+        parameters = kwargs.pop('parameters', None)
+        filter = kwargs.pop('filter', None)  # pylint: disable = W0622
+        if parameters:
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter.split('@')[0].replace('@', value)  # pylint: disable = W0622
+
+        temp_select = kwargs.pop('select', None)
+        select = ""
+        if temp_select is not None:
+            if len(list(temp_select)) > 1:
+                for i in temp_select:
+                    select += i + ","
+                temp_select = None
+
+        query_options = QueryOptions(select=select or temp_select,# kwargs.pop('select', None),
+                                     top=kwargs.pop('results_per_page', None), filter=filter)
+        command = functools.partial(self._client.table.query, query_options=query_options, 
                                     **kwargs)
         return AsyncItemPaged(
-            command, results_per_page=query_options,
+            command,
             page_iterator_class=TablePropertiesPaged
         )
 
