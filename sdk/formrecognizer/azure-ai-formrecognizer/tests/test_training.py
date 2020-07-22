@@ -35,6 +35,7 @@ class TestTraining(FormRecognizerTest):
         poller2 = client.begin_training(training_files_url=container_sas_url, use_training_labels=False)
         poller2.wait()
         check_poll_value(poller2._polling_method._timeout)  # goes back to client default
+        client.close()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
