@@ -9,6 +9,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
 from ._timer import Timer
+from .._utils import is_retryable_status_code
 from .._generated_serviceclient.aio import SearchServiceClient
 from .._generated.aio import SearchIndexClient
 from .._generated.models import IndexBatch, IndexingResult
@@ -128,7 +129,7 @@ class SearchClient(HeadersMixin):
                             break
 
             for result in results:
-                if result.status_code == 207:
+                if is_retryable_status_code(result.status_code):
                     requeue = [x for x in actions if x.get(self._index_key) == result.key]
                     self._index_documents_batch.enqueue_actions(requeue)
 
@@ -627,7 +628,7 @@ class SearchClient(HeadersMixin):
     @distributed_trace_async
     async def _index_documents_actions(self, actions, **kwargs):
         # type: (List[IndexAction], **Any) -> List[IndexingResult]
-        error_map = {503: RequestTooLargeError}
+        error_map = {413: RequestTooLargeError}
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         try:
