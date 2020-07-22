@@ -17,7 +17,7 @@ except ImportError:
 
 from uamqp import authentication, types
 
-from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusError
+from ..exceptions import ServiceBusError
 from .._version import VERSION
 from .constants import (
     JWT_TOKEN_SCOPE,
