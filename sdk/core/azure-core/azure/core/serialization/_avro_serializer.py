@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import cast, IO
+from typing import BinaryIO, Optional, Any, Union, Type
 
 from ._object_serializer import ObjectSerializer
 
@@ -36,7 +36,7 @@ class AvroObjectSerializer(ObjectSerializer):
         :param str codec: The writer codec. If None, let the avro library decides.
         """
         try:
-            import avro
+            import avro  # pylint: disable=unused-import
         except ImportError:
             raise ImportError("In order to create a AvroObjectSerializer you need to install the 'avro' library")
 
@@ -46,15 +46,22 @@ class AvroObjectSerializer(ObjectSerializer):
         self,
         stream,  # type: BinaryIO
         value,  # type: ObjectType
-        schema,  # type: Type[ObjectType]
+        schema=None,  # type: Optional[Any]
     ):
         # type: (...) -> None
         """Convert the provided value to it's binary representation and write it to the stream.
 
+        Schema must be a Avro RecordSchema:
+        https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
+
         :param stream: A stream of bytes or bytes directly
         :type stream: BinaryIO
         :param value: An object to serialize
+        :param schema: A Avro RecordSchema
         """
+        if not schema:
+            raise ValueError("Schema is required in Avro serializer.")
+
         from avro.datafile import DataFileWriter
         from avro.io import DatumWriter
 
@@ -74,14 +81,16 @@ class AvroObjectSerializer(ObjectSerializer):
     def deserialize(
         self,
         data,  # type: Union[bytes, BinaryIO]
-        return_Type,  # type: Type[ObjectType]
+        return_type=None,  # type: Optional[Type[ObjectType]]
     ):
         # type: (...) -> ObjectType
         """Read the binary representation into a specific type.
 
+        Return type will be ignored, since the schema is deduced from the provided bytes.
+
         :param data: A stream of bytes or bytes directly
         :type data: BinaryIO or bytes
-        :param return_type: The type of the object to convert to and return
+        :param return_type: Return type is not supported in the Avro serializer.
         :returns: An instanciated object
         :rtype: ObjectType
         """

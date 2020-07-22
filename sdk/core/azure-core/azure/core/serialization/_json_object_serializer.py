@@ -23,10 +23,14 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import cast, IO
+import logging
+from typing import cast, IO, BinaryIO, Optional, Any, Type
 import json
 
 from ._object_serializer import ObjectSerializer
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class JsonObjectSerializer(ObjectSerializer):
@@ -47,32 +51,43 @@ class JsonObjectSerializer(ObjectSerializer):
         self,
         stream,  # type: BinaryIO
         value,  # type: ObjectType
-        schema,  # type: Type[ObjectType]
+        schema=None,  # type: Optional[Any]
     ):
         # type: (...) -> None
         """Convert the provided value to it's binary representation and write it to the stream.
 
+        Schema is not supported by the JSON serializer
+
         :param stream: A stream of bytes or bytes directly
         :type stream: BinaryIO
         :param value: An object to serialize
+        :param schema: Schema is not supported in the JSON serializer
         """
+        if schema:
+            _LOGGER.warning("Schema is not supported by the JSON serializer")
+
         bytes_value = json.dumps(value, **self.serializer_kwargs).encode("utf-8")
         stream.write(bytes_value)
 
     def deserialize(
         self,
         data,  # type: Union[bytes, BinaryIO]
-        return_Type,  # type: Type[ObjectType]
+        return_type=None,  # type: Optional[Type[ObjectType]]
     ):
         # type: (...) -> ObjectType
         """Read the binary representation into a specific type.
 
+        Return type is not supported by the JSON serializer
+
         :param data: A stream of bytes or bytes directly
         :type data: BinaryIO or bytes
-        :param return_type: The type of the object to convert to and return
+        :param return_type: Return type is not supported in the JSON serializer.
         :returns: An instanciated object
         :rtype: ObjectType
         """
+        if return_type:
+            _LOGGER.warning("Schema is not supported by the JSON serializer")
+
         if hasattr(data, 'read'):
             # Assume a stream
             data = cast(IO, data).read()

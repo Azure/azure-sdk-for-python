@@ -49,7 +49,7 @@ def test_serialize_basic():
 
     stream = BytesIO()
 
-    serializer.serialize(stream, Foo(42, "bar"), None)
+    serializer.serialize(stream, Foo(42, "bar"))
 
     assert stream.getvalue() == b'{"a": 42, "b": "bar"}'
 
@@ -68,7 +68,7 @@ def test_deserialize_basic():
         }
     )
 
-    obj = serializer.deserialize(serialized, None)
+    obj = serializer.deserialize(serialized)
     assert obj.a == 42
     assert obj.b == "bar"
 
@@ -106,21 +106,9 @@ def test_deserialize_basic_avro():
 
     serialized_avro = b'Obj\x01\x04\x14avro.codec\x08null\x16avro.schema\xba\x03{"type": "record", "name": "User", "namespace": "example.avro", "fields": [{"type": "string", "name": "name"}, {"type": ["int", "null"], "name": "favorite_number"}, {"type": ["string", "null"], "name": "favorite_color"}]}\x00\xda\xb1\xaa~\xd6\xd0\nME$\xbb\xe4L\xf6\xaf\xdc\x02\x16\x06Ben\x00\x0e\x00\x06red\xda\xb1\xaa~\xd6\xd0\nME$\xbb\xe4L\xf6\xaf\xdc'
 
-    avro_schema_bytes = b"""
-{"namespace": "example.avro",
- "type": "record",
- "name": "User",
- "fields": [
-     {"name": "name", "type": "string"},
-     {"name": "favorite_number",  "type": ["int", "null"]},
-     {"name": "favorite_color", "type": ["string", "null"]}
- ]
-}"""
-    schema = avro.schema.parse(avro_schema_bytes)
-
     deserializer = AvroObjectSerializer()
 
-    obj = deserializer.deserialize(serialized_avro, schema)
+    obj = deserializer.deserialize(serialized_avro)
 
     assert obj['name'] == "Ben"
     assert obj['favorite_number'] == 7

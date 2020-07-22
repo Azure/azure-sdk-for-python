@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import abc
-from typing import IO, BinaryIO, Union, Generic, Type, TypeVar
+from typing import BinaryIO, Union, Type, TypeVar, Optional
 
 
 try:
@@ -42,14 +42,19 @@ class ObjectSerializer(ABC):
         self,
         stream,  # type: BinaryIO
         value,  # type: ObjectType
-        schema,  # type: Type[ObjectType]
+        schema=None,  # type: Optional[Any]
     ):
         # type: (...) -> None
         """Convert the provided value to it's binary representation and write it to the stream.
 
+        Schema can be used to pass additional information on how to serialize the value. Schema
+        might be ignored, and usage is dependent of the serializer chose. Please refer to the documentation
+        of the serializer implementation for details of schema structure.
+
         :param stream: A stream of bytes or bytes directly
         :type stream: BinaryIO
         :param value: An object to serialize
+        :param schema: A schema used validate or help serialization. Usage is dependent of the serializer.
         """
         raise NotImplementedError()
 
@@ -57,14 +62,18 @@ class ObjectSerializer(ABC):
     def deserialize(
         self,
         data,  # type: Union[bytes, BinaryIO]
-        return_Type,  # type: Type[ObjectType]
+        return_type=None,  # type: Optional[Type[ObjectType]]
     ):
         # type: (...) -> ObjectType
         """Read the binary representation into a specific type.
 
+        Return type can be used to express the expected return type if the serializer is able to instiate classes.
+        If not, the return type will be decided by the deserializer implementation (likely dict).
+        Please refer to the documentation of the serializer implementation for details.
+
         :param data: A stream of bytes or bytes directly
         :type data: BinaryIO or bytes
-        :param return_type: The type of the object to convert to and return
+        :param return_type: The type of the object to convert to and return, if supported.
         :returns: An instanciated object
         :rtype: ObjectType
         """
