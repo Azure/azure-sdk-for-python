@@ -53,7 +53,7 @@ from ..exceptions import (
     SessionLockExpired,
     MessageSettleFailed,
     MessageContentTooLarge)
-from .utils import utc_from_timestamp, utc_now, copy_messages_if_needed
+from .utils import utc_from_timestamp, utc_now, copy_messages_to_sendable_if_needed
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
     from .._servicebus_session_receiver import ServiceBusSessionReceiver
@@ -540,7 +540,7 @@ class BatchMessage(object):
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
         """
-        message = copy_messages_if_needed(message)
+        message = copy_messages_to_sendable_if_needed(message)
         message_size = message.message.get_message_encoded_size()
 
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
