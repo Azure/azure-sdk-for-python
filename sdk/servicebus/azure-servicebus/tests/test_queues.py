@@ -1373,6 +1373,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with pytest.raises(ServiceBusError):
             auto_lock_renew.register(renewable=MockReceivedMessage())
 
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     def test_queue_message_properties(self):
         scheduled_enqueue_time = (utc_now() + timedelta(seconds=20)).replace(microsecond=0)
         message = Message(
