@@ -362,7 +362,7 @@ class TableSasPermissions(object):
     ):
         # type: (...) -> None
         """
-        :keyword bool query:
+        :keyword bool read:
             Get entities and query entities.
         :keyword bool add:
             Add entities. Add and Update permissions are required for upsert operations.
@@ -375,7 +375,7 @@ class TableSasPermissions(object):
         """
         if not _str:
             _str = ''
-        self.query = kwargs.pop('query', None) or ('r' in _str)
+        self.query = kwargs.pop('read', None) or ('r' in _str)
         self.add = kwargs.pop('add', None) or ('a' in _str)
         self.update = kwargs.pop('update', None) or ('u' in _str)
         self.delete = kwargs.pop('delete', None) or ('d' in _str)
@@ -408,18 +408,18 @@ class TableSasPermissions(object):
         :return: A AccountSasPermissions object
         :rtype: ~azure.data.tables.AccountSasPermissions
         """
-        p_query = 'r' in permission
+        p_read = 'r' in permission
         p_add = 'a' in permission
         p_delete = 'd' in permission
         p_update = 'u' in permission
 
         parsed = cls(
-            **dict(kwargs, query=p_query, add=p_add, delete=p_delete, update=p_update))
+            **dict(kwargs, read=p_read, add=p_add, delete=p_delete, update=p_update))
         parsed._str = permission  # pylint: disable = W0201
         return parsed
 
 
-TableSasPermissions.QUERY = TableSasPermissions(**dict(query=True))
+TableSasPermissions.QUERY = TableSasPermissions(**dict(read=True))
 TableSasPermissions.ADD = TableSasPermissions(**dict(add=True))
 TableSasPermissions.UPDATE = TableSasPermissions(**dict(update=True))
 TableSasPermissions.DELETE = TableSasPermissions(**dict(delete=True))
