@@ -68,11 +68,6 @@ class EventHubNamespacePreparer(AzureMgmtPreparer):
             self.connection_string = key.primary_connection_string
             self.key_name = key.key_name
             self.primary_key = key.primary_key
-
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
         else:
             self.resource = FakeResource(name=name, id=name)
             self.connection_string = 'Endpoint=sb://{}.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='.format(name)
@@ -215,11 +210,6 @@ class EventHubNamespaceAuthorizationRulePreparer(_EventHubChildResourcePreparer)
 
             key = self.client.namespaces.list_keys(group.name, namespace.name, name)
             connection_string = key.primary_connection_string
-
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
         else:
             self.resource = FakeResource(name=name, id=name)
             connection_string = 'https://microsoft.com'
@@ -276,11 +266,6 @@ class EventHubAuthorizationRulePreparer(_EventHubChildResourcePreparer):
 
             key = self.client.event_hubs.list_keys(group.name, namespace.name, eventhub.name, name)
             connection_string = key.primary_connection_string
-
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
         else:
             self.resource = FakeResource(name=name, id=name)
             connection_string = 'https://microsoft.com'
