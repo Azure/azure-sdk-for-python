@@ -35,6 +35,7 @@ from ._shared.response_handlers import return_headers_and_deserialized
 
 class TableClient(TableClientBase):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
+
     def __init__(
             self, account_url,  # type: str
             table_name,  # type: str
@@ -312,7 +313,7 @@ class TableClient(TableClientBase):
         row_key = entity['RowKey']
         entity = _add_entity_properties(entity)
 
-        if mode is UpdateMode.replace:
+        if mode is UpdateMode.REPLACE:
             self._client.table.update_entity(
                 table=self.table_name,
                 partition_key=partition_key,
@@ -334,7 +335,7 @@ class TableClient(TableClientBase):
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword str select: Specify desired properties of an entity to return certain entities
+        :keyword Union[str, list(str)] select: Specify desired properties of an entity to return certain entities
         :keyword str filter: Specify a filter to return certain entities
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
@@ -349,7 +350,15 @@ class TableClient(TableClientBase):
                 if key == selected:
                     filter = filter.split('@')[0].replace('@', value)  # pylint: disable = W0622
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
+        temp_select = kwargs.pop('select', None)
+        select = ""
+        if temp_select is not None:
+            if len(list(temp_select)) > 1:
+                for i in temp_select:
+                    select += i + ","
+                temp_select = None
+
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
                                      filter=filter)
 
         command = functools.partial(
@@ -371,7 +380,7 @@ class TableClient(TableClientBase):
 
         :param str filter: Specify a filter to return certain entities
         :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword str select: Specify desired properties of an entity to return certain entities
+        :keyword Union[str, list[str]] select: Specify desired properties of an entity to return certain entities
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
         :rtype: ItemPaged[TableEntity]
@@ -385,7 +394,15 @@ class TableClient(TableClientBase):
                 if key == selected:
                     filter = filter_start.replace('@', value)  # pylint: disable = W0622
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
+        temp_select = kwargs.pop('select', None)
+        select = ""
+        if temp_select is not None:
+            if len(list(temp_select)) > 1:
+                for i in temp_select:
+                    select += i + ","
+                temp_select = None
+
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
                                      filter=filter)
 
         command = functools.partial(
@@ -410,18 +427,14 @@ class TableClient(TableClientBase):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :keyword str select: Specify desired properties of an entity to return certain entities
         :return: Entity mapping str to azure.table.EntityProperty
         :rtype: ~azure.table.TableEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        query_options = QueryOptions(select=kwargs.pop('select', None))
-
         entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
                                                                               partition_key=partition_key,
                                                                               row_key=row_key,
-                                                                              query_options=query_options,
                                                                               **kwargs)
         properties = _convert_to_entity(entity.additional_properties)
         return properties
@@ -465,7 +478,7 @@ class TableClient(TableClientBase):
                     table_entity_properties=entity,
                     **kwargs
                 )
-        if mode is UpdateMode.replace:
+        if mode is UpdateMode.REPLACE:
             try:
                 self._client.table.update_entity(
                     table=self.table_name,

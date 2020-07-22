@@ -194,16 +194,32 @@ class TableServiceClient(TableServiceClientBase):
     ):
         # type: (...) -> ItemPaged[str]
         """Queries tables under the given account.
-
-        :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword str select: Specify desired properties of a table to return certain tables
         :param filter: Specify a filter to return certain tables
         :type filter: str
+        :keyword int results_per_page: Number of tables per page in return ItemPaged
+        :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
+        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: A query of tables
         :rtype: ItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
+        parameters = kwargs.pop('parameters', None)
+        filter = kwargs.pop('filter', None)  # pylint: disable = W0622
+        if parameters:
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter.split('@')[0].replace('@', value)  # pylint: disable = W0622
+
+        temp_select = kwargs.pop('select', None)
+        select = ""
+        if temp_select is not None:
+            if len(list(temp_select)) > 1:
+                for i in temp_select:
+                    select += i + ","
+                temp_select = None
+
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
                                      filter=filter)
         command = functools.partial(self._client.table.query,
                                     **kwargs)
@@ -221,14 +237,31 @@ class TableServiceClient(TableServiceClientBase):
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword str select: Specify desired properties of a table to return certain tables
+        :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
+        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :keyword str filter: Specify desired filter for tables
         :return: A query of tables
         :rtype: ItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
-                                     filter=kwargs.pop('filter', None))
+        parameters = kwargs.pop('parameters', None)
+        if parameters:
+            filter_start = filter.split('@')[0]
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
+
+        temp_select = kwargs.pop('select', None)
+        select = ""
+        if temp_select is not None:
+            if len(list(temp_select)) > 1:
+                for i in temp_select:
+                    select += i + ","
+                temp_select = None
+
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
+                                     filter=filter)
 
         command = functools.partial(self._client.table.query,
                                     **kwargs)

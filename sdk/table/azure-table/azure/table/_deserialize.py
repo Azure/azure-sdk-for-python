@@ -7,7 +7,7 @@
 import datetime
 from uuid import UUID
 from azure.table._shared import url_quote
-from azure.table._entity import EntityProperty, EdmType, Entity
+from azure.table._entity import EntityProperty, EdmType, TableEntity
 from azure.table._shared._common_conversion import _decode_base64_to_bytes
 from azure.table._generated.models import TableProperties
 from azure.core.exceptions import ResourceExistsError
@@ -108,7 +108,7 @@ def _convert_to_entity(entry_element):
        "RowKey":"myrowkey"
     }
     '''
-    entity = Entity()
+    entity = TableEntity()
 
     properties = {}
     edmtypes = {}

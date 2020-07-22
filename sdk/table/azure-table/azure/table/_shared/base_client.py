@@ -50,8 +50,7 @@ from .policies import (
     StorageRequestHook,
     StorageResponseHook,
     StorageLoggingPolicy,
-    StorageHosts,
-    ExponentialRetry,
+    StorageHosts, ExponentialRetry,
 )
 from .._version import VERSION
 from .response_handlers import process_table_error, PartialBatchErrorException
@@ -258,7 +257,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         request = self._client._client.post(  # pylint: disable=protected-access
             url='{}://{}/?comp=batch{}{}'.format(
                 self.scheme,
-                self.primary_hostname,
+                self._primary_hostname,
                 kwargs.pop('sas', None),
                 kwargs.pop('timeout', None)
             ),

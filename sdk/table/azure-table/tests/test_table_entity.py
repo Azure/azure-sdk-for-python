@@ -24,7 +24,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError)
 
-from azure.table._entity import Entity, EntityProperty, EdmType
+from azure.table._entity import TableEntity, EntityProperty, EdmType
 from azure.table._models import TableSasPermissions, AccessPolicy, UpdateMode
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
@@ -118,7 +118,7 @@ class StorageTableEntityTest(TableTestCase):
             'other': EntityProperty(type=EdmType.INT32, value=20),
             'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
         }
-        return Entity(**properties)
+        return TableEntity(**properties)
 
     def _insert_random_entity(self, pk=None, rk=None):
         entity = self._create_random_entity_dict(pk, rk)
@@ -688,7 +688,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_get_entity_with_select(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -699,7 +699,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             resp = self.table.get_entity(partition_key=entity.PartitionKey,
                                          row_key=entity.RowKey,
-                                         select="age,sex,xyz")
+                                         select=["age", "sex", "xyz"])
 
             # Assert
             self.assertEqual(resp.age, 39)
@@ -748,7 +748,7 @@ class StorageTableEntityTest(TableTestCase):
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
 
             # resp = self.table.update_item(sent_entity, response_hook=lambda e, h: h)
-            resp = self.table.update_entity(mode=UpdateMode.replace, entity=sent_entity)
+            resp = self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             #  self.assertTrue(resp)
@@ -770,7 +770,7 @@ class StorageTableEntityTest(TableTestCase):
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
             with self.assertRaises(ResourceNotFoundError):
-                self.table.update_entity(mode=UpdateMode.replace, entity=sent_entity)
+                self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
         finally:
@@ -788,7 +788,7 @@ class StorageTableEntityTest(TableTestCase):
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
             # , response_hook=lambda e, h: h)
             self.table.update_entity(
-                mode=UpdateMode.replace, entity=sent_entity, etag=etag,
+                mode=UpdateMode.REPLACE, entity=sent_entity, etag=etag,
                 match_condition=MatchConditions.IfNotModified)
 
             # Assert
@@ -871,7 +871,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = self.table.upsert_entity(mode=UpdateMode.replace, entity=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             # self.assertIsNone(resp)
@@ -891,7 +891,7 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
-            resp = self.table.upsert_entity(mode=UpdateMode.replace, entity=sent_entity)
+            resp = self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
             self.assertIsNone(resp)
@@ -1375,7 +1375,7 @@ class StorageTableEntityTest(TableTestCase):
             table = self._create_query_table(2)
 
             # Act
-            entities = list(table.list_entities(select="age, sex"))
+            entities = list(table.list_entities(select=['age', 'sex']))
 
             # Assert
             self.assertEqual(len(entities), 2)
@@ -1609,7 +1609,7 @@ class StorageTableEntityTest(TableTestCase):
             )
             table = service.get_table_client(self.table_name)
             updated_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            table.update_entity(mode=UpdateMode.replace, entity=updated_entity)
+            table.update_entity(mode=UpdateMode.REPLACE, entity=updated_entity)
 
             # Assert
             received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
