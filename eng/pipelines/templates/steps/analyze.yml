@@ -2,12 +2,18 @@ parameters:
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
   TestMarkArgument: ''
+  AdditionalTestArgs: ''
 
 steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
     inputs:
      versionSpec: '$(PythonVersion)'
+
+  - task: DownloadPipelineArtifact@0
+    inputs:
+      artifactName: 'artifacts'
+      targetPath: $(Build.ArtifactStagingDirectory)
 
   - script: |
      pip install -r eng/ci_tools.txt
@@ -91,8 +97,9 @@ steps:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
-  # - template: ../steps/run_apistub.yml
-  #   parameters:
-  #     ServiceDirectory: ${{ parameters.ServiceDirectory }}
-  #     BuildTargetingString: ${{ parameters.BuildTargetingString }}
-  #     TestMarkArgument: ${{ parameters.TestMarkArgument }}
+  - template: ../steps/run_apistub.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      TestMarkArgument: ${{ parameters.TestMarkArgument }}
+      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}

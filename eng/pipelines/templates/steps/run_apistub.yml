@@ -2,6 +2,7 @@ parameters:
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
   TestMarkArgument: ''
+  AdditionalTestArgs: ''
 
 steps:
   - task: UsePythonVersion@0
@@ -21,7 +22,8 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}" 
+        "${{ parameters.BuildTargetingString }}"
+        ${{ parameters.AdditionalTestArgs }}
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="apistub"
