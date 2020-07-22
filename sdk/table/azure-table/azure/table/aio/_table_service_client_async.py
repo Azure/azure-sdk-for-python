@@ -6,7 +6,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.table import VERSION, LocationMode
 from azure.table._generated.aio._azure_table_async import AzureTable
-from azure.table._generated.models import TableServiceProperties, TableProperties
+from azure.table._generated.models import TableServiceProperties, TableProperties, QueryOptions
 from azure.table._models import service_stats_deserialize, service_properties_deserialize
 from azure.table._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from azure.table._shared.policies_async import ExponentialRetry
@@ -204,7 +204,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :type query_options: ~azure.table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AsyncItemPaged, or the result of cls(response)
-        :rtype: ~AsyncItemPaged
+        :rtype: ~AsyncItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         command = functools.partial(
@@ -218,7 +218,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     @distributed_trace
     def query_tables(
             self,
-            query_options=None,
+            # query_options=None,
+            filter=None,
             **kwargs
     ):
         # type: (...) -> ItemPaged
@@ -227,10 +228,12 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :param query_options: Parameter group.
         :type query_options: ~azure.table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ItemPaged, or the result of cls(response)
-        :rtype: ~ItemPaged
+        :return: AsyncItemPaged, or the result of cls(response)
+        :rtype: ~AsyncItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=kwargs.pop('select', None),
+                                     filter=filter)
         command = functools.partial(self._client.table.query,
                                     **kwargs)
         return AsyncItemPaged(

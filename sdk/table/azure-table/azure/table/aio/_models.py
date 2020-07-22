@@ -49,9 +49,9 @@ class TablePropertiesPaged(AsyncPageIterator):
         self.results_per_page = results_per_page
         self.location_mode = None
 
-    def _get_next_cb(self, continuation_token):
+    async def _get_next_cb(self, continuation_token):
         try:
-            return self._command(
+            return await self._command(
                 next_table_name=continuation_token or None,
                 query_options=self.results_per_page or None,
                 cls=return_context_and_deserialized,
@@ -60,7 +60,7 @@ class TablePropertiesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _extract_data_cb(self, get_next_return):
+    async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = [t for t in self._response.value]
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
@@ -97,7 +97,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
         self.table = table
         self.location_mode = None
 
-    def _get_next_cb(self, continuation_token):
+    async def _get_next_cb(self, continuation_token):
         row_key = ""
         partition_key = ""
         for key, value in continuation_token.items():
@@ -106,7 +106,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
             if key == "PartitionKey":
                 partition_key = value
         try:
-            return self._command(
+            return await self._command(
                 query_options=self.results_per_page or None,
                 next_row_key=row_key or None,
                 next_partition_key=partition_key or None,
@@ -117,7 +117,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _extract_data_cb(self, get_next_return):
+    async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = [_convert_to_entity(t) for t in self._response.value]
         next_entity = {}
