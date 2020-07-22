@@ -4,11 +4,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 
-from subprocess import check_call, CalledProcessError
+from subprocess import check_call
 import argparse
 import os
 import logging
-import sys
 
 from tox_helper_tasks import find_whl, get_package_details
 
@@ -29,7 +28,9 @@ def get_package_wheel_path(pkg_root):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run apistubgen against target folder. ")
+    parser = argparse.ArgumentParser(
+        description="Run apistubgen against target folder. "
+    )
 
     parser.add_argument(
         "-t",
@@ -47,7 +48,6 @@ if __name__ == "__main__":
         required=True,
     )
 
-
     args = parser.parse_args()
 
     # Check if a wheel is already built for current package and install from wheel when available
@@ -56,13 +56,4 @@ if __name__ == "__main__":
     if not pkg_path:
         pkg_path = args.target_package
 
-
-    check_call(
-        [
-                "apistubgen",
-                "--pkg-path",
-                pkg_path,
-            ],
-
-            cwd=args.work_dir
-    )
+    check_call(["apistubgen", "--pkg-path", pkg_path,], cwd=args.work_dir)
