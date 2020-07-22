@@ -70,7 +70,7 @@ jobs:
     steps:
     - template: ../../../common/pipelines/templates/steps/verify-links.yml
       parameters:
-        Directory: "sdk/ ${{ parameters.ServiceDirectory }}"
+        Directory: "sdk/${{ parameters.ServiceDirectory }}"
 
     - template: ../steps/analyze.yml
       parameters: 
