@@ -250,6 +250,23 @@ async def test_default_credential_shared_cache_use():
         mock_credential.supported.reset_mock()
 
 
+def test_managed_identity_client_id():
+    """The credential should initialize ManagedIdentityCredential with the value of AZURE_CLIENT_ID"""
+
+    expected_client_id = "the-client"
+    with patch.dict(os.environ, {EnvironmentVariables.AZURE_CLIENT_ID: expected_client_id}, clear=True):
+        with patch(DefaultAzureCredential.__module__ + ".ManagedIdentityCredential") as mock_credential:
+            DefaultAzureCredential()
+
+    mock_credential.assert_called_once_with(client_id=expected_client_id)
+
+    with patch.dict(os.environ, {}, clear=True):
+        with patch(DefaultAzureCredential.__module__ + ".ManagedIdentityCredential") as mock_credential:
+            DefaultAzureCredential()
+
+    mock_credential.assert_called_once_with(client_id=None)
+
+
 def get_credential_for_shared_cache_test(expected_refresh_token, expected_access_token, cache, **kwargs):
     exclude_other_credentials = {
         option: True for option in ("exclude_environment_credential", "exclude_managed_identity_credential")

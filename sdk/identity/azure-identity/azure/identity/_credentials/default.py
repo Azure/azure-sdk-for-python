@@ -99,7 +99,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:
-            credentials.append(ManagedIdentityCredential(**kwargs))
+            credentials.append(
+                ManagedIdentityCredential(client_id=os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID), **kwargs)
+            )
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
