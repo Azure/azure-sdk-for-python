@@ -17,7 +17,6 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor
-from typing import List, Union
 
 from uamqp import authentication, types
 
