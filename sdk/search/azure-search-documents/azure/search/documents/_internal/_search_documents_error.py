@@ -5,9 +5,5 @@
 # -------------------------------------------------------------------------
 from azure.core.exceptions import HttpResponseError
 
-class RequestTooLargeError(HttpResponseError):
-    """An error response with status code 409
-
-    The key is read-only.
-
-    To allow modification unlock it first."""
+class RequestEntityTooLargeError(HttpResponseError):
+    """An error response with status code 413 - Request Entity Too Large"""

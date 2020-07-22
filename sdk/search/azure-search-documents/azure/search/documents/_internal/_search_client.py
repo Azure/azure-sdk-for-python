@@ -15,7 +15,7 @@ from ._utils import is_retryable_status_code
 from ._generated import SearchIndexClient
 from ._generated_serviceclient import SearchServiceClient
 from ._generated.models import IndexBatch, IndexingResult
-from ._search_documents_error import RequestTooLargeError
+from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
@@ -666,14 +666,14 @@ class SearchClient(HeadersMixin):
     @distributed_trace
     def _index_documents_actions(self, actions, **kwargs):
         # type: (List[IndexAction], **Any) -> List[IndexingResult]
-        error_map = {413: RequestTooLargeError}
+        error_map = {413: RequestEntityTooLargeError}
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         try:
             index_documents = IndexBatch(actions=actions)
             batch_response = self._client.documents.index(batch=index_documents, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
-        except RequestTooLargeError:
+        except RequestEntityTooLargeError:
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
