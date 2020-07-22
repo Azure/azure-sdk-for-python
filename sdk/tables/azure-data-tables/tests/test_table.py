@@ -108,20 +108,14 @@ class StorageTableTest(TableTestCase):
     def test_create_table(self, resource_group, location, storage_account, storage_account_key):
         # # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
-        # response = ts.create_table(table_name)
-        # assert response.table_name == table_name
 
         table_name = self._get_table_reference()
-        # table_client = ts.get_table_client(table_name)
 
         # Act
         created = ts.create_table(table_name)
 
         # Assert
         assert created.table_name == table_name
-        # existing = list(ts.query_tables("TableName eq '{}'".format(table_name)))
-        # This is causing problems
-        # self.assertEqual(existing, [table_name])
         ts.delete_table(table_name)
 
     # @pytest.mark.skip("pending")
