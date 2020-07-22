@@ -15,44 +15,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Tue, 21 Jul 2020 19:14:04 GMT
-=======
-      - Tue, 21 Jul 2020 19:18:30 GMT
->>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
+      - Wed, 22 Jul 2020 13:39:10 GMT
       User-Agent:
-      - azsdk-python-storage-table/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-<<<<<<< HEAD
-      - Tue, 21 Jul 2020 19:14:04 GMT
-=======
-      - Tue, 21 Jul 2020 19:18:30 GMT
->>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
+      - Wed, 22 Jul 2020 13:39:10 GMT
       x-ms-version:
-      - 12.0.0b1
+      - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\r\n<error
-        xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\r\n
-        \ <code>InvalidHeaderValue</code>\r\n  <message xml:lang=\"en-US\">The value
-        for one of the HTTP headers is not in the correct format.\nRequestId:2e6469e6-d002-0086-6a93-5fd313000000\nTime:2020-07-21T19:14:04.3499166Z</message>\r\n</error>"
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablee74c0d8a"}'
     headers:
-<<<<<<< HEAD
-      content-length:
-      - '371'
-      content-type:
-      - application/xml
-      date:
-      - Tue, 21 Jul 2020 19:14:04 GMT
-=======
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 21 Jul 2020 19:18:29 GMT
+      - Wed, 22 Jul 2020 13:39:10 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttablee74c0d8a')
       server:
@@ -88,27 +69,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 21 Jul 2020 19:18:30 GMT
+      - Wed, 22 Jul 2020 13:39:10 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 21 Jul 2020 19:18:30 GMT
+      - Wed, 22 Jul 2020 13:39:10 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/uttablee74c0d8a
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablee74c0d8a/@Element","odata.etag":"W/\"datetime''2020-07-21T19%3A18%3A29.177684Z''\"","PartitionKey":"pke74c0d8a","RowKey":"rke74c0d8a","Timestamp":"2020-07-21T19:18:29.177684Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablee74c0d8a/@Element","odata.etag":"W/\"datetime''2020-07-22T13%3A39%3A10.8580173Z''\"","PartitionKey":"pke74c0d8a","RowKey":"rke74c0d8a","Timestamp":"2020-07-22T13:39:10.8580173Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 21 Jul 2020 19:18:29 GMT
+      - Wed, 22 Jul 2020 13:39:10 GMT
       etag:
-      - W/"datetime'2020-07-21T19%3A18%3A29.177684Z'"
+      - W/"datetime'2020-07-22T13%3A39%3A10.8580173Z'"
       location:
       - https://storagename.table.core.windows.net/uttablee74c0d8a(PartitionKey='pke74c0d8a',RowKey='rke74c0d8a')
       server:
@@ -136,17 +117,17 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 21 Jul 2020 19:18:30 GMT
+      - Wed, 22 Jul 2020 13:39:10 GMT
       If-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 21 Jul 2020 19:18:30 GMT
+      - Wed, 22 Jul 2020 13:39:10 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
-    uri: https://storagename.table.core.windows.net/uttablee74c0d8a(PartitionKey='pke74c0d8a',RowKey='rke74c0d8a')?se=2020-07-21T20%3A18%3A30Z&sp=d&sv=2019-07-07&tn=uttablee74c0d8a&sig=x58BJKuqW4deT9RZn%2ByjJ%2F7KVvcJt%2FhzbTwfPUd8NNY%3D
+    uri: https://storagename.table.core.windows.net/uttablee74c0d8a(PartitionKey='pke74c0d8a',RowKey='rke74c0d8a')?se=2020-07-22T14%3A39%3A10Z&sp=d&sv=2019-07-07&tn=uttablee74c0d8a&sig=rAIWQz4wLZ%2Fi5SwnRm9Nat3loNJ9Q70jFE2wYP3ocAM%3D
   response:
     body:
       string: ''
@@ -156,7 +137,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 21 Jul 2020 19:18:29 GMT
+      - Wed, 22 Jul 2020 13:39:10 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
@@ -178,11 +159,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 21 Jul 2020 19:18:31 GMT
+      - Wed, 22 Jul 2020 13:39:11 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 21 Jul 2020 19:18:31 GMT
+      - Wed, 22 Jul 2020 13:39:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -190,14 +171,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"ResourceNotFound","message":{"lang":"en-US","value":"The
-        specified resource does not exist.\nRequestId:18d6a542-f002-0051-3893-5f14ff000000\nTime:2020-07-21T19:18:29.6199958Z"}}}'
+        specified resource does not exist.\nRequestId:5a233002-1002-0072-1a2d-607b34000000\nTime:2020-07-22T13:39:11.2843045Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 21 Jul 2020 19:18:29 GMT
+      - Wed, 22 Jul 2020 13:39:11 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -221,11 +202,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 21 Jul 2020 19:18:31 GMT
+      - Wed, 22 Jul 2020 13:39:11 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 21 Jul 2020 19:18:31 GMT
+      - Wed, 22 Jul 2020 13:39:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -239,11 +220,14 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 21 Jul 2020 19:18:29 GMT
->>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
+      - Wed, 22 Jul 2020 13:39:11 GMT
       server:
-      - Microsoft-HTTPAPI/2.0
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
     status:
-      code: 400
-      message: The value for one of the HTTP headers is not in the correct format.
+      code: 204
+      message: No Content
 version: 1

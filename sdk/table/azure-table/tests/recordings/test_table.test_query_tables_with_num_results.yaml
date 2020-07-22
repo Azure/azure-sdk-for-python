@@ -15,41 +15,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-<<<<<<< HEAD
-      - Tue, 21 Jul 2020 19:13:32 GMT
-=======
-      - Tue, 21 Jul 2020 19:20:47 GMT
->>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
+      - Wed, 22 Jul 2020 13:38:24 GMT
       User-Agent:
-      - azsdk-python-storage-table/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-<<<<<<< HEAD
-      - Tue, 21 Jul 2020 19:13:32 GMT
-=======
-      - Tue, 21 Jul 2020 19:20:47 GMT
->>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
+      - Wed, 22 Jul 2020 13:38:24 GMT
       x-ms-version:
-      - 12.0.0b1
+      - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\r\n<error
-        xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\r\n
-        \ <code>InvalidHeaderValue</code>\r\n  <message xml:lang=\"en-US\">The value
-        for one of the HTTP headers is not in the correct format.\nRequestId:3322fdcc-2002-003b-2293-5f5a0e000000\nTime:2020-07-21T19:13:32.7400962Z</message>\r\n</error>"
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"listtable0aab312c0"}'
     headers:
-      content-length:
-      - '371'
+      cache-control:
+      - no-cache
       content-type:
-      - application/xml
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-<<<<<<< HEAD
-      - Tue, 21 Jul 2020 19:13:32 GMT
-      server:
-      - Microsoft-HTTPAPI/2.0
-=======
-      - Tue, 21 Jul 2020 19:20:45 GMT
+      - Wed, 22 Jul 2020 13:38:24 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('listtable0aab312c0')
       server:
@@ -79,11 +63,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 21 Jul 2020 19:20:47 GMT
+      - Wed, 22 Jul 2020 13:38:25 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 21 Jul 2020 19:20:47 GMT
+      - Wed, 22 Jul 2020 13:38:25 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -97,7 +81,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 21 Jul 2020 19:20:46 GMT
+      - Wed, 22 Jul 2020 13:38:24 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('listtable1aab312c0')
       server:
@@ -127,11 +111,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 21 Jul 2020 19:20:47 GMT
+      - Wed, 22 Jul 2020 13:38:25 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 21 Jul 2020 19:20:47 GMT
+      - Wed, 22 Jul 2020 13:38:25 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -145,7 +129,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 21 Jul 2020 19:20:46 GMT
+      - Wed, 22 Jul 2020 13:38:24 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('listtable2aab312c0')
       server:
@@ -175,11 +159,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 21 Jul 2020 19:20:47 GMT
+      - Wed, 22 Jul 2020 13:38:25 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 21 Jul 2020 19:20:47 GMT
+      - Wed, 22 Jul 2020 13:38:25 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -193,7 +177,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 21 Jul 2020 19:20:46 GMT
+      - Wed, 22 Jul 2020 13:38:24 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('listtable3aab312c0')
       server:
@@ -219,11 +203,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 21 Jul 2020 19:20:47 GMT
+      - Wed, 22 Jul 2020 13:38:25 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 21 Jul 2020 19:20:47 GMT
+      - Wed, 22 Jul 2020 13:38:25 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -237,7 +221,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 21 Jul 2020 19:20:46 GMT
+      - Wed, 22 Jul 2020 13:38:24 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -261,11 +245,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 21 Jul 2020 19:20:47 GMT
+      - Wed, 22 Jul 2020 13:38:25 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 21 Jul 2020 19:20:47 GMT
+      - Wed, 22 Jul 2020 13:38:25 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -279,7 +263,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Tue, 21 Jul 2020 19:20:46 GMT
+      - Wed, 22 Jul 2020 13:38:24 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -287,11 +271,10 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-continuation-nexttablename:
-      - 1!48!bGlzdHRhYmxlMWFhYjMxMmMwATAxZDY1Zjk0MDhiYWI0NjQ-
+      - 1!48!bGlzdHRhYmxlMWFhYjMxMmMwATAxZDY2MDJkNjAwMDgyMTg-
       x-ms-version:
       - '2019-07-07'
->>>>>>> c8d2333f4b67a39e7180fc86a6170762aaec73ee
     status:
-      code: 400
-      message: The value for one of the HTTP headers is not in the correct format.
+      code: 200
+      message: OK
 version: 1

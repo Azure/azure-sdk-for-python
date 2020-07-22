@@ -11,28 +11,94 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 21 Jul 2020 19:14:15 GMT
+      - Wed, 22 Jul 2020 13:39:29 GMT
       User-Agent:
-      - azsdk-python-storage-table/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 21 Jul 2020 19:14:15 GMT
+      - Wed, 22 Jul 2020 13:39:29 GMT
       x-ms-version:
-      - 12.0.0b1
+      - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\r\n<error
-        xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\r\n
-        \ <code>InvalidHeaderValue</code>\r\n  <message xml:lang=\"en-US\">The value
-        for one of the HTTP headers is not in the correct format.\nRequestId:f4727e9d-f002-0081-1d93-5fbf70000000\nTime:2020-07-21T19:14:15.4978537Z</message>\r\n</error>"
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablec79a183d"}'
     headers:
-      content-length: '371'
-      content-type: application/xml
-      date: Tue, 21 Jul 2020 19:14:15 GMT
-      server: Microsoft-HTTPAPI/2.0
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 22 Jul 2020 13:39:30 GMT
+      location: https://storagename.table.core.windows.net/Tables('uttablec79a183d')
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-07-07'
     status:
-      code: 400
-      message: The value for one of the HTTP headers is not in the correct format.
-    url: https://pyacrstoragepr42k4akq5hh.table.core.windows.net/Tables
+      code: 201
+      message: Created
+    url: https://pyacrstoragezfpr7mey3qch.table.core.windows.net/Tables
+- request:
+    body: '{"RowKey": "rk", "PartitionKey": ""}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '36'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Wed, 22 Jul 2020 13:39:30 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 22 Jul 2020 13:39:30 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://storagename.table.core.windows.net/uttablec79a183d
+  response:
+    body:
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablec79a183d/@Element","odata.etag":"W/\"datetime''2020-07-22T13%3A39%3A30.287526Z''\"","PartitionKey":"","RowKey":"rk","Timestamp":"2020-07-22T13:39:30.287526Z"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Wed, 22 Jul 2020 13:39:30 GMT
+      etag: W/"datetime'2020-07-22T13%3A39%3A30.287526Z'"
+      location: https://storagename.table.core.windows.net/uttablec79a183d(PartitionKey='',RowKey='rk')
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-07-07'
+    status:
+      code: 201
+      message: Created
+    url: https://pyacrstoragezfpr7mey3qch.table.core.windows.net/uttablec79a183d
+- request:
+    body: null
+    headers:
+      Date:
+      - Wed, 22 Jul 2020 13:39:30 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Wed, 22 Jul 2020 13:39:30 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://storagename.table.core.windows.net/Tables('uttablec79a183d')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Wed, 22 Jul 2020 13:39:30 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-07-07'
+    status:
+      code: 204
+      message: No Content
+    url: https://pyacrstoragezfpr7mey3qch.table.core.windows.net/Tables('uttablec79a183d')
 version: 1
