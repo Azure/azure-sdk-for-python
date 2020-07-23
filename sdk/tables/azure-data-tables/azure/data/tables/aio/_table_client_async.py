@@ -192,11 +192,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             self,
             partition_key,  # type: str
             row_key,  # type: str
-            etag=None,  # type: Optional[object]
-            match_condition=None,  # type: Optional[MatchCondition]
             **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    ) -> None:
         """Deletes the specified entity in a table.
         :param partition_key: The partition key of the entity.
         :type partition_key: str
@@ -210,9 +207,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
-                                                    etag_param='etag', match_param='match_condition')
+        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+                                                                match_condition=kwargs.pop('match_condition', None)),
+                                                                etag_param='etag', match_param='match_condition')
 
         await self._client.table.delete_entity(
             table=self.table_name,
@@ -224,28 +221,28 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace_async
     async def create_entity(
             self,
-            table_entity_properties,  # type: dict[str,str]
+            entity,  # type: dict[str,str]
             **kwargs  # type: Any
     ):
         # type: (...) -> TableEntity
         """Insert entity in a table.
-        :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, str]
+        :param entity: The properties for the table entity.
+        :type entity: dict[str, str]
         :return: TableEntity mapping str to azure.data.tables.EntityProperty
         :rtype: ~azure.data.tables.TableEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if table_entity_properties:
+        if entity:
 
-            if "PartitionKey" in table_entity_properties and "RowKey" in table_entity_properties:
-                table_entity_properties = _add_entity_properties(table_entity_properties)
+            if "PartitionKey" in entity and "RowKey" in entity:
+                entity = _add_entity_properties(entity)
             else:
                 raise ValueError
         try:
             inserted_entity = await self._client.table.insert_entity(
                 table=self.table_name,
-                table_entity_properties=table_entity_properties,
+                table_entity_properties=entity,
                 **kwargs
             )
             properties = _convert_to_entity(inserted_entity)
@@ -256,20 +253,16 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace_async
     async def update_entity(  # pylint:disable=R1710
             self,
-            mode,  # type: Any
-            table_entity_properties,  # type: dict[str,str]
-            partition_key=None,  # type: Optional[str]
-            row_key=None,  # type: Optional[str]
-            etag=None,  # type: Optional[object]
-            match_condition=None,  # type: Optional[MatchCondition]
+            entity,  # type: dict[str,str]
+            mode: UpdateMode=UpdateMode.MERGE,
             **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Update entity in a table.
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
-        :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, str]
+        :param entity: The properties for the table entity.
+        :type entity: dict[str, str]
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
@@ -283,33 +276,72 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=etag, match_condition=match_condition),
+        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None), 
+                                                    match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
 
-        if table_entity_properties:
-            partition_key = table_entity_properties['PartitionKey']
-            row_key = table_entity_properties['RowKey']
-            table_entity_properties = _add_entity_properties(table_entity_properties)
+        partition_key = entity['PartitionKey']
+        row_key = entity['RowKey']
+        entity = _add_entity_properties(entity)
 
         if mode is UpdateMode.REPLACE:
             await self._client.table.update_entity(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                table_entity_properties=table_entity_properties,
+                table_entity_properties=entity,
                 if_match=if_match or if_not_match or "*",
                 **kwargs)
         if mode is UpdateMode.MERGE:
             await self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
                                                   row_key=row_key, if_match=if_match or if_not_match or "*",
-                                                  table_entity_properties=table_entity_properties, **kwargs)
+                                                  table_entity_properties=entity, **kwargs)
+
+    @distributed_trace
+    def list_entities(
+        self,
+        **kwargs, # Any
+    ) -> AsyncItemPaged[TableEntity]:
+        """Lists entities in a table.
+        :keyword int results_per_page: Number of entities per page in return ItemPaged
+        :keyword Union[str, list(str)] select: Specify desired properties of an entity to return certain entities
+        :keyword str filter: Specify a filter to return certain entities
+        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
+        :return: Query of table entities
+        :rtype: ItemPaged[TableEntity]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        parameters = kwargs.pop('parameters', None)
+        filter = kwargs.pop('filter', None)  # pylint: disable = W0622
+        if parameters:
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter.split('@')[0].replace('@', value)  # pylint: disable = W0622
+
+        temp_select = kwargs.pop('select', None)
+        select = ""
+        if temp_select is not None:
+            if len(list(temp_select)) > 1:
+                for i in temp_select:
+                    select += i + ","
+                temp_select = None
+
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
+                                     filter=filter)
+
+        command = functools.partial(
+            self._client.table.query_entities,
+            **kwargs)
+        return AsyncItemPaged(
+            command, results_per_page=query_options, table=self.table_name,
+            page_iterator_class=TableEntityPropertiesPaged
+        )
 
     @distributed_trace
     def query_entities(
             self,
-            results_per_page=None,
-            select=None,
-            filter=None,  # pylint: disable=W0622
+            filter,  # pylint: disable=W0622
             **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[TableEntity]
@@ -324,7 +356,26 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :rtype: ItemPaged[TableEntity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        query_options = QueryOptions(top=results_per_page, select=select, filter=filter)
+        parameters = kwargs.pop('parameters', None)
+        filter = kwargs.pop('filter', None)
+        if parameters:
+            filter_start = filter.split('@')[0]
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter_start.replace('@', value)
+
+        temp_select = kwargs.pop('parameters', None)
+        select = ""
+        if temp_select is not None:
+            if len(list(temp_select)) > 1:
+                for i in temp_select:
+                    select += i + ","
+                temp_select = None
+
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), 
+                                        select=select or temp_select,
+                                        filter=filter)
 
         command = functools.partial(
             self._client.table.query_entities,
@@ -339,9 +390,6 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             self,
             partition_key,  # type: str
             row_key,  # type: str
-            results_per_page=None,
-            select=None,
-            filter=None,  # pylint: disable=W0622
             **kwargs  # type: Any
     ):
         # type: (...) -> TableEntity
@@ -361,11 +409,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        query_options = QueryOptions(top=results_per_page, select=select, filter=filter)
         entity = await self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
                                                                                     partition_key=partition_key,
                                                                                     row_key=row_key,
-                                                                                    query_options=query_options,
                                                                                     **kwargs)
         properties = _convert_to_entity(entity.additional_properties)
         return properties #Entity(properties)
@@ -373,10 +419,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace_async
     async def upsert_entity(  # pylint:disable=R1710
             self,
-            mode,  # type: Any
-            table_entity_properties,  # type: dict[str,str]
-            partition_key=None,  # type: Optional[str]
-            row_key=None,  # type: Optional[str]
+            entity,  # type: dict[str,str]
+            mode=UpdateMode.MERGE,  # type: Any
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -384,8 +428,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """Update/Merge or Insert entity into table.
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
-        :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, str]
+        :param entity: The properties for the table entity.
+        :type entity: dict[str, str]
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
@@ -395,10 +439,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
-        if table_entity_properties:
-            partition_key = table_entity_properties['PartitionKey']
-            row_key = table_entity_properties['RowKey']
-            table_entity_properties = _add_entity_properties(table_entity_properties)
+        partition_key = entity['PartitionKey']
+        row_key = entity['RowKey']
+        entity = _add_entity_properties(entity)
 
         if mode is UpdateMode.MERGE:
             try:
@@ -406,14 +449,14 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=table_entity_properties,
+                    table_entity_properties=entity,
                     **kwargs
                 )
             except ResourceNotFoundError:
                 await self.create_entity(
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=table_entity_properties,
+                    table_entity_properties=entity,
                     **kwargs
                 )
         if mode is UpdateMode.REPLACE:
@@ -422,12 +465,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=table_entity_properties,
+                    table_entity_properties=entity,
                     **kwargs)
             except ResourceNotFoundError:
                 await self.create_entity(
                     partition_key=partition_key,
                     row_key=row_key,
-                    table_entity_properties=table_entity_properties,
+                    table_entity_properties=entity,
                     **kwargs
                 )

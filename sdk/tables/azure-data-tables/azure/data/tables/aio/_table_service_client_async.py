@@ -192,7 +192,6 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     @distributed_trace
     def list_tables(
             self,
-            query_options=None,  # type: Optional[QueryOptions]
             **kwargs
     ):
         # type: (...) -> AsyncItemPaged
