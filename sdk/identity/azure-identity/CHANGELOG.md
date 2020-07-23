@@ -1,6 +1,9 @@
 # Release History
 
 ## 1.4.0b8 (Unreleased)
+- `DefaultAzureCredential` uses the value of environment variable
+`AZURE_CLIENT_ID` to configure a user-assigned managed identity.
+([#10931](https://github.com/Azure/azure-sdk-for-python/issues/10931))
 
 
 ## 1.4.0b7 (2020-07-22)
