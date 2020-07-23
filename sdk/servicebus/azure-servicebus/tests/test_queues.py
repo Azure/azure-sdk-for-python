@@ -1378,7 +1378,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_message_properties(self):
+    def test_queue_message_properties(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         scheduled_enqueue_time = (utc_now() + timedelta(seconds=20)).replace(microsecond=0)
         message = Message(
             body='data',
