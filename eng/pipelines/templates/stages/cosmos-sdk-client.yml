@@ -41,7 +41,7 @@ stages:
           vmImage: $(OSVmImage)
 
         steps:
-          - template: ../steps/cosmos-emulator.yml
+          - template: ../../../common/pipelines/templates/steps/cosmos-emulator.yml
             parameters:
               EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
               StartParameters: ${{ parameters.EmulatorStartParameters }}
