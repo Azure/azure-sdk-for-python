@@ -18,7 +18,7 @@ from .exceptions import (
     OperationTimeoutError,
     _ServiceBusErrorPolicy,
     )
-from ._common.utils import create_authentication
+from ._common.utils import create_authentication, copy_messages_to_sendable_if_needed
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
@@ -68,6 +68,7 @@ class SenderMixin(object):
             if not isinstance(message, Message):
                 raise ValueError("Scheduling batch messages only supports iterables containing Message Objects."
                                  " Received instead: {}".format(message.__class__.__name__))
+            message = copy_messages_to_sendable_if_needed(message)
             message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
@@ -326,6 +327,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        message = copy_messages_to_sendable_if_needed(message)
         try:
             batch = self.create_batch()
             batch._from_list(message)  # pylint: disable=protected-access

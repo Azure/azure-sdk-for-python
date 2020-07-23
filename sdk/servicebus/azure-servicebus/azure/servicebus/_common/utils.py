@@ -177,3 +177,23 @@ def generate_dead_letter_entity_name(
     )
 
     return entity_name
+
+
+def copy_messages_to_sendable_if_needed(messages):
+    """
+    This method is to convert single/multiple received messages to sendable messages to enable message resending.
+    """
+    # pylint: disable=protected-access
+    try:
+        msgs_to_return = []
+        for each in messages:
+            try:
+                msgs_to_return.append(each._to_outgoing_message())
+            except AttributeError:
+                msgs_to_return.append(each)
+        return msgs_to_return
+    except TypeError:
+        try:
+            return messages._to_outgoing_message()
+        except AttributeError:
+            return messages
