@@ -10,7 +10,7 @@ from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. Microsoft Azure Key Vault PyPI package -
 #    https://pypi.python.org/pypi/azure-keyvault-keys/
@@ -21,7 +21,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates deleting and purging a vault(key) resource for Azure Key Vault.
 # The vault has to be soft-delete enabled to perform one of the following operations. See
-# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
+# https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
 #
 # 1. Create a key (create_key)
 #

@@ -22,7 +22,7 @@ class UsernamePasswordCredential(InteractiveCredential):
 
     This credential can only authenticate work and school accounts; Microsoft accounts are not supported.
     See this document for more information about account types:
-    https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/sign-up-organization
+    https://docs.microsoft.com/azure/active-directory/fundamentals/sign-up-organization
 
     :param str client_id: the application's client ID
     :param str username: the user's username (usually an email address)

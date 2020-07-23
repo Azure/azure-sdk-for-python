@@ -14,7 +14,7 @@ Search client library. The async versions of the samples (the python sample
 files appended with `_async`) show asynchronous operations with Cognitive Search
 and require Python version 3.5 or later.
 
-Authenticate the client with a Azure Cognitive Search [API Key Credential](https://docs.microsoft.com/en-us/azure/search/search-security-api-keys):
+Authenticate the client with a Azure Cognitive Search [API Key Credential](https://docs.microsoft.com/azure/search/search-security-api-keys):
 
 [sample_authentication.py](sample_authentication.py) ([async version](async_samples/sample_authentication_async.py))
 
@@ -45,7 +45,7 @@ Then for common search index operations:
 ## Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package (3.5 or later if using asyncio)
 * You must have an [Azure subscription](https://azure.microsoft.com/free/)
-* You must create the "Hotels" sample index [in the Azure Portal](https://docs.microsoft.com/en-us/azure/search/search-get-started-portal)
+* You must create the "Hotels" sample index [in the Azure Portal](https://docs.microsoft.com/azure/search/search-get-started-portal)
 
 
 ## Setup
@@ -67,5 +67,5 @@ Then for common search index operations:
 
 ## Next steps
 
-Check out the [API reference documentation](https://docs.microsoft.com/en-us/rest/api/searchservice/)
+Check out the [API reference documentation](https://docs.microsoft.com/rest/api/searchservice/)
 to learn more about what you can do with the Azure Cognitive Search client library.

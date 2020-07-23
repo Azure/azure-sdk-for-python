@@ -38,7 +38,7 @@ class AcsClusterProperties(Model):
     :type agent_count: int
     :param agent_vm_size: The Azure VM size of the agent VM nodes. This cannot
      be changed once the cluster is created. This list is non exhaustive; refer
-     to https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes
+     to https://docs.microsoft.com/azure/virtual-machines/windows/sizes
      for the possible VM sizes. Possible values include: 'Standard_A0',
      'Standard_A1', 'Standard_A2', 'Standard_A3', 'Standard_A4', 'Standard_A5',
      'Standard_A6', 'Standard_A7', 'Standard_A8', 'Standard_A9',

@@ -1664,7 +1664,7 @@ class BGPCommunity(msrest.serialization.Model):
     :param community_name: The name of the bgp community. e.g. Skype.
     :type community_name: str
     :param community_value: The value of the bgp community. For more information:
-     https://docs.microsoft.com/en-us/azure/expressroute/expressroute-routing.
+     https://docs.microsoft.com/azure/expressroute/expressroute-routing.
     :type community_value: str
     :param community_prefixes: The prefixes that the bgp community contains.
     :type community_prefixes: list[str]

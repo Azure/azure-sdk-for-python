@@ -58,7 +58,7 @@ class MessageIdOperations:
         :type queue_message: ~azure.storage.queue.models.QueueMessage
         :param timeout: The The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
          Timeouts for Queue Service Operations.</a>
         :type timeout: int
         :param request_id: Provides a client-generated, opaque value with a 1
@@ -130,7 +130,7 @@ class MessageIdOperations:
         :type pop_receipt: str
         :param timeout: The The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
          Timeouts for Queue Service Operations.</a>
         :type timeout: int
         :param request_id: Provides a client-generated, opaque value with a 1

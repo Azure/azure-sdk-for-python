@@ -27,7 +27,7 @@ interactions:
         \ Foundation Server 2013 Update 4 on Windows Server 2012 R2</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
         \ Europe;West Europe;Japan East;Japan West;Central US;East US;East US 2;North\
-        \ Central US;South Central US;West US</Location><LogicalSizeInGB>128</LogicalSizeInGB><Name>03f55de797f546a1b29d1b8d66be687a__Team-Foundation-Server-2013-Update4-WS2012R2</Name><OS>Windows</OS><Eula>http://www.microsoft.com/en-us/download/details.aspx?id=13350</Eula><Description>Microsoft\
+        \ Central US;South Central US;West US</Location><LogicalSizeInGB>128</LogicalSizeInGB><Name>03f55de797f546a1b29d1b8d66be687a__Team-Foundation-Server-2013-Update4-WS2012R2</Name><OS>Windows</OS><Eula>http://www.microsoft.com/download/details.aspx?id=13350</Eula><Description>Microsoft\
         \ Team Foundation Server 2013 Trial on Windows Server 2012 R2 Update. Virtual\
         \ Machines created with this trial image will require a product key for Team\
         \ Foundation Server (such as from an MSDN Subscription). This image includes\
@@ -37,13 +37,13 @@ interactions:
         \ SQL Server Standard edition (from an MSDN Subscription), or by connect to\
         \ a pre-existing SQL Server. Minimum virtual machine size for this image is\
         \ Medium. For more details on TFS server setup please see the [Team Foundation\
-        \ Server install guide|http://msdn.microsoft.com/en-us/library/dd631902.aspx].</Description><ImageFamily>Team\
+        \ Server install guide|http://msdn.microsoft.com/library/dd631902.aspx].</Description><ImageFamily>Team\
         \ Foundation Server 2013 Update 4 on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-11-12T08:00:00Z</PublishedDate><IsPremium>false</IsPremium><IconUri>VisualStudio2013_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=286720</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ Visual Studio Group</PublisherName><SmallIconUri>VisualStudio2013_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Team\
         \ Foundation Server 2013 Update 4 on Windows Server 2012 R2</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
         \ Europe;West Europe;Japan East;Japan West;Central US;East US;East US 2;North\
-        \ Central US;South Central US;West US</Location><LogicalSizeInGB>128</LogicalSizeInGB><Name>03f55de797f546a1b29d1b8d66be687a__Team-Foundation-Server-2013-Update4-WS2012R2-201503.20</Name><OS>Windows</OS><Eula>http://www.microsoft.com/en-us/download/details.aspx?id=13350</Eula><Description>Microsoft\
+        \ Central US;South Central US;West US</Location><LogicalSizeInGB>128</LogicalSizeInGB><Name>03f55de797f546a1b29d1b8d66be687a__Team-Foundation-Server-2013-Update4-WS2012R2-201503.20</Name><OS>Windows</OS><Eula>http://www.microsoft.com/download/details.aspx?id=13350</Eula><Description>Microsoft\
         \ Team Foundation Server 2013 Trial on Windows Server 2012 R2 Update. Virtual\
         \ Machines created with this trial image will require a product key for Team\
         \ Foundation Server (such as from an MSDN Subscription). This image includes\
@@ -53,13 +53,13 @@ interactions:
         \ SQL Server Standard edition (from an MSDN Subscription), or by connect to\
         \ a pre-existing SQL Server. Minimum virtual machine size for this image is\
         \ Medium. For more details on TFS server setup please see the [Team Foundation\
-        \ Server install guide|http://msdn.microsoft.com/en-us/library/dd631902.aspx].</Description><ImageFamily>Team\
+        \ Server install guide|http://msdn.microsoft.com/library/dd631902.aspx].</Description><ImageFamily>Team\
         \ Foundation Server 2013 Update 4 on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-03-20T07:00:00Z</PublishedDate><IsPremium>false</IsPremium><IconUri>VisualStudio2013_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=286720</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ Visual Studio Group</PublisherName><SmallIconUri>VisualStudio2013_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Team\
         \ Foundation Server 2013 Update 4 on Windows Server 2012 R2</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
         \ Europe;West Europe;Japan East;Japan West;Central US;East US;East US 2;North\
-        \ Central US;South Central US;West US</Location><LogicalSizeInGB>128</LogicalSizeInGB><Name>03f55de797f546a1b29d1b8d66be687a__Team-Foundation-Server-2013-Update4-WS2012R2-201503.27</Name><OS>Windows</OS><Eula>http://www.microsoft.com/en-us/legal/IntellectualProperty/UseTerms/Default.aspx</Eula><Description>Microsoft\
+        \ Central US;South Central US;West US</Location><LogicalSizeInGB>128</LogicalSizeInGB><Name>03f55de797f546a1b29d1b8d66be687a__Team-Foundation-Server-2013-Update4-WS2012R2-201503.27</Name><OS>Windows</OS><Eula>http://www.microsoft.com/legal/IntellectualProperty/UseTerms/Default.aspx</Eula><Description>Microsoft\
         \ Team Foundation Server 2013 Trial on Windows Server 2012 R2 Update. Virtual\
         \ Machines created with this trial image will require a product key for Team\
         \ Foundation Server (such as from an MSDN Subscription). This image includes\
@@ -69,7 +69,7 @@ interactions:
         \ SQL Server Standard edition (from an MSDN Subscription), or by connect to\
         \ a pre-existing SQL Server. Minimum virtual machine size for this image is\
         \ Medium. For more details on TFS server setup please see the [Team Foundation\
-        \ Server install guide|http://msdn.microsoft.com/en-us/library/dd631902.aspx].</Description><ImageFamily>Team\
+        \ Server install guide|http://msdn.microsoft.com/library/dd631902.aspx].</Description><ImageFamily>Team\
         \ Foundation Server 2013 Update 4 on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-03-27T07:00:00Z</PublishedDate><IsPremium>false</IsPremium><IconUri>VisualStudio2013_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=286720</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ Visual Studio Group</PublisherName><SmallIconUri>VisualStudio2013_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Visual\
         \ Studio Community 2013 with Tools for Apache Cordova CTP 3.1 on Windows Server\
@@ -370,7 +370,7 @@ interactions:
         \  These older versions of the JRE and JDK are provided to help developers\
         \ debug issues in older systems. They are not recommended for use in production.\
         \ Minimum recommended virtual machine size for this image is [Medium|http://go.microsoft.com/fwlink/?LinkID=309169|_blank].\
-        \ [Learn More|http://www.windowsazure.com/en-us/documentation/articles/virtual-machines-java-run-tomcat-application-server/|_blank]</Description><ImageFamily>JDK\
+        \ [Learn More|http://www.windowsazure.com/documentation/articles/virtual-machines-java-run-tomcat-application-server/|_blank]</Description><ImageFamily>JDK\
         \ 6 on Windows Server 2012</ImageFamily><PublishedDate>2015-05-07T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>Java6_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkId=321694</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=386544</PricingDetailLink><SmallIconUri>Java6_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>JDK\
         \ 7 on Windows Server 2012</Label><Location>East Asia;Southeast Asia;Australia\
         \ East;Australia Southeast;Brazil South;North Europe;West Europe;Japan East;Japan\
@@ -381,7 +381,7 @@ interactions:
         \ and includes a Java Development Kit (JDK), Java Runtime Environment (JRE),\
         \ and tools for developing, debugging, and monitoring Java applications. Minimum\
         \ recommended virtual machine size for this image is [Medium|http://go.microsoft.com/fwlink/?LinkID=309169|_blank].\
-        \ [Learn More|http://www.windowsazure.com/en-us/documentation/articles/virtual-machines-java-run-tomcat-application-server|_blank]</Description><ImageFamily>JDK\
+        \ [Learn More|http://www.windowsazure.com/documentation/articles/virtual-machines-java-run-tomcat-application-server|_blank]</Description><ImageFamily>JDK\
         \ 7 on Windows Server 2012</ImageFamily><PublishedDate>2015-05-07T00:00:00Z</PublishedDate><IsPremium>false</IsPremium><IconUri>Java7_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkId=321701</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft</PublisherName><SmallIconUri>Java7_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>JDK\
         \ 8 on Windows Server 2012 R2</Label><Location>East Asia;Southeast Asia;Australia\
         \ East;Australia Southeast;Brazil South;North Europe;West Europe;Japan East;Japan\
@@ -447,7 +447,7 @@ interactions:
         \ is an affordable, full-featured data management solution that is ideal for\
         \ midsize companies.  Minimum recommended virtual machine size for this image\
         \ is [Standard_D12|http://go.microsoft.com/fwlink/?LinkID=309169|_blank].\
-        \ [Learn More|http://msdn.microsoft.com/en-us/library/dn439775.aspx|_blank]</Description><ImageFamily>Oracle\
+        \ [Learn More|http://msdn.microsoft.com/library/dn439775.aspx|_blank]</Description><ImageFamily>Oracle\
         \ Database 12c Standard Edition on Windows Server 2012</ImageFamily><PublishedDate>2015-05-07T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>OracleDatabase12_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkId=321696</PrivacyUri><RecommendedVMSize>Standard_D12</RecommendedVMSize><PublisherName>Microsoft</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=386537</PricingDetailLink><SmallIconUri>OracleDatabase12_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Oracle\
         \ Database 12c and WebLogic Server 12c Standard Edition on Windows Server\
         \ 2012</Label><Location>East Asia;Southeast Asia;Australia East;Australia\
@@ -458,7 +458,7 @@ interactions:
         \ midsize companies. [Oracle WebLogic Server|http://www.oracle.com/weblogicserver|_blank]\
         \ 12c Standard Edition (12.1.2.0) is a leading Java EE application server.\
         \ Minimum recommended virtual machine size for this image is [Standard_D12|http://go.microsoft.com/fwlink/?LinkID=309169|_blank].\
-        \ [Learn More|http://msdn.microsoft.com/en-us/library/dn466427.aspx|_blank]</Description><ImageFamily>Oracle\
+        \ [Learn More|http://msdn.microsoft.com/library/dn466427.aspx|_blank]</Description><ImageFamily>Oracle\
         \ Database 12c and WebLogic Server 12c Standard Edition on Windows Server\
         \ 2012</ImageFamily><PublishedDate>2015-05-07T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>OracleWeblogicDatabase12_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkId=321695</PrivacyUri><RecommendedVMSize>Standard_D12</RecommendedVMSize><PublisherName>Microsoft</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=386542</PricingDetailLink><SmallIconUri>OracleWeblogicDatabase12_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Oracle\
         \ Database 12c Enterprise Edition on Windows Server 2012</Label><Location>East\
@@ -469,7 +469,7 @@ interactions:
         \ is a next-generation database designed for the cloud, providing a new multitenant\
         \ architecture on top of a fast, scalable, reliable, and secure database platform.\
         \ Minimum recommended virtual machine size for this image is [Standard_D12|http://go.microsoft.com/fwlink/?LinkID=309169|_blank].\
-        \ [Learn More|http://msdn.microsoft.com/en-us/library/dn439775.aspx|_blank]</Description><ImageFamily>Oracle\
+        \ [Learn More|http://msdn.microsoft.com/library/dn439775.aspx|_blank]</Description><ImageFamily>Oracle\
         \ Database 12c Enterprise Edition on Windows Server 2012</ImageFamily><PublishedDate>2015-05-07T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>OracleDatabase12_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkId=321699</PrivacyUri><RecommendedVMSize>Standard_D12</RecommendedVMSize><PublisherName>Microsoft</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=386538</PricingDetailLink><SmallIconUri>OracleDatabase12_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Oracle\
         \ Database 12c and WebLogic Server 12c Enterprise Edition on Windows Server\
         \ 2012</Label><Location>East Asia;Southeast Asia;Australia East;Australia\
@@ -481,7 +481,7 @@ interactions:
         \ [Oracle WebLogic Server|http://www.oracle.com/weblogicserver|_blank] 12c\
         \ Enterprise Edition (12.1.2.0) is a leading Java EE application server. Minimum\
         \ recommended virtual machine size for this image is [Standard_D12|http://go.microsoft.com/fwlink/?LinkID=309169|_blank].\
-        \ [Learn More|http://msdn.microsoft.com/en-us/library/dn466427.aspx|_blank]</Description><ImageFamily>Oracle\
+        \ [Learn More|http://msdn.microsoft.com/library/dn466427.aspx|_blank]</Description><ImageFamily>Oracle\
         \ Database 12c and WebLogic Server 12c Enterprise Edition on Windows Server\
         \ 2012</ImageFamily><PublishedDate>2015-05-07T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>OracleWeblogicDatabase12_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkId=321698</PrivacyUri><RecommendedVMSize>Standard_D12</RecommendedVMSize><PublisherName>Microsoft</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=386541</PricingDetailLink><SmallIconUri>OracleWeblogicDatabase12_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Oracle\
         \ WebLogic Server 12c Enterprise Edition on Windows Server 2012</Label><Location>East\
@@ -493,7 +493,7 @@ interactions:
         \ applications on a mission-critical cloud platform, with native cloud management,\
         \ and integrated tools. Minimum recommended virtual machine size for this\
         \ image is [standard_D12 |http://go.microsoft.com/fwlink/?LinkID=309169|_blank].\
-        \ [Learn More|http://msdn.microsoft.com/en-us/library/dn439774.aspx|_blank]</Description><ImageFamily>Oracle\
+        \ [Learn More|http://msdn.microsoft.com/library/dn439774.aspx|_blank]</Description><ImageFamily>Oracle\
         \ WebLogic Server 12c Enterprise Edition on Windows Server 2012</ImageFamily><PublishedDate>2015-05-07T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>OracleWeblogic12_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkId=321700</PrivacyUri><RecommendedVMSize>Standard_D12</RecommendedVMSize><PublisherName>Microsoft</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=386540</PricingDetailLink><SmallIconUri>OracleWeblogic12_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Oracle\
         \ WebLogic Server 12c Standard Edition on Windows Server 2012</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
@@ -504,7 +504,7 @@ interactions:
         \ applications on a mission-critical cloud platform, with native cloud management,\
         \ and integrated tools. Minimum recommended virtual machine size for this\
         \ image is [Standard_D12|http://go.microsoft.com/fwlink/?LinkID=309169|_blank].\
-        \ [Learn More|http://msdn.microsoft.com/en-us/library/dn439774.aspx|_blank]</Description><ImageFamily>Oracle\
+        \ [Learn More|http://msdn.microsoft.com/library/dn439774.aspx|_blank]</Description><ImageFamily>Oracle\
         \ WebLogic Server 12c Standard Edition on Windows Server 2012</ImageFamily><PublishedDate>2015-05-07T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>OracleWeblogic12_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkId=321697</PrivacyUri><RecommendedVMSize>Standard_D12</RecommendedVMSize><PublisherName>Microsoft</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=386539</PricingDetailLink><SmallIconUri>OracleWeblogic12_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Oracle\
         \ WebLogic Server 11g Enterprise Edition on Windows Server 2008 R2</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
@@ -515,7 +515,7 @@ interactions:
         \ It takes full advantage of the latest hardware architectures including 64-bit\
         \ addressable memory, multi-core computing systems and high-speed networks.\
         \ Minimum recommended virtual machine size for this image is [Standard_D12|http://go.microsoft.com/fwlink/?LinkID=309169|_blank].\
-        \ [Learn More|http://msdn.microsoft.com/en-us/library/dn466428.aspx|_blank]</Description><ImageFamily>Oracle\
+        \ [Learn More|http://msdn.microsoft.com/library/dn466428.aspx|_blank]</Description><ImageFamily>Oracle\
         \ WebLogic Server 11g Enterprise Edition on Windows Server 2008 R2</ImageFamily><PublishedDate>2015-05-07T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>OracleWeblogic11_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkId=321693</PrivacyUri><RecommendedVMSize>Standard_D12</RecommendedVMSize><PublisherName>Microsoft</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=386540</PricingDetailLink><SmallIconUri>OracleWeblogic11_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Oracle\
         \ WebLogic Server 11g Standard Edition on Windows Server 2008 R2</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
@@ -527,7 +527,7 @@ interactions:
         \ enterprise applications and services quickly and operations teams with the\
         \ administration capabilities to keep them up and running. Minimum recommended\
         \ virtual machine size for this image is [Standard_D12|http://go.microsoft.com/fwlink/?LinkID=309169|_blank].\
-        \ [Learn More|http://msdn.microsoft.com/en-us/library/dn466428.aspx|_blank]</Description><ImageFamily>Oracle\
+        \ [Learn More|http://msdn.microsoft.com/library/dn466428.aspx|_blank]</Description><ImageFamily>Oracle\
         \ WebLogic Server 11g Standard Edition on Windows Server 2008 R2</ImageFamily><PublishedDate>2015-05-07T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>OracleWeblogic11_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkId=321690</PrivacyUri><RecommendedVMSize>Standard_D12</RecommendedVMSize><PublisherName>Microsoft</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=386539</PricingDetailLink><SmallIconUri>OracleWeblogic11_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Zulu\
         \ OpenJDK package v1.7 on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
@@ -1552,28 +1552,28 @@ interactions:
         \ West;Central US;East US;East US 2;North Central US;South Central US;West\
         \ US</Location><LogicalSizeInGB>32</LogicalSizeInGB><Name>9b7cfe55da0349d5a8316a8cc4741f87__StorSimple-VirtualAppliance-1100-20140710</Name><OS>Windows</OS><Description>Microsoft\
         \ StorSimple Virtual Appliance 1100</Description><ImageFamily>StorSimple Virtual\
-        \ Appliance 1100</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-07-09T00:41:59Z</PublishedDate><IsPremium>false</IsPremium><PrivacyUri>http://azure.microsoft.com/en-us/support/legal/privacy-statement/</PrivacyUri><PublisherName>Microsoft\
+        \ Appliance 1100</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-07-09T00:41:59Z</PublishedDate><IsPremium>false</IsPremium><PrivacyUri>http://azure.microsoft.com/support/legal/privacy-statement/</PrivacyUri><PublisherName>Microsoft\
         \ Hybrid Cloud Storage Group</PublisherName><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>StorSimple\
         \ Virtual Appliance 1100,December 2014</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>32</LogicalSizeInGB><Name>9b7cfe55da0349d5a8316a8cc4741f87__StorSimple-VirtualAppliance-1100-20141209</Name><OS>Windows</OS><Description>Microsoft\
         \ StorSimple Virtual Appliance 1100</Description><ImageFamily>StorSimple Virtual\
-        \ Appliance 1100</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-12-09T15:26:36Z</PublishedDate><IsPremium>false</IsPremium><PrivacyUri>http://azure.microsoft.com/en-us/support/legal/privacy-statement/</PrivacyUri><PublisherName>Microsoft\
+        \ Appliance 1100</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-12-09T15:26:36Z</PublishedDate><IsPremium>false</IsPremium><PrivacyUri>http://azure.microsoft.com/support/legal/privacy-statement/</PrivacyUri><PublisherName>Microsoft\
         \ Hybrid Cloud Storage Group</PublisherName><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>StorSimple\
         \ Virtual Appliance1100, May 2015</Label><Location>East Asia;Southeast Asia;Australia\
         \ East;Australia Southeast;Brazil South;North Europe;West Europe;Japan East;Japan\
         \ West;Central US;East US;East US 2;North Central US;South Central US;West\
         \ US</Location><LogicalSizeInGB>32</LogicalSizeInGB><Name>9b7cfe55da0349d5a8316a8cc4741f87__StorSimple-VirtualAppliance-1100-20150506</Name><OS>Windows</OS><Description>Microsoft\
         \ StorSimple Virtual Appliance 1100</Description><ImageFamily>StorSimple Virtual\
-        \ Appliance 1100</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-05-08T12:17:30Z</PublishedDate><IsPremium>false</IsPremium><PrivacyUri>http://azure.microsoft.com/en-us/support/legal/privacy-statement/</PrivacyUri><PublisherName>Microsoft\
+        \ Appliance 1100</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-05-08T12:17:30Z</PublishedDate><IsPremium>false</IsPremium><PrivacyUri>http://azure.microsoft.com/support/legal/privacy-statement/</PrivacyUri><PublisherName>Microsoft\
         \ Hybrid Cloud Storage Group</PublisherName><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>StorSimple\
         \ Virtual Appliance1100 , June 2015</Label><Location>East Asia;Southeast Asia;Australia\
         \ East;Australia Southeast;Brazil South;North Europe;West Europe;South India;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>32</LogicalSizeInGB><Name>9b7cfe55da0349d5a8316a8cc4741f87__StorSimple-VirtualAppliance-1100-20150617</Name><OS>Windows</OS><Description>Microsoft\
         \ StorSimple Virtual Appliance 1100</Description><ImageFamily>StorSimple Virtual\
-        \ Appliance 1100</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-06-26T07:49:56Z</PublishedDate><IsPremium>false</IsPremium><PrivacyUri>http://azure.microsoft.com/en-us/support/legal/privacy-statement/</PrivacyUri><PublisherName>Microsoft\
+        \ Appliance 1100</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-06-26T07:49:56Z</PublishedDate><IsPremium>false</IsPremium><PrivacyUri>http://azure.microsoft.com/support/legal/privacy-statement/</PrivacyUri><PublisherName>Microsoft\
         \ Hybrid Cloud Storage Group</PublisherName><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server 2008 R2 SP1, March 2015</Label><Location>East Asia;Southeast Asia;Australia\
         \ East;Australia Southeast;Brazil South;North Europe;West Europe;South India;Japan\
@@ -1853,91 +1853,91 @@ interactions:
         \ Server RDSHwO13P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;North Europe;West Europe;East US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO13P-on-Windows-Server-2012-R2-20140814-1846</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO13P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-08-14T20:56:09.553895Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO13P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-08-14T20:56:09.553895Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server RDSHwO13P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO13P-on-Windows-Server-2012-R2-20141111-2335</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO13P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-11-12T00:23:04.7938861Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO13P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-11-12T00:23:04.7938861Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server RDSHwO13P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO13P-on-Windows-Server-2012-R2-20150127-2030</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO13P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-01-27T21:22:33.5359792Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO13P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-01-27T21:22:33.5359792Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server RDSHwO13P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO13P-on-Windows-Server-2012-R2-20150309-1850</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO13P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-03-09T21:27:13.0940596Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO13P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-03-09T21:27:13.0940596Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server RDSHwO13P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO13P-on-Windows-Server-2012-R2-20150429-2200</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO13P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-04-30T02:06:52.0524797Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO13P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-04-30T02:06:52.0524797Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server RDSHwO13P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO13P-on-Windows-Server-2012-R2-20150514-2210</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO13P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-05-14T23:02:10.1569333Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO13P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-05-14T23:02:10.1569333Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server RDSHwO365P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO365P-on-Windows-Server-2012-R2-20141121-0016</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-11-21T01:07:50.1224459Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-11-21T01:07:50.1224459Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server RDSHwO365P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO365P-on-Windows-Server-2012-R2-20141126-2055</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-11-27T01:46:00.1951134Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-11-27T01:46:00.1951134Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server RDSHwO365P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO365P-on-Windows-Server-2012-R2-20150128-0010</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-01-28T01:17:11.0039487Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-01-28T01:17:11.0039487Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server RDSHwO365P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO365P-on-Windows-Server-2012-R2-20150309-1850</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-03-09T19:50:33.6933063Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-03-09T19:50:33.6933063Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server RDSHwO365P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO365P-on-Windows-Server-2012-R2-20150428-2230</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-04-28T23:16:04.9724554Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-04-28T23:16:04.9724554Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server RDSHwO365P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO365P-on-Windows-Server-2012-R2-20150513-1800</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-05-13T20:37:23.4158594Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-05-13T20:37:23.4158594Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server RDSHwO365P on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
         \ East;Japan West;Central US;East US;East US 2;North Central US;South Central\
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>ad072bd3082149369c449ba5832401ae__Windows-Server-RDSHwO365P-on-Windows-Server-2012-R2-20150610-2039</Name><OS>Windows</OS><Eula/><Description>This\
         \ image can be used by authorized Microsoft Service Providers only.</Description><ImageFamily>Windows\
-        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-06-11T01:56:15.8997285Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/en-us/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ Server RDSHwO365P on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2015-06-11T01:56:15.8997285Z</PublishedDate><IsPremium>false</IsPremium><IconUri>WindowsServer2012R2_100.png</IconUri><PrivacyUri>http://www.windowsazure.com/support/legal/privacy-statement</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ Windows Server Remote Desktop Group</PublisherName><SmallIconUri>WindowsServer2012R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>Windows\
         \ Server Remote Desktop Session Host on Windows Server 2012 R2</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
@@ -3816,7 +3816,7 @@ interactions:
         \ patches, and support through 24x7 web, email, chat and phone from SUSE.\
         \ Virtual machines created from this image incur per-hour support fees, in\
         \ addition to Azure platform fees. An Azure support plan is required (developer\
-        \ or above). Support incidents are initiated through Azure Support ( [http://azure.microsoft.com/en-us/support/options/|http://azure.microsoft.com/en-us/support/options/]\
+        \ or above). Support incidents are initiated through Azure Support ( [http://azure.microsoft.com/support/options/|http://azure.microsoft.com/support/options/]\
         \ ).</Description><ImageFamily>SUSE Linux Enterprise Server 12 (Premium Image)</ImageFamily><PublishedDate>2015-05-12T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>Suse11_100.png</IconUri><PublisherName>SUSE</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=299677</PricingDetailLink><SmallIconUri>Suse11_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SUSE\
         \ Linux Enterprise Server 12</Label><Location>East Asia;Southeast Asia;Australia\
         \ East;Australia Southeast;Brazil South;North Europe;West Europe;Japan East;Japan\
@@ -4187,7 +4187,7 @@ interactions:
         \ Weblogic</ImageFamily><PublishedDate>2014-12-22T06:00:00Z</PublishedDate><IsPremium>false</IsPremium><IconUri>OracleWeblogic12_100.png</IconUri><PrivacyUri>http://www.oracle.com/us/legal/privacy/privacy-policy-078584.html</PrivacyUri><PublisherName>Oracle</PublisherName><SmallIconUri>OracleWeblogic12_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SharePoint\
         \ Server 2013 Trial</Label><Location>East Asia;Southeast Asia;Australia East;Australia\
         \ Southeast;Brazil South;North Europe;West Europe;Japan East;Japan West;Central\
-        \ US;East US;East US 2;North Central US;South Central US;West US</Location><LogicalSizeInGB>128</LogicalSizeInGB><Name>c6e0f177abd8496e934234bd27f46c5d__SharePoint-2013-Trial-1-20-2015</Name><OS>Windows</OS><Eula>http://www.microsoft.com/en-us/download/details.aspx?id=38417</Eula><Description>Microsoft\
+        \ US;East US;East US 2;North Central US;South Central US;West US</Location><LogicalSizeInGB>128</LogicalSizeInGB><Name>c6e0f177abd8496e934234bd27f46c5d__SharePoint-2013-Trial-1-20-2015</Name><OS>Windows</OS><Eula>http://www.microsoft.com/download/details.aspx?id=38417</Eula><Description>Microsoft\
         \ SharePoint Server 2013 Trial on Windows Server 2012 Datacenter. Virtual\
         \ Machines created with this trial image will expire on July 18, 2015. This\
         \ image includes a complete installation of SharePoint Server 2013. Some SharePoint\
@@ -4227,7 +4227,7 @@ interactions:
         \ require additional setup and configuration before use. We recommend that\
         \ you use a virtual machine size of large or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database.</Description><ImageFamily>SQL\
+        \ info see http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database.</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Enterprise on Windows Server 2008 R2</ImageFamily><PublishedDate>2013-04-16T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Standard on Windows Server 2008 R2</Label><Location>East\
@@ -4238,7 +4238,7 @@ interactions:
         \ require additional setup and configuration before use. We recommend that\
         \ you use a virtual machine size of medium or higher. This image has been\
         \ pre-configured for Windows Azure, including enabling CEIP which can be disabled,\
-        \ for more info see http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database.</Description><ImageFamily>SQL\
+        \ for more info see http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database.</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Standard on Windows Server 2008 R2</ImageFamily><PublishedDate>2013-04-16T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Enterprise on Windows Server 2008 R2</Label><Location>East\
@@ -4247,7 +4247,7 @@ interactions:
         \ Central US;South Central US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2-SP2-10.50.4319.0-Enterprise-ENU-Win2008R2-cy14su05</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285681</Eula><Description>We\
         \ recommend that you use a virtual machine size of A3 or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Enterprise on Windows Server 2008 R2</ImageFamily><PublishedDate>2014-07-18T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Standard on Windows Server 2008 R2</Label><Location>East\
@@ -4256,7 +4256,7 @@ interactions:
         \ Central US;South Central US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2-SP2-10.50.4319.0-Standard-ENU-Win2008R2-cy14su05</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285685</Eula><Description>We\
         \ recommend that you use a virtual machine size of A2 or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Standard on Windows Server 2008 R2</ImageFamily><PublishedDate>2014-07-18T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Web on Windows Server 2008 R2</Label><Location>East Asia;Southeast\
@@ -4265,7 +4265,7 @@ interactions:
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2-SP2-10.50.4319.0-Web-ENU-Win2008R2-cy14su05</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285686</Eula><Description>We\
         \ recommend that you use a virtual machine size of A2 or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Web on Windows Server 2008 R2</ImageFamily><PublishedDate>2014-07-18T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP3 Enterprise on Windows Server 2008 R2</Label><Location>East\
@@ -4274,7 +4274,7 @@ interactions:
         \ US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2-SP3-10.50.6000.34-Ent-ENU-Win2008R2-cy14su09</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285681</Eula><Description>We\
         \ recommend that you use a virtual machine size of A3 or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP3 Enterprise on Windows Server 2008 R2</ImageFamily><PublishedDate>2014-09-26T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP3 Enterprise on Windows Server 2008 R2</Label><Location>East\
@@ -4283,7 +4283,7 @@ interactions:
         \ Central US;South Central US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2-SP3-10.50.6000.34-Ent-ENU-Win2008R2-cy15su04</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285681</Eula><Description>We\
         \ recommend that you use a virtual machine size of A3 or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP3 Enterprise on Windows Server 2008 R2</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP3 Standard on Windows Server 2008 R2</Label><Location>East\
@@ -4292,7 +4292,7 @@ interactions:
         \ US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2-SP3-10.50.6000.34-Std-ENU-Win2008R2-cy14su09</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285685</Eula><Description>We\
         \ recommend that you use a virtual machine size of A2 or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP3 Standard on Windows Server 2008 R2</ImageFamily><PublishedDate>2014-09-26T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP3 Standard on Windows Server 2008 R2</Label><Location>East\
@@ -4301,7 +4301,7 @@ interactions:
         \ Central US;South Central US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2-SP3-10.50.6000.34-Std-ENU-Win2008R2-cy15su04</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285685</Eula><Description>We\
         \ recommend that you use a virtual machine size of A2 or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP3 Standard on Windows Server 2008 R2</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP3 Web on Windows Server 2008 R2</Label><Location>East Asia;Southeast\
@@ -4309,7 +4309,7 @@ interactions:
         \ US;East US;East US 2;North Central US;South Central US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2-SP3-10.50.6000.34-Web-ENU-Win2008R2-cy14su09</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285686</Eula><Description>We\
         \ recommend that you use a virtual machine size of A2 or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP3 Web on Windows Server 2008 R2</ImageFamily><PublishedDate>2014-09-26T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP3 Web on Windows Server 2008 R2</Label><Location>East Asia;Southeast\
@@ -4318,7 +4318,7 @@ interactions:
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2-SP3-10.50.6000.34-Web-ENU-Win2008R2-cy15su04</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285686</Eula><Description>We\
         \ recommend that you use a virtual machine size of A2 or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP3 Web on Windows Server 2008 R2</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Enterprise on Windows Server 2008 R2</Label><Location>East\
@@ -4329,7 +4329,7 @@ interactions:
         \ require additional setup and configuration before use. We recommend that\
         \ you use a virtual machine size of large or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database.</Description><ImageFamily>SQL\
+        \ info see http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database.</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Enterprise on Windows Server 2008 R2</ImageFamily><PublishedDate>2013-10-22T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Enterprise on Windows Server 2008 R2</Label><Location>East\
@@ -4338,7 +4338,7 @@ interactions:
         \ Central US;South Central US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2SP2-GDR-10.50.4021.0-Enterprise-ENU-Win2K8R2-CY13SU12</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285681</Eula><Description>We\
         \ recommend that you use a virtual machine size of large or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Enterprise on Windows Server 2008 R2</ImageFamily><PublishedDate>2013-12-23T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Enterprise on Windows Server 2008 R2</Label><Location>East\
@@ -4347,7 +4347,7 @@ interactions:
         \ Central US;South Central US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2SP2-GDR-10.50.4021.0-Enterprise-ENU-Win2K8R2-CY14SU02</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285681</Eula><Description>We\
         \ recommend that you use a virtual machine size of A3 or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Enterprise on Windows Server 2008 R2</ImageFamily><PublishedDate>2014-02-21T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>A3</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Standard on Windows Server 2008 R2</Label><Location>East\
@@ -4357,7 +4357,7 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of medium or higher.\
         \ This image has been pre-configured for Windows Azure, including enabling\
-        \ CEIP which can be disabled, for more info see http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database.</Description><ImageFamily>SQL\
+        \ CEIP which can be disabled, for more info see http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database.</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Standard on Windows Server 2008 R2</ImageFamily><PublishedDate>2013-10-22T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Standard on Windows Server 2008 R2</Label><Location>East\
@@ -4366,7 +4366,7 @@ interactions:
         \ Central US;South Central US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2SP2-GDR-10.50.4021.0-Standard-ENU-Win2K8R2-CY13SU12</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285685</Eula><Description>We\
         \ recommend that you use a virtual machine size of medium or higher. This\
         \ image has been pre-configured for Windows Azure, including enabling CEIP\
-        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Standard on Windows Server 2008 R2</ImageFamily><PublishedDate>2013-12-23T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Standard on Windows Server 2008 R2</Label><Location>East\
@@ -4375,7 +4375,7 @@ interactions:
         \ Central US;South Central US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2SP2-GDR-10.50.4021.0-Standard-ENU-Win2K8R2-CY14SU02</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285685</Eula><Description>We\
         \ recommend that you use a virtual machine size of A2 or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Standard on Windows Server 2008 R2</ImageFamily><PublishedDate>2014-02-21T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>Sqlserver2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>A2</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Web on Windows Server 2008 R2</Label><Location>East Asia;Southeast\
@@ -4385,7 +4385,7 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of medium or higher.\
         \ This image has been pre-configured for Windows Azure, including enabling\
-        \ CEIP which can be disabled, for more info see http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database.</Description><ImageFamily>SQL\
+        \ CEIP which can be disabled, for more info see http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database.</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Web on Windows Server 2008 R2</ImageFamily><PublishedDate>2013-07-29T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Web on Windows Server 2008 R2</Label><Location>East Asia;Southeast\
@@ -4395,7 +4395,7 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of medium or higher.\
         \ This image has been pre-configured for Windows Azure, including enabling\
-        \ CEIP which can be disabled, for more info see http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database.</Description><ImageFamily>SQL\
+        \ CEIP which can be disabled, for more info see http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database.</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Web on Windows Server 2008 R2</ImageFamily><PublishedDate>2013-10-22T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Web on Windows Server 2008 R2</Label><Location>East Asia;Southeast\
@@ -4404,7 +4404,7 @@ interactions:
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2SP2-GDR-10.50.4021.0-Web-ENU-Win2K8R2-CY13SU12</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285686</Eula><Description>We\
         \ recommend that you use a virtual machine size of medium or higher. This\
         \ image has been pre-configured for Windows Azure, including enabling CEIP\
-        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Web on Windows Server 2008 R2</ImageFamily><PublishedDate>2013-12-23T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2008 R2 SP2 Web on Windows Server 2008 R2</Label><Location>East Asia;Southeast\
@@ -4413,7 +4413,7 @@ interactions:
         \ US;West US</Location><LogicalSizeInGB>127</LogicalSizeInGB><Name>fb83b3509582419d99629ce476bcb5c8__SQL-Server-2008R2SP2-GDR-10.50.4021.0-Web-ENU-Win2K8R2-CY14SU02</Name><OS>Windows</OS><Eula>http://go.microsoft.com/fwlink/?LinkID=285686</Eula><Description>We\
         \ recommend that you use a virtual machine size of A2 or higher. This image\
         \ has been pre-configured for Windows Azure, including enabling CEIP which\
-        \ can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2008 R2 SP2 Web on Windows Server 2008 R2</ImageFamily><PublishedDate>2014-02-21T00:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2008R2_100.png</IconUri><PrivacyUri>http://msdn.microsoft.com/library/ms143384(v=sql.105).aspx</PrivacyUri><RecommendedVMSize>A2</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2008R2_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Enterprise on Windows Server 2012</Label><Location>East\
@@ -4424,8 +4424,8 @@ interactions:
         \ require additional setup and configuration before use. We recommend that\
         \ you use a virtual machine size of A3 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see  [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Enterprise on Windows Server 2012</ImageFamily><PublishedDate>2014-08-31T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ info see  [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Enterprise on Windows Server 2012</ImageFamily><PublishedDate>2014-08-31T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Standard on Windows Server 2012</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
@@ -4434,8 +4434,8 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of A2 or higher. This\
         \ image has been pre-configured for Windows Azure, including enabling CEIP\
-        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Standard on Windows Server 2012</ImageFamily><PublishedDate>2014-08-31T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
+        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Standard on Windows Server 2012</ImageFamily><PublishedDate>2014-08-31T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Web on Windows Server 2012</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
@@ -4444,8 +4444,8 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of A2 or higher. This\
         \ image has been pre-configured for Windows Azure, including enabling CEIP\
-        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Web on Windows Server 2012</ImageFamily><PublishedDate>2014-08-31T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
+        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Web on Windows Server 2012</ImageFamily><PublishedDate>2014-08-31T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Enterprise on Windows Server 2012 R2</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
@@ -4455,8 +4455,8 @@ interactions:
         \ require additional setup and configuration before use. We recommend that\
         \ you use a virtual machine size of A3 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see  [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Enterprise on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-12-01T08:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ info see  [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Enterprise on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-12-01T08:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Standard on Windows Server 2012 R2</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
@@ -4465,8 +4465,8 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of A2 or higher. This\
         \ image has been pre-configured for Windows Azure, including enabling CEIP\
-        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Standard on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-12-01T08:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
+        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Standard on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-12-01T08:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Web on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
@@ -4475,8 +4475,8 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of A2 or higher. This\
         \ image has been pre-configured for Windows Azure, including enabling CEIP\
-        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Web on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-12-01T08:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
+        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Web on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-12-01T08:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Enterprise on Windows Server 2012</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
@@ -4486,8 +4486,8 @@ interactions:
         \ require additional setup and configuration before use. We recommend that\
         \ you use a virtual machine size of A3 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see  [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Enterprise on Windows Server 2012</ImageFamily><PublishedDate>2015-03-10T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ info see  [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Enterprise on Windows Server 2012</ImageFamily><PublishedDate>2015-03-10T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Enterprise on Windows Server 2012</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
@@ -4497,8 +4497,8 @@ interactions:
         \ require additional setup and configuration before use. We recommend that\
         \ you use a virtual machine size of A3 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see  [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Enterprise on Windows Server 2012</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ info see  [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Enterprise on Windows Server 2012</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Enterprise on Windows Server 2012 R2</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
@@ -4508,8 +4508,8 @@ interactions:
         \ require additional setup and configuration before use. We recommend that\
         \ you use a virtual machine size of A3 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see  [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Enterprise on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
+        \ info see  [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Enterprise on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Standard on Windows Server 2012</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
@@ -4518,8 +4518,8 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of A2 or higher. This\
         \ image has been pre-configured for Windows Azure, including enabling CEIP\
-        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Standard on Windows Server 2012</ImageFamily><PublishedDate>2015-03-10T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
+        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Standard on Windows Server 2012</ImageFamily><PublishedDate>2015-03-10T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Standard on Windows Server 2012</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
@@ -4528,8 +4528,8 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of A2 or higher. This\
         \ image has been pre-configured for Windows Azure, including enabling CEIP\
-        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Standard on Windows Server 2012</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
+        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Standard on Windows Server 2012</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Standard on Windows Server 2012 R2</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
@@ -4538,8 +4538,8 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of A2 or higher. This\
         \ image has been pre-configured for Windows Azure, including enabling CEIP\
-        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Standard on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
+        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Standard on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Web on Windows Server 2012</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
@@ -4548,8 +4548,8 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of A2 or higher. This\
         \ image has been pre-configured for Windows Azure, including enabling CEIP\
-        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Web on Windows Server 2012</ImageFamily><PublishedDate>2015-03-10T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
+        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Web on Windows Server 2012</ImageFamily><PublishedDate>2015-03-10T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Web on Windows Server 2012</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
@@ -4558,8 +4558,8 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of A2 or higher. This\
         \ image has been pre-configured for Windows Azure, including enabling CEIP\
-        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Web on Windows Server 2012</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
+        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Web on Windows Server 2012</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2012 SP2 Web on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
         \ Asia;Australia East;Australia Southeast;Brazil South;North Europe;West Europe;Japan\
@@ -4568,8 +4568,8 @@ interactions:
         \ SQL Server components require additional setup and configuration before\
         \ use. We recommend that you use a virtual machine size of A2 or higher. This\
         \ image has been pre-configured for Windows Azure, including enabling CEIP\
-        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
-        \ Server 2012 SP2 Web on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/en-us/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
+        \ which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ Server 2012 SP2 Web on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2012_100.png</IconUri><PrivacyUri>http://www.microsoft.com/download/details.aspx?id=29067</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2012_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM Enterprise on Windows Server 2012 R2</Label><Location>East\
         \ Asia;Southeast Asia;Australia East;Australia Southeast;Brazil South;North\
@@ -4578,7 +4578,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A3 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM Enterprise on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM Standard on Windows Server 2012 R2</Label><Location>East\
@@ -4588,7 +4588,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A2 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM Standard on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM Web on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
@@ -4598,7 +4598,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A2 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM Web on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-04-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM DataWarehousing on Windows Server 2012 R2</Label><Location>East\
@@ -4612,7 +4612,7 @@ interactions:
         \ the recommendations [here|http://msdn.microsoft.com/library/dn387396.aspx|_blank].\
         \ For best performance, we recommend using a VM size of A7. This image has\
         \ been pre-configured for Windows Azure, including enabling CEIP which can\
-        \ be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM DataWarehousing on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-06-27T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>A7</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM Enterprise on Windows Server 2012 R2</Label><Location>East\
@@ -4622,7 +4622,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A3 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM Enterprise on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-06-09T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM Standard on Windows Server 2012 R2</Label><Location>East\
@@ -4632,7 +4632,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A2 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM Standard on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-06-09T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM Web on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
@@ -4642,7 +4642,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A2 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM Web on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-06-09T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM Enterprise on Windows Server 2012 R2</Label><Location>East\
@@ -4652,7 +4652,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A3 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM Enterprise on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-11-15T08:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM Standard on Windows Server 2012 R2</Label><Location>East\
@@ -4662,7 +4662,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A2 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM Standard on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-11-15T08:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM Web on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
@@ -4672,7 +4672,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A2 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM Web on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-11-15T08:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 SP1 Standard on Windows Server 2012 R2</Label><Location>East\
@@ -4682,7 +4682,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A2 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank]</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank]</Description><ImageFamily>SQL\
         \ Server 2014 SP1 Standard on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-05-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 SP1 Web on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
@@ -4692,7 +4692,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A2 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 SP1 Web on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-05-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>Medium</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 SP1 Enterprise on Windows Server 2012 R2</Label><Location>East\
@@ -4702,7 +4702,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A3 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 SP1 Enterprise on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-05-15T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM DataWarehousing on Windows Server 2012 R2</Label><Location>East\
@@ -4716,7 +4716,7 @@ interactions:
         \ the recommendations [here|http://msdn.microsoft.com/library/dn387396.aspx|_blank].\
         \ For best performance, we recommend using a VM size of A7. This image has\
         \ been pre-configured for Windows Azure, including enabling CEIP which can\
-        \ be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM DataWarehousing on Windows Server 2012 R2</ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2014-04-01T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SQLServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>A7</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM Enterprise on Windows Server 2012 R2</Label><Location>East\
@@ -4726,7 +4726,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A3 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM Enterprise on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-04-01T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>A3</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271259</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM Standard on Windows Server 2012 R2</Label><Location>East\
@@ -4736,7 +4736,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A2 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM Standard on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-04-01T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>A2</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271257</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2014 RTM Web on Windows Server 2012 R2</Label><Location>East Asia;Southeast\
@@ -4746,7 +4746,7 @@ interactions:
         \ image contains the full version of SQL Server. We recommend that you use\
         \ a virtual machine size of A2 or higher. This image has been pre-configured\
         \ for Windows Azure, including enabling CEIP which can be disabled, for more\
-        \ info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2014 RTM Web on Windows Server 2012 R2</ImageFamily><PublishedDate>2014-04-01T07:00:00Z</PublishedDate><IsPremium>true</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=282418</PrivacyUri><RecommendedVMSize>A2</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><PricingDetailLink>http://go.microsoft.com/fwlink/?LinkId=271258</PricingDetailLink><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2016 CTP2 Evaluation on Windows Server 2012 R2</Label><Location>East\
@@ -4758,7 +4758,7 @@ interactions:
         \ Some SQL Server 2016 components require additional setup and configuration\
         \ before use. We recommend that you use a virtual machine size of large or\
         \ higher. This image has been pre-configured for Windows Azure, including\
-        \ enabling CEIP which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ enabling CEIP which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2016 CTP2 Evaluation on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-05-27T07:00:00Z</PublishedDate><IsPremium>false</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=398120</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>Public</Category><Label>SQL\
         \ Server 2016 CTP2.1 Evaluation on Windows Server 2012 R2</Label><Location>East\
@@ -4770,7 +4770,7 @@ interactions:
         \ Some SQL Server 2016 components require additional setup and configuration\
         \ before use. We recommend that you use a virtual machine size of large or\
         \ higher. This image has been pre-configured for Windows Azure, including\
-        \ enabling CEIP which can be disabled, for more info see [here|http://msdn.microsoft.com/en-us/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
+        \ enabling CEIP which can be disabled, for more info see [here|http://msdn.microsoft.com/library/windowsazure/dn133151.aspx#database|_blank].</Description><ImageFamily>SQL\
         \ Server 2016 CTP2 Evaluation on Windows Server 2012 R2</ImageFamily><PublishedDate>2015-06-19T00:00:00Z</PublishedDate><IsPremium>false</IsPremium><IconUri>SqlServer2014_100.png</IconUri><PrivacyUri>http://go.microsoft.com/fwlink/?LinkID=398120</PrivacyUri><RecommendedVMSize>Large</RecommendedVMSize><PublisherName>Microsoft\
         \ SQL Server Group</PublisherName><SmallIconUri>SqlServer2014_45.png</SmallIconUri><IOType>Standard_LRS</IOType></OSImage><OSImage><Category>User</Category><Label>ptvstrial_test1</Label><Location>West\
         \ US</Location><LogicalSizeInGB>128</LogicalSizeInGB><MediaLink>http://portalvhdsmp6ddqtwmht89.blob.core.windows.net/vhds/ieiyyfw5.i1e201404012234340900.vhd</MediaLink><Name>ptvstrial_test1</Name><OS>Windows</OS><IsPremium>false</IsPremium><OSState>Generalized</OSState><IOType>Standard_LRS</IOType></OSImage></Images>"}

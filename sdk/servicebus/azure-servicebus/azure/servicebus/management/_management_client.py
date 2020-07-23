@@ -206,7 +206,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         Before calling this method, you should use `get_queue` to get a `QueueDescription` instance, then use the
         keyword arguments to update the properties you want to update.
         Only a portion of properties can be updated.
-        Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
+        Refer to https://docs.microsoft.com/rest/api/servicebus/update-queue.
 
         :param queue: The queue to be updated.
         :type queue: ~azure.servicebus.management.QueueDescription
@@ -377,7 +377,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         Before calling this method, you should use `get_topic` to get a `TopicDescription` instance, then use the
         keyword arguments to update the properties you want to update.
         Only a portion of properties can be updated.
-        Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-topic.
+        Refer to https://docs.microsoft.com/rest/api/servicebus/update-topic.
 
         :param ~azure.servicebus.management.TopicDescription topic: The topic to be updated.
         :keyword timedelta default_message_time_to_live: The value you want to update to.

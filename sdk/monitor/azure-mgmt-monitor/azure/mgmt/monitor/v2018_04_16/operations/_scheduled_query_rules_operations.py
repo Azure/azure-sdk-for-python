@@ -305,7 +305,7 @@ class ScheduledQueryRulesOperations(object):
         """List the Log Search rules within a subscription group.
 
         :param filter: The filter to apply on the operation. For more information please see
-     https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx.
+     https://msdn.microsoft.com/library/azure/dn931934.aspx.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LogSearchRuleResourceCollection or the result of cls(response)
@@ -379,7 +379,7 @@ class ScheduledQueryRulesOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param filter: The filter to apply on the operation. For more information please see
-     https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx.
+     https://msdn.microsoft.com/library/azure/dn931934.aspx.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LogSearchRuleResourceCollection or the result of cls(response)

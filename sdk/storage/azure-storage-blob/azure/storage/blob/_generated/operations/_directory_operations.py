@@ -42,13 +42,13 @@ class DirectoryOperations(object):
         the destination already exists and has a lease the lease is broken.
         This operation supports conditional HTTP requests.  For more
         information, see [Specifying Conditional Headers for Blob Service
-        Operations](https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations).
+        Operations](https://docs.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations).
         To fail if the destination already exists, use a conditional request
         with If-None-Match: "*".
 
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param directory_properties: Optional.  User-defined properties to be
@@ -198,7 +198,7 @@ class DirectoryOperations(object):
         the destination already exists and has a lease the lease is broken.
         This operation supports conditional HTTP requests. For more
         information, see [Specifying Conditional Headers for Blob Service
-        Operations](https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations).
+        Operations](https://docs.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations).
         To fail if the destination already exists, use a conditional request
         with If-None-Match: "*".
 
@@ -210,7 +210,7 @@ class DirectoryOperations(object):
         :type rename_source: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param marker: When renaming a directory, the number of paths that are
@@ -409,7 +409,7 @@ class DirectoryOperations(object):
         :type recursive_directory_delete: bool
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param marker: When renaming a directory, the number of paths that are
@@ -512,7 +512,7 @@ class DirectoryOperations(object):
 
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param owner: Optional. The owner of the blob or directory.
@@ -634,7 +634,7 @@ class DirectoryOperations(object):
 
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param upn: Optional. Valid only when Hierarchical Namespace is

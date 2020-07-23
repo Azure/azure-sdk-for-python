@@ -122,7 +122,7 @@ def test_request_body(cert_path, cert_password):
 
 def validate_jwt(request, client_id, pem_bytes):
     """Validate the request meets AAD's expectations for a client credential grant using a certificate, as documented
-    at https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-certificate-credentials
+    at https://docs.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials
     """
 
     cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())

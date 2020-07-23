@@ -3853,7 +3853,7 @@ class OSProfile(msrest.serialization.Model):
      secrets or passwords in customData property** :code:`<br>`:code:`<br>` This property cannot be
      updated after the VM is created. :code:`<br>`:code:`<br>` customData is passed to the VM to be
      saved as a file, for more information see `Custom Data on Azure VMs
-     <https://azure.microsoft.com/en-us/blog/custom-data-and-cloud-init-on-windows-azure/>`_
+     <https://azure.microsoft.com/blog/custom-data-and-cloud-init-on-windows-azure/>`_
      :code:`<br>`:code:`<br>` For using cloud-init for your Linux VM, see `Using cloud-init to
      customize a Linux VM during creation <https://docs.microsoft.com/azure/virtual-
      machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-
@@ -8830,9 +8830,9 @@ class WindowsConfiguration(msrest.serialization.Model):
     :type enable_automatic_updates: bool
     :param time_zone: Specifies the time zone of the virtual machine. e.g. "Pacific Standard Time".
      :code:`<br>`:code:`<br>` Possible values can be `TimeZoneInfo.Id
-     <https://docs.microsoft.com/en-us/dotnet/api/system.timezoneinfo.id?#System_TimeZoneInfo_Id>`_
+     <https://docs.microsoft.com/dotnet/api/system.timezoneinfo.id?#System_TimeZoneInfo_Id>`_
      value from time zones returned by `TimeZoneInfo.GetSystemTimeZones
-     <https://docs.microsoft.com/en-us/dotnet/api/system.timezoneinfo.getsystemtimezones>`_.
+     <https://docs.microsoft.com/dotnet/api/system.timezoneinfo.getsystemtimezones>`_.
     :type time_zone: str
     :param additional_unattend_content: Specifies additional base-64 encoded XML formatted
      information that can be included in the Unattend.xml file, which is used by Windows Setup.

@@ -44,7 +44,7 @@ class AppendBlobOperations(object):
         :type content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair
@@ -230,7 +230,7 @@ class AppendBlobOperations(object):
         :type content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param transactional_content_md5: Specify the transactional md5 for
@@ -407,7 +407,7 @@ class AppendBlobOperations(object):
         :type source_contentcrc64: bytearray
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param transactional_content_md5: Specify the transactional md5 for
@@ -591,7 +591,7 @@ class AppendBlobOperations(object):
 
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param request_id: Provides a client-generated, opaque value with a 1

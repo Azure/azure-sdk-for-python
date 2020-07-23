@@ -1108,10 +1108,10 @@ class ImageGallery(CollectionPage):
 class ImageInsights(Response):
     """The top-level object that the response includes when an image insights
     request succeeds. For information about requesting image insights, see the
-    [insightsToken](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#insightstoken)
+    [insightsToken](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#insightstoken)
     query parameter. The modules query parameter affects the fields that Bing
     includes in the response. If you set
-    [modules](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#modulesrequested)
+    [modules](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#modulesrequested)
     to only Caption, then this object includes only the imageCaption field.
 
     Variables are only populated by the server, and will be ignored when

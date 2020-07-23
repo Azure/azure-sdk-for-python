@@ -845,7 +845,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      executed against the database, and should not be used in combination with
      other groups as this will result in duplicate audit logs.
      For more information, see [Database-Level Audit Action
-     Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
+     Groups](https://docs.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
      For Database auditing policy, specific Actions can also be specified (note
      that Actions cannot be specified for Server auditing policy). The
      supported actions to audit are:
@@ -867,7 +867,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
      For more information, see [Database-Level Audit
-     Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
+     Actions](https://docs.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage
      subscription Id.
@@ -2714,7 +2714,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      executed against the database, and should not be used in combination with
      other groups as this will result in duplicate audit logs.
      For more information, see [Database-Level Audit Action
-     Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
+     Groups](https://docs.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
      For Database auditing policy, specific Actions can also be specified (note
      that Actions cannot be specified for Server auditing policy). The
      supported actions to audit are:
@@ -2736,7 +2736,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
      For more information, see [Database-Level Audit
-     Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
+     Actions](https://docs.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage
      subscription Id.
@@ -2874,7 +2874,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      executed against the database, and should not be used in combination with
      other groups as this will result in duplicate audit logs.
      For more information, see [Database-Level Audit Action
-     Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
+     Groups](https://docs.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
      For Database auditing policy, specific Actions can also be specified (note
      that Actions cannot be specified for Server auditing policy). The
      supported actions to audit are:
@@ -2896,7 +2896,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
      For more information, see [Database-Level Audit
-     Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
+     Actions](https://docs.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage
      subscription Id.
@@ -7821,7 +7821,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
      executed against the database, and should not be used in combination with
      other groups as this will result in duplicate audit logs.
      For more information, see [Database-Level Audit Action
-     Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
+     Groups](https://docs.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
      For Database auditing policy, specific Actions can also be specified (note
      that Actions cannot be specified for Server auditing policy). The
      supported actions to audit are:
@@ -7843,7 +7843,7 @@ class ServerBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
      For more information, see [Database-Level Audit
-     Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
+     Actions](https://docs.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage
      subscription Id.

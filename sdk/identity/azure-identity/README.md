@@ -4,14 +4,14 @@ libraries. It provides credentials Azure SDK clients can use to authenticate
 their requests.
 
 This library currently supports:
-  - [Service principal authentication](https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals)
-  - [Managed identity authentication](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview)
+  - [Service principal authentication](https://docs.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals)
+  - [Managed identity authentication](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview)
   - User authentication
 
   [Source code](./)
   | [Package (PyPI)](https://pypi.org/project/azure-identity/)
   | [API reference documentation][ref_docs]
-  | [Azure Active Directory documentation](https://docs.microsoft.com/en-us/azure/active-directory/)
+  | [Azure Active Directory documentation](https://docs.microsoft.com/azure/active-directory/)
 
 # Getting started
 ## Prerequisites
@@ -92,7 +92,7 @@ described in the next section.
 
 Authenticating as a managed identity requires no configuration but is only
 possible in a supported hosting environment. See Azure Active Directory's
-[managed identity documentation](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/services-support-managed-identities)
+[managed identity documentation](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/services-support-managed-identities)
 for more information.
 
 #### Single sign-on
@@ -277,7 +277,7 @@ the message collects error messages from each credential in the chain.
 
 For more details on handling Azure Active Directory errors please refer to the
 Azure Active Directory
-[error code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-aadsts-error-codes).
+[error code documentation](https://docs.microsoft.com/azure/active-directory/develop/reference-aadsts-error-codes).
 
 
 # Next steps

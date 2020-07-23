@@ -962,7 +962,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     # @unittest.skip("""
     # can not test it, see: 
-    # https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-maintenance-notifications
+    # https://docs.microsoft.com/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-maintenance-notifications
     # """)
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_compute_vmss_perform_maintenance(self, resource_group):

@@ -29,7 +29,7 @@ class AzureServiceBusResourceNotFound(AzureException):
 class Queue(WindowsAzureData):
 
     ''' Queue class corresponding to Queue Description:
-    http://msdn.microsoft.com/en-us/library/windowsazure/hh780773'''
+    http://msdn.microsoft.com/library/windowsazure/hh780773'''
 
     def __init__(self, lock_duration=None, max_size_in_megabytes=None,
                  requires_duplicate_detection=None, requires_session=None,
@@ -57,7 +57,7 @@ class Queue(WindowsAzureData):
 class Topic(WindowsAzureData):
 
     ''' Topic class corresponding to Topic Description:
-    https://docs.microsoft.com/en-us/dotnet/api/microsoft.servicebus.messaging.topicdescription. '''
+    https://docs.microsoft.com/dotnet/api/microsoft.servicebus.messaging.topicdescription. '''
 
     def __init__(self, default_message_time_to_live=None,
                  max_size_in_megabytes=None, requires_duplicate_detection=None,
@@ -86,7 +86,7 @@ class Topic(WindowsAzureData):
 class Subscription(WindowsAzureData):
 
     ''' Subscription class corresponding to Subscription Description:
-    http://msdn.microsoft.com/en-us/library/windowsazure/hh780763. '''
+    http://msdn.microsoft.com/library/windowsazure/hh780763. '''
 
     def __init__(self, lock_duration=None, requires_session=None,
                  default_message_time_to_live=None,
@@ -110,7 +110,7 @@ class Subscription(WindowsAzureData):
 class Rule(WindowsAzureData):
 
     ''' Rule class corresponding to Rule Description:
-    http://msdn.microsoft.com/en-us/library/windowsazure/hh780753. '''
+    http://msdn.microsoft.com/library/windowsazure/hh780753. '''
 
     def __init__(self, filter_type=None, filter_expression=None,
                  action_type=None, action_expression=None):

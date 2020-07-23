@@ -52,7 +52,7 @@ class DirectoryOperations:
         :type file_last_write_time: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage
@@ -142,7 +142,7 @@ class DirectoryOperations:
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>
         :type timeout: int
         :param callable cls: A custom type or function that will be passed the
@@ -208,7 +208,7 @@ class DirectoryOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>
         :type timeout: int
         :param callable cls: A custom type or function that will be passed the
@@ -270,7 +270,7 @@ class DirectoryOperations:
         :type file_last_write_time: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>
         :type timeout: int
         :param file_permission: If specified the permission (security
@@ -353,7 +353,7 @@ class DirectoryOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage
@@ -434,7 +434,7 @@ class DirectoryOperations:
         :type maxresults: int
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>
         :type timeout: int
         :param callable cls: A custom type or function that will be passed the
@@ -519,7 +519,7 @@ class DirectoryOperations:
         :type maxresults: int
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime
@@ -599,7 +599,7 @@ class DirectoryOperations:
         :type handle_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>
         :type timeout: int
         :param marker: A string value that identifies the portion of the list

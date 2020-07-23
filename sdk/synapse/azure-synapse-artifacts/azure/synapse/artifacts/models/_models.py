@@ -9202,7 +9202,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
      cluster.
     :type zookeeper_node_size: object
     :param script_actions: Custom script actions to run on HDI ondemand cluster once it's up.
-     Please refer to https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-
+     Please refer to https://docs.microsoft.com/azure/hdinsight/hdinsight-hadoop-customize-
      cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-
      us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
     :type script_actions: list[~azure.synapse.artifacts.models.ScriptAction]

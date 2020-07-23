@@ -356,7 +356,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # Simulate eviction (TODO: need example)
         self.mgmt_client.virtual_machines.simulate_eviction(resource_group.name, VIRTUAL_MACHINE_NAME, )
 
-        # TODO: cannot use it successfully, see:     https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-maintenance-notifications
+        # TODO: cannot use it successfully, see:     https://docs.microsoft.com/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-maintenance-notifications
         # Perform maintenance the virtual machine (TODO: need swagger file)
         try:
             result = self.mgmt_client.virtual_machines.begin_perform_maintenance(resource_group.name, VIRTUAL_MACHINE_NAME)

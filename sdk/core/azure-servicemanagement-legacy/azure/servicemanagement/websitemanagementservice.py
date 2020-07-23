@@ -225,7 +225,7 @@ class WebsiteManagementService(_ServiceManagementClient):
         time_grain:
             Optional. A rollup name, as P1D. OTherwise, default rollup for the metrics is used.
         More information and metrics name at:
-        http://msdn.microsoft.com/en-us/library/azure/dn166964.aspx
+        http://msdn.microsoft.com/library/azure/dn166964.aspx
         '''        
         metrics = ('names='+','.join(metrics)) if metrics else ''
         start_time = ('StartTime='+start_time) if start_time else ''

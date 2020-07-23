@@ -768,7 +768,7 @@ class UpdateContactProfile(Model):
     :type phone_number: str
     :param preferred_time_zone: Time zone of the user. This is the name of the
      time zone from [Microsoft Time Zone Index
-     Values](https://support.microsoft.com/en-us/help/973627/microsoft-time-zone-index-values).
+     Values](https://support.microsoft.com/help/973627/microsoft-time-zone-index-values).
     :type preferred_time_zone: str
     :param country: Country of the user. This is the ISO 3166-1 alpha-3 code.
     :type country: str

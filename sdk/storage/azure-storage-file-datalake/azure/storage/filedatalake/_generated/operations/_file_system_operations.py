@@ -59,7 +59,7 @@ class FileSystemOperations(object):
         :type request_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param callable cls: A custom type or function that will be passed the
@@ -119,7 +119,7 @@ class FileSystemOperations(object):
         Set properties for the FileSystem.  This operation supports conditional
         HTTP requests.  For more information, see [Specifying Conditional
         Headers for Blob Service
-        Operations](https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations).
+        Operations](https://docs.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations).
 
         :param properties: Optional. User-defined properties to be stored with
          the filesystem, in the format of a comma-separated list of name and
@@ -138,7 +138,7 @@ class FileSystemOperations(object):
         :type request_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param modified_access_conditions: Additional parameters for the
@@ -218,7 +218,7 @@ class FileSystemOperations(object):
         :type request_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param callable cls: A custom type or function that will be passed the
@@ -284,7 +284,7 @@ class FileSystemOperations(object):
         will fail with status code 404 (Not Found) while the filesystem is
         being deleted. This operation supports conditional HTTP requests.  For
         more information, see [Specifying Conditional Headers for Blob Service
-        Operations](https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations).
+        Operations](https://docs.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations).
 
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage
@@ -292,7 +292,7 @@ class FileSystemOperations(object):
         :type request_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param modified_access_conditions: Additional parameters for the
@@ -392,7 +392,7 @@ class FileSystemOperations(object):
         :type request_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>
         :type timeout: int
         :param callable cls: A custom type or function that will be passed the

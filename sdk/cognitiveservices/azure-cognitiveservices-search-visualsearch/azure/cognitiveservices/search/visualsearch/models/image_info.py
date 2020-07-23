@@ -20,9 +20,9 @@ class ImageInfo(Model):
     :param image_insights_token: An image insights token. To get the insights
      token, call one of the Image Search APIs (for example, /images/search). In
      the search results, the
-     [Image](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#image)
+     [Image](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#image)
      object's
-     [imageInsightsToken](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#image-imageinsightstoken)
+     [imageInsightsToken](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#image-imageinsightstoken)
      field contains the token. The imageInsightsToken and url fields mutually
      exclusive; do not specify both. Do not specify an insights token if the
      request includes the image form data.

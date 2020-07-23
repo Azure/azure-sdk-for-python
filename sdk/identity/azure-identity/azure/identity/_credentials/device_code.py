@@ -27,7 +27,7 @@ class DeviceCodeCredential(InteractiveCredential):
     authenticates successfully, the credential receives an access token.
 
     For more information about the device code flow, see Azure Active Directory documentation:
-    https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code
+    https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-device-code
 
     :param str client_id: the application's ID
 

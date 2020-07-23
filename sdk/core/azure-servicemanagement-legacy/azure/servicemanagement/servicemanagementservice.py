@@ -1171,7 +1171,7 @@ class ServiceManagementService(_ServiceManagementClient):
         operation_result_filter: Optional. Returns subscription operations only for the specified result status, either Succeeded, Failed, or InProgress.
         continuation_token: Optional.
         More information at:
-        https://msdn.microsoft.com/en-us/library/azure/gg715318.aspx
+        https://msdn.microsoft.com/library/azure/gg715318.aspx
         '''
         start_time = ('StartTime=' + start_time) if start_time else ''
         end_time = ('EndTime=' + end_time) if end_time else ''

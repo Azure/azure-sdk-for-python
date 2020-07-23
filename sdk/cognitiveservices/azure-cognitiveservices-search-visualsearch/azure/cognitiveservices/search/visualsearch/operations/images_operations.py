@@ -50,10 +50,10 @@ class ImagesOperations(object):
          format, see
          [RFC2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html).
          This header and the
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-visual-search-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/rest/api/cognitiveservices/bing-visual-search-api-v7-reference#setlang)
          query parameter are mutually exclusive; do not specify both. If you
          set this header, you must also specify the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-visual-search-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/rest/api/cognitiveservices/bing-visual-search-api-v7-reference#cc)
          query parameter. To determine the market to return results for, Bing
          uses the first supported language it finds from the list and combines
          it with the cc parameter value. If the list does not include a
@@ -62,9 +62,9 @@ class ImagesOperations(object):
          the results. To determine the market that Bing used, see the
          BingAPIs-Market header. Use this header and the cc query parameter
          only if you specify multiple languages. Otherwise, use the
-         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-visual-search-api-v7-reference#mkt)
+         [mkt](https://docs.microsoft.com/rest/api/cognitiveservices/bing-visual-search-api-v7-reference#mkt)
          and
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-visual-search-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/rest/api/cognitiveservices/bing-visual-search-api-v7-reference#setlang)
          query parameters. A user interface string is a string that's used as a
          label in a user interface. There are few user interface strings in the
          JSON response objects. Any links to Bing.com properties in the
@@ -74,7 +74,7 @@ class ImagesOperations(object):
          boundary parameter (for example, multipart/form-data;
          boundary=<boundary string>). For more details, see [Content form
          types](
-         https://docs.microsoft.com/en-us/azure/cognitive-services/bing-visual-search/overview#content-form-types).
+         https://docs.microsoft.com/azure/cognitive-services/bing-visual-search/overview#content-form-types).
         :type content_type: str
         :param user_agent: The user agent originating the request. Bing uses
          the user agent to provide mobile users with an optimized experience.
@@ -182,12 +182,12 @@ class ImagesOperations(object):
          where Bing delivers results. The market must be in the form <language
          code>-<country code>. For example, en-US. The string is case
          insensitive. For a list of possible market values, see [Market
-         Codes](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-visual-search/supported-countries-markets).
+         Codes](https://docs.microsoft.com/azure/cognitive-services/bing-visual-search/supported-countries-markets).
          NOTE: If known, you are encouraged to always specify the market.
          Specifying the market helps Bing route the request and return an
          appropriate and optimal response. If you specify a market that is not
          listed in [Market
-         Codes](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-visual-search/supported-countries-markets),
+         Codes](https://docs.microsoft.com/azure/cognitive-services/bing-visual-search/supported-countries-markets),
          Bing uses a best fit market code based on an internal mapping that is
          subject to change.
         :type market: str

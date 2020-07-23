@@ -53,7 +53,7 @@ class DiffDiskPlacement(str, Enum):
     OS disk provisioning. For more information on Ephemeral OS disk size requirements, please refer
     Ephemeral OS disk size requirements for Windows VM at https://docs.microsoft.com/en-
     us/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements and Linux VM at
-    https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-
+    https://docs.microsoft.com/azure/virtual-machines/linux/ephemeral-os-disks#size-
     requirements
     """
 
@@ -287,7 +287,7 @@ class StorageAccountTypes(str, Enum):
     Standard SSD. Premium_LRS uses Premium SSD. UltraSSD_LRS uses Ultra disk. For more information
     regarding disks supported for Windows Virtual Machines, refer to https://docs.microsoft.com/en-
     us/azure/virtual-machines/windows/disks-types and, for Linux Virtual Machines, refer to
-    https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disks-types
+    https://docs.microsoft.com/azure/virtual-machines/linux/disks-types
     """
 
     standard_lrs = "Standard_LRS"

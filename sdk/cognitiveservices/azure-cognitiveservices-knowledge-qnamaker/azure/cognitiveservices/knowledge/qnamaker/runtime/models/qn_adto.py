@@ -22,7 +22,7 @@ class QnADTO(Model):
     :param answer: Required. Answer text
     :type answer: str
     :param source: Source from which Q-A was indexed. eg.
-     https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs
+     https://docs.microsoft.com/azure/cognitive-services/QnAMaker/FAQs
     :type source: str
     :param questions: Required. List of questions associated with the answer.
     :type questions: list[str]

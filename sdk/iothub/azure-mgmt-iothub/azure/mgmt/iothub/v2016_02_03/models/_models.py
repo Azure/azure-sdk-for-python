@@ -741,15 +741,15 @@ class MessagingEndpointProperties(Model):
     """The properties of the messaging endpoints used by this IoT hub.
 
     :param lock_duration_as_iso8601: The lock duration. See:
-     https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-file-upload.
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload.
     :type lock_duration_as_iso8601: timedelta
     :param ttl_as_iso8601: The period of time for which a message is available
      to consume before it is expired by the IoT hub. See:
-     https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-file-upload.
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload.
     :type ttl_as_iso8601: timedelta
     :param max_delivery_count: The number of times the IoT hub attempts to
      deliver a message. See:
-     https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-file-upload.
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload.
     :type max_delivery_count: int
     """
 

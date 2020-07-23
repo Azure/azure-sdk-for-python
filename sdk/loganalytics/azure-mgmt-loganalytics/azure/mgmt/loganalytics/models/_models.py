@@ -1101,7 +1101,7 @@ class SavedSearch(ProxyResource):
      serves as a function. Value should be in the following format:
      'param-name1:type1 = default_value1, param-name2:type2 = default_value2'.
      For more examples and proper syntax please refer to
-     https://docs.microsoft.com/en-us/azure/kusto/query/functions/user-defined-functions.
+     https://docs.microsoft.com/azure/kusto/query/functions/user-defined-functions.
     :type function_parameters: str
     :param version: The version number of the query language. The current
      version is 2 and is the default.

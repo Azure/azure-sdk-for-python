@@ -96,7 +96,7 @@ This project has adopted the `Microsoft Open Source Code of Conduct <https://ope
 Learn More
 ==========
 
-`Microsoft Azure Python Developer Center <http://azure.microsoft.com/en-us/develop/python/>`__
+`Microsoft Azure Python Developer Center <http://azure.microsoft.com/develop/python/>`__
 
 
 .. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2FREADME.png

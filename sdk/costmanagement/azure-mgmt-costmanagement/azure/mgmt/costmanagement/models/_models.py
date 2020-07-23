@@ -288,7 +288,7 @@ class ExportDeliveryDestination(Model):
     per subscription. When creating an export in the Azure portal, it is done
     automatically, however API users need to register the subscription. For
     more information see
-    https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-supported-services
+    https://docs.microsoft.com/azure/azure-resource-manager/resource-manager-supported-services
     .
 
     All required parameters must be populated in order to send to Azure.

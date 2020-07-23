@@ -27,7 +27,7 @@ class MgmtCommerceTest(AzureMgmtTestCase):
         #)
         #output = list(output)
 
-        # OfferDurableID: https://azure.microsoft.com/en-us/support/legal/offer-details/
+        # OfferDurableID: https://azure.microsoft.com/support/legal/offer-details/
         rate = self.commerce_client.rate_card.get(
             "OfferDurableId eq 'MS-AZR-0062P' and Currency eq 'USD' and Locale eq 'en-US' and RegionInfo eq 'US'"
         )

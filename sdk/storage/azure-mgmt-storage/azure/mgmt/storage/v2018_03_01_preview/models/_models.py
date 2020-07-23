@@ -990,10 +990,10 @@ class ListServiceSasResponse(msrest.serialization.Model):
 
 
 class ManagementPoliciesRules(msrest.serialization.Model):
-    """The Storage Account ManagementPolicies Rules, in JSON format. See more details in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+    """The Storage Account ManagementPolicies Rules, in JSON format. See more details in: https://docs.microsoft.com/azure/storage/common/storage-lifecycle-managment-concepts.
 
     :param policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
-     in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+     in: https://docs.microsoft.com/azure/storage/common/storage-lifecycle-managment-concepts.
     :type policy: object
     """
 
@@ -1010,10 +1010,10 @@ class ManagementPoliciesRules(msrest.serialization.Model):
 
 
 class ManagementPoliciesRulesSetParameter(msrest.serialization.Model):
-    """The Storage Account ManagementPolicies Rules, in JSON format. See more details in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+    """The Storage Account ManagementPolicies Rules, in JSON format. See more details in: https://docs.microsoft.com/azure/storage/common/storage-lifecycle-managment-concepts.
 
     :param policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
-     in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+     in: https://docs.microsoft.com/azure/storage/common/storage-lifecycle-managment-concepts.
     :type policy: object
     """
 
@@ -1861,7 +1861,7 @@ class StorageAccountManagementPolicies(Resource):
      Microsoft.Storage/storageAccounts.
     :vartype type: str
     :param policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
-     in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+     in: https://docs.microsoft.com/azure/storage/common/storage-lifecycle-managment-concepts.
     :type policy: object
     :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
     :vartype last_modified_time: ~datetime.datetime
@@ -1897,7 +1897,7 @@ class StorageAccountManagementPoliciesRulesProperty(ManagementPoliciesRules):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :param policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
-     in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+     in: https://docs.microsoft.com/azure/storage/common/storage-lifecycle-managment-concepts.
     :type policy: object
     :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
     :vartype last_modified_time: ~datetime.datetime

@@ -2200,7 +2200,7 @@ class FaceDetectorPreset(Preset):
      640x360 before processing. Switching to "StandardDefinition" will reduce
      the time it takes to process high resolution video. It may also reduce the
      cost of using this component (see
-     https://azure.microsoft.com/en-us/pricing/details/media-services/#analytics
+     https://azure.microsoft.com/pricing/details/media-services/#analytics
      for details). However, faces that end up being too small in the resized
      video may not be detected. Possible values include: 'SourceResolution',
      'StandardDefinition'

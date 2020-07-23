@@ -52,7 +52,7 @@ class ImagesOperations(object):
          example, to limit images to a specific domain, use the
          [site:](http://msdn.microsoft.com/library/ff795613.aspx) operator. To
          help improve relevance of an insights query (see
-         [insightsToken](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#insightstoken)),
+         [insightsToken](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#insightstoken)),
          you should always include the user's query term. Use this parameter
          only with the Image Search API.Do not specify this parameter when
          calling the Trending Images API.
@@ -63,10 +63,10 @@ class ImagesOperations(object):
          format, see
          [RFC2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html).
          This header and the
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
          query parameter are mutually exclusive; do not specify both. If you
          set this header, you must also specify the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
          query parameter. To determine the market to return results for, Bing
          uses the first supported language it finds from the list and combines
          it with the cc parameter value. If the list does not include a
@@ -75,9 +75,9 @@ class ImagesOperations(object):
          the results. To determine the market that Bing used, see the
          BingAPIs-Market header. Use this header and the cc query parameter
          only if you specify multiple languages. Otherwise, use the
-         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
+         [mkt](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
          and
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
          query parameters. A user interface string is a string that's used as a
          label in a user interface. There are few user interface strings in the
          JSON response objects. Any links to Bing.com properties in the
@@ -200,9 +200,9 @@ class ImagesOperations(object):
          ~azure.cognitiveservices.search.imagesearch.models.ImageColor
         :param country_code: A 2-character country code of the country where
          the results come from. For a list of possible values, see [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
+         Codes](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
          If you set this parameter, you must also specify the
-         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
+         [Accept-Language](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
          header. Bing uses the first supported language it finds from the
          languages list, and combine that language with the country code that
          you specify to determine the market to return results for. If the
@@ -213,7 +213,7 @@ class ImagesOperations(object):
          parameter only if you specify multiple languages; otherwise, you
          should use the mkt and setLang query parameters. This parameter and
          the
-         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
+         [mkt](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
          query parameter are mutually exclusive—do not specify both.
         :type country_code: str
         :param count: The number of images to return in the response. The
@@ -240,7 +240,7 @@ class ImagesOperations(object):
         :param id: An ID that uniquely identifies an image. Use this parameter
          to ensure that the specified image is the first image in the list of
          images that Bing returns. The
-         [Image](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#image)
+         [Image](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#image)
          object's imageId field contains the ID that you set this parameter to.
         :type id: str
         :param image_content: Filter images by the following content types.
@@ -290,15 +290,15 @@ class ImagesOperations(object):
          where Bing delivers results. The market must be in the form <language
          code>-<country code>. For example, en-US. The string is case
          insensitive. For a list of possible market values, see [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
+         Codes](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
          NOTE: If known, you are encouraged to always specify the market.
          Specifying the market helps Bing route the request and return an
          appropriate and optimal response. If you specify a market that is not
          listed in [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes),
+         Codes](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes),
          Bing uses a best fit market code based on an internal mapping that is
          subject to change. This parameter and the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
          query parameter are mutually exclusive—do not specify both.
         :type market: str
         :param max_file_size: Filter images that are less than or equal to the
@@ -339,14 +339,14 @@ class ImagesOperations(object):
         :param offset: The zero-based offset that indicates the number of
          images to skip before returning images. The default is 0. The offset
          should be less than
-         ([totalEstimatedMatches](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#totalestimatedmatches)
+         ([totalEstimatedMatches](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#totalestimatedmatches)
          - count). Use this parameter along with the count parameter to page
          results. For example, if your user interface displays 20 images per
          page, set count to 20 and offset to 0 to get the first page of
          results. For each subsequent page, increment offset by 20 (for
          example, 0, 20, 40). It is possible for multiple pages to include some
          overlap in results. To prevent duplicates, see
-         [nextOffset](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#nextoffset).
+         [nextOffset](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#nextoffset).
          Use this parameter only with the Image API. Do not specify this
          parameter when calling the Trending Images API or the Web Search API.
         :type offset: long
@@ -389,7 +389,7 @@ class ImagesOperations(object):
          Typically, you set setLang to the same language specified by mkt
          unless the user wants the user interface strings displayed in a
          different language. This parameter and the
-         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
+         [Accept-Language](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
          header are mutually exclusive; do not specify both. A user interface
          string is a string that's used as a label in a user interface. There
          are few user interface strings in the JSON response objects. Also, any
@@ -517,7 +517,7 @@ class ImagesOperations(object):
          example, to limit images to a specific domain, use the
          [site:](http://msdn.microsoft.com/library/ff795613.aspx) operator. To
          help improve relevance of an insights query (see
-         [insightsToken](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#insightstoken)),
+         [insightsToken](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#insightstoken)),
          you should always include the user's query term. Use this parameter
          only with the Image Search API.Do not specify this parameter when
          calling the Trending Images API.
@@ -528,10 +528,10 @@ class ImagesOperations(object):
          format, see
          [RFC2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html).
          This header and the
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
          query parameter are mutually exclusive; do not specify both. If you
          set this header, you must also specify the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
          query parameter. To determine the market to return results for, Bing
          uses the first supported language it finds from the list and combines
          it with the cc parameter value. If the list does not include a
@@ -540,16 +540,16 @@ class ImagesOperations(object):
          the results. To determine the market that Bing used, see the
          BingAPIs-Market header. Use this header and the cc query parameter
          only if you specify multiple languages. Otherwise, use the
-         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
+         [mkt](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
          and
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
          query parameters. A user interface string is a string that's used as a
          label in a user interface. There are few user interface strings in the
          JSON response objects. Any links to Bing.com properties in the
          response objects apply the specified language.
         :type accept_language: str
         :param content_type: Optional request header. If you set the
-         [modules](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#modulesrequested)
+         [modules](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#modulesrequested)
          query parameter to RecognizedEntities, you may specify the binary of
          an image in the body of a POST request. If you specify the image in
          the body of a POST request, you must specify this header and set its
@@ -691,9 +691,9 @@ class ImagesOperations(object):
          ~azure.cognitiveservices.search.imagesearch.models.ImageCropType
         :param country_code: A 2-character country code of the country where
          the results come from. For a list of possible values, see [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
+         Codes](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
          If you set this parameter, you must also specify the
-         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
+         [Accept-Language](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
          header. Bing uses the first supported language it finds from the
          languages list, and combine that language with the country code that
          you specify to determine the market to return results for. If the
@@ -704,13 +704,13 @@ class ImagesOperations(object):
          parameter only if you specify multiple languages; otherwise, you
          should use the mkt and setLang query parameters. This parameter and
          the
-         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
+         [mkt](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
          query parameter are mutually exclusive—do not specify both.
         :type country_code: str
         :param id: An ID that uniquely identifies an image. Use this parameter
          to ensure that the specified image is the first image in the list of
          images that Bing returns. The
-         [Image](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#image)
+         [Image](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#image)
          object's imageId field contains the ID that you set this parameter to.
         :type id: str
         :param image_url: The URL of an image that you want to get insights
@@ -718,20 +718,20 @@ class ImagesOperations(object):
          parameter to specify the image. You may also specify the image by
          placing the binary of the image in the body of a POST request. If you
          use the binary option, see the
-         [Content-Type](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#contenttype)
+         [Content-Type](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#contenttype)
          header. The maximum supported image size is 1 MB. Use this parameter
          only with the Insights API. Do not specify this parameter when calling
          the Images, Trending Images, or Web Search APIs.
         :type image_url: str
         :param insights_token: An image token. The
-         [Image](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#image)
+         [Image](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#image)
          object's
-         [imageInsightsToken](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#image-imageinsightstoken)
+         [imageInsightsToken](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#image-imageinsightstoken)
          contains the token. Specify this parameter to get additional
          information about an image, such as a caption or shopping source. For
          a list of the additional information about an image that you can get,
          see the
-         [modules](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#modulesrequested)
+         [modules](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#modulesrequested)
          query parameter. Use this parameter only with the Insights API. Do not
          specify this parameter when calling the Images, Trending Images, or
          Web Search APIs.
@@ -774,15 +774,15 @@ class ImagesOperations(object):
          where Bing delivers results. The market must be in the form <language
          code>-<country code>. For example, en-US. The string is case
          insensitive. For a list of possible market values, see [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
+         Codes](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
          NOTE: If known, you are encouraged to always specify the market.
          Specifying the market helps Bing route the request and return an
          appropriate and optimal response. If you specify a market that is not
          listed in [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes),
+         Codes](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes),
          Bing uses a best fit market code based on an internal mapping that is
          subject to change. This parameter and the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
          query parameter are mutually exclusive—do not specify both.
         :type market: str
         :param safe_search: Filter images for adult content. The following are
@@ -812,7 +812,7 @@ class ImagesOperations(object):
          Typically, you set setLang to the same language specified by mkt
          unless the user wants the user interface strings displayed in a
          different language. This parameter and the
-         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
+         [Accept-Language](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
          header are mutually exclusive; do not specify both. A user interface
          string is a string that's used as a label in a user interface. There
          are few user interface strings in the JSON response objects. Also, any
@@ -912,7 +912,7 @@ class ImagesOperations(object):
         others. The images are broken out into different categories. For
         example, Popular People Searches. For a list of markets that support
         trending images, see [Trending
-        Images](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-image-search/trending-images).
+        Images](https://docs.microsoft.com/azure/cognitive-services/bing-image-search/trending-images).
 
         :param accept_language: A comma-delimited list of one or more
          languages to use for user interface strings. The list is in decreasing
@@ -920,10 +920,10 @@ class ImagesOperations(object):
          format, see
          [RFC2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html).
          This header and the
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
          query parameter are mutually exclusive; do not specify both. If you
          set this header, you must also specify the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
          query parameter. To determine the market to return results for, Bing
          uses the first supported language it finds from the list and combines
          it with the cc parameter value. If the list does not include a
@@ -932,9 +932,9 @@ class ImagesOperations(object):
          the results. To determine the market that Bing used, see the
          BingAPIs-Market header. Use this header and the cc query parameter
          only if you specify multiple languages. Otherwise, use the
-         [mkt](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
+         [mkt](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#mkt)
          and
-         [setLang](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
+         [setLang](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#setlang)
          query parameters. A user interface string is a string that's used as a
          label in a user interface. There are few user interface strings in the
          JSON response objects. Any links to Bing.com properties in the
@@ -1060,15 +1060,15 @@ class ImagesOperations(object):
          where Bing delivers results. The market must be in the form <language
          code>-<country code>. For example, en-US. The string is case
          insensitive. For a list of possible market values, see [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
+         Codes](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes).
          NOTE: If known, you are encouraged to always specify the market.
          Specifying the market helps Bing route the request and return an
          appropriate and optimal response. If you specify a market that is not
          listed in [Market
-         Codes](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes),
+         Codes](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#market-codes),
          Bing uses a best fit market code based on an internal mapping that is
          subject to change. This parameter and the
-         [cc](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
+         [cc](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#cc)
          query parameter are mutually exclusive—do not specify both.
         :type market: str
         :param safe_search: Filter images for adult content. The following are
@@ -1098,7 +1098,7 @@ class ImagesOperations(object):
          Typically, you set setLang to the same language specified by mkt
          unless the user wants the user interface strings displayed in a
          different language. This parameter and the
-         [Accept-Language](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
+         [Accept-Language](https://docs.microsoft.com/rest/api/cognitiveservices/bing-images-api-v7-reference#acceptlanguage)
          header are mutually exclusive; do not specify both. A user interface
          string is a string that's used as a label in a user interface. There
          are few user interface strings in the JSON response objects. Also, any

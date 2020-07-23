@@ -539,23 +539,23 @@ class ImageTemplateManagedImageSource(ImageTemplateSource):
 
 class ImageTemplatePlatformImageSource(ImageTemplateSource):
     """Describes an image source from [Azure Gallery
-    Images](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages).
+    Images](https://docs.microsoft.com/rest/api/compute/virtualmachineimages).
 
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Constant filled by server.
     :type type: str
     :param publisher: Image Publisher in [Azure Gallery
-     Images](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages).
+     Images](https://docs.microsoft.com/rest/api/compute/virtualmachineimages).
     :type publisher: str
     :param offer: Image offer from the [Azure Gallery
-     Images](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages).
+     Images](https://docs.microsoft.com/rest/api/compute/virtualmachineimages).
     :type offer: str
     :param sku: Image sku from the [Azure Gallery
-     Images](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages).
+     Images](https://docs.microsoft.com/rest/api/compute/virtualmachineimages).
     :type sku: str
     :param version: Image version from the [Azure Gallery
-     Images](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages).
+     Images](https://docs.microsoft.com/rest/api/compute/virtualmachineimages).
     :type version: str
     :param plan_info: Optional configuration of purchase plan for platform
      image.

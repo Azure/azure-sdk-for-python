@@ -1635,7 +1635,7 @@ class ImageReference(Model):
      Shared Image Gallery image must have replicas in the same region as the
      Azure Batch account. For information about the firewall settings for the
      Batch node agent to communicate with the Batch service see
-     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
+     https://docs.microsoft.com/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :type id: str
     """
 
@@ -1906,7 +1906,7 @@ class NetworkConfiguration(Model):
      enable outbound connections to Azure Storage on port 443. For
      cloudServiceConfiguration pools, only 'classic' VNETs are supported. For
      more details see:
-     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
+     https://docs.microsoft.com/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
     :type subnet_id: str
     :param endpoint_configuration: The configuration for endpoints on compute
      nodes in the Batch pool. Pool endpoint configuration is only supported on

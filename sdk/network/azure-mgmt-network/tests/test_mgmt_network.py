@@ -594,7 +594,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
     @RandomNameResourceGroupPreparer()
     def test_virtual_network_gateway_operations(self, resource_group, location):
         raise unittest.SkipTest("Skipping test_search")
-        # https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-site-to-site-resource-manager-portal
+        # https://docs.microsoft.com/azure/vpn-gateway/vpn-gateway-howto-site-to-site-resource-manager-portal
 
         vnet_name = self.get_resource_name('pyvirtnet')
         fe_name = self.get_resource_name('pysubnetfe')

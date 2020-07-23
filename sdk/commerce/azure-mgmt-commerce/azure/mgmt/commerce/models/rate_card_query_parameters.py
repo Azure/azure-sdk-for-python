@@ -18,7 +18,7 @@ class RateCardQueryParameters(Model):
 
     :param offer_durable_id: The Offer ID parameter consists of the 'MS-AZR-'
      prefix, plus the Offer ID number (e.g., MS-AZR-0026P). See
-     https://azure.microsoft.com/en-us/support/legal/offer-details/ for more
+     https://azure.microsoft.com/support/legal/offer-details/ for more
      information on the list of available Offer IDs, country/region
      availability, and billing currency.
     :type offer_durable_id: str

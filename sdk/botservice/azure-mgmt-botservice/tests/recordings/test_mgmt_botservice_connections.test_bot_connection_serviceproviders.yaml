@@ -41,7 +41,7 @@ interactions:
         to the Skype tenant.","helpUrl":null,"default":null},{"name":"TenantId","type":"string","displayName":"Tenant
         ID","description":"The tenant ID of your Azure Active Directory application.","helpUrl":null,"default":"common"},{"name":"ResourceUri","type":"string","displayName":"Resource
         URI","description":"The URI for the discovery endpoint. Need an AAD token
-        to access this endpoint.","helpUrl":"https://msdn.microsoft.com/en-us/skype/ucwa/authenticationusingazuread","default":"https://webdir.online.lync.com/"},{"name":"LoginUriAAD","type":"string","displayName":"Login
+        to access this endpoint.","helpUrl":"https://msdn.microsoft.com/skype/ucwa/authenticationusingazuread","default":"https://webdir.online.lync.com/"},{"name":"LoginUriAAD","type":"string","displayName":"Login
         URI for AAD","description":"The URI for the AAD login endpoint.","helpUrl":null,"default":"https://login.microsoftonline.com"}]}},{"properties":{"id":"29d6ab23-bb51-4e91-a010-d38c1e30d1c4","displayName":"Outlook","serviceProviderName":"outlook","devPortalUrl":null,"iconUrl":null,"parameters":[{"name":"ClientId","type":"string","displayName":"Client
         id","description":"The id used to identify this application with the service
         provider","helpUrl":null,"default":null},{"name":"ClientSecret","type":"securestring","displayName":"Client
@@ -57,7 +57,7 @@ interactions:
         URL","description":"The Sharepoint Online Azure Active Directory discovery
         URL.","helpUrl":null,"default":"https://api.office.com/discovery/"},{"name":"TenantId","type":"string","displayName":"Tenant
         ID","description":"The tenant ID of your Azure Active Directory application.","helpUrl":null,"default":"common"},{"name":"Capability","type":"string","displayName":"Capability","description":"Resource
-        for which AccessToken needs to be obtained.","helpUrl":"http://msdn.microsoft.com/en-us/office/office365/howto/discover-service-endpoints","default":"RootSite"},{"name":"ResourceUri","type":"string","displayName":"Resource
+        for which AccessToken needs to be obtained.","helpUrl":"http://msdn.microsoft.com/office/office365/howto/discover-service-endpoints","default":"RootSite"},{"name":"ResourceUri","type":"string","displayName":"Resource
         URL","description":"The resource to get authorization for.","helpUrl":null,"default":null}]}},{"properties":{"id":"30dd229c-58e3-4a48-bdfd-91ec48eb906c","displayName":"Azure
         Active Directory v2","serviceProviderName":"Aadv2","devPortalUrl":null,"iconUrl":null,"parameters":[{"name":"ClientId","type":"string","displayName":"Client
         id","description":"The id used to identify this application with the service
@@ -150,7 +150,7 @@ interactions:
         URL","description":"The Azure Active Directory login URL.","helpUrl":null,"default":"https://login.windows.net"},{"name":"DiscoveryUri","type":"string","displayName":"Discovery
         URL","description":"The Office365 Azure Active Directory discovery URL.","helpUrl":null,"default":"https://api.office.com/discovery/"},{"name":"TenantId","type":"string","displayName":"Tenant
         ID","description":"The tenant of your Azure Active Directory application.","helpUrl":null,"default":"common"},{"name":"Capability","type":"string","displayName":"Capability","description":"Resource
-        for which AccessToken needs to be obtained.","helpUrl":"http://msdn.microsoft.com/en-us/office/office365/howto/discover-service-endpoints","default":"Contacts"},{"name":"ResourceUri","type":"string","displayName":"Resource
+        for which AccessToken needs to be obtained.","helpUrl":"http://msdn.microsoft.com/office/office365/howto/discover-service-endpoints","default":"Contacts"},{"name":"ResourceUri","type":"string","displayName":"Resource
         URL","description":"The resource to get authorization for.","helpUrl":null,"default":null}]}},{"properties":{"id":"65d314ec-3b66-4021-b2c9-6d8c2f7148ff","displayName":"OneDrive","serviceProviderName":"onedrive","devPortalUrl":null,"iconUrl":null,"parameters":[{"name":"ClientId","type":"string","displayName":"Client
         id","description":"The id used to identify this application with the service
         provider","helpUrl":null,"default":null},{"name":"ClientSecret","type":"securestring","displayName":"Client

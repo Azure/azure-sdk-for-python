@@ -11,7 +11,7 @@ an Event Hubs connection string that points to the built-in messaging endpoint.
 The Event Hubs connection string is then used with the EventHubConsumerClient to
 receive events.
 More information about the built-in messaging endpoint can be found at:
-https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin
+https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin
 """
 
 import os

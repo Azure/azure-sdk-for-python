@@ -123,7 +123,7 @@ az webapp config appsettings set -g $RESOURCE_GROUP -n $WEB_APP_USER_ASSIGNED \
 At the time of writing, attaching user-assigned identities is impossible through the Azure CLI
 ([Azure/azure-cli#9887](https://github.com/Azure/azure-cli/issues/9887)).
 Use the Azure Portal to attached the managed identity created above to the Web App (see
-[App Service documentation](https://docs.microsoft.com/en-us/azure/app-service/overview-managed-identity?tabs=dotnet#adding-a-user-assigned-identity)).
+[App Service documentation](https://docs.microsoft.com/azure/app-service/overview-managed-identity?tabs=dotnet#adding-a-user-assigned-identity)).
 
 ## Build the Docker image
 

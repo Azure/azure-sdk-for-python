@@ -11,7 +11,7 @@ This preview package for Python enables users to get blob change feed events. Th
 ### Prerequisites
 * Python 2.7, or 3.5 or later is required to use this package.
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure storage account](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-quickstart-create-account) to use this package.
+[Azure storage account](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account) to use this package.
 
 ### Install the package
 Install the Azure Storage Blob ChangeFeed client library for Python with [pip](https://pypi.org/project/pip/):
@@ -22,9 +22,9 @@ pip install azure-storage-blob-changefeed --pre
 
 ### Create a storage account
 If you wish to create a new storage account, you can use the
-[Azure Portal](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-the-azure-portal),
-[Azure PowerShell](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-powershell),
-or [Azure CLI](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-azure-cli):
+[Azure Portal](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-the-azure-portal),
+[Azure PowerShell](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-powershell),
+or [Azure CLI](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-azure-cli):
 
 ```bash
 # Create a new resource group to hold the storage account -

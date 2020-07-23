@@ -984,7 +984,7 @@ class PoolOperations(object):
          service rejects the request with detailed error information. For more
          information about specifying this formula, see Automatically scale
          Compute Nodes in an Azure Batch Pool
-         (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
+         (https://azure.microsoft.com/documentation/articles/batch-automatic-scaling).
         :type auto_scale_formula: str
         :param auto_scale_evaluation_interval: The time interval at which to
          automatically adjust the Pool size according to the autoscale formula.
@@ -1115,7 +1115,7 @@ class PoolOperations(object):
          the Pool, 'Enable automatic scaling on a Pool'. For more information
          about specifying this formula, see Automatically scale Compute Nodes
          in an Azure Batch Pool
-         (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
+         (https://azure.microsoft.com/documentation/articles/batch-automatic-scaling).
         :type auto_scale_formula: str
         :param pool_evaluate_auto_scale_options: Additional parameters for the
          operation

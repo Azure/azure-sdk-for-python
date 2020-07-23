@@ -7167,10 +7167,10 @@ interactions:
         detail\": \"A cross-premises or VNet-to-VNet connection needs to be created\
         \ on the gateway.\",\r\n      \"recommendedActions\": [\r\n        {\r\n \
         \         \"actionText\": \"Create a cross premises connection\",\r\n    \
-        \      \"actionUri\": \"https://azure.microsoft.com/en-us/documentation/articles/vpn-gateway-howto-site-to-site-resource-manager-portal/\"\
+        \      \"actionUri\": \"https://azure.microsoft.com/documentation/articles/vpn-gateway-howto-site-to-site-resource-manager-portal/\"\
         ,\r\n          \"actionUriText\": \"cross premises\"\r\n        },\r\n   \
         \     {\r\n          \"actionText\": \"Create a VNet-to-VNet connection\"\
-        ,\r\n          \"actionUri\": \"https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-vnet-vnet-resource-manager-portal\"\
+        ,\r\n          \"actionUri\": \"https://docs.microsoft.com/azure/vpn-gateway/vpn-gateway-howto-vnet-vnet-resource-manager-portal\"\
         ,\r\n          \"actionUriText\": \"VNet-to-VNet\"\r\n        },\r\n     \
         \   {\r\n          \"actionText\": \"If you are experiencing problems you\
         \ believe are caused by Azure, contact support\",\r\n          \"actionUri\"\
@@ -7233,10 +7233,10 @@ interactions:
         detail\": \"A cross-premises or VNet-to-VNet connection needs to be created\
         \ on the gateway.\",\r\n      \"recommendedActions\": [\r\n        {\r\n \
         \         \"actionText\": \"Create a cross premises connection\",\r\n    \
-        \      \"actionUri\": \"https://azure.microsoft.com/en-us/documentation/articles/vpn-gateway-howto-site-to-site-resource-manager-portal/\"\
+        \      \"actionUri\": \"https://azure.microsoft.com/documentation/articles/vpn-gateway-howto-site-to-site-resource-manager-portal/\"\
         ,\r\n          \"actionUriText\": \"cross premises\"\r\n        },\r\n   \
         \     {\r\n          \"actionText\": \"Create a VNet-to-VNet connection\"\
-        ,\r\n          \"actionUri\": \"https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-vnet-vnet-resource-manager-portal\"\
+        ,\r\n          \"actionUri\": \"https://docs.microsoft.com/azure/vpn-gateway/vpn-gateway-howto-vnet-vnet-resource-manager-portal\"\
         ,\r\n          \"actionUriText\": \"VNet-to-VNet\"\r\n        },\r\n     \
         \   {\r\n          \"actionText\": \"If you are experiencing problems you\
         \ believe are caused by Azure, contact support\",\r\n          \"actionUri\"\

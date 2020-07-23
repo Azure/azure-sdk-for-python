@@ -836,7 +836,7 @@ class CorsSettings(Model):
     :type allowed_origins: list[str]
     :param support_credentials: Gets or sets whether CORS requests with
      credentials are allowed. See
-     https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Requests_with_credentials
+     https://developer.mozilla.org/docs/Web/HTTP/CORS#Requests_with_credentials
      for more details.
     :type support_credentials: bool
     """

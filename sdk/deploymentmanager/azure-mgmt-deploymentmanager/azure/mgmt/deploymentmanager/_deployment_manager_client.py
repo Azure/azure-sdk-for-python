@@ -24,7 +24,7 @@ from . import models
 
 
 class DeploymentManagerClient(SDKClient):
-    """REST APIs for orchestrating deployments using the Azure Deployment Manager (ADM). See https://docs.microsoft.com/en-us/azure/azure-resource-manager/deployment-manager-overview for more information.
+    """REST APIs for orchestrating deployments using the Azure Deployment Manager (ADM). See https://docs.microsoft.com/azure/azure-resource-manager/deployment-manager-overview for more information.
 
     :ivar config: Configuration for client.
     :vartype config: DeploymentManagerClientConfiguration

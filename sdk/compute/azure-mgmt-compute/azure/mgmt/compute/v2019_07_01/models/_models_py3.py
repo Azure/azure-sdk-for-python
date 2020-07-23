@@ -10310,9 +10310,9 @@ class WindowsConfiguration(msrest.serialization.Model):
     :type enable_automatic_updates: bool
     :param time_zone: Specifies the time zone of the virtual machine. e.g. "Pacific Standard Time".
      :code:`<br>`:code:`<br>` Possible values can be `TimeZoneInfo.Id
-     <https://docs.microsoft.com/en-us/dotnet/api/system.timezoneinfo.id?#System_TimeZoneInfo_Id>`_
+     <https://docs.microsoft.com/dotnet/api/system.timezoneinfo.id?#System_TimeZoneInfo_Id>`_
      value from time zones returned by `TimeZoneInfo.GetSystemTimeZones
-     <https://docs.microsoft.com/en-us/dotnet/api/system.timezoneinfo.getsystemtimezones>`_.
+     <https://docs.microsoft.com/dotnet/api/system.timezoneinfo.getsystemtimezones>`_.
     :type time_zone: str
     :param additional_unattend_content: Specifies additional base-64 encoded XML formatted
      information that can be included in the Unattend.xml file, which is used by Windows Setup.

@@ -979,7 +979,7 @@ class IntegrationRuntimeComputeProperties(Model):
     :type additional_properties: dict[str, object]
     :param location: The location for managed integration runtime. The
      supported regions could be found on
-     https://docs.microsoft.com/en-us/azure/data-factory/data-factory-data-movement-activities
+     https://docs.microsoft.com/azure/data-factory/data-factory-data-movement-activities
     :type location: str
     :param node_size: The node size requirement to managed integration
      runtime.
@@ -1389,7 +1389,7 @@ class IntegrationRuntimeSsisCatalogInfo(Model):
     :type catalog_admin_password: ~azure.mgmt.synapse.models.SecureString
     :param catalog_pricing_tier: The pricing tier for the catalog database.
      The valid values could be found in
-     https://azure.microsoft.com/en-us/pricing/details/sql-database/. Possible
+     https://azure.microsoft.com/pricing/details/sql-database/. Possible
      values include: 'Basic', 'Standard', 'Premium', 'PremiumRS'
     :type catalog_pricing_tier: str or
      ~azure.mgmt.synapse.models.IntegrationRuntimeSsisCatalogPricingTier
@@ -3469,7 +3469,7 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
      executed against the database, and should not be used in combination with
      other groups as this will result in duplicate audit logs.
      For more information, see [Database-Level Audit Action
-     Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
+     Groups](https://docs.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
      For Database auditing policy, specific Actions can also be specified (note
      that Actions cannot be specified for Server auditing policy). The
      supported actions to audit are:
@@ -3491,7 +3491,7 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
      SELECT on DATABASE::myDatabase by public
      SELECT on SCHEMA::mySchema by public
      For more information, see [Database-Level Audit
-     Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
+     Actions](https://docs.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
     :type audit_actions_and_groups: list[str]
     :param storage_account_subscription_id: Specifies the blob storage
      subscription Id.

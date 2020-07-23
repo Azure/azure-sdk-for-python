@@ -138,7 +138,7 @@ Azure Key Vault can create and store RSA and elliptic curve keys. Both can
 optionally be protected by hardware security modules (HSMs). Azure Key Vault
 can also perform cryptographic operations with them. For more information about
 keys and supported operations and algorithms, see the
-[Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/about-keys-secrets-and-certificates#key-vault-keys).
+[Key Vault documentation](https://docs.microsoft.com/azure/key-vault/about-keys-secrets-and-certificates#key-vault-keys).
 
 [KeyClient][key_client_docs] can create keys in the vault, get existing keys
 from the vault, update key metadata, and delete keys, as shown in the
@@ -436,7 +436,7 @@ additional questions or comments.
 [list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/list_operations_async.py
 [recover_purge_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/recover_purge_operations.py
 [recover_purge_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/recover_purge_operations_async.py
-[keyvault_docs]: https://docs.microsoft.com/en-us/azure/key-vault/
+[keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [pip]: https://pypi.org/project/pip/
 [pypi_package_keys]: https://pypi.org/project/azure-keyvault-keys/
 [reference_docs]: https://aka.ms/azsdk-python-keyvault-keys-docs
@@ -444,7 +444,7 @@ additional questions or comments.
 [crypto_client_docs]: https://aka.ms/azsdk-python-keyvault-keys-cryptographyclient
 [key_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/azure/keyvault/keys
 [key_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples
-[soft_delete]: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
+[soft_delete]: https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete
 [test_examples_keys]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/tests/test_samples_keys.py
 [test_example_keys_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/tests/test_samples_keys_async.py
 

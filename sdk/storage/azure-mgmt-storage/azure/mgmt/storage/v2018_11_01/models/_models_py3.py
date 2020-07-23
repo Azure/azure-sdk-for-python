@@ -1328,7 +1328,7 @@ class ManagementPolicy(Resource):
     :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
     :vartype last_modified_time: ~datetime.datetime
     :param policy: The Storage Account ManagementPolicy, in JSON format. See more details in:
-     https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+     https://docs.microsoft.com/azure/storage/common/storage-lifecycle-managment-concepts.
     :type policy: ~azure.mgmt.storage.v2018_11_01.models.ManagementPolicySchema
     """
 
@@ -1529,12 +1529,12 @@ class ManagementPolicyRule(msrest.serialization.Model):
 
 
 class ManagementPolicySchema(msrest.serialization.Model):
-    """The Storage Account ManagementPolicies Rules. See more details in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+    """The Storage Account ManagementPolicies Rules. See more details in: https://docs.microsoft.com/azure/storage/common/storage-lifecycle-managment-concepts.
 
     All required parameters must be populated in order to send to Azure.
 
     :param rules: Required. The Storage Account ManagementPolicies Rules. See more details in:
-     https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
+     https://docs.microsoft.com/azure/storage/common/storage-lifecycle-managment-concepts.
     :type rules: list[~azure.mgmt.storage.v2018_11_01.models.ManagementPolicyRule]
     """
 

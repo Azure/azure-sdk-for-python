@@ -40,7 +40,7 @@ class QueueOperations(object):
 
         :param timeout: The The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
          Timeouts for Queue Service Operations.</a>
         :type timeout: int
         :param metadata: Optional. Include this parameter to specify that the
@@ -106,7 +106,7 @@ class QueueOperations(object):
 
         :param timeout: The The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
          Timeouts for Queue Service Operations.</a>
         :type timeout: int
         :param request_id: Provides a client-generated, opaque value with a 1
@@ -164,7 +164,7 @@ class QueueOperations(object):
 
         :param timeout: The The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
          Timeouts for Queue Service Operations.</a>
         :type timeout: int
         :param request_id: Provides a client-generated, opaque value with a 1
@@ -227,7 +227,7 @@ class QueueOperations(object):
 
         :param timeout: The The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
          Timeouts for Queue Service Operations.</a>
         :type timeout: int
         :param metadata: Optional. Include this parameter to specify that the
@@ -297,7 +297,7 @@ class QueueOperations(object):
 
         :param timeout: The The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
          Timeouts for Queue Service Operations.</a>
         :type timeout: int
         :param request_id: Provides a client-generated, opaque value with a 1
@@ -368,7 +368,7 @@ class QueueOperations(object):
         :type queue_acl: list[~azure.storage.queue.models.SignedIdentifier]
         :param timeout: The The timeout parameter is expressed in seconds. For
          more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         href="https://docs.microsoft.com/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
          Timeouts for Queue Service Operations.</a>
         :type timeout: int
         :param request_id: Provides a client-generated, opaque value with a 1

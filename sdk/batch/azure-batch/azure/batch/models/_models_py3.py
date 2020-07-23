@@ -18,7 +18,7 @@ class AccountListPoolNodeCountsOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch.
     :type filter: str
     :param max_results: The maximum number of items to return in the response.
      Default value: 10 .
@@ -63,7 +63,7 @@ class AccountListSupportedImagesOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-support-images.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-support-images.
     :type filter: str
     :param max_results: The maximum number of items to return in the response.
      A maximum of 1000 results will be returned. Default value: 1000 .
@@ -835,7 +835,7 @@ class CertificateListOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-certificates.
     :type filter: str
     :param select: An OData $select clause.
     :type select: str
@@ -1577,7 +1577,7 @@ class CloudTask(Model):
      or "/bin/sh -c MyCommand" in Linux. If the command line refers to file
      paths, it should use a relative path (relative to the Task working
      directory), or use the Batch provided environment variable
-     (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     (https://docs.microsoft.com/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
      Task runs. If the Pool that will run this Task has containerConfiguration
@@ -2245,7 +2245,7 @@ class ComputeNodeListOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-nodes-in-a-pool.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-nodes-in-a-pool.
     :type filter: str
     :param select: An OData $select clause.
     :type select: str
@@ -3101,7 +3101,7 @@ class FileListFromComputeNodeOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files.
     :type filter: str
     :param max_results: The maximum number of items to return in the response.
      A maximum of 1000 files can be returned. Default value: 1000 .
@@ -3146,7 +3146,7 @@ class FileListFromTaskOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-task-files.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-task-files.
     :type filter: str
     :param max_results: The maximum number of items to return in the response.
      A maximum of 1000 files can be returned. Default value: 1000 .
@@ -3312,7 +3312,7 @@ class ImageReference(Model):
      replicas in the same region as the Azure Batch account. For information
      about the firewall settings for the Batch Compute Node agent to
      communicate with the Batch service see
-     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
+     https://docs.microsoft.com/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :type virtual_machine_image_id: str
     """
 
@@ -4059,7 +4059,7 @@ class JobListFromJobScheduleOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule.
     :type filter: str
     :param select: An OData $select clause.
     :type select: str
@@ -4112,7 +4112,7 @@ class JobListOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-jobs.
     :type filter: str
     :param select: An OData $select clause.
     :type select: str
@@ -4166,7 +4166,7 @@ class JobListPreparationAndReleaseTaskStatusOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status.
     :type filter: str
     :param select: An OData $select clause.
     :type select: str
@@ -4256,7 +4256,7 @@ class JobManagerTask(Model):
      "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths,
      it should use a relative path (relative to the Task working directory), or
      use the Batch provided environment variable
-     (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     (https://docs.microsoft.com/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
      Job Manager Task runs. If the Pool that will run this Task has
@@ -4411,7 +4411,7 @@ class JobNetworkConfiguration(Model):
      and port 3389 for Windows. Port 443 is also required to be open for
      outbound connections for communications to Azure Storage. For more details
      see:
-     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
+     https://docs.microsoft.com/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
     :type subnet_id: str
     """
 
@@ -4628,7 +4628,7 @@ class JobPreparationTask(Model):
      or "/bin/sh -c MyCommand" in Linux. If the command line refers to file
      paths, it should use a relative path (relative to the Task working
      directory), or use the Batch provided environment variable
-     (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     (https://docs.microsoft.com/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
      Job Preparation Task runs. When this is specified, all directories
@@ -4852,7 +4852,7 @@ class JobReleaseTask(Model):
      "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths,
      it should use a relative path (relative to the Task working directory), or
      use the Batch provided environment variable
-     (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     (https://docs.microsoft.com/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
      Job Release Task runs. When this is specified, all directories recursively
@@ -5434,7 +5434,7 @@ class JobScheduleListOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-job-schedules.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-job-schedules.
     :type filter: str
     :param select: An OData $select clause.
     :type select: str
@@ -6514,7 +6514,7 @@ class NetworkConfiguration(Model):
      for Linux and port 3389 for Windows. For Pools created with a cloud
      service configuration, enable ports 10100, 20100, and 30100. Also enable
      outbound connections to Azure Storage on port 443. For more details see:
-     https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
+     https://docs.microsoft.com/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
     :type subnet_id: str
     :param dynamic_vnet_assignment_scope: The scope of dynamic vnet
      assignment. Possible values include: 'none', 'job'
@@ -7455,7 +7455,7 @@ class PoolEnableAutoScaleParameter(Model):
      rejects the request with detailed error information. For more information
      about specifying this formula, see Automatically scale Compute Nodes in an
      Azure Batch Pool
-     (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
+     (https://azure.microsoft.com/documentation/articles/batch-automatic-scaling).
     :type auto_scale_formula: str
     :param auto_scale_evaluation_interval: The time interval at which to
      automatically adjust the Pool size according to the autoscale formula. The
@@ -7552,7 +7552,7 @@ class PoolEvaluateAutoScaleParameter(Model):
      Pool, 'Enable automatic scaling on a Pool'. For more information about
      specifying this formula, see Automatically scale Compute Nodes in an Azure
      Batch Pool
-     (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
+     (https://azure.microsoft.com/documentation/articles/batch-automatic-scaling).
     :type auto_scale_formula: str
     """
 
@@ -7773,7 +7773,7 @@ class PoolListOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-pools.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-pools.
     :type filter: str
     :param select: An OData $select clause.
     :type select: str
@@ -7836,7 +7836,7 @@ class PoolListUsageMetricsOptions(Model):
     :type end_time: datetime
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics.
     :type filter: str
     :param max_results: The maximum number of items to return in the response.
      A maximum of 1000 results will be returned. Default value: 1000 .
@@ -8960,7 +8960,7 @@ class StartTask(Model):
      "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths,
      it should use a relative path (relative to the Task working directory), or
      use the Batch provided environment variable
-     (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     (https://docs.microsoft.com/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
      StartTask runs. When this is specified, all directories recursively below
@@ -9353,7 +9353,7 @@ class TaskAddParameter(Model):
      MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command
      line refers to file paths, it should use a relative path (relative to the
      Task working directory), or use the Batch provided environment variable
-     (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     (https://docs.microsoft.com/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
      Task runs. If the Pool that will run this Task has containerConfiguration
@@ -10053,7 +10053,7 @@ class TaskListOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-tasks.
+     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-tasks.
     :type filter: str
     :param select: An OData $select clause.
     :type select: str
@@ -10673,9 +10673,9 @@ class VirtualMachineConfiguration(Model):
      empty. When the Compute Node is removed from the Pool, the disk and all
      data associated with it is also deleted. The disk is not formatted after
      being attached, it must be formatted before use - for more information see
-     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/classic/attach-disk#initialize-a-new-data-disk-in-linux
+     https://docs.microsoft.com/azure/virtual-machines/linux/classic/attach-disk#initialize-a-new-data-disk-in-linux
      and
-     https://docs.microsoft.com/en-us/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine.
+     https://docs.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine.
     :type data_disks: list[~azure.batch.models.DataDisk]
     :param license_type: The type of on-premises license to be used when
      deploying the operating system. This only applies to Images that contain
