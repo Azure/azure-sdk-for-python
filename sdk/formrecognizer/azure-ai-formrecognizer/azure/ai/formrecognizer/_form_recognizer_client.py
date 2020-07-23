@@ -14,6 +14,7 @@ from typing import (
     TYPE_CHECKING
 )
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 from azure.core.polling.base_polling import LROBasePolling
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
@@ -24,7 +25,7 @@ from ._response_handlers import (
 )
 from ._generated.models import AnalyzeOperationResult
 from ._api_versions import validate_api_version
-from ._helpers import get_content_type, get_authentication_policy, error_map, POLLING_INTERVAL
+from ._helpers import get_content_type, get_authentication_policy, error_map, process_form_exception, POLLING_INTERVAL
 from ._user_agent import USER_AGENT
 from ._polling import AnalyzePolling
 if TYPE_CHECKING:
@@ -134,16 +135,19 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(receipt)
 
-        return self._client.begin_analyze_receipt_async(  # type: ignore
-            file_stream=receipt,
-            content_type=content_type,
-            include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._receipt_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
-            **kwargs
-        )
+        try:
+            return self._client.begin_analyze_receipt_async(  # type: ignore
+                file_stream=receipt,
+                content_type=content_type,
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._receipt_callback),
+                polling=LROBasePolling(timeout=polling_interval, **kwargs),
+                error_map=error_map,
+                continuation_token=continuation_token,
+                **kwargs
+            )
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     @distributed_trace
     def begin_recognize_receipts_from_url(self, receipt_url, **kwargs):
@@ -181,15 +185,18 @@ class FormRecognizerClient(object):
         continuation_token = kwargs.pop("continuation_token", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        return self._client.begin_analyze_receipt_async(  # type: ignore
-            file_stream={"source": receipt_url},
-            include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._receipt_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
-            **kwargs
-        )
+        try:
+            return self._client.begin_analyze_receipt_async(  # type: ignore
+                file_stream={"source": receipt_url},
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._receipt_callback),
+                polling=LROBasePolling(timeout=polling_interval, **kwargs),
+                error_map=error_map,
+                continuation_token=continuation_token,
+                **kwargs
+            )
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
@@ -235,15 +242,18 @@ class FormRecognizerClient(object):
         if content_type is None:
             content_type = get_content_type(form)
 
-        return self._client.begin_analyze_layout_async(  # type: ignore
-            file_stream=form,
-            content_type=content_type,
-            cls=kwargs.pop("cls", self._content_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
-            **kwargs
-        )
+        try:
+            return self._client.begin_analyze_layout_async(  # type: ignore
+                file_stream=form,
+                content_type=content_type,
+                cls=kwargs.pop("cls", self._content_callback),
+                polling=LROBasePolling(timeout=polling_interval, **kwargs),
+                error_map=error_map,
+                continuation_token=continuation_token,
+                **kwargs
+            )
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     @distributed_trace
     def begin_recognize_content_from_url(self, form_url, **kwargs):
@@ -265,14 +275,17 @@ class FormRecognizerClient(object):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        return self._client.begin_analyze_layout_async(  # type: ignore
-            file_stream={"source": form_url},
-            cls=kwargs.pop("cls", self._content_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
-            **kwargs
-        )
+        try:
+            return self._client.begin_analyze_layout_async(  # type: ignore
+                file_stream={"source": form_url},
+                cls=kwargs.pop("cls", self._content_callback),
+                polling=LROBasePolling(timeout=polling_interval, **kwargs),
+                error_map=error_map,
+                continuation_token=continuation_token,
+                **kwargs
+            )
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     @distributed_trace
     def begin_recognize_custom_forms(self, model_id, form, **kwargs):
@@ -328,17 +341,20 @@ class FormRecognizerClient(object):
             return prepare_form_result(analyze_result, model_id)
 
         deserialization_callback = cls if cls else analyze_callback
-        return self._client.begin_analyze_with_custom_model(  # type: ignore
-            file_stream=form,
-            model_id=model_id,
-            include_text_details=include_field_elements,
-            content_type=content_type,
-            cls=deserialization_callback,
-            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
-            **kwargs
-        )
+        try:
+            return self._client.begin_analyze_with_custom_model(  # type: ignore
+                file_stream=form,
+                model_id=model_id,
+                include_text_details=include_field_elements,
+                content_type=content_type,
+                cls=deserialization_callback,
+                polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
+                error_map=error_map,
+                continuation_token=continuation_token,
+                **kwargs
+            )
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     @distributed_trace
     def begin_recognize_custom_forms_from_url(self, model_id, form_url, **kwargs):
@@ -374,16 +390,19 @@ class FormRecognizerClient(object):
             return prepare_form_result(analyze_result, model_id)
 
         deserialization_callback = cls if cls else analyze_callback
-        return self._client.begin_analyze_with_custom_model(  # type: ignore
-            file_stream={"source": form_url},
-            model_id=model_id,
-            include_text_details=include_field_elements,
-            cls=deserialization_callback,
-            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
-            error_map=error_map,
-            continuation_token=continuation_token,
-            **kwargs
-        )
+        try:
+            return self._client.begin_analyze_with_custom_model(  # type: ignore
+                file_stream={"source": form_url},
+                model_id=model_id,
+                include_text_details=include_field_elements,
+                cls=deserialization_callback,
+                polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[AnalyzePolling()], **kwargs),
+                error_map=error_map,
+                continuation_token=continuation_token,
+                **kwargs
+            )
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     def close(self):
         # type: () -> None

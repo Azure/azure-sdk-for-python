@@ -13,6 +13,7 @@ from typing import (
     Union,
     TYPE_CHECKING,
 )
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncLROPoller
 from azure.core.pipeline import AsyncPipeline
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -30,7 +31,7 @@ from .._generated.models import (
     CopyOperationResult,
     CopyAuthorizationResult
 )
-from .._helpers import error_map, get_authentication_policy, POLLING_INTERVAL
+from .._helpers import error_map, get_authentication_policy, POLLING_INTERVAL, process_form_exception
 from .._models import (
     CustomFormModelInfo,
     AccountProperties,
@@ -178,16 +179,19 @@ class FormTrainingClient(object):
             **kwargs
         )
 
-        return AsyncLROPoller(
-            self._client._client,
-            response,
-            deserialization_callback,
-            AsyncLROBasePolling(  # type: ignore
-                timeout=polling_interval,
-                lro_algorithms=[TrainingPolling()],
-                **kwargs
+        try:
+            return AsyncLROPoller(
+                self._client._client,
+                response,
+                deserialization_callback,
+                AsyncLROBasePolling(  # type: ignore
+                    timeout=polling_interval,
+                    lro_algorithms=[TrainingPolling()],
+                    **kwargs
+                )
             )
-        )
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     @distributed_trace_async
     async def delete_model(self, model_id: str, **kwargs: Any) -> None:
@@ -211,12 +215,15 @@ class FormTrainingClient(object):
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
-
-        return await self._client.delete_custom_model(
-            model_id=model_id,
-            error_map=error_map,
-            **kwargs
-        )
+        
+        try:
+            return await self._client.delete_custom_model(
+                model_id=model_id,
+                error_map=error_map,
+                **kwargs
+            )
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     @distributed_trace
     def list_custom_models(self, **kwargs: Any) -> AsyncItemPaged[CustomFormModelInfo]:
@@ -236,11 +243,12 @@ class FormTrainingClient(object):
                 :dedent: 12
                 :caption: List model information for each model on the account.
         """
-        return self._client.list_custom_models(  # type: ignore
-            cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
-            error_map=error_map,
-            **kwargs
-        )
+        try:
+            return self._client.list_custom_models(  # type: ignore
+                cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
+                error_map=error_map,
+                **kwargs
+            )
 
     @distributed_trace_async
     async def get_account_properties(self, **kwargs: Any) -> AccountProperties:
@@ -261,7 +269,10 @@ class FormTrainingClient(object):
                 :caption: Get properties for the form recognizer account.
         """
         response = await self._client.get_custom_models(error_map=error_map, **kwargs)
-        return AccountProperties._from_generated(response.summary)
+        try:
+            return AccountProperties._from_generated(response.summary)
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     @distributed_trace_async
     async def get_custom_model(self, model_id: str, **kwargs: Any) -> CustomFormModel:
@@ -292,7 +303,10 @@ class FormTrainingClient(object):
             error_map=error_map,
             **kwargs
         )
-        return CustomFormModel._from_generated(response)
+        try:
+            return CustomFormModel._from_generated(response)
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     @distributed_trace_async
     async def get_copy_authorization(
@@ -334,7 +348,10 @@ class FormTrainingClient(object):
         target = json.loads(response.http_response.text())
         target["resourceId"] = resource_id
         target["resourceRegion"] = resource_region
-        return target
+        try:
+            return target
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     @distributed_trace_async
     async def begin_copy_model(
@@ -379,28 +396,30 @@ class FormTrainingClient(object):
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._client._deserialize(CopyOperationResult, raw_response)
             return CustomFormModelInfo._from_generated(copy_result, target["modelId"])
-
-        return await self._client.begin_copy_custom_model(  # type: ignore
-            model_id=model_id,
-            copy_request=CopyRequest(
-                target_resource_id=target["resourceId"],
-                target_resource_region=target["resourceRegion"],
-                copy_authorization=CopyAuthorizationResult(
-                    access_token=target["accessToken"],
-                    model_id=target["modelId"],
-                    expiration_date_time_ticks=target["expirationDateTimeTicks"]
-                )
-            ),
-            cls=kwargs.pop("cls", _copy_callback),
-            polling=AsyncLROBasePolling(
-                timeout=polling_interval,
-                lro_algorithms=[CopyPolling()],
+        try:
+            return await self._client.begin_copy_custom_model(  # type: ignore
+                model_id=model_id,
+                copy_request=CopyRequest(
+                    target_resource_id=target["resourceId"],
+                    target_resource_region=target["resourceRegion"],
+                    copy_authorization=CopyAuthorizationResult(
+                        access_token=target["accessToken"],
+                        model_id=target["modelId"],
+                        expiration_date_time_ticks=target["expirationDateTimeTicks"]
+                    )
+                ),
+                cls=kwargs.pop("cls", _copy_callback),
+                polling=AsyncLROBasePolling(
+                    timeout=polling_interval,
+                    lro_algorithms=[CopyPolling()],
+                    **kwargs
+                ),
+                error_map=error_map,
+                continuation_token=continuation_token,
                 **kwargs
-            ),
-            error_map=error_map,
-            continuation_token=continuation_token,
-            **kwargs
-        )
+            )
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
         """Get an instance of a FormRecognizerClient from FormTrainingClient.

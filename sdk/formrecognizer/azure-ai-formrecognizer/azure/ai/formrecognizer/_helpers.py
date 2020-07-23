@@ -5,7 +5,9 @@
 # ------------------------------------
 
 import six
+import sys
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.exceptions import (
@@ -94,3 +96,7 @@ def check_beginning_bytes(form):
         if form[:4] == b"\x4D\x4D\x00\x2A":  # big-endian
             return "image/tiff"
     raise ValueError("Content type could not be auto-detected. Please pass the content_type keyword argument.")
+
+def process_form_exception(exc):
+    req_id = exc.response.request.headers["x-ms-client-request-id"]
+    raise HttpResponseError(exc.message + ". Request ID is: " + req_id, exc)
