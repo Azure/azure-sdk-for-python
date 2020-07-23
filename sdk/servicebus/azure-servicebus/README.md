@@ -381,7 +381,7 @@ connstr = os.environ['SERVICE_BUS_CONN_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 session_id = os.environ['SERVICE_BUS_SESSION_ID']
 
-# Can also be called via "with AutoLockRenew() as renewer" to automate shutdown.
+# Can also be called via "with AutoLockRenew() as renewer" to automate closing.
 renewer = AutoLockRenew()
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_session_receiver(queue_name, session_id=session_id) as receiver:
@@ -390,7 +390,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             renewer.register(msg, timeout=60)
             # Do your application logic here
             msg.complete()
-renewer.shutdown()
+renewer.close()
 ```
 
 If for any reason auto-renewal has been interrupted or failed, this can be observed via the `auto_renew_error` property on the object being renewed.

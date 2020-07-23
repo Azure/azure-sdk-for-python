@@ -10,7 +10,7 @@ from ._servicebus_receiver_async import ServiceBusReceiver
 from ._servicebus_session_receiver_async import ServiceBusSessionReceiver
 from ._servicebus_session_async import ServiceBusSession
 from ._servicebus_client_async import ServiceBusClient
-from ._async_utils import AutoLockRenew
+from ._async_auto_lock_renewer import AutoLockRenew
 
 __all__ = [
     'ReceivedMessage',
