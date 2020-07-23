@@ -1708,8 +1708,8 @@ class CopySink(Model):
     SnowflakeSink, SqlDWSink, SqlMISink, AzureSqlSink, SqlServerSink, SqlSink,
     CosmosDbSqlApiSink, DocumentDbCollectionSink, FileSystemSink, BlobSink,
     BinarySink, ParquetSink, AvroSink, AzureTableSink, AzureQueueSink,
-    SapCloudForCustomerSink, AzureMySqlSink, AzurePostgreSqlSink, OrcSink,
-    JsonSink, DelimitedTextSink
+    SapCloudForCustomerSink, AzureMySqlSink, AzurePostgreSqlSink, RestSink,
+    OrcSink, JsonSink, DelimitedTextSink
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1753,7 +1753,7 @@ class CopySink(Model):
     }
 
     _subtype_map = {
-        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SnowflakeSink': 'SnowflakeSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'CosmosDbSqlApiSink': 'CosmosDbSqlApiSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzureMySqlSink': 'AzureMySqlSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'OrcSink': 'OrcSink', 'JsonSink': 'JsonSink', 'DelimitedTextSink': 'DelimitedTextSink'}
+        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SnowflakeSink': 'SnowflakeSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'CosmosDbSqlApiSink': 'CosmosDbSqlApiSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzureMySqlSink': 'AzureMySqlSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'RestSink': 'RestSink', 'OrcSink': 'OrcSink', 'JsonSink': 'JsonSink', 'DelimitedTextSink': 'DelimitedTextSink'}
     }
 
     def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
@@ -24233,23 +24233,23 @@ class QuickBooksLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param endpoint: Required. The endpoint of the QuickBooks server. (i.e.
+    :param connection_properties: Properties used to connect to QuickBooks. It
+     is mutually exclusive with any other properties in the linked service.
+     Type: object.
+    :type connection_properties: object
+    :param endpoint: The endpoint of the QuickBooks server. (i.e.
      quickbooks.api.intuit.com)
     :type endpoint: object
-    :param company_id: Required. The company ID of the QuickBooks company to
-     authorize.
+    :param company_id: The company ID of the QuickBooks company to authorize.
     :type company_id: object
-    :param consumer_key: Required. The consumer key for OAuth 1.0
-     authentication.
+    :param consumer_key: The consumer key for OAuth 1.0 authentication.
     :type consumer_key: object
-    :param consumer_secret: Required. The consumer secret for OAuth 1.0
-     authentication.
+    :param consumer_secret: The consumer secret for OAuth 1.0 authentication.
     :type consumer_secret: ~azure.mgmt.datafactory.models.SecretBase
-    :param access_token: Required. The access token for OAuth 1.0
-     authentication.
+    :param access_token: The access token for OAuth 1.0 authentication.
     :type access_token: ~azure.mgmt.datafactory.models.SecretBase
-    :param access_token_secret: Required. The access token secret for OAuth
-     1.0 authentication.
+    :param access_token_secret: The access token secret for OAuth 1.0
+     authentication.
     :type access_token_secret: ~azure.mgmt.datafactory.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source
      endpoints are encrypted using HTTPS. The default value is true.
@@ -24262,12 +24262,6 @@ class QuickBooksLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'endpoint': {'required': True},
-        'company_id': {'required': True},
-        'consumer_key': {'required': True},
-        'consumer_secret': {'required': True},
-        'access_token': {'required': True},
-        'access_token_secret': {'required': True},
     }
 
     _attribute_map = {
@@ -24277,6 +24271,7 @@ class QuickBooksLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
+        'connection_properties': {'key': 'typeProperties.connectionProperties', 'type': 'object'},
         'endpoint': {'key': 'typeProperties.endpoint', 'type': 'object'},
         'company_id': {'key': 'typeProperties.companyId', 'type': 'object'},
         'consumer_key': {'key': 'typeProperties.consumerKey', 'type': 'object'},
@@ -24287,8 +24282,9 @@ class QuickBooksLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, endpoint, company_id, consumer_key, consumer_secret, access_token, access_token_secret, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, use_encrypted_endpoints=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_properties=None, endpoint=None, company_id=None, consumer_key=None, consumer_secret=None, access_token=None, access_token_secret=None, use_encrypted_endpoints=None, encrypted_credential=None, **kwargs) -> None:
         super(QuickBooksLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.connection_properties = connection_properties
         self.endpoint = endpoint
         self.company_id = company_id
         self.consumer_key = consumer_key
@@ -25104,6 +25100,90 @@ class RestServiceLinkedService(LinkedService):
         self.type = 'RestService'
 
 
+class RestSink(CopySink):
+    """A copy activity Rest service Sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param write_batch_size: Write batch size. Type: integer (or Expression
+     with resultType integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or
+     Expression with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression
+     with resultType integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the sink data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param request_method: The HTTP method used to call the RESTful API. The
+     default is POST. Type: string (or Expression with resultType string).
+    :type request_method: object
+    :param additional_headers: The additional HTTP headers in the request to
+     the RESTful API. Type: string (or Expression with resultType string).
+    :type additional_headers: object
+    :param http_request_timeout: The timeout (TimeSpan) to get an HTTP
+     response. It is the timeout to get a response, not the timeout to read
+     response data. Default value: 00:01:40. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type http_request_timeout: object
+    :param request_interval: The time to await before sending next request, in
+     milliseconds
+    :type request_interval: object
+    :param compression_type: Compression Type to Send data in compressed
+     format with Optimal Compression Level, Default is None. And The Only
+     Supported option is Gzip.
+    :type compression_type: object
+    :param wrap_request_json_in_an_object: Wraps Request Array Json into an
+     Object before calling the rest endpoint , Default is false. ex: if true
+     request content sample format is { rows:[]} else the format is []
+    :type wrap_request_json_in_an_object: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'request_method': {'key': 'requestMethod', 'type': 'object'},
+        'additional_headers': {'key': 'additionalHeaders', 'type': 'object'},
+        'http_request_timeout': {'key': 'httpRequestTimeout', 'type': 'object'},
+        'request_interval': {'key': 'requestInterval', 'type': 'object'},
+        'compression_type': {'key': 'compressionType', 'type': 'object'},
+        'wrap_request_json_in_an_object': {'key': 'wrapRequestJsonInAnObject', 'type': 'object'},
+    }
+
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, request_method=None, additional_headers=None, http_request_timeout=None, request_interval=None, compression_type=None, wrap_request_json_in_an_object=None, **kwargs) -> None:
+        super(RestSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+        self.request_method = request_method
+        self.additional_headers = additional_headers
+        self.http_request_timeout = http_request_timeout
+        self.request_interval = request_interval
+        self.compression_type = compression_type
+        self.wrap_request_json_in_an_object = wrap_request_json_in_an_object
+        self.type = 'RestSink'
+
+
 class RestSource(CopySource):
     """A copy activity Rest service source.
 
@@ -25424,9 +25504,12 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param client_id: Required. The client ID associated with the Salesforce
-     Marketing Cloud application. Type: string (or Expression with resultType
-     string).
+    :param connection_properties: Properties used to connect to Salesforce
+     Marketing Cloud. It is mutually exclusive with any other properties in the
+     linked service. Type: object.
+    :type connection_properties: object
+    :param client_id: The client ID associated with the Salesforce Marketing
+     Cloud application. Type: string (or Expression with resultType string).
     :type client_id: object
     :param client_secret: The client secret associated with the Salesforce
      Marketing Cloud application. Type: string (or Expression with resultType
@@ -25453,7 +25536,6 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'client_id': {'required': True},
     }
 
     _attribute_map = {
@@ -25463,6 +25545,7 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
+        'connection_properties': {'key': 'typeProperties.connectionProperties', 'type': 'object'},
         'client_id': {'key': 'typeProperties.clientId', 'type': 'object'},
         'client_secret': {'key': 'typeProperties.clientSecret', 'type': 'SecretBase'},
         'use_encrypted_endpoints': {'key': 'typeProperties.useEncryptedEndpoints', 'type': 'object'},
@@ -25471,8 +25554,9 @@ class SalesforceMarketingCloudLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, client_id, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, client_secret=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_properties=None, client_id=None, client_secret=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None, **kwargs) -> None:
         super(SalesforceMarketingCloudLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.connection_properties = connection_properties
         self.client_id = client_id
         self.client_secret = client_secret
         self.use_encrypted_endpoints = use_encrypted_endpoints
@@ -26940,17 +27024,16 @@ class SapOpenHubLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param server: Required. Host name of the SAP BW instance where the open
-     hub destination is located. Type: string (or Expression with resultType
+    :param server: Host name of the SAP BW instance where the open hub
+     destination is located. Type: string (or Expression with resultType
      string).
     :type server: object
-    :param system_number: Required. System number of the BW system where the
-     open hub destination is located. (Usually a two-digit decimal number
-     represented as a string.) Type: string (or Expression with resultType
-     string).
+    :param system_number: System number of the BW system where the open hub
+     destination is located. (Usually a two-digit decimal number represented as
+     a string.) Type: string (or Expression with resultType string).
     :type system_number: object
-    :param client_id: Required. Client ID of the client on the BW system where
-     the open hub destination is located. (Usually a three-digit decimal number
+    :param client_id: Client ID of the client on the BW system where the open
+     hub destination is located. (Usually a three-digit decimal number
      represented as a string) Type: string (or Expression with resultType
      string).
     :type client_id: object
@@ -26958,6 +27041,9 @@ class SapOpenHubLinkedService(LinkedService):
      is located. The default value is EN. Type: string (or Expression with
      resultType string).
     :type language: object
+    :param system_id: SystemID of the SAP system where the table is located.
+     Type: string (or Expression with resultType string).
+    :type system_id: object
     :param user_name: Username to access the SAP BW server where the open hub
      destination is located. Type: string (or Expression with resultType
      string).
@@ -26965,6 +27051,15 @@ class SapOpenHubLinkedService(LinkedService):
     :param password: Password to access the SAP BW server where the open hub
      destination is located.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param message_server: The hostname of the SAP Message Server. Type:
+     string (or Expression with resultType string).
+    :type message_server: object
+    :param message_server_service: The service name or port number of the
+     Message Server. Type: string (or Expression with resultType string).
+    :type message_server_service: object
+    :param logon_group: The Logon Group for the SAP System. Type: string (or
+     Expression with resultType string).
+    :type logon_group: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -26973,9 +27068,6 @@ class SapOpenHubLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'server': {'required': True},
-        'system_number': {'required': True},
-        'client_id': {'required': True},
     }
 
     _attribute_map = {
@@ -26989,19 +27081,27 @@ class SapOpenHubLinkedService(LinkedService):
         'system_number': {'key': 'typeProperties.systemNumber', 'type': 'object'},
         'client_id': {'key': 'typeProperties.clientId', 'type': 'object'},
         'language': {'key': 'typeProperties.language', 'type': 'object'},
+        'system_id': {'key': 'typeProperties.systemId', 'type': 'object'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'message_server': {'key': 'typeProperties.messageServer', 'type': 'object'},
+        'message_server_service': {'key': 'typeProperties.messageServerService', 'type': 'object'},
+        'logon_group': {'key': 'typeProperties.logonGroup', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, server, system_number, client_id, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, language=None, user_name=None, password=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, server=None, system_number=None, client_id=None, language=None, system_id=None, user_name=None, password=None, message_server=None, message_server_service=None, logon_group=None, encrypted_credential=None, **kwargs) -> None:
         super(SapOpenHubLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.server = server
         self.system_number = system_number
         self.client_id = client_id
         self.language = language
+        self.system_id = system_id
         self.user_name = user_name
         self.password = password
+        self.message_server = message_server
+        self.message_server_service = message_server_service
+        self.logon_group = logon_group
         self.encrypted_credential = encrypted_credential
         self.type = 'SapOpenHub'
 
@@ -30357,17 +30457,19 @@ class SquareLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param host: Required. The URL of the Square instance. (i.e.
-     mystore.mysquare.com)
+    :param connection_properties: Properties used to connect to Square. It is
+     mutually exclusive with any other properties in the linked service. Type:
+     object.
+    :type connection_properties: object
+    :param host: The URL of the Square instance. (i.e. mystore.mysquare.com)
     :type host: object
-    :param client_id: Required. The client ID associated with your Square
-     application.
+    :param client_id: The client ID associated with your Square application.
     :type client_id: object
     :param client_secret: The client secret associated with your Square
      application.
     :type client_secret: ~azure.mgmt.datafactory.models.SecretBase
-    :param redirect_uri: Required. The redirect URL assigned in the Square
-     application dashboard. (i.e. http://localhost:2500)
+    :param redirect_uri: The redirect URL assigned in the Square application
+     dashboard. (i.e. http://localhost:2500)
     :type redirect_uri: object
     :param use_encrypted_endpoints: Specifies whether the data source
      endpoints are encrypted using HTTPS. The default value is true.
@@ -30387,9 +30489,6 @@ class SquareLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'host': {'required': True},
-        'client_id': {'required': True},
-        'redirect_uri': {'required': True},
     }
 
     _attribute_map = {
@@ -30399,6 +30498,7 @@ class SquareLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
+        'connection_properties': {'key': 'typeProperties.connectionProperties', 'type': 'object'},
         'host': {'key': 'typeProperties.host', 'type': 'object'},
         'client_id': {'key': 'typeProperties.clientId', 'type': 'object'},
         'client_secret': {'key': 'typeProperties.clientSecret', 'type': 'SecretBase'},
@@ -30409,8 +30509,9 @@ class SquareLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, host, client_id, redirect_uri, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, client_secret=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_properties=None, host=None, client_id=None, client_secret=None, redirect_uri=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None, **kwargs) -> None:
         super(SquareLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.connection_properties = connection_properties
         self.host = host
         self.client_id = client_id
         self.client_secret = client_secret
@@ -33336,8 +33437,11 @@ class XeroLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param host: Required. The endpoint of the Xero server. (i.e.
-     api.xero.com)
+    :param connection_properties: Properties used to connect to Xero. It is
+     mutually exclusive with any other properties in the linked service. Type:
+     object.
+    :type connection_properties: object
+    :param host: The endpoint of the Xero server. (i.e. api.xero.com)
     :type host: object
     :param consumer_key: The consumer key associated with the Xero
      application.
@@ -33365,7 +33469,6 @@ class XeroLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'host': {'required': True},
     }
 
     _attribute_map = {
@@ -33375,6 +33478,7 @@ class XeroLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
+        'connection_properties': {'key': 'typeProperties.connectionProperties', 'type': 'object'},
         'host': {'key': 'typeProperties.host', 'type': 'object'},
         'consumer_key': {'key': 'typeProperties.consumerKey', 'type': 'SecretBase'},
         'private_key': {'key': 'typeProperties.privateKey', 'type': 'SecretBase'},
@@ -33384,8 +33488,9 @@ class XeroLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, host, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, consumer_key=None, private_key=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_properties=None, host=None, consumer_key=None, private_key=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None, **kwargs) -> None:
         super(XeroLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.connection_properties = connection_properties
         self.host = host
         self.consumer_key = consumer_key
         self.private_key = private_key
@@ -33743,7 +33848,11 @@ class ZohoLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param endpoint: Required. The endpoint of the Zoho server. (i.e.
+    :param connection_properties: Properties used to connect to Zoho. It is
+     mutually exclusive with any other properties in the linked service. Type:
+     object.
+    :type connection_properties: object
+    :param endpoint: The endpoint of the Zoho server. (i.e.
      crm.zoho.com/crm/private)
     :type endpoint: object
     :param access_token: The access token for Zoho authentication.
@@ -33766,7 +33875,6 @@ class ZohoLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'endpoint': {'required': True},
     }
 
     _attribute_map = {
@@ -33776,6 +33884,7 @@ class ZohoLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
+        'connection_properties': {'key': 'typeProperties.connectionProperties', 'type': 'object'},
         'endpoint': {'key': 'typeProperties.endpoint', 'type': 'object'},
         'access_token': {'key': 'typeProperties.accessToken', 'type': 'SecretBase'},
         'use_encrypted_endpoints': {'key': 'typeProperties.useEncryptedEndpoints', 'type': 'object'},
@@ -33784,8 +33893,9 @@ class ZohoLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, endpoint, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, access_token=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_properties=None, endpoint=None, access_token=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None, **kwargs) -> None:
         super(ZohoLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.connection_properties = connection_properties
         self.endpoint = endpoint
         self.access_token = access_token
         self.use_encrypted_endpoints = use_encrypted_endpoints
