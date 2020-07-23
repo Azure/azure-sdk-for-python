@@ -1,0 +1,107 @@
+interactions:
+- request:
+    body: '{"TableName": "uttablef8471404"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 23 Jul 2020 16:29:41 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 23 Jul 2020 16:29:41 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://storagename.table.core.windows.net/Tables
+  response:
+    body:
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablef8471404"}'
+    headers:
+      cache-control: no-cache
+      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
+      date: Thu, 23 Jul 2020 16:29:41 GMT
+      location: https://storagename.table.core.windows.net/Tables('uttablef8471404')
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-ms-version: '2019-07-07'
+    status:
+      code: 201
+      message: Created
+    url: https://pyacrstoragevwbkpqx4mzj2.table.core.windows.net/Tables
+- request:
+    body: '{"PartitionKey": "test", "RowKey": "test1", "age": "39", "age@odata.type":
+      "Edm.Int64", "sex": "male", "married": true, "deceased": false, "ratio": 3.1,
+      "evenratio": 3.0, "large": "933311100", "large@odata.type": "Edm.Int64", "Birthday":
+      "1973-10-04T00:00:00Z", "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z",
+      "birthday@odata.type": "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type":
+      "Edm.Binary", "other": 20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
+      "clsid@odata.type": "Edm.Guid"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '526'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 23 Jul 2020 16:29:41 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 23 Jul 2020 16:29:41 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: POST
+    uri: https://storagename.table.core.windows.net/uttablef8471404?se=2020-07-23T17:29:41Z&sp=a&sv=2019-07-07&tn=uttablef8471404&spk=test&srk=test1&epk=test&erk=test1&sig=dJ7XRXHzHGYT5N3hHgqe67sUfJ9p04VXlJOJtu3R4sQ%3D
+  response:
+    body:
+      string: '{"odata.error":{"code":"InvalidUri","message":{"lang":"en-US","value":"The
+        requested URI does not represent any resource on the server.\nRequestId:83868330-e002-0027-5a0e-610f44000000\nTime:2020-07-23T16:29:42.5267586Z"}}}'
+    headers:
+      content-length: '222'
+      content-type: application/json
+      date: Thu, 23 Jul 2020 16:29:41 GMT
+      server: Microsoft-HTTPAPI/2.0
+      x-ms-error-code: InvalidUri
+    status:
+      code: 400
+      message: The requested URI does not represent any resource on the server.
+    url: https://pyacrstoragevwbkpqx4mzj2.table.core.windows.net//uttablef8471404?se=2020-07-23T17:29:41Z&sp=a&sv=2019-07-07&tn=uttablef8471404&spk=test&srk=test1&epk=test&erk=test1&sig=dJ7XRXHzHGYT5N3hHgqe67sUfJ9p04VXlJOJtu3R4sQ%3D
+- request:
+    body: null
+    headers:
+      Date:
+      - Thu, 23 Jul 2020 16:29:42 GMT
+      User-Agent:
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 23 Jul 2020 16:29:42 GMT
+      x-ms-version:
+      - '2019-07-07'
+    method: DELETE
+    uri: https://storagename.table.core.windows.net/Tables('uttablef8471404')
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control: no-cache
+      content-length: '0'
+      date: Thu, 23 Jul 2020 16:29:42 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-content-type-options: nosniff
+      x-ms-version: '2019-07-07'
+    status:
+      code: 204
+      message: No Content
+    url: https://pyacrstoragevwbkpqx4mzj2.table.core.windows.net/Tables('uttablef8471404')
+version: 1
