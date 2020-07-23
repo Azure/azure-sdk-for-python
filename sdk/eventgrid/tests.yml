@@ -11,7 +11,6 @@ jobs:
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_TEST_RUN_LIVE: 'true'
       Matrix:
         Linux_Python35:
           OSVmImage: 'ubuntu-18.04'
