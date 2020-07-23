@@ -4,12 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-
-from ._deserialize import _convert_to_entity
-from ._shared.models import Services
-from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
+from ._deserialize import _convert_to_entity
+from ._shared.models import Services
+from ._shared.response_handlers import return_context_and_deserialized, process_table_error
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
@@ -285,14 +284,12 @@ class TablePropertiesPaged(PageIterator):
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
         props_list = []
-        for t in self._response.value:
-            props_list.append(Table(t))
-        # props_list = [Table(t) for t in self._response.value]
+        props_list = [Table(t) for t in self._response.value]
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 
@@ -345,7 +342,7 @@ class TableEntityPropertiesPaged(PageIterator):
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return

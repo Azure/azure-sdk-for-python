@@ -6,7 +6,9 @@
 
 import functools
 from typing import Any, Union
-
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from ._models import Table
 
@@ -15,11 +17,9 @@ from ._generated.models import TableProperties, TableServiceProperties, QueryOpt
 from ._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
 from ._shared.base_client import parse_connection_str, TransportWrapper
 from ._shared.models import LocationMode
-from ._shared.response_handlers import process_storage_error
+from ._shared.response_handlers import process_table_error
 from ._version import VERSION
-from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged
-from azure.core.tracing.decorator import distributed_trace
+
 from ._table_client import TableClient
 from ._shared._error import _validate_table_name
 from ._shared._table_service_client_base import TableServiceClientBase
@@ -92,7 +92,7 @@ class TableServiceClient(TableServiceClientBase):
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
@@ -109,7 +109,7 @@ class TableServiceClient(TableServiceClientBase):
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     @distributed_trace
     def set_service_properties(
@@ -145,7 +145,7 @@ class TableServiceClient(TableServiceClientBase):
         try:
             return self._client.service.set_properties(props, **kwargs)  # type: ignore
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     @distributed_trace
     def create_table(
@@ -246,7 +246,7 @@ class TableServiceClient(TableServiceClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        filter = kwargs.pop('filter', None)
+        filter = kwargs.pop('filter', None)  # pylint: disable=W0622
         if parameters:
             filter_start = filter.split('@')[0]
             selected = filter.split('@')[1]

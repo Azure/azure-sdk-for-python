@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 23 Jul 2020 16:29:05 GMT
+      - Thu, 23 Jul 2020 16:44:17 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 16:29:05 GMT
+      - Thu, 23 Jul 2020 16:44:17 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 23 Jul 2020 16:29:05 GMT
+      - Thu, 23 Jul 2020 16:44:17 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttable979d1213')
       server:
@@ -69,27 +69,27 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 23 Jul 2020 16:29:05 GMT
+      - Thu, 23 Jul 2020 16:44:17 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 16:29:05 GMT
+      - Thu, 23 Jul 2020 16:44:17 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/uttable979d1213
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable979d1213/@Element","odata.etag":"W/\"datetime''2020-07-23T16%3A29%3A06.0064013Z''\"","PartitionKey":"pk979d1213","RowKey":"rk979d1213","Timestamp":"2020-07-23T16:29:06.0064013Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttable979d1213/@Element","odata.etag":"W/\"datetime''2020-07-23T16%3A44%3A18.1520186Z''\"","PartitionKey":"pk979d1213","RowKey":"rk979d1213","Timestamp":"2020-07-23T16:44:18.1520186Z","age@odata.type":"Edm.Int64","age":"39","sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large@odata.type":"Edm.Int64","large":"933311100","Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833"}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 23 Jul 2020 16:29:05 GMT
+      - Thu, 23 Jul 2020 16:44:17 GMT
       etag:
-      - W/"datetime'2020-07-23T16%3A29%3A06.0064013Z'"
+      - W/"datetime'2020-07-23T16%3A44%3A18.1520186Z'"
       location:
       - https://storagename.table.core.windows.net/uttable979d1213(PartitionKey='pk979d1213',RowKey='rk979d1213')
       server:
@@ -119,11 +119,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Thu, 23 Jul 2020 16:29:05 GMT
+      - Thu, 23 Jul 2020 16:44:17 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 16:29:05 GMT
+      - Thu, 23 Jul 2020 16:44:17 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -135,7 +135,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 23 Jul 2020 16:29:05 GMT
+      - Thu, 23 Jul 2020 16:44:18 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -155,26 +155,26 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 23 Jul 2020 16:29:05 GMT
+      - Thu, 23 Jul 2020 16:44:18 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 16:29:05 GMT
+      - Thu, 23 Jul 2020 16:44:18 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://storagename.table.core.windows.net/uttable979d1213()?$filter=PartitionKey%20eq%20%27pk979d1213%27&sv=2019-07-07&si=testid&tn=uttable979d1213&sig=cFFmBzCC8DiV83j4L3Y0OClX3SWVID2Hq5Jby8VfvuI%3D
+    uri: https://storagename.table.core.windows.net/uttable979d1213()?$filter=PartitionKey%20eq%20%27pk979d1213%27&sv=2019-07-07&si=testid&tn=uttable979d1213&sig=ST6y7O4HuA3XHuynSlDoTrABzYKMeeFfSZb6v%2FZNjEs%3D
   response:
     body:
       string: '{"odata.error":{"code":"InvalidUri","message":{"lang":"en-US","value":"The
-        requested URI does not represent any resource on the server.\nRequestId:6f34ebdf-d002-0060-160e-61d02f000000\nTime:2020-07-23T16:29:06.4292859Z"}}}'
+        requested URI does not represent any resource on the server.\nRequestId:884f02f8-b002-0008-7d10-61c512000000\nTime:2020-07-23T16:44:18.9771558Z"}}}'
     headers:
       content-length:
       - '222'
       content-type:
       - application/json
       date:
-      - Thu, 23 Jul 2020 16:29:06 GMT
+      - Thu, 23 Jul 2020 16:44:18 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -194,11 +194,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 23 Jul 2020 16:29:06 GMT
+      - Thu, 23 Jul 2020 16:44:18 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 16:29:06 GMT
+      - Thu, 23 Jul 2020 16:44:18 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -212,7 +212,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 23 Jul 2020 16:29:06 GMT
+      - Thu, 23 Jul 2020 16:44:18 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

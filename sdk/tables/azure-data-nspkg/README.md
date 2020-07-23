@@ -9,3 +9,11 @@ azure.storage namespace.
 
 If you are looking to install the Azure Data libraries, see the
 [azure](https://pypi.python.org/pypi/azure) bundle package.
+
+# Azure (.+ client library for Python|Smoke Test for Python)
+# Getting started
+# Key concepts
+# Examples
+# Troubleshooting
+# Next steps
+# Contributing

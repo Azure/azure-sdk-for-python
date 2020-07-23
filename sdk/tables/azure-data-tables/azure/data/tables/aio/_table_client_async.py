@@ -13,7 +13,7 @@ from azure.data.tables._shared.base_client import parse_connection_str
 from azure.data.tables._shared.base_client_async import AsyncStorageAccountHostsMixin
 from azure.data.tables._shared.policies_async import ExponentialRetry
 from azure.data.tables._shared.request_handlers import serialize_iso
-from azure.data.tables._shared.response_handlers import return_headers_and_deserialized, process_storage_error
+from azure.data.tables._shared.response_handlers import return_headers_and_deserialized, process_table_error
 
 from .._models import UpdateMode 
 from ._models import TableEntityPropertiesPaged
@@ -99,7 +99,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 cls=return_headers_and_deserialized,
                 **kwargs)
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace_async
@@ -132,7 +132,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 table_acl=signed_identifiers or None,
                 **kwargs)
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     @distributed_trace_async
     async def get_table_properties(
@@ -155,7 +155,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 **kwargs)
             return response
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     @distributed_trace_async
     async def create_table(
@@ -251,7 +251,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             properties = _convert_to_entity(inserted_entity)
             return properties #Entity(properties)
         except ValueError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     @distributed_trace_async
     async def update_entity(  # pylint:disable=R1710

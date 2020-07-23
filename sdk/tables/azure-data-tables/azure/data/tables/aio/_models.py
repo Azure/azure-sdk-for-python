@@ -7,7 +7,7 @@ from enum import Enum
 
 from azure.data.tables._deserialize import _convert_to_entity
 from azure.data.tables._shared.models import Services
-from azure.data.tables._shared.response_handlers import return_context_and_deserialized, process_storage_error
+from azure.data.tables._shared.response_handlers import return_context_and_deserialized, process_table_error
 from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncPageIterator
 # from .._generated.models import AccessPolicy as GenAccessPolicy
@@ -58,7 +58,7 @@ class TablePropertiesPaged(AsyncPageIterator):
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
@@ -115,7 +115,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return

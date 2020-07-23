@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union
+from typing import Optional, Any, Union  # pylint: disable = W0611
 
 try:
     from urllib.parse import urlparse, unquote
@@ -14,6 +14,8 @@ except ImportError:
     from urllib2 import unquote  # type: ignore
 
 from azure.core.paging import ItemPaged
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
 from ._deserialize import _convert_to_entity
 from ._entity import TableEntity
 from ._generated import AzureTable
@@ -23,10 +25,10 @@ from ._shared.base_client import parse_connection_str
 from ._shared._table_client_base import TableClientBase
 
 from ._shared.request_handlers import serialize_iso
-from ._shared.response_handlers import process_storage_error
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from ._shared.response_handlers import process_table_error
+
 from ._version import VERSION
-from azure.core.tracing.decorator import distributed_trace
+
 
 from ._models import TableEntityPropertiesPaged, UpdateMode
 
@@ -153,7 +155,7 @@ class TableClient(TableClientBase):
                 cls=return_headers_and_deserialized,
                 **kwargs)
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
@@ -187,7 +189,7 @@ class TableClient(TableClientBase):
                 table_acl=signed_identifiers or None,
                 **kwargs)
         except HttpResponseError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     @distributed_trace
     def create_table(
@@ -280,7 +282,7 @@ class TableClient(TableClientBase):
             properties = _convert_to_entity(inserted_entity)
             return properties
         except ResourceNotFoundError as error:
-            process_storage_error(error)
+            process_table_error(error)
 
     @distributed_trace
     def update_entity(  # pylint:disable=R1710
