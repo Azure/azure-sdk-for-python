@@ -62,8 +62,9 @@ class TestSamplesAsync(FormRecognizerTest):
         os.environ['CONTAINER_SAS_URL'] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
         ftc = FormTrainingClient(form_recognizer_account,  AzureKeyCredential(form_recognizer_account_key))
         container_sas_url = os.environ['CONTAINER_SAS_URL']
-        poller = await ftc.begin_training(container_sas_url, use_training_labels=False)
-        model = await poller.result()
+        async with ftc:
+            poller = await ftc.begin_training(container_sas_url, use_training_labels=False)
+            model = await poller.result()
         os.environ['CUSTOM_TRAINED_MODEL_ID'] = model.model_id
         _test_file('sample_get_bounding_boxes_async.py', form_recognizer_account, form_recognizer_account_key)
 
@@ -83,8 +84,9 @@ class TestSamplesAsync(FormRecognizerTest):
         os.environ['CONTAINER_SAS_URL'] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
         ftc = FormTrainingClient(form_recognizer_account,  AzureKeyCredential(form_recognizer_account_key))
         container_sas_url = os.environ['CONTAINER_SAS_URL']
-        poller = await ftc.begin_training(container_sas_url, use_training_labels=False)
-        model = await poller.result()
+        async with ftc:
+            poller = await ftc.begin_training(container_sas_url, use_training_labels=False)
+            model = await poller.result()
         os.environ['CUSTOM_TRAINED_MODEL_ID'] = model.model_id
         _test_file('sample_recognize_custom_forms_async.py', form_recognizer_account, form_recognizer_account_key)
 
@@ -121,8 +123,9 @@ class TestSamplesAsync(FormRecognizerTest):
         os.environ['CONTAINER_SAS_URL'] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
         ftc = FormTrainingClient(form_recognizer_account,  AzureKeyCredential(form_recognizer_account_key))
         container_sas_url = os.environ['CONTAINER_SAS_URL']
-        poller = await ftc.begin_training(container_sas_url, use_training_labels=False)
-        model = await poller.result()
+        async with ftc:
+            poller = await ftc.begin_training(container_sas_url, use_training_labels=False)
+            model = await poller.result()
         os.environ['AZURE_SOURCE_MODEL_ID'] = model.model_id
         os.environ["AZURE_FORM_RECOGNIZER_TARGET_ENDPOINT"] = form_recognizer_account
         os.environ["AZURE_FORM_RECOGNIZER_TARGET_KEY"] = form_recognizer_account_key
@@ -141,10 +144,11 @@ class TestSamplesAsync(FormRecognizerTest):
         os.environ['CONTAINER_SAS_URL'] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
         ftc = FormTrainingClient(form_recognizer_account,  AzureKeyCredential(form_recognizer_account_key))
         container_sas_url = os.environ['CONTAINER_SAS_URL']
-        poller = await ftc.begin_training(container_sas_url, use_training_labels=False)
-        unlabeled_model = await poller.result()
-        poller = await ftc.begin_training(container_sas_url, use_training_labels=True)
-        labeled_model = await poller.result()
+        async with ftc:
+            poller = await ftc.begin_training(container_sas_url, use_training_labels=False)
+            unlabeled_model = await poller.result()
+            poller = await ftc.begin_training(container_sas_url, use_training_labels=True)
+            labeled_model = await poller.result()
         os.environ["ID_OF_MODEL_TRAINED_WITH_LABELS"] = labeled_model.model_id
         os.environ["ID_OF_MODEL_TRAINED_WITHOUT_LABELS"] = unlabeled_model.model_id
         _test_file('sample_differentiate_output_models_trained_with_and_without_labels_async.py',
