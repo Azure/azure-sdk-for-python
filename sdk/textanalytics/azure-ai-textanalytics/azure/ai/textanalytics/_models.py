@@ -500,7 +500,6 @@ class DocumentError(DictMixin):
             + DetectLanguageResult().keys() + RecognizeLinkedEntitiesResult().keys()
             + AnalyzeSentimentResult().keys() + ExtractKeyPhrasesResult().keys()
         )
-        result_set.update()
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
             raise AttributeError(
