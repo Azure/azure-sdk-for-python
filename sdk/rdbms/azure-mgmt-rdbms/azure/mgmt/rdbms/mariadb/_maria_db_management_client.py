@@ -23,7 +23,6 @@ from .operations import ConfigurationsOperations
 from .operations import LogFilesOperations
 from .operations import LocationBasedPerformanceTierOperations
 from .operations import CheckNameAvailabilityOperations
-from .operations import ServerSecurityAlertPoliciesOperations
 from .operations import Operations
 from .operations import QueryTextsOperations
 from .operations import TopQueryStatisticsOperations
@@ -34,6 +33,7 @@ from .operations import LocationBasedRecommendedActionSessionsOperationStatusOpe
 from .operations import LocationBasedRecommendedActionSessionsResultOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
+from .operations import ServerSecurityAlertPoliciesOperations
 from . import models
 
 
@@ -61,8 +61,6 @@ class MariaDBManagementClient(MariaDBManagementClientOperationsMixin, SDKClient)
     :vartype location_based_performance_tier: azure.mgmt.rdbms.mariadb.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailability operations
     :vartype check_name_availability: azure.mgmt.rdbms.mariadb.operations.CheckNameAvailabilityOperations
-    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
-    :vartype server_security_alert_policies: azure.mgmt.rdbms.mariadb.operations.ServerSecurityAlertPoliciesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.mariadb.operations.Operations
     :ivar query_texts: QueryTexts operations
@@ -83,6 +81,8 @@ class MariaDBManagementClient(MariaDBManagementClientOperationsMixin, SDKClient)
     :vartype private_endpoint_connections: azure.mgmt.rdbms.mariadb.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
     :vartype private_link_resources: azure.mgmt.rdbms.mariadb.operations.PrivateLinkResourcesOperations
+    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
+    :vartype server_security_alert_policies: azure.mgmt.rdbms.mariadb.operations.ServerSecurityAlertPoliciesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -121,8 +121,6 @@ class MariaDBManagementClient(MariaDBManagementClientOperationsMixin, SDKClient)
             self._client, self.config, self._serialize, self._deserialize)
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.query_texts = QueryTextsOperations(
@@ -142,4 +140,6 @@ class MariaDBManagementClient(MariaDBManagementClientOperationsMixin, SDKClient)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)

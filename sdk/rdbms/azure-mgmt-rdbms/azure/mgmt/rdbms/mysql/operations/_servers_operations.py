@@ -27,7 +27,6 @@ class ServersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2017-12-01".
     """
 
     models = models
@@ -37,13 +36,14 @@ class ServersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-12-01"
 
         self.config = config
 
 
     def _create_initial(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
+        api_version = "2017-12-01"
+
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -55,7 +55,7 @@ class ServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -149,6 +149,8 @@ class ServersOperations(object):
 
     def _update_initial(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
+        api_version = "2017-12-01"
+
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -160,7 +162,7 @@ class ServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -252,6 +254,8 @@ class ServersOperations(object):
 
     def _delete_initial(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+        api_version = "2017-12-01"
+
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -263,7 +267,7 @@ class ServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -348,6 +352,8 @@ class ServersOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2017-12-01"
+
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
@@ -359,7 +365,7 @@ class ServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -408,6 +414,8 @@ class ServersOperations(object):
          ~azure.mgmt.rdbms.mysql.models.ServerPaged[~azure.mgmt.rdbms.mysql.models.Server]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2017-12-01"
+
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -420,7 +428,7 @@ class ServersOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -475,6 +483,8 @@ class ServersOperations(object):
          ~azure.mgmt.rdbms.mysql.models.ServerPaged[~azure.mgmt.rdbms.mysql.models.Server]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2017-12-01"
+
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -486,7 +496,7 @@ class ServersOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -530,6 +540,8 @@ class ServersOperations(object):
 
     def _restart_initial(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+        api_version = "2017-12-01"
+
         # Construct URL
         url = self.restart.metadata['url']
         path_format_arguments = {
@@ -541,7 +553,7 @@ class ServersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -606,3 +618,167 @@ class ServersOperations(object):
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     restart.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}/restart'}
+
+
+    def _start_initial(
+            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+        api_version = "2020-01-01"
+
+        # Construct URL
+        url = self.start.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'serverName': self._serialize.url("server_name", server_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def start(
+            self, resource_group_name, server_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Starts a stopped server.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._start_initial(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    start.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}/start'}
+
+
+    def _stop_initial(
+            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+        api_version = "2020-01-01"
+
+        # Construct URL
+        url = self.stop.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'serverName': self._serialize.url("server_name", server_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str', min_length=1)
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def stop(
+            self, resource_group_name, server_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Stops a running server.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._stop_initial(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    stop.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}/stop'}

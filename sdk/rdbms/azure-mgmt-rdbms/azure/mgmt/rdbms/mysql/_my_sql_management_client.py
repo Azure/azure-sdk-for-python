@@ -24,7 +24,6 @@ from .operations import LogFilesOperations
 from .operations import ServerAdministratorsOperations
 from .operations import LocationBasedPerformanceTierOperations
 from .operations import CheckNameAvailabilityOperations
-from .operations import ServerSecurityAlertPoliciesOperations
 from .operations import Operations
 from .operations import QueryTextsOperations
 from .operations import TopQueryStatisticsOperations
@@ -36,6 +35,7 @@ from .operations import LocationBasedRecommendedActionSessionsResultOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import ServerKeysOperations
+from .operations import ServerSecurityAlertPoliciesOperations
 from . import models
 
 
@@ -65,8 +65,6 @@ class MySQLManagementClient(MySQLManagementClientOperationsMixin, SDKClient):
     :vartype location_based_performance_tier: azure.mgmt.rdbms.mysql.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailability operations
     :vartype check_name_availability: azure.mgmt.rdbms.mysql.operations.CheckNameAvailabilityOperations
-    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
-    :vartype server_security_alert_policies: azure.mgmt.rdbms.mysql.operations.ServerSecurityAlertPoliciesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.mysql.operations.Operations
     :ivar query_texts: QueryTexts operations
@@ -89,6 +87,8 @@ class MySQLManagementClient(MySQLManagementClientOperationsMixin, SDKClient):
     :vartype private_link_resources: azure.mgmt.rdbms.mysql.operations.PrivateLinkResourcesOperations
     :ivar server_keys: ServerKeys operations
     :vartype server_keys: azure.mgmt.rdbms.mysql.operations.ServerKeysOperations
+    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
+    :vartype server_security_alert_policies: azure.mgmt.rdbms.mysql.operations.ServerSecurityAlertPoliciesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -128,8 +128,6 @@ class MySQLManagementClient(MySQLManagementClientOperationsMixin, SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.query_texts = QueryTextsOperations(
@@ -151,4 +149,6 @@ class MySQLManagementClient(MySQLManagementClientOperationsMixin, SDKClient):
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_keys = ServerKeysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
