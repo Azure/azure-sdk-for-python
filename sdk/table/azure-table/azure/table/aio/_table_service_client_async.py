@@ -192,7 +192,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     @distributed_trace
     def list_tables(
             self,
-            query_options=None,  # type: Optional[QueryOptions]
+            # query_options=None,  # type: Optional[QueryOptions]
             **kwargs
     ):
         # type: (...) -> AsyncItemPaged
@@ -205,8 +205,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :rtype: ~AsyncItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        filter = kwargs.pop('filter', None)  # pylint: disable = W0622
         parameters = kwargs.pop('parameters', None)
+        filter = kwargs.pop('filter', None)
         if parameters:
             filter_start = filter.split('@')[0]
             selected = filter.split('@')[1]
@@ -227,10 +227,11 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         command = functools.partial(
             self._client.table.query,
-            query_options=query_options,
+            # query_options=query_options,
             **kwargs)
         return AsyncItemPaged(
             command,
+            results_per_page=query_options,
             page_iterator_class=TablePropertiesPaged
         )
 
@@ -239,8 +240,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             self,
             filter: str,
             **kwargs
-    ):
-        # type: (...) -> ItemPaged
+    ) -> AsyncItemPaged[str]: # TODO: this will return a table after merging with lilaw_table
         """Queries tables under the given account.
 
         :param query_options: Parameter group.
@@ -250,7 +250,6 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :rtype: ~AsyncItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-
         parameters = kwargs.pop('parameters', None)
         filter = kwargs.pop('filter', None)  # pylint: disable = W0622
         if parameters:
@@ -267,14 +266,24 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
                     select += i + ","
                 temp_select = None
 
-        query_options = QueryOptions(select=select or temp_select,# kwargs.pop('select', None),
-                                     top=kwargs.pop('results_per_page', None), filter=filter)
-        command = functools.partial(self._client.table.query, query_options=query_options, 
-                                    **kwargs)
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None),
+                                        select=select or temp_select,
+                                        filter=filter)
+        command = functools.partial(self._client.table.query, **kwargs)
         return AsyncItemPaged(
             command,
+            results_per_page=query_options,
             page_iterator_class=TablePropertiesPaged
         )
+
+        # query_options = QueryOptions(select=select or temp_select,# kwargs.pop('select', None),
+        #                              top=kwargs.pop('results_per_page', None), filter=filter)
+        # command = functools.partial(self._client.table.query, query_options=query_options, 
+        #                             **kwargs)
+        # return AsyncItemPaged(
+        #     command,
+        #     page_iterator_class=TablePropertiesPaged
+        # )
 
     def get_table_client(self, table, **kwargs):
         # type: (Union[TableProperties, str], Optional[Any]) -> TableClient
