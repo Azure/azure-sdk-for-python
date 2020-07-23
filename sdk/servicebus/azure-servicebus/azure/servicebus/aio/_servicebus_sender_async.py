@@ -19,6 +19,7 @@ from .._common.constants import (
     MGMT_REQUEST_SEQUENCE_NUMBERS
 )
 from .._common import mgmt_handlers
+from .._common.utils import copy_messages_to_sendable_if_needed
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
@@ -267,6 +268,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        message = copy_messages_to_sendable_if_needed(message)
         try:
             batch = await self.create_batch()
             batch._from_list(message)  # pylint: disable=protected-access

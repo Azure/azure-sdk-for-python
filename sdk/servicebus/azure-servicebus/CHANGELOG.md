@@ -6,9 +6,9 @@
 
 * Added new properties to Message, PeekMessage and ReceivedMessage: `content_type`, `correlation_id`, `label`,
 `message_id`, `reply_to`, `reply_to_session_id` and `to`. Please refer to the docstring for further information.
-
-* Add new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
+* Added new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
 `dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`. Please refer to the docstring for further information.
+* Added support for sending received messages via `ServiceBusSender.send_messages`.
 
 **Breaking Changes**
 
