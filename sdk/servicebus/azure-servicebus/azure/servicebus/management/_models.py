@@ -632,7 +632,7 @@ class CorrelationRuleFilter(object):
     :param content_type: Content type of the message.
     :type content_type: str
     :param properties: dictionary object for custom filters
-    :type properties: dict[str, str]
+    :type properties: dict[str, Union[str, int, float, bool, datetime, timedelta]]
     """
     def __init__(self, **kwargs):
         # type: (Any) -> None
