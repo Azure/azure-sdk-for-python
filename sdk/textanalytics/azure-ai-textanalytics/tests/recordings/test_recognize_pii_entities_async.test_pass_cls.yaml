@@ -17,14 +17,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"0","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 5ee30fda-744d-4397-bf16-3e5c95934535
+      apim-request-id: 6ab92cde-4042-45d2-913b-d6dad6184a02
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Wed, 22 Jul 2020 17:58:07 GMT
+      date: Thu, 23 Jul 2020 17:19:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '69'
+      x-envoy-upstream-service-time: '67'
     status:
       code: 200
       message: OK

@@ -306,8 +306,8 @@ endpoint="https://<region>.api.cognitive.microsoft.com/"
 text_analytics_client = TextAnalyticsClient(endpoint, credential, api_version=ApiVersion.V3_1_preview_1)
 
 documents = [
-    "The employee's SSN is 555-55-5555.",
-    "The employee's phone number is 555-55-5555."
+    "The employee's SSN is 859-98-0987.",
+    "The employee's phone number is 555-555-5555."
 ]
 response = text_analytics_client.recognize_pii_entities(documents, language="en")
 result = [doc for doc in response if not doc.is_error]

@@ -25,13 +25,13 @@ interactions:
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en"}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: a25d4b3b-58fa-4d99-a9c8-3c05392a28c8
+      apim-request-id: c6aa447e-1084-4062-965a-ad3db86ab494
       content-type: application/json; charset=utf-8
-      date: Wed, 22 Jul 2020 17:58:12 GMT
+      date: Thu, 23 Jul 2020 17:19:59 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2'
+      x-envoy-upstream-service-time: '1'
     status:
       code: 200
       message: OK

@@ -25,9 +25,9 @@ interactions:
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en"}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 81f2f465-54cb-4985-acf7-dc538d1bc45a
+      apim-request-id: 63a32671-e4f1-4ecf-b8dd-5c58051ebda9
       content-type: application/json; charset=utf-8
-      date: Wed, 22 Jul 2020 17:57:58 GMT
+      date: Thu, 23 Jul 2020 17:19:47 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -56,14 +56,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 08a167cd-b6fb-44fc-bdb4-943bbaa35424
+      apim-request-id: 272a4c80-6b40-476f-9d05-701c2a54ea72
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 22 Jul 2020 17:57:58 GMT
+      date: Thu, 23 Jul 2020 17:19:47 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '172'
+      x-envoy-upstream-service-time: '92'
     status:
       code: 200
       message: OK
@@ -94,9 +94,9 @@ interactions:
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en"}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 11f34b41-e33c-4e12-af87-47939753fb90
+      apim-request-id: f344bd29-a1d2-4109-8499-fc1817740a61
       content-type: application/json; charset=utf-8
-      date: Wed, 22 Jul 2020 17:57:58 GMT
+      date: Thu, 23 Jul 2020 17:19:47 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

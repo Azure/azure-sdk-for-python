@@ -24,13 +24,13 @@ interactions:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 1e1a2d45-8aa2-42dc-af56-fbb87d9f772d
+      - 62420b86-ba2f-4072-8b84-a38812d95461
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Wed, 22 Jul 2020 15:42:28 GMT
+      - Thu, 23 Jul 2020 17:18:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '103'
+      - '77'
     status:
       code: 200
       message: OK
@@ -71,7 +71,7 @@ interactions:
       content-length:
       - '224'
       date:
-      - Wed, 22 Jul 2020 15:42:28 GMT
+      - Thu, 23 Jul 2020 17:18:53 GMT
     status:
       code: 401
       message: PermissionDenied
@@ -100,13 +100,13 @@ interactions:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - c5ce3d0b-f8bd-4a4e-8b08-82a99b308596
+      - 88eb6c1d-7ae6-4cde-b702-c5b9c966fa0d
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Wed, 22 Jul 2020 15:42:28 GMT
+      - Thu, 23 Jul 2020 17:18:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -114,7 +114,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '83'
+      - '73'
     status:
       code: 200
       message: OK

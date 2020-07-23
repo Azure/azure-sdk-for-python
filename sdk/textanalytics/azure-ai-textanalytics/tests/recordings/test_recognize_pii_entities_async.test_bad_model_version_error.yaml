@@ -18,13 +18,13 @@ interactions:
       string: '{"error":{"code":"InvalidRequest","message":"Invalid Request.","innererror":{"code":"ModelVersionIncorrect","message":"Invalid
         model version. Possible values are: latest,2020-04-01,2019-10-01,2020-02-01"}}}'
     headers:
-      apim-request-id: 97c6120d-45db-4f9f-9548-785672722770
+      apim-request-id: ba42b7a5-d3b0-4c87-a0f5-0436156f76b1
       content-type: application/json; charset=utf-8
-      date: Wed, 22 Jul 2020 17:57:55 GMT
+      date: Thu, 23 Jul 2020 17:19:45 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '4'
     status:
       code: 400
       message: Bad Request

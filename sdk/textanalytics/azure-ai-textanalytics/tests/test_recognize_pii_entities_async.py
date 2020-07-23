@@ -37,12 +37,12 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_all_successful_passing_dict(self, client):
 
-        docs = [{"id": "1", "text": "My SSN is 555-55-5555."},
+        docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
                 {"id": "2", "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
                 {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
 
         response = await client.recognize_pii_entities(docs, show_stats=True)
-        self.assertEqual(response[0].entities[0].text, "555-55-5555")
+        self.assertEqual(response[0].entities[0].text, "859-98-0987")
         self.assertEqual(response[0].entities[0].category, "U.S. Social Security Number (SSN)")
         self.assertEqual(response[1].entities[0].text, "111000025")
         # self.assertEqual(response[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumber here
@@ -60,13 +60,13 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_all_successful_passing_text_document_input(self, client):
         docs = [
-            TextDocumentInput(id="1", text="My SSN is 555-55-5555."),
+            TextDocumentInput(id="1", text="My SSN is 859-98-0987."),
             TextDocumentInput(id="2", text="Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."),
             TextDocumentInput(id="3", text="Is 998.214.865-68 your Brazilian CPF number?")
         ]
 
         response = await client.recognize_pii_entities(docs, show_stats=True)
-        self.assertEqual(response[0].entities[0].text, "555-55-5555")
+        self.assertEqual(response[0].entities[0].text, "859-98-0987")
         self.assertEqual(response[0].entities[0].category, "U.S. Social Security Number (SSN)")
         self.assertEqual(response[1].entities[0].text, "111000025")
         # self.assertEqual(response[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumber here
@@ -89,14 +89,14 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_passing_only_string(self, client):
         docs = [
-            u"My SSN is 555-55-5555.",
+            u"My SSN is 859-98-0987.",
             u"Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
             u"Is 998.214.865-68 your Brazilian CPF number?",
             u""
         ]
 
         response = await client.recognize_pii_entities(docs, show_stats=True)
-        self.assertEqual(response[0].entities[0].text, "555-55-5555")
+        self.assertEqual(response[0].entities[0].text, "859-98-0987")
         self.assertEqual(response[0].entities[0].category, "U.S. Social Security Number (SSN)")
         self.assertEqual(response[1].entities[0].text, "111000025")
         # self.assertEqual(response[1].entities[0].category, "ABA Routing Number")  # Service is currently returning PhoneNumber here

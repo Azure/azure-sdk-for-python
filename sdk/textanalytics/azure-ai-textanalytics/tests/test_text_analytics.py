@@ -32,7 +32,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
 
         categorized_entity = _models.CategorizedEntity(text="Bill Gates", category="Person", subcategory="Age", confidence_score=0.899)
 
-        pii_entity = _models.PiiEntity(text="555-55-5555", category="SSN", subcategory=None, confidence_score=0.899)
+        pii_entity = _models.PiiEntity(text="859-98-0987", category="SSN", subcategory=None, confidence_score=0.899)
 
         text_document_statistics = _models.TextDocumentStatistics(character_count=14, transaction_count=18)
 
@@ -123,7 +123,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual("DetectedLanguage(name=English, iso6391_name=en, confidence_score=1.0)", repr(detected_language))
         self.assertEqual("CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, confidence_score=0.899)",
                          repr(categorized_entity))
-        self.assertEqual("PiiEntity(text=555-55-5555, category=SSN, subcategory=None, confidence_score=0.899)", repr(pii_entity))
+        self.assertEqual("PiiEntity(text=859-98-0987, category=SSN, subcategory=None, confidence_score=0.899)", repr(pii_entity))
         self.assertEqual("TextDocumentStatistics(character_count=14, transaction_count=18)",
                          repr(text_document_statistics))
         self.assertEqual("RecognizeEntitiesResult(id=1, entities=[CategorizedEntity(text=Bill Gates, category=Person, "
@@ -132,7 +132,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
                          "These words will be truncated and may result in unreliable model predictions.)], "
                          "statistics=TextDocumentStatistics(character_count=14, transaction_count=18), "
                          "is_error=False)", repr(recognize_entities_result))
-        self.assertEqual("RecognizePiiEntitiesResult(id=1, entities=[PiiEntity(text=555-55-5555, category=SSN, "
+        self.assertEqual("RecognizePiiEntitiesResult(id=1, entities=[PiiEntity(text=859-98-0987, category=SSN, "
                          "subcategory=None, confidence_score=0.899)], "
                          "warnings=[TextAnalyticsWarning(code=LongWordsInDocument, message=The document contains very long words (longer than 64 characters). "
                          "These words will be truncated and may result in unreliable model predictions.)], "

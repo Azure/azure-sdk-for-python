@@ -17,10 +17,10 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 3c5948fd-5e57-4222-b579-297401b09b91
+      apim-request-id: c4071053-3e6e-4bfa-bc65-6a85f13e053f
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Wed, 22 Jul 2020 17:58:00 GMT
+      date: Thu, 23 Jul 2020 17:19:49 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

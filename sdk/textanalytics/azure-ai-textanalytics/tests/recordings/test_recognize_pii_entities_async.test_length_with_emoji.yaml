@@ -18,14 +18,14 @@ interactions:
       string: '{"documents":[{"id":"0","entities":[{"text":"123-12-1234","category":"U.S.
         Social Security Number (SSN)","offset":7,"length":11,"confidenceScore":0.85}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 9d758df2-7d6b-49ea-b340-b97b68c560a3
+      apim-request-id: d85eded0-4738-4ad8-a913-eec883d4d280
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Wed, 22 Jul 2020 17:58:06 GMT
+      date: Thu, 23 Jul 2020 17:19:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '95'
+      x-envoy-upstream-service-time: '71'
     status:
       code: 200
       message: OK

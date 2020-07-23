@@ -30,11 +30,11 @@ interactions:
         language code. Supported languages: en"}}}],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 24c22a21-8e3e-46fe-b2d3-20ee4dc6c236
+      - cb56e9a0-cd4c-4993-8dfd-73de11e11b05
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Jul 2020 15:42:30 GMT
+      - Thu, 23 Jul 2020 17:18:55 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -42,7 +42,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3'
+      - '2'
     status:
       code: 200
       message: OK

@@ -19,14 +19,14 @@ interactions:
     body:
       string: '{"documents":[{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 2a056d2f-d725-4d15-a0e6-6ffb64afd273
+      apim-request-id: 6fa308e2-4146-49ac-8ce0-0a2e16abfe4b
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=3
-      date: Wed, 22 Jul 2020 17:58:08 GMT
+      date: Thu, 23 Jul 2020 17:19:55 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '74'
+      x-envoy-upstream-service-time: '76'
     status:
       code: 200
       message: OK

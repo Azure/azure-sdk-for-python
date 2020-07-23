@@ -18,10 +18,10 @@ interactions:
       string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":35,"transactionsCount":1},"entities":[{"text":"Bill
         Gates","category":"Person","offset":0,"length":10,"confidenceScore":0.81},{"text":"Microsoft","category":"Organization","offset":25,"length":9,"confidenceScore":0.64}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: 3e428412-5600-4c14-9f33-ce4723e74e10
+      apim-request-id: e612f043-5b57-4974-ac8f-8eaca05cdffe
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Wed, 22 Jul 2020 17:58:02 GMT
+      date: Thu, 23 Jul 2020 17:19:52 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

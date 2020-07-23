@@ -19,9 +19,9 @@ interactions:
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en"}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: a6576cc1-60ef-43bf-b14b-c29cec86751e
+      apim-request-id: 439917d9-3122-42b3-923f-f45d5927a520
       content-type: application/json; charset=utf-8
-      date: Wed, 22 Jul 2020 17:58:02 GMT
+      date: Thu, 23 Jul 2020 17:19:51 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff

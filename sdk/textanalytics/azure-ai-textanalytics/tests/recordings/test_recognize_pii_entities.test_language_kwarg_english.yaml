@@ -23,13 +23,13 @@ interactions:
         Gates","category":"Person","offset":0,"length":10,"confidenceScore":0.81},{"text":"Microsoft","category":"Organization","offset":25,"length":9,"confidenceScore":0.64}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 52d7b215-8f46-4f3a-88b6-86fbe5dece23
+      - 985c402a-0b74-4e08-99b6-c3e7bd65cb6c
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Wed, 22 Jul 2020 15:42:25 GMT
+      - Thu, 23 Jul 2020 17:18:50 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '71'
+      - '76'
     status:
       code: 200
       message: OK

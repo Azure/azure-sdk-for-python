@@ -23,11 +23,11 @@ interactions:
         contains duplicated Ids. Make sure each document has a unique Id."}}}'
     headers:
       apim-request-id:
-      - 90e9260e-8f04-438e-a0f5-63af6d3933ee
+      - 30ffe8c5-5001-4d47-800f-eaabba1d0476
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 22 Jul 2020 15:42:22 GMT
+      - Thu, 23 Jul 2020 17:18:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
