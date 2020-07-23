@@ -505,8 +505,6 @@ version before installing the latest release.
 * Azure Storage has moved.
     https://github.com/Azure/azure-storage-python
 
-    https://azure.github.io/azure-sdk-for-python/ref/Storage.html
-
 **Bugfixes**
 
 * #437 Make delete_storage_account return async request id
@@ -608,9 +606,6 @@ easy production AND consumption of SAS for blob, queue and table storage.
  * For blob storage, you can now consume public containers/blobs, init
    BlobService/QueueService/TableService with account_name only
    (no account_key or sas_token)
-
- See https://azure.github.io/azure-sdk-for-python/ref/Storage.html for
- more details on using SAS with Azure Storage.
 
 **Other changes**
 
