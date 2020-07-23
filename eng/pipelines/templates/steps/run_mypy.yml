@@ -5,6 +5,17 @@ parameters:
   EnvVars: {}
 
 steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.7'
+    inputs:
+     versionSpec: '3.7'
+    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
+
+  - script: |
+      pip install -r eng/ci_tools.txt
+    displayName: 'Prep Environment'
+    condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
+
   - task: PythonScript@0
     displayName: 'Run MyPy'
     inputs:
