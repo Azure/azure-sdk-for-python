@@ -466,7 +466,7 @@ class StorageTableClientTest(TableTestCase):
                     platform.python_version(),
                     platform.platform()))
 
-        tables = list(service.query_tables(raw_response_hook=callback))
+        tables = list(service.list_tables(raw_response_hook=callback))
         self.assertIsInstance(tables, list)
 
     # @pytest.mark.skip("pending")
@@ -486,7 +486,7 @@ class StorageTableClientTest(TableTestCase):
                 response.http_request.headers['User-Agent']
                 )
 
-        tables = list(service.query_tables(raw_response_hook=callback))
+        tables = list(service.list_tables(raw_response_hook=callback))
         self.assertIsInstance(tables, list)
 
         def callback(response):
@@ -499,7 +499,7 @@ class StorageTableClientTest(TableTestCase):
                 response.http_request.headers['User-Agent']
                 )
 
-        tables = list(service.query_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
+        tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
         self.assertIsInstance(tables, list)
 
     @pytest.mark.skip("pending")
@@ -518,7 +518,7 @@ class StorageTableClientTest(TableTestCase):
 )
 
         custom_headers = {'User-Agent': 'customer_user_agent'}
-        tables = list(service.query_tables(raw_response_hook=callback, headers=custom_headers))
+        tables = list(service.list_tables(raw_response_hook=callback, headers=custom_headers))
         self.assertIsInstance(tables, list)
 
     #@pytest.mark.skip("pending")
