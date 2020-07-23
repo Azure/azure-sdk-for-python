@@ -6,11 +6,12 @@
 # pylint: disable=unused-argument
 import datetime
 from uuid import UUID
+from azure.core.exceptions import ResourceExistsError
 from ._shared import url_quote
 from ._entity import EntityProperty, EdmType, TableEntity
 from ._shared._common_conversion import _decode_base64_to_bytes
 from ._generated.models import TableProperties
-from azure.core.exceptions import ResourceExistsError
+
 
 from ._shared.models import TableErrorCode
 

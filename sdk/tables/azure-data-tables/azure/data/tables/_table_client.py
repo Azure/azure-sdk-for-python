@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, Union
+from typing import Optional, Any, Union  # pylint: disable = W0611
 
 try:
     from urllib.parse import urlparse, unquote
@@ -14,6 +14,8 @@ except ImportError:
     from urllib2 import unquote  # type: ignore
 
 from azure.core.paging import ItemPaged
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
 from ._deserialize import _convert_to_entity
 from ._entity import TableEntity
 from ._generated import AzureTable
@@ -24,9 +26,9 @@ from ._shared._table_client_base import TableClientBase
 
 from ._shared.request_handlers import serialize_iso
 from ._shared.response_handlers import process_table_error
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+
 from ._version import VERSION
-from azure.core.tracing.decorator import distributed_trace
+
 
 from ._models import TableEntityPropertiesPaged, UpdateMode
 

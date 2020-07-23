@@ -6,7 +6,9 @@
 
 import functools
 from typing import Any, Union
-
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from ._models import Table
 
@@ -17,9 +19,7 @@ from ._shared.base_client import parse_connection_str, TransportWrapper
 from ._shared.models import LocationMode
 from ._shared.response_handlers import process_table_error
 from ._version import VERSION
-from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged
-from azure.core.tracing.decorator import distributed_trace
+
 from ._table_client import TableClient
 from ._shared._error import _validate_table_name
 from ._shared._table_service_client_base import TableServiceClientBase
@@ -246,7 +246,7 @@ class TableServiceClient(TableServiceClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        filter = kwargs.pop('filter', None)
+        filter = kwargs.pop('filter', None)  # pylint: disable=W0622
         if parameters:
             filter_start = filter.split('@')[0]
             selected = filter.split('@')[1]

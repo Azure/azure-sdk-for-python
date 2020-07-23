@@ -4,12 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import PageIterator
 from ._deserialize import _convert_to_entity
 from ._shared.models import Services
 from ._shared.response_handlers import return_context_and_deserialized, process_table_error
-from azure.core.exceptions import HttpResponseError
-from azure.core.paging import PageIterator
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
