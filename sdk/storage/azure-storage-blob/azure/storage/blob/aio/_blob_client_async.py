@@ -970,6 +970,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             this is only applicable to block blobs on standard storage accounts.
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
+        :keyword bool seal_blob:
+            Seal the destination append blob. This operation is only for append blob.
+
+            .. versionadded:: 12.4.0
+
         :keyword bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
@@ -2115,5 +2120,50 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         )
         try:
             return await self._client.append_blob.append_block_from_url(**options)  # type: ignore
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace_async()
+    async def seal_append_blob(self, **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime, int]]
+        """The Seal operation seals the Append Blob to make it read-only.
+
+            .. versionadded:: 12.4.0
+
+        :keyword int appendpos_condition:
+            Optional conditional header, used only for the Append Block operation.
+            A number indicating the byte offset to compare. Append Block will
+            succeed only if the append position is equal to this number. If it
+            is not, the request will fail with the AppendPositionConditionNotMet error
+            (HTTP status code 412 - Precondition Failed).
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
+        :rtype: dict(str, Any)
+        """
+        options = self._seal_append_blob_options(**kwargs)
+        try:
+            return await self._client.append_blob.seal(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)

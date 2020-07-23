@@ -1,0 +1,251 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 23 Jul 2020 06:18:01 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6b18aa?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:03d90b4d-a01e-0089-05b9-60f775000000\nTime:2020-07-23T06:18:01.9118575Z</Message></Error>"
+    headers:
+      content-length:
+      - '230'
+      content-type:
+      - application/xml
+      date:
+      - Thu, 23 Jul 2020 06:18:01 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ContainerAlreadyExists
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 409
+      message: The specified container already exists.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 23 Jul 2020 06:18:01 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainersource6b18aa?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:03d90b54-a01e-0089-0ab9-60f775000000\nTime:2020-07-23T06:18:01.9999193Z</Message></Error>"
+    headers:
+      content-length:
+      - '230'
+      content-type:
+      - application/xml
+      date:
+      - Thu, 23 Jul 2020 06:18:01 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ContainerAlreadyExists
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 409
+      message: The specified container already exists.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-blob-type:
+      - AppendBlob
+      x-ms-date:
+      - Thu, 23 Jul 2020 06:18:02 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6b18aa/blob6b18aa
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 23 Jul 2020 06:18:01 GMT
+      etag:
+      - '"0x8D82ED0275496C1"'
+      last-modified:
+      - Thu, 23 Jul 2020 06:18:02 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-12-12'
+      x-ms-version-id:
+      - '2020-07-23T06:18:02.0865489Z'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 23 Jul 2020 06:18:02 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6b18aa/blob6b18aa?comp=seal
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 23 Jul 2020 06:18:02 GMT
+      etag:
+      - '"0x8D82ED027776758"'
+      last-modified:
+      - Thu, 23 Jul 2020 06:18:02 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-sealed:
+      - 'true'
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-copy-source:
+      - https://emilyeuap.blob.core.windows.net/utcontainer6b18aa/blob6b18aa
+      x-ms-date:
+      - Thu, 23 Jul 2020 06:18:02 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6b18aa/copiedblob
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 23 Jul 2020 06:18:02 GMT
+      etag:
+      - '"0x8D82ED0278573A6"'
+      last-modified:
+      - Thu, 23 Jul 2020 06:18:02 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-copy-id:
+      - 3bfb36c1-c7da-41ed-84df-ba09520c58a8
+      x-ms-copy-status:
+      - success
+      x-ms-version:
+      - '2019-12-12'
+      x-ms-version-id:
+      - '2020-07-23T06:18:02.4067766Z'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: abc
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '3'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-date:
+      - Thu, 23 Jul 2020 06:18:02 GMT
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer6b18aa/copiedblob?comp=appendblock
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobIsSealed</Code><Message>The
+        blob is sealed and its contents cannot be modified.\nRequestId:03d90b8e-a01e-0089-3eb9-60f775000000\nTime:2020-07-23T06:18:02.4962703Z</Message></Error>"
+    headers:
+      content-length:
+      - '236'
+      content-type:
+      - application/xml
+      date:
+      - Thu, 23 Jul 2020 06:18:02 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - BlobIsSealed
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 409
+      message: The blob is sealed and its contents cannot be modified.
+version: 1

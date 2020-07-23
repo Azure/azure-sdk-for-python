@@ -1291,5 +1291,74 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         # Act
         await blob.append_block(data, validate_content=True)
 
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_seal_append_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
+        await self._setup(bsc)
+        blob = await self._create_blob(bsc)
+        resp = await blob.seal_append_blob()
+        self.assertTrue(resp['blob_sealed'])
 
+        with self.assertRaises(HttpResponseError):
+            await blob.append_block("abc")
+
+        await blob.set_blob_metadata({'isseal': 'yes'})
+        prop = await blob.get_blob_properties()
+
+        self.assertEqual(prop.metadata['isseal'], 'yes')
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_seal_append_blob_with_append_condition(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
+        await self._setup(bsc)
+        blob = await self._create_blob(bsc)
+        with self.assertRaises(HttpResponseError):
+            await blob.seal_append_blob(appendpos_condition=1)
+
+        resp = await blob.seal_append_blob(appendpos_condition=0)
+        self.assertTrue(resp['blob_sealed'])
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_copy_sealed_blob_will_get_a_sealed_blob(self, resource_group, location, storage_account,
+                                                     storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
+        await self._setup(bsc)
+        blob = await self._create_blob(bsc)
+
+        # copy sealed blob will get a sealed blob
+        await blob.seal_append_blob()
+        copied_blob = bsc.get_blob_client(self.container_name, "copiedblob")
+        await copied_blob.start_copy_from_url(blob.url)
+        with self.assertRaises(HttpResponseError):
+            await copied_blob.append_block("abc")
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_copy_unsealed_blob_will_get_a_sealed_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
+        await self._setup(bsc)
+        blob = await self._create_blob(bsc)
+
+        # copy unsealed blob with seal_blob=True will get a sealed blob
+        copied_blob2 = bsc.get_blob_client(self.container_name, "copiedblob2")
+        await copied_blob2.start_copy_from_url(blob.url, seal_blob=True)
+        with self.assertRaises(HttpResponseError):
+            await copied_blob2.append_block("abc")
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_copy_sealed_blob_with_seal_blob_will_get_a_sealed_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
+        await self._setup(bsc)
+        blob = await self._create_blob(bsc)
+
+        # copy sealed blob with seal_blob=True will get a sealed blob
+        await blob.seal_append_blob()
+        copied_blob3 = bsc.get_blob_client(self.container_name, "copiedblob3")
+        await copied_blob3.start_copy_from_url(blob.url, seal_blob=True)
+        with self.assertRaises(HttpResponseError):
+            await copied_blob3.append_block("abc")
 # ------------------------------------------------------------------------------
