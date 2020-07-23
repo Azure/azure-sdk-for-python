@@ -8,7 +8,7 @@
 
 **New features**
 
-- `FormField` now has attribute `type` which contains the semantic data type of the field value
+- `FormField` now has attribute `value_type` which contains the semantic data type of the field value
 
 **Fixes and improvements**
 

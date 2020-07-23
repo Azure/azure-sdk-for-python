@@ -222,7 +222,7 @@ class FormRecognizerTest(AzureTestCase):
             self.assertBoundingBoxTransformCorrect(b[label].value_data.bounding_box, a.bounding_box)
             self.assertEqual(a.text, b[label].value_data.text)
             field_type = a.type
-            self.assertEqual(field_type, b[label].type)
+            self.assertEqual(field_type, b[label].value_type)
             if field_type == "string":
                 self.assertEqual(b[label].value, a.value_string)
             if field_type == "number":
@@ -268,7 +268,7 @@ class FormRecognizerTest(AzureTestCase):
         if actual_field is None:
             return
         field_type = actual_field.type
-        self.assertEqual(field_type, receipt_field.type)
+        self.assertEqual(field_type, receipt_field.value_type)
         if field_type == "string":
             self.assertEqual(receipt_field.value, actual_field.value_string)
         if field_type == "number":
@@ -320,19 +320,19 @@ class FormRecognizerTest(AzureTestCase):
 
     def assertReceiptItemsHasValues(self, items, page_number, include_field_elements):
         for item in items:
-            self.assertEqual(item.type, "object")
+            self.assertEqual(item.value_type, "object")
             self.assertBoundingBoxHasPoints(item.value.get("Name").value_data.bounding_box)
             self.assertIsNotNone(item.value.get("Name").confidence)
             self.assertIsNotNone(item.value.get("Name").value_data.text)
-            self.assertIsNotNone(item.value.get("Name").type)
+            self.assertIsNotNone(item.value.get("Name").value_type)
             self.assertBoundingBoxHasPoints(item.value.get("Quantity").value_data.bounding_box)
             self.assertIsNotNone(item.value.get("Quantity").confidence)
             self.assertIsNotNone(item.value.get("Quantity").value_data.text)
-            self.assertIsNotNone(item.value.get("Quantity").type)
+            self.assertIsNotNone(item.value.get("Quantity").value_type)
             self.assertBoundingBoxHasPoints(item.value.get("TotalPrice").value_data.bounding_box)
             self.assertIsNotNone(item.value.get("TotalPrice").confidence)
             self.assertIsNotNone(item.value.get("TotalPrice").value_data.text)
-            self.assertIsNotNone(item.value.get("TotalPrice").type)
+            self.assertIsNotNone(item.value.get("TotalPrice").value_type)
 
             if include_field_elements:
                 self.assertFieldElementsHasValues(item.value.get("Name").value_data.field_elements, page_number)
