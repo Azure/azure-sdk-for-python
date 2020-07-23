@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 23 Jul 2020 14:22:07 GMT
+      - Thu, 23 Jul 2020 14:40:37 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 14:22:07 GMT
+      - Thu, 23 Jul 2020 14:40:37 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 23 Jul 2020 14:22:06 GMT
+      - Thu, 23 Jul 2020 14:40:37 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttablebfd90c40')
       server:
@@ -69,26 +69,26 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 23 Jul 2020 14:22:07 GMT
+      - Thu, 23 Jul 2020 14:40:38 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 14:22:07 GMT
+      - Thu, 23 Jul 2020 14:40:38 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://storagename.table.core.windows.net/uttablebfd90c40?st=2020-07-23T14%3A21%3A07Z&se=2020-07-23T15%3A22%3A07Z&sp=a&sv=2019-07-07&tn=uttablebfd90c40&sig=fGndGamKKmFs1yyNP6O9YWu9zXHuzus9BsZ8rnvFHB4%3D
+    uri: https://storagename.table.core.windows.net/uttablebfd90c40?st=2020-07-23T14%3A39%3A38Z&se=2020-07-23T15%3A40%3A38Z&sp=a&sv=2019-07-07&tn=uttablebfd90c40&sig=d9Y73DUsCf1%2FC%2Br%2FwE16KUH2wSSb2tZbGfKD33kyM6k%3D
   response:
     body:
       string: '{"odata.error":{"code":"InvalidUri","message":{"lang":"en-US","value":"The
-        requested URI does not represent any resource on the server.\nRequestId:f137aba2-9002-0027-79fc-609043000000\nTime:2020-07-23T14:22:08.0605364Z"}}}'
+        requested URI does not represent any resource on the server.\nRequestId:2e2a670c-3002-0045-2aff-60ca49000000\nTime:2020-07-23T14:40:38.6702578Z"}}}'
     headers:
       content-length:
       - '222'
       content-type:
       - application/json
       date:
-      - Thu, 23 Jul 2020 14:22:07 GMT
+      - Thu, 23 Jul 2020 14:40:38 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -108,11 +108,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 23 Jul 2020 14:22:07 GMT
+      - Thu, 23 Jul 2020 14:40:38 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 14:22:07 GMT
+      - Thu, 23 Jul 2020 14:40:38 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -126,7 +126,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 23 Jul 2020 14:22:07 GMT
+      - Thu, 23 Jul 2020 14:40:38 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

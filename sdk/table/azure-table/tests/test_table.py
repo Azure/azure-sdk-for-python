@@ -213,17 +213,17 @@ class StorageTableTest(TableTestCase):
 
         # Act
         big_page = []
-        for t in ts.query_tables().by_page():
+        for t in next(ts.query_tables().by_page()):
             big_page.append(t)
 
         small_page = []
-        for s in ts.query_tables(results_per_page=3).by_page():
+        for s in next(ts.query_tables(results_per_page=3).by_page()):
             small_page.append(s)
         # big_page = list(next(ts.query_tables().by_page()))
         # small_page = list(next(ts.query_tables(results_per_page=3).by_page()))
 
         # Assert
-        self.assertEqual(len(small_page), 2)
+        self.assertEqual(len(small_page), 3)
         self.assertGreaterEqual(len(big_page), 4)
 
     # @pytest.mark.skip("pending")

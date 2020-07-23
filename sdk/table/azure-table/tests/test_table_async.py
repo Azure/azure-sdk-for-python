@@ -118,7 +118,7 @@ class TableTestAsync(AsyncTableTestCase):
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    async def test_list_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
+    async def test_query_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table = await self._create_table(ts)
@@ -126,7 +126,7 @@ class TableTestAsync(AsyncTableTestCase):
         # Act
         name_filter = "TableName eq '{}'".format(table.table_name)
         tables = []
-        async for t in ts.query_tables(query_options=QueryOptions(filter=name_filter)):
+        async for t in ts.query_tables(filter=name_filter):
             tables.append(t)
 
         # Assert
