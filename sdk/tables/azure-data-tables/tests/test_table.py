@@ -212,8 +212,8 @@ class StorageTableTest(TableTestCase):
             small_page.append(s)
         for t in next(ts.list_tables().by_page()):
             big_page.append(t)
-        # big_page = list(next(ts.query_tables().by_page()))
-        # small_page = list(next(ts.query_tables(results_per_page=3).by_page()))
+        # big_page = (next(ts.query_tables().by_page()))
+        # small_page = (next(ts.query_tables(results_per_page=3).by_page()))
 
         # Assert
         self.assertEqual(len(small_page), 3)
