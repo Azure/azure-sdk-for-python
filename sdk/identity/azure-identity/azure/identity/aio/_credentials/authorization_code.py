@@ -27,7 +27,7 @@ class AuthorizationCodeCredential(AsyncCredentialBase):
     :param str redirect_uri: The application's redirect URI. Must match the URI used to request the authorization code.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
     """

@@ -11,11 +11,15 @@ DEFAULT_REFRESH_OFFSET = 300
 DEFAULT_TOKEN_REFRESH_RETRY_DELAY = 30
 
 
-class KnownAuthorities:
+class AzureAuthorityHosts:
     AZURE_CHINA = "login.chinacloudapi.cn"
     AZURE_GERMANY = "login.microsoftonline.de"
     AZURE_GOVERNMENT = "login.microsoftonline.us"
     AZURE_PUBLIC_CLOUD = "login.microsoftonline.com"
+
+
+class KnownAuthorities(AzureAuthorityHosts):
+    """Alias of :class:`AzureAuthorityHosts`"""
 
 
 class EnvironmentVariables:

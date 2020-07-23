@@ -206,6 +206,30 @@ async def test_shared_cache_username():
     assert token.token == expected_access_token
 
 
+def test_vscode_tenant_id():
+    """the credential should allow configuring a tenant ID for VSCodeCredential by kwarg or environment"""
+
+    expected_args = {"tenant_id": "the-tenant"}
+
+    with patch(DefaultAzureCredential.__module__ + ".VSCodeCredential") as mock_credential:
+        DefaultAzureCredential(visual_studio_code_tenant_id=expected_args["tenant_id"])
+    mock_credential.assert_called_once_with(**expected_args)
+
+    # tenant id can also be specified in $AZURE_TENANT_ID
+    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: expected_args["tenant_id"]}, clear=True):
+        with patch(DefaultAzureCredential.__module__ + ".VSCodeCredential") as mock_credential:
+            DefaultAzureCredential()
+    mock_credential.assert_called_once_with(**expected_args)
+
+    # keyword argument should override environment variable
+    with patch.dict(
+        os.environ, {EnvironmentVariables.AZURE_TENANT_ID: "not-" + expected_args["tenant_id"]}, clear=True
+    ):
+        with patch(DefaultAzureCredential.__module__ + ".VSCodeCredential") as mock_credential:
+            DefaultAzureCredential(visual_studio_code_tenant_id=expected_args["tenant_id"])
+    mock_credential.assert_called_once_with(**expected_args)
+
+
 @pytest.mark.asyncio
 async def test_default_credential_shared_cache_use():
     with patch(DefaultAzureCredential.__module__ + ".SharedTokenCacheCredential") as mock_credential:
