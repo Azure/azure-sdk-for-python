@@ -411,7 +411,7 @@ class RoleAssignmentsOperations(object):
          the format,
          /{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}.
          Example:
-         /subscriptions/{subId}/resourcegroups/{rgname}//providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}.
+         /subscriptions/{subId}/resourcegroups/{rgname}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}.
         :type role_assignment_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
