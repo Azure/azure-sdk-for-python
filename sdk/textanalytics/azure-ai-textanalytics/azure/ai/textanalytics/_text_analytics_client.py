@@ -236,7 +236,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         Returns a list of personal information entities ("SSN",
         "Bank Account", etc) in the document.  For the list of supported entity types,
         check https://aka.ms/tanerpii
-        for document length limits, maximum batch size, and supported text encoding.
 
         See https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview#data-limits
         for document length limits, maximum batch size, and supported text encoding.

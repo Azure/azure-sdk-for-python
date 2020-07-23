@@ -500,6 +500,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [analyze_sentiment]: https://aka.ms/azsdk-python-textanalytics-analyzesentiment
 [recognize_entities]: https://aka.ms/azsdk-python-textanalytics-recognizeentities
+[recognize_pii_entities]: https://aka.ms/azsdk-python-textanalytics-recognizepiientities
 [recognize_linked_entities]: https://aka.ms/azsdk-python-textanalytics-recognizelinkedentities
 [extract_key_phrases]: https://aka.ms/azsdk-python-textanalytics-extractkeyphrases
 [detect_language]: https://aka.ms/azsdk-python-textanalytics-detectlanguage
