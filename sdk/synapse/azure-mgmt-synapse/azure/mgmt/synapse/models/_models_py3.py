@@ -4989,8 +4989,13 @@ class Workspace(TrackedResource):
      ~azure.mgmt.synapse.models.DataLakeStorageAccountDetails
     :param sql_administrator_login_password: SQL administrator login password
     :type sql_administrator_login_password: str
-    :ivar managed_resource_group_name: Workspace managed resource group
-    :vartype managed_resource_group_name: str
+    :param managed_resource_group_name: Workspace managed resource group. The
+     resource group name uniquely identifies the resource group within the user
+     subscriptionId. The resource group name must be no longer than 90
+     characters long, and must be alphanumeric characters
+     (Char.IsLetterOrDigit()) and '-', '_', '(', ')' and'.'. Note that the name
+     cannot end with '.'
+    :type managed_resource_group_name: str
     :ivar provisioning_state: Resource provisioning state
     :vartype provisioning_state: str
     :param sql_administrator_login: Login for workspace SQL active directory
@@ -5018,7 +5023,6 @@ class Workspace(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'managed_resource_group_name': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -5040,11 +5044,11 @@ class Workspace(TrackedResource):
         'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
     }
 
-    def __init__(self, *, location: str, tags=None, default_data_lake_storage=None, sql_administrator_login_password: str=None, sql_administrator_login: str=None, virtual_network_profile=None, connectivity_endpoints=None, managed_virtual_network: str=None, private_endpoint_connections=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, default_data_lake_storage=None, sql_administrator_login_password: str=None, managed_resource_group_name: str=None, sql_administrator_login: str=None, virtual_network_profile=None, connectivity_endpoints=None, managed_virtual_network: str=None, private_endpoint_connections=None, identity=None, **kwargs) -> None:
         super(Workspace, self).__init__(tags=tags, location=location, **kwargs)
         self.default_data_lake_storage = default_data_lake_storage
         self.sql_administrator_login_password = sql_administrator_login_password
-        self.managed_resource_group_name = None
+        self.managed_resource_group_name = managed_resource_group_name
         self.provisioning_state = None
         self.sql_administrator_login = sql_administrator_login
         self.virtual_network_profile = virtual_network_profile
