@@ -481,6 +481,10 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     message = Message("{}".format(i), session_id=session_id)
                     await sender.send_messages(message)
 
+            results = []
+            async def lock_lost_callback(renewable, error):
+                results.append(renewable)
+
             renewer = AutoLockRenew()
             messages = []
             async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=20) as session:
@@ -502,6 +506,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                             messages.append(message)
 
                         elif len(messages) == 1:
+                            assert not results
                             await asyncio.sleep(45)
                             print("Second sleep {}".format(session.session.locked_until_utc - utc_now()))
                             assert session.session._lock_expired
@@ -513,7 +518,17 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                                 assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                             messages.append(message)
 
-            await renewer.shutdown()
+            # While we're testing autolockrenew and sessions, let's make sure we don't call the lock-lost callback when a session exits.
+            renewer._renew_period = 1
+            session = None
+
+            async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
+                session = receiver.session
+                renewer.register(session, timeout=5, on_lock_renew_failure=lock_lost_callback)
+            await asyncio.sleep(max(0,(session.locked_until_utc - utc_now()).total_seconds()+1)) # If this pattern repeats make sleep_until_expired_async
+            assert not results
+
+            await renewer.close()
             assert len(messages) == 2
 
 
@@ -614,7 +629,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     assert len(messages) == 1
                 else:
                     raise Exception("Failed to receive schdeduled message.")
-            await renewer.shutdown()
+            await renewer.close()
 
 
     @pytest.mark.liveTest
@@ -654,7 +669,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     assert len(messages) == 2
                 else:
                     raise Exception("Failed to receive schdeduled message.")
-            await renewer.shutdown()
+            await renewer.close()
 
 
     @pytest.mark.liveTest
@@ -688,7 +703,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                         print(str(m))
                         await m.complete()
                     raise
-            await renewer.shutdown()
+            await renewer.close()
 
 
     @pytest.mark.liveTest

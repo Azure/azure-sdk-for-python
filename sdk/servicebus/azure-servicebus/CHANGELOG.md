@@ -25,6 +25,12 @@
   - Removed property `settled` on `PeekMessage`.
   - Removed property `expired` on `ReceivedMessage`.
 
+* Add `on_lock_renew_failure` as a parameter to `AutoLockRenew.register`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion)
+
+**Breaking Changes**
+
+* `AutoLockRenew.sleep_time` and `AutoLockRenew.renew_period` have been made internal as `_sleep_time` and `_renew_period` respectively, as it is not expected a user will have to interact with them.
+* `AutoLockRenew.shutdown` is now `AutoLockRenew.close` to normalize with other equivelent behaviors.
 
 ## 7.0.0b4 (2020-07-06)
 
@@ -35,8 +41,8 @@
 
 **BugFixes**
 
-* Fixed bug where sync AutoLockRenew does not shutdown itself timely.
-* Fixed bug where async AutoLockRenew does not support context manager.
+* Fixed bug where sync `AutoLockRenew` does not shutdown itself timely.
+* Fixed bug where async `AutoLockRenew` does not support context manager.
 
 **Breaking Changes**
 
