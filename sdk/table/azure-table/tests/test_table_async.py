@@ -153,9 +153,9 @@ class TableTestAsync(AsyncTableTestCase):
             big_page.append(t)
 
         small_page = []
-        small_tables = ts.list_tables(results_per_page=3)
-        async for s in await tables.__anext__():
-        # async for s in ts.query_tables(filter=None, results_per_page=3).by_page():
+        # small_tables = ts.list_tables(results_per_page=3)
+        # async for s in await small_tables.__anext__():
+        async for s in ts.list_tables(results_per_page=3).by_page():#query_tables(filter=None, results_per_page=3).by_page():
             small_page.append(s)
 
         self.assertEqual(len(small_page), 2)

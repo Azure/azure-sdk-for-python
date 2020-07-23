@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 22 Jul 2020 23:07:46 GMT
+      - Thu, 23 Jul 2020 14:21:16 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 22 Jul 2020 23:07:46 GMT
+      - Thu, 23 Jul 2020 14:21:16 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Wed, 22 Jul 2020 23:07:46 GMT
+      - Thu, 23 Jul 2020 14:21:15 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('pytablesync99dc0b08')
       server:
@@ -63,11 +63,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 22 Jul 2020 23:07:46 GMT
+      - Thu, 23 Jul 2020 14:21:16 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 22 Jul 2020 23:07:46 GMT
+      - Thu, 23 Jul 2020 14:21:16 GMT
       x-ms-version:
       - '2019-07-07'
     method: PATCH
@@ -81,9 +81,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 22 Jul 2020 23:07:46 GMT
+      - Thu, 23 Jul 2020 14:21:16 GMT
       etag:
-      - W/"datetime'2020-07-22T23%3A07%3A47.2155382Z'"
+      - W/"datetime'2020-07-23T14%3A21%3A17.0453149Z'"
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
@@ -109,11 +109,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 22 Jul 2020 23:07:47 GMT
+      - Thu, 23 Jul 2020 14:21:16 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 22 Jul 2020 23:07:47 GMT
+      - Thu, 23 Jul 2020 14:21:16 GMT
       x-ms-version:
       - '2019-07-07'
     method: PATCH
@@ -127,9 +127,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 22 Jul 2020 23:07:46 GMT
+      - Thu, 23 Jul 2020 14:21:16 GMT
       etag:
-      - W/"datetime'2020-07-22T23%3A07%3A47.3186119Z'"
+      - W/"datetime'2020-07-23T14%3A21%3A17.1333753Z'"
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
@@ -151,26 +151,26 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 22 Jul 2020 23:07:47 GMT
+      - Thu, 23 Jul 2020 14:21:16 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 22 Jul 2020 23:07:47 GMT
+      - Thu, 23 Jul 2020 14:21:16 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://storagename.table.core.windows.net/pytablesync99dc0b08()?st=2020-07-22T23%3A06%3A47Z&se=2020-07-23T00%3A07%3A47Z&sp=r&sv=2019-07-07&ss=t&srt=o&sig=8cbTkDPmxSAj6%2BomXh1yNI%2FjpYeYvBzfwX238epeNTo%3D
+    uri: https://storagename.table.core.windows.net/pytablesync99dc0b08()?st=2020-07-23T14%3A20%3A16Z&se=2020-07-23T15%3A21%3A16Z&sp=r&sv=2019-07-07&ss=t&srt=o&sig=aX2crrkIkE1WKmnPVZmWPYczQHY%2F9PJXC0CIRPOiUSk%3D
   response:
     body:
       string: '{"odata.error":{"code":"InvalidUri","message":{"lang":"en-US","value":"The
-        requested URI does not represent any resource on the server.\nRequestId:4cb44d86-d002-00a9-507c-60ded8000000\nTime:2020-07-22T23:07:47.7122091Z"}}}'
+        requested URI does not represent any resource on the server.\nRequestId:06b1e0d1-d002-002b-1cfc-607eb2000000\nTime:2020-07-23T14:21:17.5016795Z"}}}'
     headers:
       content-length:
       - '222'
       content-type:
       - application/json
       date:
-      - Wed, 22 Jul 2020 23:07:46 GMT
+      - Thu, 23 Jul 2020 14:21:16 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -190,11 +190,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Wed, 22 Jul 2020 23:07:47 GMT
+      - Thu, 23 Jul 2020 14:21:17 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 22 Jul 2020 23:07:47 GMT
+      - Thu, 23 Jul 2020 14:21:17 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -208,7 +208,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 22 Jul 2020 23:07:47 GMT
+      - Thu, 23 Jul 2020 14:21:16 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
