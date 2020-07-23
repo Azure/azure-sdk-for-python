@@ -87,7 +87,8 @@ def deserialize_value(value, value_type):
     elif value_type == "dateTime":
         value = isodate.parse_datetime(value)
     elif value_type == "duration":
-        value = isodate.parse_duration(value) # Note: If value ever includes a month or year, will return an isodate type, and should be reassessed
+        value = isodate.parse_duration(value)
+        # Note: If value ever includes a month or year, will return an isodate type, and should be reassessed
     return value
 
 
