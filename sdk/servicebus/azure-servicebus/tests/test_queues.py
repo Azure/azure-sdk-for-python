@@ -1375,6 +1375,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
     def test_queue_message_properties(self):
         scheduled_enqueue_time = (utc_now() + timedelta(seconds=20)).replace(microsecond=0)
         message = Message(
