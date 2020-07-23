@@ -284,9 +284,9 @@ revamped configuration API. Static `create_config` methods have been renamed
 
 ### New features:
 - Added credentials for authenticating users:
-[`DeviceCodeCredential`](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity/1.2.0/azure.identity.html#azure.identity.DeviceCodeCredential),
-[`InteractiveBrowserCredential`](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity/1.2.0/azure.identity.html#azure.identity.InteractiveBrowserCredential),
-[`UsernamePasswordCredential`](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity/1.2.0/azure.identity.html#azure.identity.UsernamePasswordCredential)
+ - `DeviceCodeCredential`
+ - `InteractiveBrowserCredential`
+ - `UsernamePasswordCredential`
   - async versions of these credentials will be added in a future release
 
 ## 1.0.0b1 (2019-06-28)
