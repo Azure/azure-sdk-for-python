@@ -5,17 +5,6 @@ parameters:
   AdditionalTestArgs: ''
 
 steps:
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 3.7'
-    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
-    inputs:
-     versionSpec: '3.7'
-
-  - script: |
-      pip install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
-    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
-
   - task: PythonScript@0
     displayName: 'Run Api Stub Generation'
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
@@ -28,4 +17,4 @@ steps:
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="apistub"
         --disablecov
-        --omit-management
+        --filter-type="Omit_management"
