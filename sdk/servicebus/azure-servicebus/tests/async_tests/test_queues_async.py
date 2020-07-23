@@ -1066,6 +1066,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 messages = await receiver.receive_messages(max_wait_time=5)
                 assert len(messages) == 1
 
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
     def test_queue_message_http_proxy_setting(self):
         mock_conn_str = "Endpoint=sb://mock.servicebus.windows.net/;SharedAccessKeyName=mock;SharedAccessKey=mock"
         http_proxy = {
