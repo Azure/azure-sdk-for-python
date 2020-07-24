@@ -1,4 +1,4 @@
-# Azure Schema Registry library for Python
+# Azure Schema Registry client library for Python
 
 Azure Schema Registry is a ...
 <<This library is under development>>
