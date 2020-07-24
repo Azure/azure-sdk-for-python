@@ -59,6 +59,10 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
 ]
 
+BANDIT_EXCLUDED_PACKAGES = [
+    "azure-servicebus",
+]
+
 omit_regression = (
     lambda x: "nspkg" not in x
     and "mgmt" not in x
@@ -70,7 +74,7 @@ omit_docs = lambda x: "nspkg" not in x and os.path.basename(x) not in META_PACKA
 omit_build = lambda x: x # Dummy lambda to match omit type
 lambda_filter_azure_pkg = lambda x: x.startswith("azure") and "-nspkg" not in x
 omit_mgmt = lambda x: "mgmt" not in x or os.path.basename(x) in MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS
-omit_bandit = lambda x: not( x.startswith('azure.eventhub') or x.startswith("azure.servicebus") or "mgmt" in x)
+omit_bandit = lambda x: not(os.path.basename(x) in BANDIT_EXCLUDED_PACKAGES or "mgmt" in x)
 
 # dict of filter type and filter function
 omit_funct_dict = {
