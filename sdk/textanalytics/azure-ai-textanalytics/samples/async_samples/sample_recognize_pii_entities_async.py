@@ -40,8 +40,8 @@ class RecognizePiiEntitiesSampleAsync(object):
         )
         documents = [
             "The employee's SSN is 859-98-0987.",
-            "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
-            "Is 998.214.865-68 your Brazilian CPF number?"
+            "Is 998.214.865-68 your Brazilian CPF number?",
+            "My phone number is 555-555-5555"
         ]
 
         async with text_analytics_client:
