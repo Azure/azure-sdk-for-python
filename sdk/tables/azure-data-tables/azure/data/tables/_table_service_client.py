@@ -10,7 +10,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
-from ._models import Table, _parameter_filter_substitution
+from ._models import Table
 
 from ._generated import AzureTable
 from ._generated.models import TableProperties, TableServiceProperties, QueryOptions
@@ -21,7 +21,6 @@ from ._shared.response_handlers import process_table_error
 from ._version import VERSION
 
 from ._table_client import TableClient
-from ._shared._error import _validate_table_name
 from ._shared._table_service_client_base import TableServiceClientBase
 
 

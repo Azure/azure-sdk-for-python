@@ -32,7 +32,7 @@ from ._shared.response_handlers import process_table_error
 from ._version import VERSION
 
 
-from ._models import TableEntityPropertiesPaged, UpdateMode, _parameter_filter_substitution
+from ._models import TableEntityPropertiesPaged, UpdateMode
 
 from ._shared.response_handlers import return_headers_and_deserialized
 
