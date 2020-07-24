@@ -49,8 +49,7 @@ def _read_credential(service_name, account_name):
     if _advapi.CredReadW(target, 1, 0, ct.byref(cred_ptr)):
         cred_blob = cred_ptr.contents.CredentialBlob
         cred_blob_size = cred_ptr.contents.CredentialBlobSize
-        password_as_list = [int.from_bytes(cred_blob[pos : pos + 1], "little") for pos in range(0, cred_blob_size)]
-        cred = "".join(map(chr, password_as_list))
+        cred = "".join(map(chr, cred_blob[:cred_blob_size]))
         _advapi.CredFree(cred_ptr)
         return cred
     return None
