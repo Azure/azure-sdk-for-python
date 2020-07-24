@@ -106,7 +106,7 @@ def serialize_value_type(value):
         return "dateTime", isodate.datetime_isoformat(value)
     if isinstance(value, timedelta):
         return "duration", isodate.duration_isoformat(value)
-    raise ValueError("value {} of type {} is not supported for the key value".format(value, value_type))
+    raise ValueError("value {} of type {} is not supported for the key value".format(value, type(value)))
 
 
 def deserialize_key_values(xml_parent, key_values):
