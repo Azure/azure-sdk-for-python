@@ -52,7 +52,7 @@ detail the new keyword arguments):
 - `Secret` now has attribute `properties`, which holds certain properties of the
 secret, such as `version`. This changes the shape of the returned `Secret` type,
 as certain properties of `Secret` (such as `version`) have to be accessed
-through the `properties` property. See the updated [docs](https://azure.github.io/azure-sdk-for-python/ref/Keyvault.html#azure-keyvault-secrets)
+through the `properties` property.
 for details.
 - `update_secret` has been renamed to `update_secret_properties`
 - The `vault_url` parameter of `SecretClient` has been renamed to `vault_endpoint`
