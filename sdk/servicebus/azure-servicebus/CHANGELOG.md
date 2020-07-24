@@ -6,9 +6,9 @@
 
 * Added new properties to Message, PeekMessage and ReceivedMessage: `content_type`, `correlation_id`, `label`,
 `message_id`, `reply_to`, `reply_to_session_id` and `to`. Please refer to the docstring for further information.
-
-* Add new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
+* Added new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
 `dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`. Please refer to the docstring for further information.
+* Added support for sending received messages via `ServiceBusSender.send_messages`.
 
 **Breaking Changes**
 
@@ -25,6 +25,12 @@
   - Removed property `settled` on `PeekMessage`.
   - Removed property `expired` on `ReceivedMessage`.
 
+* Add `on_lock_renew_failure` as a parameter to `AutoLockRenew.register`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion)
+
+**Breaking Changes**
+
+* `AutoLockRenew.sleep_time` and `AutoLockRenew.renew_period` have been made internal as `_sleep_time` and `_renew_period` respectively, as it is not expected a user will have to interact with them.
+* `AutoLockRenew.shutdown` is now `AutoLockRenew.close` to normalize with other equivelent behaviors.
 
 ## 7.0.0b4 (2020-07-06)
 
@@ -35,8 +41,8 @@
 
 **BugFixes**
 
-* Fixed bug where sync AutoLockRenew does not shutdown itself timely.
-* Fixed bug where async AutoLockRenew does not support context manager.
+* Fixed bug where sync `AutoLockRenew` does not shutdown itself timely.
+* Fixed bug where async `AutoLockRenew` does not support context manager.
 
 **Breaking Changes**
 

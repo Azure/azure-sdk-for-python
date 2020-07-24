@@ -26,13 +26,15 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_none_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         with self.assertRaises(ValueError):
-            await client.begin_recognize_custom_forms(model_id=None, form=b"xx")
+            async with client:
+                await client.begin_recognize_custom_forms(model_id=None, form=b"xx")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_custom_form_empty_model_id(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         with self.assertRaises(ValueError):
-            await client.begin_recognize_custom_forms(model_id="", form=b"xx")
+            async with client:
+                await client.begin_recognize_custom_forms(model_id="", form=b"xx")
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_custom_form_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -40,23 +42,26 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            poller = await client.begin_recognize_custom_forms(model_id="xx", form=myfile)
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_custom_forms(model_id="xx", form=myfile)
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            poller = await client.begin_recognize_custom_forms(model_id="xx", form=b"xx", content_type="image/jpeg")
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_custom_forms(model_id="xx", form=b"xx", content_type="image/jpeg")
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_passing_unsupported_url_content_type(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
 
         with self.assertRaises(TypeError):
-            poller = await client.begin_recognize_custom_forms(model_id="xx", form="https://badurl.jpg", content_type="application/json")
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_custom_forms(model_id="xx", form="https://badurl.jpg", content_type="application/json")
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_auto_detect_unsupported_stream_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
@@ -66,42 +71,46 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         with self.assertRaises(ValueError):
-            poller = await client.begin_recognize_custom_forms(
-                model_id="xxx",
-                form=myfile,
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_custom_forms(
+                    model_id="xxx",
+                    form=myfile,
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True)
     async def test_custom_form_damaged_file(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
+        async with client:
+            training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
+            model = await training_poller.result()
 
-        training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
-        model = await training_poller.result()
-
-        with self.assertRaises(HttpResponseError):
-            poller = await fr_client.begin_recognize_custom_forms(
-                model.model_id,
-                b"\x25\x50\x44\x46\x55\x55\x55",
-            )
-            result = await poller.result()
+            with self.assertRaises(HttpResponseError):
+                async with fr_client:
+                    poller = await fr_client.begin_recognize_custom_forms(
+                        model.model_id,
+                        b"\x25\x50\x44\x46\x55\x55\x55",
+                    )
+                    result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True)
     async def test_custom_form_unlabeled_blank_page(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
-
-        poller = await client.begin_training(container_sas_url, use_training_labels=False)
-        model = await poller.result()
-
         with open(self.blank_pdf, "rb") as fd:
             blank = fd.read()
-        poller = await fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            blank
-        )
-        form = await poller.result()
+
+        async with client:
+            poller = await client.begin_training(container_sas_url, use_training_labels=False)
+            model = await poller.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(
+                    model.model_id,
+                    blank
+                )
+                form = await poller.result()
 
         self.assertEqual(len(form), 1)
         self.assertEqual(form[0].page_range.first_page_number, 1)
@@ -112,17 +121,19 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     @GlobalClientPreparer(training=True)
     async def test_custom_form_labeled_blank_page(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
-
-        poller = await client.begin_training(container_sas_url, use_training_labels=True)
-        model = await poller.result()
-
         with open(self.blank_pdf, "rb") as fd:
             blank = fd.read()
-        poller = await fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            blank
-        )
-        form = await poller.result()
+
+        async with client:
+            poller = await client.begin_training(container_sas_url, use_training_labels=True)
+            model = await poller.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(
+                    model.model_id,
+                    blank
+                )
+                form = await poller.result()
 
         self.assertEqual(len(form), 1)
         self.assertEqual(form[0].page_range.first_page_number, 1)
@@ -134,14 +145,16 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
-        model = await training_poller.result()
-
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = await fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.IMAGE_JPEG)
-        form = await poller.result()
+        async with client:
+            training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
+            model = await training_poller.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.IMAGE_JPEG)
+                form = await poller.result()
         self.assertEqual(form[0].form_type, "form-0")
         self.assertFormPagesHasValues(form[0].pages)
         for label, field in form[0].fields.items():
@@ -155,19 +168,20 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     @GlobalClientPreparer(training=True, multipage=True)
     async def test_custom_form_multipage_unlabeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
-
-        training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
-        model = await training_poller.result()
-
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
 
-        poller = await fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            myfile,
-            content_type=FormContentType.APPLICATION_PDF
-        )
-        forms = await poller.result()
+        async with client:
+            training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
+            model = await training_poller.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(
+                    model.model_id,
+                    myfile,
+                    content_type=FormContentType.APPLICATION_PDF
+                )
+                forms = await poller.result()
 
         for form in forms:
             if form.form_type is None:
@@ -186,14 +200,16 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_labeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        training_poller = await client.begin_training(container_sas_url, use_training_labels=True)
-        model = await training_poller.result()
-
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = await fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.IMAGE_JPEG)
-        form = await poller.result()
+        async with client:
+            training_poller = await client.begin_training(container_sas_url, use_training_labels=True)
+            model = await training_poller.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.IMAGE_JPEG)
+                form = await poller.result()
 
         self.assertEqual(form[0].form_type, "form-"+model.model_id)
         self.assertFormPagesHasValues(form[0].pages)
@@ -207,22 +223,23 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     @GlobalClientPreparer(training=True, multipage=True)
     async def test_custom_form_multipage_labeled(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
-
-        training_poller = await client.begin_training(
-            container_sas_url,
-            use_training_labels=True
-        )
-        model = await training_poller.result()
-
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
 
-        poller = await fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            myfile,
-            content_type=FormContentType.APPLICATION_PDF
-        )
-        forms = await poller.result()
+        async with client:
+            training_poller = await client.begin_training(
+                container_sas_url,
+                use_training_labels=True
+            )
+            model = await training_poller.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(
+                    model.model_id,
+                    myfile,
+                    content_type=FormContentType.APPLICATION_PDF
+                )
+                forms = await poller.result()
 
         for form in forms:
             self.assertEqual(form.form_type, "form-"+model.model_id)
@@ -239,9 +256,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_form_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
-        model = await training_poller.result()
-
         responses = []
 
         def callback(raw_response, _, headers):
@@ -253,13 +267,18 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = await fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            myfile,
-            include_field_elements=True,
-            cls=callback
-        )
-        form = await poller.result()
+        async with client:
+            training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
+            model = await training_poller.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(
+                    model.model_id,
+                    myfile,
+                    include_field_elements=True,
+                    cls=callback
+                )
+                form = await poller.result()
 
         actual = responses[0]
         recognized_form = responses[1]
@@ -277,9 +296,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_forms_multipage_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
-        model = await training_poller.result()
-
         responses = []
 
         def callback(raw_response, _, headers):
@@ -291,13 +307,18 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
 
-        poller = await fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            myfile,
-            include_field_elements=True,
-            cls=callback
-        )
-        form = await poller.result()
+        async with client:
+            training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
+            model = await training_poller.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(
+                    model.model_id,
+                    myfile,
+                    include_field_elements=True,
+                    cls=callback
+                )
+                form = await poller.result()
         actual = responses[0]
         recognized_form = responses[1]
         read_results = actual.analyze_result.read_results
@@ -316,9 +337,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_form_labeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        training_polling = await client.begin_training(container_sas_url, use_training_labels=True)
-        model = await training_polling.result()
-
         responses = []
 
         def callback(raw_response, _, headers):
@@ -330,13 +348,18 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = await fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            myfile,
-            include_field_elements=True,
-            cls=callback
-        )
-        form = await poller.result()
+        async with client:
+            training_polling = await client.begin_training(container_sas_url, use_training_labels=True)
+            model = await training_polling.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(
+                    model.model_id,
+                    myfile,
+                    include_field_elements=True,
+                    cls=callback
+                )
+                form = await poller.result()
 
         actual = responses[0]
         recognized_form = responses[1]
@@ -354,9 +377,6 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_forms_multipage_labeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        training_poller = await client.begin_training(container_sas_url, use_training_labels=True)
-        model = await training_poller.result()
-
         responses = []
 
         def callback(raw_response, _, headers):
@@ -368,13 +388,18 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
 
-        poller = await fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            myfile,
-            include_field_elements=True,
-            cls=callback
-        )
-        form = await poller.result()
+        async with client:
+            training_poller = await client.begin_training(container_sas_url, use_training_labels=True)
+            model = await training_poller.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(
+                    model.model_id,
+                    myfile,
+                    include_field_elements=True,
+                    cls=callback
+                )
+                form = await poller.result()
 
         actual = responses[0]
         recognized_form = responses[1]
@@ -394,34 +419,33 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     async def test_custom_form_continuation_token(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
-
-        poller = await client.begin_training(container_sas_url, use_training_labels=False)
-        model = await poller.result()
-
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
-        initial_poller = await fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            myfile
-        )
 
-        cont_token = initial_poller.continuation_token()
-        poller = await fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            myfile,
-            continuation_token=cont_token
-        )
-        result = await poller.result()
-        self.assertIsNotNone(result)
-        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        async with client:
+            poller = await client.begin_training(container_sas_url, use_training_labels=False)
+            model = await poller.result()
+
+            async with fr_client:
+                initial_poller = await fr_client.begin_recognize_custom_forms(
+                    model.model_id,
+                    myfile
+                )
+
+                cont_token = initial_poller.continuation_token()
+                poller = await fr_client.begin_recognize_custom_forms(
+                    model.model_id,
+                    myfile,
+                    continuation_token=cont_token
+                )
+                result = await poller.result()
+                self.assertIsNotNone(result)
+                await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True, multipage2=True)
     async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
-
-        poller = await client.begin_training(container_sas_url, use_training_labels=False)
-        model = await poller.result()
 
         responses = []
 
@@ -434,13 +458,18 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         with open(self.multipage_vendor_pdf, "rb") as fd:
             myfile = fd.read()
 
-        poller = await fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            myfile,
-            include_field_elements=True,
-            cls=callback
-        )
-        form = await poller.result()
+        async with client:
+            poller = await client.begin_training(container_sas_url, use_training_labels=False)
+            model = await poller.result()
+
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(
+                    model.model_id,
+                    myfile,
+                    include_field_elements=True,
+                    cls=callback
+                )
+                form = await poller.result()
         actual = responses[0]
         recognized_form = responses[1]
         read_results = actual.analyze_result.read_results
@@ -459,10 +488,10 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
     async def test_custom_form_multipage_vendor_set_labeled_transform(self, client, container_sas_url):
         fr_client = client.get_form_recognizer_client()
 
-        poller = await client.begin_training(container_sas_url, use_training_labels=True)
-        model = await poller.result()
-
         responses = []
+
+        with open(self.multipage_vendor_pdf, "rb") as fd:
+            myfile = fd.read()
 
         def callback(raw_response, _, headers):
             analyze_result = fr_client._client._deserialize(AnalyzeOperationResult, raw_response)
@@ -470,16 +499,18 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(form)
 
-        with open(self.multipage_vendor_pdf, "rb") as fd:
-            myfile = fd.read()
+        async with client:
+            poller = await client.begin_training(container_sas_url, use_training_labels=True)
+            model = await poller.result()
 
-        poller = await fr_client.begin_recognize_custom_forms(
-            model.model_id,
-            myfile,
-            include_field_elements=True,
-            cls=callback
-        )
-        form = await poller.result()
+            async with fr_client:
+                poller = await fr_client.begin_recognize_custom_forms(
+                    model.model_id,
+                    myfile,
+                    include_field_elements=True,
+                    cls=callback
+                )
+                form = await poller.result()
         actual = responses[0]
         recognized_form = responses[1]
         read_results = actual.analyze_result.read_results

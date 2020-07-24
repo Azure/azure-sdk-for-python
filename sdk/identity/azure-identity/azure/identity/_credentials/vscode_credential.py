@@ -4,9 +4,11 @@
 # ------------------------------------
 import sys
 from typing import TYPE_CHECKING
+
 from .._exceptions import CredentialUnavailableError
 from .._constants import AZURE_VSCODE_CLIENT_ID
 from .._internal.aad_client import AadClient
+from .._internal.decorators import log_get_token
 
 if sys.platform.startswith("win"):
     from .._internal.win_vscode_adapter import get_credentials
@@ -22,13 +24,24 @@ if TYPE_CHECKING:
 
 
 class VSCodeCredential(object):
-    """Authenticates by redeeming a refresh token previously saved by VS Code"""
+    """Authenticates as the Azure user signed in to Visual Studio Code.
+
+    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+          defines authorities for other clouds.
+    :keyword str tenant_id: ID of the tenant the credential should authenticate in. Defaults to the "organizations"
+        tenant, which supports only Azure Active Directory work or school accounts.
+    """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._client = kwargs.pop("_client", None) or AadClient("organizations", AZURE_VSCODE_CLIENT_ID, **kwargs)
         self._refresh_token = None
+        self._client = kwargs.pop("_client", None)
+        if not self._client:
+            tenant_id = kwargs.pop("tenant_id", None) or "organizations"
+            self._client = AadClient(tenant_id, AZURE_VSCODE_CLIENT_ID, **kwargs)
 
+    @log_get_token("VSCodeCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.

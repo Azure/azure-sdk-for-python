@@ -37,6 +37,7 @@ from azure.servicebus.exceptions import (
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, ServiceBusQueuePreparer, CachedServiceBusQueuePreparer
 from utilities import get_logger, print_message, sleep_until_expired
+from mocks import MockReceivedMessage
 
 _logger = get_logger(logging.DEBUG)
 
@@ -212,7 +213,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                               mode=ReceiveSettleMode.ReceiveAndDelete, 
-                                              idle_timeout=5) as receiver:
+                                              idle_timeout=8) as receiver:
                 for message in receiver:
                     assert not message.properties
                     assert not message.label
@@ -744,23 +745,65 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
-    
-            with sb_client.get_queue_receiver(servicebus_queue.name,
-                                           idle_timeout=5, 
-                                           mode=ReceiveSettleMode.PeekLock) as receiver:
-                with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                    for i in range(5):
-                        message = Message("Test message no. {}".format(i))
-                        sender.send_messages(message)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name,
+                                           idle_timeout=5,
+                                           mode=ReceiveSettleMode.PeekLock)
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            with receiver, sender:
+                for i in range(5):
+                    message = Message(
+                        body="Test message",
+                        properties={'key': 'value'},
+                        label='label',
+                        content_type='application/text',
+                        correlation_id='cid',
+                        message_id='mid',
+                        partition_key='pk',
+                        via_partition_key='via_pk',
+                        to='to',
+                        reply_to='reply_to',
+                        time_to_live=timedelta(seconds=60)
+                    )
+                    sender.send_messages(message)
     
                 messages = receiver.peek_messages(5)
                 assert len(messages) > 0
                 assert all(isinstance(m, PeekMessage) for m in messages)
                 for message in messages:
                     print_message(_logger, message)
+                    assert b''.join(message.body) == b'Test message'
+                    assert message.properties[b'key'] == b'value'
+                    assert message.label == 'label'
+                    assert message.content_type == 'application/text'
+                    assert message.correlation_id == 'cid'
+                    assert message.message_id == 'mid'
+                    assert message.partition_key == 'pk'
+                    assert message.via_partition_key == 'via_pk'
+                    assert message.to == 'to'
+                    assert message.reply_to == 'reply_to'
+                    assert message.time_to_live == timedelta(seconds=60)
                     with pytest.raises(AttributeError):
                         message.complete()
-    
+
+                    sender.send_messages(message)
+
+                cnt = 0
+                for message in receiver:
+                    assert b''.join(message.body) == b'Test message'
+                    assert message.properties[b'key'] == b'value'
+                    assert message.label == 'label'
+                    assert message.content_type == 'application/text'
+                    assert message.correlation_id == 'cid'
+                    assert message.message_id == 'mid'
+                    assert message.partition_key == 'pk'
+                    assert message.via_partition_key == 'via_pk'
+                    assert message.to == 'to'
+                    assert message.reply_to == 'reply_to'
+                    assert message.time_to_live == timedelta(seconds=60)
+                    message.complete()
+                    cnt += 1
+                assert cnt == 10
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -892,7 +935,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             print("Remaining messages", message.locked_until_utc, utc_now())
                             messages.append(message)
                             message.complete()
-            renewer.shutdown()
+            renewer.close()
             assert len(messages) == 11
 
     @pytest.mark.liveTest
@@ -1192,28 +1235,36 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
-            with sb_client.get_queue_receiver(servicebus_queue.name,
-                                              prefetch=20) as receiver:
-                with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                    content = str(uuid.uuid4())
-                    message_id_a = uuid.uuid4()
-                    message_a = Message(content)
-                    message_a.message_id = message_id_a
-                    message_id_b = uuid.uuid4()
-                    message_b = Message(content)
-                    message_b.message_id = message_id_b
-                    message_arry = [message_a, message_b]
-                    for message in message_arry:
-                        message.properties = {'key': 'value'}
-                        message.label = 'label'
-                        message.content_type = 'application/text'
-                        message.correlation_id = 'cid'
-                        message.partition_key = 'pk'
-                        message.via_partition_key = 'via_pk'
-                        message.to = 'to'
-                        message.reply_to = 'reply_to'
-                    tokens = sender.schedule_messages(message_arry, enqueue_time)
-                    assert len(tokens) == 2
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, prefetch=20)
+
+            with sender, receiver:
+                content = str(uuid.uuid4())
+                message_id_a = uuid.uuid4()
+                message_a = Message(content)
+                message_a.message_id = message_id_a
+                message_id_b = uuid.uuid4()
+                message_b = Message(content)
+                message_b.message_id = message_id_b
+                message_arry = [message_a, message_b]
+                for message in message_arry:
+                    message.properties = {'key': 'value'}
+                    message.label = 'label'
+                    message.content_type = 'application/text'
+                    message.correlation_id = 'cid'
+                    message.partition_key = 'pk'
+                    message.via_partition_key = 'via_pk'
+                    message.to = 'to'
+                    message.reply_to = 'reply_to'
+
+                sender.send_messages(message_arry)
+
+                received_messages = receiver.receive_messages(max_batch_size=2, max_wait_time=5)
+                for message in received_messages:
+                    message.complete()
+
+                tokens = sender.schedule_messages(received_messages, enqueue_time)
+                assert len(tokens) == 2
     
                 messages = receiver.receive_messages(max_wait_time=120)
                 messages.extend(receiver.receive_messages(max_wait_time=5))
@@ -1337,19 +1388,88 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert len(messages) == 1
                 messages[0].complete()
 
-    def test_queue_mock_no_reusing_auto_lock_renew(self):
-        class MockReceivedMessage:
-            def __init__(self):
-                self._received_timestamp_utc = utc_now()
-                self.locked_until_utc = self._received_timestamp_utc + timedelta(seconds=10)
 
-            def renew_lock(self):
-                self.locked_until_utc = self.locked_until_utc + timedelta(seconds=10)
+    def test_queue_mock_auto_lock_renew_callback(self):
+        results = []
+        errors = []
+        def callback_mock(renewable, error):
+            results.append(renewable)
+            if error:
+                errors.append(error)
 
         auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1 # So we can run the test fast.
+        with auto_lock_renew: # Check that it is called when the object expires for any reason (silent renew failure)
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            time.sleep(3)
+            assert len(results) == 1 and results[-1]._lock_expired == True
+            assert not errors
+
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
+        with auto_lock_renew: # Check that in normal operation it does not get called
+            auto_lock_renew.register(renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
+            time.sleep(3)
+            assert not results
+            assert not errors
+
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
+        with auto_lock_renew: # Check that when a message is settled, it will not get called even after expiry
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            message._settled = True
+            time.sleep(3)
+            assert not results
+            assert not errors
+
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
+        with auto_lock_renew: # Check that it is called when there is an overt renew failure
+            message = MockReceivedMessage(exception_on_renew_lock=True)
+            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            time.sleep(3)
+            assert len(results) == 1 and results[-1]._lock_expired == True
+            assert errors[-1]
+
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
+        with auto_lock_renew: # Check that it is not called when the renewer is shutdown
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            auto_lock_renew.close()
+            time.sleep(3)
+            assert not results
+            assert not errors
+
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
+        with auto_lock_renew: # Check that it is not called when the receiver is shutdown
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            message._receiver._running = False
+            time.sleep(3)
+            assert not results
+            assert not errors
+
+
+    def test_queue_mock_no_reusing_auto_lock_renew(self):
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1 # So we can run the test fast.
         with auto_lock_renew:
             auto_lock_renew.register(renewable=MockReceivedMessage())
-            time.sleep(12)
+            time.sleep(3)
 
         with pytest.raises(ServiceBusError):
             with auto_lock_renew:
@@ -1359,12 +1479,13 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             auto_lock_renew.register(renewable=MockReceivedMessage())
 
         auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
 
         with auto_lock_renew:
             auto_lock_renew.register(renewable=MockReceivedMessage())
-            time.sleep(12)
+            time.sleep(3)
 
-        auto_lock_renew.shutdown()
+        auto_lock_renew.close()
 
         with pytest.raises(ServiceBusError):
             with auto_lock_renew:
@@ -1469,15 +1590,29 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             def message_content():
                 for i in range(20):
-                    yield Message("Message no. {}".format(i))
+                    yield Message(
+                        body="Test message",
+                        properties={'key': 'value'},
+                        label='label',
+                        content_type='application/text',
+                        correlation_id='cid',
+                        message_id='mid',
+                        partition_key='pk',
+                        via_partition_key='via_pk',
+                        to='to',
+                        reply_to='reply_to',
+                        time_to_live=timedelta(seconds=60)
+                    )
 
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+
+            with sender, receiver:
                 message = BatchMessage()
                 for each in message_content():
                     message.add(each)
                 sender.send_messages(message)
 
-            with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 receive_counter = 0
                 message_received_cnt = 0
                 while message_received_cnt < 20:
@@ -1486,9 +1621,48 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         break
                     receive_counter += 1
                     message_received_cnt += len(messages)
-                    for m in messages:
-                        print_message(_logger, m)
-                        m.complete()
+                    for message in messages:
+                        print_message(_logger, message)
+                        assert b''.join(message.body) == b'Test message'
+                        assert message.properties[b'key'] == b'value'
+                        assert message.label == 'label'
+                        assert message.content_type == 'application/text'
+                        assert message.correlation_id == 'cid'
+                        assert message.message_id == 'mid'
+                        assert message.partition_key == 'pk'
+                        assert message.via_partition_key == 'via_pk'
+                        assert message.to == 'to'
+                        assert message.reply_to == 'reply_to'
+                        assert message.time_to_live == timedelta(seconds=60)
+                        message.complete()
+                        sender.send_messages(message)  # resending received message
+
+                assert message_received_cnt == 20
+                # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
+                assert receive_counter < 10  # Dynamic link credit issuing come info effect
+
+                receive_counter = 0
+                message_received_cnt = 0
+                while message_received_cnt < 20:
+                    messages = receiver.receive_messages(max_batch_size=20, max_wait_time=5)
+                    if not messages:
+                        break
+                    receive_counter += 1
+                    message_received_cnt += len(messages)
+                    for message in messages:
+                        print_message(_logger, message)
+                        assert b''.join(message.body) == b'Test message'
+                        assert message.properties[b'key'] == b'value'
+                        assert message.label == 'label'
+                        assert message.content_type == 'application/text'
+                        assert message.correlation_id == 'cid'
+                        assert message.message_id == 'mid'
+                        assert message.partition_key == 'pk'
+                        assert message.via_partition_key == 'via_pk'
+                        assert message.to == 'to'
+                        assert message.reply_to == 'reply_to'
+                        assert message.time_to_live == timedelta(seconds=60)
+                        message.complete()
 
                 assert message_received_cnt == 20
                 # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration

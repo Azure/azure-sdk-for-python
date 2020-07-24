@@ -31,6 +31,7 @@ from ._models import (
     CustomFormModel,
     CustomFormSubmodel,
     CustomFormModelField,
+    FieldValueType
 )
 
 
@@ -59,6 +60,7 @@ __all__ = [
     'CustomFormModel',
     'CustomFormSubmodel',
     'CustomFormModelField',
+    'FieldValueType'
 ]
 
 __VERSION__ = VERSION
