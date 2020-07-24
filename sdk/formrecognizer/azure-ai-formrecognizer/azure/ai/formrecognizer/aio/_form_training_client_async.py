@@ -11,6 +11,7 @@ from typing import (
     Any,
     Dict,
     Union,
+    cast,
     TYPE_CHECKING,
 )
 from azure.core.exceptions import HttpResponseError
@@ -191,7 +192,9 @@ class FormTrainingClient(object):
                 )
             )
         except HttpResponseError as e:
+            ret_val = cast(AsyncLROPoller[CustomFormModel], None)
             process_form_exception(e)
+        return ret_val
 
     @distributed_trace_async
     async def delete_model(self, model_id: str, **kwargs: Any) -> None:
@@ -244,13 +247,15 @@ class FormTrainingClient(object):
                 :caption: List model information for each model on the account.
         """
         try:
-            return self._client.list_custom_models(  # type: ignore
+            ret_val = self._client.list_custom_models(
                 cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
                 error_map=error_map,
                 **kwargs
             )
         except HttpResponseError as e:
+            ret_val = cast(AsyncItemPaged, None)
             process_form_exception(e)
+        return ret_val # type: ignore
 
     @distributed_trace_async
     async def get_account_properties(self, **kwargs: Any) -> AccountProperties:
@@ -272,9 +277,11 @@ class FormTrainingClient(object):
         """
         response = await self._client.get_custom_models(error_map=error_map, **kwargs)
         try:
-            return AccountProperties._from_generated(response.summary)
+            ret_val = AccountProperties._from_generated(response.summary)
         except HttpResponseError as e:
+            ret_val = cast(AccountProperties, None)
             process_form_exception(e)
+        return ret_val
 
     @distributed_trace_async
     async def get_custom_model(self, model_id: str, **kwargs: Any) -> CustomFormModel:
@@ -306,9 +313,11 @@ class FormTrainingClient(object):
             **kwargs
         )
         try:
-            return CustomFormModel._from_generated(response)
+            ret_val = CustomFormModel._from_generated(response)
         except HttpResponseError as e:
+            ret_val = cast(CustomFormModel, None)
             process_form_exception(e)
+        return ret_val
 
     @distributed_trace_async
     async def get_copy_authorization(
@@ -351,9 +360,11 @@ class FormTrainingClient(object):
         target["resourceId"] = resource_id
         target["resourceRegion"] = resource_region
         try:
-            return target
+            ret_val = target
         except HttpResponseError as e:
+            ret_val = cast(Dict, None)
             process_form_exception(e)
+        return ret_val
 
     @distributed_trace_async
     async def begin_copy_model(
@@ -399,7 +410,7 @@ class FormTrainingClient(object):
             copy_result = self._client._deserialize(CopyOperationResult, raw_response)
             return CustomFormModelInfo._from_generated(copy_result, target["modelId"])
         try:
-            return await self._client.begin_copy_custom_model(  # type: ignore
+            ret_val = await self._client.begin_copy_custom_model(
                 model_id=model_id,
                 copy_request=CopyRequest(
                     target_resource_id=target["resourceId"],
@@ -421,7 +432,9 @@ class FormTrainingClient(object):
                 **kwargs
             )
         except HttpResponseError as e:
+            ret_val = cast(AsyncLROPoller, None)
             process_form_exception(e)
+        return ret_val # type: ignore
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
         """Get an instance of a FormRecognizerClient from FormTrainingClient.

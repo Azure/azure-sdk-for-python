@@ -11,6 +11,7 @@ from typing import (
     Any,
     Dict,
     Union,
+    cast,
     TYPE_CHECKING,
 )
 from azure.core.exceptions import HttpResponseError
@@ -174,7 +175,9 @@ class FormTrainingClient(object):
                 LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs)
             )
         except HttpResponseError as e:
+            ret_val = cast(LROPoller, None)
             process_form_exception(e)
+            return ret_val
 
     @distributed_trace
     def delete_model(self, model_id, **kwargs):
@@ -235,7 +238,9 @@ class FormTrainingClient(object):
                 **kwargs
             )
         except HttpResponseError as e:
+            ret_val = cast(ItemPaged, None)
             process_form_exception(e)
+            return ret_val
 
     @distributed_trace
     def get_account_properties(self, **kwargs):
@@ -260,7 +265,9 @@ class FormTrainingClient(object):
         try:
             return AccountProperties._from_generated(response.summary)
         except HttpResponseError as e:
+            ret_val = cast(AccountProperties, None)
             process_form_exception(e)
+            return ret_val
 
     @distributed_trace
     def get_custom_model(self, model_id, **kwargs):
@@ -290,7 +297,9 @@ class FormTrainingClient(object):
         try:
             return CustomFormModel._from_generated(response)
         except HttpResponseError as e:
+            ret_val = cast(CustomFormModel, None)
             process_form_exception(e)
+            return ret_val
 
     @distributed_trace
     def get_copy_authorization(self, resource_id, resource_region, **kwargs):
@@ -331,7 +340,9 @@ class FormTrainingClient(object):
         try:
             return target
         except HttpResponseError as e:
+            ret_val = cast(Dict, None)
             process_form_exception(e)
+            return ret_val
 
     @distributed_trace
     def begin_copy_model(
@@ -397,7 +408,9 @@ class FormTrainingClient(object):
                 **kwargs
             )
         except HttpResponseError as e:
+            ret_val = cast(LROPoller, None)
             process_form_exception(e)
+            return ret_val
 
     def get_form_recognizer_client(self, **kwargs):
         # type: (Any) -> FormRecognizerClient
