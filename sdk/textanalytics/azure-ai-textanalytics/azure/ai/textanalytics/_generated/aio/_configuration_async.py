@@ -34,7 +34,6 @@ class TextAnalyticsClientConfiguration(Configuration):
         endpoint,  # type: str
         **kwargs  # type: Any
     ) -> None:
-        # type: (...) -> None
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
