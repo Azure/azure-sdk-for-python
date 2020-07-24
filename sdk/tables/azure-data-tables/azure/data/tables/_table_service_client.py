@@ -205,7 +205,6 @@ class TableServiceClient(TableServiceClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        filter = kwargs.pop('filter', None)  # pylint: disable = W0622
         if parameters:
             selected = filter.split('@')[1]
             for key, value in parameters.items():
@@ -213,12 +212,9 @@ class TableServiceClient(TableServiceClientBase):
                     filter = filter.split('@')[0].replace('@', value)  # pylint: disable = W0622
 
         temp_select = kwargs.pop('select', None)
-        select = ""
-        if temp_select is not None:
-            if len(list(temp_select)) > 1:
-                for i in temp_select:
-                    select += i + ","
-                temp_select = None
+        select = " "
+        if temp_select is not None and len(list(temp_select)) > 1:
+            select = ", ".join(temp_select)
 
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
                                      filter=filter)
@@ -255,12 +251,9 @@ class TableServiceClient(TableServiceClientBase):
                     filter = filter_start.replace('@', value)  # pylint: disable = W0622
 
         temp_select = kwargs.pop('select', None)
-        select = ""
-        if temp_select is not None:
-            if len(list(temp_select)) > 1:
-                for i in temp_select:
-                    select += i + ","
-                temp_select = None
+        select = " "
+        if temp_select is not None and len(list(temp_select)) > 1:
+            select = ", ".join(temp_select)
 
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
                                      filter=filter)

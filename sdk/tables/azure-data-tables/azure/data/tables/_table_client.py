@@ -323,10 +323,12 @@ class TableClient(TableClientBase):
                 table_entity_properties=entity,
                 if_match=if_match or if_not_match or "*",
                 **kwargs)
-        if mode is UpdateMode.MERGE:
+        elif mode is UpdateMode.MERGE:
             self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
                                             row_key=row_key, if_match=if_match or if_not_match or "*",
                                             table_entity_properties=entity, **kwargs)
+        else:
+            raise ValueError('Mode type is not supported')
 
     @distributed_trace
     def list_entities(
@@ -353,12 +355,9 @@ class TableClient(TableClientBase):
                     filter = filter.split('@')[0].replace('@', value)  # pylint: disable = W0622
 
         temp_select = kwargs.pop('select', None)
-        select = ""
-        if temp_select is not None:
-            if len(list(temp_select)) > 1:
-                for i in temp_select:
-                    select += i + ","
-                temp_select = None
+        select = " "
+        if temp_select is not None and len(list(temp_select)) > 1:
+            select = ", ".join(temp_select)
 
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
                                      filter=filter)
@@ -397,12 +396,9 @@ class TableClient(TableClientBase):
                     filter = filter_start.replace('@', value)  # pylint: disable = W0622
 
         temp_select = kwargs.pop('select', None)
-        select = ""
-        if temp_select is not None:
-            if len(list(temp_select)) > 1:
-                for i in temp_select:
-                    select += i + ","
-                temp_select = None
+        select = " "
+        if temp_select is not None and len(list(temp_select)) > 1:
+            select = ", ".join(temp_select)
 
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
                                      filter=filter)
@@ -480,7 +476,7 @@ class TableClient(TableClientBase):
                     table_entity_properties=entity,
                     **kwargs
                 )
-        if mode is UpdateMode.REPLACE:
+        elif mode is UpdateMode.REPLACE:
             try:
                 self._client.table.update_entity(
                     table=self.table_name,
@@ -495,3 +491,5 @@ class TableClient(TableClientBase):
                     table_entity_properties=entity,
                     **kwargs
                 )
+        else:
+            raise ValueError('Mode type is not supported')
