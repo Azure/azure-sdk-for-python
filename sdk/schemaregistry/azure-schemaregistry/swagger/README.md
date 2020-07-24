@@ -1,4 +1,4 @@
-# Azure ServiceBus for Python
+# Azure Schema Registry for Python
 
 > see https://aka.ms/autorest
 
