@@ -148,4 +148,4 @@ opentelemetry-api==0.8b0
 #override azure-servicebus msrest>=0.6.15,<2.0.0
 #override azure-servicebus azure-core<2.0.0,>=1.6.0
 #override azure-search-documents msrest>=0.6.10
-#override azure-table msrest>=0.6.10
+#override azure-data-tables msrest>=0.6.10

@@ -4,17 +4,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
+import warnings
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-
-from azure.data.tables._generated import models
+from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Optional, TypeVar
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -26,7 +26,7 @@ class ServiceOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.data.tables.models
+    :type models: ~azure_table.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -52,7 +52,7 @@ class ServiceOperations(object):
         """Sets properties for an account's Table service endpoint, including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
         :param table_service_properties: The Table Service properties.
-        :type table_service_properties: ~azure.data.tables.models.TableServiceProperties
+        :type table_service_properties: ~azure_table.models.TableServiceProperties
         :param timeout: The timeout parameter is expressed in seconds.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -131,7 +131,7 @@ class ServiceOperations(object):
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceProperties, or the result of cls(response)
-        :rtype: ~azure.data.tables.models.TableServiceProperties
+        :rtype: ~azure_table.models.TableServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableServiceProperties"]
@@ -199,7 +199,7 @@ class ServiceOperations(object):
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceStats, or the result of cls(response)
-        :rtype: ~azure.data.tables.models.TableServiceStats
+        :rtype: ~azure_table.models.TableServiceStats
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableServiceStats"]
@@ -245,7 +245,6 @@ class ServiceOperations(object):
         response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
         response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
         deserialized = self._deserialize('TableServiceStats', pipeline_response)
-
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)

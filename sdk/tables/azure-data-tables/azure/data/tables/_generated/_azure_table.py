@@ -16,17 +16,16 @@ if TYPE_CHECKING:
 from ._configuration import AzureTableConfiguration
 from .operations import TableOperations
 from .operations import ServiceOperations
-from azure.data.tables._generated import models
-
+from . import models
 
 
 class AzureTable(object):
     """AzureTable.
 
     :ivar table: TableOperations operations
-    :vartype table: azure.data.tables.operations.TableOperations
+    :vartype table: azure_table.operations.TableOperations
     :ivar service: ServiceOperations operations
-    :vartype service: azure.data.tables.operations.ServiceOperations
+    :vartype service: azure_table.operations.ServiceOperations
     :param url: The URL of the service account or table that is the targe of the desired operation.
     :type url: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.

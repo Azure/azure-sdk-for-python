@@ -377,7 +377,7 @@ class StorageTableTest(TableTestCase):
         identifiers = dict()
         identifiers['testid'] = AccessPolicy(start=datetime.utcnow() - timedelta(minutes=5),
                                              expiry=datetime.utcnow() + timedelta(hours=1),
-                                             permission=TableSasPermissions(query=True))
+                                             permission='r')
         try:
             client.set_table_access_policy(signed_identifiers=identifiers)
             # Assert

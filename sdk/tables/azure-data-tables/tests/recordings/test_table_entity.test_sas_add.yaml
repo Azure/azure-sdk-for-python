@@ -15,125 +15,31 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 24 Jul 2020 15:03:22 GMT
+      - Fri, 24 Jul 2020 16:41:53 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 15:03:22 GMT
+      - Fri, 24 Jul 2020 16:41:53 GMT
       x-ms-version:
-      - '2019-07-07'
+      - 12.0.0b1
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttablebfd90c40"}'
-    headers:
-      cache-control:
-      - no-cache
-      content-type:
-      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date:
-      - Fri, 24 Jul 2020 15:03:22 GMT
-      location:
-      - https://storagename.table.core.windows.net/Tables('uttablebfd90c40')
-      server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-ms-version:
-      - '2019-07-07'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: '{"PartitionKey": "pkbfd90c40", "RowKey": "rkbfd90c40", "age": "39", "age@odata.type":
-      "Edm.Int64", "sex": "male", "married": true, "deceased": false, "ratio": 3.1,
-      "evenratio": 3.0, "large": "933311100", "large@odata.type": "Edm.Int64", "Birthday":
-      "1973-10-04T00:00:00Z", "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z",
-      "birthday@odata.type": "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type":
-      "Edm.Binary", "other": 20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833",
-      "clsid@odata.type": "Edm.Guid"}'
-    headers:
-      Accept:
-      - application/json;odata=minimalmetadata
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '537'
-      Content-Type:
-      - application/json;odata=nometadata
-      DataServiceVersion:
-      - '3.0'
-      Date:
-      - Fri, 24 Jul 2020 15:03:22 GMT
-      User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Fri, 24 Jul 2020 15:03:22 GMT
-      x-ms-version:
-      - '2019-07-07'
-    method: POST
-    uri: https://storagename.table.core.windows.net/uttablebfd90c40?st=2020-07-24T15%3A02%3A22Z&se=2020-07-24T16%3A03%3A22Z&sp=a&sv=2019-07-07&tn=uttablebfd90c40&sig=LKnzlfWgS9XBBlGSEUCbxoui8Y8rv4j0XcYVxRAkqR4%3D
-  response:
-    body:
-      string: '{"odata.error":{"code":"InvalidUri","message":{"lang":"en-US","value":"The
-        requested URI does not represent any resource on the server.\nRequestId:11adf09a-d002-004b-59cb-619863000000\nTime:2020-07-24T15:03:23.4296801Z"}}}'
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\r\n<error
+        xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\r\n
+        \ <code>InvalidHeaderValue</code>\r\n  <message xml:lang=\"en-US\">The value
+        for one of the HTTP headers is not in the correct format.\nRequestId:d1c58c55-b002-005b-27d9-612691000000\nTime:2020-07-24T16:41:53.9490116Z</message>\r\n</error>"
     headers:
       content-length:
-      - '222'
+      - '371'
       content-type:
-      - application/json
+      - application/xml
       date:
-      - Fri, 24 Jul 2020 15:03:22 GMT
+      - Fri, 24 Jul 2020 16:41:53 GMT
       server:
       - Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidUri
     status:
       code: 400
-      message: The requested URI does not represent any resource on the server.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      Date:
-      - Fri, 24 Jul 2020 15:03:23 GMT
-      User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Fri, 24 Jul 2020 15:03:23 GMT
-      x-ms-version:
-      - '2019-07-07'
-    method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('uttablebfd90c40')
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Fri, 24 Jul 2020 15:03:22 GMT
-      server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      x-content-type-options:
-      - nosniff
-      x-ms-version:
-      - '2019-07-07'
-    status:
-      code: 204
-      message: No Content
+      message: The value for one of the HTTP headers is not in the correct format.
 version: 1

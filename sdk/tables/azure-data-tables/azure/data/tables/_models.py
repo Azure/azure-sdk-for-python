@@ -456,6 +456,7 @@ class Table(object):
 
     :ivar str name: The name of the table.
     """
+
     def __init__(self, table):
         self.table = table
 

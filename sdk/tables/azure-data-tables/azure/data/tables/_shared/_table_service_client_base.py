@@ -57,3 +57,18 @@ class TableServiceClientBase(StorageAccountHostsMixin):
         """
         return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
         
+    def _parameter_filter_substitution(
+            self,
+            parameters,  # type: dict[str,str]
+            filter  # type: str  # pylint: disable = W0622
+    ):
+        """Replace user defined parameter in filter
+        :param parameters: User defined parameters
+        :param filter: Filter for querying
+        """
+        filter_start = filter.split('@')[0]
+        selected = filter.split('@')[1]
+        for key, value in parameters.items():
+            if key == selected:
+                filter = filter_start.replace('@', value)  # pylint: disable = W0622
+        return filter

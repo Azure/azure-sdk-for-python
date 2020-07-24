@@ -91,8 +91,8 @@ class CorsRule(msrest.serialization.Model):
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(CorsRule, self).__init__(**kwargs)
         self.allowed_origins = kwargs['allowed_origins']
@@ -109,7 +109,7 @@ class GeoReplication(msrest.serialization.Model):
 
     :param status: Required. The status of the secondary location. Possible values include: "live",
      "bootstrap", "unavailable".
-    :type status: str or ~azure.data.tables.models.GeoReplicationStatusType
+    :type status: str or ~azure_table.models.GeoReplicationStatusType
     :param last_sync_time: Required. A GMT date/time value, to the second. All primary writes
      preceding this value are guaranteed to be available for read operations at the secondary.
      Primary writes after this point in time may or may not be available for reads.
@@ -130,8 +130,8 @@ class GeoReplication(msrest.serialization.Model):
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(GeoReplication, self).__init__(**kwargs)
         self.status = kwargs['status']
@@ -152,7 +152,7 @@ class Logging(msrest.serialization.Model):
     :param write: Required. Indicates whether all write requests should be logged.
     :type write: bool
     :param retention_policy: Required. The retention policy.
-    :type retention_policy: ~azure.data.tables.models.RetentionPolicy
+    :type retention_policy: ~azure_table.models.RetentionPolicy
     """
 
     _validation = {
@@ -175,8 +175,8 @@ class Logging(msrest.serialization.Model):
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(Logging, self).__init__(**kwargs)
         self.version = kwargs['version']
@@ -199,7 +199,7 @@ class Metrics(msrest.serialization.Model):
      API operations.
     :type include_apis: bool
     :param retention_policy: The retention policy.
-    :type retention_policy: ~azure.data.tables.models.RetentionPolicy
+    :type retention_policy: ~azure_table.models.RetentionPolicy
     """
 
     _validation = {
@@ -213,12 +213,12 @@ class Metrics(msrest.serialization.Model):
         'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy'},
     }
     _xml_map = {
-
+        
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(Metrics, self).__init__(**kwargs)
         self.version = kwargs.get('version', None)
@@ -233,7 +233,7 @@ class QueryOptions(msrest.serialization.Model):
     :param format: Specifies the media type for the response. Possible values include:
      "application/json;odata=nometadata", "application/json;odata=minimalmetadata",
      "application/json;odata=fullmetadata".
-    :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+    :type format: str or ~azure_table.models.OdataMetadataFormat
     :param top: Maximum number of records to return.
     :type top: int
     :param select: Select expression using OData notation. Limits the columns on each record to
@@ -255,8 +255,8 @@ class QueryOptions(msrest.serialization.Model):
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(QueryOptions, self).__init__(**kwargs)
         self.format = kwargs.get('format', None)
@@ -291,8 +291,8 @@ class RetentionPolicy(msrest.serialization.Model):
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(RetentionPolicy, self).__init__(**kwargs)
         self.enabled = kwargs['enabled']
@@ -307,11 +307,12 @@ class SignedIdentifier(msrest.serialization.Model):
     :param id: Required. A unique id.
     :type id: str
     :param access_policy: Required. The access policy.
-    :type access_policy: ~azure.data.tables.models.AccessPolicy
+    :type access_policy: ~azure_table.models.AccessPolicy
     """
 
     _validation = {
         'id': {'required': True},
+        'access_policy': {'required': True},
     }
 
     _attribute_map = {
@@ -346,8 +347,8 @@ class TableEntityQueryResponse(msrest.serialization.Model):
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(TableEntityQueryResponse, self).__init__(**kwargs)
         self.odata_metadata = kwargs.get('odata_metadata', None)
@@ -366,8 +367,8 @@ class TableProperties(msrest.serialization.Model):
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(TableProperties, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
@@ -379,7 +380,7 @@ class TableQueryResponse(msrest.serialization.Model):
     :param odata_metadata: The metadata response of the table.
     :type odata_metadata: str
     :param value: List of tables.
-    :type value: list[~azure.data.tables.models.TableResponseProperties]
+    :type value: list[~azure_table.models.TableResponseProperties]
     """
 
     _attribute_map = {
@@ -388,8 +389,8 @@ class TableQueryResponse(msrest.serialization.Model):
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(TableQueryResponse, self).__init__(**kwargs)
         self.odata_metadata = kwargs.get('odata_metadata', None)
@@ -417,8 +418,8 @@ class TableResponseProperties(msrest.serialization.Model):
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(TableResponseProperties, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
@@ -451,8 +452,8 @@ class TableResponse(TableResponseProperties):
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(TableResponse, self).__init__(**kwargs)
         self.odata_metadata = kwargs.get('odata_metadata', None)
@@ -469,12 +470,12 @@ class TableServiceError(msrest.serialization.Model):
         'message': {'key': 'Message', 'type': 'str', 'xml': {'name': 'Message'}},
     }
     _xml_map = {
-
+        
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(TableServiceError, self).__init__(**kwargs)
         self.message = kwargs.get('message', None)
@@ -484,30 +485,30 @@ class TableServiceProperties(msrest.serialization.Model):
     """Table Service Properties.
 
     :param logging: Azure Analytics Logging settings.
-    :type logging: ~azure.data.tables.models.Logging
+    :type logging: ~azure_table.models.Logging
     :param hour_metrics: A summary of request statistics grouped by API in hourly aggregates for
      tables.
-    :type hour_metrics: ~azure.data.tables.models.Metrics
+    :type hour_metrics: ~azure_table.models.Metrics
     :param minute_metrics: A summary of request statistics grouped by API in minute aggregates for
      tables.
-    :type minute_metrics: ~azure.data.tables.models.Metrics
+    :type minute_metrics: ~azure_table.models.Metrics
     :param cors: The set of CORS rules.
-    :type cors: list[~azure.data.tables.models.CorsRule]
+    :type cors: list[~azure_table.models.CorsRule]
     """
-    _xml_map = {
-        'name': 'StorageServiceProperties'
-    }
+
     _attribute_map = {
         'logging': {'key': 'Logging', 'type': 'Logging'},
         'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
         'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
-        'cors': {'key': 'Cors', 'type': '[CorsRule]',
-                 'xml': {'name': 'Cors', 'wrapped': True, 'itemsName': 'CorsRule'}},
+        'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'wrapped': True, 'itemsName': 'CorsRule'}},
+    }
+    _xml_map = {
+        'name': 'StorageServiceProperties'
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(TableServiceProperties, self).__init__(**kwargs)
         self.logging = kwargs.get('logging', None)
@@ -520,19 +521,19 @@ class TableServiceStats(msrest.serialization.Model):
     """Stats for the service.
 
     :param geo_replication: Geo-Replication information for the Secondary Storage Service.
-    :type geo_replication: ~azure.data.tables.models.GeoReplication
+    :type geo_replication: ~azure_table.models.GeoReplication
     """
 
     _attribute_map = {
         'geo_replication': {'key': 'GeoReplication', 'type': 'GeoReplication'},
     }
     _xml_map = {
-
+        'name': 'StorageServiceStats'
     }
 
     def __init__(
-            self,
-            **kwargs
+        self,
+        **kwargs
     ):
         super(TableServiceStats, self).__init__(**kwargs)
         self.geo_replication = kwargs.get('geo_replication', None)

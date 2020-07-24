@@ -11,93 +11,28 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 24 Jul 2020 15:03:37 GMT
+      - Fri, 24 Jul 2020 16:42:03 GMT
       User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 15:03:37 GMT
+      - Fri, 24 Jul 2020 16:42:03 GMT
       x-ms-version:
-      - '2019-07-07'
+      - 12.0.0b1
     method: POST
     uri: https://storagename.table.core.windows.net/Tables
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#Tables/@Element","TableName":"uttable7cd216d7"}'
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\r\n<error
+        xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\r\n
+        \ <code>InvalidHeaderValue</code>\r\n  <message xml:lang=\"en-US\">The value
+        for one of the HTTP headers is not in the correct format.\nRequestId:37a3a36f-d002-0062-1bd9-61dd8d000000\nTime:2020-07-24T16:42:03.7710204Z</message>\r\n</error>"
     headers:
-      cache-control: no-cache
-      content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Fri, 24 Jul 2020 15:03:38 GMT
-      location: https://storagename.table.core.windows.net/Tables('uttable7cd216d7')
-      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
+      content-length: '371'
+      content-type: application/xml
+      date: Fri, 24 Jul 2020 16:42:02 GMT
+      server: Microsoft-HTTPAPI/2.0
     status:
-      code: 201
-      message: Created
-    url: https://pyacrstoragepozdg2nbhamj.table.core.windows.net/Tables
-- request:
-    body: null
-    headers:
-      DataServiceVersion:
-      - '3.0'
-      Date:
-      - Fri, 24 Jul 2020 15:03:37 GMT
-      If-Match:
-      - '*'
-      User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Fri, 24 Jul 2020 15:03:37 GMT
-      x-ms-version:
-      - '2019-07-07'
-    method: DELETE
-    uri: https://storagename.table.core.windows.net/uttable7cd216d7(PartitionKey='pk7cd216d7',RowKey='rk7cd216d7')
-  response:
-    body:
-      string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>ResourceNotFound</code><message
-        xml:lang="en-US">The specified resource does not exist.
-
-        RequestId:d68a1429-0002-0024-39cb-6130b7000000
-
-        Time:2020-07-24T15:03:38.4313592Z</message></error>'
-    headers:
-      cache-control: no-cache
-      content-type: application/xml;charset=utf-8
-      date: Fri, 24 Jul 2020 15:03:38 GMT
-      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
-    status:
-      code: 404
-      message: Not Found
-    url: https://pyacrstoragepozdg2nbhamj.table.core.windows.net/uttable7cd216d7(PartitionKey='pk7cd216d7',RowKey='rk7cd216d7')
-- request:
-    body: null
-    headers:
-      Date:
-      - Fri, 24 Jul 2020 15:03:38 GMT
-      User-Agent:
-      - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Fri, 24 Jul 2020 15:03:38 GMT
-      x-ms-version:
-      - '2019-07-07'
-    method: DELETE
-    uri: https://storagename.table.core.windows.net/Tables('uttable7cd216d7')
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control: no-cache
-      content-length: '0'
-      date: Fri, 24 Jul 2020 15:03:38 GMT
-      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      x-content-type-options: nosniff
-      x-ms-version: '2019-07-07'
-    status:
-      code: 204
-      message: No Content
-    url: https://pyacrstoragepozdg2nbhamj.table.core.windows.net/Tables('uttable7cd216d7')
+      code: 400
+      message: The value for one of the HTTP headers is not in the correct format.
+    url: https://pyacrstorageih5pao7rr7y6.table.core.windows.net/Tables
 version: 1

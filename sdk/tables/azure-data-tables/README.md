@@ -4,12 +4,12 @@ Azure Data Tables is a NoSQL data storing service that can be accessed from anyw
 Tables scale as needed to support the amount of data inserted, and allow for the storing of data with non-complex accessing. 
 The Azure Data Tables client can be used to access Azure Storage or Cosmos Storage accounts.
 
-Common uses of Azure Table include:
+Common uses of Azure Data Tables include:
 
 * Storing structured data in the form of tables
 * Quickly querying data using a clustered index
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/azure/table) | [Package (PyPI)](https://pypi.org/project/azure-table/) | [API reference documentation](https://aka.ms/azsdk/python/table/docs) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-data-tables/azure/data/tables) | [Package (PyPI)](https://pypi.org/project/azure-data-tables/) | [API reference documentation](https://aka.ms/azsdk/python/table/docs) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples)
 
 ## Getting started
 
@@ -20,10 +20,10 @@ Common uses of Azure Table include:
  or you must have a [Azure Cosmos Account](https://docs.microsoft.com/en-us/azure/cosmos-db/account-overview).
 
 ### Install the package
-Install the Azure Table client library for Python with [pip](https://pypi.org/project/pip/):
+Install the Azure Data Tables client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install --pre azure-table
+pip install --pre azure-data-tables
 ```
 
 ### Create a storage account
@@ -42,7 +42,7 @@ az storage account create -n mystorageaccount -g MyResourceGroup
 ```
 
 ### Create the client
-The Azure Table client library for Python allows you to interact with two types of resources: the storage
+The Azure Data Tables client library for Python allows you to interact with two types of resources: the storage
 account and tables, and entities. Interaction with these resources starts with an instance of a [client](#clients).
 To create a client object, you will need the storage account's table service endpoint URL and a credential that allows
 you to access the storage account:
@@ -118,12 +118,12 @@ az storage account show-connection-string -g MyResourceGroup -n mystorageaccount
 ```
 
 ## Key concepts
-The following components make up the Azure Table Service:
+The following components make up the Azure Data Tables Service:
 * The storage account
 * A table within the storage account, which contains a set of entities
 * An entity within a table, as a dictionary
 
-The Azure Table client library for Python allows you to interact with each of these components through the
+The Azure Data Tables client library for Python allows you to interact with each of these components through the
 use of a dedicated client object.
 
 ### Clients
@@ -229,7 +229,7 @@ the client level to enable it for all requests.
 
 ## Troubleshooting
 ### General
-Azure Table clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
+Azure Data Tables clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md).
 All Table service operations will throw a `HttpResponseError` on failure with helpful [error codes](https://docs.microsoft.com/en-us/rest/api/storageservices/table-service-error-codes).
 
 ### Logging
@@ -265,20 +265,20 @@ service_client.get_service_stats(logging_enable=True)
 
 ## Next steps
 
-Get started with our [Table samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples).
+Get started with our [Table samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-data-tables/samples).
 
-Several Azure Table Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables:
+Several Azure Data Tables Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables:
 
-* [table_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples/table_samples_authentication.py) - Examples found in this article:
+* [table_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-data-tables/samples/table_samples_authentication.py) - Examples found in this article:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
-* [table_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples/table_samples_service.py) - Examples found in this article:
+* [table_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-data-tables/samples/table_samples_service.py) - Examples found in this article:
     * Get and set service properties
     * List tables in a storage account
     * Create and delete a table from the service
     * Get the TableClient
-* [table_samples_client.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-table/samples/table_samples_client.py) - Examples found in this article:
+* [table_samples_client.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-data-tables/samples/table_samples_client.py) - Examples found in this article:
     * Client creation
     * Create a table
     * Create and Delete entities
@@ -287,7 +287,7 @@ Several Azure Table Python SDK samples are available to you in the SDK's GitHub 
     * Upsert entities
     
 ### Additional documentation
-For more extensive documentation on Azure Table, see the [Azure Table documentation](https://docs.microsoft.com/azure/storage/tables/) on docs.microsoft.com.
+For more extensive documentation on Azure Data Tables, see the [Azure Data Tables documentation](https://docs.microsoft.com/azure/storage/tables/) on docs.microsoft.com.
 
 ## Contributing
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
