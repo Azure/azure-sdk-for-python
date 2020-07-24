@@ -67,15 +67,15 @@ def field_data(bounding_box, form_word, form_line):
 
 @pytest.fixture
 def form_field_two(field_data):
-    model = _models.FormField(type="string", label_data=field_data[0], value_data=field_data[0], name="form_field_two", value="value", confidence=0)
-    model_repr = "FormField(type=string, label_data={}, value_data={}, name=form_field_two, value='value', confidence=0)".format(field_data[1], field_data[1])[:1024]
+    model = _models.FormField(value_type="string", label_data=field_data[0], value_data=field_data[0], name="form_field_two", value="value", confidence=0)
+    model_repr = "FormField(value_type=string, label_data={}, value_data={}, name=form_field_two, value='value', confidence=0)".format(field_data[1], field_data[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
 def form_field_one(field_data, form_field_two):
-    model = _models.FormField(type="string", label_data=field_data[0], value_data=field_data[0], name="form_field_one", value=form_field_two[0], confidence=1.0)
-    model_repr = "FormField(type=string, label_data={}, value_data={}, name=form_field_one, value={}, confidence=1.0)".format(field_data[1], field_data[1], form_field_two[1])[:1024]
+    model = _models.FormField(value_type="string", label_data=field_data[0], value_data=field_data[0], name="form_field_one", value=form_field_two[0], confidence=1.0)
+    model_repr = "FormField(value_type=string, label_data={}, value_data={}, name=form_field_one, value={}, confidence=1.0)".format(field_data[1], field_data[1], form_field_two[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
