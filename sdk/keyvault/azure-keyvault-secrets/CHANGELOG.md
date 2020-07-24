@@ -31,7 +31,7 @@ Used as a context manager, a `SecretClient` closes opened sockets on exit.
 ## 4.0.0 (2019-10-31)
 ### Breaking changes:
 - Moved optional parameters of two methods into kwargs (
-[docs](https://azure.github.io/azure-sdk-for-python/ref/Keyvault.html#azure-keyvault-secrets)
+[docs](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-keyvault-secrets/4.0.0/azure.keyvault.secrets.html)
 detail the new keyword arguments):
   - `set_secret` now has positional parameters `name` and `value`
   - `update_secret_properties` now has positional parameters `name` and
