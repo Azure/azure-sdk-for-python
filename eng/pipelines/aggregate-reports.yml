@@ -15,7 +15,7 @@ jobs:
     parameters:
       Directory: ""
 
-  - template: ./templates/steps/analyze.yml
+  - template: /eng/pipelines/templates/steps/analyze_dependency.yml
 
   - task: AzureFileCopy@2
     displayName: 'Upload dependency report'

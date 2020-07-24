@@ -5,7 +5,7 @@ parameters:
   AdditionalTestArgs: ''
 
 steps:
-  - template: ./templates/steps/analyze_dependency.yml
+  - template: /eng/common/pipelines/templates/steps/analyze_dependency.yml
 
   - task: PythonScript@0
     displayName: 'Verify Change Log'
