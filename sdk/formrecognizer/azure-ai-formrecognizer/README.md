@@ -270,7 +270,9 @@ credential = AzureKeyCredential("<api_key>")
 form_training_client = FormTrainingClient(endpoint, credential)
 
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
-poller = form_training_client.begin_training(container_sas_url, use_training_labels=False)
+poller = form_training_client.begin_training(
+    container_sas_url, use_training_labels=False
+)
 model = poller.result()
 
 # Custom model information
@@ -279,13 +281,19 @@ print("Status: {}".format(model.status))
 print("Training started on: {}".format(model.training_started_on))
 print("Training completed on: {}".format(model.training_completed_on))
 
-print("Recognized fields:")
-# looping through the submodels, which contains the fields they were trained on
+print("\nRecognized fields:")
 for submodel in model.submodels:
-    print("The submodel with form type '{}' has recognized the following fields: {}".format(
-        submodel.form_type,
-        ", ".join([label for label in submodel.fields])
-    ))
+    print(
+        "The submodel with form type ID '{}' has recognized the following fields: {}".format(
+            submodel.form_type,
+            ", ".join(
+                [
+                    field.label if field.label else name
+                    for name, field in submodel.fields.items()
+                ]
+            ),
+        )
+    )
 
 # Training result information
 for doc in model.training_documents:
@@ -319,8 +327,8 @@ print("We have models with the following ids: {}".format(
     ", ".join([m.model_id for m in custom_models])
 ))
 
-# Now we get the custom model from the "Train a model" sample
-model_id = "<model id from the Train a Model sample>"
+# Replace with the custom model ID from the "Train a model" sample
+model_id = "<model_id from the Train a Model sample>"
 
 custom_model = form_training_client.get_custom_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
@@ -340,10 +348,6 @@ except ResourceNotFoundError:
 ## Async APIs
 This library also includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
-See
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
-for more information.
-
 
 ## Optional Configuration
 
