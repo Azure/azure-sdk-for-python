@@ -84,7 +84,7 @@ its `__init__` method (probably using `super`):
 * `recording_processors` and `replay_processors`:
   Lists of `RecordingProcessor` instances for making changes to requests and responses
   during test recording and test playback, respectively.
-  See [recording_processors.py](https://github.com/Azure/azure-sdk-for-python/blob/e6d329933b00855bb5873fcfa7abe97a0f03c44a/tools/azure-devtools/src/azure_devtools/scenario_tests/recording_processors.py)
+  See [recording_processors.py](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-devtools/src/azure_devtools/scenario_tests/recording_processors.py)
   for some examples and how to implement them.
 * `recording_patches` and `replay_patches`:
   Lists of patches to apply to functions, methods, etc.
