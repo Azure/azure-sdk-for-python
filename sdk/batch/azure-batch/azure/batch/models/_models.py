@@ -63,7 +63,7 @@ class AccountListSupportedImagesOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-support-images.
+     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-support-images.
     :type filter: str
     :param max_results: The maximum number of items to return in the response.
      A maximum of 1000 results will be returned. Default value: 1000 .
