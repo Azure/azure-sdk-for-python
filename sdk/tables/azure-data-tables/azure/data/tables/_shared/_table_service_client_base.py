@@ -10,6 +10,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
 
 from azure.data.tables._shared.base_client import parse_query
+from azure.data.tables._shared.policies_async import ExponentialRetry
 from .base_client import StorageAccountHostsMixin
 
 class TableServiceClientBase(StorageAccountHostsMixin):
@@ -55,3 +56,4 @@ class TableServiceClientBase(StorageAccountHostsMixin):
         mode hostname.
         """
         return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+        

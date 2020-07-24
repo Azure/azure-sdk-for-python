@@ -11,11 +11,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 23 Jul 2020 19:35:58 GMT
+      - Fri, 24 Jul 2020 15:02:32 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 19:35:58 GMT
+      - Fri, 24 Jul 2020 15:02:32 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -25,16 +25,16 @@ interactions:
       string: '<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>ResourceNotFound</code><message
         xml:lang="en-US">The specified resource does not exist.
 
-        RequestId:bd40ab95-a002-00a0-6f28-61dec2000000
+        RequestId:6adde194-a002-006d-04cb-6103d7000000
 
-        Time:2020-07-23T19:35:58.6583703Z</message></error>'
+        Time:2020-07-24T15:02:33.2736862Z</message></error>'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/xml;charset=utf-8
       date:
-      - Thu, 23 Jul 2020 19:35:58 GMT
+      - Fri, 24 Jul 2020 15:02:32 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

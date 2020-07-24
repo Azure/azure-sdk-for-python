@@ -10,51 +10,35 @@ from azure.data.tables._shared.models import Services
 from azure.data.tables._shared.response_handlers import return_context_and_deserialized, process_table_error
 from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncPageIterator
-# from .._generated.models import AccessPolicy as GenAccessPolicy
-# from .._generated.models import Logging as GeneratedLogging
-# from .._generated.models import Metrics as GeneratedMetrics
-# from .._generated.models import RetentionPolicy as GeneratedRetentionPolicy
-# from .._generated.models import CorsRule as GeneratedCorsRule
 
 
 class TablePropertiesPaged(AsyncPageIterator):
     """An iterable of Table properties.
 
-    :keyword str service_endpoint: The service URL.
-    :keyword str prefix: A queue name prefix being used to filter the list.
-    :keyword str marker: The continuation token of the current page of results.
-    :keyword int results_per_page: The maximum number of results retrieved per API call.
-    :keyword str next_marker: The continuation token to retrieve the next page of results.
-    :keyword str location_mode: The location mode being used to list results. The available
+    :ivar: str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
-    :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only queues whose names
-        begin with the specified prefix.
-    :param int results_per_page: The maximum number of queue names to retrieve per
+    :ivar: callable command: Function to retrieve the next page of items.
         call.
-    :param str continuation_token: An opaque continuation token.
+    :vartype: str continuation_token: An opaque continuation token.
     """
 
-    def __init__(self, command, prefix=None, query_options=None, continuation_token=None):
+    def __init__(self, command, continuation_token=None, **kwargs):
         super(TablePropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
-            continuation_token=continuation_token or ""
+            continuation_token=continuation_token or "",
+            **kwargs
         )
         self._command = command
-        self.prefix = prefix
-        self.service_endpoint = None
         self.next_table_name = None
         self._headers = None
-        self.query_options = query_options
         self.location_mode = None
 
-    async def _get_next_cb(self, continuation_token):
+    async def _get_next_cb(self, continuation_token, **kwargs):
         try:
             return await self._command(
                 next_table_name=continuation_token or None,
-                # query_options=self.query_options or None,
-                cls=return_context_and_deserialized,
+                cls=kwargs.pop('cls', return_context_and_deserialized),
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
@@ -69,16 +53,11 @@ class TablePropertiesPaged(AsyncPageIterator):
 class TableEntityPropertiesPaged(AsyncPageIterator):
     """An iterable of TableEntity properties.
 
-    :keyword str service_endpoint: The service URL.
-    :keyword str prefix: A queue name prefix being used to filter the list.
-    :keyword str marker: The continuation token of the current page of results.
-    :keyword int results_per_page: The maximum number of results retrieved per API call.
-    :keyword str next_marker: The continuation token to retrieve the next page of results.
-    :keyword str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only queues whose names
-        begin with the specified prefix.
+    :ivar: callable command: Function to retrieve the next page of items.
+        call.
+    :ivar: int results_per_page: The maximum number of results retrieved per API call.
+    :ivar: table TODO: type?
+    :ivar: callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of queue names to retrieve per
         call.
     :param str continuation_token: An opaque continuation token.

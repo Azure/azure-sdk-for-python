@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 23 Jul 2020 19:36:24 GMT
+      - Fri, 24 Jul 2020 15:02:59 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 19:36:24 GMT
+      - Fri, 24 Jul 2020 15:02:59 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 23 Jul 2020 19:36:23 GMT
+      - Fri, 24 Jul 2020 15:02:59 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttablee10d18a6')
       server:
@@ -64,11 +64,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 23 Jul 2020 19:36:24 GMT
+      - Fri, 24 Jul 2020 15:02:59 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 19:36:24 GMT
+      - Fri, 24 Jul 2020 15:02:59 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -76,14 +76,14 @@ interactions:
   response:
     body:
       string: '{"odata.error":{"code":"PropertyNameTooLong","message":{"lang":"en-US","value":"The
-        property name exceeds the maximum allowed length (255).\nRequestId:eb35c8c8-0002-0086-8028-6196da000000\nTime:2020-07-23T19:36:24.9815840Z"}}}'
+        property name exceeds the maximum allowed length (255).\nRequestId:6b801848-0002-0042-0dcb-6182ed000000\nTime:2020-07-24T15:03:00.3490611Z"}}}'
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Thu, 23 Jul 2020 19:36:24 GMT
+      - Fri, 24 Jul 2020 15:02:59 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -107,11 +107,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 23 Jul 2020 19:36:24 GMT
+      - Fri, 24 Jul 2020 15:02:59 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 19:36:24 GMT
+      - Fri, 24 Jul 2020 15:02:59 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -125,7 +125,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 23 Jul 2020 19:36:24 GMT
+      - Fri, 24 Jul 2020 15:03:00 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

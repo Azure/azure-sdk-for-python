@@ -64,3 +64,16 @@ class TableClientBase(StorageAccountHostsMixin):
         mode hostname.
         """
         return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+
+    @classmethod
+    def _validate_signed_identifiers(cls, signed_identifiers):
+        # type: (...) -> None
+        """Validate the number of signed identifiers is less than five
+
+        :param signed_identifiers:
+        :type signed_identifiers: dict[str,AccessPolicy]
+        """
+        if len(signed_identifiers) > 5:
+            raise ValueError(
+                'Too many access policies provided. The server does not support setting '
+                'more than 5 access policies on a single resource.')

@@ -114,8 +114,6 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertGreaterEqual(len(tables), 1)
         self.assertIsNotNone(tables[0])
 
-        await ts.delete_table(table.table_name)
-
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_query_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
@@ -153,23 +151,10 @@ class TableTestAsync(AsyncTableTestCase):
             big_page.append(t)
 
         small_page = []
-        # small_tables = ts.list_tables(results_per_page=3)
-        # async for s in await small_tables.__anext__():
-        async for s in ts.list_tables(results_per_page=3).by_page():#query_tables(filter=None, results_per_page=3).by_page():
+        async for s in ts.list_tables(results_per_page=3).by_page():
             small_page.append(s)
 
         self.assertEqual(len(small_page), 2)
-
-        # first_page = []
-        # async for item in small_page[0]:
-        #     first_page.append(item)
-
-        # second_page = []
-        # async for item in small_page[1]:
-        #     second_page.append(item)
-        # # Assert
-        # self.assertEqual(len(first_page), 3)
-        # self.assertEqual(len(second_page), 1)
         self.assertGreaterEqual(len(big_page), 4)
 
     @pytest.mark.skip("pending")
@@ -187,12 +172,12 @@ class TableTestAsync(AsyncTableTestCase):
         # Act
         generator1 = ts.list_tables(query_options=QueryOptions(top=2)).by_page()
         tables1 = []
-        async for el in await generator1.__anext__():
+        async for el in await generator1: #.__anext__():
             tables1.append(el)
         generator2 = ts.list_tables(query_options=QueryOptions(top=2)).by_page(
             continuation_token=generator1.continuation_token)
         tables2 = []
-        async for el in await generator2.__anext__():
+        async for el in await generator2:# .__anext__():
             tables2.append(el)
 
         # Assert

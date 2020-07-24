@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 23 Jul 2020 19:37:26 GMT
+      - Fri, 24 Jul 2020 15:04:06 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 19:37:26 GMT
+      - Fri, 24 Jul 2020 15:04:06 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -26,7 +26,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Thu, 23 Jul 2020 19:37:26 GMT
+      date: Fri, 24 Jul 2020 15:04:06 GMT
       location: https://storagename.table.core.windows.net/Tables('uttablef8471404')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -35,7 +35,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstorageo2gx23nsoaws.table.core.windows.net/Tables
+    url: https://pyacrstoragepozdg2nbhamj.table.core.windows.net/Tables
 - request:
     body: '{"PartitionKey": "test", "RowKey": "test1", "age": "39", "age@odata.type":
       "Edm.Int64", "sex": "male", "married": true, "deceased": false, "ratio": 3.1,
@@ -54,38 +54,38 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 23 Jul 2020 19:37:26 GMT
+      - Fri, 24 Jul 2020 15:04:06 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 19:37:26 GMT
+      - Fri, 24 Jul 2020 15:04:06 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://storagename.table.core.windows.net/uttablef8471404?se=2020-07-23T20:37:26Z&sp=a&sv=2019-07-07&tn=uttablef8471404&spk=test&srk=test1&epk=test&erk=test1&sig=QmxgEu94AbpA5JyngtoDmebSxWhDWtoBfw9i/09fQ8c%3D
+    uri: https://storagename.table.core.windows.net/uttablef8471404?se=2020-07-24T16:04:06Z&sp=a&sv=2019-07-07&tn=uttablef8471404&spk=test&srk=test1&epk=test&erk=test1&sig=P2y44mUVTMKzydNXaf9588EL4f6O/P%2BZoxThATzxOIA%3D
   response:
     body:
       string: '{"odata.error":{"code":"InvalidUri","message":{"lang":"en-US","value":"The
-        requested URI does not represent any resource on the server.\nRequestId:6cc76eea-0002-0062-6328-619844000000\nTime:2020-07-23T19:37:27.1161693Z"}}}'
+        requested URI does not represent any resource on the server.\nRequestId:6b805851-0002-0042-26cb-6182ed000000\nTime:2020-07-24T15:04:07.2146055Z"}}}'
     headers:
       content-length: '222'
       content-type: application/json
-      date: Thu, 23 Jul 2020 19:37:26 GMT
+      date: Fri, 24 Jul 2020 15:04:06 GMT
       server: Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidUri
     status:
       code: 400
       message: The requested URI does not represent any resource on the server.
-    url: https://pyacrstorageo2gx23nsoaws.table.core.windows.net//uttablef8471404?se=2020-07-23T20:37:26Z&sp=a&sv=2019-07-07&tn=uttablef8471404&spk=test&srk=test1&epk=test&erk=test1&sig=QmxgEu94AbpA5JyngtoDmebSxWhDWtoBfw9i/09fQ8c%3D
+    url: https://pyacrstoragepozdg2nbhamj.table.core.windows.net//uttablef8471404?se=2020-07-24T16:04:06Z&sp=a&sv=2019-07-07&tn=uttablef8471404&spk=test&srk=test1&epk=test&erk=test1&sig=P2y44mUVTMKzydNXaf9588EL4f6O/P%2BZoxThATzxOIA%3D
 - request:
     body: null
     headers:
       Date:
-      - Thu, 23 Jul 2020 19:37:26 GMT
+      - Fri, 24 Jul 2020 15:04:06 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 23 Jul 2020 19:37:26 GMT
+      - Fri, 24 Jul 2020 15:04:06 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -96,12 +96,12 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Thu, 23 Jul 2020 19:37:26 GMT
+      date: Fri, 24 Jul 2020 15:04:06 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-07-07'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstorageo2gx23nsoaws.table.core.windows.net/Tables('uttablef8471404')
+    url: https://pyacrstoragepozdg2nbhamj.table.core.windows.net/Tables('uttablef8471404')
 version: 1
