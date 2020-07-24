@@ -10,6 +10,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
 
 from azure.data.tables._shared.base_client import parse_query
+from azure.data.tables._shared.policies_async import ExponentialRetry
 from .base_client import StorageAccountHostsMixin
 
 class TableServiceClientBase(StorageAccountHostsMixin):
@@ -50,6 +51,12 @@ class TableServiceClientBase(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(TableServiceClientBase, self).__init__(parsed_url, service=service, credential=credential, **kwargs)
 
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+        
     def _parameter_filter_substitution(
             self,
             parameters,  # type: dict[str,str]

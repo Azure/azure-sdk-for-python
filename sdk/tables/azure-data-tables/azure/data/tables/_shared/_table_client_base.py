@@ -59,6 +59,24 @@ class TableClientBase(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(TableClientBase, self).__init__(parsed_url, service='table', credential=credential, **kwargs)
 
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
+        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+
+    @classmethod
+    def _validate_signed_identifiers(cls, signed_identifiers):
+        # type: (...) -> None
+        """Validate the number of signed identifiers is less than five
+
+        :param signed_identifiers:
+        :type signed_identifiers: dict[str,AccessPolicy]
+        """
+        if len(signed_identifiers) > 5:
+            raise ValueError(
+                'Too many access policies provided. The server does not support setting '
+                'more than 5 access policies on a single resource.')
 
     def _parameter_filter_substitution(
             self,

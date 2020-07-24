@@ -418,42 +418,6 @@ class StorageTableClientTest(TableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    def test_request_callback_signed_header(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        service = TableServiceClient(self.account_url(storage_account, "table"), credential=storage_account_key)
-        name = self.get_resource_name('cont')
-
-        # Act
-        try:
-            headers = {'x-ms-meta-hello': 'world'}
-            table = service.create_table(name, headers=headers)
-
-            # Assert
-            metadata = table.get_table_properties
-            # table properties return TableServiceProperties
-           # self.assertEqual(metadata, {'hello': 'world'})
-        finally:
-            service.delete_table(name)
-
-    @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
-    def test_response_callback(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        service = TableServiceClient(self.account_url(storage_account, "table"), credential=storage_account_key)
-        name = self.get_resource_name('cont')
-        table = service.get_table_client(name)
-
-        # Act
-        def callback(response):
-            response.http_response.status_code = 200
-            response.http_response.headers.clear()
-
-        # Assert
-        exists = table.get_table_properties(raw_response_hook=callback)
-        self.assertTrue(exists)
-
-    @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
     def test_user_agent_default(self, resource_group, location, storage_account, storage_account_key):
         service = TableServiceClient(self.account_url(storage_account, "table"), credential=storage_account_key)
 
@@ -557,8 +521,6 @@ class StorageTableClientTest(TableTestCase):
             
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
 
-        # with self.assertRaises(ValueError):
-        #     service = TableClient(account_url=table_url, table_name=invalid_table_name, credential=storage_account_key)
 
     #@pytest.mark.skip("pending")
     def test_error_with_malformed_conn_str(self):

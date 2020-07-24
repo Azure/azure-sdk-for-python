@@ -688,29 +688,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("pending")
-    @GlobalStorageAccountPreparer()
-    def test_get_entity_with_select(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        self._set_up(storage_account, storage_account_key)
-        try:
-            entity, _ = self._insert_random_entity()
-
-            # Act
-            resp = self.table.get_entity(partition_key=entity.PartitionKey,
-                                         row_key=entity.RowKey,
-                                         select=["age", "sex", "xyz"])
-
-            # Assert
-            self.assertEqual(resp.age, 39)
-            self.assertEqual(resp.sex, 'male')
-            self.assertEqual(resp.xyz, None)
-            self.assertFalse(hasattr(resp, "birthday"))
-            self.assertFalse(hasattr(resp, "married"))
-            self.assertFalse(hasattr(resp, "deceased"))
-        finally:
-            self._tear_down()
-
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_get_entity_with_special_doubles(self, resource_group, location, storage_account, storage_account_key):

@@ -67,12 +67,6 @@ class TableClient(TableClientBase):
         self._client = AzureTable(self.url, pipeline=self._pipeline)
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
-
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
@@ -173,10 +167,7 @@ class TableClient(TableClientBase):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if len(signed_identifiers) > 5:
-            raise ValueError(
-                'Too many access policies provided. The server does not support setting '
-                'more than 5 access policies on a single resource.')
+        self._validate_signed_identifiers(signed_identifiers)
         identifiers = []
         for key, value in signed_identifiers.items():
             if value:
@@ -273,7 +264,7 @@ class TableClient(TableClientBase):
             entity = _add_entity_properties(entity)
             # TODO: Remove - and run test to see what happens with the service
         else:
-            raise ValueError
+            raise ValueError('PartitionKey and RowKey were not provided in entity')
         try:
             inserted_entity = self._client.table.insert_entity(
                 table=self.table_name,
@@ -389,9 +380,10 @@ class TableClient(TableClientBase):
 
         command = functools.partial(
             self._client.table.query_entities,
+            query_options=query_options,
             **kwargs)
         return ItemPaged(
-            command, results_per_page=query_options, table=self.table_name,
+            command, table=self.table_name,
             page_iterator_class=TableEntityPropertiesPaged
         )
 
@@ -444,8 +436,8 @@ class TableClient(TableClientBase):
         row_key = entity['RowKey']
         entity = _add_entity_properties(entity)
 
-        if mode is UpdateMode.MERGE:
-            try:
+        try:
+            if mode is UpdateMode.MERGE:
                 self._client.table.merge_entity(
                     table=self.table_name,
                     partition_key=partition_key,
@@ -453,27 +445,19 @@ class TableClient(TableClientBase):
                     table_entity_properties=entity,
                     **kwargs
                 )
-            except ResourceNotFoundError:
-                self.create_entity(
-                    partition_key=partition_key,
-                    row_key=row_key,
-                    table_entity_properties=entity,
-                    **kwargs
-                )
-        elif mode is UpdateMode.REPLACE:
-            try:
+            elif mode is UpdateMode.REPLACE:
                 self._client.table.update_entity(
                     table=self.table_name,
                     partition_key=partition_key,
                     row_key=row_key,
                     table_entity_properties=entity,
                     **kwargs)
-            except ResourceNotFoundError:
-                self.create_entity(
-                    partition_key=partition_key,
-                    row_key=row_key,
-                    table_entity_properties=entity,
-                    **kwargs
-                )
-        else:
-            raise ValueError('Mode type is not supported')
+            else:
+                raise ValueError('Mode type is not supported')
+        except ResourceNotFoundError:
+            self.create_entity(
+                partition_key=partition_key,
+                row_key=row_key,
+                table_entity_properties=entity,
+                **kwargs
+            )

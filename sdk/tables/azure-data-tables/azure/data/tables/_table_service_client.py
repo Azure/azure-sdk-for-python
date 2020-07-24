@@ -50,12 +50,6 @@ class TableServiceClient(TableServiceClientBase):
         self._client = AzureTable(self.url, pipeline=self._pipeline)
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
-
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
@@ -208,10 +202,10 @@ class TableServiceClient(TableServiceClientBase):
 
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
                                      filter=filter)
-        command = functools.partial(self._client.table.query,
+        command = functools.partial(self._client.table.query, query_options=query_options,
                                     **kwargs)
         return ItemPaged(
-            command, results_per_page=query_options,
+            command,
             page_iterator_class=TablePropertiesPaged
         )
 
@@ -236,10 +230,12 @@ class TableServiceClient(TableServiceClientBase):
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
                                      filter=filter)
 
-        command = functools.partial(self._client.table.query,
-                                    **kwargs)
+        command = functools.partial(
+            self._client.table.query,
+            query_options=query_options,
+            **kwargs)
         return ItemPaged(
-            command, results_per_page=query_options,
+            command,
             page_iterator_class=TablePropertiesPaged
         )
 
