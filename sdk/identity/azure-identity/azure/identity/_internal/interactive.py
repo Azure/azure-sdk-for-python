@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+"""Base class for credentials using MSAL for interactive user authentication"""
+
 import abc
 import base64
 import json
