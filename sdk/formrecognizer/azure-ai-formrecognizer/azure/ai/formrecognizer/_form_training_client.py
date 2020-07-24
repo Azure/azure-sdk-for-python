@@ -238,9 +238,8 @@ class FormTrainingClient(object):
                 **kwargs
             )
         except HttpResponseError as e:
-            ret_val = cast(ItemPaged, None)
             process_form_exception(e)
-            return ret_val
+            return None # type: ignore
 
     @distributed_trace
     def get_account_properties(self, **kwargs):
