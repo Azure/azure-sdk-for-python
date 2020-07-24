@@ -5,7 +5,6 @@
 # ------------------------------------
 
 import six
-import sys
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
