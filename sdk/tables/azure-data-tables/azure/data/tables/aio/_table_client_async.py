@@ -324,12 +324,6 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :param results_per_page: Number of entities per page in return ItemPaged
-        :type results_per_page: int
-        :param select: Specify desired properties of an entity to return certain entities
-        :type select: str
-        :param filter: Specify a filter to return certain entities
-        :type filter: str
         :return: TableEntity mapping str to azure.data.tables.EntityProperty
         :rtype: ~azure.data.tables.TableEntity
         :raises: ~azure.core.exceptions.HttpResponseError
