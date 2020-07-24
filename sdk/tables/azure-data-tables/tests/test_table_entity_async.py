@@ -1441,7 +1441,7 @@ class StorageTableEntityTest(TableTestCase):
                 storage_account.name,
                 storage_account_key,
                 self.table_name,
-                permission=TableSasPermissions(query=True),
+                permission=TableSasPermissions(read=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
@@ -1659,7 +1659,7 @@ class StorageTableEntityTest(TableTestCase):
                 storage_account.name,
                 storage_account_key,
                 self.table_name.upper(),
-                permission=TableSasPermissions(query=True),
+                permission=TableSasPermissions(read=True),
                 expiry=datetime.utcnow() + timedelta(hours=1),
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
@@ -1697,7 +1697,7 @@ class StorageTableEntityTest(TableTestCase):
             access_policy = AccessPolicy()
             access_policy.start = datetime(2011, 10, 11)
             access_policy.expiry = datetime(2020, 10, 12)
-            access_policy.permission = TableSasPermissions(query=True)
+            access_policy.permission = TableSasPermissions(read=True)
             identifiers = {'testid': access_policy}
 
             await self.table.set_table_access_policy(identifiers)
