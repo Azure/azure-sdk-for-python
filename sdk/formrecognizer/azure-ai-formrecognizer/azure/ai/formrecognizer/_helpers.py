@@ -6,7 +6,6 @@
 
 import six
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.exceptions import (
@@ -98,4 +97,4 @@ def check_beginning_bytes(form):
 
 def process_form_exception(exc):
     req_id = exc.response.request.headers["x-ms-client-request-id"]
-    raise HttpResponseError(exc.message + ". Request ID is: " + req_id, exc.response)
+    raise exc.__class__(message=exc.message + "\nRequest ID is: " + req_id, response=exc.response)

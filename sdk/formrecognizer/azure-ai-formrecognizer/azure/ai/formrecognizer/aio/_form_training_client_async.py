@@ -215,7 +215,7 @@ class FormTrainingClient(object):
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
-        
+
         try:
             return await self._client.delete_custom_model(
                 model_id=model_id,
