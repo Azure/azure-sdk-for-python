@@ -94,14 +94,14 @@ def deserialize_value(value, value_type):
 
 
 def serialize_value_type(value):
+    if isinstance(value, float):
+        return "double", str(value)
+    if isinstance(value, bool):  # Attention: bool is subclass of int. So put bool ahead of int
+        return "boolean", str(value).lower()
     if isinstance(value, six.string_types):
         return "string", value
     if isinstance(value, six.integer_types):
         return "int" if value <= constants.INT32_MAX_VALUE else "long", str(value)
-    if isinstance(value, float):
-        return "double", str(value)
-    if isinstance(value, bool):
-        return "boolean", str(value).lower()
     if isinstance(value, datetime):
         return "dateTime", isodate.datetime_isoformat(value)
     if isinstance(value, timedelta):
