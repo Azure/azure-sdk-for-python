@@ -68,6 +68,10 @@ jobs:
       vmImage: 'ubuntu-18.04'
 
     steps:
+    - template: ../../../common/pipelines/templates/steps/verify-links.yml
+      parameters:
+        Directory: "sdk/${{ parameters.ServiceDirectory }}"
+
     - template: ../steps/analyze.yml
       parameters: 
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
