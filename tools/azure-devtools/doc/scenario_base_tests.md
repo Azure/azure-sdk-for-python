@@ -89,7 +89,7 @@ its `__init__` method (probably using `super`):
 * `recording_patches` and `replay_patches`:
   Lists of patches to apply to functions, methods, etc.
   during test recording and playback, respectively.
-  See [patches.py](https://github.com/Azure/azure-sdk-for-python/blob/39f2757d504babfa49a70ced87a3150a57b0f462/tools/azure-devtools/src/azure_devtools/scenario_tests/patches.py)
+  See [patches.py](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-devtools/src/azure_devtools/scenario_tests/patches.py)
   for some examples. Note the `mock_in_unit_test` function
   which abstracts out some boilerplate for applying a patch.
 
