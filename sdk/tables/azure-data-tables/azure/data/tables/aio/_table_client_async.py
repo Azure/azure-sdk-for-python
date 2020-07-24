@@ -26,7 +26,8 @@ from .._models import UpdateMode
 from ._models import TableEntityPropertiesPaged
 from .._deserialize import _convert_to_entity
 from .._serialize import _add_entity_properties, _get_match_headers
-from .._shared._table_client_base import TableClientBase
+from .._shared._table_client_base import TableClientBase, _parameter_filter_substitution
+
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     """A client to interact with a specific Queue.
@@ -141,8 +142,6 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             **kwargs: Any
     ) -> None:
         """Creates a new table under the given account.
-        :param request_id_parameter: Request Id parameter
-        :type request_id_parameter: str
         :return: None
         :rtype: None
         """
@@ -160,10 +159,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :keytype etag: Etag of the entity
-        :vartype etag: str
-        :keytype match_condition: MatchCondition
-        :vartype match_condition: ~azure.core.MatchConditions
+        :keyword str etag: Etag of the entity
+        :keyword  ~azure.core.MatchConditions match_condition: MatchCondition
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -262,22 +259,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """Lists entities in a table.
         :keyword int results_per_page: Number of entities per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of an entity to return certain entities
-        :keyword str filter: Specify a filter to return certain entities
-        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
         :rtype: ItemPaged[TableEntity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        parameters = kwargs.pop('parameters', None)
-        temp_select = kwargs.pop('select', None)
-        select = ""
-        if temp_select is not None:
-            if len(list(temp_select)) > 1:
-                for i in temp_select:
-                    select += i + ","
-                temp_select = None
+        user_select = kwargs.pop('select', None)
+        if user_select and not isinstance(user_select, str):
+            user_select = ", ".join(user_select)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select)
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select)
 
         command = functools.partial(
             self._client.table.query_entities,
@@ -294,36 +284,24 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             **kwargs: Any
     ) -> AsyncItemPaged[TableEntity]:
         """Queries entities in a table.
-        :param results_per_page: Number of entities per page in return ItemPaged
-        :type results_per_page: int
-        :param select: Specify desired properties of an entity to return certain entities
-        :type select: str
+
         :param filter: Specify a filter to return certain entities
         :type filter: str
+        :keyword int results_per_page: Number of entities per page in return ItemPaged
+        :keyword str select: Specify desired properties of an entity to return certain entities
         :return: Query of table entities
         :rtype: ItemPaged[TableEntity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        # filter = kwargs.pop('filter', None)
-        # if parameters:
-        #     filter_start = filter.split('@')[0]
-        #     selected = filter.split('@')[1]
-        #     for key, value in parameters.items():
-        #         if key == selected:
-        #             filter = filter_start.replace('@', value)
+        filter = _parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
 
-        temp_select = kwargs.pop('parameters', None)
-        select = ""
-        if temp_select is not None:
-            if len(list(temp_select)) > 1:
-                for i in temp_select:
-                    select += i + ","
-                temp_select = None
+        user_select = kwargs.pop('select', None)
+        if user_select and not isinstance(user_select, str):
+            user_select = ", ".join(user_select)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), 
-                                        select=select or temp_select,
-                                        filter=filter)
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
+                                     filter=filter)
 
         command = functools.partial(
             self._client.table.query_entities,
