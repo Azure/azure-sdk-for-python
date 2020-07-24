@@ -88,6 +88,45 @@ class UnmaskedIpLoggingStatus(str, Enum):
     enabled = "Enabled"  #: Unmasked IP logging is enabled
 
 
+class AlertSeverity(str, Enum):
+
+    informational = "Informational"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
+class AlertIntent(str, Enum):
+
+    unknown = "Unknown"
+    pre_attack = "PreAttack"
+    initial_access = "InitialAccess"
+    persistence = "Persistence"
+    privilege_escalation = "PrivilegeEscalation"
+    defense_evasion = "DefenseEvasion"
+    credential_access = "CredentialAccess"
+    discovery = "Discovery"
+    lateral_movement = "LateralMovement"
+    execution = "Execution"
+    collection = "Collection"
+    exfiltration = "Exfiltration"
+    command_and_control = "CommandAndControl"
+    impact = "Impact"
+    probing = "Probing"
+    exploitation = "Exploitation"
+
+
+class RecommendationSeverity(str, Enum):
+
+    unknown = "Unknown"
+    not_applicable = "NotApplicable"
+    healthy = "Healthy"
+    off_by_policy = "OffByPolicy"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
 class AutoProvision(str, Enum):
 
     on = "On"  #: Install missing security agent on VMs automatically
@@ -279,6 +318,36 @@ class ControlType(str, Enum):
 
     built_in = "BuiltIn"  #: Azure Security Center managed assessments
     custom = "Custom"  #: Non Azure Security Center managed assessments
+
+
+class ProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    failed = "Failed"
+    updating = "Updating"
+
+
+class HybridComputeProvisioningState(str, Enum):
+
+    valid = "Valid"  #: Valid service principal details.
+    invalid = "Invalid"  #: Invalid service principal details.
+    expired = "Expired"  #: the service principal details are expired
+
+
+class AuthenticationProvisioningState(str, Enum):
+
+    valid = "Valid"  #: Valid connector
+    invalid = "Invalid"  #: Invalid connector
+    expired = "Expired"  #: the connection is expired
+    incorrect_policy = "IncorrectPolicy"  #: Incorrect policy of the connector
+
+
+class PermissionProperty(str, Enum):
+
+    awsaws_security_hub_read_only_access = "AWS::AWSSecurityHubReadOnlyAccess"  #: This permission provides read only access to AWS Security Hub resources.
+    aws_security_audit = "AWS::SecurityAudit"  #: This permission grants access to read security configuration metadata.
+    aws_amazon_ssm_automation_role = "AWS::AmazonSSMAutomationRole"  #: The permission provides for EC2 Automation service to execute activities defined within Automation documents.
+    gcp_security_center_admin_viewer = "GCP::Security Center Admin Viewer"  #: This permission provides read only access to GCP Security Command Center.
 
 
 class ExpandEnum(str, Enum):
