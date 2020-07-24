@@ -4,19 +4,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
+import warnings
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.data.tables._generated import models
+
+from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
 
 class TableOperations(object):
     """TableOperations operations.
@@ -25,7 +26,7 @@ class TableOperations(object):
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.data.tables.models
+    :type models: ~azure_table.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -41,11 +42,11 @@ class TableOperations(object):
         self._config = config
 
     def query(
-            self,
-            request_id_parameter=None,  # type: Optional[str]
-            next_table_name=None,  # type: Optional[str]
-            query_options=None,  # type: Optional["models.QueryOptions"]
-            **kwargs  # type: Any
+        self,
+        request_id_parameter=None,  # type: Optional[str]
+        next_table_name=None,  # type: Optional[str]
+        query_options=None,  # type: Optional["models.QueryOptions"]
+        **kwargs  # type: Any
     ):
         # type: (...) -> "models.TableQueryResponse"
         """Queries tables under the given account.
@@ -56,16 +57,16 @@ class TableOperations(object):
         :param next_table_name: A table query continuation token from a previous call.
         :type next_table_name: str
         :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
+        :type query_options: ~azure_table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableQueryResponse, or the result of cls(response)
-        :rtype: ~azure.data.tables.models.TableQueryResponse
+        :rtype: ~azure_table.models.TableQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableQueryResponse"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _format = None
         _top = None
         _select = None
@@ -101,10 +102,8 @@ class TableOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                 request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version,
-                                                                         'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
         header_parameters['Accept'] = 'application/json;odata=minimalmetadata'
 
         # Construct and send request
@@ -117,52 +116,49 @@ class TableOperations(object):
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id'] = self._deserialize('str',
-                                                                       response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-continuation-NextTableName'] = self._deserialize('str', response.headers.get(
-            'x-ms-continuation-NextTableName'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-continuation-NextTableName']=self._deserialize('str', response.headers.get('x-ms-continuation-NextTableName'))
         deserialized = self._deserialize('TableQueryResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
     query.metadata = {'url': '/Tables'}  # type: ignore
 
     def create(
-            self,
-            table_properties,  # type: "models.TableProperties"
-            request_id_parameter=None,  # type: Optional[str]
-            response_preference=None,  # type: Optional[Union[str, "models.ResponseFormat"]]
-            query_options=None,  # type: Optional["models.QueryOptions"]
-            **kwargs  # type: Any
+        self,
+        table_properties,  # type: "models.TableProperties"
+        request_id_parameter=None,  # type: Optional[str]
+        response_preference=None,  # type: Optional[Union[str, "models.ResponseFormat"]]
+        query_options=None,  # type: Optional["models.QueryOptions"]
+        **kwargs  # type: Any
     ):
         # type: (...) -> "models.TableResponse"
         """Creates a new table under the given account.
 
         :param table_properties: The Table properties.
-        :type table_properties: ~azure.data.tables.models.TableProperties
+        :type table_properties: ~azure_table.models.TableProperties
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when analytics logging is enabled.
         :type request_id_parameter: str
         :param response_preference: Specifies whether the response should include the inserted entity
          in the payload. Possible values are return-no-content and return-content.
-        :type response_preference: str or ~azure.data.tables.models.ResponseFormat
+        :type response_preference: str or ~azure_table.models.ResponseFormat
         :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
+        :type query_options: ~azure_table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableResponse, or the result of cls(response)
-        :rtype: ~azure.data.tables.models.TableResponse or None
+        :rtype: ~azure_table.models.TableResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableResponse"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -185,10 +181,8 @@ class TableOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                 request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version,
-                                                                         'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
         if response_preference is not None:
             header_parameters['Prefer'] = self._serialize.header("response_preference", response_preference, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
@@ -211,36 +205,31 @@ class TableOperations(object):
         response_headers = {}
         deserialized = None
         if response.status_code == 201:
-            response_headers['x-ms-client-request-id'] = self._deserialize('str', response.headers.get(
-                'x-ms-client-request-id'))
-            response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-            response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
-            response_headers['Preference-Applied'] = self._deserialize('str',
-                                                                       response.headers.get('Preference-Applied'))
+            response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+            response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+            response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+            response_headers['Preference-Applied']=self._deserialize('str', response.headers.get('Preference-Applied'))
             deserialized = self._deserialize('TableResponse', pipeline_response)
 
         if response.status_code == 204:
-            response_headers['x-ms-client-request-id'] = self._deserialize('str', response.headers.get(
-                'x-ms-client-request-id'))
-            response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-            response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
-            response_headers['Preference-Applied'] = self._deserialize('str',
-                                                                       response.headers.get('Preference-Applied'))
+            response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+            response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+            response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+            response_headers['Preference-Applied']=self._deserialize('str', response.headers.get('Preference-Applied'))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
     create.metadata = {'url': '/Tables'}  # type: ignore
 
     def delete(
-            self,
-            table,  # type: str
-            request_id_parameter=None,  # type: Optional[str]
-            **kwargs  # type: Any
+        self,
+        table,  # type: str
+        request_id_parameter=None,  # type: Optional[str]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Operation permanently deletes the specified table.
@@ -274,8 +263,7 @@ class TableOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                 request_id_parameter, 'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -288,11 +276,10 @@ class TableOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id'] = self._deserialize('str',
-                                                                       response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -300,14 +287,14 @@ class TableOperations(object):
     delete.metadata = {'url': '/Tables(\'{table}\')'}  # type: ignore
 
     def query_entities(
-            self,
-            table,  # type: str
-            timeout=None,  # type: Optional[int]
-            request_id_parameter=None,  # type: Optional[str]
-            next_partition_key=None,  # type: Optional[str]
-            next_row_key=None,  # type: Optional[str]
-            query_options=None,  # type: Optional["models.QueryOptions"]
-            **kwargs  # type: Any
+        self,
+        table,  # type: str
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        next_partition_key=None,  # type: Optional[str]
+        next_row_key=None,  # type: Optional[str]
+        query_options=None,  # type: Optional["models.QueryOptions"]
+        **kwargs  # type: Any
     ):
         # type: (...) -> "models.TableEntityQueryResponse"
         """Queries entities in a table.
@@ -324,16 +311,16 @@ class TableOperations(object):
         :param next_row_key: An entity query continuation token from a previous call.
         :type next_row_key: str
         :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
+        :type query_options: ~azure_table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableEntityQueryResponse, or the result of cls(response)
-        :rtype: ~azure.data.tables.models.TableEntityQueryResponse
+        :rtype: ~azure_table.models.TableEntityQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableEntityQueryResponse"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _format = None
         _top = None
         _select = None
@@ -366,8 +353,7 @@ class TableOperations(object):
         if _filter is not None:
             query_parameters['$filter'] = self._serialize.query("filter", _filter, 'str')
         if next_partition_key is not None:
-            query_parameters['NextPartitionKey'] = self._serialize.query("next_partition_key", next_partition_key,
-                                                                         'str')
+            query_parameters['NextPartitionKey'] = self._serialize.query("next_partition_key", next_partition_key, 'str')
         if next_row_key is not None:
             query_parameters['NextRowKey'] = self._serialize.query("next_row_key", next_row_key, 'str')
 
@@ -375,10 +361,8 @@ class TableOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                 request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version,
-                                                                         'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
         header_parameters['Accept'] = 'application/json;odata=minimalmetadata'
 
         # Construct and send request
@@ -392,33 +376,29 @@ class TableOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id'] = self._deserialize('str',
-                                                                       response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-continuation-NextPartitionKey'] = self._deserialize('str', response.headers.get(
-            'x-ms-continuation-NextPartitionKey'))
-        response_headers['x-ms-continuation-NextRowKey'] = self._deserialize('str', response.headers.get(
-            'x-ms-continuation-NextRowKey'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-continuation-NextPartitionKey']=self._deserialize('str', response.headers.get('x-ms-continuation-NextPartitionKey'))
+        response_headers['x-ms-continuation-NextRowKey']=self._deserialize('str', response.headers.get('x-ms-continuation-NextRowKey'))
         deserialized = self._deserialize('TableEntityQueryResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
     query_entities.metadata = {'url': '/{table}()'}  # type: ignore
 
     def query_entities_with_partition_and_row_key(
-            self,
-            table,  # type: str
-            partition_key,  # type: str
-            row_key,  # type: str
-            timeout=None,  # type: Optional[int]
-            request_id_parameter=None,  # type: Optional[str]
-            query_options=None,  # type: Optional["models.QueryOptions"]
-            **kwargs  # type: Any
+        self,
+        table,  # type: str
+        partition_key,  # type: str
+        row_key,  # type: str
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        query_options=None,  # type: Optional["models.QueryOptions"]
+        **kwargs  # type: Any
     ):
         # type: (...) -> "models.TableEntityQueryResponse"
         """Queries entities in a table.
@@ -435,16 +415,16 @@ class TableOperations(object):
          limit that is recorded in the analytics logs when analytics logging is enabled.
         :type request_id_parameter: str
         :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
+        :type query_options: ~azure_table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableEntityQueryResponse, or the result of cls(response)
-        :rtype: ~azure.data.tables.models.TableEntityQueryResponse
+        :rtype: ~azure_table.models.TableEntityQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableEntityQueryResponse"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _format = None
         _select = None
         _filter = None
@@ -479,10 +459,8 @@ class TableOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                 request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version,
-                                                                         'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
         header_parameters['Accept'] = 'application/json;odata=minimalmetadata'
 
         # Construct and send request
@@ -496,37 +474,32 @@ class TableOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id'] = self._deserialize('str',
-                                                                       response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['ETag'] = self._deserialize('str', response.headers.get('ETag'))
-        response_headers['x-ms-continuation-NextPartitionKey'] = self._deserialize('str', response.headers.get(
-            'x-ms-continuation-NextPartitionKey'))
-        response_headers['x-ms-continuation-NextRowKey'] = self._deserialize('str', response.headers.get(
-            'x-ms-continuation-NextRowKey'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['x-ms-continuation-NextPartitionKey']=self._deserialize('str', response.headers.get('x-ms-continuation-NextPartitionKey'))
+        response_headers['x-ms-continuation-NextRowKey']=self._deserialize('str', response.headers.get('x-ms-continuation-NextRowKey'))
         deserialized = self._deserialize('TableEntityQueryResponse', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
-    query_entities_with_partition_and_row_key.metadata = {
-        'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
+    query_entities_with_partition_and_row_key.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
 
     def update_entity(
-            self,
-            table,  # type: str
-            partition_key,  # type: str
-            row_key,  # type: str
-            timeout=None,  # type: Optional[int]
-            request_id_parameter=None,  # type: Optional[str]
-            if_match=None,  # type: Optional[str]
-            table_entity_properties=None,  # type: Optional[Dict[str, object]]
-            query_options=None,  # type: Optional["models.QueryOptions"]
-            **kwargs  # type: Any
+        self,
+        table,  # type: str
+        partition_key,  # type: str
+        row_key,  # type: str
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        if_match=None,  # type: Optional[str]
+        table_entity_properties=None,  # type: Optional[Dict[str, object]]
+        query_options=None,  # type: Optional["models.QueryOptions"]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Update entity in a table.
@@ -550,7 +523,7 @@ class TableOperations(object):
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
+        :type query_options: ~azure_table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -559,7 +532,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -587,10 +560,8 @@ class TableOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                 request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version,
-                                                                         'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
         if if_match is not None:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
@@ -613,12 +584,11 @@ class TableOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id'] = self._deserialize('str',
-                                                                       response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['ETag'] = self._deserialize('str', response.headers.get('ETag'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -626,16 +596,16 @@ class TableOperations(object):
     update_entity.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
 
     def merge_entity(
-            self,
-            table,  # type: str
-            partition_key,  # type: str
-            row_key,  # type: str
-            timeout=None,  # type: Optional[int]
-            request_id_parameter=None,  # type: Optional[str]
-            if_match=None,  # type: Optional[str]
-            table_entity_properties=None,  # type: Optional[Dict[str, object]]
-            query_options=None,  # type: Optional["models.QueryOptions"]
-            **kwargs  # type: Any
+        self,
+        table,  # type: str
+        partition_key,  # type: str
+        row_key,  # type: str
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        if_match=None,  # type: Optional[str]
+        table_entity_properties=None,  # type: Optional[Dict[str, object]]
+        query_options=None,  # type: Optional["models.QueryOptions"]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Merge entity in a table.
@@ -659,7 +629,7 @@ class TableOperations(object):
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
+        :type query_options: ~azure_table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -668,7 +638,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -696,10 +666,8 @@ class TableOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                 request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version,
-                                                                         'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
         if if_match is not None:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
@@ -722,12 +690,11 @@ class TableOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id'] = self._deserialize('str',
-                                                                       response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['ETag'] = self._deserialize('str', response.headers.get('ETag'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -735,15 +702,15 @@ class TableOperations(object):
     merge_entity.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
 
     def delete_entity(
-            self,
-            table,  # type: str
-            partition_key,  # type: str
-            row_key,  # type: str
-            if_match,  # type: str
-            timeout=None,  # type: Optional[int]
-            request_id_parameter=None,  # type: Optional[str]
-            query_options=None,  # type: Optional["models.QueryOptions"]
-            **kwargs  # type: Any
+        self,
+        table,  # type: str
+        partition_key,  # type: str
+        row_key,  # type: str
+        if_match,  # type: str
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        query_options=None,  # type: Optional["models.QueryOptions"]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Deletes the specified entity in a table.
@@ -764,7 +731,7 @@ class TableOperations(object):
          limit that is recorded in the analytics logs when analytics logging is enabled.
         :type request_id_parameter: str
         :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
+        :type query_options: ~azure_table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -773,7 +740,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -800,10 +767,8 @@ class TableOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                 request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version,
-                                                                         'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
         header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
 
         # Construct and send request
@@ -817,11 +782,10 @@ class TableOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id'] = self._deserialize('str',
-                                                                       response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -829,14 +793,14 @@ class TableOperations(object):
     delete_entity.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
 
     def insert_entity(
-            self,
-            table,  # type: str
-            timeout=None,  # type: Optional[int]
-            request_id_parameter=None,  # type: Optional[str]
-            response_preference=None,  # type: Optional[Union[str, "models.ResponseFormat"]]
-            table_entity_properties=None,  # type: Optional[Dict[str, object]]
-            query_options=None,  # type: Optional["models.QueryOptions"]
-            **kwargs  # type: Any
+        self,
+        table,  # type: str
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        response_preference=None,  # type: Optional[Union[str, "models.ResponseFormat"]]
+        table_entity_properties=None,  # type: Optional[Dict[str, object]]
+        query_options=None,  # type: Optional["models.QueryOptions"]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, object]
         """Insert entity in a table.
@@ -850,11 +814,11 @@ class TableOperations(object):
         :type request_id_parameter: str
         :param response_preference: Specifies whether the response should include the inserted entity
          in the payload. Possible values are return-no-content and return-content.
-        :type response_preference: str or ~azure.data.tables.models.ResponseFormat
+        :type response_preference: str or ~azure_table.models.ResponseFormat
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
+        :type query_options: ~azure_table.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: dict mapping str to object, or the result of cls(response)
         :rtype: dict[str, object] or None
@@ -863,7 +827,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[Dict[str, object]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-
+        
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -889,10 +853,8 @@ class TableOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                 request_id_parameter, 'str')
-        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version,
-                                                                         'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['DataServiceVersion'] = self._serialize.header("data_service_version", data_service_version, 'str')
         if response_preference is not None:
             header_parameters['Prefer'] = self._serialize.header("response_preference", response_preference, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
@@ -918,41 +880,36 @@ class TableOperations(object):
         response_headers = {}
         deserialized = None
         if response.status_code == 201:
-            response_headers['x-ms-client-request-id'] = self._deserialize('str', response.headers.get(
-                'x-ms-client-request-id'))
-            response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-            response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
-            response_headers['ETag'] = self._deserialize('str', response.headers.get('ETag'))
-            response_headers['Preference-Applied'] = self._deserialize('str',
-                                                                       response.headers.get('Preference-Applied'))
-            response_headers['Content-Type'] = self._deserialize('str', response.headers.get('Content-Type'))
+            response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+            response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+            response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+            response_headers['Preference-Applied']=self._deserialize('str', response.headers.get('Preference-Applied'))
+            response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
             deserialized = self._deserialize('{object}', pipeline_response)
 
         if response.status_code == 204:
-            response_headers['x-ms-client-request-id'] = self._deserialize('str', response.headers.get(
-                'x-ms-client-request-id'))
-            response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-            response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
-            response_headers['ETag'] = self._deserialize('str', response.headers.get('ETag'))
-            response_headers['Preference-Applied'] = self._deserialize('str',
-                                                                       response.headers.get('Preference-Applied'))
-            response_headers['Content-Type'] = self._deserialize('str', response.headers.get('Content-Type'))
+            response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+            response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+            response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+            response_headers['Preference-Applied']=self._deserialize('str', response.headers.get('Preference-Applied'))
+            response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
     insert_entity.metadata = {'url': '/{table}'}  # type: ignore
 
     def get_access_policy(
-            self,
-            table,  # type: str
-            timeout=None,  # type: Optional[int]
-            request_id_parameter=None,  # type: Optional[str]
-            **kwargs  # type: Any
+        self,
+        table,  # type: str
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        **kwargs  # type: Any
     ):
         # type: (...) -> List["models.SignedIdentifier"]
         """Retrieves details about any stored access policies specified on the table that may be used with Shared Access Signatures.
@@ -966,7 +923,7 @@ class TableOperations(object):
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of SignedIdentifier, or the result of cls(response)
-        :rtype: list[~azure.data.tables.models.SignedIdentifier]
+        :rtype: list[~azure_table.models.SignedIdentifier]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[List["models.SignedIdentifier"]]
@@ -992,8 +949,7 @@ class TableOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                 request_id_parameter, 'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         header_parameters['Accept'] = 'application/xml'
 
         # Construct and send request
@@ -1007,27 +963,25 @@ class TableOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id'] = self._deserialize('str',
-                                                                       response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
         deserialized = self._deserialize('[SignedIdentifier]', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-
     get_access_policy.metadata = {'url': '/{table}'}  # type: ignore
 
     def set_access_policy(
-            self,
-            table,  # type: str
-            timeout=None,  # type: Optional[int]
-            request_id_parameter=None,  # type: Optional[str]
-            table_acl=None,  # type: Optional[List["models.SignedIdentifier"]]
-            **kwargs  # type: Any
+        self,
+        table,  # type: str
+        timeout=None,  # type: Optional[int]
+        request_id_parameter=None,  # type: Optional[str]
+        table_acl=None,  # type: Optional[List["models.SignedIdentifier"]]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
@@ -1040,7 +994,7 @@ class TableOperations(object):
          limit that is recorded in the analytics logs when analytics logging is enabled.
         :type request_id_parameter: str
         :param table_acl: The acls for the table.
-        :type table_acl: list[~azure.data.tables.models.SignedIdentifier]
+        :type table_acl: list[~azure_table.models.SignedIdentifier]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1070,8 +1024,7 @@ class TableOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id_parameter is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter",
-                                                                                 request_id_parameter, 'str')
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/xml'
 
@@ -1079,14 +1032,11 @@ class TableOperations(object):
         body_content_kwargs = {}  # type: Dict[str, Any]
         serialization_ctxt = {'xml': {'name': 'SignedIdentifiers', 'wrapped': True, 'itemsName': 'SignedIdentifier'}}
         if table_acl is not None:
-            body_content = self._serialize.body(table_acl, '[SignedIdentifier]', is_xml=True,
-                                                serialization_ctxt=serialization_ctxt)
+            body_content = self._serialize.body(table_acl, '[SignedIdentifier]', is_xml=True, serialization_ctxt=serialization_ctxt)
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
-
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        print(request.body)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1097,11 +1047,10 @@ class TableOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-client-request-id'] = self._deserialize('str',
-                                                                       response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id'] = self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version'] = self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date'] = self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
 
         if cls:
             return cls(pipeline_response, None, response_headers)

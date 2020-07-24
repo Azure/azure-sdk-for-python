@@ -4,5 +4,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure.data.tables_async import AzureTable
+from ._azure_table_async import AzureTable
 __all__ = ['AzureTable']

@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._azure.data.tables_enums import *
+from ._azure_table_enums import *
 
 
 class AccessPolicy(msrest.serialization.Model):
@@ -33,8 +33,8 @@ class AccessPolicy(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601', 'xml': {'name': 'Start'}},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'xml': {'name': 'Expiry'}},
+        'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'str', 'xml': {'name': 'Expiry'}},
         'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
     }
     _xml_map = {
@@ -124,7 +124,7 @@ class GeoReplication(msrest.serialization.Model):
 
     :param status: Required. The status of the secondary location. Possible values include: "live",
      "bootstrap", "unavailable".
-    :type status: str or ~azure.data.tables.models.GeoReplicationStatusType
+    :type status: str or ~azure_table.models.GeoReplicationStatusType
     :param last_sync_time: Required. A GMT date/time value, to the second. All primary writes
      preceding this value are guaranteed to be available for read operations at the secondary.
      Primary writes after this point in time may or may not be available for reads.
@@ -170,7 +170,7 @@ class Logging(msrest.serialization.Model):
     :param write: Required. Indicates whether all write requests should be logged.
     :type write: bool
     :param retention_policy: Required. The retention policy.
-    :type retention_policy: ~azure.data.tables.models.RetentionPolicy
+    :type retention_policy: ~azure_table.models.RetentionPolicy
     """
 
     _validation = {
@@ -223,7 +223,7 @@ class Metrics(msrest.serialization.Model):
      API operations.
     :type include_apis: bool
     :param retention_policy: The retention policy.
-    :type retention_policy: ~azure.data.tables.models.RetentionPolicy
+    :type retention_policy: ~azure_table.models.RetentionPolicy
     """
 
     _validation = {
@@ -262,7 +262,7 @@ class QueryOptions(msrest.serialization.Model):
     :param format: Specifies the media type for the response. Possible values include:
      "application/json;odata=nometadata", "application/json;odata=minimalmetadata",
      "application/json;odata=fullmetadata".
-    :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+    :type format: str or ~azure_table.models.OdataMetadataFormat
     :param top: Maximum number of records to return.
     :type top: int
     :param select: Select expression using OData notation. Limits the columns on each record to
@@ -344,7 +344,7 @@ class SignedIdentifier(msrest.serialization.Model):
     :param id: Required. A unique id.
     :type id: str
     :param access_policy: Required. The access policy.
-    :type access_policy: ~azure.data.tables.models.AccessPolicy
+    :type access_policy: ~azure_table.models.AccessPolicy
     """
 
     _validation = {
@@ -425,7 +425,7 @@ class TableQueryResponse(msrest.serialization.Model):
     :param odata_metadata: The metadata response of the table.
     :type odata_metadata: str
     :param value: List of tables.
-    :type value: list[~azure.data.tables.models.TableResponseProperties]
+    :type value: list[~azure_table.models.TableResponseProperties]
     """
 
     _attribute_map = {
@@ -546,15 +546,15 @@ class TableServiceProperties(msrest.serialization.Model):
     """Table Service Properties.
 
     :param logging: Azure Analytics Logging settings.
-    :type logging: ~azure.data.tables.models.Logging
+    :type logging: ~azure_table.models.Logging
     :param hour_metrics: A summary of request statistics grouped by API in hourly aggregates for
      tables.
-    :type hour_metrics: ~azure.data.tables.models.Metrics
+    :type hour_metrics: ~azure_table.models.Metrics
     :param minute_metrics: A summary of request statistics grouped by API in minute aggregates for
      tables.
-    :type minute_metrics: ~azure.data.tables.models.Metrics
+    :type minute_metrics: ~azure_table.models.Metrics
     :param cors: The set of CORS rules.
-    :type cors: list[~azure.data.tables.models.CorsRule]
+    :type cors: list[~azure_table.models.CorsRule]
     """
 
     _attribute_map = {
@@ -562,6 +562,9 @@ class TableServiceProperties(msrest.serialization.Model):
         'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
         'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
         'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'name': 'Cors', 'wrapped': True, 'itemsName': 'CorsRule'}},
+    }
+    _xml_map = {
+        'name': 'StorageServiceProperties'
     }
 
     def __init__(
@@ -584,14 +587,14 @@ class TableServiceStats(msrest.serialization.Model):
     """Stats for the service.
 
     :param geo_replication: Geo-Replication information for the Secondary Storage Service.
-    :type geo_replication: ~azure.data.tables.models.GeoReplication
+    :type geo_replication: ~azure_table.models.GeoReplication
     """
 
     _attribute_map = {
         'geo_replication': {'key': 'GeoReplication', 'type': 'GeoReplication'},
     }
     _xml_map = {
-        
+        'name': 'StorageServiceStats'
     }
 
     def __init__(
