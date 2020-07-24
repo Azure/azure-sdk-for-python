@@ -9363,7 +9363,7 @@ class SiteAuthSettings(ProxyOnlyResource):
      This setting is optional. If not specified, "wl.basic" is used as the
      default scope.
      Microsoft Account Scopes and permissions documentation:
-     https://msdn.microsoft.com/library/dn631845.aspx
+     https://msdn.microsoft.com/en-us/library/dn631845.aspx
     :type microsoft_account_oauth_scopes: list[str]
     """
 
