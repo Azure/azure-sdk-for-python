@@ -96,12 +96,13 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace_async
     async def set_table_access_policy(
             self,
-            signed_identifiers: Dict[str,AccessPolicy],
-            **kwargs
-    ) -> None:
+            signed_identifiers,  # type: dict[str,AccessPolicy]
+            **kwargs):
+        # type: (...) -> None
         """Sets stored access policies for the table that may be used with Shared Access Signatures.
+
         :param signed_identifiers:
-        :type signed_identifiers: dict[str,~azure.data.tables.AccessPolicy]
+        :type signed_identifiers: dict[str,AccessPolicy]
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -113,11 +114,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        signed_identifiers = identifiers  
+        signed_identifiers = identifiers  # type: ignore
         try:
             await self._client.table.set_access_policy(
                 table=self.table_name,
-                table_acl=signed_identifiers,
+                table_acl=signed_identifiers or None,
                 **kwargs)
         except HttpResponseError as error:
             process_table_error(error)

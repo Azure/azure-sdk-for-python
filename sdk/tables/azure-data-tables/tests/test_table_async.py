@@ -322,7 +322,7 @@ class TableTestAsync(AsyncTableTestCase):
         identifiers = dict()
         identifiers['testid'] = AccessPolicy(start=datetime.utcnow() - timedelta(minutes=5),
                                              expiry=datetime.utcnow() + timedelta(hours=1),
-                                             permission=TableSasPermissions(query=True))
+                                             permission=TableSasPermissions(read=True))
         try:
             await client.set_table_access_policy(signed_identifiers=identifiers)
             # Assert
