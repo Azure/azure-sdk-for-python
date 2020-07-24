@@ -372,7 +372,7 @@ class TableSasPermissions(object):
         """
         if not _str:
             _str = ''
-        self.query = kwargs.pop('read', None) or ('r' in _str)
+        self.read = kwargs.pop('read', None) or ('r' in _str)
         self.add = kwargs.pop('add', None) or ('a' in _str)
         self.update = kwargs.pop('update', None) or ('u' in _str)
         self.delete = kwargs.pop('delete', None) or ('d' in _str)
@@ -384,7 +384,7 @@ class TableSasPermissions(object):
         return TableSasPermissions(_str=str(self) + str(other))
 
     def __str__(self):
-        return (('r' if self.query else '') +
+        return (('r' if self.read else '') +
                 ('a' if self.add else '') +
                 ('u' if self.update else '') +
                 ('d' if self.delete else ''))
@@ -416,7 +416,7 @@ class TableSasPermissions(object):
         return parsed
 
 
-TableSasPermissions.QUERY = TableSasPermissions(**dict(read=True))
+TableSasPermissions.READ = TableSasPermissions(**dict(read=True))
 TableSasPermissions.ADD = TableSasPermissions(**dict(add=True))
 TableSasPermissions.UPDATE = TableSasPermissions(**dict(update=True))
 TableSasPermissions.DELETE = TableSasPermissions(**dict(delete=True))

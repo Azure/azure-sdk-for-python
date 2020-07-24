@@ -13,6 +13,24 @@ from azure.data.tables._shared._error import _validate_table_name
 from azure.data.tables._shared.base_client import parse_query
 from .base_client import StorageAccountHostsMixin
 
+
+def _parameter_filter_substitution(
+        parameters,  # type: dict[str,str]
+        filter  # type: str  # pylint: disable = W0622
+):
+    """Replace user defined parameter in filter
+    :param parameters: User defined parameters
+    :param filter: Filter for querying
+    """
+    if parameters:
+        filter_start = filter.split('@')[0]
+        selected = filter.split('@')[1]
+        for key, value in parameters.items():
+            if key == selected:
+                filter = filter_start.replace('@', value)  # pylint: disable = W0622
+    return filter  # pylint: disable = W0622
+
+
 class TableClientBase(StorageAccountHostsMixin):
     """Create TableClientBase from a Credential.
 
@@ -30,11 +48,12 @@ class TableClientBase(StorageAccountHostsMixin):
 
     :returns: None
     """
+
     def __init__(
-        self, account_url, # type: str
-        table_name, # type: str
-        credential=None, # type: str
-        **kwargs # type: Any
+            self, account_url,  # type: str
+            table_name,  # type: str
+            credential=None,  # type: str
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
 
@@ -63,7 +82,7 @@ class TableClientBase(StorageAccountHostsMixin):
         """Format the endpoint URL according to the current location
         mode hostname.
         """
-        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+        return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def _validate_signed_identifiers(cls, signed_identifiers):
@@ -77,19 +96,3 @@ class TableClientBase(StorageAccountHostsMixin):
             raise ValueError(
                 'Too many access policies provided. The server does not support setting '
                 'more than 5 access policies on a single resource.')
-
-    def _parameter_filter_substitution(
-            self,
-            parameters,  # type: dict[str,str]
-            filter  # type: str  # pylint: disable = W0622
-    ):
-        """Replace user defined parameter in filter
-        :param parameters: User defined parameters
-        :param filter: Filter for querying
-        """
-        filter_start = filter.split('@')[0]
-        selected = filter.split('@')[1]
-        for key, value in parameters.items():
-            if key == selected:
-                filter = filter_start.replace('@', value)  # pylint: disable = W0622
-        return filter

@@ -21,7 +21,7 @@ from ._shared.response_handlers import process_table_error
 from ._version import VERSION
 
 from ._table_client import TableClient
-from ._shared._table_service_client_base import TableServiceClientBase
+from ._shared._table_service_client_base import TableServiceClientBase, _parameter_filter_substitution
 
 
 class TableServiceClient(TableServiceClientBase):
@@ -156,7 +156,7 @@ class TableServiceClient(TableServiceClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table = self.get_table_client(table_name=table_name)
-        table.create_table()
+        table.create_table(**kwargs)
         return table
 
     @distributed_trace
@@ -194,7 +194,7 @@ class TableServiceClient(TableServiceClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        filter= _parameter_filter_substitution(parameters, filter)
+        filter = _parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
 
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
@@ -227,8 +227,7 @@ class TableServiceClient(TableServiceClientBase):
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
-                                     filter=filter)
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select)
 
         command = functools.partial(
             self._client.table.query,

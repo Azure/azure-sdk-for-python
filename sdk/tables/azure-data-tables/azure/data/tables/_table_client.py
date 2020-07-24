@@ -7,8 +7,6 @@
 import functools
 from typing import Optional, Any, Union  # pylint: disable = W0611
 
-from azure.data.tables._shared._error import _validate_table_name
-
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -24,7 +22,7 @@ from ._generated import AzureTable
 from ._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
 from ._serialize import _get_match_headers, _add_entity_properties
 from ._shared.base_client import parse_connection_str
-from ._shared._table_client_base import TableClientBase
+from ._shared._table_client_base import TableClientBase, _parameter_filter_substitution
 
 from ._shared.request_handlers import serialize_iso
 from ._shared.response_handlers import process_table_error
@@ -340,8 +338,7 @@ class TableClient(TableClientBase):
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
-                                     filter=filter)
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select)
 
         command = functools.partial(
             self._client.table.query_entities,
@@ -369,7 +366,7 @@ class TableClient(TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        filter = _parameter_filter_substitution(parameters, filter)
+        filter = _parameter_filter_substitution(parameters, filter)   # pylint: disable = W0622
 
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
