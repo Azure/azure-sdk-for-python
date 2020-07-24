@@ -79,7 +79,7 @@ setup(
     ]),
     install_requires=[
         'msrest>=0.6.17,<2.0.0',
-        'azure-core<2.0.0,>=1.6.0'
+        'msrest>=0.5.0'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg', 'futures'],
