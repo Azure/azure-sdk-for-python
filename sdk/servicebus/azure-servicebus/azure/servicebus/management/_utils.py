@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from typing import cast
 from xml.etree.ElementTree import ElementTree, SubElement, QName
 import isodate
+import six
 
 # Refer to the async version of this module under ..\aio\management\_utils.py for detailed explanation.
 
@@ -93,18 +94,17 @@ def deserialize_value(value, value_type):
 
 
 def serialize_value_type(value):
-    value_type = type(value)
-    if value_type == str:
+    if isinstance(value, six.string_types):
         return "string", value
-    if value_type == int:
+    if isinstance(value, six.integer_types):
         return "int" if value <= constants.INT32_MAX_VALUE else "long", str(value)
-    if value_type == float:
+    if isinstance(value, float):
         return "double", str(value)
-    if value_type == bool:
+    if isinstance(value, bool):
         return "boolean", str(value).lower()
-    if value_type == datetime:
+    if isinstance(value, datetime):
         return "dateTime", isodate.datetime_isoformat(value)
-    if value_type == timedelta:
+    if isinstance(value, timedelta):
         return "duration", isodate.duration_isoformat(value)
     raise ValueError("value {} of type {} is not supported for the key value".format(value, value_type))
 
