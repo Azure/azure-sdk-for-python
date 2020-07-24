@@ -7,6 +7,8 @@
 import functools
 from typing import Optional, Any, Union  # pylint: disable = W0611
 
+from azure.data.tables._shared._error import _validate_table_name
+
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -30,7 +32,7 @@ from ._shared.response_handlers import process_table_error
 from ._version import VERSION
 
 
-from ._models import TableEntityPropertiesPaged, UpdateMode
+from ._models import TableEntityPropertiesPaged, UpdateMode, _parameter_filter_substitution
 
 from ._shared.response_handlers import return_headers_and_deserialized
 
@@ -62,7 +64,6 @@ class TableClient(TableClientBase):
         :returns: None
         """
         super(TableClient, self).__init__(account_url, table_name, credential=credential, **kwargs)
-
         self._client = AzureTable(self.url, pipeline=self._pipeline)
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
 
@@ -340,26 +341,15 @@ class TableClient(TableClientBase):
 
         :keyword int results_per_page: Number of entities per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of an entity to return certain entities
-        :keyword str filter: Specify a filter to return certain entities
-        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
         :rtype: ItemPaged[TableEntity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        parameters = kwargs.pop('parameters', None)
-        filter = kwargs.pop('filter', None)  # pylint: disable = W0622
-        if parameters:
-            selected = filter.split('@')[1]
-            for key, value in parameters.items():
-                if key == selected:
-                    filter = filter.split('@')[0].replace('@', value)  # pylint: disable = W0622
+        user_select = kwargs.pop('select', None)
+        if user_select and not isinstance(user_select, str):
+            user_select = ", ".join(user_select)
 
-        temp_select = kwargs.pop('select', None)
-        select = " "
-        if temp_select is not None and len(list(temp_select)) > 1:
-            select = ", ".join(temp_select)
-
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
                                      filter=filter)
 
         command = functools.partial(
@@ -388,19 +378,13 @@ class TableClient(TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        if parameters:
-            filter_start = filter.split('@')[0]
-            selected = filter.split('@')[1]
-            for key, value in parameters.items():
-                if key == selected:
-                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
+        filter = _parameter_filter_substitution(parameters, filter)
 
-        temp_select = kwargs.pop('select', None)
-        select = " "
-        if temp_select is not None and len(list(temp_select)) > 1:
-            select = ", ".join(temp_select)
+        user_select = kwargs.pop('select', None)
+        if user_select and not isinstance(user_select, str):
+            user_select = ", ".join(user_select)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
                                      filter=filter)
 
         command = functools.partial(

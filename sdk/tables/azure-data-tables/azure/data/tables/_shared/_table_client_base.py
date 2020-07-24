@@ -58,3 +58,20 @@ class TableClientBase(StorageAccountHostsMixin):
         self.table_name = table_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(TableClientBase, self).__init__(parsed_url, service='table', credential=credential, **kwargs)
+
+
+    def _parameter_filter_substitution(
+            self,
+            parameters,  # type: dict[str,str]
+            filter  # type: str  # pylint: disable = W0622
+    ):
+        """Replace user defined parameter in filter
+        :param parameters: User defined parameters
+        :param filter: Filter for querying
+        """
+        filter_start = filter.split('@')[0]
+        selected = filter.split('@')[1]
+        for key, value in parameters.items():
+            if key == selected:
+                filter = filter_start.replace('@', value)  # pylint: disable = W0622
+        return filter

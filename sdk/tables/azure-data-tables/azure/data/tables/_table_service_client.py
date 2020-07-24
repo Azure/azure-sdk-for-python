@@ -10,7 +10,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
-from ._models import Table
+from ._models import Table, _parameter_filter_substitution
 
 from ._generated import AzureTable
 from ._generated.models import TableProperties, TableServiceProperties, QueryOptions
@@ -162,11 +162,8 @@ class TableServiceClient(TableServiceClientBase):
         :rtype: ~azure.data.tables.TableClient
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        _validate_table_name(table_name)
-
-        table_properties = TableProperties(table_name=table_name, **kwargs)
-        self._client.table.create(table_properties)
         table = self.get_table_client(table_name=table_name)
+        table.create_table()
         return table
 
     @distributed_trace
@@ -183,9 +180,8 @@ class TableServiceClient(TableServiceClientBase):
         :return: None
         :rtype: None
         """
-        _validate_table_name(table_name)
-
-        self._client.table.delete(table=table_name, **kwargs)
+        table = self.get_table_client(table_name=table_name)
+        table.delete_table(**kwargs)
 
     @distributed_trace
     def query_tables(
@@ -205,18 +201,13 @@ class TableServiceClient(TableServiceClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        if parameters:
-            selected = filter.split('@')[1]
-            for key, value in parameters.items():
-                if key == selected:
-                    filter = filter.split('@')[0].replace('@', value)  # pylint: disable = W0622
+        filter= _parameter_filter_substitution(parameters, filter)
 
-        temp_select = kwargs.pop('select', None)
-        select = " "
-        if temp_select is not None and len(list(temp_select)) > 1:
-            select = ", ".join(temp_select)
+        user_select = kwargs.pop('select', None)
+        if user_select and not isinstance(user_select, str):
+            user_select = ", ".join(user_select)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
                                      filter=filter)
         command = functools.partial(self._client.table.query,
                                     **kwargs)
@@ -235,27 +226,15 @@ class TableServiceClient(TableServiceClientBase):
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
-        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
-        :keyword str filter: Specify desired filter for tables
         :return: A query of tables
         :rtype: ItemPaged[Table]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        parameters = kwargs.pop('parameters', None)
-        filter = kwargs.pop('filter', None)  # pylint: disable=W0622
-        if parameters:
-            filter_start = filter.split('@')[0]
-            selected = filter.split('@')[1]
-            for key, value in parameters.items():
-                if key == selected:
-                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
+        user_select = kwargs.pop('select', None)
+        if user_select and not isinstance(user_select, str):
+            user_select = ", ".join(user_select)
 
-        temp_select = kwargs.pop('select', None)
-        select = " "
-        if temp_select is not None and len(list(temp_select)) > 1:
-            select = ", ".join(temp_select)
-
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
                                      filter=filter)
 
         command = functools.partial(self._client.table.query,

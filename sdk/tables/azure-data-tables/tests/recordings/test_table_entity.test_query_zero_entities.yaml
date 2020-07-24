@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 24 Jul 2020 14:34:52 GMT
+      - Fri, 24 Jul 2020 16:12:10 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 14:34:52 GMT
+      - Fri, 24 Jul 2020 16:12:10 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 24 Jul 2020 14:34:50 GMT
+      - Fri, 24 Jul 2020 16:12:08 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttable7732118a')
       server:
@@ -63,11 +63,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 24 Jul 2020 14:34:53 GMT
+      - Fri, 24 Jul 2020 16:12:11 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 14:34:53 GMT
+      - Fri, 24 Jul 2020 16:12:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -81,7 +81,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 24 Jul 2020 14:34:50 GMT
+      - Fri, 24 Jul 2020 16:12:08 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('querytable7732118a')
       server:
@@ -107,25 +107,24 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 24 Jul 2020 14:34:53 GMT
+      - Fri, 24 Jul 2020 16:12:11 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 14:34:53 GMT
+      - Fri, 24 Jul 2020 16:12:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
-    uri: https://storagename.table.core.windows.net/querytable7732118a()?$select=%20
+    uri: https://storagename.table.core.windows.net/querytable7732118a()?$filter=%3Cclass%20%27filter%27%3E
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#querytable7732118a&$select=","value":[]}'
+      string: '{"odata.error":{"code":"InvalidInput","message":{"lang":"en-US","value":"Syntax
+        error: character ''<'' is not valid at position 0 in ''<class ''filter''>''.\nRequestId:7e6e5643-8002-001e-48d5-61b6bb000000\nTime:2020-07-24T16:12:08.5236277Z"}}}'
     headers:
-      cache-control:
-      - no-cache
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 24 Jul 2020 14:34:50 GMT
+      - Fri, 24 Jul 2020 16:12:08 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -135,8 +134,8 @@ interactions:
       x-ms-version:
       - '2019-07-07'
     status:
-      code: 200
-      message: OK
+      code: 400
+      message: Bad Request
 - request:
     body: null
     headers:
@@ -149,11 +148,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 24 Jul 2020 14:34:53 GMT
+      - Fri, 24 Jul 2020 16:12:11 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 14:34:53 GMT
+      - Fri, 24 Jul 2020 16:12:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -167,7 +166,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 24 Jul 2020 14:34:50 GMT
+      - Fri, 24 Jul 2020 16:12:08 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
@@ -189,11 +188,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 24 Jul 2020 14:34:53 GMT
+      - Fri, 24 Jul 2020 16:12:11 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 14:34:53 GMT
+      - Fri, 24 Jul 2020 16:12:11 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -207,7 +206,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 24 Jul 2020 14:34:50 GMT
+      - Fri, 24 Jul 2020 16:12:08 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:
