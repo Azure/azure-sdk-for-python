@@ -98,4 +98,4 @@ def check_beginning_bytes(form):
 
 def process_form_exception(exc):
     req_id = exc.response.request.headers["x-ms-client-request-id"]
-    raise HttpResponseError(exc.message + ". Request ID is: " + req_id, exc)
+    raise HttpResponseError(exc.message + ". Request ID is: " + req_id, exc.response)
