@@ -113,8 +113,8 @@ class AttestationProvider(TrackedResource):
     :type location: str
     :param trust_model: Trust model for the attestation service instance.
     :type trust_model: str
-    :param status: Required. Status of attestation service. Possible values
-     include: 'Ready', 'NotReady', 'Error'
+    :param status: Status of attestation service. Possible values include:
+     'Ready', 'NotReady', 'Error'
     :type status: str or
      ~azure.mgmt.attestation.models.AttestationServiceStatus
     :param attest_uri: Gets the uri of attestation service
@@ -126,7 +126,6 @@ class AttestationProvider(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'status': {'required': True},
     }
 
     _attribute_map = {

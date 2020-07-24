@@ -113,8 +113,8 @@ class AttestationProvider(TrackedResource):
     :type location: str
     :param trust_model: Trust model for the attestation service instance.
     :type trust_model: str
-    :param status: Required. Status of attestation service. Possible values
-     include: 'Ready', 'NotReady', 'Error'
+    :param status: Status of attestation service. Possible values include:
+     'Ready', 'NotReady', 'Error'
     :type status: str or
      ~azure.mgmt.attestation.models.AttestationServiceStatus
     :param attest_uri: Gets the uri of attestation service
@@ -126,7 +126,6 @@ class AttestationProvider(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'status': {'required': True},
     }
 
     _attribute_map = {
@@ -140,7 +139,7 @@ class AttestationProvider(TrackedResource):
         'attest_uri': {'key': 'properties.attestUri', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, status, tags=None, trust_model: str=None, attest_uri: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, trust_model: str=None, status=None, attest_uri: str=None, **kwargs) -> None:
         super(AttestationProvider, self).__init__(tags=tags, location=location, **kwargs)
         self.trust_model = trust_model
         self.status = status
