@@ -34,6 +34,13 @@ class PublicNetworkAccessType(str, Enum):
     disabled = "Disabled"  #: Disables public connectivity to Application Insights through public DNS.
 
 
+class IngestionMode(str, Enum):
+
+    application_insights = "ApplicationInsights"
+    application_insights_with_diagnostic_settings = "ApplicationInsightsWithDiagnosticSettings"
+    log_analytics = "LogAnalytics"
+
+
 class PurgeState(str, Enum):
 
     pending = "pending"
