@@ -8,7 +8,7 @@ This is the AutoRest configuration file for Network.
 
 ## Getting Started
 
-To build the SDK for Network, simply [Install AutoRest](https://aka.ms/autorest/install) and in this folder, run:
+To build the SDK for Network, simply [Install AutoRest](https://github.com/Azure/autorest/blob/master/docs/installing-autorest.md) and in this folder, run:
 
 > `autorest`
 
@@ -66,4 +66,4 @@ swagger-to-sdk:
 
 ## Python
 
-See configuration in [readme.python.md](./readme.python.md)
+See configuration in [readme.python.md](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/mgmt/swagger/multi_api/readme.python.md)
