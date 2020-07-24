@@ -181,14 +181,11 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     ) -> None:
         """Creates a new table under the given account.
 
-                        :param request_id_parameter: Request Id parameter
-                        :type request_id_parameter: str
-                        :param table_name: The Table name.
-                        :type table_name: str
-                        :keyword callable cls: A custom type or function that will be passed the direct response
-                        :return: None
-                        :rtype: ~None
-                        """
+        :param table_name: The Table name.
+        :type table_name: str
+        :return: None
+        :rtype: ~None
+         """
         _validate_table_name(table_name)
 
         await self._client.table.delete(table=table_name, **kwargs)
