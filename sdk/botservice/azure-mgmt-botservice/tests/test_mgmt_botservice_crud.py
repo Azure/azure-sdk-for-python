@@ -3,7 +3,7 @@ from azure.mgmt.botservice import AzureBotService
 from azure.mgmt.botservice.models import (
     Bot,
     BotProperties,
-    sku,
+    Sku,
     ErrorException
 )
 
@@ -45,7 +45,7 @@ class CoreBotServiceTestCase(AzureMgmtTestCase):
             resource_name = self.resource_name,
             parameters = Bot(
                 location= self.location,
-                sku = sku.Sku(name=self.sku_name),
+                sku = Sku(name=self.sku_name),
                 kind= self.kind,
                 properties= BotProperties(
                     display_name = self.display_name,
