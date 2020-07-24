@@ -1332,6 +1332,9 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         await blob.seal_append_blob()
         copied_blob = bsc.get_blob_client(self.container_name, "copiedblob")
         await copied_blob.start_copy_from_url(blob.url)
+        prop = await copied_blob.get_blob_properties()
+
+        self.assertTrue(prop.is_append_blob_sealed)
         with self.assertRaises(HttpResponseError):
             await copied_blob.append_block("abc")
 
@@ -1345,8 +1348,16 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         # copy unsealed blob with seal_blob=True will get a sealed blob
         copied_blob2 = bsc.get_blob_client(self.container_name, "copiedblob2")
         await copied_blob2.start_copy_from_url(blob.url, seal_blob=True)
+        prop = await copied_blob2.get_blob_properties()
+
+        self.assertTrue(prop.is_append_blob_sealed)
         with self.assertRaises(HttpResponseError):
             await copied_blob2.append_block("abc")
+
+        blobs_gen = bsc.get_container_client(self.container_name).list_blobs()
+        async for blob in blobs_gen:
+            if blob.name == "copiedblob2":
+                self.assertTrue(blob.is_append_blob_sealed)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1358,7 +1369,10 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         # copy sealed blob with seal_blob=True will get a sealed blob
         await blob.seal_append_blob()
         copied_blob3 = bsc.get_blob_client(self.container_name, "copiedblob3")
-        await copied_blob3.start_copy_from_url(blob.url, seal_blob=True)
-        with self.assertRaises(HttpResponseError):
-            await copied_blob3.append_block("abc")
+        await copied_blob3.start_copy_from_url(blob.url, seal_blob=False)
+
+        prop = await copied_blob3.get_blob_properties()
+
+        self.assertIsNone(prop.is_append_blob_sealed)
+        await copied_blob3.append_block("abc")
 # ------------------------------------------------------------------------------

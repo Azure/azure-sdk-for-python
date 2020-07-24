@@ -440,6 +440,11 @@ class BlobProperties(DictMixin):
         requested a subset of the blob.
     :ivar int append_blob_committed_block_count:
         (For Append Blobs) Number of committed blocks in the blob.
+    :ivar bool is_append_blob_sealed:
+        Indicate if the append blob is sealed or not.
+
+        .. versionadded:: 12.4.0
+
     :ivar int page_blob_sequence_number:
         (For Page Blobs) Sequence number for page blob used for coordinating
         concurrent writes.
@@ -484,12 +489,24 @@ class BlobProperties(DictMixin):
         Whether this blob is encrypted.
     :ivar list(~azure.storage.blob.ObjectReplicationPolicy) object_replication_source_properties:
         Only present for blobs that have policy ids and rule ids applied to them.
+
+        .. versionadded:: 12.4.0
+
     :ivar str object_replication_destination_policy:
         Represents the Object Replication Policy Id that created this blob.
+
+        .. versionadded:: 12.4.0
+
     :ivar int tag_count:
         Tags count on this blob.
+
+        .. versionadded:: 12.4.0
+
     :ivar dict(str, str) tags:
         Key value pair of tags on this blob.
+
+        .. versionadded:: 12.4.0
+
     """
 
     def __init__(self, **kwargs):
@@ -506,6 +523,7 @@ class BlobProperties(DictMixin):
         self.size = kwargs.get('Content-Length')
         self.content_range = kwargs.get('Content-Range')
         self.append_blob_committed_block_count = kwargs.get('x-ms-blob-committed-block-count')
+        self.is_append_blob_sealed = kwargs.get('x-ms-blob-sealed')
         self.page_blob_sequence_number = kwargs.get('x-ms-blob-sequence-number')
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.copy = CopyProperties(**kwargs)
@@ -536,6 +554,7 @@ class BlobProperties(DictMixin):
         blob.etag = generated.properties.etag
         blob.deleted = generated.deleted
         blob.snapshot = generated.snapshot
+        blob.is_append_blob_sealed = generated.properties.is_sealed
         blob.metadata = generated.metadata.additional_properties if generated.metadata else {}
         blob.encrypted_metadata = generated.metadata.encrypted if generated.metadata else None
         blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
