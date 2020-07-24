@@ -18,7 +18,7 @@ class AccountListPoolNodeCountsOptions(Model):
 
     :param filter: An OData $filter clause. For more information on
      constructing this filter, see
-     https://docs.microsoft.com/rest/api/batchservice/odata-filters-in-batch.
+     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch.
     :type filter: str
     :param max_results: The maximum number of items to return in the response.
      Default value: 10 .
