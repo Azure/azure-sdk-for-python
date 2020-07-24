@@ -99,7 +99,7 @@ and a `CertificateOperation` if not.
 certificate, such as `version`. This changes the shape of the `Certificate` type,
 as certain properties of `Certificate` (such as `version`) have to be accessed
 through the `properties` property.
-for details.
+
 - `update_certificate` has been renamed to `update_certificate_properties`
 - The `vault_url` parameter of `CertificateClient` has been renamed to `vault_endpoint`
 - The property `vault_url` has been renamed to `vault_endpoint` in all models

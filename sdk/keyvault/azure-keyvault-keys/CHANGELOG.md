@@ -71,7 +71,7 @@ been renamed to `KeyCurveName`, `KeyOperation`, and `KeyType`, respectively.
 key, such as `version`. This changes the shape of the returned `Key` type,
 as certain properties of `Key` (such as `version`) have to be accessed
 through the `properties` property.
-for details.
+
 - `update_key` has been renamed to `update_key_properties`
 - The `vault_url` parameter of `KeyClient` has been renamed to `vault_endpoint`
 - The property `vault_url` has been renamed to `vault_endpoint` in all models
