@@ -1593,7 +1593,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     yield Message(
                         body="Test message",
                         properties={'key': 'value'},
-                        label='label',
+                        label='1st',
                         content_type='application/text',
                         correlation_id='cid',
                         message_id='mid',
@@ -1614,18 +1614,17 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(message)
 
                 receive_counter = 0
-                message_received_cnt = 0
-                while message_received_cnt < 20:
+                message_1st_received_cnt = 0
+                message_2nd_received_cnt = 0
+                while message_1st_received_cnt < 20 or message_2nd_received_cnt < 20:
                     messages = receiver.receive_messages(max_batch_size=20, max_wait_time=5)
                     if not messages:
                         break
                     receive_counter += 1
-                    message_received_cnt += len(messages)
                     for message in messages:
                         print_message(_logger, message)
                         assert b''.join(message.body) == b'Test message'
                         assert message.properties[b'key'] == b'value'
-                        assert message.label == 'label'
                         assert message.content_type == 'application/text'
                         assert message.correlation_id == 'cid'
                         assert message.message_id == 'mid'
@@ -1634,36 +1633,16 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         assert message.to == 'to'
                         assert message.reply_to == 'reply_to'
                         assert message.time_to_live == timedelta(seconds=60)
-                        message.complete()
-                        sender.send_messages(message)  # resending received message
 
-                assert message_received_cnt == 20
-                # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
-                assert receive_counter < 10  # Dynamic link credit issuing come info effect
+                        if message.label == '1st':
+                            message_1st_received_cnt += 1
+                            message.complete()
+                            message.label = '2nd'
+                            sender.send_messages(message)  # resending received message
+                        elif message.label == '2nd':
+                            message_2nd_received_cnt += 1
+                            message.complete()
 
-                receive_counter = 0
-                message_received_cnt = 0
-                while message_received_cnt < 20:
-                    messages = receiver.receive_messages(max_batch_size=20, max_wait_time=5)
-                    if not messages:
-                        break
-                    receive_counter += 1
-                    message_received_cnt += len(messages)
-                    for message in messages:
-                        print_message(_logger, message)
-                        assert b''.join(message.body) == b'Test message'
-                        assert message.properties[b'key'] == b'value'
-                        assert message.label == 'label'
-                        assert message.content_type == 'application/text'
-                        assert message.correlation_id == 'cid'
-                        assert message.message_id == 'mid'
-                        assert message.partition_key == 'pk'
-                        assert message.via_partition_key == 'via_pk'
-                        assert message.to == 'to'
-                        assert message.reply_to == 'reply_to'
-                        assert message.time_to_live == timedelta(seconds=60)
-                        message.complete()
-
-                assert message_received_cnt == 20
+                assert message_1st_received_cnt == 20 and message_2nd_received_cnt == 20
                 # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
                 assert receive_counter < 10  # Dynamic link credit issuing come info effect
