@@ -428,20 +428,20 @@ class FormRecognizerClient(object):
         deserialization_callback = cls if cls else analyze_callback
 
         try:
-        return await self._client.begin_analyze_with_custom_model(  # type: ignore
-            file_stream={"source": form_url},
-            model_id=model_id,
-            include_text_details=include_field_elements,
-            cls=deserialization_callback,
-            polling=AsyncLROBasePolling(
-                timeout=polling_interval,
-                lro_algorithms=[AnalyzePolling()],
+            return await self._client.begin_analyze_with_custom_model(  # type: ignore
+                file_stream={"source": form_url},
+                model_id=model_id,
+                include_text_details=include_field_elements,
+                cls=deserialization_callback,
+                polling=AsyncLROBasePolling(
+                    timeout=polling_interval,
+                    lro_algorithms=[AnalyzePolling()],
+                    **kwargs
+                ),
+                error_map=error_map,
+                continuation_token=continuation_token,
                 **kwargs
-            ),
-            error_map=error_map,
-            continuation_token=continuation_token,
-            **kwargs
-        )
+            )
         except HttpResponseError as e:
             process_form_exception(e)
 

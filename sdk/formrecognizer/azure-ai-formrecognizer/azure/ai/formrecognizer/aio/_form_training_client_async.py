@@ -249,6 +249,8 @@ class FormTrainingClient(object):
                 error_map=error_map,
                 **kwargs
             )
+        except HttpResponseError as e:
+            process_form_exception(e)
 
     @distributed_trace_async
     async def get_account_properties(self, **kwargs: Any) -> AccountProperties:
