@@ -22,7 +22,7 @@ from azure.data.tables._shared.response_handlers import process_table_error
 from azure.data.tables.aio._table_client_async import TableClient
 from ._models import TablePropertiesPaged
 from .._shared._error import _validate_table_name
-from .._shared._table_service_client_base import TableServiceClientBase
+from .._shared._table_service_client_base import TableServiceClientBase, _parameter_filter_substitution
 from .._models import Table
 
 
@@ -200,32 +200,17 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     ) -> AsyncItemPaged[Table]:
         """Queries tables under the given account.
 
-        :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AsyncItemPaged, or the result of cls(response)
+        :keyword int results_per_page: Number of tables per page in return ItemPaged
+        :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
+        :return: AsyncItemPaged
         :rtype: ~AsyncItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        parameters = kwargs.pop('parameters', None)
-        filter = kwargs.pop('filter', None)
-        if parameters:
-            filter_start = filter.split('@')[0]
-            selected = filter.split('@')[1]
-            for key, value in parameters.items():
-                if key == selected:
-                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
+        user_select = kwargs.pop('select', None)
+        if user_select and not isinstance(user_select, str):
+            user_select = ", ".join(user_select)
 
-        temp_select = kwargs.pop('select', None)
-        select = ""
-        if temp_select is not None:
-            if len(list(temp_select)) > 1:
-                for i in temp_select:
-                    select += i + ","
-                temp_select = None
-
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=select or temp_select,
-                                     filter=filter)
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select)
 
         command = functools.partial(
             self._client.table.query,
@@ -244,30 +229,26 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     ) -> AsyncItemPaged[str]:
         """Queries tables under the given account.
 
-        :param query_options: Parameter group.
-        :type query_options: ~azure.data.tables.models.QueryOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AsyncItemPaged, or the result of cls(response)
+        :param filter: Specify a filter to return certain tables
+        :type filter: str
+        :keyword int results_per_page: Number of tables per page in return ItemPaged
+        :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
+        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
+        :return: AsyncItemPaged
         :rtype: ~AsyncItemPaged[str]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+
         parameters = kwargs.pop('parameters', None)
-        # if parameters:
-        #     selected = filter.split('@')[1]
-        #     for key, value in parameters.items():
-        #         if key == selected:
-        #             filter = filter.split('@')[0].replace('@', value)  # pylint: disable = W0622
+        filter = _parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
 
-        temp_select = kwargs.pop('select', None)
-        select = ""
-        if temp_select is not None:
-            if len(list(temp_select)) > 1:
-                for i in temp_select:
-                    select += i + ","
-                temp_select = None
+        user_select = kwargs.pop('select', None)
+        if user_select and not isinstance(user_select, str):
+            user_select = ", ".join(user_select)
 
-        query_options = QueryOptions(select=select or temp_select,
-                                     top=kwargs.pop('results_per_page', None), filter=filter)
+        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
+                                     filter=filter)
+
         command = functools.partial(self._client.table.query, query_options=query_options, 
                                     **kwargs)
         return AsyncItemPaged(
