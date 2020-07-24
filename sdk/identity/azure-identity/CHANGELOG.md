@@ -209,7 +209,7 @@ the Azure CLI's client ID will be used.
   `client_id`
   - transport configuration is now done through keyword arguments as
   described in
-  [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/azure-identity_1.0.0b4/sdk/core/azure-core/docs/configuration.md)
+  [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/azure-identity_1.0.0/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
 
 ### Fixes and improvements:
 - Authenticating with a single sign-on shared with other Microsoft applications
