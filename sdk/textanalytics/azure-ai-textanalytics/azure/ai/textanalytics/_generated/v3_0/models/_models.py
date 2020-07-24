@@ -832,7 +832,7 @@ class SentenceSentiment(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param text: The sentence text.
+    :param text: Required. The sentence text.
     :type text: str
     :param sentiment: Required. The predicted Sentiment for the sentence. Possible values include:
      "positive", "neutral", "negative".
@@ -847,6 +847,7 @@ class SentenceSentiment(msrest.serialization.Model):
     """
 
     _validation = {
+        'text': {'required': True},
         'sentiment': {'required': True},
         'confidence_scores': {'required': True},
         'offset': {'required': True},
@@ -866,7 +867,7 @@ class SentenceSentiment(msrest.serialization.Model):
         **kwargs
     ):
         super(SentenceSentiment, self).__init__(**kwargs)
-        self.text = kwargs.get('text', None)
+        self.text = kwargs['text']
         self.sentiment = kwargs['sentiment']
         self.confidence_scores = kwargs['confidence_scores']
         self.offset = kwargs['offset']

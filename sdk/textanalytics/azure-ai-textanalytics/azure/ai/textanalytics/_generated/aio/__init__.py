@@ -6,11 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._text_analytics_client import TextAnalyticsClient
+from ._text_analytics_client_async import TextAnalyticsClient
 __all__ = ['TextAnalyticsClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
