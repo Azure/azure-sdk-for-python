@@ -25,8 +25,8 @@ from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 adjust_attribute_map()
 
 
-class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
-    """Description of a Service Bus queue resource.
+class QueueProperties(object):  # pylint:disable=too-many-instance-attributes
+    """Properties of a Service Bus queue resource.
 
     :param name: Name of the queue.
     :type name: str
@@ -126,7 +126,7 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
 
     @classmethod
     def _from_internal_entity(cls, name, internal_qd):
-        # type: (str, InternalQueueDescription) -> QueueDescription
+        # type: (str, InternalQueueDescription) -> QueueProperties
         qd = cls(name)
         qd._internal_qd = deepcopy(internal_qd)  # pylint:disable=protected-access
 
@@ -182,8 +182,8 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         return self._internal_qd
 
 
-class QueueRuntimeInfo(object):
-    """Service Bus queue metrics.
+class QueueRuntimeProperties(object):
+    """Service Bus queue runtime properties.
 
     :ivar name: Name of the queue.
     :type name: str
@@ -196,46 +196,81 @@ class QueueRuntimeInfo(object):
     :type updated_at: ~datetime.datetime
     :ivar size_in_bytes: The size of the queue, in bytes.
     :type size_in_bytes: int
-    :ivar message_count: The number of messages in the queue.
-    :type message_count: int
-    :ivar message_count_details: Details about the message counts in entity.
-    :type message_count_details: ~azure.servicebus.management.MessageCountDetails
+    :ivar total_message_count: Total number of messages.
+    :type total_message_count: int
+    :ivar active_message_count: Number of active messages in the queue, topic, or subscription.
+    :type active_message_count: int
+    :ivar dead_letter_message_count: Number of messages that are dead lettered.
+    :type dead_letter_message_count: int
+    :ivar scheduled_message_count: Number of scheduled messages.
+    :type scheduled_message_count: int
+    :ivar transfer_dead_letter_message_count: Number of messages transferred into dead letters.
+    :type transfer_dead_letter_message_count: int
+    :ivar transfer_message_count: Number of messages transferred to another queue, topic, or
+     subscription.
+    :type transfer_message_count: int
     """
-
     def __init__(
         self,
-        name,
-        **kwargs
     ):
-        # type: (str, Any) -> None
-        self.name = name
+        self._name = None
         self._internal_qr = None  # type: Optional[InternalQueueDescription]
-
-        self.accessed_at = kwargs.get('accessed_at', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.updated_at = kwargs.get('updated_at', None)
-        self.size_in_bytes = kwargs.get('size_in_bytes', None)
-        self.message_count = kwargs.get('message_count', None)
-        self.message_count_details = kwargs.get('message_count_details', None)
 
     @classmethod
     def _from_internal_entity(cls, name, internal_qr):
-        # type: (str, InternalQueueDescription) -> QueueRuntimeInfo
-        qr = cls(name)
+        # type: (str, InternalQueueDescription) -> QueueRuntimeProperties
+        qr = cls()
+        qr._name = name
         qr._internal_qr = deepcopy(internal_qr)  # pylint:disable=protected-access
-
-        qr.accessed_at = internal_qr.accessed_at
-        qr.created_at = internal_qr.created_at
-        qr.updated_at = internal_qr.updated_at
-        qr.size_in_bytes = internal_qr.size_in_bytes
-        qr.message_count = internal_qr.message_count
-        qr.message_count_details = internal_qr.message_count_details
-
         return qr
 
+    @property
+    def name(self):
+        return self._name
 
-class TopicDescription(object):  # pylint:disable=too-many-instance-attributes
-    """Description of a Service Bus topic resource.
+    @property
+    def accessed_at(self):
+        return self._internal_qr.accessed_at
+
+    @property
+    def created_at(self):
+        return self._internal_qr.created_at
+
+    @property
+    def updated_at(self):
+        return self._internal_qr.updated_at
+
+    @property
+    def size_in_bytes(self):
+        return self._internal_qr.size_in_bytes
+
+    @property
+    def total_message_count(self):
+        return self._internal_qr.message_count
+
+    @property
+    def active_message_count(self):
+        return self._internal_qr.message_count_details.active_message_count
+
+    @property
+    def dead_letter_message_count(self):
+        return self._internal_qr.message_count_details.dead_letter_message_count
+
+    @property
+    def scheduled_message_count(self):
+        return self._internal_qr.message_count_details.scheduled_message_count
+
+    @property
+    def transfer_dead_letter_message_count(self):
+        return self._internal_qr.message_count_details.transfer_dead_letter_message_count
+
+    @property
+    def transfer_message_count(self):
+        return self._internal_qr.message_count_details.transfer_message_count
+
+
+class TopicProperties(object):  # pylint:disable=too-many-instance-attributes
+    """Properties of a Service Bus topic resource.
 
     :param name: Name of the topic.
     :type name: str
@@ -317,7 +352,7 @@ class TopicDescription(object):  # pylint:disable=too-many-instance-attributes
 
     @classmethod
     def _from_internal_entity(cls, name, internal_td):
-        # type: (str, InternalTopicDescription) -> TopicDescription
+        # type: (str, InternalTopicDescription) -> TopicProperties
         qd = cls(name)
         qd._internal_td = deepcopy(internal_td)
 
@@ -364,8 +399,8 @@ class TopicDescription(object):  # pylint:disable=too-many-instance-attributes
         return self._internal_td
 
 
-class TopicRuntimeInfo(object):
-    """Description of a Service Bus topic resource.
+class TopicRuntimeProperties(object):
+    """Runtime properties of a Service Bus topic resource.
 
     :ivar str name:
     :ivar created_at: The exact time the queue was created.
@@ -375,42 +410,81 @@ class TopicRuntimeInfo(object):
     :ivar accessed_at: Last time a message was sent, or the last time there was a receive request
      to this queue.
     :type accessed_at: ~datetime.datetime
-    :ivar message_count_details: Details about the message counts in queue.
-    :type message_count_details: ~azure.servicebus.management._generated.models.MessageCountDetails
     :ivar subscription_count: The number of subscriptions in the topic.
     :type subscription_count: int
+    :ivar active_message_count: Number of active messages in the queue, topic, or subscription.
+    :type active_message_count: int
+    :ivar dead_letter_message_count: Number of messages that are dead lettered.
+    :type dead_letter_message_count: int
+    :ivar scheduled_message_count: Number of scheduled messages.
+    :type scheduled_message_count: int
+    :ivar transfer_dead_letter_message_count: Number of messages transferred into dead letters.
+    :type transfer_dead_letter_message_count: int
+    :ivar transfer_message_count: Number of messages transferred to another queue, topic, or
+     subscription.
+    :type transfer_message_count: int
     """
     def __init__(
         self,
-        name,
-        **kwargs
     ):
-        # type: (str, Any) -> None
-        self.name = name
+        self._name = None
         self._internal_td = None  # type: Optional[InternalTopicDescription]
-        self.created_at = kwargs.get('created_at', None)
-        self.updated_at = kwargs.get('updated_at', None)
-        self.accessed_at = kwargs.get('accessed_at', None)
-        self.message_count_details = kwargs.get('message_count_details', None)
-        self.subscription_count = kwargs.get('subscription_count', None)
 
     @classmethod
     def _from_internal_entity(cls, name, internal_td):
-        # type: (str, InternalTopicDescription) -> TopicRuntimeInfo
-        qd = cls(name)
+        # type: (str, InternalTopicDescription) -> TopicRuntimeProperties
+        qd = cls()
+        qd._name = name
         qd._internal_td = internal_td
-
-        qd.created_at = internal_td.created_at
-        qd.updated_at = internal_td.updated_at
-        qd.accessed_at = internal_td.accessed_at
-        qd.message_count_details = internal_td.message_count_details
-        qd.subscription_count = internal_td.subscription_count
-
         return qd
 
+    @property
+    def name(self):
+        return self._name
 
-class SubscriptionDescription(object):  # pylint:disable=too-many-instance-attributes
-    """Description of a Service Bus queue resource.
+    @property
+    def accessed_at(self):
+        return self._internal_td.accessed_at
+
+    @property
+    def created_at(self):
+        return self._internal_td.created_at
+
+    @property
+    def updated_at(self):
+        return self._internal_td.updated_at
+
+    @property
+    def size_in_bytes(self):
+        return self._internal_td.size_in_bytes
+
+    @property
+    def subscription_count(self):
+        return self._internal_td.subscription_count
+
+    @property
+    def active_message_count(self):
+        return self._internal_td.message_count_details.active_message_count
+
+    @property
+    def dead_letter_message_count(self):
+        return self._internal_td.message_count_details.dead_letter_message_count
+
+    @property
+    def scheduled_message_count(self):
+        return self._internal_td.message_count_details.scheduled_message_count
+
+    @property
+    def transfer_dead_letter_message_count(self):
+        return self._internal_td.message_count_details.transfer_dead_letter_message_count
+
+    @property
+    def transfer_message_count(self):
+        return self._internal_td.message_count_details.transfer_message_count
+
+
+class SubscriptionProperties(object):  # pylint:disable=too-many-instance-attributes
+    """Properties of a Service Bus topic subscription resource.
 
     :param name: Name of the subscription.
     :type name: str
@@ -479,7 +553,7 @@ class SubscriptionDescription(object):  # pylint:disable=too-many-instance-attri
 
     @classmethod
     def _from_internal_entity(cls, name, internal_subscription):
-        # type: (str, InternalSubscriptionDescription) -> SubscriptionDescription
+        # type: (str, InternalSubscriptionDescription) -> SubscriptionProperties
         subscription = cls(name)
         subscription._internal_sd = deepcopy(internal_subscription)
         subscription.lock_duration = internal_subscription.lock_duration
@@ -521,8 +595,8 @@ class SubscriptionDescription(object):  # pylint:disable=too-many-instance-attri
         return self._internal_sd
 
 
-class SubscriptionRuntimeInfo(object):
-    """Description of a Service Bus queue resource.
+class SubscriptionRuntimeProperties(object):
+    """Runtime properties of a Service Bus topic subscription resource.
 
     :ivar str name:
     :ivar created_at: The exact time the queue was created.
@@ -532,39 +606,77 @@ class SubscriptionRuntimeInfo(object):
     :ivar accessed_at: Last time a message was sent, or the last time there was a receive request
      to this queue.
     :type accessed_at: ~datetime.datetime
-    :ivar message_count: The number of messages in the subscription.
-    :type message_count: int
-    :ivar message_count_details: Details about the message counts in queue.
-    :type message_count_details: ~azure.servicebus.management._generated.models.MessageCountDetails
+    :ivar total_message_count: The number of messages in the subscription.
+    :type total_message_count: int
+    :ivar active_message_count: Number of active messages in the queue, topic, or subscription.
+    :type active_message_count: int
+    :ivar dead_letter_message_count: Number of messages that are dead lettered.
+    :type dead_letter_message_count: int
+    :ivar scheduled_message_count: Number of scheduled messages.
+    :type scheduled_message_count: int
+    :ivar transfer_dead_letter_message_count: Number of messages transferred into dead letters.
+    :type transfer_dead_letter_message_count: int
+    :ivar transfer_message_count: Number of messages transferred to another queue, topic, or
+     subscription.
+    :type transfer_message_count: int
 
     """
-    def __init__(self, name, **kwargs):
-        # type: (str, Any) -> None
+    def __init__(self):
         self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
-        self.name = name
-
-        self.message_count = kwargs.get('message_count', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.updated_at = kwargs.get('updated_at', None)
-        self.accessed_at = kwargs.get('accessed_at', None)
-        self.message_count_details = kwargs.get('message_count_details', None)
+        self._name = None
 
     @classmethod
     def _from_internal_entity(cls, name, internal_subscription):
-        # type: (str, InternalSubscriptionDescription) -> SubscriptionRuntimeInfo
-        subscription = cls(name)
+        # type: (str, InternalSubscriptionDescription) -> SubscriptionRuntimeProperties
+        subscription = cls()
+        subscription._name = name
         subscription._internal_sd = internal_subscription
-        subscription.message_count = internal_subscription.message_count
-        subscription.created_at = internal_subscription.created_at
-        subscription.updated_at = internal_subscription.updated_at
-        subscription.accessed_at = internal_subscription.accessed_at
-        subscription.message_count_details = internal_subscription.message_count_details
 
         return subscription
 
+    @property
+    def name(self):
+        return self._name
 
-class RuleDescription(object):
-    """Description of a topic subscription rule.
+    @property
+    def accessed_at(self):
+        return self._internal_sd.accessed_at
+
+    @property
+    def created_at(self):
+        return self._internal_sd.created_at
+
+    @property
+    def updated_at(self):
+        return self._internal_sd.updated_at
+
+    @property
+    def total_message_count(self):
+        return self._internal_sd.message_count
+
+    @property
+    def active_message_count(self):
+        return self._internal_sd.message_count_details.active_message_count
+
+    @property
+    def dead_letter_message_count(self):
+        return self._internal_sd.message_count_details.dead_letter_message_count
+
+    @property
+    def scheduled_message_count(self):
+        return self._internal_sd.message_count_details.scheduled_message_count
+
+    @property
+    def transfer_dead_letter_message_count(self):
+        return self._internal_sd.message_count_details.transfer_dead_letter_message_count
+
+    @property
+    def transfer_message_count(self):
+        return self._internal_sd.message_count_details.transfer_message_count
+
+
+class RuleProperties(object):
+    """Properties of a topic subscription rule.
 
     :param name: Name of the rule.
     :type name: str
@@ -588,7 +700,7 @@ class RuleDescription(object):
 
     @classmethod
     def _from_internal_entity(cls, name, internal_rule):
-        # type: (str, InternalRuleDescription) -> RuleDescription
+        # type: (str, InternalRuleDescription) -> RuleProperties
         rule = cls(name)
         rule._internal_rule = deepcopy(internal_rule)
 
