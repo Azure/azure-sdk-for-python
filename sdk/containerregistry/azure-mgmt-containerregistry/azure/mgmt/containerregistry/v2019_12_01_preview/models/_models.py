@@ -1371,6 +1371,8 @@ class ExportPipeline(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :param location: The location of the export pipeline.
+    :type location: str
     :param identity: The identity of the export pipeline.
     :type identity:
      ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
@@ -1399,6 +1401,7 @@ class ExportPipeline(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'target': {'key': 'properties.target', 'type': 'ExportPipelineTargetProperties'},
         'options': {'key': 'properties.options', 'type': '[str]'},
@@ -1407,6 +1410,7 @@ class ExportPipeline(ProxyResource):
 
     def __init__(self, **kwargs):
         super(ExportPipeline, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
         self.identity = kwargs.get('identity', None)
         self.target = kwargs.get('target', None)
         self.options = kwargs.get('options', None)
@@ -1820,6 +1824,8 @@ class ImportPipeline(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :param location: The location of the import pipeline.
+    :type location: str
     :param identity: The identity of the import pipeline.
     :type identity:
      ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
@@ -1852,6 +1858,7 @@ class ImportPipeline(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'source': {'key': 'properties.source', 'type': 'ImportPipelineSourceProperties'},
         'trigger': {'key': 'properties.trigger', 'type': 'PipelineTriggerProperties'},
@@ -1861,6 +1868,7 @@ class ImportPipeline(ProxyResource):
 
     def __init__(self, **kwargs):
         super(ImportPipeline, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
         self.identity = kwargs.get('identity', None)
         self.source = kwargs.get('source', None)
         self.trigger = kwargs.get('trigger', None)
