@@ -62,7 +62,8 @@ class GetBoundingBoxesSample(object):
             for name, field in form.fields.items():
                 # each field is of type FormField
                 # The value of the field can also be a FormField, or a list of FormFields - in our sample, it is not.
-                print("...Field '{}' has value '{}' within bounding box '{}', with a confidence score of {}".format(
+                print("...Field '{}' has label '{}' with value '{}' within bounding box '{}', with a confidence score of {}".format(
+                    name,
                     field.label_data.text if field.label_data else name,
                     field.value,
                     format_bounding_box(field.value_data.bounding_box),

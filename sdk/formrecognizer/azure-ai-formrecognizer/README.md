@@ -183,7 +183,8 @@ result = poller.result()
 for recognized_form in result:
     print("Form type ID: {}".format(recognized_form.form_type))
     for name, field in recognized_form.fields.items():
-        print("Field '{}' has value '{}' with a confidence score of {}".format(
+        print("Field '{}' has label '{}' with value '{}' and a confidence score of {}".format(
+            name,
             field.label_data.text if field.label_data else name,
             field.value,
             field.confidence

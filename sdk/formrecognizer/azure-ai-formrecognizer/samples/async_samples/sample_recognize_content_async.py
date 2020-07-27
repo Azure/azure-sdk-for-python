@@ -34,7 +34,8 @@ def format_bounding_box(bounding_box):
 class RecognizeContentSampleAsync(object):
 
     async def recognize_content(self):
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Invoice_1.pdf"))
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
+                                                            "..", "..", "./sample_forms/forms/Invoice_1.pdf"))
         # [START recognize_content_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
