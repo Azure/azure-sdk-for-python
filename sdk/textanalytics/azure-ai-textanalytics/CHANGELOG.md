@@ -1,5 +1,9 @@
 # Change Log azure-ai-textanalytics
 
+## 5.0.0 (2020-07-27)
+
+- Re-release of GA version 1.0.0 with an updated version
+
 ## 1.0.0 (2020-06-09)
 
 - First stable release of the azure-ai-textanalytics package. Targets the service's v3.0 API.
