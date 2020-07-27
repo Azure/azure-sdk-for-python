@@ -10,10 +10,12 @@ from ._diagnostic_settings_category_operations_async import DiagnosticSettingsCa
 from ._diagnostic_settings_operations_async import DiagnosticSettingsOperations
 from ._metric_definitions_operations_async import MetricDefinitionsOperations
 from ._metrics_operations_async import MetricsOperations
+from ._subscription_diagnostic_settings_operations_async import SubscriptionDiagnosticSettingsOperations
 
 __all__ = [
     'DiagnosticSettingsCategoryOperations',
     'DiagnosticSettingsOperations',
     'MetricDefinitionsOperations',
     'MetricsOperations',
+    'SubscriptionDiagnosticSettingsOperations',
 ]
