@@ -9,7 +9,7 @@ import datetime
 import msrest
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.servicebus.aio.management import ServiceBusManagementClient
-from azure.servicebus.management import QueueDescription
+from azure.servicebus.management import CreateQueueOptions
 from azure.servicebus.aio import ServiceBusSharedKeyCredential
 from azure.servicebus._common.utils import utc_now
 
@@ -214,13 +214,13 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
             await mgmt_service.create_queue(Exception())
 
         with pytest.raises(msrest.exceptions.ValidationError):
-            await mgmt_service.create_queue(QueueDescription(name=Exception()))
+            await mgmt_service.create_queue(CreateQueueOptions(name=Exception()))
 
         with pytest.raises(msrest.exceptions.ValidationError):
             await mgmt_service.create_queue('')
 
         with pytest.raises(msrest.exceptions.ValidationError):
-            await mgmt_service.create_queue(QueueDescription(name=''))
+            await mgmt_service.create_queue(CreateQueueOptions(name=''))
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -228,7 +228,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_queues(mgmt_service)
         queue_name = "dkldf"
-        await mgmt_service.create_queue(QueueDescription(name=queue_name,
+        await mgmt_service.create_queue(CreateQueueOptions(name=queue_name,
                                                     auto_delete_on_idle=datetime.timedelta(minutes=10),
                                                     dead_lettering_on_message_expiration=True, 
                                                     default_message_time_to_live=datetime.timedelta(minutes=11),

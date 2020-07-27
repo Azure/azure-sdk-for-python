@@ -23,8 +23,180 @@ from ._model_workaround import adjust_attribute_map
 adjust_attribute_map()
 
 
-class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
-    """Description of a Service Bus queue resource.
+class CreateQueueOptions(object):  # pylint:disable=too-many-instance-attributes
+    """Creation options for a Service Bus queue resource.
+
+    :param name: Name of the queue.
+    :type name: str
+    :keyword authorization_rules: Authorization rules for resource.
+    :type authorization_rules: Optional[list[~azure.servicebus.management.AuthorizationRule]]
+    :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
+     automatically deleted. The minimum duration is 5 minutes.
+    :type auto_delete_on_idle: Optional[~datetime.timedelta]
+    :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
+     letter support when a message expires.
+    :type dead_lettering_on_message_expiration: Optional[bool]
+    :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+     the duration after which the message expires, starting from when the message is sent to Service
+     Bus. This is the default value used when TimeToLive is not set on a message itself.
+    :type default_message_time_to_live: Optional[~datetime.timedelta]
+    :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
+     duration of the duplicate detection history. The default value is 10 minutes.
+    :type duplicate_detection_history_time_window: Optional[~datetime.timedelta]
+    :keyword entity_availability_status: Availibility status of the entity. Possible values include:
+     "Available", "Limited", "Renaming", "Restoring", "Unknown".
+    :type entity_availability_status: Optional[Union[str,
+     azure.servicebus.management.EntityAvailabilityStatus]]
+    :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+     are enabled.
+    :type enable_batched_operations: Optional[bool]
+    :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
+     queue holds a message in memory temporarily before writing it to persistent storage.
+    :type enable_express: Optional[bool]
+    :keyword enable_partitioning: A value that indicates whether the queue is to be partitioned
+     across multiple message brokers.
+    :type enable_partitioning: Optional[bool]
+    :keyword is_anonymous_accessible: A value indicating if the resource can be accessed without
+     authorization.
+    :type is_anonymous_accessible: Optional[bool]
+    :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
+     that the message is locked for other receivers. The maximum value for LockDuration is 5
+     minutes; the default value is 1 minute.
+    :type lock_duration: Optional[~datetime.timedelta]
+    :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
+     after this number of deliveries. Default value is 10.
+    :type max_delivery_count: Optional[int]
+    :keyword max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
+     memory allocated for the queue.
+    :type max_size_in_megabytes: Optional[int]
+    :keyword requires_duplicate_detection: A value indicating if this queue requires duplicate
+     detection.
+    :type requires_duplicate_detection: Optional[bool]
+    :keyword requires_session: A value that indicates whether the queue supports the concept of
+     sessions.
+    :type requires_session: Optional[bool]
+    :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+     "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
+    :type status: Optional[Union[str, ~azure.servicebus.management.EntityStatus]]
+    :keyword forward_to: The name of the recipient entity to which all the messages sent to the queue
+     are forwarded to.
+    :type forward_to: Optional[str]
+    :keyword user_metadata: Custom metdata that user can associate with the description. Max length
+     is 1024 chars.
+    :type user_metadata: Optional[str]
+    :keyword support_ordering: A value that indicates whether the queue supports ordering.
+    :type support_ordering: Optional[bool]
+    :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
+     dead-lettered messages of this subscription are forwarded to.
+    :type forward_dead_lettered_messages_to: Optional[str]
+    """
+
+    def __init__(
+        self,
+        name,
+        **kwargs
+    ):
+        self.name = name
+        self._internal_entity = None
+        
+
+        extraction_missing_args = []
+        def extract_kwarg(name):
+            if getattr(self, '_require_all_args', False):
+                try:
+                    return kwargs[name]
+                except KeyError:
+                    extraction_missing_args.append(name)
+            else:
+                return kwargs.get(name, None)
+
+        self.authorization_rules = kwargs.get('authorization_rules', None)
+        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
+        self.dead_lettering_on_message_expiration = kwargs.get('dead_lettering_on_message_expiration', None)
+        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
+        self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
+        self.entity_availability_status = kwargs.get('entity_availability_status', None)
+        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
+        self.enable_express = kwargs.get('enable_express', None)
+        self.enable_partitioning = kwargs.get('enable_partitioning', None)
+        self.is_anonymous_accessible = kwargs.get('is_anonymous_accessible', None)
+        self.lock_duration = kwargs.get('lock_duration', None)
+        self.max_delivery_count = kwargs.get('max_delivery_count', None)
+        self.max_size_in_megabytes = kwargs.get('max_size_in_megabytes', None)
+        self.requires_duplicate_detection = kwargs.get('requires_duplicate_detection', None)
+        self.requires_session = kwargs.get('requires_session', None)
+        self.status = kwargs.get('status', None)
+        self.support_ordering = kwargs.get('support_ordering', None)
+        self.forward_to = kwargs.get('forward_to', None)
+        self.user_metadata = kwargs.get('user_metadata', None)
+        self.forward_dead_lettered_messages_to = kwargs.get('forward_dead_lettered_messages_to', None)
+
+        if extraction_missing_args:
+            raise TypeError('__init__() missing {} required positional arguments: {}'.format(
+                len(extraction_missing_args),
+                ' and '.join(["'" + e + "'"  for e in extraction_missing_args])))
+
+    @classmethod
+    def _from_internal_entity(cls, name, internal_entity):
+        # type: (str, InternalQueueDescription) -> CreateQueueOptions
+        qd = cls(name,
+                 authorization_rules = internal_entity.authorization_rules,
+                 auto_delete_on_idle = internal_entity.auto_delete_on_idle,
+                 dead_lettering_on_message_expiration = internal_entity.dead_lettering_on_message_expiration,
+                 default_message_time_to_live = internal_entity.default_message_time_to_live,
+                 duplicate_detection_history_time_window = internal_entity.duplicate_detection_history_time_window,
+                 entity_availability_status = internal_entity.entity_availability_status,
+                 enable_batched_operations = internal_entity.enable_batched_operations,
+                 enable_express = internal_entity.enable_express,
+                 enable_partitioning = internal_entity.enable_partitioning,
+                 is_anonymous_accessible = internal_entity.is_anonymous_accessible,
+                 lock_duration = internal_entity.lock_duration,
+                 max_delivery_count = internal_entity.max_delivery_count,
+                 max_size_in_megabytes = internal_entity.max_size_in_megabytes,
+                 requires_duplicate_detection = internal_entity.requires_duplicate_detection,
+                 requires_session = internal_entity.requires_session,
+                 status = internal_entity.status,
+                 support_ordering = internal_entity.support_ordering,
+                 forward_to = internal_entity.forward_to,
+                 forward_dead_lettered_messages_to = internal_entity.forward_dead_lettered_messages_to,
+                 user_metadata = internal_entity.user_metadata,
+                 )
+        qd._internal_entity = deepcopy(internal_entity)  # pylint:disable=protected-access
+
+        return qd
+
+    def _to_internal_entity(self):
+        # type: () -> InternalQueueDescription
+        if not self._internal_entity:
+            internal_entity = InternalQueueDescription()
+            self._internal_entity = internal_entity
+
+        self._internal_entity.authorization_rules = self.authorization_rules
+        self._internal_entity.auto_delete_on_idle = self.auto_delete_on_idle
+        self._internal_entity.dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration
+        self._internal_entity.default_message_time_to_live = self.default_message_time_to_live
+        self._internal_entity.duplicate_detection_history_time_window = self.duplicate_detection_history_time_window
+        self._internal_entity.entity_availability_status = self.entity_availability_status
+        self._internal_entity.enable_batched_operations = self.enable_batched_operations
+        self._internal_entity.enable_express = self.enable_express
+        self._internal_entity.enable_partitioning = self.enable_partitioning
+        self._internal_entity.is_anonymous_accessible = self.is_anonymous_accessible
+        self._internal_entity.lock_duration = self.lock_duration
+        self._internal_entity.max_delivery_count = self.max_delivery_count
+        self._internal_entity.max_size_in_megabytes = self.max_size_in_megabytes
+        self._internal_entity.requires_duplicate_detection = self.requires_duplicate_detection
+        self._internal_entity.requires_session = self.requires_session
+        self._internal_entity.status = self.status
+        self._internal_entity.support_ordering = self.support_ordering
+        self._internal_entity.forward_to = self.forward_to
+        self._internal_entity.forward_dead_lettered_messages_to = self.forward_dead_lettered_messages_to
+        self._internal_entity.user_metadata = self.user_metadata
+
+        return self._internal_entity
+
+
+class QueueProperties(CreateQueueOptions):
+    """Properties of a Service Bus queue resource.
 
     :param name: Name of the queue.
     :type name: str
@@ -90,96 +262,17 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
      dead-lettered messages of this subscription are forwarded to.
     :type forward_dead_lettered_messages_to: str
     """
-
-    def __init__(
-        self,
-        name,
-        **kwargs
-    ):
-        self.name = name
-        self._internal_qd = None
-
-        self.authorization_rules = kwargs.get('authorization_rules', None)
-        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
-        self.dead_lettering_on_message_expiration = kwargs.get('dead_lettering_on_message_expiration', None)
-        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
-        self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
-        self.entity_availability_status = kwargs.get('entity_availability_status', None)
-        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
-        self.enable_express = kwargs.get('enable_express', None)
-        self.enable_partitioning = kwargs.get('enable_partitioning', None)
-        self.is_anonymous_accessible = kwargs.get('is_anonymous_accessible', None)
-        self.lock_duration = kwargs.get('lock_duration', None)
-        self.max_delivery_count = kwargs.get('max_delivery_count', None)
-        self.max_size_in_megabytes = kwargs.get('max_size_in_megabytes', None)
-        self.requires_duplicate_detection = kwargs.get('requires_duplicate_detection', None)
-        self.requires_session = kwargs.get('requires_session', None)
-        self.status = kwargs.get('status', None)
-        self.support_ordering = kwargs.get('support_ordering', None)
-        self.forward_to = kwargs.get('forward_to', None)
-        self.user_metadata = kwargs.get('user_metadata', None)
-        self.forward_dead_lettered_messages_to = kwargs.get('forward_dead_lettered_messages_to', None)
-
+    def __init__(self, name, **kwargs):
+        self._require_all_args = True
+        super(QueueProperties, self).__init__(name, **kwargs)
 
     @classmethod
-    def _from_internal_entity(cls, name, internal_qd):
-        # type: (str, InternalQueueDescription) -> QueueDescription
-        qd = cls(name)
-        qd._internal_qd = deepcopy(internal_qd)  # pylint:disable=protected-access
-
-        qd.authorization_rules = internal_qd.authorization_rules
-        qd.auto_delete_on_idle = internal_qd.auto_delete_on_idle
-        qd.dead_lettering_on_message_expiration = internal_qd.dead_lettering_on_message_expiration
-        qd.default_message_time_to_live = internal_qd.default_message_time_to_live
-        qd.duplicate_detection_history_time_window = internal_qd.duplicate_detection_history_time_window
-        qd.entity_availability_status = internal_qd.entity_availability_status
-        qd.enable_batched_operations = internal_qd.enable_batched_operations
-        qd.enable_express = internal_qd.enable_express
-        qd.enable_partitioning = internal_qd.enable_partitioning
-        qd.is_anonymous_accessible = internal_qd.is_anonymous_accessible
-        qd.lock_duration = internal_qd.lock_duration
-        qd.max_delivery_count = internal_qd.max_delivery_count
-        qd.max_size_in_megabytes = internal_qd.max_size_in_megabytes
-        qd.requires_duplicate_detection = internal_qd.requires_duplicate_detection
-        qd.requires_session = internal_qd.requires_session
-        qd.status = internal_qd.status
-        qd.support_ordering = internal_qd.support_ordering
-        qd.forward_to = internal_qd.forward_to
-        qd.forward_dead_lettered_messages_to = internal_qd.forward_dead_lettered_messages_to
-        qd.user_metadata = internal_qd.user_metadata
-
-        return qd
-
-    def _to_internal_entity(self):
-        if not self._internal_qd:
-            internal_qd = InternalQueueDescription()
-            self._internal_qd = internal_qd
-
-        self._internal_qd.authorization_rules = self.authorization_rules
-        self._internal_qd.auto_delete_on_idle = self.auto_delete_on_idle
-        self._internal_qd.dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration
-        self._internal_qd.default_message_time_to_live = self.default_message_time_to_live
-        self._internal_qd.duplicate_detection_history_time_window = self.duplicate_detection_history_time_window
-        self._internal_qd.entity_availability_status = self.entity_availability_status
-        self._internal_qd.enable_batched_operations = self.enable_batched_operations
-        self._internal_qd.enable_express = self.enable_express
-        self._internal_qd.enable_partitioning = self.enable_partitioning
-        self._internal_qd.is_anonymous_accessible = self.is_anonymous_accessible
-        self._internal_qd.lock_duration = self.lock_duration
-        self._internal_qd.max_delivery_count = self.max_delivery_count
-        self._internal_qd.max_size_in_megabytes = self.max_size_in_megabytes
-        self._internal_qd.requires_duplicate_detection = self.requires_duplicate_detection
-        self._internal_qd.requires_session = self.requires_session
-        self._internal_qd.status = self.status
-        self._internal_qd.support_ordering = self.support_ordering
-        self._internal_qd.forward_to = self.forward_to
-        self._internal_qd.forward_dead_lettered_messages_to = self.forward_dead_lettered_messages_to
-        self._internal_qd.user_metadata = self.user_metadata
-
-        return self._internal_qd
+    def _from_internal_entity(cls, name, internal_entity):
+        # type: (str, InternalQueueDescription) -> QueueProperties
+        return super(QueueProperties, cls)._from_internal_entity(name, internal_entity)
 
 
-class QueueRuntimeInfo(object):
+class QueueRuntimeProperties(object):
     """Service Bus queue metrics.
 
     :ivar name: Name of the queue.
@@ -216,7 +309,7 @@ class QueueRuntimeInfo(object):
 
     @classmethod
     def _from_internal_entity(cls, name, internal_qr):
-        # type: (str, InternalQueueDescription) -> QueueRuntimeInfo
+        # type: (str, InternalQueueDescription) -> QueueRuntimeProperties
         qr = cls(name)
         qr._internal_qr = deepcopy(internal_qr)  # pylint:disable=protected-access
 

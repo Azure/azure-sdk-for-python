@@ -34,7 +34,7 @@ from ._generated._configuration import ServiceBusManagementClientConfiguration
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
 from ._model_workaround import avoid_timedelta_overflow
 from . import _constants as constants
-from ._models import QueueRuntimeInfo, QueueDescription, TopicDescription, TopicRuntimeInfo, \
+from ._models import QueueRuntimeProperties, CreateQueueOptions, QueueProperties, TopicDescription, TopicRuntimeInfo, \
     SubscriptionDescription, SubscriptionRuntimeInfo, RuleDescription
 from ._handle_response_error import _handle_response_error
 
@@ -137,43 +137,48 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key), **kwargs)
 
     def get_queue(self, queue_name, **kwargs):
-        # type: (str, Any) -> QueueDescription
+        # type: (str, Any) -> QueueProperties
         """Get the properties of a queue.
 
         :param str queue_name: The name of the queue.
-        :rtype: ~azure.servicebus.management.QueueDescription
+        :rtype: ~azure.servicebus.management.QueueProperties
         """
         entry_ele = self._get_entity_element(queue_name, **kwargs)
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
-        queue_description = QueueDescription._from_internal_entity(queue_name, entry.content.queue_description)
+        queue_description = QueueProperties._from_internal_entity(queue_name, entry.content.queue_description)
         return queue_description
 
     def get_queue_runtime_info(self, queue_name, **kwargs):
-        # type: (str, Any) -> QueueRuntimeInfo
+        # type: (str, Any) -> QueueRuntimeProperties
         """Get the runtime information of a queue.
 
         :param str queue_name: The name of the queue.
-        :rtype: ~azure.servicebus.management.QueueRuntimeInfo
+        :rtype: ~azure.servicebus.management.QueueRuntimeProperties
         """
         entry_ele = self._get_entity_element(queue_name, **kwargs)
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Queue {} does not exist".format(queue_name))
-        runtime_info = QueueRuntimeInfo._from_internal_entity(queue_name, entry.content.queue_description)
+        runtime_info = QueueRuntimeProperties._from_internal_entity(queue_name, entry.content.queue_description)
         return runtime_info
 
     def create_queue(self, queue, **kwargs):
-        # type: (Union[str, QueueDescription], Any) -> QueueDescription
+        # type: (Union[str, CreateQueueOptions, dict], Any) -> QueueProperties
         """Create a queue.
 
-        :param queue: The queue name or a `QueueDescription` instance. When it's a str, it will be the name
+        :param queue: The queue name or a `CreateQueueOptions` instance. When it's a str, it will be the name
          of the created queue. Other properties of the created queue will have default values as defined by the
-         service. Use a `QueueDescription` if you want to set queue properties other than the queue name.
-        :type queue: Union[str, ~azure.servicebus.management.QueueDescription]
-        :rtype: ~azure.servicebus.management.QueueDescription
+         service. Use a `CreateQueueOptions` if you want to set queue properties other than the queue name.
+        :type queue: Union[str, ~azure.servicebus.management.CreateQueueOptions]
+        :rtype: ~azure.servicebus.management.QueueProperties
         """
+        try:
+            queue = CreateQueueOptions(**queue)
+        except TypeError:
+            pass
+
         try:
             queue_name = queue.name  # type: ignore
             to_create = queue._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
@@ -196,20 +201,20 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             )
 
         entry = QueueDescriptionEntry.deserialize(entry_ele)
-        result = QueueDescription._from_internal_entity(queue_name, entry.content.queue_description)
+        result = QueueProperties._from_internal_entity(queue_name, entry.content.queue_description)
         return result
 
     def update_queue(self, queue, **kwargs):
-        # type: (QueueDescription, Any) -> None
+        # type: (Union[QueueProperties, dict], Any) -> None
         """Update a queue.
 
-        Before calling this method, you should use `get_queue` to get a `QueueDescription` instance, then use the
+        Before calling this method, you should use `get_queue` to get a `QueueProperties` instance, then use the
         keyword arguments to update the properties you want to update.
         Only a portion of properties can be updated.
         Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
 
         :param queue: The queue to be updated.
-        :type queue: ~azure.servicebus.management.QueueDescription
+        :type queue: ~azure.servicebus.management.QueueProperties
         :keyword timedelta default_message_time_to_live: The value you want to update to.
         :keyword timedelta lock_duration: The value you want to update to.
         :keyword bool dead_lettering_on_message_expiration: The value you want to update to.
@@ -217,6 +222,10 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         :keyword int max_delivery_count: The value you want to update to.
         :rtype: None
         """
+        try:
+            queue = QueueProperties(**queue)
+        except TypeError:
+            pass
 
         to_update = queue._to_internal_entity()
 
@@ -248,13 +257,18 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             )
 
     def delete_queue(self, queue, **kwargs):
-        # type: (Union[str, QueueDescription], Any) -> None
+        # type: (Union[str, QueueProperties, dict], Any) -> None
         """Delete a queue.
 
-        :param Union[str, azure.servicebus.management.QueueDescription] queue: The name of the queue or
-         a `QueueDescription` with name.
+        :param Union[str, azure.servicebus.management.QueueProperties] queue: The name of the queue or
+         a `QueueProperties` with name.
         :rtype: None
         """
+        try:
+            queue = QueueProperties(**queue)
+        except TypeError:
+            pass
+
         try:
             queue_name = queue.name  # type: ignore
         except AttributeError:
@@ -267,15 +281,15 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
                 api_version=constants.API_VERSION, **kwargs)
 
     def list_queues(self, **kwargs):
-        # type: (Any) -> ItemPaged[QueueDescription]
+        # type: (Any) -> ItemPaged[QueueProperties]
         """List the queues of a ServiceBus namespace.
 
-        :returns: An iterable (auto-paging) response of QueueDescription.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.QueueDescription]
+        :returns: An iterable (auto-paging) response of QueueProperties.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.QueueProperties]
         """
 
         def entry_to_qd(entry):
-            qd = QueueDescription._from_internal_entity(entry.title, entry.content.queue_description)
+            qd = QueueProperties._from_internal_entity(entry.title, entry.content.queue_description)
             return qd
 
         extract_data = functools.partial(
@@ -288,15 +302,15 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             get_next, extract_data)
 
     def list_queues_runtime_info(self, **kwargs):
-        # type: (Any) -> ItemPaged[QueueRuntimeInfo]
+        # type: (Any) -> ItemPaged[QueueRuntimeProperties]
         """List the runtime information of the queues in a ServiceBus namespace.
 
-        :returns: An iterable (auto-paging) response of QueueRuntimeInfo.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.QueueRuntimeInfo]
+        :returns: An iterable (auto-paging) response of QueueRuntimeProperties.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.QueueRuntimeProperties]
         """
 
         def entry_to_qr(entry):
-            qd = QueueRuntimeInfo._from_internal_entity(entry.title, entry.content.queue_description)
+            qd = QueueRuntimeProperties._from_internal_entity(entry.title, entry.content.queue_description)
             return qd
 
         extract_data = functools.partial(
