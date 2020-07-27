@@ -1,9 +1,3 @@
-parameters:
-  BuildTargetingString: 'azure-*'
-  ServiceDirectory: ''
-  TestMarkArgument: ''
-  AdditionalTestArgs: ''
-
 steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
