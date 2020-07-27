@@ -182,7 +182,7 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         return self._internal_qd
 
 
-class QueueRuntimeInfo(object):
+class QueueRuntimeProperties(object):
     """Service Bus queue metrics.
 
     :ivar name: Name of the queue.
@@ -196,10 +196,18 @@ class QueueRuntimeInfo(object):
     :type updated_at: ~datetime.datetime
     :ivar size_in_bytes: The size of the queue, in bytes.
     :type size_in_bytes: int
-    :ivar message_count: The number of messages in the queue.
-    :type message_count: int
-    :ivar message_count_details: Details about the message counts in entity.
-    :type message_count_details: ~azure.servicebus.management.MessageCountDetails
+    :ivar total_message_count: The total number of messages in the queue.
+    :type total_message_count: int
+    :ivar active_message_count: The number of active messages in the queue.
+    :type active_message_count: int
+    :ivar dead_letter_message_count: The number of messages in the dead-letter sub-queue.
+    :type dead_letter_message_count: int
+    :ivar scheduled_message_count: The number of scheduled messages in the queue.
+    :type scheduled_message_count: int
+    :ivar transfer_dead_letter_message_count: The number of messages transferred into dead-letter.
+    :type transfer_dead_letter_message_count: int
+    :ivar transfer_message_count: Number of messages transferred to another queue, topic, or subscription.
+    :type transfer_message_count: int
     """
 
     def __init__(
@@ -211,25 +219,34 @@ class QueueRuntimeInfo(object):
         self.name = name
         self._internal_qr = None  # type: Optional[InternalQueueDescription]
 
-        self.accessed_at = kwargs.get('accessed_at', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.updated_at = kwargs.get('updated_at', None)
-        self.size_in_bytes = kwargs.get('size_in_bytes', None)
-        self.message_count = kwargs.get('message_count', None)
-        self.message_count_details = kwargs.get('message_count_details', None)
+        self.accessed_at = kwargs.get('accessed_at')
+        self.created_at = kwargs.get('created_at')
+        self.updated_at = kwargs.get('updated_at')
+        self.size_in_bytes = kwargs.get('size_in_bytes')
+        self.total_message_count = kwargs.get('total_message_count')
+        # We want to flatten these properties to make them more discoverable
+        self.active_message_count = kwargs.get('active_message_count')
+        self.dead_letter_message_count = kwargs.get('dead_letter_message_count')
+        self.scheduled_message_count = kwargs.get('scheduled_message_count')
+        self.transfer_dead_letter_message_count = kwargs.get('transfer_dead_letter_message_count')
+        self.transfer_message_count = kwargs.get('transfer_message_count')
 
     @classmethod
     def _from_internal_entity(cls, name, internal_qr):
         # type: (str, InternalQueueDescription) -> QueueRuntimeInfo
-        qr = cls(name)
+        qr = cls(name,
+                 accessed_at = internal_qr.accessed_at,
+                 created_at = internal_qr.created_at,
+                 updated_at = internal_qr.updated_at,
+                 size_in_bytes = internal_qr.size_in_bytes,
+                 total_message_count = internal_qr.message_count,
+                 active_message_count = internal_qr.message_count_details.active_message_count,
+                 dead_letter_message_count = internal_qr.message_count_details.dead_letter_message_count,
+                 scheduled_message_count = internal_qr.message_count_details.scheduled_message_count,
+                 transfer_dead_letter_message_count = internal_qr.message_count_details.transfer_dead_letter_message_count,
+                 transfer_message_count = internal_qr.message_count_details.transfer_message_count
+                 )
         qr._internal_qr = deepcopy(internal_qr)  # pylint:disable=protected-access
-
-        qr.accessed_at = internal_qr.accessed_at
-        qr.created_at = internal_qr.created_at
-        qr.updated_at = internal_qr.updated_at
-        qr.size_in_bytes = internal_qr.size_in_bytes
-        qr.message_count = internal_qr.message_count
-        qr.message_count_details = internal_qr.message_count_details
 
         return qr
 

@@ -8,7 +8,7 @@ from ._generated.models import AuthorizationRule, MessageCountDetails, \
     AccessRights, EntityAvailabilityStatus, EntityStatus, \
     NamespaceProperties, MessagingSku, NamespaceType
 
-from ._models import QueueRuntimeInfo, QueueDescription, TopicRuntimeInfo, TopicDescription, \
+from ._models import QueueRuntimeProperties, QueueDescription, TopicRuntimeInfo, TopicDescription, \
     SubscriptionDescription, SubscriptionRuntimeInfo, RuleDescription, \
     TrueRuleFilter, FalseRuleFilter, SqlRuleFilter, CorrelationRuleFilter, \
     SqlRuleAction
@@ -18,7 +18,7 @@ __all__ = [
     'AuthorizationRule',
     'MessageCountDetails',
     'QueueDescription',
-    'QueueRuntimeInfo',
+    'QueueRuntimeProperties',
     'TopicDescription',
     'TopicRuntimeInfo',
     'SubscriptionDescription',

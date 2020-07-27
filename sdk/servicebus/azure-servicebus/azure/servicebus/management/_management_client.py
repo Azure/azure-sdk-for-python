@@ -35,7 +35,7 @@ from ._generated._configuration import ServiceBusManagementClientConfiguration
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
 from ._model_workaround import avoid_timedelta_overflow
 from . import _constants as constants
-from ._models import QueueRuntimeInfo, QueueDescription, TopicDescription, TopicRuntimeInfo, \
+from ._models import QueueRuntimeProperties, QueueDescription, TopicDescription, TopicRuntimeInfo, \
     SubscriptionDescription, SubscriptionRuntimeInfo, RuleDescription
 from ._handle_response_error import _handle_response_error
 
@@ -152,17 +152,17 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         return queue_description
 
     def get_queue_runtime_info(self, queue_name, **kwargs):
-        # type: (str, Any) -> QueueRuntimeInfo
+        # type: (str, Any) -> QueueRuntimeProperties
         """Get the runtime information of a queue.
 
         :param str queue_name: The name of the queue.
-        :rtype: ~azure.servicebus.management.QueueRuntimeInfo
+        :rtype: ~azure.servicebus.management.QueueRuntimeProperties
         """
         entry_ele = self._get_entity_element(queue_name, **kwargs)
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Queue {} does not exist".format(queue_name))
-        runtime_info = QueueRuntimeInfo._from_internal_entity(queue_name, entry.content.queue_description)
+        runtime_info = QueueRuntimeProperties._from_internal_entity(queue_name, entry.content.queue_description)
         return runtime_info
 
     def create_queue(self, queue, **kwargs):
@@ -289,15 +289,15 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             get_next, extract_data)
 
     def list_queues_runtime_info(self, **kwargs):
-        # type: (Any) -> ItemPaged[QueueRuntimeInfo]
+        # type: (Any) -> ItemPaged[QueueRuntimeProperties]
         """List the runtime information of the queues in a ServiceBus namespace.
 
-        :returns: An iterable (auto-paging) response of QueueRuntimeInfo.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.QueueRuntimeInfo]
+        :returns: An iterable (auto-paging) response of QueueRuntimeProperties.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.QueueRuntimeProperties]
         """
 
         def entry_to_qr(entry):
-            qd = QueueRuntimeInfo._from_internal_entity(entry.title, entry.content.queue_description)
+            qd = QueueRuntimeProperties._from_internal_entity(entry.title, entry.content.queue_description)
             return qd
 
         extract_data = functools.partial(

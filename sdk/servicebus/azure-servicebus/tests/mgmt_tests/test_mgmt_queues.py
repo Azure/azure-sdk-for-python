@@ -409,14 +409,13 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         assert info.size_in_bytes == 0
         assert info.accessed_at is not None
         assert info.updated_at is not None
-        assert info.message_count == 0
+        assert info.total_message_count == 0
 
-        assert info.message_count_details
-        assert info.message_count_details.active_message_count == 0
-        assert info.message_count_details.dead_letter_message_count == 0
-        assert info.message_count_details.transfer_dead_letter_message_count == 0
-        assert info.message_count_details.transfer_message_count == 0
-        assert info.message_count_details.scheduled_message_count == 0
+        assert info.active_message_count == 0
+        assert info.dead_letter_message_count == 0
+        assert info.transfer_dead_letter_message_count == 0
+        assert info.transfer_message_count == 0
+        assert info.scheduled_message_count == 0
 
         mgmt_service.delete_queue("test_queue")
         queues_infos = list(mgmt_service.list_queues_runtime_info())
@@ -451,14 +450,13 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
             assert queue_runtime_info.created_at is not None
             assert queue_runtime_info.accessed_at is not None
             assert queue_runtime_info.updated_at is not None
-            assert queue_runtime_info.message_count == 0
+            assert queue_runtime_info.total_message_count == 0
 
-            assert queue_runtime_info.message_count_details
-            assert queue_runtime_info.message_count_details.active_message_count == 0
-            assert queue_runtime_info.message_count_details.dead_letter_message_count == 0
-            assert queue_runtime_info.message_count_details.transfer_dead_letter_message_count == 0
-            assert queue_runtime_info.message_count_details.transfer_message_count == 0
-            assert queue_runtime_info.message_count_details.scheduled_message_count == 0
+            assert queue_runtime_info.active_message_count == 0
+            assert queue_runtime_info.dead_letter_message_count == 0
+            assert queue_runtime_info.transfer_dead_letter_message_count == 0
+            assert queue_runtime_info.transfer_message_count == 0
+            assert queue_runtime_info.scheduled_message_count == 0
         finally:
             mgmt_service.delete_queue("test_queue")
 
