@@ -21,7 +21,7 @@ from ._shared.response_handlers import process_table_error
 from ._version import VERSION
 
 from ._table_client import TableClient
-from ._shared._table_service_client_base import TableServiceClientBase, _parameter_filter_substitution
+from ._shared._table_service_client_base import TableServiceClientBase
 
 
 class TableServiceClient(TableServiceClientBase):
@@ -194,7 +194,7 @@ class TableServiceClient(TableServiceClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        filter = _parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
+        filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
 
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):

@@ -13,23 +13,6 @@ from azure.data.tables._shared.base_client import parse_query
 from .base_client import StorageAccountHostsMixin
 
 
-def _parameter_filter_substitution(
-        parameters,  # type: dict[str,str]
-        filter  # type: str  # pylint: disable = W0622
-):
-    """Replace user defined parameter in filter
-    :param parameters: User defined parameters
-    :param filter: Filter for querying
-    """
-    if parameters:
-        filter_start = filter.split('@')[0]
-        selected = filter.split('@')[1]
-        for key, value in parameters.items():
-            if key == selected:
-                filter = filter_start.replace('@', value)  # pylint: disable = W0622
-    return filter  # pylint: disable = W0622
-
-
 class TableServiceClientBase(StorageAccountHostsMixin):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)
     Create TableServiceClientBase class for sync and async code.
@@ -73,3 +56,20 @@ class TableServiceClientBase(StorageAccountHostsMixin):
         mode hostname.
         """
         return "{}://{}{}".format(self.scheme, hostname, self._query_str)
+
+    def _parameter_filter_substitution(
+            self,
+            parameters,  # type: dict[str,str]
+            filter  # type: str  # pylint: disable = W0622
+    ):
+        """Replace user defined parameter in filter
+        :param parameters: User defined parameters
+        :param filter: Filter for querying
+        """
+        if parameters:
+            filter_start = filter.split('@')[0]
+            selected = filter.split('@')[1]
+            for key, value in parameters.items():
+                if key == selected:
+                    filter = filter_start.replace('@', value)  # pylint: disable = W0622
+        return filter  # pylint: disable = W0622
