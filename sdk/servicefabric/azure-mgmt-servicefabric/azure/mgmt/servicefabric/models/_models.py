@@ -191,6 +191,8 @@ class ApplicationResource(ProxyResource):
     :type tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
+    :param identity: Describes the managed identities for an Azure resource.
+    :type identity: ~azure.mgmt.servicefabric.models.ManagedIdentity
     :param type_version: The version of the application type as defined in the
      application manifest.
     :type type_version: str
@@ -220,6 +222,10 @@ class ApplicationResource(ProxyResource):
     :param metrics: List of application capacity metric description.
     :type metrics:
      list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
+    :param managed_identities: List of user assigned identities for the
+     application, each mapped to a friendly name.
+    :type managed_identities:
+     list[~azure.mgmt.servicefabric.models.ApplicationUserAssignedIdentity]
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response
     :vartype provisioning_state: str
@@ -245,6 +251,7 @@ class ApplicationResource(ProxyResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
         'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'ApplicationUpgradePolicy'},
@@ -252,12 +259,14 @@ class ApplicationResource(ProxyResource):
         'maximum_nodes': {'key': 'properties.maximumNodes', 'type': 'long'},
         'remove_application_capacity': {'key': 'properties.removeApplicationCapacity', 'type': 'bool'},
         'metrics': {'key': 'properties.metrics', 'type': '[ApplicationMetricDescription]'},
+        'managed_identities': {'key': 'properties.managedIdentities', 'type': '[ApplicationUserAssignedIdentity]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'type_name': {'key': 'properties.typeName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ApplicationResource, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
         self.type_version = kwargs.get('type_version', None)
         self.parameters = kwargs.get('parameters', None)
         self.upgrade_policy = kwargs.get('upgrade_policy', None)
@@ -265,6 +274,7 @@ class ApplicationResource(ProxyResource):
         self.maximum_nodes = kwargs.get('maximum_nodes', 0)
         self.remove_application_capacity = kwargs.get('remove_application_capacity', None)
         self.metrics = kwargs.get('metrics', None)
+        self.managed_identities = kwargs.get('managed_identities', None)
         self.provisioning_state = None
         self.type_name = kwargs.get('type_name', None)
 
@@ -345,6 +355,10 @@ class ApplicationResourceUpdate(ProxyResource):
     :param metrics: List of application capacity metric description.
     :type metrics:
      list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
+    :param managed_identities: List of user assigned identities for the
+     application, each mapped to a friendly name.
+    :type managed_identities:
+     list[~azure.mgmt.servicefabric.models.ApplicationUserAssignedIdentity]
     """
 
     _validation = {
@@ -370,6 +384,7 @@ class ApplicationResourceUpdate(ProxyResource):
         'maximum_nodes': {'key': 'properties.maximumNodes', 'type': 'long'},
         'remove_application_capacity': {'key': 'properties.removeApplicationCapacity', 'type': 'bool'},
         'metrics': {'key': 'properties.metrics', 'type': '[ApplicationMetricDescription]'},
+        'managed_identities': {'key': 'properties.managedIdentities', 'type': '[ApplicationUserAssignedIdentity]'},
     }
 
     def __init__(self, **kwargs):
@@ -381,6 +396,7 @@ class ApplicationResourceUpdate(ProxyResource):
         self.maximum_nodes = kwargs.get('maximum_nodes', 0)
         self.remove_application_capacity = kwargs.get('remove_application_capacity', None)
         self.metrics = kwargs.get('metrics', None)
+        self.managed_identities = kwargs.get('managed_identities', None)
 
 
 class ApplicationTypeResource(ProxyResource):
@@ -550,6 +566,29 @@ class ApplicationTypeVersionResourceList(Model):
         self.next_link = None
 
 
+class ApplicationTypeVersionsCleanupPolicy(Model):
+    """ApplicationTypeVersionsCleanupPolicy.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param max_unused_versions_to_keep: Required. Number of unused versions
+     per application type to keep.
+    :type max_unused_versions_to_keep: int
+    """
+
+    _validation = {
+        'max_unused_versions_to_keep': {'required': True, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'max_unused_versions_to_keep': {'key': 'maxUnusedVersionsToKeep', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApplicationTypeVersionsCleanupPolicy, self).__init__(**kwargs)
+        self.max_unused_versions_to_keep = kwargs.get('max_unused_versions_to_keep', None)
+
+
 class ApplicationUpgradePolicy(Model):
     """Describes the policy for a monitored application upgrade.
 
@@ -572,6 +611,12 @@ class ApplicationUpgradePolicy(Model):
      the health of an application or one of its children entities.
     :type application_health_policy:
      ~azure.mgmt.servicefabric.models.ArmApplicationHealthPolicy
+    :param upgrade_mode: The mode used to monitor health during a rolling
+     upgrade. The values are UnmonitoredAuto, UnmonitoredManual, and Monitored.
+     Possible values include: 'Invalid', 'UnmonitoredAuto',
+     'UnmonitoredManual', 'Monitored'. Default value: "Monitored" .
+    :type upgrade_mode: str or
+     ~azure.mgmt.servicefabric.models.RollingUpgradeMode
     """
 
     _attribute_map = {
@@ -579,6 +624,7 @@ class ApplicationUpgradePolicy(Model):
         'force_restart': {'key': 'forceRestart', 'type': 'bool'},
         'rolling_upgrade_monitoring_policy': {'key': 'rollingUpgradeMonitoringPolicy', 'type': 'ArmRollingUpgradeMonitoringPolicy'},
         'application_health_policy': {'key': 'applicationHealthPolicy', 'type': 'ArmApplicationHealthPolicy'},
+        'upgrade_mode': {'key': 'upgradeMode', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -587,6 +633,34 @@ class ApplicationUpgradePolicy(Model):
         self.force_restart = kwargs.get('force_restart', None)
         self.rolling_upgrade_monitoring_policy = kwargs.get('rolling_upgrade_monitoring_policy', None)
         self.application_health_policy = kwargs.get('application_health_policy', None)
+        self.upgrade_mode = kwargs.get('upgrade_mode', "Monitored")
+
+
+class ApplicationUserAssignedIdentity(Model):
+    """ApplicationUserAssignedIdentity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The friendly name of user assigned identity.
+    :type name: str
+    :param principal_id: Required. The principal id of user assigned identity.
+    :type principal_id: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'principal_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApplicationUserAssignedIdentity, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.principal_id = kwargs.get('principal_id', None)
 
 
 class ArmApplicationHealthPolicy(Model):
@@ -813,6 +887,41 @@ class CertificateDescription(Model):
         self.thumbprint = kwargs.get('thumbprint', None)
         self.thumbprint_secondary = kwargs.get('thumbprint_secondary', None)
         self.x509_store_name = kwargs.get('x509_store_name', None)
+
+
+class ClientCertificate(Model):
+    """Client Certificate definition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param is_admin: Required. Whether the certificate is admin or not.
+    :type is_admin: bool
+    :param thumbprint: Certificate Thumbprint.
+    :type thumbprint: str
+    :param common_name: Certificate Common name.
+    :type common_name: str
+    :param issuer_thumbprint: Issuer thumbprint for the certificate. Its only
+     use ehn CommonName is used.
+    :type issuer_thumbprint: str
+    """
+
+    _validation = {
+        'is_admin': {'required': True},
+    }
+
+    _attribute_map = {
+        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        'common_name': {'key': 'commonName', 'type': 'str'},
+        'issuer_thumbprint': {'key': 'issuerThumbprint', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ClientCertificate, self).__init__(**kwargs)
+        self.is_admin = kwargs.get('is_admin', None)
+        self.thumbprint = kwargs.get('thumbprint', None)
+        self.common_name = kwargs.get('common_name', None)
+        self.issuer_thumbprint = kwargs.get('issuer_thumbprint', None)
 
 
 class ClientCertificateCommonName(Model):
@@ -1053,7 +1162,7 @@ class Cluster(Resource):
      ~azure.mgmt.servicefabric.models.ProvisioningState
     :param reliability_level: The reliability level sets the replica set size
      of system services. Learn about
-     [ReliabilityLevel](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity).
+     [ReliabilityLevel](https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity).
      - None - Run the System services with a target replica set count of 1.
      This should only be used for test clusters.
      - Bronze - Run the System services with a target replica set count of 3.
@@ -1084,6 +1193,10 @@ class Cluster(Resource):
      **clusterCodeVersion** property in the cluster resource.
      . Possible values include: 'Automatic', 'Manual'
     :type upgrade_mode: str or ~azure.mgmt.servicefabric.models.enum
+    :param application_type_versions_cleanup_policy: The policy used to clean
+     up unused versions.
+    :type application_type_versions_cleanup_policy:
+     ~azure.mgmt.servicefabric.models.ApplicationTypeVersionsCleanupPolicy
     :param vm_image: The VM image VMSS has been configured with. Generic names
      such as Windows or Linux can be used.
     :type vm_image: str
@@ -1133,6 +1246,7 @@ class Cluster(Resource):
         'reverse_proxy_certificate_common_names': {'key': 'properties.reverseProxyCertificateCommonNames', 'type': 'ServerCertificateCommonNames'},
         'upgrade_description': {'key': 'properties.upgradeDescription', 'type': 'ClusterUpgradePolicy'},
         'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'str'},
+        'application_type_versions_cleanup_policy': {'key': 'properties.applicationTypeVersionsCleanupPolicy', 'type': 'ApplicationTypeVersionsCleanupPolicy'},
         'vm_image': {'key': 'properties.vmImage', 'type': 'str'},
     }
 
@@ -1160,6 +1274,7 @@ class Cluster(Resource):
         self.reverse_proxy_certificate_common_names = kwargs.get('reverse_proxy_certificate_common_names', None)
         self.upgrade_description = kwargs.get('upgrade_description', None)
         self.upgrade_mode = kwargs.get('upgrade_mode', None)
+        self.application_type_versions_cleanup_policy = kwargs.get('application_type_versions_cleanup_policy', None)
         self.vm_image = kwargs.get('vm_image', None)
 
 
@@ -1345,7 +1460,7 @@ class ClusterUpdateParameters(Model):
      list[~azure.mgmt.servicefabric.models.NodeTypeDescription]
     :param reliability_level: The reliability level sets the replica set size
      of system services. Learn about
-     [ReliabilityLevel](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity).
+     [ReliabilityLevel](https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity).
      - None - Run the System services with a target replica set count of 1.
      This should only be used for test clusters.
      - Bronze - Run the System services with a target replica set count of 3.
@@ -1371,6 +1486,10 @@ class ClusterUpdateParameters(Model):
      **clusterCodeVersion** property in the cluster resource.
      . Possible values include: 'Automatic', 'Manual'
     :type upgrade_mode: str or ~azure.mgmt.servicefabric.models.enum
+    :param application_type_versions_cleanup_policy: The policy used to clean
+     up unused versions.
+    :type application_type_versions_cleanup_policy:
+     ~azure.mgmt.servicefabric.models.ApplicationTypeVersionsCleanupPolicy
     :param tags: Cluster update parameters
     :type tags: dict[str, str]
     """
@@ -1389,6 +1508,7 @@ class ClusterUpdateParameters(Model):
         'reverse_proxy_certificate': {'key': 'properties.reverseProxyCertificate', 'type': 'CertificateDescription'},
         'upgrade_description': {'key': 'properties.upgradeDescription', 'type': 'ClusterUpgradePolicy'},
         'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'str'},
+        'application_type_versions_cleanup_policy': {'key': 'properties.applicationTypeVersionsCleanupPolicy', 'type': 'ApplicationTypeVersionsCleanupPolicy'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -1407,6 +1527,7 @@ class ClusterUpdateParameters(Model):
         self.reverse_proxy_certificate = kwargs.get('reverse_proxy_certificate', None)
         self.upgrade_description = kwargs.get('upgrade_description', None)
         self.upgrade_mode = kwargs.get('upgrade_mode', None)
+        self.application_type_versions_cleanup_policy = kwargs.get('application_type_versions_cleanup_policy', None)
         self.tags = kwargs.get('tags', None)
 
 
@@ -1587,6 +1708,10 @@ class DiagnosticsStorageAccountConfig(Model):
     :param protected_account_key_name: Required. The protected diagnostics
      storage key name.
     :type protected_account_key_name: str
+    :param protected_account_key_name2: The secondary protected diagnostics
+     storage key name. If one of the storage account keys is rotated the
+     cluster will fallback to using the other.
+    :type protected_account_key_name2: str
     :param blob_endpoint: Required. The blob endpoint of the azure storage
      account.
     :type blob_endpoint: str
@@ -1609,6 +1734,7 @@ class DiagnosticsStorageAccountConfig(Model):
     _attribute_map = {
         'storage_account_name': {'key': 'storageAccountName', 'type': 'str'},
         'protected_account_key_name': {'key': 'protectedAccountKeyName', 'type': 'str'},
+        'protected_account_key_name2': {'key': 'protectedAccountKeyName2', 'type': 'str'},
         'blob_endpoint': {'key': 'blobEndpoint', 'type': 'str'},
         'queue_endpoint': {'key': 'queueEndpoint', 'type': 'str'},
         'table_endpoint': {'key': 'tableEndpoint', 'type': 'str'},
@@ -1618,6 +1744,7 @@ class DiagnosticsStorageAccountConfig(Model):
         super(DiagnosticsStorageAccountConfig, self).__init__(**kwargs)
         self.storage_account_name = kwargs.get('storage_account_name', None)
         self.protected_account_key_name = kwargs.get('protected_account_key_name', None)
+        self.protected_account_key_name2 = kwargs.get('protected_account_key_name2', None)
         self.blob_endpoint = kwargs.get('blob_endpoint', None)
         self.queue_endpoint = kwargs.get('queue_endpoint', None)
         self.table_endpoint = kwargs.get('table_endpoint', None)
@@ -1698,6 +1825,416 @@ class ErrorModelError(Model):
         self.message = kwargs.get('message', None)
 
 
+class LoadBalancingRule(Model):
+    """Describes a load balancing rule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param frontend_port: Required. The port for the external endpoint. Port
+     numbers for each rule must be unique within the Load Balancer. Acceptable
+     values are between 1 and 65534.
+    :type frontend_port: int
+    :param backend_port: Required. The port used for internal connections on
+     the endpoint. Acceptable values are between 1 and 65535.
+    :type backend_port: int
+    :param protocol: Required. The reference to the transport protocol used by
+     the load balancing rule. Possible values include: 'tcp', 'udp'
+    :type protocol: str or ~azure.mgmt.servicefabric.models.Protocol
+    :param probe_protocol: Required. the reference to the load balancer probe
+     used by the load balancing rule. Possible values include: 'tcp', 'http',
+     'https'
+    :type probe_protocol: str or
+     ~azure.mgmt.servicefabric.models.ProbeProtocol
+    :param probe_request_path: The probe request path. Only supported for
+     HTTP/HTTPS probes.
+    :type probe_request_path: str
+    """
+
+    _validation = {
+        'frontend_port': {'required': True, 'maximum': 65534, 'minimum': 1},
+        'backend_port': {'required': True, 'maximum': 65534, 'minimum': 1},
+        'protocol': {'required': True},
+        'probe_protocol': {'required': True},
+    }
+
+    _attribute_map = {
+        'frontend_port': {'key': 'frontendPort', 'type': 'int'},
+        'backend_port': {'key': 'backendPort', 'type': 'int'},
+        'protocol': {'key': 'protocol', 'type': 'str'},
+        'probe_protocol': {'key': 'probeProtocol', 'type': 'str'},
+        'probe_request_path': {'key': 'probeRequestPath', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LoadBalancingRule, self).__init__(**kwargs)
+        self.frontend_port = kwargs.get('frontend_port', None)
+        self.backend_port = kwargs.get('backend_port', None)
+        self.protocol = kwargs.get('protocol', None)
+        self.probe_protocol = kwargs.get('probe_protocol', None)
+        self.probe_request_path = kwargs.get('probe_request_path', None)
+
+
+class ManagedCluster(Resource):
+    """The manged cluster resource
+    .
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource identifier.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :param location: Required. Azure resource location.
+    :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
+    :ivar etag: Azure resource etag.
+    :vartype etag: str
+    :param dns_name: Required. The cluster dns name.
+    :type dns_name: str
+    :ivar fqdn: the cluster Fully qualified domain name.
+    :vartype fqdn: str
+    :ivar cluster_id: A service generated unique identifier for the cluster
+     resource.
+    :vartype cluster_id: str
+    :ivar cluster_state: The current state of the cluster.
+     - WaitingForNodes - Indicates that the cluster resource is created and the
+     resource provider is waiting for Service Fabric VM extension to boot up
+     and report to it.
+     - Deploying - Indicates that the Service Fabric runtime is being installed
+     on the VMs. Cluster resource will be in this state until the cluster boots
+     up and system services are up.
+     - BaselineUpgrade - Indicates that the cluster is upgrading to establishes
+     the cluster version. This upgrade is automatically initiated when the
+     cluster boots up for the first time.
+     - UpdatingUserConfiguration - Indicates that the cluster is being upgraded
+     with the user provided configuration.
+     - UpdatingUserCertificate - Indicates that the cluster is being upgraded
+     with the user provided certificate.
+     - UpdatingInfrastructure - Indicates that the cluster is being upgraded
+     with the latest Service Fabric runtime version. This happens only when the
+     **upgradeMode** is set to 'Automatic'.
+     - EnforcingClusterVersion - Indicates that cluster is on a different
+     version than expected and the cluster is being upgraded to the expected
+     version.
+     - UpgradeServiceUnreachable - Indicates that the system service in the
+     cluster is no longer polling the Resource Provider. Clusters in this state
+     cannot be managed by the Resource Provider.
+     - AutoScale - Indicates that the ReliabilityLevel of the cluster is being
+     adjusted.
+     - Ready - Indicates that the cluster is in a stable state.
+     . Possible values include: 'WaitingForNodes', 'Deploying',
+     'BaselineUpgrade', 'UpdatingUserConfiguration', 'UpdatingUserCertificate',
+     'UpdatingInfrastructure', 'EnforcingClusterVersion',
+     'UpgradeServiceUnreachable', 'AutoScale', 'Ready'
+    :vartype cluster_state: str or ~azure.mgmt.servicefabric.models.enum
+    :ivar cluster_certificate_thumbprint: The cluster certificate thumbprint
+     used node to node communication.
+    :vartype cluster_certificate_thumbprint: str
+    :param client_connection_port: The port used for client connections to the
+     cluster. Default value: 19000 .
+    :type client_connection_port: int
+    :param http_gateway_connection_port: The port used for http connections to
+     the cluster. Default value: 19080 .
+    :type http_gateway_connection_port: int
+    :param admin_user_name: Required. vm admin user name.
+    :type admin_user_name: str
+    :param admin_password: vm admin user password.
+    :type admin_password: str
+    :param load_balancing_rules: Describes load balancing rules.
+    :type load_balancing_rules:
+     list[~azure.mgmt.servicefabric.models.LoadBalancingRule]
+    :param clients: client certificates for the cluster.
+    :type clients: list[~azure.mgmt.servicefabric.models.ClientCertificate]
+    :param azure_active_directory: Azure active directory.
+    :type azure_active_directory:
+     ~azure.mgmt.servicefabric.models.AzureActiveDirectory
+    :param fabric_settings: The list of custom fabric settings to configure
+     the cluster.
+    :type fabric_settings:
+     ~azure.mgmt.servicefabric.models.SettingsSectionDescription
+    :ivar provisioning_state: The provisioning state of the managed cluster
+     resource. Possible values include: 'Updating', 'Succeeded', 'Failed',
+     'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.servicefabric.models.ProvisioningState
+    :param cluster_code_version: The Service Fabric runtime version of the
+     cluster. This property can only by set the user when **upgradeMode** is
+     set to 'Manual'. To get list of available Service Fabric versions for new
+     clusters use [ClusterVersion API](./ClusterVersion.md). To get the list of
+     available version for existing clusters use **availableClusterVersions**.
+    :type cluster_code_version: str
+    :param cluster_upgrade_mode: The upgrade mode of the cluster when new
+     Service Fabric runtime version is available.
+     - Automatic - The cluster will be automatically upgraded to the latest
+     Service Fabric runtime version as soon as it is available.
+     - Manual - The cluster will not be automatically upgraded to the latest
+     Service Fabric runtime version. The cluster is upgraded by setting the
+     **clusterCodeVersion** property in the cluster resource.
+     . Possible values include: 'Automatic', 'Manual'
+    :type cluster_upgrade_mode: str or ~azure.mgmt.servicefabric.models.enum
+    :param cluster_upgrade_description: Describes the policy used when
+     upgrading the cluster.
+    :type cluster_upgrade_description:
+     ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
+    :param reverse_proxy_endpoint_port: The endpoint used by reverse proxy.
+    :type reverse_proxy_endpoint_port: int
+    :param sku: The sku of the managed cluster
+    :type sku: ~azure.mgmt.servicefabric.models.Sku
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'etag': {'readonly': True},
+        'dns_name': {'required': True},
+        'fqdn': {'readonly': True},
+        'cluster_id': {'readonly': True},
+        'cluster_state': {'readonly': True},
+        'cluster_certificate_thumbprint': {'readonly': True},
+        'admin_user_name': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'dns_name': {'key': 'properties.dnsName', 'type': 'str'},
+        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
+        'cluster_id': {'key': 'properties.clusterId', 'type': 'str'},
+        'cluster_state': {'key': 'properties.clusterState', 'type': 'str'},
+        'cluster_certificate_thumbprint': {'key': 'properties.clusterCertificateThumbprint', 'type': 'str'},
+        'client_connection_port': {'key': 'properties.clientConnectionPort', 'type': 'int'},
+        'http_gateway_connection_port': {'key': 'properties.httpGatewayConnectionPort', 'type': 'int'},
+        'admin_user_name': {'key': 'properties.adminUserName', 'type': 'str'},
+        'admin_password': {'key': 'properties.adminPassword', 'type': 'str'},
+        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[LoadBalancingRule]'},
+        'clients': {'key': 'properties.clients', 'type': '[ClientCertificate]'},
+        'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
+        'fabric_settings': {'key': 'properties.fabricSettings', 'type': 'SettingsSectionDescription'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
+        'cluster_upgrade_mode': {'key': 'properties.clusterUpgradeMode', 'type': 'str'},
+        'cluster_upgrade_description': {'key': 'properties.clusterUpgradeDescription', 'type': 'ClusterUpgradePolicy'},
+        'reverse_proxy_endpoint_port': {'key': 'properties.reverseProxyEndpointPort', 'type': 'int'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedCluster, self).__init__(**kwargs)
+        self.dns_name = kwargs.get('dns_name', None)
+        self.fqdn = None
+        self.cluster_id = None
+        self.cluster_state = None
+        self.cluster_certificate_thumbprint = None
+        self.client_connection_port = kwargs.get('client_connection_port', 19000)
+        self.http_gateway_connection_port = kwargs.get('http_gateway_connection_port', 19080)
+        self.admin_user_name = kwargs.get('admin_user_name', None)
+        self.admin_password = kwargs.get('admin_password', None)
+        self.load_balancing_rules = kwargs.get('load_balancing_rules', None)
+        self.clients = kwargs.get('clients', None)
+        self.azure_active_directory = kwargs.get('azure_active_directory', None)
+        self.fabric_settings = kwargs.get('fabric_settings', None)
+        self.provisioning_state = None
+        self.cluster_code_version = kwargs.get('cluster_code_version', None)
+        self.cluster_upgrade_mode = kwargs.get('cluster_upgrade_mode', None)
+        self.cluster_upgrade_description = kwargs.get('cluster_upgrade_description', None)
+        self.reverse_proxy_endpoint_port = kwargs.get('reverse_proxy_endpoint_port', None)
+        self.sku = kwargs.get('sku', None)
+
+
+class ManagedClusterUpdateParameters(Model):
+    """Managed cluster update request.
+
+    :param client_connection_port: The port used for client connections to the
+     cluster.
+    :type client_connection_port: int
+    :param http_gateway_connection_port: The port used for http connections to
+     the cluster.
+    :type http_gateway_connection_port: int
+    :param load_balancing_rules: Describes a load balancing rule.
+    :type load_balancing_rules:
+     ~azure.mgmt.servicefabric.models.LoadBalancingRule
+    :param clients: client certificates for the cluster.
+    :type clients: ~azure.mgmt.servicefabric.models.ClientCertificate
+    :param azure_active_directory: Azure active directory.
+    :type azure_active_directory:
+     ~azure.mgmt.servicefabric.models.AzureActiveDirectory
+    :param fabric_settings: The list of custom fabric settings to configure
+     the cluster.
+    :type fabric_settings:
+     ~azure.mgmt.servicefabric.models.SettingsSectionDescription
+    :param cluster_code_version: The Service Fabric runtime version of the
+     cluster. This property can only by set the user when **upgradeMode** is
+     set to 'Manual'. To get list of available Service Fabric versions for new
+     clusters use [ClusterVersion API](./ClusterVersion.md). To get the list of
+     available version for existing clusters use **availableClusterVersions**.
+    :type cluster_code_version: str
+    :param cluster_upgrade_mode: The upgrade mode of the cluster when new
+     Service Fabric runtime version is available.
+     - Automatic - The cluster will be automatically upgraded to the latest
+     Service Fabric runtime version as soon as it is available.
+     - Manual - The cluster will not be automatically upgraded to the latest
+     Service Fabric runtime version. The cluster is upgraded by setting the
+     **clusterCodeVersion** property in the cluster resource.
+     . Possible values include: 'Automatic', 'Manual'
+    :type cluster_upgrade_mode: str or ~azure.mgmt.servicefabric.models.enum
+    :param cluster_upgrade_description: Describes the policy used when
+     upgrading the cluster.
+    :type cluster_upgrade_description:
+     ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
+    :param reverse_proxy_endpoint_port: The endpoint used by reverse proxy.
+    :type reverse_proxy_endpoint_port: int
+    :param tags: Managed cluster update parameters
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'client_connection_port': {'key': 'properties.clientConnectionPort', 'type': 'int'},
+        'http_gateway_connection_port': {'key': 'properties.httpGatewayConnectionPort', 'type': 'int'},
+        'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': 'LoadBalancingRule'},
+        'clients': {'key': 'properties.clients', 'type': 'ClientCertificate'},
+        'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
+        'fabric_settings': {'key': 'properties.fabricSettings', 'type': 'SettingsSectionDescription'},
+        'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
+        'cluster_upgrade_mode': {'key': 'properties.clusterUpgradeMode', 'type': 'str'},
+        'cluster_upgrade_description': {'key': 'properties.clusterUpgradeDescription', 'type': 'ClusterUpgradePolicy'},
+        'reverse_proxy_endpoint_port': {'key': 'properties.reverseProxyEndpointPort', 'type': 'int'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedClusterUpdateParameters, self).__init__(**kwargs)
+        self.client_connection_port = kwargs.get('client_connection_port', None)
+        self.http_gateway_connection_port = kwargs.get('http_gateway_connection_port', None)
+        self.load_balancing_rules = kwargs.get('load_balancing_rules', None)
+        self.clients = kwargs.get('clients', None)
+        self.azure_active_directory = kwargs.get('azure_active_directory', None)
+        self.fabric_settings = kwargs.get('fabric_settings', None)
+        self.cluster_code_version = kwargs.get('cluster_code_version', None)
+        self.cluster_upgrade_mode = kwargs.get('cluster_upgrade_mode', None)
+        self.cluster_upgrade_description = kwargs.get('cluster_upgrade_description', None)
+        self.reverse_proxy_endpoint_port = kwargs.get('reverse_proxy_endpoint_port', None)
+        self.tags = kwargs.get('tags', None)
+
+
+class ManagedClusterVersionDetails(Model):
+    """The detail of the Service Fabric runtime version.
+
+    :param msi_version: The Service Fabric runtime version of the cluster.
+    :type msi_version: str
+    :param support_expiry_utc: The date of expiry of support of the version.
+    :type support_expiry_utc: str
+    :param os_type: Indicates the operating system of the cluster. Possible
+     values include: 'Windows', 'Ubuntu', 'RedHat', 'Ubuntu18_04'
+    :type os_type: str or ~azure.mgmt.servicefabric.models.enum
+    """
+
+    _attribute_map = {
+        'msi_version': {'key': 'msiVersion', 'type': 'str'},
+        'support_expiry_utc': {'key': 'supportExpiryUtc', 'type': 'str'},
+        'os_type': {'key': 'osType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedClusterVersionDetails, self).__init__(**kwargs)
+        self.msi_version = kwargs.get('msi_version', None)
+        self.support_expiry_utc = kwargs.get('support_expiry_utc', None)
+        self.os_type = kwargs.get('os_type', None)
+
+
+class ManagedIdentity(Model):
+    """Describes the managed identities for an Azure resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The principal id of the managed identity. This
+     property will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant id of the managed identity. This property will
+     only be provided for a system assigned identity.
+    :vartype tenant_id: str
+    :param type: The type of managed identity for the resource. Possible
+     values include: 'SystemAssigned', 'UserAssigned', 'SystemAssigned,
+     UserAssigned', 'None'
+    :type type: str or ~azure.mgmt.servicefabric.models.ManagedIdentityType
+    :param user_assigned_identities: The list of user identities associated
+     with the resource. The user identity dictionary key references will be ARM
+     resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities: dict[str,
+     ~azure.mgmt.servicefabric.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ManagedIdentityType'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = kwargs.get('type', None)
+        self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+
+
+class ManagedProxyResource(Model):
+    """The resource model definition for proxy-only resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Azure resource identifier.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedProxyResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = kwargs.get('tags', None)
+
+
 class PartitionSchemeDescription(Model):
     """Describes how the service is partitioned.
 
@@ -1738,7 +2275,7 @@ class NamedPartitionSchemeDescription(PartitionSchemeDescription):
     :type partition_scheme: str
     :param count: Required. The number of partitions.
     :type count: int
-    :param names: Required. Array of size specified by the ‘Count’ parameter,
+    :param names: Required. Array of size specified by the ‘count’ parameter,
      for the names of the partitions.
     :type names: list[str]
     """
@@ -1751,8 +2288,8 @@ class NamedPartitionSchemeDescription(PartitionSchemeDescription):
 
     _attribute_map = {
         'partition_scheme': {'key': 'partitionScheme', 'type': 'str'},
-        'count': {'key': 'Count', 'type': 'int'},
-        'names': {'key': 'Names', 'type': '[str]'},
+        'count': {'key': 'count', 'type': 'int'},
+        'names': {'key': 'names', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -1760,6 +2297,148 @@ class NamedPartitionSchemeDescription(PartitionSchemeDescription):
         self.count = kwargs.get('count', None)
         self.names = kwargs.get('names', None)
         self.partition_scheme = 'Named'
+
+
+class NodeType(ManagedProxyResource):
+    """Describes a node type in the cluster, each node type represents sub set of
+    nodes in the cluster.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Azure resource identifier.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
+    :param is_primary: Required. The node type on which system services will
+     run. Only one node type should be marked as primary. Primary node type
+     cannot be deleted or changed for existing clusters.
+    :type is_primary: bool
+    :param vm_instance_count: Required. The number of nodes in the node type.
+     This count should match the capacity property in the corresponding
+     VirtualMachineScaleSet resource.
+    :type vm_instance_count: int
+    :param disk_size_in_gb: Required. Disk size for each vm in the node type
+     in GBs.
+    :type disk_size_in_gb: int
+    :param placement_properties: The placement tags applied to nodes in the
+     node type, which can be used to indicate where certain services (workload)
+     should run.
+    :type placement_properties: dict[str, str]
+    :param capacities: The capacity tags applied to the nodes in the node
+     type, the cluster resource manager uses these tags to understand how much
+     resource a node has.
+    :type capacities: dict[str, str]
+    :param application_ports: The range of ports from which cluster assigned
+     port to Service Fabric applications.
+    :type application_ports:
+     ~azure.mgmt.servicefabric.models.EndpointRangeDescription
+    :param ephemeral_ports: The range of ephemeral ports that nodes in this
+     node type should be configured with.
+    :type ephemeral_ports:
+     ~azure.mgmt.servicefabric.models.EndpointRangeDescription
+    :param vm_size: The size of virtual machines in the pool. All virtual
+     machines in a pool are the same size. For example, Standard_D3.
+    :type vm_size: str
+    :param vm_image_publisher: The publisher of the Azure Virtual Machines
+     Marketplace image. For example, Canonical or MicrosoftWindowsServer.
+    :type vm_image_publisher: str
+    :param vm_image_offer: The offer type of the Azure Virtual Machines
+     Marketplace image. For example, UbuntuServer or WindowsServer.
+    :type vm_image_offer: str
+    :param vm_image_sku: The SKU of the Azure Virtual Machines Marketplace
+     image. For example, 14.04.0-LTS or 2012-R2-Datacenter.
+    :type vm_image_sku: str
+    :param vm_image_version: The version of the Azure Virtual Machines
+     Marketplace image. A value of 'latest' can be specified to select the
+     latest version of an image. If omitted, the default is 'latest'.
+    :type vm_image_version: str
+    :param vm_secrets: virtual machine secretes. The secrets to install in the
+     virtual machines.
+    :type vm_secrets: list[~azure.mgmt.servicefabric.models.VaultSecretGroup]
+    :param vm_extensions: virtual machine extensions. Set of extensions that
+     should be installed onto the virtual machines.
+    :type vm_extensions: list[~azure.mgmt.servicefabric.models.VMSSExtension]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'is_primary': {'required': True},
+        'vm_instance_count': {'required': True, 'maximum': 2147483647, 'minimum': 1},
+        'disk_size_in_gb': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'is_primary': {'key': 'properties.isPrimary', 'type': 'bool'},
+        'vm_instance_count': {'key': 'properties.vmInstanceCount', 'type': 'int'},
+        'disk_size_in_gb': {'key': 'properties.diskSizeInGB', 'type': 'int'},
+        'placement_properties': {'key': 'properties.placementProperties', 'type': '{str}'},
+        'capacities': {'key': 'properties.capacities', 'type': '{str}'},
+        'application_ports': {'key': 'properties.applicationPorts', 'type': 'EndpointRangeDescription'},
+        'ephemeral_ports': {'key': 'properties.ephemeralPorts', 'type': 'EndpointRangeDescription'},
+        'vm_size': {'key': 'properties.vmSize', 'type': 'str'},
+        'vm_image_publisher': {'key': 'properties.vmImagePublisher', 'type': 'str'},
+        'vm_image_offer': {'key': 'properties.vmImageOffer', 'type': 'str'},
+        'vm_image_sku': {'key': 'properties.vmImageSku', 'type': 'str'},
+        'vm_image_version': {'key': 'properties.vmImageVersion', 'type': 'str'},
+        'vm_secrets': {'key': 'properties.vmSecrets', 'type': '[VaultSecretGroup]'},
+        'vm_extensions': {'key': 'properties.vmExtensions', 'type': '[VMSSExtension]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NodeType, self).__init__(**kwargs)
+        self.is_primary = kwargs.get('is_primary', None)
+        self.vm_instance_count = kwargs.get('vm_instance_count', None)
+        self.disk_size_in_gb = kwargs.get('disk_size_in_gb', None)
+        self.placement_properties = kwargs.get('placement_properties', None)
+        self.capacities = kwargs.get('capacities', None)
+        self.application_ports = kwargs.get('application_ports', None)
+        self.ephemeral_ports = kwargs.get('ephemeral_ports', None)
+        self.vm_size = kwargs.get('vm_size', None)
+        self.vm_image_publisher = kwargs.get('vm_image_publisher', None)
+        self.vm_image_offer = kwargs.get('vm_image_offer', None)
+        self.vm_image_sku = kwargs.get('vm_image_sku', None)
+        self.vm_image_version = kwargs.get('vm_image_version', None)
+        self.vm_secrets = kwargs.get('vm_secrets', None)
+        self.vm_extensions = kwargs.get('vm_extensions', None)
+
+
+class NodeTypeActionParameters(Model):
+    """Parameters for Node type action.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param nodes: Required. List of node names from the node type.
+    :type nodes: list[str]
+    :param force: Force the action to go through.
+    :type force: bool
+    """
+
+    _validation = {
+        'nodes': {'required': True},
+    }
+
+    _attribute_map = {
+        'nodes': {'key': 'nodes', 'type': '[str]'},
+        'force': {'key': 'force', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NodeTypeActionParameters, self).__init__(**kwargs)
+        self.nodes = kwargs.get('nodes', None)
+        self.force = kwargs.get('force', None)
 
 
 class NodeTypeDescription(Model):
@@ -1786,7 +2465,7 @@ class NodeTypeDescription(Model):
     :type http_gateway_endpoint_port: int
     :param durability_level: The durability level of the node type. Learn
      about
-     [DurabilityLevel](https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity).
+     [DurabilityLevel](https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity).
      - Bronze - No privileges. This is the default.
      - Silver - The infrastructure jobs can be paused for a duration of 10
      minutes per UD.
@@ -1850,6 +2529,66 @@ class NodeTypeDescription(Model):
         self.is_primary = kwargs.get('is_primary', None)
         self.vm_instance_count = kwargs.get('vm_instance_count', None)
         self.reverse_proxy_endpoint_port = kwargs.get('reverse_proxy_endpoint_port', None)
+
+
+class NodeTypeUpdateParameters(Model):
+    """Node type update request.
+
+    :param vm_instance_count: The number of nodes in the node type. This count
+     should match the capacity property in the corresponding
+     VirtualMachineScaleSet resource.
+    :type vm_instance_count: int
+    :param placement_properties: The placement tags applied to nodes in the
+     node type, which can be used to indicate where certain services (workload)
+     should run.
+    :type placement_properties: dict[str, str]
+    :param capacities: The capacity tags applied to the nodes in the node
+     type, the cluster resource manager uses these tags to understand how much
+     resource a node has.
+    :type capacities: dict[str, str]
+    :param application_ports: The range of ports from which cluster assigned
+     port to Service Fabric applications.
+    :type application_ports:
+     ~azure.mgmt.servicefabric.models.EndpointRangeDescription
+    :param ephemeral_ports: The range of ephemeral ports that nodes in this
+     node type should be configured with.
+    :type ephemeral_ports:
+     ~azure.mgmt.servicefabric.models.EndpointRangeDescription
+    :param vm_secrets: virtual machine secretes. The secrets to install in the
+     virtual machines.
+    :type vm_secrets: list[~azure.mgmt.servicefabric.models.VaultSecretGroup]
+    :param vm_extensions: virtual machine extensions. Set of extensions that
+     should be installed onto the virtual machines.
+    :type vm_extensions: list[~azure.mgmt.servicefabric.models.VMSSExtension]
+    :param tags: Node type update parameters
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'vm_instance_count': {'maximum': 2147483647, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'vm_instance_count': {'key': 'properties.vmInstanceCount', 'type': 'int'},
+        'placement_properties': {'key': 'properties.placementProperties', 'type': '{str}'},
+        'capacities': {'key': 'properties.capacities', 'type': '{str}'},
+        'application_ports': {'key': 'properties.applicationPorts', 'type': 'EndpointRangeDescription'},
+        'ephemeral_ports': {'key': 'properties.ephemeralPorts', 'type': 'EndpointRangeDescription'},
+        'vm_secrets': {'key': 'properties.vmSecrets', 'type': '[VaultSecretGroup]'},
+        'vm_extensions': {'key': 'properties.vmExtensions', 'type': '[VMSSExtension]'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NodeTypeUpdateParameters, self).__init__(**kwargs)
+        self.vm_instance_count = kwargs.get('vm_instance_count', None)
+        self.placement_properties = kwargs.get('placement_properties', None)
+        self.capacities = kwargs.get('capacities', None)
+        self.application_ports = kwargs.get('application_ports', None)
+        self.ephemeral_ports = kwargs.get('ephemeral_ports', None)
+        self.vm_secrets = kwargs.get('vm_secrets', None)
+        self.vm_extensions = kwargs.get('vm_extensions', None)
+        self.tags = kwargs.get('tags', None)
 
 
 class OperationResult(Model):
@@ -2029,7 +2768,7 @@ class ServicePlacementPolicyDescription(Model):
     }
 
     _attribute_map = {
-        'type': {'key': 'Type', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2089,6 +2828,10 @@ class ServiceResource(ProxyResource):
      package. Possible values include: 'SharedProcess', 'ExclusiveProcess'
     :type service_package_activation_mode: str or
      ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
+    :param service_dns_name: Dns name used for the service. If this is
+     specified, then the service can be accessed via its DNS name instead of
+     service name.
+    :type service_dns_name: str
     """
 
     _validation = {
@@ -2115,6 +2858,7 @@ class ServiceResource(ProxyResource):
         'service_type_name': {'key': 'properties.serviceTypeName', 'type': 'str'},
         'partition_description': {'key': 'properties.partitionDescription', 'type': 'PartitionSchemeDescription'},
         'service_package_activation_mode': {'key': 'properties.servicePackageActivationMode', 'type': 'str'},
+        'service_dns_name': {'key': 'properties.serviceDnsName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2128,6 +2872,7 @@ class ServiceResource(ProxyResource):
         self.service_type_name = kwargs.get('service_type_name', None)
         self.partition_description = kwargs.get('partition_description', None)
         self.service_package_activation_mode = kwargs.get('service_package_activation_mode', None)
+        self.service_dns_name = kwargs.get('service_dns_name', None)
 
 
 class ServiceResourceList(Model):
@@ -2245,6 +2990,10 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
      package. Possible values include: 'SharedProcess', 'ExclusiveProcess'
     :type service_package_activation_mode: str or
      ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
+    :param service_dns_name: Dns name used for the service. If this is
+     specified, then the service can be accessed via its DNS name instead of
+     service name.
+    :type service_dns_name: str
     :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
@@ -2264,6 +3013,7 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
         'service_type_name': {'key': 'serviceTypeName', 'type': 'str'},
         'partition_description': {'key': 'partitionDescription', 'type': 'PartitionSchemeDescription'},
         'service_package_activation_mode': {'key': 'servicePackageActivationMode', 'type': 'str'},
+        'service_dns_name': {'key': 'serviceDnsName', 'type': 'str'},
         'service_kind': {'key': 'serviceKind', 'type': 'str'},
     }
 
@@ -2277,6 +3027,7 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
         self.service_type_name = kwargs.get('service_type_name', None)
         self.partition_description = kwargs.get('partition_description', None)
         self.service_package_activation_mode = kwargs.get('service_package_activation_mode', None)
+        self.service_dns_name = kwargs.get('service_dns_name', None)
         self.service_kind = None
         self.service_kind = 'ServiceResourceProperties'
 
@@ -2541,6 +3292,30 @@ class SingletonPartitionSchemeDescription(PartitionSchemeDescription):
         self.partition_scheme = 'Singleton'
 
 
+class Sku(Model):
+    """Sku definition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Sku Name. Basic will hav a minimum of 3 seed nodes
+     and Standard a minimum of 5. Basic only allows 1 node type. Possible
+     values include: 'Basic', 'Standard'
+    :type name: str or ~azure.mgmt.servicefabric.models.enum
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+
+
 class StatefulServiceProperties(ServiceResourceProperties):
     """The properties of a stateful service resource.
 
@@ -2582,6 +3357,10 @@ class StatefulServiceProperties(ServiceResourceProperties):
      package. Possible values include: 'SharedProcess', 'ExclusiveProcess'
     :type service_package_activation_mode: str or
      ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
+    :param service_dns_name: Dns name used for the service. If this is
+     specified, then the service can be accessed via its DNS name instead of
+     service name.
+    :type service_dns_name: str
     :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param has_persisted_state: A flag indicating whether this is a persistent
@@ -2623,6 +3402,7 @@ class StatefulServiceProperties(ServiceResourceProperties):
         'service_type_name': {'key': 'serviceTypeName', 'type': 'str'},
         'partition_description': {'key': 'partitionDescription', 'type': 'PartitionSchemeDescription'},
         'service_package_activation_mode': {'key': 'servicePackageActivationMode', 'type': 'str'},
+        'service_dns_name': {'key': 'serviceDnsName', 'type': 'str'},
         'service_kind': {'key': 'serviceKind', 'type': 'str'},
         'has_persisted_state': {'key': 'hasPersistedState', 'type': 'bool'},
         'target_replica_set_size': {'key': 'targetReplicaSetSize', 'type': 'int'},
@@ -2760,10 +3540,24 @@ class StatelessServiceProperties(ServiceResourceProperties):
      package. Possible values include: 'SharedProcess', 'ExclusiveProcess'
     :type service_package_activation_mode: str or
      ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
+    :param service_dns_name: Dns name used for the service. If this is
+     specified, then the service can be accessed via its DNS name instead of
+     service name.
+    :type service_dns_name: str
     :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param instance_count: The instance count.
     :type instance_count: int
+    :param instance_close_delay_duration: Delay duration for RequestDrain
+     feature to ensures that the endpoint advertised by the stateless instance
+     is removed before the delay starts prior to closing the instance. This
+     delay enables existing requests to drain gracefully before the instance
+     actually goes down
+     (https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-downtime-preview).
+     It is first interpreted as a string representing an ISO 8601 duration. If
+     that fails, then it is interpreted as a number representing the total
+     number of milliseconds.
+    :type instance_close_delay_duration: str
     """
 
     _validation = {
@@ -2782,13 +3576,16 @@ class StatelessServiceProperties(ServiceResourceProperties):
         'service_type_name': {'key': 'serviceTypeName', 'type': 'str'},
         'partition_description': {'key': 'partitionDescription', 'type': 'PartitionSchemeDescription'},
         'service_package_activation_mode': {'key': 'servicePackageActivationMode', 'type': 'str'},
+        'service_dns_name': {'key': 'serviceDnsName', 'type': 'str'},
         'service_kind': {'key': 'serviceKind', 'type': 'str'},
         'instance_count': {'key': 'instanceCount', 'type': 'int'},
+        'instance_close_delay_duration': {'key': 'instanceCloseDelayDuration', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(StatelessServiceProperties, self).__init__(**kwargs)
         self.instance_count = kwargs.get('instance_count', None)
+        self.instance_close_delay_duration = kwargs.get('instance_close_delay_duration', None)
         self.service_kind = 'Stateless'
 
 
@@ -2822,6 +3619,16 @@ class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
     :type service_kind: str
     :param instance_count: The instance count.
     :type instance_count: int
+    :param instance_close_delay_duration: Delay duration for RequestDrain
+     feature to ensures that the endpoint advertised by the stateless instance
+     is removed before the delay starts prior to closing the instance. This
+     delay enables existing requests to drain gracefully before the instance
+     actually goes down
+     (https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-downtime-preview).
+     It is first interpreted as a string representing an ISO 8601 duration. If
+     that fails, then it is interpreted as a number representing the total
+     number of milliseconds.
+    :type instance_close_delay_duration: str
     """
 
     _validation = {
@@ -2837,12 +3644,30 @@ class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
         'default_move_cost': {'key': 'defaultMoveCost', 'type': 'str'},
         'service_kind': {'key': 'serviceKind', 'type': 'str'},
         'instance_count': {'key': 'instanceCount', 'type': 'int'},
+        'instance_close_delay_duration': {'key': 'instanceCloseDelayDuration', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(StatelessServiceUpdateProperties, self).__init__(**kwargs)
         self.instance_count = kwargs.get('instance_count', None)
+        self.instance_close_delay_duration = kwargs.get('instance_close_delay_duration', None)
         self.service_kind = 'Stateless'
+
+
+class SubResource(Model):
+    """Azure resource identifier.
+
+    :param id: Azure resource identifier.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SubResource, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
 
 
 class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
@@ -2857,11 +3682,11 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
     :type count: int
     :param low_key: Required. String indicating the lower bound of the
      partition key range that
-     should be split between the partition ‘Count’
+     should be split between the partition ‘count’
     :type low_key: str
     :param high_key: Required. String indicating the upper bound of the
      partition key range that
-     should be split between the partition ‘Count’
+     should be split between the partition ‘count’
     :type high_key: str
     """
 
@@ -2874,9 +3699,9 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
 
     _attribute_map = {
         'partition_scheme': {'key': 'partitionScheme', 'type': 'str'},
-        'count': {'key': 'Count', 'type': 'int'},
-        'low_key': {'key': 'LowKey', 'type': 'str'},
-        'high_key': {'key': 'HighKey', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'int'},
+        'low_key': {'key': 'lowKey', 'type': 'str'},
+        'high_key': {'key': 'highKey', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2885,3 +3710,175 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
         self.low_key = kwargs.get('low_key', None)
         self.high_key = kwargs.get('high_key', None)
         self.partition_scheme = 'UniformInt64Range'
+
+
+class UserAssignedIdentity(Model):
+    """UserAssignedIdentity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UserAssignedIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
+class VaultCertificate(Model):
+    """Describes a single certificate reference in a Key Vault, and where the
+    certificate should reside on the VM.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param certificate_url: Required. This is the URL of a certificate that
+     has been uploaded to Key Vault as a secret. For adding a secret to the Key
+     Vault, see [Add a key or secret to the key
+     vault](https://docs.microsoft.com/azure/key-vault/key-vault-get-started/#add).
+     In this case, your certificate needs to be It is the Base64 encoding of
+     the following JSON Object which is encoded in UTF-8: <br><br> {<br>
+     "data":"<Base64-encoded-certificate>",<br>  "dataType":"pfx",<br>
+     "password":"<pfx-file-password>"<br>}
+    :type certificate_url: str
+    :param certificate_store: Required. For Windows VMs, specifies the
+     certificate store on the Virtual Machine to which the certificate should
+     be added. The specified certificate store is implicitly in the
+     LocalMachine account. <br><br>For Linux VMs, the certificate file is
+     placed under the /var/lib/waagent directory, with the file name
+     <UppercaseThumbprint>.crt for the X509 certificate file and
+     <UppercaseThumbprint>.prv for private key. Both of these files are .pem
+     formatted.
+    :type certificate_store: str
+    """
+
+    _validation = {
+        'certificate_url': {'required': True},
+        'certificate_store': {'required': True},
+    }
+
+    _attribute_map = {
+        'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
+        'certificate_store': {'key': 'certificateStore', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VaultCertificate, self).__init__(**kwargs)
+        self.certificate_url = kwargs.get('certificate_url', None)
+        self.certificate_store = kwargs.get('certificate_store', None)
+
+
+class VaultSecretGroup(Model):
+    """Specifies set of certificates that should be installed onto the virtual
+    machines.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source_vault: Required. The relative URL of the Key Vault
+     containing all of the certificates in VaultCertificates.
+    :type source_vault: ~azure.mgmt.servicefabric.models.SubResource
+    :param vault_certificates: Required. The list of key vault references in
+     SourceVault which contain certificates.
+    :type vault_certificates:
+     list[~azure.mgmt.servicefabric.models.VaultCertificate]
+    """
+
+    _validation = {
+        'source_vault': {'required': True},
+        'vault_certificates': {'required': True},
+    }
+
+    _attribute_map = {
+        'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},
+        'vault_certificates': {'key': 'vaultCertificates', 'type': '[VaultCertificate]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VaultSecretGroup, self).__init__(**kwargs)
+        self.source_vault = kwargs.get('source_vault', None)
+        self.vault_certificates = kwargs.get('vault_certificates', None)
+
+
+class VMSSExtension(Model):
+    """Specifies set of extensions that should be installed onto the virtual
+    machines.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the extension.
+    :type name: str
+    :param publisher: Required. The name of the extension handler publisher.
+    :type publisher: str
+    :param type: Required. Specifies the type of the extension; an example is
+     "CustomScriptExtension".
+    :type type: str
+    :param type_handler_version: Required. Specifies the version of the script
+     handler.
+    :type type_handler_version: str
+    :param auto_upgrade_minor_version: Indicates whether the extension should
+     use a newer minor version if one is available at deployment time. Once
+     deployed, however, the extension will not upgrade minor versions unless
+     redeployed, even with this property set to true.
+    :type auto_upgrade_minor_version: bool
+    :param enable_automatic_upgrade: Indicates if the extension will upgrade
+     automatically.
+    :type enable_automatic_upgrade: bool
+    :param settings: Json formatted public settings for the extension.
+    :type settings: object
+    :param protected_settings: The extension can contain either
+     protectedSettings or protectedSettingsFromKeyVault or no protected
+     settings at all.
+    :type protected_settings: object
+    :ivar provisioning_state: The provisioning state, which only appears in
+     the response.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'publisher': {'required': True},
+        'type': {'required': True},
+        'type_handler_version': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'publisher': {'key': 'properties.publisher', 'type': 'str'},
+        'type': {'key': 'properties.type', 'type': 'str'},
+        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
+        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
+        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
+        'settings': {'key': 'properties.settings', 'type': 'object'},
+        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VMSSExtension, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.publisher = kwargs.get('publisher', None)
+        self.type = kwargs.get('type', None)
+        self.type_handler_version = kwargs.get('type_handler_version', None)
+        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
+        self.enable_automatic_upgrade = kwargs.get('enable_automatic_upgrade', None)
+        self.settings = kwargs.get('settings', None)
+        self.protected_settings = kwargs.get('protected_settings', None)
+        self.provisioning_state = None
