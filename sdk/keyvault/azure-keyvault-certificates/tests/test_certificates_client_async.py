@@ -3,8 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
+from datetime import datetime
 import functools
-import os
 import logging
 import json
 
@@ -19,7 +19,6 @@ from azure.keyvault.certificates import (
     KeyUsageType,
     CertificateContentType,
     LifetimeAction,
-    WellKnownIssuerNames,
     CertificateIssuer,
     IssuerProperties,
 )
@@ -635,3 +634,18 @@ class CertificateClientTests(KeyVaultTestCase):
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    async def test_versions(self, client, **kwargs):
+        cert_name = self.get_resource_name("cert")
+        for _ in range(self.list_test_size):
+            await client.create_certificate(cert_name, CertificatePolicy.get_default())
+
+        today = datetime.utcnow().strftime("%m%d%Y")
+        async for version in client.list_properties_of_certificate_versions(cert_name):
+            cert = await client.get_certificate_version(version.name, version.version)
+            assert cert.name == cert_name
+            for date in (version.created_on, version.updated_on, version.not_before):
+                assert date.strftime("%m%d%Y") == today

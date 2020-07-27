@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime
 import functools
 import json
 import logging
-import os
 import time
 
 from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormalizer
@@ -21,7 +21,6 @@ from azure.keyvault.certificates import (
     KeyUsageType,
     CertificateContentType,
     LifetimeAction,
-    WellKnownIssuerNames,
     CertificateIssuer,
     IssuerProperties,
 )
@@ -623,3 +622,19 @@ class CertificateClientTests(KeyVaultTestCase):
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    def test_versions(self, client, **kwargs):
+        cert_name = self.get_resource_name("cert")
+        for _ in range(self.list_test_size):
+            client.begin_create_certificate(cert_name, CertificatePolicy.get_default()).wait()
+
+        today = datetime.utcnow().strftime("%m%d%Y")
+        versions = [v for v in client.list_properties_of_certificate_versions(cert_name)]
+        for version in versions:
+            cert = client.get_certificate_version(version.name, version.version)
+            assert cert.name == cert_name
+            for date in (version.created_on, version.updated_on, version.not_before):
+                assert date.strftime("%m%d%Y") == today
