@@ -2,17 +2,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
 import os
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
 from azure.identity import CredentialUnavailableError
-from azure.identity.aio import DefaultAzureCredential, SharedTokenCacheCredential
-from azure.identity.aio._credentials.azure_cli import AzureCliCredential
-from azure.identity.aio._credentials.managed_identity import ManagedIdentityCredential
-from azure.identity.aio._credentials.vscode_credential import VSCodeCredential
+from azure.identity.aio import (
+    AzureCliCredential,
+    DefaultAzureCredential,
+    ManagedIdentityCredential,
+    SharedTokenCacheCredential,
+    VSCodeCredential,
+)
 from azure.identity._constants import EnvironmentVariables
 import pytest
 

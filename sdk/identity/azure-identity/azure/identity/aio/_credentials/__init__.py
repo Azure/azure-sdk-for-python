@@ -11,7 +11,7 @@ from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
-from .vscode_credential import VSCodeCredential
+from .vscode import VSCodeCredential
 
 
 __all__ = [
