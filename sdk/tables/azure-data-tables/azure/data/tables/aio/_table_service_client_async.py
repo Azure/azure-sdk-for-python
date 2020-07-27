@@ -1,10 +1,13 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 import functools
 from typing import (
     Union,
     Optional,
     Any,
-    Dict,
-    List
 )
 
 from azure.core.async_paging import AsyncItemPaged
@@ -66,10 +69,11 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     """
 
     def __init__(
-            self, account_url: str,
-            credential: Optional[Any]=None,
-            **kwargs: Any
-    ) -> None:
+            self, account_url,  # type: str
+            credential=None,  # type: Union[str,TokenCredential]
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(TableServiceClient, self).__init__(  # type: ignore
@@ -83,7 +87,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         self._loop = loop
 
     @distributed_trace_async
-    async def get_service_stats(self, **kwargs) -> "models.TableServiceStats":
+    async def get_service_stats(self, **kwargs):
+        # type: (...) -> dict[str,object]
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
@@ -101,7 +106,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             process_table_error(error)
 
     @distributed_trace_async
-    async def get_service_properties(self, **kwargs) -> "models.TableServiceProperties":
+    async def get_service_properties(self, **kwargs):
+        # type: (...) -> dict[str,Any]
         """Gets the properties of an account's Table service,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -119,12 +125,14 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
     @distributed_trace_async
     async def set_service_properties(
-            self, analytics_logging=None,
-            hour_metrics=None,
-            minute_metrics=None,
-            cors=None,
-            **kwargs
-    ) -> None:
+            self,
+            analytics_logging=None,  # type: Optional[TableAnalyticsLogging]
+            hour_metrics=None,  # type: Optional[Metrics]
+            minute_metrics=None,  # type: Optional[Metrics]
+            cors=None,  # type: Optional[CorsRule]
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Sets properties for an account's Table service endpoint,
         including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -154,9 +162,10 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     @distributed_trace_async
     async def create_table(
             self,
-            table_name: str,
-            **kwargs: Any
-    ) -> TableClient:
+            table_name,  # type: str
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> TableClient
         """Creates a new table under the given account.
 
         :param headers:
@@ -176,9 +185,10 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     @distributed_trace_async
     async def delete_table(
             self,
-            table_name: str,
-            **kwargs: Any
-    ) -> None:
+            table_name,  # type: str
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Creates a new table under the given account.
 
         :param table_name: The Table name.
@@ -193,8 +203,9 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     @distributed_trace
     def list_tables(
             self,
-            **kwargs
-    ) -> AsyncItemPaged[Table]:
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[Table]
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
@@ -221,9 +232,10 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     @distributed_trace
     def query_tables(
             self,
-            filter: List[str],
-            **kwargs: Any
-    ) -> AsyncItemPaged[Table]:
+            filter,  # pylint: disable=W0622
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[Table]
         """Queries tables under the given account.
         :param filter: Specify a filter to return certain tables
         :type filter: str
@@ -250,11 +262,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             page_iterator_class=TablePropertiesPaged
         )
 
-    def get_table_client(
-        self, 
-        table: Union[TableProperties, str],
-        **kwargs: Any
-    ) -> TableClient:
+    def get_table_client(self, table, **kwargs):
+        # type: (Union[TableProperties, str], Optional[Any]) -> TableClient
         """Get a client to interact with the specified table.
 
                The table need not already exist.

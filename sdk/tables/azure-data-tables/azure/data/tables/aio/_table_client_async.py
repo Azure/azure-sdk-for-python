@@ -1,10 +1,12 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 import functools
 from typing import (
-    Union, 
-    Optional,
+    Union,
     Any,
-    Dict,
-    List
 )
 
 from azure.core.async_paging import AsyncItemPaged
@@ -14,15 +16,14 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.data.tables import VERSION
 from azure.data.tables._entity import TableEntity
 from azure.data.tables._generated.aio._azure_table_async import AzureTable
-from azure.data.tables._generated.models import SignedIdentifier, TableProperties, QueryOptions, TableServiceProperties
+from azure.data.tables._generated.models import SignedIdentifier, TableProperties, QueryOptions
 from azure.data.tables._models import AccessPolicy
-from azure.data.tables._shared.base_client import parse_connection_str
 from azure.data.tables._shared.base_client_async import AsyncStorageAccountHostsMixin
 from azure.data.tables._shared.policies_async import ExponentialRetry
 from azure.data.tables._shared.request_handlers import serialize_iso
 from azure.data.tables._shared.response_handlers import return_headers_and_deserialized, process_table_error
 
-from .._models import UpdateMode 
+from .._models import UpdateMode
 from ._models import TableEntityPropertiesPaged
 from .._deserialize import _convert_to_entity
 from .._serialize import _add_entity_properties, _get_match_headers
@@ -30,53 +31,49 @@ from .._shared._table_client_base import TableClientBase
 
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
-    """A client to interact with a specific Queue.
-
-    :param str account_url:
-        The URL to the storage account. In order to create a client given the full URI to the queue,
-        use the :func:`from_queue_url` classmethod.
-    :param queue_name: The name of the queue.
-    :type queue_name: str
-    :param credential:
-        The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string, an account
-        shared access key.
-    :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
-    :keyword str secondary_hostname:
-        The hostname of the secondary endpoint.
-    :keyword message_encode_policy: The encoding policy to use on outgoing messages.
-        Default is not to encode messages. Other options include :class:`TextBase64EncodePolicy`,
-        :class:`BinaryBase64EncodePolicy` or `None`.
-    :keyword message_decode_policy: The decoding policy to use on incoming messages.
-        Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
-        :class:`BinaryBase64DecodePolicy` or `None`.
-
-    """
+    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
 
     def __init__(
             self,
-            account_url: str,
-            table_name: str,
-            credential: Optional[Any]=None,
-            **kwargs: Any
-    ) -> None:
+            account_url,  # type: str
+            table_name,  # type: str
+            credential,  # type : Optional[Any]=None
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Create TableClient from a Credential.
+
+              :param account_url:
+                  A url to an Azure Storage account.
+              :type account_url: str
+              :param table_name: The table name.
+              :type table_name: str
+              :param credential:
+                  The credentials with which to authenticate. This is optional if the
+                  account URL already has a SAS token, or the connection string already has shared
+                  access key values. The value can be a SAS token string, an account shared access
+                  key, or an instance of a TokenCredentials class from azure.identity.
+              :type credential: Union[str,TokenCredential]
+
+              :returns: None
+              """
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(TableClient, self).__init__(
             account_url, table_name=table_name, credential=credential, loop=loop, **kwargs
         )
         self._client = AzureTable(self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = kwargs.get('api_version', VERSION)  
+        self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable = W0212
         self._loop = loop
 
     @distributed_trace_async
     async def get_table_access_policy(
             self,
-            **kwargs: Any
-    ) -> Dict[str,AccessPolicy]:
-        """Retrieves details about any stored access policies specified on the table that may be
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> dict[str,AccessPolicy]
+        """
+        Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
         :return: Dictionary of SignedIdentifiers
         :rtype: dict[str,~azure.data.tables.AccessPolicy]
@@ -126,8 +123,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace_async
     async def create_table(
             self,
-            **kwargs: Any
-    ) -> str:
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> str
         """Creates a new table under the given account.
         :return: Table created
         :rtype: str
@@ -140,8 +138,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace_async
     async def delete_table(
             self,
-            **kwargs: Any
-    ) -> None:
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Creates a new table under the given account.
         :return: None
         :rtype: None
@@ -151,10 +150,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace_async
     async def delete_entity(
             self,
-            partition_key: str,
-            row_key: str,
-            **kwargs: Any
-    ) -> None:
+            partition_key,  # type: str
+            row_key,  # type: str
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Deletes the specified entity in a table.
         :param partition_key: The partition key of the entity.
         :type partition_key: str
@@ -168,7 +168,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """
         if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
-                                                                etag_param='etag', match_param='match_condition')
+                                                    etag_param='etag', match_param='match_condition')
 
         await self._client.table.delete_entity(
             table=self.table_name,
@@ -180,9 +180,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace_async
     async def create_entity(
             self,
-            entity: Dict[str,str],
-            **kwargs: Any
-    ) -> Union[Dict[str,str], TableEntity]:
+            entity,  # type: Union[TableEntity, dict[str,str]]
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> TableEntity
         """Insert entity in a table.
         :param entity: The properties for the table entity.
         :type entity: dict[str, str]
@@ -203,17 +204,18 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 **kwargs
             )
             properties = _convert_to_entity(inserted_entity)
-            return properties 
-        except ResourceNotFoundError as error: 
+            return properties
+        except ResourceNotFoundError as error:
             process_table_error(error)
 
     @distributed_trace_async
-    async def update_entity(  
+    async def update_entity(
             self,
-            entity: Dict[str,str],
-            mode: UpdateMode=UpdateMode.MERGE,
-            **kwargs: Any
-    ) -> None:
+            entity,  # type: Union[TableEntity, dict[str,str]]
+            mode=UpdateMode.MERGE,  # type: UpdateMode
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         """Update entity in a table.
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
@@ -231,8 +233,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None), 
-                                                    match_condition=kwargs.pop('match_condition', None)),
+        if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
+                                                                match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
 
         partition_key = entity['PartitionKey']
@@ -256,9 +258,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
     @distributed_trace
     def list_entities(
-        self,
-        **kwargs: Any
-    ) -> AsyncItemPaged[TableEntity]:
+            self,
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[TableEntity]
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities per page in return ItemPaged
@@ -284,9 +287,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace
     def query_entities(
             self,
-            filter: List[str],  
-            **kwargs: Any
-    ) -> AsyncItemPaged[TableEntity]:
+            filter,  # type: str  # pylint: disable = W0622
+            **kwargs
+    ):
+        # type: (...) -> AsyncItemPaged[TableEntity]
         """Lists entities in a table.
 
         :param str filter: Specify a filter to return certain entities
@@ -298,7 +302,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        filter = self._parameter_filter_substitution(parameters, filter)   # pylint: disable = W0622
+        filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable = W0622
 
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
@@ -319,10 +323,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     @distributed_trace_async
     async def get_entity(
             self,
-            partition_key: str,
-            row_key: str,
-            **kwargs: Any
-    ) -> TableEntity:
+            partition_key,  # type: str
+            row_key,  # type: str
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> TableEntity
         """Queries entities in a table.
         :param partition_key: The partition key of the entity.
         :type partition_key: str
@@ -338,25 +343,22 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                                                                                     row_key=row_key,
                                                                                     **kwargs)
         properties = _convert_to_entity(entity.additional_properties)
-        return properties 
+        return properties
 
     @distributed_trace_async
-    async def upsert_entity(  
+    async def upsert_entity(
             self,
-            entity: Dict[str,str],
-            mode: UpdateMode=UpdateMode.MERGE,
-            **kwargs: Any
-    ) -> None:
+            entity,  # type: Union[TableEntity, dict[str,str]]
+            mode=UpdateMode.MERGE,  # type: UpdateMode
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> None
 
         """Update/Merge or Insert entity into table.
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
         :param entity: The properties for the table entity.
         :type entity: dict[str, str]
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
         :return: Entity mapping str to azure.data.tables.EntityProperty or None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -385,9 +387,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             else:
                 raise ValueError('Mode type is not supported')
         except ResourceNotFoundError:
-                await self.create_entity(
-                    partition_key=partition_key,
-                    row_key=row_key,
-                    table_entity_properties=entity,
-                    **kwargs
-                )
+            await self.create_entity(
+                partition_key=partition_key,
+                row_key=row_key,
+                table_entity_properties=entity,
+                **kwargs
+            )

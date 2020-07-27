@@ -3,10 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from enum import Enum
-
 from azure.data.tables._deserialize import _convert_to_entity
-from azure.data.tables._shared.models import Services
 from azure.data.tables._shared.response_handlers import return_context_and_deserialized, process_table_error
 from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncPageIterator
