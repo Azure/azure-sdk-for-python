@@ -73,11 +73,6 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        # pylint:disable=unused-import
-        try:
-            import asyncio
-        except ImportError:
-            raise ImportError("Please make sure asyncio library are installed")
         super(AsyncioRequestsTransport, self).__init__(**kwargs)
 
     async def __aenter__(self):
@@ -152,11 +147,6 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
     :param int content_length: size of body in bytes.
     """
     def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
-        # pylint:disable=unused-import
-        try:
-            import asyncio
-        except ImportError:
-            raise ImportError("Please make sure asyncio library are installed")
         self.pipeline = pipeline
         self.request = response.request
         self.response = response

@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Optional, TypeVar, AsyncIterator as AsyncIteratorType
+from typing import Any, Optional, TypeVar, AsyncIterator as AsyncIteratorType, TYPE_CHECKING
 from collections.abc import AsyncIterator
 
 import logging
@@ -43,6 +43,8 @@ CONTENT_CHUNK_SIZE = 10 * 1024
 _LOGGER = logging.getLogger(__name__)
 ClientResponse = TypeVar("ClientResponse")
 
+if TYPE_CHECKING:
+    import aiohttp
 
 class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
@@ -68,9 +70,8 @@ class AioHttpTransport(AsyncHttpTransport):
         # pylint:disable=unused-import
         try:
             import aiohttp
-            import asyncio
         except ImportError:
-            raise ImportError("Please make sure aiohttp and asyncio libraries are installed")
+            raise ImportError("Please make sure aiohttp is installed")
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
@@ -211,9 +212,8 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         # pylint:disable=unused-import
         try:
             import aiohttp
-            import asyncio
         except ImportError:
-            raise ImportError("Please make sure aiohttp and asyncio libraries are installed")
+            raise ImportError("Please make sure aiohttp is installed")
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
@@ -276,14 +276,12 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :param block_size: block size of data sent over connection.
     :type block_size: int
     """
-    def __init__(self, request, aiohttp_response, block_size=None):
-        # type: (HttpRequest, ClientResponse, int) -> None
+    def __init__(self, request: HttpRequest, aiohttp_response: "aiohttp.ClientResponse", block_size=None) -> None:
         # pylint:disable=unused-import
         try:
             import aiohttp
-            import asyncio
         except ImportError:
-            raise ImportError("Please make sure aiohttp and asyncio libraries are installed")
+            raise ImportError("Please make sure aiohttp is installed")
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         self.status_code = aiohttp_response.status  # type:ignore

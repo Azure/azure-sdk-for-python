@@ -79,32 +79,6 @@ Message = TypeVar("Message")
 _LOGGER = logging.getLogger(__name__)
 
 
-def _case_insensitive_dict(*args, **kwargs):
-    """Return a case-insensitive dict from a structure that a dict would have accepted.
-
-    Rational is I don't want to re-implement this, but I don't want
-    to assume "requests" or "aiohttp" are installed either.
-    So I use the one from "requests" or the one from "aiohttp" ("multidict")
-    If one day this library is used in an HTTP context without "requests" nor "aiohttp" installed,
-    we can add "multidict" as a dependency or re-implement our own.
-    """
-    try:
-        from requests.structures import CaseInsensitiveDict
-
-        return CaseInsensitiveDict(*args, **kwargs)
-    except ImportError:
-        pass
-    try:
-        # multidict is installed by aiohttp
-        from multidict import CIMultiDict
-
-        return CIMultiDict(*args, **kwargs)
-    except ImportError:
-        raise ValueError(
-            "Neither 'requests' or 'multidict' are installed and no case-insensitive dict impl have been found"
-        )
-
-
 def _format_url_section(template, **kwargs):
     """String format the template with the kwargs, auto-skip sections of the template that are NOT in the kwargs.
 
@@ -218,9 +192,10 @@ class HttpRequest(object):
 
     def __init__(self, method, url, headers=None, files=None, data=None):
         # type: (str, str, Mapping[str, str], Any, Any) -> None
+        from .._tools import case_insensitive_dict
         self.method = method
         self.url = url
-        self.headers = _case_insensitive_dict(headers)
+        self.headers = case_insensitive_dict(headers)
         self.files = files
         self.data = data
         self.multipart_mixed_info = None  # type: Optional[Tuple]
@@ -643,9 +618,10 @@ class _HttpClientTransportResponse(_HttpResponseBase):
     """
 
     def __init__(self, request, httpclient_response):
+        from .._tools import case_insensitive_dict
         super(_HttpClientTransportResponse, self).__init__(request, httpclient_response)
         self.status_code = httpclient_response.status
-        self.headers = _case_insensitive_dict(httpclient_response.getheaders())
+        self.headers = case_insensitive_dict(httpclient_response.getheaders())
         self.reason = httpclient_response.reason
         self.content_type = self.headers.get("Content-Type")
         self.data = None

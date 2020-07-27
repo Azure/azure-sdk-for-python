@@ -18,10 +18,7 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOH
     """
 
     def __init__(self, credential, *scopes, **kwargs):
-        try:
-            import asyncio
-        except ImportError:
-            raise ImportError("Please make sure asyncio library are installed")
+        import asyncio
 
         super().__init__(credential, *scopes, **kwargs)
         self._lock = asyncio.Lock()

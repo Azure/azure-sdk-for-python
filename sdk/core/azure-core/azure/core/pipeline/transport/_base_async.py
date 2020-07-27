@@ -76,11 +76,6 @@ class _PartGenerator(AsyncIterator):
     """
 
     def __init__(self, response: "AsyncHttpResponse") -> None:
-        # pylint:disable=unused-import
-        try:
-            import asyncio
-        except ImportError:
-            raise ImportError("Please make sure asyncio library are installed")
         self._response = response
         self._parts = None
 
