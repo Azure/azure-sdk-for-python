@@ -170,7 +170,7 @@ Version 7.0.0b1 is a preview of our efforts to create a client library that is u
 
 * Introduces new AMQP-based API.
 * Original HTTP-based API still available under new namespace: azure.servicebus.control_client
-* For full API changes, please see updated [reference documentation](https://docs.microsoft.com/python/api/overview/azure/servicebus/client?view=azure-python).
+* For full API changes, please see updated [reference documentation](https://docs.microsoft.com/python/api/azure-servicebus/azure.servicebus?view=azure-python).
 
 Within the new namespace, the original HTTP-based API from version 0.21.1 remains unchanged (i.e. no additional features or bugfixes)
 so for those intending to only use HTTP operations - there is no additional benefit in updating at this time.

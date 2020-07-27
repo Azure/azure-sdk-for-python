@@ -10,7 +10,6 @@ from xml.etree.ElementTree import ElementTree
 from datetime import timedelta
 
 from azure.core.async_paging import AsyncItemPaged
-from azure.servicebus.aio.management._utils import extract_data_template, get_next_template
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import HttpLoggingPolicy, DistributedTracingPolicy, ContentDecodePolicy, \
@@ -39,6 +38,8 @@ from ...management._models import QueueRuntimeInfo, QueueDescription, TopicDescr
 from ...management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from ...management._handle_response_error import _handle_response_error
 from ...management._model_workaround import avoid_timedelta_overflow
+from ._utils import extract_data_template, extract_rule_data_template, get_next_template
+from ...management._utils import deserialize_rule_key_values, serialize_rule_key_values
 
 
 if TYPE_CHECKING:
@@ -692,6 +693,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
                 "Rule('Topic: {}, Subscription: {}, Rule {}') does not exist".format(
                     subscription_name, topic_name, rule_name))
         rule_description = RuleDescription._from_internal_entity(rule_name, entry.content.rule_description)
+        deserialize_rule_key_values(entry_ele, rule_description)  # to remove after #3535 is released.
         return rule_description
 
     async def create_rule(
@@ -724,6 +726,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
+        serialize_rule_key_values(request_body, rule)
         with _handle_response_error():
             entry_ele = await self._impl.rule.put(
                 topic_name,
@@ -731,7 +734,8 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
                 rule_name,
                 request_body, api_version=constants.API_VERSION, **kwargs)
         entry = RuleDescriptionEntry.deserialize(entry_ele)
-        result = entry.content.rule_description
+        result = RuleDescription._from_internal_entity(rule_name, entry.content.rule_description)
+        deserialize_rule_key_values(entry_ele, result)  # to remove after #3535 is released.
         return result
 
     async def update_rule(
@@ -767,6 +771,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             )
         )
         request_body = create_entity_body.serialize(is_xml=True)
+        serialize_rule_key_values(request_body, rule)
         with _handle_response_error():
             await self._impl.rule.put(
                 topic_name,
@@ -824,12 +829,17 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         except AttributeError:
             subscription_name = subscription
 
-        def entry_to_rule(entry):
+        def entry_to_rule(ele, entry):
+            """
+            `ele` will be removed after #3535 is released.
+            """
             rule = entry.content.rule_description
-            return RuleDescription._from_internal_entity(entry.title, rule)
+            rule_description = RuleDescription._from_internal_entity(entry.title, rule)
+            deserialize_rule_key_values(ele, rule_description)  # to remove after #3535 is released.
+            return rule_description
 
         extract_data = functools.partial(
-            extract_data_template, RuleDescriptionFeed, entry_to_rule
+            extract_rule_data_template, RuleDescriptionFeed, entry_to_rule
         )
         get_next = functools.partial(
             get_next_template, functools.partial(self._impl.list_rules, topic_name, subscription_name), **kwargs

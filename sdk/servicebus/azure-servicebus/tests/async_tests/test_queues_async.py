@@ -1234,7 +1234,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             def message_content():
                 for i in range(20):
-                    yield Message("Message no. {}".format(i))
+                    yield Message(
+                        body="Message no. {}".format(i),
+                        label='1st'
+                    )
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             receiver = sb_client.get_queue_receiver(servicebus_queue.name)
@@ -1246,36 +1249,24 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send_messages(message)
 
                 receive_counter = 0
-                message_received_cnt = 0
-                while message_received_cnt < 20:
+                message_1st_received_cnt = 0
+                message_2nd_received_cnt = 0
+                while message_1st_received_cnt < 20 or message_2nd_received_cnt < 20:
                     messages = await receiver.receive_messages(max_batch_size=20, max_wait_time=5)
                     if not messages:
                         break
                     receive_counter += 1
-                    message_received_cnt += len(messages)
-                    for m in messages:
-                        print_message(_logger, m)
-                        await sender.send_messages(message)
-                        await m.complete()
+                    for message in messages:
+                        print_message(_logger, message)
+                        if message.label == '1st':
+                            message_1st_received_cnt += 1
+                            await message.complete()
+                            message.label = '2nd'
+                            await sender.send_messages(message)  # resending received message
+                        elif message.label == '2nd':
+                            message_2nd_received_cnt += 1
+                            await message.complete()
 
-                assert message_received_cnt == 20
-                # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
-                assert receive_counter < 10  # Dynamic link credit issuing come info effect
-
-                # received resent messages
-
-                receive_counter = 0
-                message_received_cnt = 0
-                while message_received_cnt < 20:
-                    messages = await receiver.receive_messages(max_batch_size=20, max_wait_time=5)
-                    if not messages:
-                        break
-                    receive_counter += 1
-                    message_received_cnt += len(messages)
-                    for m in messages:
-                        print_message(_logger, m)
-                        await m.complete()
-
-                assert message_received_cnt == 20
+                assert message_1st_received_cnt == 20 and message_2nd_received_cnt == 20
                 # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
                 assert receive_counter < 10  # Dynamic link credit issuing come info effect

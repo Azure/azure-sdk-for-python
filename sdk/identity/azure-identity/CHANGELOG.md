@@ -212,7 +212,7 @@ the Azure CLI's client ID will be used.
   `client_id`
   - transport configuration is now done through keyword arguments as
   described in
-  [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/configuration.md)
+  [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/azure-identity_1.0.0/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
 
 ### Fixes and improvements:
 - Authenticating with a single sign-on shared with other Microsoft applications
@@ -287,9 +287,9 @@ revamped configuration API. Static `create_config` methods have been renamed
 
 ### New features:
 - Added credentials for authenticating users:
-[`DeviceCodeCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.DeviceCodeCredential),
-[`InteractiveBrowserCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.InteractiveBrowserCredential),
-[`UsernamePasswordCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.UsernamePasswordCredential)
+ - `DeviceCodeCredential`
+ - `InteractiveBrowserCredential`
+ - `UsernamePasswordCredential`
   - async versions of these credentials will be added in a future release
 
 ## 1.0.0b1 (2019-06-28)

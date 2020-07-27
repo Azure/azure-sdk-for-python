@@ -98,8 +98,8 @@ and a `CertificateOperation` if not.
 - `Certificate` now has attribute `properties`, which holds certain properties of the
 certificate, such as `version`. This changes the shape of the `Certificate` type,
 as certain properties of `Certificate` (such as `version`) have to be accessed
-through the `properties` property. See the updated [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.certificates.html)
-for details.
+through the `properties` property.
+
 - `update_certificate` has been renamed to `update_certificate_properties`
 - The `vault_url` parameter of `CertificateClient` has been renamed to `vault_endpoint`
 - The property `vault_url` has been renamed to `vault_endpoint` in all models
