@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"source": "https://badurl.jpg"}'
+    body: 'b''{"source": "https://badurl.jpg"}'''
     headers:
       Accept:
       - '*/*'
@@ -13,21 +13,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error":{"code":"FailedToDownloadImage","innerError":{"requestId":"b7a41482-ce09-4778-bd5f-93386fb8688f"},"message":"Failed
-        to download image from input URL."}}'
+      string: '{"error": {"code": "FailedToDownloadImage", "innerError": {"requestId":
+        "8f1e7239-2f6a-4040-b97f-1e4938485fbd"}, "message": "Failed to download image
+        from input URL."}}'
     headers:
       apim-request-id:
-      - b7a41482-ce09-4778-bd5f-93386fb8688f
+      - 8f1e7239-2f6a-4040-b97f-1e4938485fbd
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 15 Apr 2020 19:04:01 GMT
+      - Fri, 10 Jul 2020 18:53:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -35,7 +35,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3281'
+      - '3086'
     status:
       code: 400
       message: Bad Request

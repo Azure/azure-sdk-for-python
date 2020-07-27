@@ -11424,28 +11424,27 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyze
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyze
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - f1d90c57-32f5-43c5-a3bc-8031c2400564
+      - d1e89e1b-f412-454e-82b1-6672f2a5ca85
       content-length:
       - '0'
       date:
-      - Thu, 04 Jun 2020 19:48:48 GMT
+      - Fri, 10 Jul 2020 18:39:39 GMT
       operation-location:
-      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/f1d90c57-32f5-43c5-a3bc-8031c2400564
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/d1e89e1b-f412-454e-82b1-6672f2a5ca85
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '143'
+      - '187'
     status:
       code: 202
       message: Accepted
@@ -11459,86 +11458,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/f1d90c57-32f5-43c5-a3bc-8031c2400564
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/d1e89e1b-f412-454e-82b1-6672f2a5ca85
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-06-04T19:48:49Z", "lastUpdatedDateTime":
-        "2020-06-04T19:48:49Z"}'
-    headers:
-      apim-request-id:
-      - 786fff01-6bbf-48d6-bb80-6278116111f2
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 04 Jun 2020 19:48:53 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '10'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/f1d90c57-32f5-43c5-a3bc-8031c2400564
-  response:
-    body:
-      string: '{"status": "running", "createdDateTime": "2020-06-04T19:48:49Z", "lastUpdatedDateTime":
-        "2020-06-04T19:48:59Z"}'
-    headers:
-      apim-request-id:
-      - d8d9484c-940a-45d1-acc1-8388dd2a736c
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 04 Jun 2020 19:49:00 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '188'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/layout/analyzeResults/f1d90c57-32f5-43c5-a3bc-8031c2400564
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-06-04T19:48:49Z",
-        "lastUpdatedDateTime": "2020-06-04T19:49:00Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:39:40Z",
+        "lastUpdatedDateTime": "2020-07-10T18:39:45Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "language": "en", "angle": 0, "width":
         8.5, "height": 11, "unit": "inch", "lines": [{"boundingBox": [1.0119, 1.6855,
         3.9147, 1.6855, 3.9147, 1.8775, 1.0119, 1.8775], "text": "Quarterly Sales
@@ -12803,11 +12729,11 @@ interactions:
         5.0925, 7.8425, 5.0925, 7.8425, 5.285, 7.0817, 5.285], "elements": ["#/readResults/1/lines/79/words/0"]}]}]}]}}'
     headers:
       apim-request-id:
-      - 206a3d5a-a7ac-4a63-a128-002fb6c5d732
+      - 926a8a10-c94c-4283-95ef-43186ed27431
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 04 Jun 2020 19:49:05 GMT
+      - Fri, 10 Jul 2020 18:39:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -12815,7 +12741,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '150'
+      - '46'
     status:
       code: 200
       message: OK

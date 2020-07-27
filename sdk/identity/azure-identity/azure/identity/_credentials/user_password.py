@@ -29,7 +29,7 @@ class UsernamePasswordCredential(InteractiveCredential):
     :param str password: the user's password
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
     :keyword str tenant_id: tenant ID or a domain associated with a tenant. If not provided, defaults to the
           'organizations' tenant, which supports only Azure Active Directory work or school accounts.
@@ -55,7 +55,6 @@ class UsernamePasswordCredential(InteractiveCredential):
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> dict
         app = self._get_app()
-        with self._adapter:
-            return app.acquire_token_by_username_password(
-                username=self._username, password=self._password, scopes=list(scopes)
-            )
+        return app.acquire_token_by_username_password(
+            username=self._username, password=self._password, scopes=list(scopes)
+        )

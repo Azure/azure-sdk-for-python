@@ -98,7 +98,7 @@ class ContainerClient(StorageAccountHostsMixin):
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
         Defaults to 4*1024*1024, or 4MB.
-    :keyword int max_single_put_size: If the blob size is less than max_single_put_size, then the blob will be
+    :keyword int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
         uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
         the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
     :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
@@ -635,7 +635,7 @@ class ContainerClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def list_blobs(self, name_starts_with=None, include=None, **kwargs):
-        # type: (Optional[str], Optional[Any], **Any) -> ItemPaged[BlobProperties]
+        # type: (Optional[str], Optional[Union[str, List[str]]], **Any) -> ItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -643,9 +643,9 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
-        :param list[str] include:
+        :param list[str] or str include:
             Specifies one or more additional datasets to include in the response.
-            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted'.
+            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'tags'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
@@ -1037,6 +1037,8 @@ class ContainerClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         delete_snapshots = kwargs.pop('delete_snapshots', None)
+        if_modified_since = kwargs.pop('if_modified_since', None)
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
                        'timeout': '&timeout=' + str(timeout) if timeout else ""
@@ -1048,13 +1050,12 @@ class ContainerClient(StorageAccountHostsMixin):
             container_name = self.container_name
 
             try:
-                container_name = blob.get('container') if blob.get('container') else container_name
                 options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
                     snapshot=blob.get('snapshot'),
                     delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
                     lease=blob.get('lease_id'),
-                    if_modified_since=blob.get('if_modified_since'),
-                    if_unmodified_since=blob.get('if_unmodified_since'),
+                    if_modified_since=if_modified_since or blob.get('if_modified_since'),
+                    if_unmodified_since=if_unmodified_since or blob.get('if_unmodified_since'),
                     etag=blob.get('etag'),
                     match_condition=blob.get('match_condition') or MatchConditions.IfNotModified if blob.get('etag')
                     else None,
@@ -1062,7 +1063,11 @@ class ContainerClient(StorageAccountHostsMixin):
                 )
                 query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options(**options)
             except AttributeError:
-                query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options()
+                query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options(
+                    delete_snapshots=delete_snapshots,
+                    if_modified_since=if_modified_since,
+                    if_unmodified_since=if_unmodified_since
+                )
 
             req = HttpRequest(
                 "DELETE",
@@ -1093,22 +1098,43 @@ class ContainerClient(StorageAccountHostsMixin):
             The blobs to delete. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
 
-            ..note::
-                When then blob type is dict, here's a list of keys you can set:
-                blob name: 'name'
-                container name: 'container'
-                snapshot you want to delete: 'snapshot'
-                whether to delete snapthots when deleting blob: 'delete_snapshots'
-                if the blob modified or not: 'if_modified_since', 'if_unmodified_since'
-                match the etag or not: 'etag', 'match_condition'
-                lease id or lease client: 'lease_id'
-                timeout for subrequest: 'timeout'
+            .. note::
+                When the blob type is dict, here's a list of keys, value rules.
+
+                blob name:
+                    key: 'name', value type: str
+                snapshot you want to delete:
+                    key: 'snapshot', value type: str
+                whether to delete snapthots when deleting blob:
+                    key: 'delete_snapshots', value: 'include' or 'only'
+                if the blob modified or not:
+                    key: 'if_modified_since', 'if_unmodified_since', value type: datetime
+                etag:
+                    key: 'etag', value type: str
+                match the etag or not:
+                    key: 'match_condition', value type: MatchConditions
+                lease:
+                    key: 'lease_id', value type: Union[str, LeaseClient]
+                timeout for subrequest:
+                    key: 'timeout', value type: int
 
         :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword str delete_snapshots:
             Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
@@ -1182,7 +1208,6 @@ class ContainerClient(StorageAccountHostsMixin):
             container_name = self.container_name
 
             try:
-                container_name = blob.get('container') if blob.get('container') else container_name
                 tier = blob_tier or blob.get('blob_tier')
                 query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(
                     tier=tier,
@@ -1191,7 +1216,8 @@ class ContainerClient(StorageAccountHostsMixin):
                     timeout=timeout or blob.get('timeout')
                 )
             except AttributeError:
-                query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(blob_tier)
+                query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(
+                    blob_tier, rehydrate_priority=rehydrate_priority)
 
             req = HttpRequest(
                 "PUT",
@@ -1224,7 +1250,7 @@ class ContainerClient(StorageAccountHostsMixin):
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
 
-            ..note::
+            .. note::
                 If you want to set different tier on different blobs please set this positional parameter to None.
                 Then the blob tier on every BlobProperties will be taken.
 
@@ -1233,14 +1259,19 @@ class ContainerClient(StorageAccountHostsMixin):
             The blobs with which to interact. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
 
-            ..note::
-                When then blob type is dict, here's a list of keys you can set:
-                blob name: 'name'
-                container name: 'container'
-                standard blob tier: 'blob_tier'
-                rehydrate priority: 'rehydrate_priority'
-                lease id or lease client: 'lease_id'
-                timeout for subrequest: 'timeout'
+            .. note::
+                When the blob type is dict, here's a list of keys, value rules.
+
+                blob name:
+                    key: 'name', value type: str
+                standard blob tier:
+                    key: 'blob_tier', value type: StandardBlobTier
+                rehydrate priority:
+                    key: 'rehydrate_priority', value type: RehydratePriority
+                lease:
+                    key: 'lease_id', value type: Union[str, LeaseClient]
+                timeout for subrequest:
+                    key: 'timeout', value type: int
 
         :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
@@ -1272,7 +1303,7 @@ class ContainerClient(StorageAccountHostsMixin):
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
 
-            ..note::
+            .. note::
                 If you want to set different tier on different blobs please set this positional parameter to None.
                 Then the blob tier on every BlobProperties will be taken.
 
@@ -1281,13 +1312,17 @@ class ContainerClient(StorageAccountHostsMixin):
             The blobs with which to interact. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
 
-            ..note::
-                When then blob type is dict, here's a list of keys you can set:
-                blob name: 'name'
-                container name: 'container'
-                premium blob tier: 'blob_tier'
-                lease id or lease client: 'lease_id'
-                timeout for subrequest: 'timeout'
+            .. note::
+                When the blob type is dict, here's a list of keys, value rules.
+
+                blob name:
+                    key: 'name', value type: str
+                premium blob tier:
+                    key: 'blob_tier', value type: PremiumPageBlobTier
+                lease:
+                    key: 'lease_id', value type: Union[str, LeaseClient]
+                timeout for subrequest:
+                    key: 'timeout', value type: int
 
         :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword int timeout:

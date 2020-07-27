@@ -246,6 +246,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs)
         ]
+        if kwargs.get("_additional_pipeline_policies"):
+            policies = policies + kwargs.get("_additional_pipeline_policies")
         return config, Pipeline(config.transport, policies=policies)
 
     def _batch_send(
@@ -260,8 +262,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             url='{}://{}/?comp=batch{}{}'.format(
                 self.scheme,
                 self.primary_hostname,
-                kwargs.pop('sas', None),
-                kwargs.pop('timeout', None)
+                kwargs.pop('sas', ""),
+                kwargs.pop('timeout', "")
             ),
             headers={
                 'x-ms-version': self.api_version

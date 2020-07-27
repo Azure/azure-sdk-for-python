@@ -1,5 +1,30 @@
 # Release History
 
+## 0.7.0 (2020-06-15)
+
+*Authoring*
+
+**Features**
+
+  - Model JSONEntity has a new parameter children
+  - Model EntityLabel has a new parameter children
+  - Model EntityPrediction has a new parameter children
+  - Model EntityLabelObject has a new parameter children
+  - Model ModelFeatureInformation has a new parameter is_required
+
+**Breaking changes**
+
+  - Operation ExamplesOperations.add has a new signature
+  - Operation ExamplesOperations.batch has a new signature
+  - Operation ExamplesOperations.list has a new signature
+  - Operation ModelOperations.list_entity_suggestions has a new signature
+  - Operation ModelOperations.list_intent_suggestions has a new signature
+  - Operation ModelOperations.delete_entity_feature has a new signature
+  - Operation ModelOperations.delete_intent_feature has a new signature
+  - Operation FeaturesOperations.add_entity_feature has a new signature
+  - Operation FeaturesOperations.add_intent_feature has a new signature
+  - Removed operation group PermissionsOperations
+
 ## 0.6.0 (2020-05-11)
 
 *Authoring*

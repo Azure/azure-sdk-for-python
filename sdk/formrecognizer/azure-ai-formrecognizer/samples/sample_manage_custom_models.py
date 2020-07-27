@@ -61,8 +61,8 @@ class ManageCustomModelsSample(object):
         custom_model = form_training_client.get_custom_model(model_id=first_model.model_id)
         print("Model ID: {}".format(custom_model.model_id))
         print("Status: {}".format(custom_model.status))
-        print("Requested on: {}".format(custom_model.requested_on))
-        print("Completed on: {}".format(custom_model.completed_on))
+        print("Training started on: {}".format(custom_model.training_started_on))
+        print("Training completed on: {}".format(custom_model.training_completed_on))
         # [END get_custom_model]
 
         # Finally, we will delete this model by ID

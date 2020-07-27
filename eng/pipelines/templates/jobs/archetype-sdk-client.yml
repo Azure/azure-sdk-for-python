@@ -9,37 +9,31 @@ parameters:
   BuildDocs: true
   TestMatrix:
     Linux_Python27:
-      OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
       PythonVersion: '2.7'
       CoverageArg: ''
       RunForPR: true
     Linux_Python35:
-      OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
       PythonVersion: '3.5'
       CoverageArg: ''
       RunForPR: false
     Linux_Python38:
-      OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
       PythonVersion: '3.8'
       CoverageArg: ''
       RunForPR: true
     Windows_Python35:
-      OSName: 'Windows'
       OSVmImage: 'windows-2019'
       PythonVersion: '3.5'
       CoverageArg: ''
       RunForPR: true
     MacOS_Python27:
-      OSName: 'MacOS'
       OSVmImage: 'macOS-10.15'
       PythonVersion: '2.7'
       CoverageArg: ''
       RunForPR: false
     Linux_pypy3:
-      OSName: 'Linux'
       OSVmImage: 'ubuntu-18.04'
       PythonVersion: 'pypy3'
       CoverageArg: '--disablecov'
@@ -74,11 +68,16 @@ jobs:
       vmImage: 'ubuntu-18.04'
 
     steps:
+    - template: ../../../common/pipelines/templates/steps/verify-links.yml
+      parameters:
+        Directory: "sdk/${{ parameters.ServiceDirectory }}"
+
     - template: ../steps/analyze.yml
       parameters: 
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
 
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
@@ -117,7 +116,7 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-        OSName: $(OSName)
+        OSVmImage: $(OSVmImage)
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}

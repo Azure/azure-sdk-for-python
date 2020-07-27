@@ -723,8 +723,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b6 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
   response:
@@ -733,11 +732,11 @@ interactions:
         request contains too many records. Max 1000 records are permitted."}}}'
     headers:
       apim-request-id:
-      - 438f2058-71fe-45c7-bc01-f04bef245480
+      - f981da9c-5e9f-452d-8b88-2a9a12ecdd49
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 27 May 2020 16:04:08 GMT
+      - Thu, 18 Jun 2020 19:52:38 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -745,7 +744,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '25'
+      - '27'
     status:
       code: 400
       message: Bad Request

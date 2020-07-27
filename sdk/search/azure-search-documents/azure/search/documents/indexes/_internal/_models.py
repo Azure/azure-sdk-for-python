@@ -8,7 +8,6 @@ from ._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
     AnalyzeRequest,
-    CustomAnalyzer as _CustomAnalyzer,
 )
 
 
@@ -120,7 +119,7 @@ class CustomAnalyzer(LexicalAnalyzer):
     _validation = {
         'odata_type': {'required': True},
         'name': {'required': True},
-        'tokenizer': {'required': True},
+        'tokenizer_name': {'required': True},
     }
 
     _attribute_map = {

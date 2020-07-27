@@ -5,6 +5,7 @@
 # ------------------------------------
 
 import pytest
+import functools
 from datetime import date, time
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -13,9 +14,26 @@ from azure.ai.formrecognizer._response_handlers import prepare_receipt
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from testcase import GlobalFormRecognizerAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
+from testcase import GlobalClientPreparer as _GlobalClientPreparer
+
+
+GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
 class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
+
+    @GlobalFormRecognizerAccountPreparer()
+    async def test_polling_interval(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key), polling_interval=7)
+        self.assertEqual(client._client._config.polling_interval, 7)
+
+        async with client:
+            poller = await client.begin_recognize_receipts_from_url(self.receipt_url_jpg, polling_interval=6)
+            await poller.wait()
+            self.assertEqual(poller._polling_method._timeout, 6)
+            poller2 = await client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
+            await poller2.wait()
+            self.assertEqual(poller2._polling_method._timeout, 7)  # goes back to client default
 
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
@@ -23,60 +41,126 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
         client = FormRecognizerClient(endpoint, token)
-        poller = await client.begin_recognize_receipts_from_url(
-            self.receipt_url_jpg
-        )
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts_from_url(
+                self.receipt_url_jpg
+            )
+            result = await poller.result()
         self.assertIsNotNone(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_receipts_encoded_url(self, client):
+        with pytest.raises(HttpResponseError) as e:
+            async with client:
+                poller = await client.begin_recognize_receipts_from_url("https://fakeuri.com/blank%20space")
+        self.assertIn("https://fakeuri.com/blank%20space", e.value.response.request.body)
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_receipt_url_bad_endpoint(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
+            async with client:
+                poller = await client.begin_recognize_receipts_from_url(
+                    self.receipt_url_jpg
+                )
+                result = await poller.result()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_receipt_url_auth_successful_key(self, client):
+        async with client:
             poller = await client.begin_recognize_receipts_from_url(
                 self.receipt_url_jpg
             )
             result = await poller.result()
-
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_receipt_url_auth_successful_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-        poller = await client.begin_recognize_receipts_from_url(
-            self.receipt_url_jpg
-        )
-        result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_receipt_url_auth_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            poller = await client.begin_recognize_receipts_from_url(
-                self.receipt_url_jpg
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_receipts_from_url(
+                    self.receipt_url_jpg
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_receipt_bad_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-
+    @GlobalClientPreparer()
+    async def test_receipt_bad_url(self, client):
         with self.assertRaises(HttpResponseError):
-            poller = await client.begin_recognize_receipts_from_url("https://badurl.jpg")
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_receipts_from_url("https://badurl.jpg")
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_receipt_url_pass_stream(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_receipt_url_pass_stream(self, client):
+        
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
 
         with self.assertRaises(HttpResponseError):
-            poller = await client.begin_recognize_receipts_from_url(receipt)
+            async with client:
+                poller = await client.begin_recognize_receipts_from_url(receipt)
+                result = await poller.result()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_receipt_url_transform_jpg(self, client):
+
+        responses = []
+
+        def callback(raw_response, _, headers):
+            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
+            extracted_receipt = prepare_receipt(analyze_result)
+            responses.append(analyze_result)
+            responses.append(extracted_receipt)
+
+        async with client:
+            poller = await client.begin_recognize_receipts_from_url(
+                self.receipt_url_jpg,
+                include_field_elements=True,
+                cls=callback
+            )
             result = await poller.result()
 
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_receipt_url_transform_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+        raw_response = responses[0]
+        returned_model = responses[1]
+        receipt = returned_model[0]
+        actual = raw_response.analyze_result.document_results[0].fields
+        read_results = raw_response.analyze_result.read_results
+        document_results = raw_response.analyze_result.document_results
 
+        # check dict values
+        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantAddress"), actual.get("MerchantAddress"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantName"), actual.get("MerchantName"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantPhoneNumber"), actual.get("MerchantPhoneNumber"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("Subtotal"), actual.get("Subtotal"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("Tax"), actual.get("Tax"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("Tip"), actual.get("Tip"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("Total"), actual.get("Total"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionDate"), actual.get("TransactionDate"), read_results)
+        self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionTime"), actual.get("TransactionTime"), read_results)
+
+        # check page range
+        self.assertEqual(receipt.page_range.first_page_number, document_results[0].page_range[0])
+        self.assertEqual(receipt.page_range.last_page_number, document_results[0].page_range[1])
+
+        # check receipt type
+        receipt_type = receipt.fields.get("ReceiptType")
+        self.assertEqual(receipt_type.confidence, actual["ReceiptType"].confidence)
+        self.assertEqual(receipt_type.value, actual["ReceiptType"].value_string)
+
+        # check receipt items
+        self.assertReceiptItemsTransformCorrect(receipt.fields["Items"].value, actual["Items"], read_results)
+
+        # Check page metadata
+        self.assertFormPagesTransformCorrect(receipt.pages, read_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_receipt_url_transform_png(self, client):
         responses = []
 
         def callback(raw_response, _, headers):
@@ -85,12 +169,13 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 
-        poller = await client.begin_recognize_receipts_from_url(
-            self.receipt_url_jpg,
-            include_text_content=True,
-            cls=callback
-        )
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts_from_url(
+                self.receipt_url_png,
+                include_field_elements=True,
+                cls=callback
+            )
+            result = await poller.result()
 
         raw_response = responses[0]
         returned_model = responses[1]
@@ -126,66 +211,15 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(receipt.pages, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_receipt_url_transform_png(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_receipt_url_include_field_elements(self, client):
 
-        responses = []
-
-        def callback(raw_response, _, headers):
-            analyze_result = client._client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_receipt(analyze_result)
-            responses.append(analyze_result)
-            responses.append(extracted_receipt)
-
-        poller = await client.begin_recognize_receipts_from_url(
-            self.receipt_url_png,
-            include_text_content=True,
-            cls=callback
-        )
-        result = await poller.result()
-
-        raw_response = responses[0]
-        returned_model = responses[1]
-        receipt = returned_model[0]
-        actual = raw_response.analyze_result.document_results[0].fields
-        read_results = raw_response.analyze_result.read_results
-        document_results = raw_response.analyze_result.document_results
-
-        # check dict values
-        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantAddress"), actual.get("MerchantAddress"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantName"), actual.get("MerchantName"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantPhoneNumber"), actual.get("MerchantPhoneNumber"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("Subtotal"), actual.get("Subtotal"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("Tax"), actual.get("Tax"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("Tip"), actual.get("Tip"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("Total"), actual.get("Total"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionDate"), actual.get("TransactionDate"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionTime"), actual.get("TransactionTime"), read_results)
-
-        # check page range
-        self.assertEqual(receipt.page_range.first_page_number, document_results[0].page_range[0])
-        self.assertEqual(receipt.page_range.last_page_number, document_results[0].page_range[1])
-
-        # check receipt type
-        receipt_type = receipt.fields.get("ReceiptType")
-        self.assertEqual(receipt_type.confidence, actual["ReceiptType"].confidence)
-        self.assertEqual(receipt_type.value, actual["ReceiptType"].value_string)
-
-        # check receipt items
-        self.assertReceiptItemsTransformCorrect(receipt.fields["Items"].value, actual["Items"], read_results)
-
-        # Check page metadata
-        self.assertFormPagesTransformCorrect(receipt.pages, read_results)
-
-    @GlobalFormRecognizerAccountPreparer()
-    async def test_receipt_url_include_text_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
-
-        poller = await client.begin_recognize_receipts_from_url(
-            self.receipt_url_jpg,
-            include_text_content=True
-        )
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts_from_url(
+                self.receipt_url_jpg,
+                include_field_elements=True
+            )
+            result = await poller.result()
 
         self.assertEqual(len(result), 1)
         receipt = result[0]
@@ -194,19 +228,20 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         for field, value in receipt.__dict__.items():
             if field not in ["page_range", "pages", "fields", "form_type"]:
                 field = getattr(receipt, field)
-                self.assertTextContentHasValues(field.value_data.text_content, receipt.page_range.first_page_number)
+                self.assertFieldElementsHasValues(field.value_data.field_elements, receipt.page_range.first_page_number)
 
         for field, value in receipt.fields.items():
-            self.assertTextContentHasValues(value.value_data.text_content, receipt.page_range.first_page_number)
+            self.assertFieldElementsHasValues(value.value_data.field_elements, receipt.page_range.first_page_number)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_receipt_url_jpg(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_receipt_url_jpg(self, client):
 
-        poller = await client.begin_recognize_receipts_from_url(
-            self.receipt_url_jpg
-        )
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts_from_url(
+                self.receipt_url_jpg
+            )
+            result = await poller.result()
 
         self.assertEqual(len(result), 1)
         receipt = result[0]
@@ -228,11 +263,12 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertReceiptItemsHasValues(receipt.fields["Items"].value, receipt.page_range.first_page_number, False)
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_receipt_url_png(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_receipt_url_png(self, client):
 
-        poller = await client.begin_recognize_receipts_from_url(self.receipt_url_png)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts_from_url(self.receipt_url_png)
+            result = await poller.result()
 
         self.assertEqual(len(result), 1)
         receipt = result[0]
@@ -251,11 +287,12 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt_type.value, 'Itemized')
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_receipt_multipage_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_receipt_multipage_url(self, client):
 
-        poller = await client.begin_recognize_receipts_from_url(self.multipage_url_pdf, include_text_content=True)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts_from_url(self.multipage_url_pdf, include_field_elements=True)
+            result = await poller.result()
 
         self.assertEqual(len(result), 3)
         receipt = result[0]
@@ -284,8 +321,8 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertEqual(receipt_type.value, 'Itemized')
 
     @GlobalFormRecognizerAccountPreparer()
-    async def test_receipt_multipage_transform_url(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    @GlobalClientPreparer()
+    async def test_receipt_multipage_transform_url(self, client):
 
         responses = []
 
@@ -295,13 +332,14 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 
-        poller = await client.begin_recognize_receipts_from_url(
-            self.multipage_url_pdf,
-            include_text_content=True,
-            cls=callback
-        )
+        async with client:
+            poller = await client.begin_recognize_receipts_from_url(
+                self.multipage_url_pdf,
+                include_field_elements=True,
+                cls=callback
+            )
 
-        result = await poller.result()
+            result = await poller.result()
         raw_response = responses[0]
         returned_model = responses[1]
         actual = raw_response.analyze_result.document_results
@@ -311,7 +349,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
         # check hardcoded values
         for receipt, actual in zip(returned_model, actual):
-            if actual.fields is None:  # second page is blank
+            if not actual.fields:  # second page is blank
                 continue
 
             # check dict values
@@ -341,13 +379,14 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(returned_model, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
     @pytest.mark.live_test_only
-    async def test_receipt_continuation_token(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
+    async def test_receipt_continuation_token(self, client):
 
-        initial_poller = await client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
-        cont_token = initial_poller.continuation_token()
-        poller = await client.begin_recognize_receipts_from_url(self.receipt_url_jpg, continuation_token=cont_token)
-        result = await poller.result()
-        self.assertIsNotNone(result)
-        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        async with client:
+            initial_poller = await client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
+            cont_token = initial_poller.continuation_token()
+            poller = await client.begin_recognize_receipts_from_url(self.receipt_url_jpg, continuation_token=cont_token)
+            result = await poller.result()
+            self.assertIsNotNone(result)
+            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

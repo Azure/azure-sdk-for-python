@@ -11,7 +11,8 @@ FILE: sample_copy_model_async.py
 
 DESCRIPTION:
     This sample demonstrates how to copy a custom model from a source Form Recognizer resource
-    to a target Form Recognizer resource.
+    to a target Form Recognizer resource. The resource id and the resource region can be found
+    in the azure portal.
 
 USAGE:
     python sample_copy_model_async.py
@@ -52,6 +53,8 @@ class CopyModelSampleAsync(object):
                 resource_region=target_region,
                 resource_id=target_resource_id
             )
+        # model ID that target client will use to access the model once copy is complete
+        print("Model ID: {}".format(target["modelId"]))
         # [END get_copy_authorization_async]
 
         # [START copy_model_async]
@@ -60,7 +63,7 @@ class CopyModelSampleAsync(object):
         async with source_client:
             poller = await source_client.begin_copy_model(
                 model_id=source_model_id,
-                target=target
+                target=target  # output from target client's call to get_copy_authorization()
             )
             copied_over_model = await poller.result()
 

@@ -1,5 +1,11 @@
 # Release History
 
+## 0.4.1 (2020-06-24)
+
+**Features**
+
+- Add recognition_03 support
+
 ## 0.4.0 (2019-06-27)
 
 **Features**

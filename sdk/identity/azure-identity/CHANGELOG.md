@@ -1,19 +1,50 @@
 # Release History
 
+## 1.4.0b8 (Unreleased)
+- `DefaultAzureCredential` uses the value of environment variable
+`AZURE_CLIENT_ID` to configure a user-assigned managed identity.
+([#10931](https://github.com/Azure/azure-sdk-for-python/issues/10931))
+
+
+## 1.4.0b7 (2020-07-22)
+- `DefaultAzureCredential` has a new optional keyword argument,
+`visual_studio_code_tenant_id`, which sets the tenant the credential should
+authenticate in when authenticating as the Azure user signed in to Visual
+Studio Code.
+- Renamed `AuthenticationRecord.deserialize` positional parameter `json_string`
+to `data`.
+
+
+## 1.4.0b6 (2020-07-07)
+- `AzureCliCredential` no longer raises an exception due to unexpected output
+  from the CLI when run by PyCharm (thanks @NVolcz)
+  ([#11362](https://github.com/Azure/azure-sdk-for-python/pull/11362))
+- Upgraded minimum `msal` version to 1.3.0
+- The async `AzureCliCredential` correctly invokes `/bin/sh`
+  ([#12048](https://github.com/Azure/azure-sdk-for-python/issues/12048))
+
+## 1.4.0b5 (2020-06-12)
+- Prevent an error on importing `AzureCliCredential` on Windows caused by a bug
+  in old versions of Python 3.6 (this bug was fixed in Python 3.6.5).
+  ([#12014](https://github.com/Azure/azure-sdk-for-python/issues/12014))
+- `SharedTokenCacheCredential.get_token` raises `ValueError` instead of
+  `ClientAuthenticationError` when called with no scopes.
+  ([#11553](https://github.com/Azure/azure-sdk-for-python/issues/11553))
+
 ## 1.4.0b4 (2020-06-09)
 - `ManagedIdentityCredential` can configure a user-assigned identity using any
   identifier supported by the current hosting environment. To specify an
   identity by its client ID, continue using the `client_id` argument. To
   specify an identity by any other ID, use the `identity_config` argument,
   for example: `ManagedIdentityCredential(identity_config={"object_id": ".."})`
-  ([#10989](https://github.com/Azure/azure-sdk-for-python/issues/10989)) 
+  ([#10989](https://github.com/Azure/azure-sdk-for-python/issues/10989))
 - `CertificateCredential` and `ClientSecretCredential` can optionally store
   access tokens they acquire in a persistent cache. To enable this, construct
   the credential with `enable_persistent_cache=True`. On Linux, the persistent
   cache requires libsecret and `pygobject`. If these are unavailable or
   unusable (e.g. in an SSH session), loading the persistent cache will raise an
   error. You may optionally configure the credential to fall back to an
-  unencrypted cache by constructing it with keyword argument 
+  unencrypted cache by constructing it with keyword argument
   `allow_unencrypted_cache=True`.
   ([#11347](https://github.com/Azure/azure-sdk-for-python/issues/11347))
 - `AzureCliCredential` raises `CredentialUnavailableError` when no user is
@@ -54,7 +85,7 @@
 
 ## 1.4.0b3 (2020-05-04)
 - `EnvironmentCredential` correctly initializes `UsernamePasswordCredential`
-with the value of `AZURE_TENANT_ID` 
+with the value of `AZURE_TENANT_ID`
 ([#11127](https://github.com/Azure/azure-sdk-for-python/pull/11127))
 - Values for the constructor keyword argument `authority` and
 `AZURE_AUTHORITY_HOST` may optionally specify an "https" scheme. For example,
@@ -74,7 +105,7 @@ with the value of `AZURE_TENANT_ID`
     - `enable_persistent_cache=True` configures these credentials to use a
     persistent cache on supported platforms (in this release, Windows only).
     By default they cache in memory only.
-- Now `DefaultAzureCredential` can authenticate with the identity signed in to 
+- Now `DefaultAzureCredential` can authenticate with the identity signed in to
 Visual Studio Code's Azure extension.
 ([#10472](https://github.com/Azure/azure-sdk-for-python/issues/10472))
 
@@ -181,7 +212,7 @@ the Azure CLI's client ID will be used.
   `client_id`
   - transport configuration is now done through keyword arguments as
   described in
-  [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/configuration.md)
+  [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/azure-identity_1.0.0/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
 
 ### Fixes and improvements:
 - Authenticating with a single sign-on shared with other Microsoft applications
@@ -256,9 +287,9 @@ revamped configuration API. Static `create_config` methods have been renamed
 
 ### New features:
 - Added credentials for authenticating users:
-[`DeviceCodeCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.DeviceCodeCredential),
-[`InteractiveBrowserCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.InteractiveBrowserCredential),
-[`UsernamePasswordCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.UsernamePasswordCredential)
+ - `DeviceCodeCredential`
+ - `InteractiveBrowserCredential`
+ - `UsernamePasswordCredential`
   - async versions of these credentials will be added in a future release
 
 ## 1.0.0b1 (2019-06-28)

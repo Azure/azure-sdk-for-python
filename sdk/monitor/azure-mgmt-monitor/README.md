@@ -2,12 +2,12 @@
 
 This is the Microsoft Azure Monitor Client Library.
 This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
-For a more complete view of Azure libraries, see the [Github repo](https://github.com/Azure/azure-sdk-for-python/)
+For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 
 # Usage
 
-For code examples, see [Monitor](https://docs.microsoft.com/python/api/overview/azure/monitoring)
+For code examples, see [Monitor](https://docs.microsoft.com/python/api/overview/azure/monitoring?view=azure-python-preview)
 on docs.microsoft.com.
 
 

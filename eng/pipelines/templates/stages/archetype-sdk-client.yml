@@ -1,12 +1,26 @@
 parameters:
-  Artifacts: []
-  ServiceDirectory: not-specified
-  ToxEnvParallel: '--tenvparallel'
-  InjectedPackages: ''
-  BuildDocs: true
-  TargetDocRepoOwner: 'MicrosoftDocs'
-  TargetDocRepoName: 'azure-docs-sdk-python'
-  
+- name: Artifacts
+  type: object
+  default: []
+- name: ServiceDirectory
+  type: string
+  default: not-specified
+- name: ToxEnvParallel
+  type: string
+  default: --tenvparallel
+- name: InjectedPackages
+  type: string
+  default: ''
+- name: BuildDocs
+  type: boolean
+  default: true
+- name: TargetDocRepoOwner
+  type: string
+  default: MicrosoftDocs
+- name: TargetDocRepoName
+  type: string
+  default: azure-docs-sdk-python
+
 stages:
   - stage: Build
     jobs:

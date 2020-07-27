@@ -20,7 +20,7 @@ from ..._internal.user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, List, Optional, Sequence, Union
+    from typing import Any, Iterable, List, Optional, Union
     from azure.core.credentials import AccessToken
     from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport
@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     Policy = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
 
 
+# pylint:disable=invalid-overridden-method
 class AadClient(AadClientBase):
     async def __aenter__(self):
         await self._pipeline.__aenter__()
@@ -44,7 +45,7 @@ class AadClient(AadClientBase):
 
     async def obtain_token_by_authorization_code(
         self,
-        scopes: "Sequence[str]",
+        scopes: "Iterable[str]",
         code: str,
         redirect_uri: str,
         client_secret: "Optional[str]" = None,
@@ -58,14 +59,14 @@ class AadClient(AadClientBase):
         return self._process_response(response, now)
 
     async def obtain_token_by_client_certificate(self, scopes, certificate, **kwargs):
-        # type: (Sequence[str], AadClientCertificate, **Any) -> AccessToken
+        # type: (Iterable[str], AadClientCertificate, **Any) -> AccessToken
         request = self._get_client_certificate_request(scopes, certificate)
         now = int(time.time())
         response = await self._pipeline.run(request, stream=False, **kwargs)
         return self._process_response(response, now)
 
     async def obtain_token_by_client_secret(
-        self, scopes: "Sequence[str]", secret: str, **kwargs: "Any"
+        self, scopes: "Iterable[str]", secret: str, **kwargs: "Any"
     ) -> "AccessToken":
         request = self._get_client_secret_request(scopes, secret)
         now = int(time.time())
@@ -73,7 +74,7 @@ class AadClient(AadClientBase):
         return self._process_response(response, now)
 
     async def obtain_token_by_refresh_token(
-        self, scopes: "Sequence[str]", refresh_token: str, **kwargs: "Any"
+        self, scopes: "Iterable[str]", refresh_token: str, **kwargs: "Any"
     ) -> "AccessToken":
         request = self._get_refresh_token_request(scopes, refresh_token)
         now = int(time.time())

@@ -19,7 +19,7 @@ interactions:
       api-key:
       - 424F1875A344DE98823F9BD67139C0D1
     method: POST
-    uri: https://searchcca148d.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://searchcca148d.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchcca148d.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC949C2A658D\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -39,7 +39,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://searchcca148d.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      - https://searchcca148d.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -67,7 +67,7 @@ interactions:
       api-key:
       - 424F1875A344DE98823F9BD67139C0D1
     method: GET
-    uri: https://searchcca148d.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://searchcca148d.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchcca148d.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D7EC949C2A658D\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}]}'
@@ -121,7 +121,7 @@ interactions:
       api-key:
       - 424F1875A344DE98823F9BD67139C0D1
     method: PUT
-    uri: https://searchcca148d.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+    uri: https://searchcca148d.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchcca148d.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC949C3F02C7\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -169,7 +169,7 @@ interactions:
       api-key:
       - 424F1875A344DE98823F9BD67139C0D1
     method: GET
-    uri: https://searchcca148d.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://searchcca148d.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchcca148d.search.windows.net/$metadata#datasources","value":[{"@odata.etag":"\"0x8D7EC949C3F02C7\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}]}'
@@ -215,7 +215,7 @@ interactions:
       api-key:
       - 424F1875A344DE98823F9BD67139C0D1
     method: GET
-    uri: https://searchcca148d.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+    uri: https://searchcca148d.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchcca148d.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC949C3F02C7\"","name":"sample-datasource","description":"updated","type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'

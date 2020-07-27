@@ -9,16 +9,18 @@
 import json
 from typing import (
     Any,
-    AsyncIterable,
     Dict,
     Union,
     TYPE_CHECKING,
 )
 from azure.core.polling import AsyncLROPoller
+from azure.core.pipeline import AsyncPipeline
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.async_paging import AsyncItemPaged
 from ._form_recognizer_client_async import FormRecognizerClient
+from ._helpers_async import AsyncTransportWrapper
 from .._generated.aio._form_recognizer_client_async import FormRecognizerClient as FormRecognizer
 from .._generated.models import (
     TrainRequest,
@@ -35,6 +37,7 @@ from .._models import (
     CustomFormModel
 )
 from .._user_agent import USER_AGENT
+from .._api_versions import validate_api_version
 from .._polling import TrainingPolling, CopyPolling
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -44,9 +47,9 @@ if TYPE_CHECKING:
 
 class FormTrainingClient(object):
     """FormTrainingClient is the Form Recognizer interface to use for creating,
-    and managing custom models. It provides methods for training models on forms
-    you provide and methods for viewing and deleting models, as well as
-    accessing account properties.
+    and managing custom models. It provides methods for training models on the forms
+    you provide, as well as methods for viewing and deleting models, accessing
+    account properties, and copying a model to another Form Recognizer resource.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -55,6 +58,9 @@ class FormTrainingClient(object):
         credential from :mod:`azure.identity`.
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
         or :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :keyword str api_version:
+        The API version of the service to use for requests. It defaults to the latest service version.
+        Setting to an older version may result in reduced feature compatibility.
 
     .. admonition:: Example:
 
@@ -81,13 +87,16 @@ class FormTrainingClient(object):
     ) -> None:
         self._endpoint = endpoint
         self._credential = credential
-
         authentication_policy = get_authentication_policy(credential)
+        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        api_version = kwargs.pop('api_version', None)
+        validate_api_version(api_version)
         self._client = FormRecognizer(
             endpoint=self._endpoint,
             credential=self._credential,  # type: ignore
             sdk_moniker=USER_AGENT,
             authentication_policy=authentication_policy,
+            polling_interval=polling_interval,
             **kwargs
         )
 
@@ -99,19 +108,21 @@ class FormTrainingClient(object):
             **kwargs: Any
     ) -> AsyncLROPoller[CustomFormModel]:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
-        externally accessible Azure storage blob container Uri (preferably a Shared Access Signature Uri).
+        externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
+        a container URI is accepted only when the container is public.
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
-        :param str training_files_url: An Azure Storage blob container's SAS URI.
+        :param str training_files_url: An Azure Storage blob container's SAS URI. A container URI can be used if the
+            container is public.
         :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
             exist in the blob container.
-        :keyword str prefix: A case-sensitive prefix string to filter documents for training.
-            Use `prefix` to filter documents themselves, or to restrict sub folders for training
-            when `include_sub_folders` is set to True. Not supported if training with labels.
-        :keyword bool include_sub_folders: A flag to indicate if sub folders
-            will also need to be included when searching for content to be preprocessed.
-            Use with `prefix` to filter for only certain sub folders. Not supported if training with labels.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
+            training. For example, when using a Azure storage blob URI, use the prefix to restrict sub
+            folders for training.
+        :keyword bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
+            will also need to be included when searching for content to be preprocessed. Not supported if
+            training with labels.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -138,7 +149,7 @@ class FormTrainingClient(object):
 
         cls = kwargs.pop("cls", None)
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         deserialization_callback = cls if cls else callback
 
         if continuation_token:
@@ -208,7 +219,7 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace
-    def list_custom_models(self, **kwargs: Any) -> AsyncIterable[CustomFormModelInfo]:
+    def list_custom_models(self, **kwargs: Any) -> AsyncItemPaged[CustomFormModelInfo]:
         """List information for each model, including model id,
         model status, and when it was created and last modified.
 
@@ -297,7 +308,9 @@ class FormTrainingClient(object):
         :param str resource_id: Azure Resource Id of the target Form Recognizer resource
             where the model will be copied to.
         :param str resource_region: Location of the target Form Recognizer resource. A valid Azure
-            region name supported by Cognitive Services.
+            region name supported by Cognitive Services. For example, 'westus', 'eastus' etc.
+            See https://azure.microsoft.com/global-infrastructure/services/?products=cognitive-services
+            for the regional availability of Cognitive Services
         :return: A dictionary with values for the copy authorization -
             "modelId", "accessToken", "resourceId", "resourceRegion", and "expirationDateTimeTicks".
         :rtype: Dict[str, Union[str, int]]
@@ -361,7 +374,7 @@ class FormTrainingClient(object):
             raise ValueError("model_id cannot be None or empty.")
 
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._client._deserialize(CopyOperationResult, raw_response)
@@ -395,11 +408,19 @@ class FormTrainingClient(object):
         :rtype: ~azure.ai.formrecognizer.aio.FormRecognizerClient
         :return: A FormRecognizerClient
         """
-        return FormRecognizerClient(
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._client._client._pipeline._transport),
+            policies=self._client._client._pipeline._impl_policies
+        )  # type: AsyncPipeline
+        client = FormRecognizerClient(
             endpoint=self._endpoint,
             credential=self._credential,
+            pipeline=_pipeline,
             **kwargs
         )
+        # need to share config, but can't pass as a keyword into client
+        client._client._config = self._client._client._config
+        return client
 
     async def __aenter__(self) -> "FormTrainingClient":
         await self._client.__aenter__()
