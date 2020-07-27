@@ -258,10 +258,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         **kwargs: Any
     ) -> AsyncItemPaged[TableEntity]:
         """Lists entities in a table.
+
         :keyword int results_per_page: Number of entities per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of an entity to return certain entities
         :return: Query of table entities
-        :rtype: ItemPaged[TableEntity]
+        :rtype: AsyncItemPaged[TableEntity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         user_select = kwargs.pop('select', None)
@@ -284,18 +285,18 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             filter: List[str],  
             **kwargs: Any
     ) -> AsyncItemPaged[TableEntity]:
-        """Queries entities in a table.
+        """Lists entities in a table.
 
-        :param filter: Specify a filter to return certain entities
-        :type filter: str
+        :param str filter: Specify a filter to return certain entities
         :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword str select: Specify desired properties of an entity to return certain entities
+        :keyword Union[str, list[str]] select: Specify desired properties of an entity to return certain entities
+        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
         :rtype: ItemPaged[TableEntity]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        filter = _parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
+        filter = self._parameter_filter_substitution(parameters, filter)   # pylint: disable = W0622
 
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):

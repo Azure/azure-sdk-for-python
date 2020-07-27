@@ -225,19 +225,17 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             **kwargs: Any
     ) -> AsyncItemPaged[str]:
         """Queries tables under the given account.
-
         :param filter: Specify a filter to return certain tables
         :type filter: str
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
-        :return: AsyncItemPaged
-        :rtype: ~AsyncItemPaged[str]
+        :return: A query of tables
+        :rtype: AsyncItemPaged[Table]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-
         parameters = kwargs.pop('parameters', None)
-        filter = _parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
+        filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
 
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
@@ -245,8 +243,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
         query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
                                      filter=filter)
-
-        command = functools.partial(self._client.table.query, query_options=query_options, 
+        command = functools.partial(self._client.table.query, query_options=query_options,
                                     **kwargs)
         return AsyncItemPaged(
             command,
