@@ -1,3 +1,4 @@
+import urllib.parse
 
 def generate_shared_access_signature(topic_hostname, shared_access_key, expiration_date, **kwargs):
     # type: (str, str, datetime.Datetime, Any) -> str
@@ -7,4 +8,8 @@ def generate_shared_access_signature(topic_hostname, shared_access_key, expirati
         :param datetime.datetime expiration_date: The expiration date for the signature.
         :rtype: str
     """
-    pass
+    resource = 'r'
+    expiration = 'e'
+    signature = 's'
+
+    encoded_resource = urllib.parse.quote(topic_hostname)

@@ -1,11 +1,10 @@
 import os
 from azure.eventgrid import EventGridConsumer
 
-req = os.environ.get("HTTP_REQUEST")
 consumer = EventGridConsumer()
 
 # returns List[DeserializedEvent]
-deserialized_events = consumer.deserialize_events(req)
+deserialized_events = consumer.deserialize_events(service_bus_received_message)
 
 # CloudEvent schema
 for event in deserialized_events:

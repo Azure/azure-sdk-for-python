@@ -23,8 +23,6 @@ from . import _constants as constants
 class EventGridPublisherClient(object):
     """EventGrid Python Publisher Client.
 
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-
     :param str topic_hostname: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which implements SAS key authentication or SAS token authentication.
     :type credential: Union[~azure.core.credentials.AzureKeyCredential, ~azure.core.credentials.TokenCredential]

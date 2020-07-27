@@ -22,7 +22,6 @@ from azure.core.exceptions import (
 
 #key = os.environ.get("DEMO_ACCESS_KEY")
 key = os.environ.get("CUSTOM_ACCESS_KEY")
-print(key)
 #topic_hostname = "eg-azure-sdk-demo.westus2-1.eventgrid.azure.net"
 topic_hostname = "eventgridcloudeventsub.eastus-1.eventgrid.azure.net"
 
