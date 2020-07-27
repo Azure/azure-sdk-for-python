@@ -46,7 +46,7 @@ class TablePropertiesPaged(AsyncPageIterator):
 
     async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [t for t in self._response.value]
+        props_list = [Table(t) for t in self._response.value]
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 
@@ -56,7 +56,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
     :ivar: callable command: Function to retrieve the next page of items.
         call.
     :ivar: int results_per_page: The maximum number of results retrieved per API call.
-    :ivar: table TODO: type?
+    :ivar: Table table: The table that contains the entities
     :ivar: callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of queue names to retrieve per
         call.
@@ -105,3 +105,13 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
                            'RowKey': self._headers['x-ms-continuation-NextRowKey']}
         return next_entity or None, props_list
 
+
+class Table(object):
+    """
+    Represents an Azure Table. Returned by list_tables.
+
+    :ivar str name: The name of the table.
+    """
+
+    def __init__(self, table):
+        self.table = table

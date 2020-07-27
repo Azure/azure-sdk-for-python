@@ -22,7 +22,7 @@ from azure.data.tables._shared.response_handlers import process_table_error
 from azure.data.tables.aio._table_client_async import TableClient
 from ._models import TablePropertiesPaged
 from .._shared._error import _validate_table_name
-from .._shared._table_service_client_base import TableServiceClientBase, _parameter_filter_substitution
+from .._shared._table_service_client_base import TableServiceClientBase
 from .._models import Table
 
 

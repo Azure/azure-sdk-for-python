@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 24 Jul 2020 18:56:12 GMT
+      - Mon, 27 Jul 2020 15:58:19 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 18:56:12 GMT
+      - Mon, 27 Jul 2020 15:58:19 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -26,7 +26,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Fri, 24 Jul 2020 18:56:08 GMT
+      date: Mon, 27 Jul 2020 15:58:18 GMT
       location: https://storagename.table.core.windows.net/Tables('uttablee7f813fe')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -35,7 +35,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragejve4h5oxlwju.table.core.windows.net/Tables
+    url: https://pyacrstoragekau3nlwgvy2b.table.core.windows.net/Tables
 - request:
     body: '{"PartitionKey": "pke7f813fe", "RowKey": "rke7f813fe"}'
     headers:
@@ -48,23 +48,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 24 Jul 2020 18:56:12 GMT
+      - Mon, 27 Jul 2020 15:58:19 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 18:56:12 GMT
+      - Mon, 27 Jul 2020 15:58:19 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
     uri: https://storagename.table.core.windows.net/uttablee7f813fe
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablee7f813fe/@Element","odata.etag":"W/\"datetime''2020-07-24T18%3A56%3A09.8536351Z''\"","PartitionKey":"pke7f813fe","RowKey":"rke7f813fe","Timestamp":"2020-07-24T18:56:09.8536351Z"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablee7f813fe/@Element","odata.etag":"W/\"datetime''2020-07-27T15%3A58%3A19.4606514Z''\"","PartitionKey":"pke7f813fe","RowKey":"rke7f813fe","Timestamp":"2020-07-27T15:58:19.4606514Z"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Fri, 24 Jul 2020 18:56:09 GMT
-      etag: W/"datetime'2020-07-24T18%3A56%3A09.8536351Z'"
+      date: Mon, 27 Jul 2020 15:58:18 GMT
+      etag: W/"datetime'2020-07-27T15%3A58%3A19.4606514Z'"
       location: https://storagename.table.core.windows.net/uttablee7f813fe(PartitionKey='pke7f813fe',RowKey='rke7f813fe')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -73,7 +73,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://pyacrstoragejve4h5oxlwju.table.core.windows.net/uttablee7f813fe
+    url: https://pyacrstoragekau3nlwgvy2b.table.core.windows.net/uttablee7f813fe
 - request:
     body: null
     headers:
@@ -82,23 +82,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 24 Jul 2020 18:56:12 GMT
+      - Mon, 27 Jul 2020 15:58:19 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 18:56:12 GMT
+      - Mon, 27 Jul 2020 15:58:19 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
     uri: https://storagename.table.core.windows.net/uttablee7f813fe(PartitionKey='pke7f813fe',RowKey='rke7f813fe')
   response:
     body:
-      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablee7f813fe/@Element","odata.etag":"W/\"datetime''2020-07-24T18%3A56%3A09.8536351Z''\"","PartitionKey":"pke7f813fe","RowKey":"rke7f813fe","Timestamp":"2020-07-24T18:56:09.8536351Z"}'
+      string: '{"odata.metadata":"https://storagename.table.core.windows.net/$metadata#uttablee7f813fe/@Element","odata.etag":"W/\"datetime''2020-07-27T15%3A58%3A19.4606514Z''\"","PartitionKey":"pke7f813fe","RowKey":"rke7f813fe","Timestamp":"2020-07-27T15:58:19.4606514Z"}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Fri, 24 Jul 2020 18:56:09 GMT
-      etag: W/"datetime'2020-07-24T18%3A56%3A09.8536351Z'"
+      date: Mon, 27 Jul 2020 15:58:18 GMT
+      etag: W/"datetime'2020-07-27T15%3A58%3A19.4606514Z'"
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -106,16 +106,16 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://pyacrstoragejve4h5oxlwju.table.core.windows.net/uttablee7f813fe(PartitionKey='pke7f813fe',RowKey='rke7f813fe')
+    url: https://pyacrstoragekau3nlwgvy2b.table.core.windows.net/uttablee7f813fe(PartitionKey='pke7f813fe',RowKey='rke7f813fe')
 - request:
     body: null
     headers:
       Date:
-      - Fri, 24 Jul 2020 18:56:12 GMT
+      - Mon, 27 Jul 2020 15:58:19 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 18:56:12 GMT
+      - Mon, 27 Jul 2020 15:58:19 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -126,12 +126,12 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Fri, 24 Jul 2020 18:56:09 GMT
+      date: Mon, 27 Jul 2020 15:58:18 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-07-07'
     status:
       code: 204
       message: No Content
-    url: https://pyacrstoragejve4h5oxlwju.table.core.windows.net/Tables('uttablee7f813fe')
+    url: https://pyacrstoragekau3nlwgvy2b.table.core.windows.net/Tables('uttablee7f813fe')
 version: 1

@@ -26,7 +26,7 @@ from .._models import UpdateMode
 from ._models import TableEntityPropertiesPaged
 from .._deserialize import _convert_to_entity
 from .._serialize import _add_entity_properties, _get_match_headers
-from .._shared._table_client_base import TableClientBase, _parameter_filter_substitution
+from .._shared._table_client_base import TableClientBase
 
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
