@@ -57,7 +57,7 @@ class TableServiceClientBase(StorageAccountHostsMixin):
         """
         return "{}://{}{}".format(self.scheme, hostname, self._query_str)
 
-    def _parameter_filter_substitution(
+    def _parameter_filter_substitution(  # pylint: disable = R0201
             self,
             parameters,  # type: dict[str,str]
             filter  # type: str  # pylint: disable = W0622

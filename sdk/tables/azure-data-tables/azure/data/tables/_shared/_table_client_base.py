@@ -80,7 +80,7 @@ class TableClientBase(StorageAccountHostsMixin):
                 'Too many access policies provided. The server does not support setting '
                 'more than 5 access policies on a single resource.')
 
-    def _parameter_filter_substitution(
+    def _parameter_filter_substitution(  # pylint: disable = R0201
             self,
             parameters,  # type: dict[str,str]
             filter  # type: str  # pylint: disable = W0622
@@ -96,4 +96,3 @@ class TableClientBase(StorageAccountHostsMixin):
                 if key == selected:
                     filter = filter_start.replace('@', value)  # pylint: disable = W0622
         return filter  # pylint: disable = W0622
-
