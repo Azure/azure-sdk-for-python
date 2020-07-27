@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 24 Jul 2020 17:39:44 GMT
+      - Mon, 27 Jul 2020 14:17:59 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 17:39:44 GMT
+      - Mon, 27 Jul 2020 14:17:59 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
@@ -33,7 +33,7 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 24 Jul 2020 17:39:41 GMT
+      - Mon, 27 Jul 2020 14:17:58 GMT
       location:
       - https://storagename.table.core.windows.net/Tables('uttable973c1208')
       server:
@@ -69,33 +69,37 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Fri, 24 Jul 2020 17:39:44 GMT
+      - Mon, 27 Jul 2020 14:17:59 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 17:39:44 GMT
+      - Mon, 27 Jul 2020 14:17:59 GMT
       x-ms-version:
       - '2019-07-07'
     method: POST
-    uri: https://storagename.table.core.windows.net/uttable973c1208?se=2020-07-24T18%3A39%3A44Z&sp=a&sv=2019-07-07&tn=uttable973c1208&spk=test&srk=test1&epk=test&erk=test1&sig=eZhhwbYmTtfDJjAEaBsVMfCUmkknEdsgiZBHfgl9JFw%3D
+    uri: https://storagename.table.core.windows.net/uttable973c1208?se=2020-07-27T15%3A17%3A59Z&sp=a&sv=2019-07-07&tn=uttable973c1208&spk=test&srk=test1&epk=test&erk=test1&sig=eEEwPPIin0GQrB7kQzt%2FhYqYnVBBKn8MmirB1Vc0%2FlI%3D
   response:
     body:
-      string: '{"odata.error":{"code":"InvalidUri","message":{"lang":"en-US","value":"The
-        requested URI does not represent any resource on the server.\nRequestId:caa537e6-9002-005c-0fe1-61ee66000000\nTime:2020-07-24T17:39:42.0121540Z"}}}'
+      string: '{"odata.error":{"code":"AuthorizationFailure","message":{"lang":"en-US","value":"This
+        request is not authorized to perform this operation.\nRequestId:026255d2-2002-0028-5e20-643bcb000000\nTime:2020-07-27T14:18:00.2506126Z"}}}'
     headers:
-      content-length:
-      - '222'
+      cache-control:
+      - no-cache
       content-type:
-      - application/json
+      - application/json;odata=minimalmetadata;streaming=true;charset=utf-8
       date:
-      - Fri, 24 Jul 2020 17:39:41 GMT
+      - Mon, 27 Jul 2020 14:17:59 GMT
       server:
-      - Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidUri
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-ms-version:
+      - '2019-07-07'
     status:
-      code: 400
-      message: The requested URI does not represent any resource on the server.
+      code: 403
+      message: Forbidden
 - request:
     body: null
     headers:
@@ -108,11 +112,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 24 Jul 2020 17:39:44 GMT
+      - Mon, 27 Jul 2020 14:18:00 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 17:39:44 GMT
+      - Mon, 27 Jul 2020 14:18:00 GMT
       x-ms-version:
       - '2019-07-07'
     method: DELETE
@@ -126,7 +130,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 24 Jul 2020 17:39:41 GMT
+      - Mon, 27 Jul 2020 14:17:59 GMT
       server:
       - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options:

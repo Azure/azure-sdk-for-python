@@ -21,31 +21,37 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Fri, 24 Jul 2020 16:42:37 GMT
+      - Mon, 27 Jul 2020 14:15:50 GMT
       User-Agent:
-      - azsdk-python-storage-table/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-table/2019-07-07 Python/3.8.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 24 Jul 2020 16:42:37 GMT
+      - Mon, 27 Jul 2020 14:15:50 GMT
       x-ms-version:
-      - 12.0.0b1
+      - '2019-07-07'
     method: PUT
     uri: https://storagename.table.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\r\n<error
-        xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\r\n
-        \ <code>InvalidHeaderValue</code>\r\n  <message xml:lang=\"en-US\">The value
-        for one of the HTTP headers is not in the correct format.\nRequestId:55509f12-7002-0044-0ad9-619595000000\nTime:2020-07-24T16:42:38.3816398Z</message>\r\n</error>"
+      string: '<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code>InvalidXmlDocument</m:code><m:message
+        xml:lang="en-US">XML specified is not syntactically valid.
+
+        RequestId:2f02f88a-4002-0016-0920-641fff000000
+
+        Time:2020-07-27T14:15:50.7668519Z</m:message></m:error>'
     headers:
       content-length:
-      - '371'
+      - '327'
       content-type:
       - application/xml
       date:
-      - Fri, 24 Jul 2020 16:42:37 GMT
+      - Mon, 27 Jul 2020 14:15:49 GMT
       server:
-      - Microsoft-HTTPAPI/2.0
+      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - InvalidXmlDocument
+      x-ms-version:
+      - '2019-07-07'
     status:
       code: 400
-      message: The value for one of the HTTP headers is not in the correct format.
+      message: XML specified is not syntactically valid.
 version: 1
