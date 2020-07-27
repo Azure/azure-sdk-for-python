@@ -20,9 +20,9 @@ parameters:
 - name: TargetDocRepoName
   type: string
   default: azure-docs-sdk-python
-- name: SkipPyPyTest
-  type: boolean
-  default: false
+- name: SkipPythonVersion
+  type: string
+  default: ''
 
 stages:
   - stage: Build
@@ -33,7 +33,7 @@ stages:
         ToxEnvParallel: ${{parameters.ToxEnvParallel}}
         BuildDocs: ${{parameters.BuildDocs}}
         InjectedPackages: ${{parameters.InjectedPackages}}
-        SkipPyPyTest: ${{parameters.SkipPyPyTest}}
+        SkipPythonVersion: ${{parameters.SkipPythonVersion}}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
