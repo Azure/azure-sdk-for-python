@@ -8,7 +8,7 @@ from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError, Ht
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import GlobalStorageAccountPreparer
 from azure.data.tables import AccessPolicy, TableSasPermissions, ResourceTypes, AccountSasPermissions
-from azure.data.tables._generated.aio import TableServiceClient
+from azure.data.tables.aio import TableServiceClient
 from azure.data.tables._generated.models import QueryOptions
 from azure.data.tables._shared.table_shared_access_signature import generate_account_sas
 
