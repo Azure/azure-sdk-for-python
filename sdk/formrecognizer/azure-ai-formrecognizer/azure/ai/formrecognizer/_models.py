@@ -555,7 +555,7 @@ class CustomFormModel(object):
         which can recognize and extract fields from a different type of form.
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
         List of any training errors.
-    :ivar ~azure.ai.formrecognizer.TrainingDocumentInfo training_documents:
+    :ivar list[~azure.ai.formrecognizer.TrainingDocumentInfo] training_documents:
          Metadata about each of the documents used to train the model.
     """
 
