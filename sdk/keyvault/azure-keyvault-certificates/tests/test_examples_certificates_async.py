@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 import functools
 
 from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
@@ -123,14 +124,13 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
         )
 
-        create_certificate_pollers = []
-        for i in range(4):
-            create_certificate_pollers.append(
-                certificate_client.create_certificate(certificate_name="certificate{}".format(i), policy=cert_policy)
-            )
-
-        for poller in create_certificate_pollers:
-            await poller
+        certificate_name = self.get_resource_name("cert")
+        await asyncio.gather(
+            *[
+                certificate_client.create_certificate(certificate_name=certificate_name + str(i), policy=cert_policy)
+                for i in range(4)
+            ]
+        )
 
         # [START list_properties_of_certificates]
 
@@ -145,6 +145,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.enabled)
 
         # [END list_properties_of_certificates]
+
+        for _ in range(2):
+            await certificate_client.create_certificate(certificate_name, cert_policy)
+
         # [START list_properties_of_certificate_versions]
 
         # get an iterator of all versions of a certificate
@@ -156,6 +160,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.properties.version)
 
         # [END list_properties_of_certificate_versions]
+
+        delete_operations = []
+        async for cert in certificate_client.list_properties_of_certificates():
+            delete_operations.append(certificate_client.delete_certificate(cert.name))
+        await asyncio.gather(*delete_operations)
+
         # [START list_deleted_certificates]
 
         # get an iterator of deleted certificates (requires soft-delete enabled for the vault)

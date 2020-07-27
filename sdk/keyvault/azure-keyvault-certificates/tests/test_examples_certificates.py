@@ -138,13 +138,13 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
         )
-
-        polling_interval = 0 if self.is_playback() else None
-
-        for i in range(4):
-            certificate_client.begin_create_certificate(
-                certificate_name="certificate{}".format(i), policy=cert_policy, _polling_interval=polling_interval
-            ).wait()
+        certificate_name = self.get_resource_name("cert")
+        create_operations = [
+            certificate_client.begin_create_certificate(certificate_name=certificate_name + str(i), policy=cert_policy)
+            for i in range(4)
+        ]
+        for operation in create_operations:
+            operation.wait()
 
         # [START list_properties_of_certificates]
 
@@ -159,10 +159,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.enabled)
 
         # [END list_properties_of_certificates]
+
+        for _ in range(2):
+            certificate_client.begin_create_certificate(certificate_name=certificate_name, policy=cert_policy).wait()
+
         # [START list_properties_of_certificate_versions]
 
         # get an iterator of a certificate's versions
-        certificate_versions = certificate_client.list_properties_of_certificate_versions("certificate-name")
+        certificate_versions = certificate_client.list_properties_of_certificate_versions(certificate_name)
 
         for certificate in certificate_versions:
             print(certificate.id)
@@ -170,6 +174,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.version)
 
         # [END list_properties_of_certificate_versions]
+
+        delete_operations = [certificate_client.begin_delete_certificate(cert.name) for cert in certificates]
+        for operation in delete_operations:
+            operation.wait()
+
         # [START list_deleted_certificates]
 
         # get an iterator of deleted certificates (requires soft-delete enabled for the vault)
