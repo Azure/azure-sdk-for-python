@@ -6,14 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._redis_management_client import RedisManagementClient
-from ._version import VERSION
+from ._operations_async import Operations
+from ._redis_operations_async import RedisOperations
+from ._firewall_rules_operations_async import FirewallRulesOperations
+from ._patch_schedules_operations_async import PatchSchedulesOperations
+from ._linked_server_operations_async import LinkedServerOperations
 
-__version__ = VERSION
-__all__ = ['RedisManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+__all__ = [
+    'Operations',
+    'RedisOperations',
+    'FirewallRulesOperations',
+    'PatchSchedulesOperations',
+    'LinkedServerOperations',
+]

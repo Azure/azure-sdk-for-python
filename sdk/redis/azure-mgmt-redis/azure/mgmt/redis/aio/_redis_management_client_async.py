@@ -6,41 +6,39 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from azure.core.credentials_async import AsyncTokenCredential
 
-    from azure.core.credentials import TokenCredential
-
-from ._configuration import RedisManagementClientConfiguration
-from .operations import Operations
-from .operations import RedisOperations
-from .operations import FirewallRulesOperations
-from .operations import PatchSchedulesOperations
-from .operations import LinkedServerOperations
-from . import models
+from ._configuration_async import RedisManagementClientConfiguration
+from .operations_async import Operations
+from .operations_async import RedisOperations
+from .operations_async import FirewallRulesOperations
+from .operations_async import PatchSchedulesOperations
+from .operations_async import LinkedServerOperations
+from .. import models
 
 
 class RedisManagementClient(object):
     """REST API for Azure Redis Cache Service.
 
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.redis.operations.Operations
+    :vartype operations: azure.mgmt.redis.aio.operations_async.Operations
     :ivar redis: RedisOperations operations
-    :vartype redis: azure.mgmt.redis.operations.RedisOperations
+    :vartype redis: azure.mgmt.redis.aio.operations_async.RedisOperations
     :ivar firewall_rules: FirewallRulesOperations operations
-    :vartype firewall_rules: azure.mgmt.redis.operations.FirewallRulesOperations
+    :vartype firewall_rules: azure.mgmt.redis.aio.operations_async.FirewallRulesOperations
     :ivar patch_schedules: PatchSchedulesOperations operations
-    :vartype patch_schedules: azure.mgmt.redis.operations.PatchSchedulesOperations
+    :vartype patch_schedules: azure.mgmt.redis.aio.operations_async.PatchSchedulesOperations
     :ivar linked_server: LinkedServerOperations operations
-    :vartype linked_server: azure.mgmt.redis.operations.LinkedServerOperations
+    :vartype linked_server: azure.mgmt.redis.aio.operations_async.LinkedServerOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Gets subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -49,16 +47,15 @@ class RedisManagementClient(object):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = RedisManagementClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -75,15 +72,12 @@ class RedisManagementClient(object):
         self.linked_server = LinkedServerOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> RedisManagementClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "RedisManagementClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)

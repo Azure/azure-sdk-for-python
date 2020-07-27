@@ -6,14 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._redis_management_client import RedisManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
+from ._redis_management_client_async import RedisManagementClient
 __all__ = ['RedisManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
