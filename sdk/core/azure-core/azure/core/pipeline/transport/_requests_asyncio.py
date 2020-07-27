@@ -70,11 +70,6 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
             :dedent: 4
             :caption: Asynchronous transport with asyncio.
     """
-
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        super(AsyncioRequestsTransport, self).__init__(**kwargs)
-
     async def __aenter__(self):
         return super(AsyncioRequestsTransport, self).__enter__()
 
