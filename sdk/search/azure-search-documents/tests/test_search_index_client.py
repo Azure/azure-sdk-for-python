@@ -14,7 +14,6 @@ from azure.core.paging import ItemPaged
 from azure.core.credentials import AzureKeyCredential
 
 from azure.search.documents._internal._generated.models import (
-    IndexAction,
     IndexBatch,
     SearchDocumentsResult,
     SearchResult,
@@ -24,6 +23,7 @@ from azure.search.documents._internal._search_client import SearchPageIterator
 from azure.search.documents import (
     IndexDocumentsBatch,
     SearchClient,
+    SearchIndexDocumentBatchingClient,
 )
 from azure.search.documents.models import odata
 
@@ -253,35 +253,8 @@ class TestSearchClient(object):
         assert isinstance(index_documents, IndexBatch)
         assert index_documents.actions == batch.actions
 
-    def test_search_client_kwargs(self):
-        client = SearchClient("endpoint", "index name", CREDENTIAL, window=100, batch_size=100)
-
-        assert client.batch_size == 100
-        assert client._window == 100
-        assert client._auto_flush
-        client.cleanup()
-
-    def test_batch_queue(self):
+    def test_get_batching_client(self):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
-
-        assert client._index_documents_batch
-        client.queue_upload_documents_actions(["upload1"])
-        client.queue_delete_documents_actions(["delete1", "delete2"])
-        client.queue_merge_documents_actions(["merge1", "merge2", "merge3"])
-        client.queue_merge_or_upload_documents_actions(["merge_or_upload1"])
-        assert len(client.actions) == 7
-        actions = client._index_documents_batch.dequeue_actions()
-        assert len(client.actions) == 0
-        client._index_documents_batch.enqueue_actions(actions)
-        assert len(client.actions) == 7
-
-    @mock.patch(
-        "azure.search.documents._internal._search_client.SearchClient.flush"
-    )
-    def test_flush_if_needed(self, mock_flush):
-        client = SearchClient("endpoint", "index name", CREDENTIAL, window=1000, batch_size=2)
-
-        client.queue_upload_documents_actions(["upload1"])
-        client.queue_delete_documents_actions(["delete1", "delete2"])
-        assert mock_flush.called
-        client.cleanup()
+        batching_client = client.get_index_document_batching_client()
+        assert batching_client.batch_size == 1000
+        assert batching_client._window == 0

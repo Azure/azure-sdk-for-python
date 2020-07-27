@@ -5,15 +5,11 @@
 # --------------------------------------------------------------------------
 from typing import cast, List, TYPE_CHECKING
 
-import threading
 import six
 
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError
 from .._api_versions import validate_api_version
-from ._utils import is_retryable_status_code
 from ._generated import SearchIndexClient
-from ._generated_serviceclient import SearchServiceClient
 from ._generated.models import IndexBatch, IndexingResult
 from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
@@ -21,6 +17,7 @@ from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
+from ._search_index_document_batching_client import SearchIndexDocumentBatchingClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -65,9 +62,6 @@ class SearchClient(HeadersMixin):
     :type index_name: str
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword int window: how many seconds if there is no changes that triggers auto flush.
-        if window is less or equal than 0, it will disable auto flush
-    :keyword int batch_size: batch size. It only takes affect when auto_flush is on
     :keyword str api_version: The Search API version to use for requests.
 
     .. admonition:: Example:
@@ -81,53 +75,24 @@ class SearchClient(HeadersMixin):
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
-    _DEFAULT_WINDOW = 0
-    _DEFAULT_BATCH_SIZE = 1000
 
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, AzureKeyCredential, **Any) -> None
 
         api_version = kwargs.pop('api_version', None)
         validate_api_version(api_version)
-        self._batch_size = kwargs.pop('batch_size', self._DEFAULT_BATCH_SIZE)
-        self._window = kwargs.pop('window', self._DEFAULT_WINDOW)
-        self._auto_flush = self._window > 0
-        self._index_documents_batch = IndexDocumentsBatch()
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
-        self._index_key = None
         self._credential = credential  # type: AzureKeyCredential
         self._client = SearchIndexClient(
             endpoint=endpoint, index_name=index_name, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: SearchIndexClient
-        self._timer = threading.Timer(self._window, self.flush)
-        if self._auto_flush:
-            self._timer.start()
-
-    def cleanup(self):
-        # type: () -> None
-        if self._auto_flush:
-            self._timer.cancel()
 
     def __repr__(self):
         # type: () -> str
         return "<SearchClient [endpoint={}, index={}]>".format(
             repr(self._endpoint), repr(self._index_name)
         )[:1024]
-
-    @property
-    def actions(self):
-        # type: () -> List[IndexAction]
-        """The list of currently configured index actions in queue.
-
-        :rtype: List[IndexAction]
-        """
-        return self._index_documents_batch.actions
-
-    @property
-    def batch_size(self):
-        # type: () -> int
-        return self._batch_size
 
     def close(self):
         # type: () -> None
@@ -136,64 +101,10 @@ class SearchClient(HeadersMixin):
         """
         return self._client.close()
 
-    def flush(self, raise_error=False):
-        # type: (bool) -> None
-        """Flush the batch.
-
-        :param bool raise_error: raise error if there are failures during flushing
-            Default to False which re-queue the failed tasks and retry on next flush.
-        """
-        # get actions
-        actions = self._index_documents_batch.dequeue_actions()
-        try:
-            results = self._index_documents_actions(actions=actions)
-            # re-queue 207:
-            if not self._index_key:
-                client = SearchServiceClient(self._endpoint)
-                kwargs = {"headers": self._merge_client_headers({})}
-                result = client.indexes.get(self._index_name, **kwargs)
-                if not result:
-                    # Cannot find the index
-                    self._index_key = ""
-                else:
-                    for field in result.fields:
-                        if field.key:
-                            self._index_key = field.name
-                            break
-
-            for result in results:
-                if is_retryable_status_code(result.status_code):
-                    requeue = [x for x in actions if x.get(self._index_key) == result.key]
-                    self._index_documents_batch.enqueue_actions(requeue)
-
-            if raise_error:
-                raise HttpResponseError(message="Some actions failed. Failed actions are re-queued.")
-
-        except Exception:   # pylint: disable=broad-except
-            # Do we want to re-queue these failures?
-            self._index_documents_batch.enqueue_actions(actions)
-            if raise_error:
-                raise
-
-    def _flush_if_needed(self):
-        # type: () -> bool
-        """ Every time when a new action is queued, this method
-            will be triggered. It checks the actions already queued and flushes them if:
-            1. Auto_flush is on
-            2. There are self._batch_size actions queued
-        """
-        if not self._auto_flush:
-            return
-
-        # reset the timer
-        self._timer.cancel()
-        self._timer = threading.Timer(self._window, self.flush)
-        self._timer.start()
-
-        if len(self._index_documents_batch.actions) < self._batch_size:
-            return
-
-        self.flush(raise_error=False)
+    def get_index_document_batching_client(self, **kwargs):
+        # type: (str, dict) -> SearchIndexDocumentBatchingClient
+        """Return a search index document batching client"""
+        return SearchIndexDocumentBatchingClient(self._endpoint, self._index_name, self._credential, **kwargs)
 
     @distributed_trace
     def get_document_count(self, **kwargs):
@@ -530,16 +441,6 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
-    def queue_upload_documents_actions(self, documents):
-        # type: (List[dict]) -> None
-        """Queue upload documents actions.
-
-        :param documents: A list of documents to upload.
-        :type documents: List[dict]
-        """
-        self._index_documents_batch.add_upload_actions(documents)
-        self._flush_if_needed()
-
     def delete_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Delete documents from the Azure search index
@@ -573,16 +474,6 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
-    def queue_delete_documents_actions(self, documents):
-        # type: (List[dict]) -> None
-        """Queue delete documents actions
-
-        :param documents: A list of documents to delete.
-        :type documents: List[dict]
-        """
-        self._index_documents_batch.add_delete_actions(documents)
-        self._flush_if_needed()
-
     def merge_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Merge documents in to existing documents in the Azure search index.
@@ -612,16 +503,6 @@ class SearchClient(HeadersMixin):
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
 
-    def queue_merge_documents_actions(self, documents):
-        # type: (List[dict]) -> None
-        """Queue merge documents actions
-
-        :param documents: A list of documents to merge.
-        :type documents: List[dict]
-        """
-        self._index_documents_batch.add_merge_actions(documents)
-        self._flush_if_needed()
-
     def merge_or_upload_documents(self, documents, **kwargs):
         # type: (List[dict], **Any) -> List[IndexingResult]
         """Merge documents in to existing documents in the Azure search index,
@@ -641,16 +522,6 @@ class SearchClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         results = self.index_documents(batch, **kwargs)
         return cast(List[IndexingResult], results)
-
-    def queue_merge_or_upload_documents_actions(self, documents):
-        # type: (List[dict]) -> None
-        """Queue merge documents or upload documents actions
-
-        :param documents: A list of documents to merge or upload.
-        :type documents: List[dict]
-        """
-        self._index_documents_batch.add_merge_or_upload_actions(documents)
-        self._flush_if_needed()
 
     @distributed_trace
     def index_documents(self, batch, **kwargs):
