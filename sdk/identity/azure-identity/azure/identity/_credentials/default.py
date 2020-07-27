@@ -13,7 +13,7 @@ from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
-from .vscode_credential import VSCodeCredential
+from .vscode import VSCodeCredential
 
 
 try:
