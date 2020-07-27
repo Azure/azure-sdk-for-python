@@ -247,10 +247,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 table_entity_properties=entity,
                 if_match=if_match or if_not_match or "*",
                 **kwargs)
-        if mode is UpdateMode.MERGE:
+        elif mode is UpdateMode.MERGE:
             await self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
                                                   row_key=row_key, if_match=if_match or if_not_match or "*",
                                                   table_entity_properties=entity, **kwargs)
+        else:
+            raise ValueError('Mode type is not supported')
 
     @distributed_trace
     def list_entities(
@@ -380,7 +382,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                     row_key=row_key,
                     table_entity_properties=entity,
                     **kwargs)
-
+            else:
+                raise ValueError('Mode type is not supported')
         except ResourceNotFoundError:
                 await self.create_entity(
                     partition_key=partition_key,

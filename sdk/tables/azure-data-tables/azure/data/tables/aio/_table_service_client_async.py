@@ -200,7 +200,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :return: AsyncItemPaged
-        :rtype: ~AsyncItemPaged[str]
+        :rtype: ~AsyncItemPaged[Table]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         user_select = kwargs.pop('select', None)
@@ -223,7 +223,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             self,
             filter: List[str],
             **kwargs: Any
-    ) -> AsyncItemPaged[str]:
+    ) -> AsyncItemPaged[Table]:
         """Queries tables under the given account.
         :param filter: Specify a filter to return certain tables
         :type filter: str
@@ -272,7 +272,6 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         except AttributeError:
             table_name = table
 
-        # TODO: transport wrapper for pipeline
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
             policies=self._pipeline._impl_policies  # pylint: disable = protected-access
