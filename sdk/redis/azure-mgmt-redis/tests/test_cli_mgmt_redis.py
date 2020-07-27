@@ -73,11 +73,11 @@ class MgmtRedisTest(AzureMgmtTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_redis(self, resource_group):
 
-        UNIQUE = resource_group.name[-4:]
+        # UNIQUE = resource_group.name[-4:]
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         TENANT_ID = self.settings.TENANT_ID
         RESOURCE_GROUP = resource_group.name
-        NAME = "my" + UNIQUE
+        NAME = "myosgk"
         VIRTUAL_NETWORK_NAME = "myVirtualNetwork"
         SUBNET_NAME = "mySubnet"
         # CACHE_NAME = "myCache"
