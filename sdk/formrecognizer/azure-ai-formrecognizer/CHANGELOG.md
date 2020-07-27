@@ -2,6 +2,9 @@
 
 ## 1.0.0b5 (Unreleased)
 
+**Breaking Changes**
+
+- Values are now capitalized for enums `FormContentType`, `LengthUnit`, `TrainingStatus`, and `CustomFormModelStatus`
 
 ## 1.0.0b4 (2020-07-07)
 

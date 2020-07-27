@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration_async import TextAnalyticsClientConfiguration
 from .operations_async import TextAnalyticsClientOperationsMixin
@@ -32,7 +36,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):
         endpoint: str,
         **kwargs: Any
     ) -> None:
-        base_url = '{Endpoint}/text/analytics/v3.0'
+        base_url = '{Endpoint}/text/analytics/v3.1-preview.1'
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 

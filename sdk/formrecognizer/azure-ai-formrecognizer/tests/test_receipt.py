@@ -51,7 +51,7 @@ class TestReceiptFromStream(FormRecognizerTest):
             myfile = fd.read()
         poller = client.begin_recognize_receipts(
             myfile,
-            content_type=FormContentType.image_png
+            content_type=FormContentType.IMAGE_PNG
         )
         result = poller.result()
         self.assertIsNotNone(result)

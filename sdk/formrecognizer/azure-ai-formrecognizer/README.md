@@ -193,7 +193,7 @@ all the recognize methods.
 
 
 ```
-form_url_jpg = "<url_of_the_form>"
+form_url = "<url_of_the_form>"
 poller = form_recognizer_client.begin_recognize_custom_forms_from_url(model_id=model_id, form_url=form_url)
 result = poller.result()
 ```

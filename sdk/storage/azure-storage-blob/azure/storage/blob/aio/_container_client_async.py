@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# pylint: disable=invalid-overridden-method
 import functools
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, AnyStr, Dict, List, IO, AsyncIterator,
