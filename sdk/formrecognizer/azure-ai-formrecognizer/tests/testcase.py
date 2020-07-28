@@ -137,7 +137,7 @@ class FormRecognizerTest(AzureTestCase):
         self.assertEqual(model.status, actual.model_info.status)
         self.assertEqual(model.errors, actual.train_result.errors)
         for m, a in zip(model.training_documents, actual.train_result.training_documents):
-            self.assertEqual(m.document_name, a.document_name)
+            self.assertEqual(m.name, a.document_name)
             if m.errors and a.errors:
                 self.assertEqual(m.errors, a.errors)
             self.assertEqual(m.page_count, a.pages)

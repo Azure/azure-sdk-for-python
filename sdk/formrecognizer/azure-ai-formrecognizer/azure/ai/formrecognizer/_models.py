@@ -667,7 +667,7 @@ class TrainingDocumentInfo(object):
     """Report for an individual document used for training
     a custom model.
 
-    :ivar str document_name:
+    :ivar str name:
         The name of the document.
     :ivar str status:
         The :class:`~azure.ai.formrecognizer.TrainingStatus`
@@ -680,7 +680,7 @@ class TrainingDocumentInfo(object):
     """
 
     def __init__(self, **kwargs):
-        self.document_name = kwargs.get("document_name", None)
+        self.name = kwargs.get("name", None)
         self.status = kwargs.get("status", None)
         self.page_count = kwargs.get("page_count", None)
         self.errors = kwargs.get("errors", [])
@@ -688,15 +688,15 @@ class TrainingDocumentInfo(object):
     @classmethod
     def _from_generated(cls, train_result):
         return [cls(
-            document_name=doc.document_name,
+            name=doc.document_name,
             status=doc.status,
             page_count=doc.pages,
             errors=FormRecognizerError._from_generated(doc.errors)
         ) for doc in train_result.training_documents] if train_result.training_documents else None
 
     def __repr__(self):
-        return "TrainingDocumentInfo(document_name={}, status={}, page_count={}, errors={})".format(
-            self.document_name, self.status, self.page_count, repr(self.errors)
+        return "TrainingDocumentInfo(name={}, status={}, page_count={}, errors={})".format(
+            self.name, self.status, self.page_count, repr(self.errors)
         )[:1024]
 
 

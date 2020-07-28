@@ -118,8 +118,8 @@ def form_recognizer_error():
 
 @pytest.fixture
 def training_document_info(form_recognizer_error):
-    model = _models.TrainingDocumentInfo(document_name="document_name", status=_models.TrainingStatus.PARTIALLY_SUCCEEDED, page_count=5, errors=[form_recognizer_error[0]])
-    model_repr = "TrainingDocumentInfo(document_name=document_name, status=partiallySucceeded, page_count=5, errors=[{}])".format(form_recognizer_error[1])[:1024]
+    model = _models.TrainingDocumentInfo(name="name", status=_models.TrainingStatus.PARTIALLY_SUCCEEDED, page_count=5, errors=[form_recognizer_error[0]])
+    model_repr = "TrainingDocumentInfo(name=name, status=partiallySucceeded, page_count=5, errors=[{}])".format(form_recognizer_error[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 

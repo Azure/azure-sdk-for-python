@@ -5,6 +5,7 @@
 **Breaking Changes**
 
 - Values are now capitalized for enums `FormContentType`, `LengthUnit`, `TrainingStatus`, and `CustomFormModelStatus`
+- `document_name` renamed to `name` on `TrainingDocumentInfo`
 
 **New features**
 
