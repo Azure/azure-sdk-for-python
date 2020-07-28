@@ -6,6 +6,7 @@
 
 - Values are now capitalized for enums `FormContentType`, `LengthUnit`, `TrainingStatus`, and `CustomFormModelStatus`
 - `document_name` renamed to `name` on `TrainingDocumentInfo`
+- Keyword argument `include_sub_folders` renamed to `include_subfolders` on `begin_training` methods
 
 **New features**
 
