@@ -10,6 +10,7 @@ import time
 import asyncio
 from argparse import ArgumentParser
 from azure.eventhub import EventHubProducerClient, EventData, EventHubSharedKeyCredential, TransportType
+from azure.eventhub.exceptions import EventHubError
 from azure.eventhub.aio import EventHubProducerClient as EventHubProducerClientAsync
 from azure.identity import ClientSecretCredential
 from azure.identity.aio import ClientSecretCredential as ClientSecretCredentialAsync
@@ -24,8 +25,29 @@ def stress_send_sync(producer: EventHubProducerClient, args, logger):
             event_data = EventData(body=b"D" * args.payload)
             batch.add(event_data)
     except ValueError:
-        producer.send_batch(batch)
-        return len(batch)
+        try:
+            producer.send_batch(batch)
+        except EventHubError as e:
+            if args.ignore_send_failure:
+                logger.warning("Sync send failed due to error: %r.", e)
+                return 0
+            raise
+    return len(batch)
+
+
+def stress_send_list_sync(producer: EventHubProducerClient, args, logger):
+    quantity = int(256*1023 / args.payload)
+    send_list = []
+    for _ in range(quantity):
+        send_list.append(EventData(body=b"D" * args.payload))
+    try:
+        producer.send_batch(send_list)
+    except EventHubError as e:
+        if args.ignore_send_failure:
+            logger.warning("Sync send failed due to error: %r.", e)
+            return 0
+        raise
+    return len(send_list)
 
 
 async def stress_send_async(producer: EventHubProducerClientAsync, args, logger):
@@ -35,8 +57,29 @@ async def stress_send_async(producer: EventHubProducerClientAsync, args, logger)
             event_data = EventData(body=b"D" * args.payload)
             batch.add(event_data)
     except ValueError:
-        await producer.send_batch(batch)
-        return len(batch)
+        try:
+            await producer.send_batch(batch)
+        except EventHubError as e:
+            if args.ignore_send_failure:
+                logger.warning("ASync send failed due to error: %r.", e)
+                return 0
+            raise
+    return len(batch)
+
+
+async def stress_send_list_async(producer: EventHubProducerClientAsync, args, logger):
+    quantity = int(256*1023 / args.payload)
+    send_list = []
+    for _ in range(quantity):
+        send_list.append(EventData(body=b"D" * args.payload))
+    try:
+        await producer.send_batch(send_list)
+    except EventHubError as e:
+        if args.ignore_send_failure:
+            logger.warning("ASync send failed due to error: %r.", e)
+            return 0
+        raise
+    return len(send_list)
 
 
 class StressTestRunner(object):
@@ -91,6 +134,10 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--uamqp_logging_enable", help="uamqp logging enable", action="store_true")
         self.argument_parser.add_argument("--print_console", action="store_true")
         self.argument_parser.add_argument("--log_filename", help="log file name", type=str)
+        self.argument_parser.add_argument("--retry_total", type=int, default=3)
+        self.argument_parser.add_argument("--retry_backoff_factor", type=float, default=0.8)
+        self.argument_parser.add_argument("--retry_backoff_max", type=float, default=120)
+        self.argument_parser.add_argument("--ignore_send_failure", help="ignore sending failures", action="store_true")
         self.args, _ = parser.parse_known_args()
 
         if self.args.send_partition_key and self.args.send_partition_id:
@@ -102,6 +149,11 @@ class StressTestRunner(object):
 
         transport_type = TransportType.Amqp if self.args.transport_type == 0 else TransportType.AmqpOverWebsocket
         http_proxy = None
+        retry_options = {
+            "retry_total": self.args.retry_total,
+            "retry_backoff_factor": self.args.retry_backoff_factor,
+            "retry_backoff_max": self.args.retry_backoff_max
+        }
         if self.args.proxy_hostname:
             http_proxy = {
                 "proxy_hostname": self.args.proxy_hostname,
@@ -117,7 +169,8 @@ class StressTestRunner(object):
                 auth_timeout=self.args.auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                logging_enable=False
+                logging_enable=self.args.uamqp_logging_enable,
+                **retry_options
             )
         elif self.args.hostname:
             client = client_class(
@@ -127,7 +180,8 @@ class StressTestRunner(object):
                 auth_timeout=self.args.auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                logging_enable=self.args.uamqp_logging_enable
+                logging_enable=self.args.uamqp_logging_enable,
+                **retry_options
             )
         elif self.args.aad_client_id:
             if is_async:
@@ -141,7 +195,8 @@ class StressTestRunner(object):
                 credential=credential,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                logging_enable=self.args.uamqp_logging_enable
+                logging_enable=self.args.uamqp_logging_enable,
+                **retry_options
             )
         else:
             raise ValueError("Argument error. Must have one of connection string, sas and aad credentials")

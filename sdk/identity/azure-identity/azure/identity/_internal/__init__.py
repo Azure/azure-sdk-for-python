@@ -3,21 +3,41 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+from six.moves.urllib_parse import urlparse
 
 from .._constants import EnvironmentVariables, KnownAuthorities
 
 
+def normalize_authority(authority):
+    # type: (str) -> str
+    """Ensure authority uses https, strip trailing spaces and /"""
+
+    parsed = urlparse(authority)
+    if not parsed.scheme:
+        return "https://" + authority.rstrip(" /")
+    if parsed.scheme != "https":
+        raise ValueError(
+            "'{}' is an invalid authority. The value must be a TLS protected (https) URL.".format(authority)
+        )
+
+    return authority.rstrip(" /")
+
+
 def get_default_authority():
-    return os.environ.get(EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD)
+    # type: () -> str
+    authority = os.environ.get(EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD)
+    return normalize_authority(authority)
 
 
 # pylint:disable=wrong-import-position
 from .aad_client import AadClient
 from .aad_client_base import AadClientBase
 from .auth_code_redirect_handler import AuthCodeRedirectServer
-from .exception_wrapper import wrap_exceptions
-from .msal_credentials import ConfidentialClientCredential, PublicClientCredential
-from .msal_transport_adapter import MsalTransportAdapter, MsalTransportResponse
+from .aadclient_certificate import AadClientCertificate
+from .certificate_credential_base import CertificateCredentialBase
+from .client_secret_credential_base import ClientSecretCredentialBase
+from .decorators import wrap_exceptions
+from .interactive import InteractiveCredential
 
 
 def _scopes_to_resource(*scopes):
@@ -34,12 +54,15 @@ def _scopes_to_resource(*scopes):
 
 
 __all__ = [
+    "_scopes_to_resource",
     "AadClient",
     "AadClientBase",
     "AuthCodeRedirectServer",
-    "ConfidentialClientCredential",
-    "MsalTransportAdapter",
-    "MsalTransportResponse",
-    "PublicClientCredential",
+    "AadClientCertificate",
+    "CertificateCredentialBase",
+    "ClientSecretCredentialBase",
+    "get_default_authority",
+    "InteractiveCredential",
+    "normalize_authority",
     "wrap_exceptions",
 ]

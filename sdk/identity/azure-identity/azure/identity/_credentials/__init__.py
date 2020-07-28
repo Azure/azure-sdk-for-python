@@ -4,18 +4,22 @@
 # ------------------------------------
 from .authorization_code import AuthorizationCodeCredential
 from .browser import InteractiveBrowserCredential
+from .certificate import CertificateCredential
 from .chained import ChainedTokenCredential
-from .client_credential import CertificateCredential, ClientSecretCredential
+from .client_secret import ClientSecretCredential
 from .default import DefaultAzureCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
-from .user import DeviceCodeCredential, UsernamePasswordCredential
+from .device_code import DeviceCodeCredential
+from .user_password import UsernamePasswordCredential
+from .vscode import VSCodeCredential
 
 
 __all__ = [
     "AuthorizationCodeCredential",
+    "AzureCliCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
     "ClientSecretCredential",
@@ -27,4 +31,5 @@ __all__ = [
     "SharedTokenCacheCredential",
     "AzureCliCredential",
     "UsernamePasswordCredential",
+    "VSCodeCredential",
 ]

@@ -11,28 +11,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: DELETE
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/xx
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/xx
   response:
     body:
-      string: '{"error":{"code":"401","message": "Access denied due to invalid subscription
-        key or wrong API endpoint. Make sure to provide a valid key for an active
-        subscription and use a correct regional API endpoint for your resource."}}'
+      string: '{"error": {"code": "401", "message": "Access denied due to invalid
+        subscription key or wrong API endpoint. Make sure to provide a valid key for
+        an active subscription and use a correct regional API endpoint for your resource."}}'
     headers:
       apim-request-id:
-      - 71d6fa7e-8752-4ca7-ba7e-3169e94e92a0
+      - fa1dac62-bd27-44ca-a8af-d8bb85e8400f
       content-length:
       - '225'
       content-type:
       - application/json
       date:
-      - Thu, 16 Apr 2020 17:45:25 GMT
+      - Fri, 10 Jul 2020 18:50:18 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       www-authenticate:
-      - AzureApiManagementKey realm="https://westus.api.cognitive.microsoft.com/formrecognizer",name="Ocp-Apim-Subscription-Key",type="header"
+      - AzureApiManagementKey realm="https://centraluseuap.api.cognitive.microsoft.com/formrecognizer",name="Ocp-Apim-Subscription-Key",type="header"
       x-content-type-options:
       - nosniff
     status:

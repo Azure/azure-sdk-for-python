@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
 from .._internal.aad_client import AadClient
+from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -25,7 +26,7 @@ class AuthorizationCodeCredential(object):
     :param str redirect_uri: The application's redirect URI. Must match the URI used to request the authorization code.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
     """
@@ -38,6 +39,7 @@ class AuthorizationCodeCredential(object):
         self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
         self._redirect_uri = redirect_uri
 
+    @log_get_token("AuthorizationCodeCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
@@ -59,12 +61,20 @@ class AuthorizationCodeCredential(object):
 
         if self._authorization_code:
             token = self._client.obtain_token_by_authorization_code(
-                code=self._authorization_code, redirect_uri=self._redirect_uri, scopes=scopes, **kwargs
+                scopes=scopes, code=self._authorization_code, redirect_uri=self._redirect_uri, **kwargs
             )
             self._authorization_code = None  # auth codes are single-use
             return token
 
-        token = self._client.get_cached_access_token(scopes) or self._redeem_refresh_token(scopes, **kwargs)
+        token = self._client.get_cached_access_token(scopes)
+        if not token:
+            token = self._redeem_refresh_token(scopes, **kwargs)
+        elif self._client.should_refresh(token):
+            try:
+                self._redeem_refresh_token(scopes, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
+
         if not token:
             raise ClientAuthenticationError(
                 message="No authorization code, cached access token, or refresh token available."
@@ -75,7 +85,9 @@ class AuthorizationCodeCredential(object):
     def _redeem_refresh_token(self, scopes, **kwargs):
         # type: (Iterable[str], **Any) -> Optional[AccessToken]
         for refresh_token in self._client.get_cached_refresh_tokens(scopes):
-            token = self._client.obtain_token_by_refresh_token(refresh_token, scopes, **kwargs)
+            if "secret" not in refresh_token:
+                continue
+            token = self._client.obtain_token_by_refresh_token(scopes, refresh_token["secret"], **kwargs)
             if token:
                 return token
         return None

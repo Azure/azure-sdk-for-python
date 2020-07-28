@@ -32,11 +32,11 @@ def _parallel_uploads(executor, uploader, pending, running):
         done, running = futures.wait(running, return_when=futures.FIRST_COMPLETED)
         range_ids.extend([chunk.result() for chunk in done])
         try:
-            next_chunk = next(pending)
+            for _ in range(0, len(done)):
+                next_chunk = next(pending)
+                running.add(executor.submit(with_current_context(uploader), next_chunk))
         except StopIteration:
             break
-        else:
-            running.add(executor.submit(with_current_context(uploader), next_chunk))
 
     # Wait for the remaining uploads to finish
     done, _running = futures.wait(running)
@@ -538,8 +538,10 @@ class IterStreamer(object):
     def seekable(self):
         return False
 
-    def next(self):
+    def __next__(self):
         return next(self.iterator)
+
+    next = __next__  # Python 2 compatibility.
 
     def tell(self, *args, **kwargs):
         raise UnsupportedOperation("Data generator does not support tell.")
@@ -552,7 +554,7 @@ class IterStreamer(object):
         count = len(self.leftover)
         try:
             while count < size:
-                chunk = self.next()
+                chunk = self.__next__()
                 if isinstance(chunk, six.text_type):
                     chunk = chunk.encode(self.encoding)
                 data += chunk

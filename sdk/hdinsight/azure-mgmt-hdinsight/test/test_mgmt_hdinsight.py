@@ -1,18 +1,21 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import unittest
 
+from azure.keyvault.keys import KeyVaultKey, KeyClient
 from azure.mgmt.hdinsight import HDInsightManagementClient
 from azure.mgmt.hdinsight.models import *
 from azure.mgmt.keyvault import KeyVaultManagementClient
 from azure.mgmt.msi import ManagedServiceIdentityClient
 from azure.mgmt.keyvault.models import SecretPermissions, KeyPermissions, CertificatePermissions, StoragePermissions, \
     Permissions, Sku, SkuName, AccessPolicyEntry, VaultProperties, VaultCreateOrUpdateParameters, Vault
+from azure.mgmt.loganalytics import LogAnalyticsManagementClient
+from azure.mgmt.loganalytics.models import Workspace
 from azure.mgmt.storage.models import Kind
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 from mgmt_hdinsight_preparers import KeyVaultPreparer
@@ -28,6 +31,7 @@ STORAGE_ADLS_FILE_SYSTEM_ENDPOINT_SUFFIX = '.dfs.core.windows.net'
 
 FAKE_WORKSPACE_ID = '1d364e89-bb71-4503-aa3d-a23535aea7bd'
 
+
 class MgmtHDInsightTest(AzureMgmtTestCase):
 
     def setUp(self):
@@ -37,13 +41,6 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.hdinsight_client = self.create_mgmt_client(HDInsightManagementClient)
         self.msi_client = self.create_mgmt_client(ManagedServiceIdentityClient)
         self.vault_mgmt_client = self.create_mgmt_client(KeyVaultManagementClient)
-
-        # if self.is_live:
-        #     self.vault_client = self.create_basic_client(KeyVaultClient)
-        # else:
-        #     def _auth_callback(server, resource, scope):
-        #         return AccessToken('Bearer', 'fake-token')
-        #     self.vault_client = KeyVaultClient(KeyVaultAuthentication(authorization_callback=_auth_callback))
 
         # sensitive test configs
         self.tenant_id = self.settings.TENANT_ID
@@ -56,9 +53,10 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.ssh_username = 'sshuser'
         self.ssh_password = 'Password1!'
         self.adls_home_mountpoint = '/clusters/hdi'
-        self.cert_password = '123'
-        self.cert_content = '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'
-        self.workspace_id = '1d364e89-bb71-4503-aa3d-a23535aea7bd'
+        self.cert_password = 'password'
+        self.cert_content = 'MIIE5TCCAs0CFDGDR+Zz5To67BBDmsF3agvAtdUvMA0GCSqGSIb3DQEBCwUAMC8xCzAJBgNVBAYTAmNuMQ4wDAYDVQQIDAVjaGluYTEQMA4GA1UECgwHenp5dGVzdDAeFw0yMDA0MTYxMDEzNTlaFw0yMTA0MTYxMDEzNTlaMC8xCzAJBgNVBAYTAmNuMQ4wDAYDVQQIDAVjaGluYTEQMA4GA1UECgwHenp5dGVzdDCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAMmvOHmbbD5kIXnvIdEGFPVd3dHe8RFHBKMBSyqVdcwiijPsaQGkx2/PHyD019FTFPDcwo5Wt2rPXdkOm5Em7NiHcYWjZTF/UDZytf+B2pihI1jDz5qUGf65vIGWI5VVtuuXHSGMOZ4RGyM8/3SyMfAy02db6bJnat2RziZJ2F3FSPfMebGYgFn8uxfYKLGQj7mPEqVyGHxcx0KqbH+2jfzBqDjbaQfo7vBsqxvMfG+2G9SAHaiZPBveym4HuyDDtBZ3ChslVHitWUw0qsbPEuR7Jp8NenAqKVrzvixoepAm7vvErRs/olkJFu3OcIusDIOEQcYem30/rSQejQvrXTcdIvD3UPcqApdzrEZvdiCvIr0ys1Ie2OoOwdz391KCIlH3zgGu4Tdg0vJ+RQIYNT8DNK2PUbbw1bENEcwklgkdT2uIjgh6kOIjMCuy6UzAPnWBF8bl9YY3rB5p/EjnGk8BSp/nCEggMVxzfUhUNQJGKo1C85yFl8Olet/jtPZgf8JV9TOJLdNHlzdkidwrcLGJ8SAEsbveF2w5CtobqeDoClrSieK6ANPPLOWplMNFPZWqUaLe45ReExGYlm7Q+hpdnJem7ywWanJTzI1GoVJMr04ZJmsMEmVYhoSqN4yvFfyWM+rDrKdpzBF6ZqknzWxw+T59u+Eu+PrRMOMAWsDJAgMBAAEwDQYJKoZIhvcNAQELBQADggIBAC/5VPkcsb8sH6wpS3LeKViG2Z+XBZ70Q7FUliE4wfLwP5duzN8DN6eJyxS/nTyxohvI6p18MVgZdhjPcvndR1FE8eBsMqZM0D3eDyCYoiB9Ghm1DSxn0AZyk7/aC4nNYLorZouWa1DdCCdOFZegod5I3USXIvUOBDh9eIQQAGCYdANSLkYsyaZgTaKWiBDH0pTVvCOroCJ7NCayibCMc4vdHUQY/UyKSgOZG0Y2M6AgwNI/yC3tyizu/D8OoF7RUb/A4JqvHnqkY2hGF3/GwEBO4eQrCmHFozrA5qZx40bWP4sXGzcmZz/4Nl9TWRWdIKe5Wh3xz6ZMtJ3gPDwt4Vi59ZHcmq187uwYIRvuvGzD4/oI4zeZ80nxhJUQrZdPh3beaA5GhvTS9MM/RGgkXgB+CA61iF0euAb3FEC3MvpjDwDq9DZDiBulAscRn3QnYhxaL2AxMkNgtj6oaHGx+RlepXKqPd11hsdWhKo8X0zcCVrtrz73b6yDQesSP+lDapLuo/74APJVyAuEXM7zGQSt3zTmeE6RTIywB00VpifqL9HmcekllopPuQrBgs0cpgrs6/VjbC6uwIwV9dUrIsP6geLeocS9j6aQmEIr/E/HjvEZ0kI+03Cw+gQqeAlSeKP6ZY9AgQsCFBIBsgORNcn/Aii0QenXC19LeFC0dJYm'
+        self.workspace_id = '3741ffb2-a54e-407c-952a-43ab44b57c9d'
+        self.primary_key = 'qFmud5LfxcCxWUvWcGMhKDp0v0KuBRLsO/AIddX734W7lzdInsVMsB5ILVoOrF+0fCfk/IYYy5SJ9Q+2v4aihQ=='
 
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
@@ -71,17 +69,19 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
-    def test_create_humboldt_cluster_with_premium_tier(self, resource_group, location, storage_account, storage_account_key):
+    def test_create_humboldt_cluster_with_premium_tier(self, resource_group, location, storage_account,
+                                                       storage_account_key):
         cluster_name = self.get_resource_name('hdisdk-premium')
         create_params = self.get_cluster_create_params(location, cluster_name, storage_account, storage_account_key)
-        create_params.properties.tier=Tier.premium
+        create_params.properties.tier = Tier.premium
         create_poller = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params)
         cluster = create_poller.result()
         self.validate_cluster(cluster_name, create_params, cluster)
 
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
-    def test_create_with_empty_extended_parameters(self, resource_group, location, storage_account, storage_account_key):
+    def test_create_with_empty_extended_parameters(self, resource_group, location, storage_account,
+                                                   storage_account_key):
         cluster_name = self.get_resource_name('hdisdk-cluster')
         create_params = ClusterCreateParametersExtended()
 
@@ -95,12 +95,14 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
-    def test_create_humboldt_cluster_with_custom_vm_sizes(self, resource_group, location, storage_account, storage_account_key):
+    def test_create_humboldt_cluster_with_custom_vm_sizes(self, resource_group, location, storage_account,
+                                                          storage_account_key):
         cluster_name = self.get_resource_name('hdisdk-customvmsizes')
         create_params = self.get_cluster_create_params(location, cluster_name, storage_account, storage_account_key)
         headnode = next(item for item in create_params.properties.compute_profile.roles if item.name == 'headnode')
         headnode.hardware_profile = HardwareProfile(vm_size="ExtraLarge")
-        zookeepernode = next(item for item in create_params.properties.compute_profile.roles if item.name == 'zookeepernode')
+        zookeepernode = next(
+            item for item in create_params.properties.compute_profile.roles if item.name == 'zookeepernode')
         zookeepernode.hardware_profile = HardwareProfile(vm_size="Medium")
         create_poller = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params)
         cluster = create_poller.result()
@@ -108,18 +110,20 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
-    def test_create_linux_spark_cluster_with_component_version(self, resource_group, location, storage_account, storage_account_key):
+    def test_create_linux_spark_cluster_with_component_version(self, resource_group, location, storage_account,
+                                                               storage_account_key):
         cluster_name = self.get_resource_name('hdisdk-sparkcomponentversions')
         create_params = self.get_cluster_create_params(location, cluster_name, storage_account, storage_account_key)
         create_params.properties.cluster_definition.kind = 'Spark'
-        create_params.properties.cluster_definition.Component_version = {'Spark' : '2.2'}
+        create_params.properties.cluster_definition.Component_version = {'Spark': '2.2'}
         create_poller = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params)
         cluster = create_poller.result()
         self.validate_cluster(cluster_name, create_params, cluster)
 
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
-    def test_create_kafka_cluster_with_managed_disks(self, resource_group, location, storage_account, storage_account_key):
+    def test_create_kafka_cluster_with_managed_disks(self, resource_group, location, storage_account,
+                                                     storage_account_key):
         cluster_name = self.get_resource_name('hdisdk-kafka')
         create_params = self.get_cluster_create_params(location, cluster_name, storage_account, storage_account_key)
         create_params.properties.cluster_definition.kind = 'Kafka'
@@ -133,23 +137,26 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         cluster = create_poller.result()
         self.validate_cluster(cluster_name, create_params, cluster)
 
-    @unittest.skip('skipping temporarily to unblock azure-keyvault checkin')
+    # @unittest.skip('skipping temporarily to unblock azure-keyvault checkin')
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
     @KeyVaultPreparer(name_prefix='hdipy', location=LOCATION, enable_soft_delete=True)
-    def test_create_kafka_cluster_with_disk_encryption(self, resource_group, location, storage_account, storage_account_key, vault):
+    def test_create_kafka_cluster_with_disk_encryption(self, resource_group, location, storage_account,
+                                                       storage_account_key, vault):
         # create managed identities for Azure resources.
         msi_name = self.get_resource_name('hdipyuai')
         msi_principal_id = "00000000-0000-0000-0000-000000000000"
-        msi_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/{}/providers/microsoft.managedidentity/userassignedidentities/{}".format(resource_group.name, msi_name)
+        msi_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/{}/providers/microsoft.managedidentity/userassignedidentities/{}".format(
+            resource_group.name, msi_name)
         if self.is_live:
             msi = self.msi_client.user_assigned_identities.create_or_update(resource_group.name, msi_name, location)
             msi_id = msi.id
             msi_principal_id = msi.principal_id
 
         # add managed identity to vault
-        required_permissions = Permissions(keys=[KeyPermissions.get, KeyPermissions.wrap_key, KeyPermissions.unwrap_key],
-                                           secrets=[SecretPermissions.get, SecretPermissions.set,SecretPermissions.delete])
+        required_permissions = Permissions(
+            keys=[KeyPermissions.get, KeyPermissions.wrap_key, KeyPermissions.unwrap_key],
+            secrets=[SecretPermissions.get, SecretPermissions.set, SecretPermissions.delete])
         vault.properties.access_policies.append(
             AccessPolicyEntry(tenant_id=self.tenant_id,
                               object_id=msi_principal_id,
@@ -157,14 +164,20 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         )
         update_params = VaultCreateOrUpdateParameters(location=location,
                                                       properties=vault.properties)
-        vault = self.vault_mgmt_client.vaults.create_or_update(resource_group.name, vault.name, update_params).result()
+        vault = self.vault_mgmt_client.vaults.begin_create_or_update(resource_group.name, vault.name, update_params).result()
         self.assertIsNotNone(vault)
 
+        # create keyclient
+        key_client_credential = self.settings.get_azure_core_credentials(scope="https://vault.azure.net/.default")
+        self.vault_client = KeyClient(vault_url=vault.properties.vault_uri, credential=key_client_credential)
+
         # create key
-        vault_uri = vault.properties.vault_uri
         key_name = self.get_resource_name('hdipykey1')
-        created_bundle = self.vault_client.create_key(vault_uri, key_name, 'RSA')
-        vault_key = KeyVaultId.parse_key_id(created_bundle.key.kid)
+        vault_key = self.vault_client.create_key(key_name, 'RSA')
+
+        # create a new key for test rotate
+        new_key_name = self.get_resource_name('hdipykey2')
+        new_vault_key = self.vault_client.create_key(new_key_name, 'RSA')
 
         # create HDInsight cluster with Kafka disk encryption
         rg_name = resource_group.name
@@ -182,9 +195,9 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
             user_assigned_identities={msi_id: ClusterIdentityUserAssignedIdentitiesValue()}
         )
         create_params.properties.disk_encryption_properties = DiskEncryptionProperties(
-            vault_uri=vault_key.vault,
+            vault_uri=vault_key.properties.vault_url,
             key_name=vault_key.name,
-            key_version=vault_key.version,
+            key_version=vault_key.properties.version,
             msi_resource_id=msi_id
         )
         cluster = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params).result()
@@ -192,18 +205,17 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
 
         # check disk encryption properties
         self.assertIsNotNone(cluster.properties.disk_encryption_properties)
-        self.assertEqual(create_params.properties.disk_encryption_properties.vault_uri, cluster.properties.disk_encryption_properties.vault_uri)
-        self.assertEqual(create_params.properties.disk_encryption_properties.key_name, cluster.properties.disk_encryption_properties.key_name)
-        self.assertEqual(create_params.properties.disk_encryption_properties.msi_resource_id.lower(), cluster.properties.disk_encryption_properties.msi_resource_id.lower())
+        self.assertEqual(create_params.properties.disk_encryption_properties.vault_uri,
+                         cluster.properties.disk_encryption_properties.vault_uri)
+        self.assertEqual(create_params.properties.disk_encryption_properties.key_name,
+                         cluster.properties.disk_encryption_properties.key_name)
+        self.assertEqual(create_params.properties.disk_encryption_properties.msi_resource_id.lower(),
+                         cluster.properties.disk_encryption_properties.msi_resource_id.lower())
 
-        # create a new key
-        new_key_name = self.get_resource_name('hdipykey2')
-        created_bundle = self.vault_client.create_key(vault_uri, new_key_name, 'RSA')
-        new_vault_key = KeyVaultId.parse_key_id(created_bundle.key.kid)
         rotate_params = ClusterDiskEncryptionParameters(
-            vault_uri=new_vault_key.vault,
+            vault_uri=new_vault_key.properties.vault_url,
             key_name=new_vault_key.name,
-            key_version=new_vault_key.version
+            key_version=new_vault_key.properties.version
         )
 
         # rotate cluster key
@@ -216,6 +228,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.assertEqual(rotate_params.key_name, cluster.properties.disk_encryption_properties.key_name)
         self.assertEqual(msi_id.lower(), cluster.properties.disk_encryption_properties.msi_resource_id.lower())
 
+    @unittest.skip("There is something wrong in ADLS Gen1 from RP.")
     @ResourceGroupPreparer(name_prefix='hdipy-', location=ADLS_LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=ADLS_LOCATION)
     def test_create_with_adls_gen1(self, resource_group, location, storage_account, storage_account_key):
@@ -241,7 +254,8 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
     def test_create_with_adls_gen2(self, resource_group, location, storage_account, storage_account_key,
                                    second_storage_account, second_storage_account_key):
         cluster_name = self.get_resource_name('hdisdk-adlgen2')
-        create_params = self.get_cluster_create_params_for_adls_gen2(location, cluster_name, storage_account, storage_account_key)
+        create_params = self.get_cluster_create_params_for_adls_gen2(location, cluster_name, storage_account,
+                                                                     storage_account_key)
 
         # Add additional storage account
         create_params.properties.storage_profile.storageaccounts.append(
@@ -256,6 +270,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         cluster = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params).result()
         self.validate_cluster(cluster_name, create_params, cluster)
 
+    @unittest.skip("This test depends on ADLS Gen1. Now there is something wrong with ADLS Gen1.")
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy2', location=LOCATION, parameter_name='second_storage_account')
@@ -307,7 +322,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
     def test_create_mlservices_cluster(self, resource_group, location, storage_account, storage_account_key):
         cluster_name = self.get_resource_name('hdisdk-mlservices')
         create_params = self.get_cluster_create_params(location, cluster_name, storage_account, storage_account_key)
-        create_params.properties.cluster_version="3.6"
+        create_params.properties.cluster_version = "3.6"
         create_params.properties.cluster_definition.kind = 'MLServices'
         create_params.properties.compute_profile.roles.append(
             Role(
@@ -371,7 +386,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
     def test_hue_on_running_cluster(self, resource_group, location, storage_account, storage_account_key):
         cluster_name = self.get_resource_name('hdisdk-applications-hue')
         create_params = self.get_cluster_create_params(location, cluster_name, storage_account, storage_account_key)
-        create_params.properties.cluster_version="3.6"
+        create_params.properties.cluster_version = "3.6"
         create_poller = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params)
         cluster = create_poller.result()
         self.validate_cluster(cluster_name, create_params, cluster)
@@ -395,19 +410,24 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
                             hardware_profile=HardwareProfile(
                                 vm_size="Large"
                             ),
-                            target_instance_count = 1
+                            target_instance_count=1
                         )
                     ]
                 )
             )
         )
 
-        self.hdinsight_client.applications.create(resource_group.name, cluster_name, application_name, application).wait()
+        self.hdinsight_client.applications.create(resource_group.name, cluster_name, application_name,
+                                                  application).wait()
         application_list = list(self.hdinsight_client.applications.list_by_cluster(resource_group.name, cluster_name))
         self.assertGreater(len(application_list), 0)
         application_match = [item for item in application_list if item.name == application_name]
         self.assertIsNotNone(application_match)
         self.assertEqual(len(application_match), 1)
+
+        # sleep for robust
+        import time
+        time.sleep(120)
 
         self.hdinsight_client.applications.delete(resource_group.name, cluster_name, application_name).wait()
         application_list = list(self.hdinsight_client.applications.list_by_cluster(resource_group.name, cluster_name))
@@ -467,7 +487,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
-    def test_http_extended(self, resource_group, location, storage_account, storage_account_key):
+    def test_gateway_settings(self, resource_group, location, storage_account, storage_account_key):
         rg_name = resource_group.name
         cluster_name = self.get_resource_name('hdisdk-http')
         create_params = self.get_cluster_create_params(location, cluster_name, storage_account, storage_account_key)
@@ -475,21 +495,17 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         cluster = create_poller.result()
         self.validate_cluster(cluster_name, create_params, cluster)
 
-        gateway = 'gateway'
         user_name = self.cluster_username
         user_password = self.cluster_password
-        http_settings = self.hdinsight_client.configurations.get(rg_name, cluster_name, gateway)
-        self.validate_http_settings(http_settings, user_name, user_password)
+        gateway_settings = self.hdinsight_client.clusters.get_gateway_settings(rg_name, cluster_name)
+        self.validate_gateway_settings(gateway_settings, user_name, user_password)
 
         new_password = 'NewPassword1!'
-        update_params = {
-            'restAuthCredential.isEnabled': 'true',
-            'restAuthCredential.username': user_name,
-            'restAuthCredential.password': new_password
-        }
-        self.hdinsight_client.configurations.update(rg_name, cluster_name, gateway, update_params).wait()
-        http_settings = self.hdinsight_client.configurations.get(rg_name, cluster_name, gateway)
-        self.validate_http_settings(http_settings, user_name, new_password)
+        update_params = UpdateGatewaySettingsParameters(is_credential_enabled=True, user_name=user_name,
+                                                        password=new_password)
+        self.hdinsight_client.clusters.update_gateway_settings(rg_name, cluster_name, update_params).wait()
+        gateway_settings = self.hdinsight_client.clusters.get_gateway_settings(rg_name, cluster_name)
+        self.validate_gateway_settings(gateway_settings, user_name, new_password)
 
     def test_get_usages(self):
         usages = self.hdinsight_client.locations.list_usages(LOCATION)
@@ -502,6 +518,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
             self.assertIsNotNone(usage.name)
             self.assertIsNotNone(usage.unit)
 
+    @unittest.skip("Script executed failed due to Internal server. The issue is related with RP not SDK.")
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
     def test_oms_on_running_cluster(self, resource_group, location, storage_account, storage_account_key):
@@ -509,12 +526,23 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         cluster_name = self.get_resource_name('hdisdk-oms')
         create_params = self.get_cluster_create_params(location, cluster_name, storage_account, storage_account_key)
         create_params.properties.cluster_definition.kind = 'Spark'
-        create_params.properties.cluster_version="3.6"
+        create_params.properties.cluster_version = "3.6"
         create_poller = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params)
         cluster = create_poller.result()
         self.validate_cluster(cluster_name, create_params, cluster)
 
-        self.hdinsight_client.extensions.enable_monitoring(rg_name, cluster_name, self.workspace_id).wait()
+        # create log analytics workspace
+        self.loganalytics_mgmt_client = self.create_mgmt_client(LogAnalyticsManagementClient)
+        workspace_name = self.get_resource_name('workspaceforpytest')
+        workspace_params = Workspace(name=workspace_name, location=location)
+        workspace_poller = self.loganalytics_mgmt_client.workspaces.create_or_update(rg_name, workspace_name,
+                                                                                     workspace_params)
+        workspace = workspace_poller.result()
+        self.workspace_id = workspace.customer_id
+        self.primary_key = self.loganalytics_mgmt_client.shared_keys.get_shared_keys(rg_name, workspace_name)
+
+        self.hdinsight_client.extensions.enable_monitoring(rg_name, cluster_name, self.workspace_id,
+                                                           self.primary_key).wait()
         monitoring_status = self.hdinsight_client.extensions.get_monitoring_status(rg_name, cluster_name)
         self.assertTrue(monitoring_status.cluster_monitoring_enabled)
         self.assertEqual(monitoring_status.workspace_id, self.workspace_id)
@@ -530,7 +558,8 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         rg_name = resource_group.name
         cluster_name = self.get_resource_name('hdisdk-clusterresize')
         create_params = self.get_cluster_create_params(location, cluster_name, storage_account, storage_account_key)
-        workernode_params = next(item for item in create_params.properties.compute_profile.roles if item.name == 'workernode')
+        workernode_params = next(
+            item for item in create_params.properties.compute_profile.roles if item.name == 'workernode')
         create_poller = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params)
         cluster = create_poller.result()
         self.validate_cluster(cluster_name, create_params, cluster)
@@ -577,7 +606,8 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.assertEqual(0, len(script_action_list))
 
         # List script action history and validate script appears there.
-        list_history_response = list(self.hdinsight_client.script_execution_history.list_by_cluster(rg_name, cluster_name))
+        list_history_response = list(
+            self.hdinsight_client.script_execution_history.list_by_cluster(rg_name, cluster_name))
         self.assertEqual(1, len(list_history_response))
         script_action = list_history_response[0]
         self.assertEqual(1, len(script_action.execution_summary))
@@ -587,7 +617,8 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.assertEqual("Succeeded", script_action.status)
 
         # Get the script action by ID and validate it's the same action.
-        script_action = self.hdinsight_client.script_actions.get_execution_detail(rg_name, cluster_name, str(list_history_response[0].script_execution_id))
+        script_action = self.hdinsight_client.script_actions.get_execution_detail(rg_name, cluster_name, str(
+            list_history_response[0].script_execution_id))
         self.assertEqual(script_action_params[0].name, script_action.name)
 
         # Execute script actions, but don't persist on success.
@@ -595,7 +626,8 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.hdinsight_client.clusters.execute_script_actions(rg_name, cluster_name, False, script_action_params).wait()
 
         # List script action history and validate the new script also appears.
-        list_history_response = list(self.hdinsight_client.script_execution_history.list_by_cluster(rg_name, cluster_name))
+        list_history_response = list(
+            self.hdinsight_client.script_execution_history.list_by_cluster(rg_name, cluster_name))
         self.assertEqual(2, len(list_history_response))
         script_action = next(a for a in list_history_response if a.name == script_action_params[0].name)
         self.assertIsNotNone(script_action)
@@ -606,7 +638,8 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.assertEqual("Succeeded", script_action.status)
 
         # Promote non-persisted script.
-        self.hdinsight_client.script_execution_history.promote(rg_name, cluster_name, str(list_history_response[0].script_execution_id))
+        self.hdinsight_client.script_execution_history.promote(rg_name, cluster_name,
+                                                               str(list_history_response[0].script_execution_id))
 
         # List script action list and validate the promoted script is the only one there.
         script_action_list = list(self.hdinsight_client.script_actions.list_by_cluster(rg_name, cluster_name))
@@ -617,16 +650,17 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.assertEqual(script_action_params[0].roles, script_action.roles)
 
         # List script action history and validate all three scripts are there.
-        list_history_response = list(self.hdinsight_client.script_execution_history.list_by_cluster(rg_name, cluster_name))
+        list_history_response = list(
+            self.hdinsight_client.script_execution_history.list_by_cluster(rg_name, cluster_name))
         self.assertEqual(2, len(list_history_response))
         self.assertTrue(all(a.status == "Succeeded" for a in list_history_response))
 
     def get_execute_script_action_params(self, script_name, script_uri):
         return [
             RuntimeScriptAction(
-                name = script_name,
-                uri = script_uri,
-                roles = ['headnode', 'workernode']
+                name=script_name,
+                uri=script_uri,
+                roles=['headnode', 'workernode']
             )
         ]
 
@@ -656,7 +690,8 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
 
         return create_params
 
-    def get_cluster_create_params_for_adls_gen2(self, location, cluster_name, storage_account, storage_account_key, create_params=None):
+    def get_cluster_create_params_for_adls_gen2(self, location, cluster_name, storage_account, storage_account_key,
+                                                create_params=None):
         if create_params is None:
             create_params = self.get_cluster_create_params(location, cluster_name)
         is_default = len(create_params.properties.storage_profile.storageaccounts) == 0
@@ -665,7 +700,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
                 name=storage_account.name + STORAGE_ADLS_FILE_SYSTEM_ENDPOINT_SUFFIX,
                 key=storage_account_key,
                 file_system=cluster_name.lower(),
-                is_default= is_default
+                is_default=is_default
             )
         )
 
@@ -760,15 +795,16 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.assertEqual(create_parameters.properties.os_type, cluster_response.properties.os_type)
         self.assertIsNone(cluster_response.properties.errors)
         self.assertEqual(HDInsightClusterProvisioningState.succeeded, cluster_response.properties.provisioning_state)
-        self.assertEqual(create_parameters.properties.cluster_definition.kind, cluster_response.properties.cluster_definition.kind)
+        self.assertEqual(create_parameters.properties.cluster_definition.kind,
+                         cluster_response.properties.cluster_definition.kind)
         self.assertEqual(create_parameters.properties.cluster_version, cluster_response.properties.cluster_version[0:3])
         self.assertIsNone(cluster_response.properties.cluster_definition.configurations)
 
-    def validate_http_settings(self, http_settings, expected_user_name, expected_user_password):
-        self.assertIsNotNone(http_settings)
-        self.assertEqual('true', http_settings['restAuthCredential.isEnabled'])
-        self.assertEqual(expected_user_name, http_settings['restAuthCredential.username'])
-        self.assertEqual(expected_user_password, http_settings['restAuthCredential.password'])
+    def validate_gateway_settings(self, gateway_settings, expected_user_name, expected_user_password):
+        self.assertIsNotNone(gateway_settings)
+        self.assertEqual('true', gateway_settings.is_credential_enabled)
+        self.assertEqual(expected_user_name, gateway_settings.user_name)
+        self.assertEqual(expected_user_password, gateway_settings.password)
 
     def _setup_scrubber(self):
         super(MgmtHDInsightTest, self)._setup_scrubber()
@@ -778,6 +814,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
                 self.scrubber.register_name_pair(getattr(self.settings, key),
                                                  getattr(self._fake_settings, key))
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

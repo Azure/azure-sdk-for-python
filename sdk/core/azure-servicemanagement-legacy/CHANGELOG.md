@@ -1,6 +1,6 @@
 # Release History
 
-## 0.20.7 (Unreleased)
+## 0.20.7 (2020-05-05)
 
 - Python 3.7 compatibility
 

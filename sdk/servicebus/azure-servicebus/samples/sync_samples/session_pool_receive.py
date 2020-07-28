@@ -4,31 +4,31 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
+import os
 import uuid
 import concurrent
 
 from azure.servicebus import ServiceBusClient, Message, AutoLockRenew
-from azure.servicebus import NoActiveSession
+from azure.servicebus.exceptions import NoActiveSession
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 # Note: This must be a session-enabled queue.
-QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
+SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
+
 
 def message_processing(sb_client, queue_name, messages):
     while True:
         try:
             with sb_client.get_queue_session_receiver(queue_name, idle_timeout=1) as receiver:
                 renewer = AutoLockRenew()
-                renewer.register(receiver.session, timeout=None)
+                renewer.register(receiver.session)
                 receiver.session.set_session_state("OPEN")
                 for message in receiver:
                     messages.append(message)
                     print("Message: {}".format(message))
-                    print("Time to live: {}".format(message.header.time_to_live))
+                    print("Time to live: {}".format(message.time_to_live))
                     print("Sequence number: {}".format(message.sequence_number))
-                    print("Enqueue Sequence numger: {}".format(message.enqueue_sequence_number))
-                    print("Partition ID: {}".format(message.partition_id))
+                    print("Enqueue Sequence number: {}".format(message.enqueued_sequence_number))
                     print("Partition Key: {}".format(message.partition_key))
                     print("Locked until: {}".format(message.locked_until_utc))
                     print("Lock Token: {}".format(message.lock_token))
@@ -52,7 +52,7 @@ def sample_session_send_receive_with_pool(connection_string, queue_name):
             for session_id in sessions:
                 for i in range(20):
                     message = Message("Sample message no. {}".format(i), session_id=session_id)
-                    sender.send(message)
+                    sender.send_messages(message)
 
         all_messages = []
         futures = []
@@ -65,4 +65,4 @@ def sample_session_send_receive_with_pool(connection_string, queue_name):
 
 
 if __name__ == '__main__':
-    sample_session_send_receive_with_pool(CONNECTION_STR, QUEUE_NAME)
+    sample_session_send_receive_with_pool(CONNECTION_STR, SESSION_QUEUE_NAME)

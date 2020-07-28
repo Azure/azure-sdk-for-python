@@ -60,7 +60,7 @@ def _get_running_loop():
 
 
 #pylint: disable=too-many-ancestors
-class AsyncioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
+class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the built-in asyncio event loop.
 
@@ -79,10 +79,10 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         return super(AsyncioRequestsTransport, self).__exit__()
 
-    async def sleep(self, duration):
+    async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await asyncio.sleep(duration)
 
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
+    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
@@ -103,7 +103,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
             response = await loop.run_in_executor(
                 None,
                 functools.partial(
-                    self.session.request, # type: ignore
+                    self.session.request,
                     request.method,
                     request.url,
                     headers=request.headers,

@@ -9,36 +9,87 @@
 /sdk/ @mayurid @lmazuel
 
 # Core
-/sdk/core/                                                           @lmazuel @xiangyan99 @johanste
-/sdk/core/azure-core/                                                @xiangyan99 @bryevdv @lmazuel
+# PRLabel: %Azure.Core
+/sdk/core/                                                           @lmazuel @xiangyan99 @johanste @rakshith91
+/sdk/core/azure-core/                                                @xiangyan99 @lmazuel
 
+####
 # Service team
+####
+# PRLabel: %Azure.Identity
 /sdk/identity/                                                       @chlowell @schaabs
+
+# PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @yunhaoling @YijunXieMS
-/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft
-/sdk/applicationinsights/                                            @alexeldeib
-/sdk/batch/                                                          @bgklein @matthchr @xingwu1
-/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
+
+# PRLabel: %Storage
+/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft    
+
+/sdk/applicationinsights/                                            @alexeldeib      
+
+# PRLabel: %Batch
+/sdk/batch/                                                          @bgklein @xingwu1
+/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish          
+
+# PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @chlowell @iscai-msft
+
+# PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/                                                   @alexeldeib
+
+# PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
+
+# PRLabel: %Container Instances
 /sdk/containerinstance/                                              @samkreter @xizhamsft
+
+# PRLabel: %Container Registry
 /sdk/containerregistry/                                              @djyou
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
-/sdk/cosmos/                                                         @shurd
+
+# PRLabel: %Cosmos
+/sdk/cosmos/                                                         @southpolesteve @zfoster
+
+# PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
-/sdk/datalake/                                                       @ro-joowan
+/sdk/datalake/                                                       @ro-joowan                                                     
 /sdk/datadatamigration/                                              @vchske
+
+# PRLabel: %Event Grid
 /sdk/eventgrid/                                                      @kalyanaj
+
+# PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
+
+# PRLabel: %Machine Learning Compute
 /sdk/machinelearningcompute/                                         @shutchings
+
+# PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
+
+# PRLabel: %Search
+/sdk/search/                                                         @xiangyan99 @rakshith91
+
+# PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
+
+# PRLabel: %SQL
 /sql/sql/                                                            @jaredmoo
+
+# PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
+
+# PRLabel: %Synapse
 /sdk/synapse/                                                        @aim-for-better @idear1203
+
+# PRLabel: %Cognitive - Text Analytics
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft
-/sdk/formrecognizer/                                                 @kristapratico @iscai-msft
+
+# PRLabel: %Cognitive - Form Recognizer
+/sdk/formrecognizer/                                                 @kristapratico @iscai-msft @rakshith91
+
+# Smoke Tests
+/common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
 
 # Management Plane
 /**/*mgmt*/     @zikalino

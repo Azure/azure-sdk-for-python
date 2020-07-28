@@ -9,7 +9,7 @@
 import sys
 
 # fixture needs to be visible from conftest
-from testcase import form_recognizer_account, form_recognizer_and_storage_account
+from testcase import form_recognizer_account
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
@@ -20,7 +20,4 @@ def pytest_configure(config):
     # register an additional marker
     config.addinivalue_line(
         "usefixtures", "form_recognizer_account"
-    )
-    config.addinivalue_line(
-        "usefixtures", "form_recognizer_and_storage_account"
     )

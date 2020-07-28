@@ -13,11 +13,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 3156F4CE69D33CAF4E2B8CC6FA27862A
+      - 2012A83AD519035A878754DF20535EC1
     method: POST
-    uri: https://search504f1054.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    uri: https://search504f1054.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"@search.score":0.48248714,"hotelId":"10","hotelName":"Countryside
@@ -72,9 +72,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Tue, 31 Mar 2020 17:34:47 GMT
+      - Wed, 29 Apr 2020 23:18:18 GMT
       elapsed-time:
-      - '234'
+      - '80'
       expires:
       - '-1'
       odata-version:
@@ -84,7 +84,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - eb26bd28-7375-11ea-af85-5cf37071153c
+      - b5d9445a-8a6f-11ea-889b-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -106,11 +106,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 3156F4CE69D33CAF4E2B8CC6FA27862A
+      - 2012A83AD519035A878754DF20535EC1
     method: POST
-    uri: https://search504f1054.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2019-05-06-Preview
+    uri: https://search504f1054.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
       string: '{"@search.coverage":100.0,"value":[{"@search.score":0.48248714,"hotelId":"10","hotelName":"Countryside
@@ -165,9 +165,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Tue, 31 Mar 2020 17:34:47 GMT
+      - Wed, 29 Apr 2020 23:18:18 GMT
       elapsed-time:
-      - '15'
+      - '7'
       expires:
       - '-1'
       odata-version:
@@ -177,7 +177,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - eb8a681a-7375-11ea-9f75-5cf37071153c
+      - b5fd6af6-8a6f-11ea-889b-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

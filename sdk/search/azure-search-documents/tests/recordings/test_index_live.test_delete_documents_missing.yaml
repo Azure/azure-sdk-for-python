@@ -14,11 +14,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 99211B5C4ABD8A0143509AE62A1DCEC4
+      - EF93A352FBEA8C4306E72E9FA5DE1C21
     method: POST
-    uri: https://searcha9301291.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2019-05-06-Preview
+    uri: https://searcha9301291.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"key":"1000","status":true,"errorMessage":null,"statusCode":200},{"key":"4","status":true,"errorMessage":null,"statusCode":200}]}'
@@ -30,9 +30,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Tue, 31 Mar 2020 17:33:18 GMT
+      - Wed, 29 Apr 2020 23:17:17 GMT
       elapsed-time:
-      - '214'
+      - '83'
       expires:
       - '-1'
       odata-version:
@@ -42,7 +42,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - b626c902-7375-11ea-b906-5cf37071153c
+      - 919491ee-8a6f-11ea-889b-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -60,11 +60,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 99211B5C4ABD8A0143509AE62A1DCEC4
+      - EF93A352FBEA8C4306E72E9FA5DE1C21
     method: GET
-    uri: https://searcha9301291.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2019-05-06-Preview
+    uri: https://searcha9301291.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
   response:
     body:
       string: "\uFEFF9"
@@ -76,7 +76,7 @@ interactions:
       content-type:
       - text/plain
       date:
-      - Tue, 31 Mar 2020 17:33:22 GMT
+      - Wed, 29 Apr 2020 23:17:20 GMT
       elapsed-time:
       - '4'
       expires:
@@ -88,7 +88,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - b85c6a1c-7375-11ea-bf12-5cf37071153c
+      - 93888cc6-8a6f-11ea-889b-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -106,11 +106,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 99211B5C4ABD8A0143509AE62A1DCEC4
+      - EF93A352FBEA8C4306E72E9FA5DE1C21
     method: GET
-    uri: https://searcha9301291.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
+    uri: https://searcha9301291.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
   response:
     body:
       string: ''
@@ -120,15 +120,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 31 Mar 2020 17:33:22 GMT
+      - Wed, 29 Apr 2020 23:17:20 GMT
       elapsed-time:
-      - '5'
+      - '6'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - b87b9240-7375-11ea-a8d5-5cf37071153c
+      - 938fe08e-8a6f-11ea-889b-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -144,11 +144,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 99211B5C4ABD8A0143509AE62A1DCEC4
+      - EF93A352FBEA8C4306E72E9FA5DE1C21
     method: GET
-    uri: https://searcha9301291.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
+    uri: https://searcha9301291.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
   response:
     body:
       string: ''
@@ -158,7 +158,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 31 Mar 2020 17:33:22 GMT
+      - Wed, 29 Apr 2020 23:17:20 GMT
       elapsed-time:
       - '6'
       expires:
@@ -166,7 +166,7 @@ interactions:
       pragma:
       - no-cache
       request-id:
-      - b88bff3a-7375-11ea-b8fd-5cf37071153c
+      - 93986740-8a6f-11ea-889b-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

@@ -4,8 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from ._generated.models._models import LanguageInput
-from ._generated.models._models import MultiLanguageInput
+from ._generated.v3_0.models._models import LanguageInput
+from ._generated.v3_0.models._models import MultiLanguageInput
 
 
 class DictMixin(object):
@@ -63,136 +63,135 @@ class DetectedLanguage(DictMixin):
     """DetectedLanguage contains the predicted language found in text,
     its confidence score, and ISO 639-1 representation.
 
-    :param name: Long name of a detected language (e.g. English,
+    :ivar name: Long name of a detected language (e.g. English,
         French).
-    :type name: str
-    :param iso6391_name: A two letter representation of the detected
+    :vartype name: str
+    :ivar iso6391_name: A two letter representation of the detected
         language according to the ISO 639-1 standard (e.g. en, fr).
-    :type iso6391_name: str
-    :param score: A confidence score between 0 and 1. Scores close
+    :vartype iso6391_name: str
+    :ivar confidence_score: A confidence score between 0 and 1. Scores close
         to 1 indicate 100% certainty that the identified language is true.
-    :type score: float
+    :vartype confidence_score: float
     """
 
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", None)
         self.iso6391_name = kwargs.get("iso6391_name", None)
-        self.score = kwargs.get("score", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
 
     @classmethod
     def _from_generated(cls, language):
         return cls(
-            name=language.name, iso6391_name=language.iso6391_name, score=language.score
+            name=language.name, iso6391_name=language.iso6391_name, confidence_score=language.confidence_score
         )
 
     def __repr__(self):
-        return "DetectedLanguage(name={}, iso6391_name={}, score={})" \
-            .format(self.name, self.iso6391_name, self.score)[:1024]
+        return "DetectedLanguage(name={}, iso6391_name={}, confidence_score={})" \
+            .format(self.name, self.iso6391_name, self.confidence_score)[:1024]
 
 
 class RecognizeEntitiesResult(DictMixin):
     """RecognizeEntitiesResult is a result object which contains
     the recognized entities from a particular document.
 
-    :param id: Unique, non-empty document identifier that matches the
+    :ivar id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :type id: str
-    :param entities: Recognized entities in the document.
-    :type entities:
+    :vartype id: str
+    :ivar entities: Recognized entities in the document.
+    :vartype entities:
         list[~azure.ai.textanalytics.CategorizedEntity]
-    :param statistics: If show_stats=true was specified in the request this
+    :ivar warnings: Warnings encountered while processing document. Results will still be returned
+     if there are warnings, but they may not be fully accurate.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
-    :type statistics:
+    :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
-    :param bool is_error: Boolean check for error item when iterating over list of
+    :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeEntitiesResult.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
+        self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "RecognizeEntitiesResult(id={}, entities={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.entities), repr(self.statistics), self.is_error)[:1024]
+        return "RecognizeEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.entities), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
 
 
 class DetectLanguageResult(DictMixin):
     """DetectLanguageResult is a result object which contains
     the detected language of a particular document.
 
-    :param id: Unique, non-empty document identifier that matches the
+    :ivar id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :type id: str
-    :param primary_language: The primary language detected in the document.
-    :type primary_language: ~azure.ai.textanalytics.DetectedLanguage
-    :param statistics: If show_stats=true was specified in the request this
+    :vartype id: str
+    :ivar primary_language: The primary language detected in the document.
+    :vartype primary_language: ~azure.ai.textanalytics.DetectedLanguage
+    :ivar warnings: Warnings encountered while processing document. Results will still be returned
+     if there are warnings, but they may not be fully accurate.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
-    :type statistics:
+    :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
-    :param bool is_error: Boolean check for error item when iterating over list of
+    :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a DetectLanguageResult.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.primary_language = kwargs.get("primary_language", None)
+        self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "DetectLanguageResult(id={}, primary_language={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.primary_language), repr(self.statistics), self.is_error)[:1024]
+        return "DetectLanguageResult(id={}, primary_language={}, warnings={}, statistics={}, "\
+            "is_error={})".format(self.id, repr(self.primary_language), repr(self.warnings),
+            repr(self.statistics), self.is_error)[:1024]
 
 
 class CategorizedEntity(DictMixin):
     """CategorizedEntity contains information about a particular
     entity found in text.
 
-    :param text: Entity text as appears in the request.
-    :type text: str
-    :param category: Entity category, such as Person/Location/Org/SSN etc
-    :type category: str
-    :param subcategory: Entity subcategory, such as Age/Year/TimeRange etc
-    :type subcategory: str
-    :param grapheme_offset: Start position (in Unicode characters) for the
-        entity text.
-    :type grapheme_offset: int
-    :param grapheme_length: Length (in Unicode characters) for the entity
-        text.
-    :type grapheme_length: int
-    :param confidence_score: Confidence score between 0 and 1 of the extracted
+    :ivar text: Entity text as appears in the request.
+    :vartype text: str
+    :ivar category: Entity category, such as Person/Location/Org/SSN etc
+    :vartype category: str
+    :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
+    :vartype subcategory: str
+    :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
-    :type confidence_score: float
+    :vartype confidence_score: float
     """
 
     def __init__(self, **kwargs):
         self.text = kwargs.get('text', None)
         self.category = kwargs.get('category', None)
         self.subcategory = kwargs.get('subcategory', None)
-        self.grapheme_offset = kwargs.get('grapheme_offset', None)
-        self.grapheme_length = kwargs.get('grapheme_length', None)
         self.confidence_score = kwargs.get('confidence_score', None)
 
     @classmethod
     def _from_generated(cls, entity):
         return cls(
             text=entity.text,
-            category=entity.type,
-            subcategory=entity.subtype,
-            grapheme_offset=entity.offset,
-            grapheme_length=entity.length,
-            confidence_score=entity.score,
+            category=entity.category,
+            subcategory=entity.subcategory,
+            confidence_score=entity.confidence_score,
         )
 
     def __repr__(self):
-        return "CategorizedEntity(text={}, category={}, subcategory={}, grapheme_offset={}, grapheme_length={}, " \
-               "confidence_score={})".format(self.text, self.category, self.subcategory, self.grapheme_offset,
-                                  self.grapheme_length, self.confidence_score)[:1024]
+        return "CategorizedEntity(text={}, category={}, subcategory={}, confidence_score={})".format(
+            self.text, self.category, self.subcategory, self.confidence_score
+        )[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -200,16 +199,16 @@ class TextAnalyticsError(DictMixin):
     other details that explain why the batch or individual document
     failed to be processed by the service.
 
-    :param code: Error code. Possible values include:
+    :ivar code: Error code. Possible values include:
      'invalidRequest', 'invalidArgument', 'internalServerError',
      'serviceUnavailable', 'invalidParameterValue', 'invalidRequestBodyFormat',
      'emptyRequest', 'missingInputRecords', 'invalidDocument', 'modelVersionIncorrect',
      'invalidDocumentBatch', 'unsupportedLanguageCode', 'invalidCountryHint'
-    :type code: str
-    :param message: Error message.
-    :type message: str
-    :param target: Error target.
-    :type target: str
+    :vartype code: str
+    :ivar message: Error message.
+    :vartype message: str
+    :ivar target: Error target.
+    :vartype target: str
     """
 
     def __init__(self, **kwargs):
@@ -219,11 +218,11 @@ class TextAnalyticsError(DictMixin):
 
     @classmethod
     def _from_generated(cls, err):
-        if err.inner_error:
+        if err.innererror:
             return cls(
-                code=err.inner_error.code,
-                message=err.inner_error.message,
-                target=err.inner_error.target
+                code=err.innererror.code,
+                message=err.innererror.message,
+                target=err.innererror.target
             )
         return cls(
             code=err.code,
@@ -235,66 +234,100 @@ class TextAnalyticsError(DictMixin):
         return "TextAnalyticsError(code={}, message={}, target={})" \
             .format(self.code, self.message, self.target)[:1024]
 
+class TextAnalyticsWarning(DictMixin):
+    """TextAnalyticsWarning contains the warning code and message that explains why
+    the response has a warning.
+
+    :ivar code: Warning code. Possible values include: 'LongWordsInDocument',
+     'DocumentTruncated'.
+    :vartype code: str
+    :ivar message: Warning message.
+    :vartype message: str
+    """
+
+    def __init__(self, **kwargs):
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+
+    @classmethod
+    def _from_generated(cls, warning):
+        return cls(
+            code=warning.code,
+            message=warning.message,
+        )
+
+    def __repr__(self):
+        return "TextAnalyticsWarning(code={}, message={})" \
+            .format(self.code, self.message)[:1024]
+
 
 class ExtractKeyPhrasesResult(DictMixin):
     """ExtractKeyPhrasesResult is a result object which contains
     the key phrases found in a particular document.
 
-    :param id: Unique, non-empty document identifier that matches the
+    :ivar id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :type id: str
-    :param key_phrases: A list of representative words or phrases.
+    :vartype id: str
+    :ivar key_phrases: A list of representative words or phrases.
         The number of key phrases returned is proportional to the number of words
         in the input document.
-    :type key_phrases: list[str]
-    :param statistics: If show_stats=true was specified in the request this
+    :vartype key_phrases: list[str]
+    :ivar warnings: Warnings encountered while processing document. Results will still be returned
+     if there are warnings, but they may not be fully accurate.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
-    :type statistics:
+    :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
-    :param bool is_error: Boolean check for error item when iterating over list of
+    :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a ExtractKeyPhrasesResult.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.key_phrases = kwargs.get("key_phrases", None)
+        self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "ExtractKeyPhrasesResult(id={}, key_phrases={}, statistics={}, is_error={})" \
-            .format(self.id, self.key_phrases, repr(self.statistics), self.is_error)[:1024]
+        return "ExtractKeyPhrasesResult(id={}, key_phrases={}, warnings={}, statistics={}, is_error={})" \
+            .format(self.id, self.key_phrases, repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
 
 
 class RecognizeLinkedEntitiesResult(DictMixin):
     """RecognizeLinkedEntitiesResult is a result object which contains
     links to a well-known knowledge base, like for example, Wikipedia or Bing.
 
-    :param id: Unique, non-empty document identifier that matches the
+    :ivar id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :type id: str
-    :param entities: Recognized well-known entities in the document.
-    :type entities:
+    :vartype id: str
+    :ivar entities: Recognized well-known entities in the document.
+    :vartype entities:
         list[~azure.ai.textanalytics.LinkedEntity]
-    :param statistics: If show_stats=true was specified in the request this
+    :ivar warnings: Warnings encountered while processing document. Results will still be returned
+     if there are warnings, but they may not be fully accurate.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
-    :type statistics:
+    :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
-    :param bool is_error: Boolean check for error item when iterating over list of
+    :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeLinkedEntitiesResult.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.entities = kwargs.get("entities", None)
+        self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.is_error = False
 
     def __repr__(self):
-        return "RecognizeLinkedEntitiesResult(id={}, entities={}, statistics={}, is_error={})" \
-            .format(self.id, repr(self.entities), repr(self.statistics), self.is_error)[:1024]
+        return "RecognizeLinkedEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.entities), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
 
 
 class AnalyzeSentimentResult(DictMixin):
@@ -302,57 +335,62 @@ class AnalyzeSentimentResult(DictMixin):
     the overall predicted sentiment and confidence scores for your document
     and a per-sentence sentiment prediction with scores.
 
-    :param id: Unique, non-empty document identifier that matches the
+    :ivar id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :type id: str
-    :param sentiment: Predicted sentiment for document (Negative,
+    :vartype id: str
+    :ivar sentiment: Predicted sentiment for document (Negative,
         Neutral, Positive, or Mixed). Possible values include: 'positive',
         'neutral', 'negative', 'mixed'
-    :type sentiment: str
-    :param statistics: If show_stats=true was specified in the request this
+    :vartype sentiment: str
+    :ivar warnings: Warnings encountered while processing document. Results will still be returned
+     if there are warnings, but they may not be fully accurate.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
-    :type statistics:
+    :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
-    :param confidence_scores: Document level sentiment confidence
+    :ivar confidence_scores: Document level sentiment confidence
         scores between 0 and 1 for each sentiment label.
-    :type confidence_scores:
+    :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :param sentences: Sentence level sentiment analysis.
-    :type sentences:
+    :ivar sentences: Sentence level sentiment analysis.
+    :vartype sentences:
         list[~azure.ai.textanalytics.SentenceSentiment]
-    :param bool is_error: Boolean check for error item when iterating over list of
+    :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a AnalyzeSentimentResult.
     """
 
     def __init__(self, **kwargs):
         self.id = kwargs.get("id", None)
         self.sentiment = kwargs.get("sentiment", None)
+        self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
         self.sentences = kwargs.get("sentences", None)
         self.is_error = False
 
     def __repr__(self):
-        return "AnalyzeSentimentResult(id={}, sentiment={}, statistics={}, confidence_scores={}, sentences={}, " \
-               "is_error={})".format(self.id, self.sentiment, repr(self.statistics), repr(self.confidence_scores),
-                                     repr(self.sentences), self.is_error)[:1024]
+        return "AnalyzeSentimentResult(id={}, sentiment={}, warnings={}, statistics={}, confidence_scores={}, "\
+                 "sentences={}, is_error={})".format(
+                 self.id, self.sentiment, repr(self.warnings), repr(self.statistics),
+                 repr(self.confidence_scores), repr(self.sentences), self.is_error)[:1024]
 
 
 class TextDocumentStatistics(DictMixin):
     """TextDocumentStatistics contains information about
     the document payload.
 
-    :param grapheme_count: Number of text elements recognized in
+    :ivar character_count: Number of text elements recognized in
         the document.
-    :type grapheme_count: int
-    :param transaction_count: Number of transactions for the
+    :vartype character_count: int
+    :ivar transaction_count: Number of transactions for the
         document.
-    :type transaction_count: int
+    :vartype transaction_count: int
     """
 
     def __init__(self, **kwargs):
-        self.grapheme_count = kwargs.get("grapheme_count", None)
+        self.character_count = kwargs.get("character_count", None)
         self.transaction_count = kwargs.get("transaction_count", None)
 
     @classmethod
@@ -360,26 +398,26 @@ class TextDocumentStatistics(DictMixin):
         if stats is None:
             return None
         return cls(
-            grapheme_count=stats.characters_count,
+            character_count=stats.characters_count,
             transaction_count=stats.transactions_count,
         )
 
     def __repr__(self):
-        return "TextDocumentStatistics(grapheme_count={}, transaction_count={})" \
-            .format(self.grapheme_count, self.transaction_count)[:1024]
+        return "TextDocumentStatistics(character_count={}, transaction_count={})" \
+            .format(self.character_count, self.transaction_count)[:1024]
 
 
 class DocumentError(DictMixin):
     """DocumentError is an error object which represents an error on
     the individual document.
 
-    :param id: Unique, non-empty document identifier that matches the
+    :ivar id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :type id: str
-    :param error: The document error.
-    :type error: ~azure.ai.textanalytics.TextAnalyticsError
-    :param bool is_error: Boolean check for error item when iterating over list of
+    :vartype id: str
+    :ivar error: The document error.
+    :vartype error: ~azure.ai.textanalytics.TextAnalyticsError
+    :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always True for an instance of a DocumentError.
     """
 
@@ -420,15 +458,15 @@ class DocumentError(DictMixin):
 class DetectLanguageInput(LanguageInput):
     """The input document to be analyzed for detecting language.
 
-    :param id: Required. Unique, non-empty document identifier.
-    :type id: str
-    :param text: Required. The input text to process.
-    :type text: str
-    :param country_hint: A country hint to help better detect
+    :ivar id: Required. Unique, non-empty document identifier.
+    :vartype id: str
+    :ivar text: Required. The input text to process.
+    :vartype text: str
+    :ivar country_hint: A country hint to help better detect
      the language of the text. Accepts two letter country codes
      specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
      in the string "none" to not use a country_hint.
-    :type country_hint: str
+    :vartype country_hint: str
     """
 
     def __init__(self, **kwargs):
@@ -448,21 +486,21 @@ class LinkedEntity(DictMixin):
     or Bing. It additionally includes all of the matches of this
     entity found in the document.
 
-    :param name: Entity Linking formal name.
-    :type name: str
-    :param matches: List of instances this entity appears in the text.
-    :type matches:
+    :ivar name: Entity Linking formal name.
+    :vartype name: str
+    :ivar matches: List of instances this entity appears in the text.
+    :vartype matches:
         list[~azure.ai.textanalytics.LinkedEntityMatch]
-    :param language: Language used in the data source.
-    :type language: str
-    :param data_source_entity_id: Unique identifier of the recognized entity from the data
+    :ivar language: Language used in the data source.
+    :vartype language: str
+    :ivar data_source_entity_id: Unique identifier of the recognized entity from the data
         source.
-    :type data_source_entity_id: str
-    :param url: URL to the entity's page from the data source.
-    :type url: str
-    :param data_source: Data source used to extract entity linking,
+    :vartype data_source_entity_id: str
+    :ivar url: URL to the entity's page from the data source.
+    :vartype url: str
+    :ivar data_source: Data source used to extract entity linking,
         such as Wiki/Bing etc.
-    :type data_source: str
+    :vartype data_source: str
     """
 
     def __init__(self, **kwargs):
@@ -495,51 +533,42 @@ class LinkedEntityMatch(DictMixin):
     the confidence score of the prediction and where the entity
     was found in the text.
 
-    :param confidence_score: If a well-known item is recognized, a
+    :ivar confidence_score: If a well-known item is recognized, a
         decimal number denoting the confidence level between 0 and 1 will be
         returned.
-    :type confidence_score: float
-    :param text: Entity text as appears in the request.
-    :type text: str
-    :param grapheme_offset: Start position (in Unicode characters) for the
-        entity match text.
-    :type grapheme_offset: int
-    :param grapheme_length: Length (in Unicode characters) for the entity
-        match text.
-    :type grapheme_length: int
+    :vartype confidence_score: float
+    :ivar text: Entity text as appears in the request.
+    :vartype text: str
     """
 
     def __init__(self, **kwargs):
         self.confidence_score = kwargs.get("confidence_score", None)
         self.text = kwargs.get("text", None)
-        self.grapheme_offset = kwargs.get("grapheme_offset", None)
-        self.grapheme_length = kwargs.get("grapheme_length", None)
 
     @classmethod
     def _from_generated(cls, match):
         return cls(
-            confidence_score=match.score,
-            text=match.text,
-            grapheme_offset=match.offset,
-            grapheme_length=match.length
+            confidence_score=match.confidence_score,
+            text=match.text
         )
 
     def __repr__(self):
-        return "LinkedEntityMatch(confidence_score={}, text={}, grapheme_offset={}, grapheme_length={})" \
-            .format(self.confidence_score, self.text, self.grapheme_offset, self.grapheme_length)[:1024]
+        return "LinkedEntityMatch(confidence_score={}, text={})".format(
+            self.confidence_score, self.text
+        )[:1024]
 
 
 class TextDocumentInput(MultiLanguageInput):
     """The input document to be analyzed by the service.
 
-    :param id: Required. A unique, non-empty document identifier.
-    :type id: str
-    :param text: Required. The input text to process.
-    :type text: str
-    :param language: This is the 2 letter ISO 639-1 representation
+    :ivar id: Required. A unique, non-empty document identifier.
+    :vartype id: str
+    :ivar text: Required. The input text to process.
+    :vartype text: str
+    :ivar language: This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc. If
      not set, uses "en" for English as default.
-    :type language: str
+    :vartype language: str
     """
 
     def __init__(self, **kwargs):
@@ -558,16 +587,16 @@ class TextDocumentBatchStatistics(DictMixin):
     request payload. Note: This object is not returned
     in the response and needs to be retrieved by a response hook.
 
-    :param document_count: Number of documents submitted in the request.
-    :type document_count: int
-    :param valid_document_count: Number of valid documents. This
+    :ivar document_count: Number of documents submitted in the request.
+    :vartype document_count: int
+    :ivar valid_document_count: Number of valid documents. This
         excludes empty, over-size limit or non-supported languages documents.
-    :type valid_document_count: int
-    :param erroneous_document_count: Number of invalid documents.
+    :vartype valid_document_count: int
+    :ivar erroneous_document_count: Number of invalid documents.
         This includes empty, over-size limit or non-supported languages documents.
-    :type erroneous_document_count: int
-    :param transaction_count: Number of transactions for the request.
-    :type transaction_count: long
+    :vartype erroneous_document_count: int
+    :ivar transaction_count: Number of transactions for the request.
+    :vartype transaction_count: long
     """
 
     def __init__(self, **kwargs):
@@ -597,55 +626,48 @@ class SentenceSentiment(DictMixin):
     """SentenceSentiment contains the predicted sentiment and
     confidence scores for each individual sentence in the document.
 
-    :param sentiment: The predicted Sentiment for the sentence.
+    :ivar text: The sentence text.
+    :vartype text: str
+    :ivar sentiment: The predicted Sentiment for the sentence.
         Possible values include: 'positive', 'neutral', 'negative'
-    :type sentiment: str
-    :param confidence_scores: The sentiment confidence score between 0
+    :vartype sentiment: str
+    :ivar confidence_scores: The sentiment confidence score between 0
         and 1 for the sentence for all labels.
-    :type confidence_scores:
+    :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :param grapheme_offset: The sentence offset from the start of the
-        document.
-    :type grapheme_offset: int
-    :param grapheme_length: The length of the sentence by Unicode standard.
-    :type grapheme_length: int
-    :param warnings: The warnings generated for the sentence.
-    :type warnings: list[str]
     """
 
     def __init__(self, **kwargs):
+        self.text = kwargs.get("text", None)
         self.sentiment = kwargs.get("sentiment", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
-        self.grapheme_offset = kwargs.get("grapheme_offset", None)
-        self.grapheme_length = kwargs.get("grapheme_length", None)
-        self.warnings = kwargs.get("warnings", None)
 
     @classmethod
     def _from_generated(cls, sentence):
         return cls(
+            text=sentence.text,
             sentiment=sentence.sentiment,
-            confidence_scores=SentimentConfidenceScores._from_generated(sentence.sentence_scores),  # pylint: disable=protected-access
-            grapheme_offset=sentence.offset,
-            grapheme_length=sentence.length,
-            warnings=sentence.warnings,
+            confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
         )
 
     def __repr__(self):
-        return "SentenceSentiment(sentiment={}, confidence_scores={}, grapheme_offset={}, grapheme_length={}, " \
-               "warnings={})".format(self.sentiment, repr(self.confidence_scores), self.grapheme_offset,
-                                     self.grapheme_length, self.warnings)[:1024]
+        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={})".format(
+            self.text,
+            self.sentiment,
+            repr(self.confidence_scores)
+        )[:1024]
 
 
 class SentimentConfidenceScores(DictMixin):
     """The confidence scores (Softmax scores) between 0 and 1.
     Higher values indicate higher confidence.
 
-    :param positive: Positive score.
-    :type positive: float
-    :param neutral: Neutral score.
-    :type neutral: float
-    :param negative: Negative score.
-    :type negative: float
+    :ivar positive: Positive score.
+    :vartype positive: float
+    :ivar neutral: Neutral score.
+    :vartype neutral: float
+    :ivar negative: Negative score.
+    :vartype negative: float
     """
 
     def __init__(self, **kwargs):

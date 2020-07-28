@@ -1,6 +1,25 @@
 
 # Release History
 
+## 1.2.0 (2020-07-06)
+
+### Bug Fixes
+
+- The `allowed_header_names` property of ARMHttpLoggingPolicy now includes the management plane specific
+allowed headers  #12218
+
+### Features
+
+- Added `http_logging_policy` property on the `Configuration` object, allowing users to individually
+set the http logging policy of the config  #12218
+
+## 1.1.0 (2020-05-04)
+
+### Features
+
+- Info logger now logs ARM throttling information  #10940
+
+
 ## 1.0.0 (2020-04-09)
 
 ### Features

@@ -13,11 +13,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 1E6460D60590FF5912219E29955BA73D
+      - 980E4A06562888E4EC5397BE01F2DE38
     method: POST
-    uri: https://search4d10e85.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2019-05-06-Preview
+    uri: https://search4d10e85.search.windows.net/indexes('drgqefsg')/search.analyze?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search4d10e85.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.AnalyzeResult","tokens":[{"token":"one''s","startOffset":0,"endOffset":5,"position":0},{"token":"two","startOffset":7,"endOffset":10,"position":1}]}'
@@ -29,9 +29,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Tue, 31 Mar 2020 17:38:13 GMT
+      - Wed, 29 Apr 2020 23:20:46 GMT
       elapsed-time:
-      - '22'
+      - '277'
       expires:
       - '-1'
       odata-version:
@@ -41,7 +41,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 65b43be8-7376-11ea-b65e-5cf37071153c
+      - 0e27953a-8a70-11ea-889b-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

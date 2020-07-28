@@ -9,11 +9,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - ACAB029D710AB15E3868655BF52F0338
+      - 6FBCE200FF6D960D275576AD2F8FB6F7
     method: GET
-    uri: https://search86b411ce.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2019-05-06-Preview
+    uri: https://search86b411ce.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search86b411ce.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.IndexStatistics","documentCount":0,"storageSize":0}'
@@ -25,9 +25,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Tue, 31 Mar 2020 17:39:40 GMT
+      - Wed, 29 Apr 2020 23:22:11 GMT
       elapsed-time:
-      - '29'
+      - '105'
       expires:
       - '-1'
       odata-version:
@@ -37,7 +37,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 99ee331e-7376-11ea-847d-5cf37071153c
+      - 405f58da-8a70-11ea-889b-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

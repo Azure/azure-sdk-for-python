@@ -26,4 +26,4 @@ steps:
 - script: python3  -m packaging_tools.update_pr -v --pr-number $(System.PullRequest.PullRequestNumber) --repo $(Build.Repository.Name)
   displayName: 'Update packaging of PR'
   env:
-    GH_TOKEN: $(python-mgmt-update-pr-token)
+    GH_TOKEN: $(azuresdk-github-pat)

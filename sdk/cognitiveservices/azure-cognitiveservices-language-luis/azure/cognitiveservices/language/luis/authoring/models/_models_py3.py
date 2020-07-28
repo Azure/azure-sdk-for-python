@@ -862,6 +862,9 @@ class EntityLabel(Model):
     :type role: str
     :param role_id: The role id for the predicted entity.
     :type role_id: str
+    :param children:
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.EntityLabel]
     """
 
     _validation = {
@@ -876,15 +879,17 @@ class EntityLabel(Model):
         'end_token_index': {'key': 'endTokenIndex', 'type': 'int'},
         'role': {'key': 'role', 'type': 'str'},
         'role_id': {'key': 'roleId', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[EntityLabel]'},
     }
 
-    def __init__(self, *, entity_name: str, start_token_index: int, end_token_index: int, role: str=None, role_id: str=None, **kwargs) -> None:
+    def __init__(self, *, entity_name: str, start_token_index: int, end_token_index: int, role: str=None, role_id: str=None, children=None, **kwargs) -> None:
         super(EntityLabel, self).__init__(**kwargs)
         self.entity_name = entity_name
         self.start_token_index = start_token_index
         self.end_token_index = end_token_index
         self.role = role
         self.role_id = role_id
+        self.children = children
 
 
 class EntityLabelObject(Model):
@@ -903,6 +908,9 @@ class EntityLabelObject(Model):
     :type end_char_index: int
     :param role: The role the entity plays in the utterance.
     :type role: str
+    :param children: The identified entities within the example utterance.
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.EntityLabelObject]
     """
 
     _validation = {
@@ -916,14 +924,16 @@ class EntityLabelObject(Model):
         'start_char_index': {'key': 'startCharIndex', 'type': 'int'},
         'end_char_index': {'key': 'endCharIndex', 'type': 'int'},
         'role': {'key': 'role', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[EntityLabelObject]'},
     }
 
-    def __init__(self, *, entity_name: str, start_char_index: int, end_char_index: int, role: str=None, **kwargs) -> None:
+    def __init__(self, *, entity_name: str, start_char_index: int, end_char_index: int, role: str=None, children=None, **kwargs) -> None:
         super(EntityLabelObject, self).__init__(**kwargs)
         self.entity_name = entity_name
         self.start_char_index = start_char_index
         self.end_char_index = end_char_index
         self.role = role
+        self.children = children
 
 
 class EntityModelCreateObject(Model):
@@ -1065,6 +1075,9 @@ class EntityPrediction(Model):
     :type end_token_index: int
     :param phrase: Required. The actual token(s) that comprise the entity.
     :type phrase: str
+    :param children:
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.EntityPrediction]
     """
 
     _validation = {
@@ -1079,14 +1092,16 @@ class EntityPrediction(Model):
         'start_token_index': {'key': 'startTokenIndex', 'type': 'int'},
         'end_token_index': {'key': 'endTokenIndex', 'type': 'int'},
         'phrase': {'key': 'phrase', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[EntityPrediction]'},
     }
 
-    def __init__(self, *, entity_name: str, start_token_index: int, end_token_index: int, phrase: str, **kwargs) -> None:
+    def __init__(self, *, entity_name: str, start_token_index: int, end_token_index: int, phrase: str, children=None, **kwargs) -> None:
         super(EntityPrediction, self).__init__(**kwargs)
         self.entity_name = entity_name
         self.start_token_index = start_token_index
         self.end_token_index = end_token_index
         self.phrase = phrase
+        self.children = children
 
 
 class EntityRole(Model):
@@ -1448,6 +1463,35 @@ class HierarchicalModel(Model):
         self.inherits = inherits
 
 
+class HierarchicalModelV2(Model):
+    """HierarchicalModelV2.
+
+    :param name:
+    :type name: str
+    :param children:
+    :type children: list[str]
+    :param inherits:
+    :type inherits:
+     ~azure.cognitiveservices.language.luis.authoring.models.PrebuiltDomainObject
+    :param roles:
+    :type roles: list[str]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[str]'},
+        'inherits': {'key': 'inherits', 'type': 'PrebuiltDomainObject'},
+        'roles': {'key': 'roles', 'type': '[str]'},
+    }
+
+    def __init__(self, *, name: str=None, children=None, inherits=None, roles=None, **kwargs) -> None:
+        super(HierarchicalModelV2, self).__init__(**kwargs)
+        self.name = name
+        self.children = children
+        self.inherits = inherits
+        self.roles = roles
+
+
 class IntentClassifier(ModelInfo):
     """Intent Classifier.
 
@@ -1589,6 +1633,9 @@ class JSONEntity(Model):
     :type entity: str
     :param role: The role the entity plays in the utterance.
     :type role: str
+    :param children:
+    :type children:
+     list[~azure.cognitiveservices.language.luis.authoring.models.JSONEntity]
     """
 
     _validation = {
@@ -1602,14 +1649,16 @@ class JSONEntity(Model):
         'end_pos': {'key': 'endPos', 'type': 'int'},
         'entity': {'key': 'entity', 'type': 'str'},
         'role': {'key': 'role', 'type': 'str'},
+        'children': {'key': 'children', 'type': '[JSONEntity]'},
     }
 
-    def __init__(self, *, start_pos: int, end_pos: int, entity: str, role: str=None, **kwargs) -> None:
+    def __init__(self, *, start_pos: int, end_pos: int, entity: str, role: str=None, children=None, **kwargs) -> None:
         super(JSONEntity, self).__init__(**kwargs)
         self.start_pos = start_pos
         self.end_pos = end_pos
         self.entity = entity
         self.role = role
+        self.children = children
 
 
 class JSONModelFeature(Model):
@@ -1900,6 +1949,98 @@ class LuisApp(Model):
         self.utterances = utterances
 
 
+class LuisAppV2(Model):
+    """Exported Model - An exported LUIS Application.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param luis_schema_version: Luis schema deserialization version.
+    :type luis_schema_version: str
+    :param name: The name of the application.
+    :type name: str
+    :param version_id: The version ID of the application that was exported.
+    :type version_id: str
+    :param desc: The description of the application.
+    :type desc: str
+    :param culture: The culture of the application. E.g.: en-us.
+    :type culture: str
+    :param intents: List of intents.
+    :type intents:
+     list[~azure.cognitiveservices.language.luis.authoring.models.HierarchicalModelV2]
+    :param entities: List of entities.
+    :type entities:
+     list[~azure.cognitiveservices.language.luis.authoring.models.HierarchicalModelV2]
+    :param closed_lists: List of list entities.
+    :type closed_lists:
+     list[~azure.cognitiveservices.language.luis.authoring.models.ClosedList]
+    :param composites: List of composite entities.
+    :type composites:
+     list[~azure.cognitiveservices.language.luis.authoring.models.HierarchicalModelV2]
+    :param pattern_any_entities: List of Pattern.Any entities.
+    :type pattern_any_entities:
+     list[~azure.cognitiveservices.language.luis.authoring.models.PatternAny]
+    :param regex_entities: List of regular expression entities.
+    :type regex_entities:
+     list[~azure.cognitiveservices.language.luis.authoring.models.RegexEntity]
+    :param prebuilt_entities: List of prebuilt entities.
+    :type prebuilt_entities:
+     list[~azure.cognitiveservices.language.luis.authoring.models.PrebuiltEntity]
+    :param regex_features: List of pattern features.
+    :type regex_features:
+     list[~azure.cognitiveservices.language.luis.authoring.models.JSONRegexFeature]
+    :param model_features: List of model features.
+    :type model_features:
+     list[~azure.cognitiveservices.language.luis.authoring.models.JSONModelFeature]
+    :param patterns: List of patterns.
+    :type patterns:
+     list[~azure.cognitiveservices.language.luis.authoring.models.PatternRule]
+    :param utterances: List of example utterances.
+    :type utterances:
+     list[~azure.cognitiveservices.language.luis.authoring.models.JSONUtterance]
+    """
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'luis_schema_version': {'key': 'luis_schema_version', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'version_id': {'key': 'versionId', 'type': 'str'},
+        'desc': {'key': 'desc', 'type': 'str'},
+        'culture': {'key': 'culture', 'type': 'str'},
+        'intents': {'key': 'intents', 'type': '[HierarchicalModelV2]'},
+        'entities': {'key': 'entities', 'type': '[HierarchicalModelV2]'},
+        'closed_lists': {'key': 'closedLists', 'type': '[ClosedList]'},
+        'composites': {'key': 'composites', 'type': '[HierarchicalModelV2]'},
+        'pattern_any_entities': {'key': 'patternAnyEntities', 'type': '[PatternAny]'},
+        'regex_entities': {'key': 'regex_entities', 'type': '[RegexEntity]'},
+        'prebuilt_entities': {'key': 'prebuiltEntities', 'type': '[PrebuiltEntity]'},
+        'regex_features': {'key': 'regex_features', 'type': '[JSONRegexFeature]'},
+        'model_features': {'key': 'model_features', 'type': '[JSONModelFeature]'},
+        'patterns': {'key': 'patterns', 'type': '[PatternRule]'},
+        'utterances': {'key': 'utterances', 'type': '[JSONUtterance]'},
+    }
+
+    def __init__(self, *, additional_properties=None, luis_schema_version: str=None, name: str=None, version_id: str=None, desc: str=None, culture: str=None, intents=None, entities=None, closed_lists=None, composites=None, pattern_any_entities=None, regex_entities=None, prebuilt_entities=None, regex_features=None, model_features=None, patterns=None, utterances=None, **kwargs) -> None:
+        super(LuisAppV2, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.luis_schema_version = luis_schema_version
+        self.name = name
+        self.version_id = version_id
+        self.desc = desc
+        self.culture = culture
+        self.intents = intents
+        self.entities = entities
+        self.closed_lists = closed_lists
+        self.composites = composites
+        self.pattern_any_entities = pattern_any_entities
+        self.regex_entities = regex_entities
+        self.prebuilt_entities = prebuilt_entities
+        self.regex_features = regex_features
+        self.model_features = model_features
+        self.patterns = patterns
+        self.utterances = utterances
+
+
 class ModelCreateObject(Model):
     """Object model for creating a new entity extractor.
 
@@ -1924,17 +2065,21 @@ class ModelFeatureInformation(Model):
     :type model_name: str
     :param feature_name: The name of the feature used.
     :type feature_name: str
+    :param is_required:
+    :type is_required: bool
     """
 
     _attribute_map = {
         'model_name': {'key': 'modelName', 'type': 'str'},
         'feature_name': {'key': 'featureName', 'type': 'str'},
+        'is_required': {'key': 'isRequired', 'type': 'bool'},
     }
 
-    def __init__(self, *, model_name: str=None, feature_name: str=None, **kwargs) -> None:
+    def __init__(self, *, model_name: str=None, feature_name: str=None, is_required: bool=None, **kwargs) -> None:
         super(ModelFeatureInformation, self).__init__(**kwargs)
         self.model_name = model_name
         self.feature_name = feature_name
+        self.is_required = is_required
 
 
 class ModelInfoResponse(Model):

@@ -28,7 +28,8 @@ class ComplianceStatus(Model):
     sending a request.
 
     :ivar compliance_state: The compliance state of the configuration.
-     Possible values include: 'Pending', 'Compliant', 'Noncompliant'
+     Possible values include: 'Pending', 'Compliant', 'Noncompliant',
+     'Installed', 'Failed'
     :vartype compliance_state: str or
      ~azure.mgmt.kubernetesconfiguration.models.ComplianceState
     :param last_config_applied: Datetime the configuration was last applied.

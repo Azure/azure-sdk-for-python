@@ -65,8 +65,7 @@ def distributed_trace_async(  # pylint:disable=function-redefined
 
     def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
         @functools.wraps(func)
-        async def wrapper_use_tracer(*args, **kwargs):
-            # type: (*Any, **Any) -> T
+        async def wrapper_use_tracer(*args: Any, **kwargs: Any) -> T:
             merge_span = kwargs.pop("merge_span", False)
             passed_in_parent = kwargs.pop("parent_span", None)
 

@@ -7,6 +7,7 @@
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.ai.textanalytics import _models
+from azure.ai.textanalytics._generated.v3_1_preview_1 import models as _generated_models
 from testcase import GlobalTextAnalyticsAccountPreparer
 from testcase import TextAnalyticsTest as TestAnalyticsTestCase
 
@@ -27,16 +28,18 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual(response[0].primary_language.name, "English")
 
     def test_repr(self):
-        detected_language = _models.DetectedLanguage(name="English", iso6391_name="en", score=1.0)
+        detected_language = _models.DetectedLanguage(name="English", iso6391_name="en", confidence_score=1.0)
 
-        categorized_entity = _models.CategorizedEntity(text="Bill Gates", category="Person", subcategory="Age",
-                                                       grapheme_offset=0, grapheme_length=8, confidence_score=0.899)
+        categorized_entity = _models.CategorizedEntity(text="Bill Gates", category="Person", subcategory="Age", confidence_score=0.899)
 
-        text_document_statistics = _models.TextDocumentStatistics(grapheme_count=14, transaction_count=18)
+        text_document_statistics = _models.TextDocumentStatistics(character_count=14, transaction_count=18)
+
+        warnings = [_models.TextAnalyticsWarning(code="LongWordsInDocument", message="The document contains very long words (longer than 64 characters). These words will be truncated and may result in unreliable model predictions.")]
 
         recognize_entities_result = _models.RecognizeEntitiesResult(
             id="1",
             entities=[categorized_entity],
+            warnings=warnings,
             statistics=text_document_statistics,
             is_error=False
         )
@@ -44,6 +47,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         detect_language_result = _models.DetectLanguageResult(
             id="1",
             primary_language=detected_language,
+            warnings=warnings,
             statistics=text_document_statistics,
             is_error=False
         )
@@ -56,11 +60,10 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
 
         extract_key_phrases_result = \
             _models.ExtractKeyPhrasesResult(
-                id="1", key_phrases=["dog", "cat", "bird"], statistics=text_document_statistics, is_error=False
+                id="1", key_phrases=["dog", "cat", "bird"], warnings=warnings, statistics=text_document_statistics, is_error=False
             )
 
-        linked_entity_match = _models.LinkedEntityMatch(confidence_score=0.999, text="Bill Gates", grapheme_offset=0,
-                                                        grapheme_length=8)
+        linked_entity_match = _models.LinkedEntityMatch(confidence_score=0.999, text="Bill Gates")
 
         linked_entity = _models.LinkedEntity(
             name="Bill Gates",
@@ -72,23 +75,22 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         )
         recognize_linked_entities_result = \
             _models.RecognizeLinkedEntitiesResult(
-                id="1", entities=[linked_entity], statistics=text_document_statistics, is_error=False
+                id="1", entities=[linked_entity], warnings=warnings, statistics=text_document_statistics, is_error=False
             )
 
         sentiment_confidence_score_per_label = \
             _models.SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02)
 
         sentence_sentiment = _models.SentenceSentiment(
+            text="This is a sentence.",
             sentiment="neutral",
-            confidence_scores=sentiment_confidence_score_per_label,
-            grapheme_offset=0,
-            grapheme_length=10,
-            warnings=["sentence was too short to find sentiment"]
+            confidence_scores=sentiment_confidence_score_per_label
         )
 
         analyze_sentiment_result = _models.AnalyzeSentimentResult(
             id="1",
             sentiment="positive",
+            warnings=warnings,
             statistics=text_document_statistics,
             confidence_scores=sentiment_confidence_score_per_label,
             sentences=[sentence_sentiment],
@@ -108,49 +110,57 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
             transaction_count=4
         )
 
-        self.assertEqual("DetectedLanguage(name=English, iso6391_name=en, score=1.0)", repr(detected_language))
-        self.assertEqual("CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, grapheme_offset=0, "
-                         "grapheme_length=8, confidence_score=0.899)",
+        self.assertEqual("DetectedLanguage(name=English, iso6391_name=en, confidence_score=1.0)", repr(detected_language))
+        self.assertEqual("CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, confidence_score=0.899)",
                          repr(categorized_entity))
-        self.assertEqual("TextDocumentStatistics(grapheme_count=14, transaction_count=18)",
+        self.assertEqual("TextDocumentStatistics(character_count=14, transaction_count=18)",
                          repr(text_document_statistics))
         self.assertEqual("RecognizeEntitiesResult(id=1, entities=[CategorizedEntity(text=Bill Gates, category=Person, "
-                         "subcategory=Age, grapheme_offset=0, grapheme_length=8, confidence_score=0.899)], "
-                         "statistics=TextDocumentStatistics(grapheme_count=14, transaction_count=18), "
+                         "subcategory=Age, confidence_score=0.899)], "
+                         "warnings=[TextAnalyticsWarning(code=LongWordsInDocument, message=The document contains very long words (longer than 64 characters). "
+                         "These words will be truncated and may result in unreliable model predictions.)], "
+                         "statistics=TextDocumentStatistics(character_count=14, transaction_count=18), "
                          "is_error=False)", repr(recognize_entities_result))
         self.assertEqual("DetectLanguageResult(id=1, primary_language=DetectedLanguage(name=English, "
-                         "iso6391_name=en, score=1.0), statistics=TextDocumentStatistics(grapheme_count=14, "
+                         "iso6391_name=en, confidence_score=1.0), "
+                         "warnings=[TextAnalyticsWarning(code=LongWordsInDocument, message=The document contains very long words (longer than 64 characters). "
+                         "These words will be truncated and may result in unreliable model predictions.)], "
+                         "statistics=TextDocumentStatistics(character_count=14, "
                          "transaction_count=18), is_error=False)", repr(detect_language_result))
         self.assertEqual("TextAnalyticsError(code=invalidRequest, message=The request is invalid, target=request)",
                          repr(text_analytics_error))
-        self.assertEqual("ExtractKeyPhrasesResult(id=1, key_phrases=['dog', 'cat', 'bird'], statistics="
-                         "TextDocumentStatistics(grapheme_count=14, transaction_count=18), is_error=False)",
+        self.assertEqual("ExtractKeyPhrasesResult(id=1, key_phrases=['dog', 'cat', 'bird'], "
+                         "warnings=[TextAnalyticsWarning(code=LongWordsInDocument, message=The document contains very long words (longer than 64 characters). "
+                         "These words will be truncated and may result in unreliable model predictions.)], "
+                         "statistics=TextDocumentStatistics(character_count=14, transaction_count=18), is_error=False)",
                          repr(extract_key_phrases_result))
-        self.assertEqual("LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, grapheme_offset=0, grapheme_length=8)",
+        self.assertEqual("LinkedEntityMatch(confidence_score=0.999, text=Bill Gates)",
                          repr(linked_entity_match))
-        self.assertEqual("LinkedEntity(name=Bill Gates, matches=[LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, "
-                         "grapheme_offset=0, grapheme_length=8), LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, "
-                         "grapheme_offset=0, grapheme_length=8)], language=English, data_source_entity_id=Bill Gates, "
+        self.assertEqual("LinkedEntity(name=Bill Gates, matches=[LinkedEntityMatch(confidence_score=0.999, text=Bill Gates), "
+                         "LinkedEntityMatch(confidence_score=0.999, text=Bill Gates)], "
+                         "language=English, data_source_entity_id=Bill Gates, "
                          "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia)", repr(linked_entity))
         self.assertEqual("RecognizeLinkedEntitiesResult(id=1, entities=[LinkedEntity(name=Bill Gates, "
-                         "matches=[LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, grapheme_offset=0, "
-                         "grapheme_length=8), LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, grapheme_offset=0, "
-                         "grapheme_length=8)], language=English, data_source_entity_id=Bill Gates, "
+                         "matches=[LinkedEntityMatch(confidence_score=0.999, text=Bill Gates), "
+                         "LinkedEntityMatch(confidence_score=0.999, text=Bill Gates)], language=English, data_source_entity_id=Bill Gates, "
                          "url=https://en.wikipedia.org/wiki/Bill_Gates, data_source=wikipedia)], "
-                         "statistics=TextDocumentStatistics(grapheme_count=14, "
+                         "warnings=[TextAnalyticsWarning(code=LongWordsInDocument, message=The document contains very long words (longer than 64 characters). "
+                         "These words will be truncated and may result in unreliable model predictions.)], "
+                         "statistics=TextDocumentStatistics(character_count=14, "
                          "transaction_count=18), is_error=False)", repr(recognize_linked_entities_result))
         self.assertEqual("SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02)",
                          repr(sentiment_confidence_score_per_label))
-        self.assertEqual("SentenceSentiment(sentiment=neutral, confidence_scores=SentimentConfidenceScores("
-                         "positive=0.99, neutral=0.05, negative=0.02), grapheme_offset=0, grapheme_length=10, warnings="
-                         "['sentence was too short to find sentiment'])", repr(sentence_sentiment))
-        self.assertEqual("AnalyzeSentimentResult(id=1, sentiment=positive, statistics=TextDocumentStatistics("
-                         "grapheme_count=14, transaction_count=18), confidence_scores=SentimentConfidenceScores"
+        self.assertEqual("SentenceSentiment(text=This is a sentence., sentiment=neutral, confidence_scores=SentimentConfidenceScores("
+                         "positive=0.99, neutral=0.05, negative=0.02))",
+                         repr(sentence_sentiment))
+        self.assertEqual("AnalyzeSentimentResult(id=1, sentiment=positive, "
+                         "warnings=[TextAnalyticsWarning(code=LongWordsInDocument, message=The document contains very long words (longer than 64 characters). "
+                         "These words will be truncated and may result in unreliable model predictions.)], "
+                         "statistics=TextDocumentStatistics("
+                         "character_count=14, transaction_count=18), confidence_scores=SentimentConfidenceScores"
                          "(positive=0.99, neutral=0.05, negative=0.02), "
-                         "sentences=[SentenceSentiment(sentiment=neutral, confidence_scores="
-                         "SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02), "
-                         "grapheme_offset=0, grapheme_length=10, "
-                         "warnings=['sentence was too short to find sentiment'])], is_error=False)",
+                         "sentences=[SentenceSentiment(text=This is a sentence., sentiment=neutral, confidence_scores="
+                         "SentimentConfidenceScores(positive=0.99, neutral=0.05, negative=0.02))], is_error=False)",
                          repr(analyze_sentiment_result))
         self.assertEqual("DocumentError(id=1, error=TextAnalyticsError(code=invalidRequest, "
                          "message=The request is invalid, target=request), is_error=True)", repr(document_error))
@@ -158,3 +168,19 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual("TextDocumentInput(id=1, text=hello world, language=en)", repr(text_document_input))
         self.assertEqual("TextDocumentBatchStatistics(document_count=1, valid_document_count=2, "
                          "erroneous_document_count=3, transaction_count=4)", repr(text_document_batch_statistics))
+
+    def test_inner_error_takes_precedence(self):
+        generated_innererror = _generated_models.InnerError(
+            code="UnsupportedLanguageCode",
+            message="Supplied language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant",
+
+        )
+        generated_error = _generated_models.TextAnalyticsError(
+            code="InvalidArgument",
+            message="Invalid Language Code.",
+            innererror=generated_innererror
+        )
+
+        error = _models.TextAnalyticsError._from_generated(generated_error)
+        self.assertEqual(error.code, "UnsupportedLanguageCode")
+        self.assertEqual(error.message, "Supplied language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant")

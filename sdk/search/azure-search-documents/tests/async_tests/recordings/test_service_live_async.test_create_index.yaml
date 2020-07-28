@@ -12,127 +12,30 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - ADFE12FCFE07036BD4D797E726C00320
+      - 2FAED7B0C4D2327B672209097091112D
     method: POST
-    uri: https://search640f10d5.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://search640f10d5.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search640f10d5.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7D59B5D3AD4E0\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
+      string: '{"@odata.context":"https://search640f10d5.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7EC954E6DE3AF\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
     headers:
       cache-control: no-cache
       content-length: '890'
       content-type: application/json; odata.metadata=minimal
-      date: Tue, 31 Mar 2020 17:45:55 GMT
-      elapsed-time: '3574'
-      etag: W/"0x8D7D59B5D3AD4E0"
+      date: Wed, 29 Apr 2020 23:30:30 GMT
+      elapsed-time: '539'
+      etag: W/"0x8D7EC954E6DE3AF"
       expires: '-1'
-      location:
-      - h
-      - t
-      - t
-      - p
-      - s
-      - ':'
-      - /
-      - /
-      - s
-      - e
-      - a
-      - r
-      - c
-      - h
-      - '6'
-      - '4'
-      - '0'
-      - f
-      - '1'
-      - '0'
-      - d
-      - '5'
-      - .
-      - s
-      - e
-      - a
-      - r
-      - c
-      - h
-      - .
-      - w
-      - i
-      - n
-      - d
-      - o
-      - w
-      - s
-      - .
-      - n
-      - e
-      - t
-      - /
-      - i
-      - n
-      - d
-      - e
-      - x
-      - e
-      - s
-      - (
-      - ''''
-      - h
-      - o
-      - t
-      - e
-      - l
-      - s
-      - ''''
-      - )
-      - '?'
-      - a
-      - p
-      - i
-      - '-'
-      - v
-      - e
-      - r
-      - s
-      - i
-      - o
-      - n
-      - '='
-      - '2'
-      - '0'
-      - '1'
-      - '9'
-      - '-'
-      - '0'
-      - '5'
-      - '-'
-      - '0'
-      - '6'
-      - '-'
-      - P
-      - r
-      - e
-      - v
-      - i
-      - e
-      - w
+      location: https://search640f10d5.search.windows.net/indexes('hotels')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 77483622-7377-11ea-a7c0-5cf37071153c
+      request-id: 69c62a04-8a71-11ea-889b-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - search640f10d5.search.windows.net
-        - /indexes
-        - api-version=2019-05-06-Preview
-        - ''
+    url: https://search640f10d5.search.windows.net/indexes?api-version=2020-06-30
 version: 1

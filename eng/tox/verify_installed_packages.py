@@ -9,8 +9,13 @@ import argparse
 import os
 import sys
 import logging
-from pip._internal.operations import freeze
+from os import path
 
+# import common_task module
+root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
+common_task_path = path.abspath(path.join(root_dir, "scripts", "devops_tasks"))
+sys.path.append(common_task_path)
+from common_tasks import get_installed_packages
 
 def verify_packages(package_file_path):
     # this method verifies packages installed on machine is matching the expected package version
@@ -29,7 +34,7 @@ def verify_packages(package_file_path):
         sys.exit(1)
 
     # find installed and expected packages
-    installed = dict(p.split('==') for p in freeze.freeze() if p.startswith('azure'))
+    installed = dict(p.split('==') for p in get_installed_packages() if p.startswith('azure') and "==" in p)
     expected = dict(p.split('==') for p in packages)
 
     missing_packages = [pkg for pkg in expected.keys() if installed.get(pkg) != expected.get(pkg)]

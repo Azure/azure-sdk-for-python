@@ -7,15 +7,12 @@ import pytest
 import time
 import threading
 
+from azure.identity import EnvironmentCredential
 from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient
 
 
 @pytest.mark.liveTest
-def test_client_secret_credential(aad_credential, live_eventhub):
-    try:
-        from azure.identity import EnvironmentCredential
-    except ImportError as e:
-        pytest.skip("No azure identity library")
+def test_client_secret_credential(live_eventhub):
     credential = EnvironmentCredential()
     producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
                                              eventhub_name=live_eventhub['event_hub'],

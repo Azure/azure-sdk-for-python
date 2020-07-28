@@ -22,8 +22,9 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Mapping, Union, cast, Iterable, Optional
+from typing import Any, List, Dict, Union, cast, Iterable, Optional
 
+import warnings
 import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
@@ -34,6 +35,7 @@ from .offer import Offer
 from .http_constants import StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
+from .documents import IndexingMode
 
 __all__ = ("DatabaseProxy",)
 
@@ -175,6 +177,9 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -201,6 +206,11 @@ class DatabaseProxy(object):
         if partition_key is not None:
             definition["partitionKey"] = partition_key
         if indexing_policy is not None:
+            if indexing_policy.get("indexingMode") is IndexingMode.Lazy:
+                warnings.warn(
+                    "Lazy indexing mode has been deprecated. Mode will be set to consistent indexing by the backend.",
+                    DeprecationWarning
+                )
             definition["indexingPolicy"] = indexing_policy
         if default_ttl is not None:
             definition["defaultTtl"] = default_ttl
@@ -208,6 +218,10 @@ class DatabaseProxy(object):
             definition["uniqueKeyPolicy"] = unique_key_policy
         if conflict_resolution_policy is not None:
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
+
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
+        if analytical_storage_ttl is not None:
+            definition["analyticalStorageTtl"] = analytical_storage_ttl
 
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -259,11 +273,15 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
 
+        analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         try:
             container_proxy = self.get_container_client(id)
             container_proxy.read(
@@ -280,7 +298,8 @@ class DatabaseProxy(object):
                 populate_query_metrics=populate_query_metrics,
                 offer_throughput=offer_throughput,
                 unique_key_policy=unique_key_policy,
-                conflict_resolution_policy=conflict_resolution_policy
+                conflict_resolution_policy=conflict_resolution_policy,
+                analytical_storage_ttl=analytical_storage_ttl
             )
 
     @distributed_trace
@@ -336,10 +355,11 @@ class DatabaseProxy(object):
         """
         if isinstance(container, ContainerProxy):
             id_value = container.id
-        elif isinstance(container, Mapping):
-            id_value = container["id"]
         else:
-            id_value = container
+            try:
+                id_value = container["id"]
+            except TypeError:
+                id_value = container
 
         return ContainerProxy(self.client_connection, self.database_link, id_value)
 
@@ -556,10 +576,11 @@ class DatabaseProxy(object):
         """
         if isinstance(user, UserProxy):
             id_value = user.id
-        elif isinstance(user, Mapping):
-            id_value = user["id"]
         else:
-            id_value = user
+            try:
+                id_value = user["id"]
+            except TypeError:
+                id_value = user
 
         return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
 

@@ -28,7 +28,7 @@ import asyncio
 import abc
 from collections.abc import AsyncIterator
 
-from typing import AsyncIterator as AsyncIteratorType, Generic, TypeVar
+from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any
 from ._base import (
     _HttpResponseBase,
     _HttpClientTransportResponse,
@@ -36,7 +36,7 @@ from ._base import (
     PipelineRequest,
     PipelineResponse,
 )
-from .._base_async import _await_result
+from .._tools_async import await_result as _await_result
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
@@ -52,11 +52,9 @@ except ImportError:  # Python <= 3.7
             """Raise any exception triggered within the runtime context."""
             return None
 
-
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-
 
 class _ResponseStopIteration(Exception):
     pass
@@ -163,7 +161,7 @@ class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpRe
 class AsyncHttpTransport(
     AbstractAsyncContextManager,
     abc.ABC,
-    Generic[HTTPRequestType, AsyncHTTPResponseType],
+    Generic[HTTPRequestType, AsyncHTTPResponseType]
 ):
     """An http sender ABC.
     """

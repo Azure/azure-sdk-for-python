@@ -13,8 +13,11 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import ContainerRegistryManagementClientConfiguration
+from .operations import ExportPipelinesOperations
 from .operations import RegistriesOperations
+from .operations import ImportPipelinesOperations
 from .operations import Operations
+from .operations import PipelineRunsOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import ReplicationsOperations
 from .operations import WebhooksOperations
@@ -33,10 +36,16 @@ class ContainerRegistryManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: ContainerRegistryManagementClientConfiguration
 
+    :ivar export_pipelines: ExportPipelines operations
+    :vartype export_pipelines: azure.mgmt.containerregistry.v2019_12_01_preview.operations.ExportPipelinesOperations
     :ivar registries: Registries operations
     :vartype registries: azure.mgmt.containerregistry.v2019_12_01_preview.operations.RegistriesOperations
+    :ivar import_pipelines: ImportPipelines operations
+    :vartype import_pipelines: azure.mgmt.containerregistry.v2019_12_01_preview.operations.ImportPipelinesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.containerregistry.v2019_12_01_preview.operations.Operations
+    :ivar pipeline_runs: PipelineRuns operations
+    :vartype pipeline_runs: azure.mgmt.containerregistry.v2019_12_01_preview.operations.PipelineRunsOperations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
     :vartype private_endpoint_connections: azure.mgmt.containerregistry.v2019_12_01_preview.operations.PrivateEndpointConnectionsOperations
     :ivar replications: Replications operations
@@ -74,9 +83,15 @@ class ContainerRegistryManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.export_pipelines = ExportPipelinesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.registries = RegistriesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.import_pipelines = ImportPipelinesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.pipeline_runs = PipelineRunsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

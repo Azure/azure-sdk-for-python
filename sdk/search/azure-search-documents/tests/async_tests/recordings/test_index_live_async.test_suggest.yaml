@@ -9,11 +9,11 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 80252BE93B3CE5D5E8CB00FD1D5E4E95
+      - 7399C73616B0BBA23C477AA593479766
     method: POST
-    uri: https://searchf6640e13.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2019-05-06-Preview
+    uri: https://searchf6640e13.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"@search.text":"Cheapest hotel in town. Infact, a motel.","hotelId":"2"},{"@search.text":"Secret
@@ -23,24 +23,17 @@ interactions:
       content-encoding: gzip
       content-length: '216'
       content-type: application/json; odata.metadata=none
-      date: Tue, 31 Mar 2020 17:44:44 GMT
-      elapsed-time: '117'
+      date: Wed, 29 Apr 2020 23:29:27 GMT
+      elapsed-time: '76'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 4f1eed7e-7377-11ea-8e1d-5cf37071153c
+      request-id: 44aeb0c4-8a71-11ea-889b-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - searchf6640e13.search.windows.net
-        - /indexes('drgqefsg')/docs/search.post.suggest
-        - api-version=2019-05-06-Preview
-        - ''
+    url: https://searchf6640e13.search.windows.net/indexes('drgqefsg')/docs/search.post.suggest?api-version=2020-06-30
 version: 1

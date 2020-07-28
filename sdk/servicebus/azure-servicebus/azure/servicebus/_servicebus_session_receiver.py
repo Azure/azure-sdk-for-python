@@ -2,14 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import time
 import logging
-from typing import Any, TYPE_CHECKING, Optional, Union
-import six
+from typing import Any, TYPE_CHECKING
 
-from ._base_handler import BaseHandler
-from ._common.utils import utc_from_timestamp, utc_now
-from ._common.constants import ReceiveSettleMode
 from ._common.receiver_mixins import SessionReceiverMixin
 from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session import ServiceBusSession
@@ -24,6 +19,9 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
     """The ServiceBusSessionReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription
     while utilizing a session for FIFO and ownership semantics.
+
+    The two primary channels for message receipt are `receive()` to make a single request for messages,
+    and `for message in receiver:` to continuously receive incoming messages in an ongoing fashion.
 
     :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
@@ -42,17 +40,14 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
-    :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-     The default value is 0, meaning messages will be received from the service and processed
-     one at a time. Increasing this value will improve message throughput performance but increase
-     the change that messages will expire while they are cached if they're not processed fast enough.
     :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
      lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-     will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-     the client fails to process the message. The default mode is PeekLock.
+     will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
+     if the client fails to process the message.
+     The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
     :keyword session_id: A specific session from which to receive. This must be specified for a
      sessionful entity, otherwise it must be None. In order to receive messages from the next available
@@ -67,6 +62,14 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
+    :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+     This setting is only for advanced performance tuning. Increasing this value will improve message throughput
+     performance but increase the chance that messages will expire while they are cached if they're not
+     processed fast enough.
+     The default value is 0, meaning messages will be received from the service and processed one at a time.
+     In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+     within its request to the service.
 
     .. admonition:: Example:
 
@@ -80,7 +83,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
     """
     def __init__(self, fully_qualified_namespace, credential, **kwargs):
         super(ServiceBusSessionReceiver, self).__init__(fully_qualified_namespace, credential, **kwargs)
-        self._create_session_attributes(**kwargs)
+        self._populate_session_attributes(**kwargs)
         self._session = ServiceBusSession(self._session_id, self, self._config.encoding)
 
     @property
@@ -121,17 +124,14 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
         :keyword mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-         will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-         the client fails to process the message. The default mode is PeekLock.
+         will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
+         if the client fails to process the message.
+         The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful entity, otherwise it must be None. In order to receive messages from the next available
          session, set this to None.  The default is None.
         :paramtype session_id: str
-        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-         The default value is 0, meaning messages will be received from the service and processed
-         one at a time. Increasing this value will improve message throughput performance but increase
-         the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -143,6 +143,14 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         This setting is only for advanced performance tuning. Increasing this value will improve message throughput
+         performance but increase the chance that messages will expire while they are cached if they're not
+         processed fast enough.
+         The default value is 0, meaning messages will be received from the service and processed one at a time.
+         In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+         within its request to the service.
         :rtype: ~azure.servicebus.ServiceBusSessionReceiver
 
         .. admonition:: Example:
@@ -155,4 +163,4 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        return super(ServiceBusSessionReceiver, self).from_connection_string(conn_str, **kwargs)
+        return super(ServiceBusSessionReceiver, cls).from_connection_string(conn_str, **kwargs)  # type: ignore

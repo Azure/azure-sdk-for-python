@@ -62,13 +62,25 @@ def _error_handler(error):
     return errors.ErrorAction(retry=True)
 
 
-def _create_servicebus_exception(logger, exception, handler):
+def _create_servicebus_exception(logger, exception, handler):  # pylint: disable=too-many-statements
     error_need_close_handler = True
     error_need_raise = False
-
-    if isinstance(exception, MessageSendFailed):
-        logger.info("Message send error (%r)", exception)
-        error = exception
+    if isinstance(exception, errors.MessageAlreadySettled):
+        logger.info("Message already settled (%r)", exception)
+        error = MessageAlreadySettled(exception)
+        error_need_close_handler = False
+        error_need_raise = True
+    elif isinstance(exception, errors.MessageContentTooLarge) or \
+            (isinstance(exception, errors.MessageException) and
+             exception.condition == constants.ErrorCodes.LinkMessageSizeExceeded):
+        logger.info("Message content is too large (%r)", exception)
+        error = MessageContentTooLarge(exception)
+        error_need_close_handler = False
+        error_need_raise = True
+    elif isinstance(exception, errors.MessageException):
+        logger.info("Message send failed (%r)", exception)
+        error = MessageSendFailed(exception)
+        error_need_raise = False
     elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_LOST:
         try:
             session_id = handler._session_id  # pylint: disable=protected-access
@@ -81,11 +93,14 @@ def _create_servicebus_exception(logger, exception, handler):
         error_need_raise = True
     elif isinstance(exception, errors.AuthenticationException):
         logger.info("Authentication failed due to exception: (%r).", exception)
-        error = ServiceBusAuthorizationError(str(exception), exception)
+        error = ServiceBusAuthenticationError(str(exception), exception)
     elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
         logger.info("Handler detached due to exception: (%r).", exception)
         if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
             error = ServiceBusAuthorizationError(str(exception), exception)
+        elif exception.condition == constants.ErrorCodes.NotAllowed and 'requires sessions' in str(exception):
+            message = str(exception) + '\n\nDid you want ServiceBusClient.get_<queue/subscription>_session_receiver()?'
+            error = ServiceBusConnectionError(message, exception)
         else:
             error = ServiceBusConnectionError(str(exception), exception)
     elif isinstance(exception, errors.MessageHandlerError):
@@ -159,8 +174,8 @@ class ServiceBusAuthorizationError(ServiceBusError):
     """An error occured when authorizing the connection."""
 
 
-class InvalidHandlerState(ServiceBusError):
-    """An attempt to run a handler operation that the handler is not in the right state to perform."""
+class ServiceBusAuthenticationError(ServiceBusError):
+    """An error occured when authenticate the connection."""
 
 
 class NoActiveSession(ServiceBusError):
@@ -171,7 +186,15 @@ class OperationTimeoutError(ServiceBusError):
     """Operation timed out."""
 
 
-class MessageAlreadySettled(ServiceBusError):
+class MessageError(ServiceBusError):
+    """A message failed to send because the message is in a wrong state"""
+
+
+class MessageContentTooLarge(MessageError, ValueError):
+    """Message content is larger than the service bus frame size"""
+
+
+class MessageAlreadySettled(MessageError):
     """Failed to settle the message.
 
     An attempt was made to complete an operation on a message that has already

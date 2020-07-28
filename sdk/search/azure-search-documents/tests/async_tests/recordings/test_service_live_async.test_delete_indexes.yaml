@@ -5,44 +5,37 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - CFBC99722708A5421EEAF35F420BF320
+      - A267E470BFF120455C4300D9DF89C73B
     method: DELETE
-    uri: https://search86db11ac.search.windows.net/indexes('drgqefsg')?api-version=2019-05-06-Preview
+    uri: https://search86db11ac.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
-      date: Tue, 31 Mar 2020 17:46:35 GMT
-      elapsed-time: '427'
+      date: Wed, 29 Apr 2020 23:30:55 GMT
+      elapsed-time: '220'
       expires: '-1'
       pragma: no-cache
-      request-id: 90f352fe-7377-11ea-9c63-5cf37071153c
+      request-id: 78b527f4-8a71-11ea-889b-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 204
       message: No Content
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - search86db11ac.search.windows.net
-        - /indexes('drgqefsg')
-        - api-version=2019-05-06-Preview
-        - ''
+    url: https://search86db11ac.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - CFBC99722708A5421EEAF35F420BF320
+      - A267E470BFF120455C4300D9DF89C73B
     method: GET
-    uri: https://search86db11ac.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://search86db11ac.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search86db11ac.search.windows.net/$metadata#indexes","value":[]}'
@@ -51,24 +44,17 @@ interactions:
       content-encoding: gzip
       content-length: '199'
       content-type: application/json; odata.metadata=minimal
-      date: Tue, 31 Mar 2020 17:46:40 GMT
-      elapsed-time: '26'
+      date: Wed, 29 Apr 2020 23:31:00 GMT
+      elapsed-time: '17'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 945637a6-7377-11ea-aeeb-5cf37071153c
+      request-id: 7be25078-8a71-11ea-889b-8c8590507855
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - search86db11ac.search.windows.net
-        - /indexes
-        - api-version=2019-05-06-Preview
-        - ''
+    url: https://search86db11ac.search.windows.net/indexes?api-version=2020-06-30
 version: 1

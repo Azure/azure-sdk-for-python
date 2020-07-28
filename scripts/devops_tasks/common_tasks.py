@@ -22,7 +22,7 @@ import re
 import pdb
 
 # Assumes the presence of setuptools
-from pkg_resources import parse_version, parse_requirements, Requirement
+from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
@@ -40,6 +40,7 @@ OMITTED_CI_PACKAGES = [
     "azure-mgmt-scheduler",
     "azure",
     "azure-mgmt",
+    "azure-storage",
 ]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
@@ -58,6 +59,10 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
 ]
 
+BANDIT_EXCLUDED_PACKAGES = [
+    "azure-servicebus",
+]
+
 omit_regression = (
     lambda x: "nspkg" not in x
     and "mgmt" not in x
@@ -69,6 +74,7 @@ omit_docs = lambda x: "nspkg" not in x and os.path.basename(x) not in META_PACKA
 omit_build = lambda x: x # Dummy lambda to match omit type
 lambda_filter_azure_pkg = lambda x: x.startswith("azure") and "-nspkg" not in x
 omit_mgmt = lambda x: "mgmt" not in x or os.path.basename(x) in MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS
+omit_bandit = lambda x: not(os.path.basename(x) in BANDIT_EXCLUDED_PACKAGES or "mgmt" in x)
 
 # dict of filter type and filter function
 omit_funct_dict = {
@@ -76,6 +82,7 @@ omit_funct_dict = {
     "Docs": omit_docs,
     "Regression": omit_regression,
     "Omit_management": omit_mgmt,
+    "Bandit": omit_bandit,
 }
 
 def log_file(file_location, is_error=False):
@@ -420,3 +427,14 @@ def find_tools_packages(root_path):
     pkgs = [os.path.basename(os.path.dirname(p)) for p in glob.glob(glob_string)]
     logging.info("Packages in tools: {}".format(pkgs))
     return pkgs
+
+
+def get_installed_packages(paths = None):
+    """Find packages in default or given lib paths
+    """
+    # WorkingSet returns installed packages in given path
+    # working_set returns installed packages in default path
+    # if paths is set then find installed packages from given paths
+    ws = WorkingSet(paths) if paths else working_set  
+    return ["{0}=={1}".format(p.project_name, p.version) for p in ws]
+

@@ -1,0 +1,41 @@
+interactions:
+- request:
+    body: '%PDFUUU'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '7'
+      Content-Type:
+      - application/pdf
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyze
+  response:
+    body:
+      string: '{"error": {"code": "InvalidImage", "message": "The input data is not
+        a valid image or password protected."}}'
+    headers:
+      apim-request-id:
+      - 9edd8d19-97ad-4ac6-9c9c-2a170b3edd01
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 10 Jul 2020 18:40:17 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '4'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

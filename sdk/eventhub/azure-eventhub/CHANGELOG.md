@@ -1,7 +1,33 @@
 # Release History
 
-## 5.1.0b2 (Unreleased)
+## 5.2.0b2 (Unreleased)
 
+
+## 5.2.0b1 (2020-07-06)
+
+**New Features**
+
+- `EventHubConsumerClient` constructor accepts two new parameters for the load balancer.
+    - `load_balancing_strategy`, which can be "greedy" or "balanced". 
+     With greedy strategy, one execution of load balancing will claim as many partitions as required to balance the load
+     whereas with balanced strategy one execution of load balancing will claim at most 1 partition.
+    - `partition_ownership_expiration_interval`, which allows you to customize the partition ownership expiration for load balancing.
+     A consumer client may lose its owned partitions more often with a smaller expiration interval. But a larger interval
+     may result in idle partitions not being claimed for longer time. 
+- Added enum class `azure.eventhub.LoadBalancingStrategy` for `load_balancing_strategy`.
+
+## 5.1.0 (2020-05-04)
+
+**New Features**
+
+- `EventHubProducerClient.send_batch` accepts either an `EventDataBatch` or a finite list of `EventData`. #9181
+- Added enqueueTime to span links of distributed tracing. #9599
+
+**Bug fixes**
+- Fixed a bug that turned `azure.eventhub.EventhubConsumerClient` into an exclusive receiver when it has no checkpoint store. #11181
+- Updated uAMQP dependency to 1.2.7.
+  - Fixed bug in setting certificate of tlsio on MacOS. #7201
+  - Fixed bug that caused segmentation fault in network tracing on MacOS when setting `logging_enable` to `True` in `EventHubConsumerClient` and `EventHubProducerClient`.
 
 ## 5.1.0b1 (2020-04-06)
 

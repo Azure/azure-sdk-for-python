@@ -154,9 +154,9 @@ class RequestIdPolicy(SansIOHTTPPolicy):
         elif self._request_id is None:
             return
         elif self._request_id is not _Unset:
-            request_id = self._request_id   # type: ignore
+            request_id = self._request_id
         elif self._auto_request_id:
-            request_id = str(uuid.uuid1())  # type: ignore
+            request_id = str(uuid.uuid1())
         if request_id is not unset:
             header = {"x-ms-client-request-id": request_id}
             request.http_request.headers.update(header)
@@ -286,10 +286,10 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                 _LOGGER.debug("Request body:")
 
                 # We don't want to log the binary data of a file upload.
-                if isinstance(http_request.body, types.GeneratorType): # type: ignore
+                if isinstance(http_request.body, types.GeneratorType):
                     _LOGGER.debug("File upload")
                 else:
-                    _LOGGER.debug(str(http_request.body)) # type: ignore
+                    _LOGGER.debug(str(http_request.body))
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
@@ -371,7 +371,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             "azure.core.pipeline.policies.http_logging_policy"
         )
         self.allowed_query_params = set()
-        self.allowed_header_names = set(HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST)
+        self.allowed_header_names = set(self.__class__.DEFAULT_HEADERS_WHITELIST)
 
     def _redact_query_param(self, key, value):
         lower_case_allowed_query_params = [
@@ -498,10 +498,10 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                 try:
                     if isinstance(data, unicode):  # type: ignore
                         # If I'm Python 2.7 and unicode XML will scream if I try a "fromstring" on unicode string
-                        data_as_str = data_as_str.encode(encoding="utf-8")  # type: ignore
+                        data_as_str = cast(str, data_as_str.encode(encoding="utf-8"))
                 except NameError:
                     pass
-                return ET.fromstring(data_as_str)
+                return ET.fromstring(data_as_str)   # nosec
             except ET.ParseError:
                 # It might be because the server has an issue, and returned JSON with
                 # content-type XML....

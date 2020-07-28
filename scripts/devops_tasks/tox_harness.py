@@ -35,6 +35,7 @@ coverage_dir = os.path.join(root_dir, "_coverage/")
 pool_size = multiprocessing.cpu_count() * 2
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
 IGNORED_TOX_INIS = ["azure-cosmos"]
+test_tools_path = os.path.join(root_dir, "eng", "test_tools.txt")
 
 
 class ToxWorkItem:
@@ -275,7 +276,7 @@ def build_whl_for_req(req, package_path):
     else:
         return req
 
-def replace_dev_reqs(file):
+def replace_dev_reqs(file, pkg_root):
     adjusted_req_lines = []
 
     with open(file, "r") as f:
@@ -288,9 +289,10 @@ def replace_dev_reqs(file):
             amended_line = " ".join(args)
             adjusted_req_lines.append(amended_line)
 
-    logging.info("Old dev requirements:{}".format(adjusted_req_lines))
-    adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, os.path.dirname(file)), adjusted_req_lines))
-    logging.info("New dev requirements:{}".format(adjusted_req_lines))
+    req_file_name = os.path.basename(file)
+    logging.info("Old {0}:{1}".format(req_file_name, adjusted_req_lines))
+    adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, pkg_root), adjusted_req_lines))
+    logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
 
     with open(file, "w") as f:
         # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
@@ -372,7 +374,8 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
                 file.write("\n")
 
         if in_ci():
-            replace_dev_reqs(destination_dev_req)
+            replace_dev_reqs(destination_dev_req, package_dir)
+            replace_dev_reqs(test_tools_path, package_dir)
             os.environ["TOX_PARALLEL_NO_SPINNER"] = "1"
 
         inject_custom_reqs(

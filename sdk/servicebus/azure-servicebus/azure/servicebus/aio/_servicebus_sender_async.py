@@ -10,17 +10,16 @@ import uamqp
 from uamqp import SendClientAsync, types
 
 from .._common.message import Message, BatchMessage
+from .._base_handler import _convert_connection_string_to_kwargs
 from .._servicebus_sender import SenderMixin
-from ._base_handler_async import BaseHandlerAsync
-from ..exceptions import (
-    MessageSendFailed
-)
+from ._base_handler_async import BaseHandler, ServiceBusSharedKeyCredential
 from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     MGMT_REQUEST_SEQUENCE_NUMBERS
 )
 from .._common import mgmt_handlers
+from .._common.utils import copy_messages_to_sendable_if_needed
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
@@ -30,7 +29,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusSender(BaseHandlerAsync, SenderMixin):
+class ServiceBusSender(BaseHandler, SenderMixin):
     """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 
@@ -59,6 +58,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
 
     .. admonition:: Example:
 
@@ -128,26 +128,23 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
                                              or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
         except:
-            self.close()
+            await self.close()
             raise
 
     async def _send(self, message, timeout=None, last_exception=None):
         await self._open()
         self._set_msg_timeout(timeout, last_exception)
-        try:
-            await self._handler.send_message_async(message.message)
-        except Exception as e:
-            raise MessageSendFailed(e)
+        await self._handler.send_message_async(message.message)
 
-    async def _schedule(self, message, schedule_time_utc):
-        # type: (Union[Message, BatchMessage], datetime.datetime) -> List[int]
-        """Send Message or BatchMessage to be enqueued at a specific time.
+    async def schedule_messages(self, messages, schedule_time_utc):
+        # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]
+        """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
-        :param message: The messages to schedule.
-        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage
+        :param messages: The message or list of messages to schedule.
+        :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
-        :rtype: List[int]
+        :rtype: list[int]
 
         .. admonition:: Example:
 
@@ -160,24 +157,26 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         """
         # pylint: disable=protected-access
         await self._open()
-        if isinstance(message, BatchMessage):
-            request_body = self._build_schedule_request(schedule_time_utc, *message._messages)
+        if isinstance(messages, Message):
+            request_body = self._build_schedule_request(schedule_time_utc, messages)
         else:
-            request_body = self._build_schedule_request(schedule_time_utc, message)
+            request_body = self._build_schedule_request(schedule_time_utc, *messages)
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
             request_body,
             mgmt_handlers.schedule_op
         )
 
-    async def _cancel_scheduled_messages(self, sequence_numbers):
+    async def cancel_scheduled_messages(self, sequence_numbers):
         # type: (Union[int, List[int]]) -> None
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
 
-        :param sequence_numbers: he sequence numbers of the scheduled messages.
+        :param sequence_numbers: The sequence numbers of the scheduled messages.
         :type sequence_numbers: int or list[int]
         :rtype: None
+        :raises: ~azure.servicebus.exceptions.ServiceBusError if messages cancellation failed due to message already
+         cancelled or enqueued.
 
         .. admonition:: Example:
 
@@ -220,6 +219,7 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
 
         .. admonition:: Example:
@@ -232,21 +232,31 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
                 :caption: Create a new instance of the ServiceBusSender from connection string.
 
         """
-        constructor_args = cls._from_connection_string(
+        constructor_args = _convert_connection_string_to_kwargs(
             conn_str,
+            ServiceBusSharedKeyCredential,
             **kwargs
         )
         return cls(**constructor_args)
 
-    async def send(self, message):
-        # type: (Message, float) -> None
+    async def send_messages(self, message):
+        # type: (Union[Message, BatchMessage, List[Message]]) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
+        If a list of messages was provided, attempts to send them as a single batch, throwing a
+        `ValueError` if they cannot fit in a single batch.
+
         :param message: The ServiceBus message to be sent.
-        :type message: ~azure.servicebus.Message
+        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage or list[~azure.servicebus.Message]
         :rtype: None
-        :raises: ~azure.servicebus.common.errors.MessageSendFailed if the message fails to
-         send or ~azure.servicebus.common.errors.OperationTimeoutError if sending times out.
+        :raises:
+                :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
+                :class: ~azure.servicebus.exceptions.MessageContentTooLarge if the size of the message is over
+                  service bus frame size limit.
+                :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to send
+                :class: ~azure.servicebus.exceptions.ServiceBusError when other errors happen such as connection
+                 error, authentication error, and any unexpected errors.
+                 It's also the top-level root class of above errors.
 
         .. admonition:: Example:
 
@@ -258,6 +268,16 @@ class ServiceBusSender(BaseHandlerAsync, SenderMixin):
                 :caption: Send message.
 
         """
+        message = copy_messages_to_sendable_if_needed(message)
+        try:
+            batch = await self.create_batch()
+            batch._from_list(message)  # pylint: disable=protected-access
+            message = batch
+        except TypeError:  # Message was not a list or generator.
+            pass
+        if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
+            raise ValueError("A BatchMessage or list of Message must have at least one Message")
+
         await self._do_retryable_operation(
             self._send,
             message=message,

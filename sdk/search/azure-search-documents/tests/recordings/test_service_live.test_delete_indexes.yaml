@@ -11,11 +11,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 668B8A9202953BC7FBED4F24F5304DBF
+      - 4047D6344BEF3D3392D3F9E3C29654B1
     method: DELETE
-    uri: https://search21c20f2f.search.windows.net/indexes('drgqefsg')?api-version=2019-05-06-Preview
+    uri: https://search21c20f2f.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30
   response:
     body:
       string: ''
@@ -23,15 +23,15 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Tue, 31 Mar 2020 17:39:04 GMT
+      - Wed, 29 Apr 2020 23:21:42 GMT
       elapsed-time:
-      - '510'
+      - '243'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - 84492680-7376-11ea-bf5b-5cf37071153c
+      - 2eb2ba32-8a70-11ea-889b-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -47,11 +47,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b2 Python/3.6.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
-      - 668B8A9202953BC7FBED4F24F5304DBF
+      - 4047D6344BEF3D3392D3F9E3C29654B1
     method: GET
-    uri: https://search21c20f2f.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://search21c20f2f.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search21c20f2f.search.windows.net/$metadata#indexes","value":[]}'
@@ -63,9 +63,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Tue, 31 Mar 2020 17:39:09 GMT
+      - Wed, 29 Apr 2020 23:21:46 GMT
       elapsed-time:
-      - '23'
+      - '111'
       expires:
       - '-1'
       odata-version:
@@ -75,7 +75,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 87ce7638-7376-11ea-8421-5cf37071153c
+      - 321d5592-8a70-11ea-889b-8c8590507855
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

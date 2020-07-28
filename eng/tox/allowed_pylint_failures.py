@@ -39,9 +39,12 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-eventgrid",
     "azure-graphrbac",
     "azure-loganalytics",
-    "azure-servicebus",
     "azure-servicefabric",
     "azure-template",
     "azure-keyvault",
-    "azure-synapse"
+    "azure-synapse",
+    "azure-synapse-artifacts",
+    "azure-synapse-spark",
+    "azure-synapse-accesscontrol",
+    "azure-synapse-nspkg",
 ]

@@ -200,6 +200,12 @@ class GeoReplicationStatusType(str, Enum):
     unavailable = "unavailable"
 
 
+class QueryFormatType(str, Enum):
+
+    delimited = "delimited"
+    json = "json"
+
+
 class AccessTierRequired(str, Enum):
 
     p4 = "P4"
@@ -257,6 +263,14 @@ class RehydratePriority(str, Enum):
     standard = "Standard"
 
 
+class BlobExpiryOptions(str, Enum):
+
+    never_expire = "NeverExpire"
+    relative_to_creation = "RelativeToCreation"
+    relative_to_now = "RelativeToNow"
+    absolute = "Absolute"
+
+
 class BlockListType(str, Enum):
 
     committed = "committed"
@@ -282,11 +296,14 @@ class ListBlobsIncludeItem(str, Enum):
     metadata = "metadata"
     snapshots = "snapshots"
     uncommittedblobs = "uncommittedblobs"
+    versions = "versions"
+    tags = "tags"
 
 
 class ListContainersIncludeType(str, Enum):
 
     metadata = "metadata"
+    deleted = "deleted"
 
 
 class PathRenameMode(str, Enum):

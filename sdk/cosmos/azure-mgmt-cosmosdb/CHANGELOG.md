@@ -1,5 +1,11 @@
 # Release History
 
+## 0.14.0 (2020-05-05)
+
+**Features**
+
+  - Model DatabaseAccountGetResults has a new parameter private_endpoint_connections
+
 ## 0.13.0 (2020-04-18)
 
 **Features**

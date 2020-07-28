@@ -117,10 +117,10 @@ class StorageCommonBlobTest(StorageTestCase):
 
     def _enable_soft_delete(self):
         delete_retention_policy = RetentionPolicy(enabled=True, days=2)
-        self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # wait until the policy has gone into effect
         if self.is_live:
+            self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
             time.sleep(30)
 
     def _disable_soft_delete(self):
@@ -215,7 +215,6 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNotNone(data)
         self.assertEqual(data.readall(), blob_data)
 
-
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_special_chars(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -230,8 +229,22 @@ class StorageCommonBlobTest(StorageTestCase):
             data = blob.download_blob(encoding='utf-8')
             self.assertEqual(data.readall(), blob_data)
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_blob_and_download_blob_with_vid(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
 
-        # Assert
+        # Act
+        for c in '-._ /()$=\',~':
+            blob_name = '{0}a{0}a{0}'.format(c)
+            blob_data = c
+            blob = self.bsc.get_blob_client(self.container_name, blob_name)
+            resp = blob.upload_blob(blob_data, length=len(blob_data), overwrite=True)
+            self.assertIsNotNone(resp.get('version_id'))
+
+            data = blob.download_blob(encoding='utf-8', version_id=resp.get('version_id'))
+            self.assertEqual(data.readall(), blob_data)
+            self.assertIsNotNone(data.properties.get('version_id'))
 
     @GlobalStorageAccountPreparer()
     def test_create_blob_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
@@ -587,7 +600,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # bug in devtools...converts upper case header to lowercase
         # passes live.
         self._setup(storage_account, storage_account_key)
-        metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
+        metadata = {'hello': ' world ', ' number ': '42', 'UP': 'UPval'}
         blob_name = self._create_block_blob()
 
         # Act
@@ -602,6 +615,28 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
 
+    @pytest.mark.playback_test_only
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_set_blob_metadata_returns_vid(self, resource_group, location, storage_account, storage_account_key):
+        # bug in devtools...converts upper case header to lowercase
+        # passes live.
+        self._setup(storage_account, storage_account_key)
+        metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
+        blob_name = self._create_block_blob()
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        resp = blob.set_blob_metadata(metadata)
+
+        # Assert
+        self.assertIsNotNone(resp['version_id'])
+        md = blob.get_blob_properties().metadata
+        self.assertEqual(3, len(md))
+        self.assertEqual(md['hello'], 'world')
+        self.assertEqual(md['number'], '42')
+        self.assertEqual(md['UP'], 'UPval')
+        self.assertFalse('up' in md)
 
     @GlobalStorageAccountPreparer()
     def test_delete_blob_with_existing_blob(self, resource_group, location, storage_account, storage_account_key):
@@ -615,6 +650,62 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_delete_specific_blob_version(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        blob_name = self.get_resource_name("blobtodelete")
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        resp = blob_client.upload_blob(b'abc', overwrite=True)
+        self.assertIsNotNone(resp['version_id'])
+
+        blob_client.upload_blob(b'abc', overwrite=True)
+
+        # Act
+        resp = blob_client.delete_blob(version_id=resp['version_id'])
+
+        blob_list = list(self.bsc.get_container_client(self.container_name).list_blobs(include="versions"))
+
+        # Assert
+        self.assertIsNone(resp)
+        self.assertTrue(len(blob_list) > 0)
+
+    @pytest.mark.playback_test_only
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    def test_delete_blob_version_with_blob_sas(self, resource_group, location, storage_account, storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+        self._setup(storage_account, storage_account_key)
+        blob_name = self._create_block_blob()
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        resp = blob_client.upload_blob(b'abcde', overwrite=True)
+
+        version_id = resp['version_id']
+        self.assertIsNotNone(version_id)
+        blob_client.upload_blob(b'abc', overwrite=True)
+
+        token = generate_blob_sas(
+            blob_client.account_name,
+            blob_client.container_name,
+            blob_client.blob_name,
+            version_id=version_id,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(delete=True, delete_previous_version=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        blob_client_using_sas = BlobClient.from_blob_url(blob_client.url, credential=token)
+        resp = blob_client_using_sas.delete_blob(version_id=version_id)
+
+        # Assert
+        self.assertIsNone(resp)
+
+        blob_list = list(self.bsc.get_container_client(self.container_name).list_blobs(include="versions"))
+        # make sure the deleted version is not in the blob version list
+        for blob in blob_list:
+            self.assertNotEqual(blob.version_id, version_id)
 
     @GlobalStorageAccountPreparer()
     def test_delete_blob_with_non_existing_blob(self, resource_group, location, storage_account, storage_account_key):
@@ -627,7 +718,6 @@ class StorageCommonBlobTest(StorageTestCase):
             blob.delete_blob()
 
         # Assert
-
 
     @GlobalStorageAccountPreparer()
     def test_delete_blob_snapshot(self, resource_group, location, storage_account, storage_account_key):
@@ -664,6 +754,29 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(len(blobs), 1)
         self.assertIsNone(blobs[0].snapshot)
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_create_blob_snapshot_returns_vid(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        container = self.bsc.get_container_client(self.container_name)
+
+        blob_name = self._create_block_blob()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        resp = blob.create_snapshot()
+        blobs = list(container.list_blobs(include='versions'))
+
+        self.assertIsNotNone(resp['version_id'])
+        # Both create blob and create snapshot will create a new version
+        self.assertTrue(len(blobs) >= 2)
+
+        # Act
+        blob.delete_blob(delete_snapshots='include')
+
+        # Assert
+        blobs = list(container.list_blobs(include=['snapshots', 'versions']))
+        # versions are not deleted so blob lists shouldn't be empty
+        self.assertTrue(len(blobs) > 0)
+        self.assertIsNone(blobs[0].snapshot)
 
     @GlobalStorageAccountPreparer()
     def test_delete_blob_with_snapshots(self, resource_group, location, storage_account, storage_account_key):
@@ -912,6 +1025,29 @@ class StorageCommonBlobTest(StorageTestCase):
         copy_content = copyblob.download_blob().readall()
         self.assertEqual(copy_content, self.byte_data)
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_copy_blob_returns_vid(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        blob_name = self._create_block_blob()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, blob_name)
+
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        copy = copyblob.start_copy_from_url(sourceblob)
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertIsNotNone(copy['version_id'])
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertFalse(isinstance(copy['copy_status'], Enum))
+        self.assertIsNotNone(copy['copy_id'])
+
+        copy_content = copyblob.download_blob().readall()
+        self.assertEqual(copy_content, self.byte_data)
 
     @GlobalStorageAccountPreparer()
     def test_copy_blob_with_blob_tier_specified(self, resource_group, location, storage_account, storage_account_key):

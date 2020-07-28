@@ -22,8 +22,8 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
-from ._constants import AZURE_CLI_CLIENT_ID
-from ._internal import get_default_authority
+from ._constants import AZURE_CLI_CLIENT_ID, DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+from ._internal import get_default_authority, normalize_authority
 from ._internal.user_agent import USER_AGENT
 
 try:
@@ -62,20 +62,35 @@ class AuthnClientBase(ABC):
         else:
             if not tenant:
                 raise ValueError("'tenant' is required")
-            authority = authority or get_default_authority()
-            self._auth_url = "https://" + "/".join((authority.strip("/"), tenant.strip("/"), "oauth2/v2.0/token"))
+            authority = normalize_authority(authority) if authority else get_default_authority()
+            self._auth_url = "/".join((authority, tenant.strip("/"), "oauth2/v2.0/token"))
         self._cache = kwargs.get("cache") or TokenCache()  # type: TokenCache
+        self._token_refresh_retry_delay = DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+        self._token_refresh_offset = DEFAULT_REFRESH_OFFSET
+        self._last_refresh_time = 0
 
     @property
     def auth_url(self):
         return self._auth_url
+
+    def should_refresh(self, token):
+        # type: (AccessToken) -> bool
+        """ check if the token needs refresh or not
+        """
+        expires_on = int(token.expires_on)
+        now = int(time.time())
+        if expires_on - now > self._token_refresh_offset:
+            return False
+        if now - self._last_refresh_time < self._token_refresh_retry_delay:
+            return False
+        return True
 
     def get_cached_token(self, scopes):
         # type: (Iterable[str]) -> Optional[AccessToken]
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes))
         for token in tokens:
             expires_on = int(token["expires_on"])
-            if expires_on - 300 > int(time.time()):
+            if expires_on > int(time.time()):
                 return AccessToken(token["secret"], expires_on)
         return None
 
@@ -217,6 +232,7 @@ class AuthnClient(AuthnClientBase):
         # type: (...) -> AccessToken
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
         request_time = int(time.time())
+        self._last_refresh_time = request_time   # no matter succeed or not, update the last refresh time
         response = self._pipeline.run(request, stream=False, **kwargs)
         token = self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
         return token

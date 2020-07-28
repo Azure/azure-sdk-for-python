@@ -1,9 +1,28 @@
 # Release History
 
-## 12.3.1 (Unreleased)
+## 12.4.0b1 (2020-07-07)
+**New features**
+- Added `query_blob` API to enable users to select/project on block blob or block blob snapshot data by providing simple query expressions.
+- Added blob versioning feature, so that every time there is a blob override the `version_id` will be updated automatically and returned in the response, the `version_id` could be used later to refer to the overwritten blob.
+- Added `set_blob_tags`,`get_blob_tags` and `find_blobs_by_tags` so that user can get blobs based on blob tags.
+- Block size is increased to 4GB at maximum, max single put size is increased to 5GB.
+- For replication enabled account, users can get replication policies when get blob properties.
+
+## 12.3.2 (2020-6-12)
+**Fixes**
+- Fixed issue where batch requests could not be combined with SAS (#9534)
+- Batch requests now support applying parameters to individual blobs within the request via passing in a dictionary.
+- Metadata cannot have leading space (#11457)
+- Improve the performance of upload when using max_concurrency
+
+**Notes**
+- Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.6.0
+
+## 12.3.1 (2020-04-29)
 
 **Fixes**
 - Fixed issue where batch requests could not be combined with token credentials (#9534)
+- Skip '/' in url encoding.
 
 
 ## 12.3.0 (2020-03-10)
@@ -194,7 +213,7 @@ https://aka.ms/azure-sdk-preview1-python.
     - `LeaseClient`: Handles all lease operations for both containers and blobs.
 
     These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account, container or blob).
-    For full details on the new API, please see the [reference documentation](http://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html).
+    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/ref/Storage.html#azure-storage-blob).
 - Copy blob operations now return a polling object that can be used to check the status of the operation, as well as abort the operation.
 - New module level operations for simple upload and download using a blob URL.
 - Download operations now return a streaming object that can download data in multiple ways:

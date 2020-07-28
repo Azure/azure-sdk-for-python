@@ -4,19 +4,20 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
+import uuid
 from typing import TYPE_CHECKING, Any
 
 import uamqp
 from uamqp.message import MessageProperties
-
-from .._base_handler import BaseHandler, _generate_sas_token
+from .._base_handler import _generate_sas_token
+from .._common._configuration import Configuration
+from .._common.utils import create_properties
 from .._common.constants import (
     TOKEN_TYPE_SASTOKEN,
     MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
-    ASSOCIATEDLINKPROPERTYNAME
-)
+    ASSOCIATEDLINKPROPERTYNAME,
+    CONTAINER_PREFIX, MANAGEMENT_PATH_SUFFIX)
 from ..exceptions import (
-    InvalidHandlerState,
     ServiceBusError,
     _create_servicebus_exception
 )
@@ -45,21 +46,28 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class BaseHandlerAsync(BaseHandler):
+class BaseHandler:
     def __init__(
         self,
-        fully_qualified_namespace: str,
-        entity_name: str,
-        credential: "TokenCredential",
-        **kwargs: Any
-    ) -> None:
-        self._loop = kwargs.pop("loop", None)
-        super(BaseHandlerAsync, self).__init__(
-            fully_qualified_namespace=fully_qualified_namespace,
-            entity_name=entity_name,
-            credential=credential,
-            **kwargs
-        )
+        fully_qualified_namespace,
+        entity_name,
+        credential,
+        **kwargs
+    ):
+        # type: (str, str, TokenCredential, Any) -> None
+        self.fully_qualified_namespace = fully_qualified_namespace
+        self._entity_name = entity_name
+
+        subscription_name = kwargs.get("subscription_name")
+        self._mgmt_target = self._entity_name + (("/Subscriptions/" + subscription_name) if subscription_name else '')
+        self._mgmt_target = "{}{}".format(self._mgmt_target, MANAGEMENT_PATH_SUFFIX)
+        self._credential = credential
+        self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
+        self._config = Configuration(**kwargs)
+        self._running = False
+        self._handler = None  # type: uamqp.AMQPClient
+        self._auth_uri = None
+        self._properties = create_properties(self._config.user_agent)
 
     async def __aenter__(self):
         await self._open_with_retry()
@@ -137,10 +145,10 @@ class BaseHandlerAsync(BaseHandler):
         )
         raise last_exception
 
-    async def _mgmt_request_response(self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs):
+    async def _mgmt_request_response(
+            self, mgmt_operation, message, callback, keep_alive_associated_link=True, **kwargs
+    ):
         await self._open()
-        if not self._running:
-            raise InvalidHandlerState("Client connection is closed.")
 
         application_properties = {}
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
@@ -176,12 +184,6 @@ class BaseHandlerAsync(BaseHandler):
             callback=callback,
             **kwargs
         )
-
-    @staticmethod
-    def _from_connection_string(conn_str, **kwargs):
-        kwargs = BaseHandler._from_connection_string(conn_str, **kwargs)
-        kwargs["credential"] = ServiceBusSharedKeyCredential(kwargs["credential"].policy, kwargs["credential"].key)
-        return kwargs
 
     async def _open(self):  # pylint: disable=no-self-use
         raise ValueError("Subclass should override the method.")
