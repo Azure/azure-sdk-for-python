@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
 import functools
 
 from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
@@ -124,13 +123,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
         )
 
-        certificate_name = self.get_resource_name("cert")
-        await asyncio.gather(
-            *[
-                certificate_client.create_certificate(certificate_name=certificate_name + str(i), policy=cert_policy)
-                for i in range(4)
-            ]
-        )
+        certificate_name = self.get_replayable_random_resource_name("cert")
+        await certificate_client.create_certificate(certificate_name, cert_policy)
 
         # [START list_properties_of_certificates]
 
@@ -146,8 +140,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END list_properties_of_certificates]
 
-        for _ in range(2):
-            await certificate_client.create_certificate(certificate_name, cert_policy)
+        # create a second version of the cert
+        await certificate_client.create_certificate(certificate_name, cert_policy)
 
         # [START list_properties_of_certificate_versions]
 
@@ -161,10 +155,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END list_properties_of_certificate_versions]
 
-        delete_operations = []
-        async for cert in certificate_client.list_properties_of_certificates():
-            delete_operations.append(certificate_client.delete_certificate(cert.name))
-        await asyncio.gather(*delete_operations)
+        await certificate_client.delete_certificate(certificate_name)
 
         # [START list_deleted_certificates]
 

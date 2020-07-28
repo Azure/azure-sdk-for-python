@@ -4,8 +4,6 @@
 # ------------------------------------
 from __future__ import print_function
 import functools
-import hashlib
-import os
 
 from azure.keyvault.certificates import (
     CertificateClient,
@@ -138,13 +136,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             content_type=CertificateContentType.pkcs12,
             validity_in_months=24,
         )
-        certificate_name = self.get_resource_name("cert")
-        create_operations = [
-            certificate_client.begin_create_certificate(certificate_name=certificate_name + str(i), policy=cert_policy)
-            for i in range(4)
-        ]
-        for operation in create_operations:
-            operation.wait()
+
+        certificate_name = self.get_replayable_random_resource_name("cert")
+        certificate_client.begin_create_certificate(certificate_name, cert_policy).wait()
 
         # [START list_properties_of_certificates]
 
@@ -160,8 +154,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END list_properties_of_certificates]
 
-        for _ in range(2):
-            certificate_client.begin_create_certificate(certificate_name=certificate_name, policy=cert_policy).wait()
+        # create a second version of the cert
+        certificate_client.begin_create_certificate(certificate_name, cert_policy).wait()
 
         # [START list_properties_of_certificate_versions]
 
@@ -175,9 +169,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END list_properties_of_certificate_versions]
 
-        delete_operations = [certificate_client.begin_delete_certificate(cert.name) for cert in certificates]
-        for operation in delete_operations:
-            operation.wait()
+        certificate_client.begin_delete_certificate(certificate_name).wait()
 
         # [START list_deleted_certificates]
 
