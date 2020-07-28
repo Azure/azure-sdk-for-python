@@ -1,5 +1,15 @@
 # Release History
 
+## 6.2.0 (2020-05-29)
+
+**Features**
+
+  - Model CognitiveServicesAccountProperties has a new parameter public_network_access
+  - Model CognitiveServicesAccountProperties has a new parameter private_endpoint_connections
+  - Model CognitiveServicesAccountProperties has a new parameter capabilities
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+
 ## 6.1.0 (2020-03-25)
 
 **Features**

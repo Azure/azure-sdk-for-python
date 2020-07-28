@@ -142,6 +142,19 @@ class ProviderShareSubscriptionPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ProviderShareSubscriptionPaged, self).__init__(*args, **kwargs)
+class ShareSubscriptionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ShareSubscription <azure.mgmt.datashare.models.ShareSubscription>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ShareSubscription]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ShareSubscriptionPaged, self).__init__(*args, **kwargs)
 class SourceShareSynchronizationSettingPaged(Paged):
     """
     A paging container for iterating over a list of :class:`SourceShareSynchronizationSetting <azure.mgmt.datashare.models.SourceShareSynchronizationSetting>` object
@@ -168,19 +181,6 @@ class ShareSubscriptionSynchronizationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ShareSubscriptionSynchronizationPaged, self).__init__(*args, **kwargs)
-class ShareSubscriptionPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ShareSubscription <azure.mgmt.datashare.models.ShareSubscription>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ShareSubscription]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ShareSubscriptionPaged, self).__init__(*args, **kwargs)
 class ConsumerSourceDataSetPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ConsumerSourceDataSet <azure.mgmt.datashare.models.ConsumerSourceDataSet>` object

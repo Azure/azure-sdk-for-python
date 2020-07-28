@@ -1,5 +1,18 @@
 # Release History
 
+## 3.0.0rc13 (2020-05-15)
+
+**Features**
+
+  - Model Replication has a new parameter region_endpoint_enabled
+  - Model ReplicationUpdateParameters has a new parameter region_endpoint_enabled
+
+**Breaking changes**
+
+  - Operation ReplicationsOperations.create has a new signature
+  - Operation ReplicationsOperations.update has a new signature
+  - Operation ReplicationsOperations.create has a new signature
+
 ## 3.0.0rc12(2020-05-06)
 
 **Features**

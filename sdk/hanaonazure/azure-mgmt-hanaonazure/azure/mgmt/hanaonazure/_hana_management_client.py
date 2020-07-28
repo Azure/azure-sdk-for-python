@@ -14,8 +14,8 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import HanaManagementClientConfiguration
 from .operations import Operations
-from .operations import HanaInstancesOperations
 from .operations import SapMonitorsOperations
+from .operations import ProviderInstancesOperations
 from . import models
 
 
@@ -27,10 +27,10 @@ class HanaManagementClient(SDKClient):
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.hanaonazure.operations.Operations
-    :ivar hana_instances: HanaInstances operations
-    :vartype hana_instances: azure.mgmt.hanaonazure.operations.HanaInstancesOperations
     :ivar sap_monitors: SapMonitors operations
     :vartype sap_monitors: azure.mgmt.hanaonazure.operations.SapMonitorsOperations
+    :ivar provider_instances: ProviderInstances operations
+    :vartype provider_instances: azure.mgmt.hanaonazure.operations.ProviderInstancesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -49,13 +49,13 @@ class HanaManagementClient(SDKClient):
         super(HanaManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-11-03-preview'
+        self.api_version = '2020-02-07-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.hana_instances = HanaInstancesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.sap_monitors = SapMonitorsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.provider_instances = ProviderInstancesOperations(
             self._client, self.config, self._serialize, self._deserialize)

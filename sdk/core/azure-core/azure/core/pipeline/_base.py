@@ -166,6 +166,9 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         import concurrent.futures
 
         def prepare_requests(req):
+            if req.multipart_mixed_info:
+                # Recursively update changeset "sub requests"
+                Pipeline._prepare_multipart_mixed_request(req)
             context = PipelineContext(None, **pipeline_options)
             pipeline_request = PipelineRequest(req, context)
             for policy in policies:
@@ -173,7 +176,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # List comprehension to raise exceptions if happened
-            [  # pylint: disable=expression-not-assigned
+            [  # pylint: disable=expression-not-assigned, unnecessary-comprehension
                 _ for _ in executor.map(prepare_requests, requests)
             ]
 

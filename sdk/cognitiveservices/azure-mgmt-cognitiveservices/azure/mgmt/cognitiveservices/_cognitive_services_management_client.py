@@ -17,6 +17,8 @@ from .operations import CognitiveServicesManagementClientOperationsMixin
 from .operations import AccountsOperations
 from .operations import ResourceSkusOperations
 from .operations import Operations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
 from . import models
 
 
@@ -32,11 +34,15 @@ class CognitiveServicesManagementClient(CognitiveServicesManagementClientOperati
     :vartype resource_skus: azure.mgmt.cognitiveservices.operations.ResourceSkusOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.cognitiveservices.operations.Operations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.cognitiveservices.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.cognitiveservices.operations.PrivateLinkResourcesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Azure Subscription ID.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -57,4 +63,8 @@ class CognitiveServicesManagementClient(CognitiveServicesManagementClientOperati
         self.resource_skus = ResourceSkusOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)

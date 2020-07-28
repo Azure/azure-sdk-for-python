@@ -107,6 +107,33 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         self.assertTrue(response[1].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_too_many_documents(self, client):
+        docs = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"]
+
+        with pytest.raises(HttpResponseError) as excinfo:
+            await client.extract_key_phrases(docs)
+        assert excinfo.value.status_code == 400
+        assert excinfo.value.error.code == "InvalidDocumentBatch"
+        assert "(InvalidDocumentBatch) The number of documents in the request have exceeded the data limitations" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_output_same_order_as_input(self, client):
+        docs = [
+            TextDocumentInput(id="1", text="one"),
+            TextDocumentInput(id="2", text="two"),
+            TextDocumentInput(id="3", text="three"),
+            TextDocumentInput(id="4", text="four"),
+            TextDocumentInput(id="5", text="five")
+        ]
+
+        response = await client.extract_key_phrases(docs)
+
+        for idx, doc in enumerate(response):
+            self.assertEqual(str(idx + 1), doc.id)
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -120,15 +147,6 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = await client.extract_key_phrases(
                 ["This is written in English."]
-            )
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    async def test_bad_model_version(self, client):
-        with self.assertRaises(HttpResponseError):
-            response = await client.extract_key_phrases(
-                documents=["Microsoft was founded by Bill Gates."],
-                model_version="old"
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -168,7 +186,8 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     async def test_show_stats_and_model_version(self, client):
         def callback(response):
-            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response)
+            self.assertIsNotNone(response.model_version, msg=response.raw_response)
             self.assertIsNotNone(response.raw_response)
             self.assertEqual(response.statistics.document_count, 5)
             self.assertEqual(response.statistics.transaction_count, 4)
@@ -320,6 +339,22 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         response = await client.extract_key_phrases(docs, raw_response_hook=callback)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_invalid_language_hint_method(self, client):
+        response = await client.extract_key_phrases(
+            ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
+        )
+        self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_invalid_language_hint_docs(self, client):
+        response = await client.extract_key_phrases(
+            [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
+        )
+        self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
+
+    @GlobalTextAnalyticsAccountPreparer()
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         credential = AzureKeyCredential(text_analytics_account_key)
         client = TextAnalyticsClient(text_analytics_account, credential)
@@ -399,7 +434,7 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
         try:
             result = await client.extract_key_phrases(docs, model_version="bad")
         except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidRequest")
+            self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -423,11 +458,39 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    async def test_document_warnings(self, client):
+        docs = [
+            {"id": "1", "text": "Thisisaveryveryverylongtextwhichgoesonforalongtimeandwhichalmostdoesn'tseemtostopatanygivenpointintime.ThereasonforthistestistotryandseewhathappenswhenwesubmitaveryveryverylongtexttoLanguage.Thisshouldworkjustfinebutjustincaseitisalwaysgoodtohaveatestcase.ThisallowsustotestwhathappensifitisnotOK.Ofcourseitisgoingtobeokbutthenagainitisalsobettertobesure!"},
+        ]
+
+        result = await client.extract_key_phrases(docs)
+        for doc in result:
+            doc_warnings = doc.warnings
+            self.assertEqual(doc_warnings[0].code, "LongWordsInDocument")
+            self.assertIsNotNone(doc_warnings[0].message)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_not_passing_list_for_docs(self, client):
+        docs = {"id": "1", "text": "hello world"}
+        with pytest.raises(TypeError) as excinfo:
+            await client.extract_key_phrases(docs)
+        assert "Input documents cannot be a dict" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
     async def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
             await client.extract_key_phrases(docs)
-        assert "Input documents can not be empty" in str(excinfo.value)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_passing_none_docs(self, client):
+        with pytest.raises(ValueError) as excinfo:
+            await client.extract_key_phrases(None)
+        assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

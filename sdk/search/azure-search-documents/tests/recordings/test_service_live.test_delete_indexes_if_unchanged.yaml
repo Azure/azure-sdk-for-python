@@ -20,7 +20,7 @@ interactions:
       api-key:
       - 0ABC8B358D4D85386822B456F8767860
     method: POST
-    uri: https://searchbbd1469.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://searchbbd1469.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchbbd1469.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7ED714678528F\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
@@ -40,7 +40,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://searchbbd1469.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+      - https://searchbbd1469.search.windows.net/indexes('hotels')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -77,7 +77,7 @@ interactions:
       api-key:
       - 0ABC8B358D4D85386822B456F8767860
     method: PUT
-    uri: https://searchbbd1469.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+    uri: https://searchbbd1469.search.windows.net/indexes('hotels')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchbbd1469.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7ED714695F21D\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
@@ -129,7 +129,7 @@ interactions:
       api-key:
       - 0ABC8B358D4D85386822B456F8767860
     method: DELETE
-    uri: https://searchbbd1469.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+    uri: https://searchbbd1469.search.windows.net/indexes('hotels')?api-version=2020-06-30
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the

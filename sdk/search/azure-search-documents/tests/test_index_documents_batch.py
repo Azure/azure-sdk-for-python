@@ -5,15 +5,15 @@
 
 import pytest
 
-from azure.search.documents._index._generated.models import IndexAction
+from azure.search.documents.models import IndexAction
 
 from azure.search.documents import IndexDocumentsBatch
 
 METHOD_NAMES = [
-    "add_upload_documents",
-    "add_delete_documents",
-    "add_merge_documents",
-    "add_merge_or_upload_documents",
+    "add_upload_actions",
+    "add_delete_actions",
+    "add_merge_actions",
+    "add_merge_or_upload_actions",
 ]
 
 METHOD_MAP = dict(zip(METHOD_NAMES, ["upload", "delete", "merge", "mergeOrUpload"]))

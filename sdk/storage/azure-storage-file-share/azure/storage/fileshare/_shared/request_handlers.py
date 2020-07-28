@@ -143,5 +143,5 @@ def add_metadata_headers(metadata=None):
     headers = {}
     if metadata:
         for key, value in metadata.items():
-            headers['x-ms-meta-{}'.format(key)] = value
+            headers['x-ms-meta-{}'.format(key.strip())] = value.strip() if value else value
     return headers

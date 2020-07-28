@@ -1,8 +1,39 @@
 
 # Release History
 
-## 1.5.1 (Unreleased)
+## 1.8.0 (Unreleased)
 
+### Features
+
+- Support params as list for exploding parameters  #12410
+
+
+## 1.7.0 (2020-07-06)
+
+### Bug fixes
+
+- `AzureKeyCredentialPolicy` will now accept (and ignore) passed in kwargs  #11963
+- Better error messages if passed endpoint is incorrect  #12106
+- Do not JSON encore a string if content type is "text"  #12137
+
+### Features
+
+- Added `http_logging_policy` property on the `Configuration` object, allowing users to individually
+set the http logging policy of the config  #12218
+
+## 1.6.0 (2020-06-03)
+
+### Bug fixes
+
+- Fixed deadlocks in AsyncBearerTokenCredentialPolicy #11543
+- Fix AttributeException in StreamDownloadGenerator #11462
+
+### Features
+
+- Added support for changesets as part of multipart message support #10485
+- Add AsyncLROPoller in azure.core.polling #10801
+- Add get_continuation_token/from_continuation_token/polling_method methods in pollers (sync and async) #10801
+- HttpResponse and PipelineContext objects are now pickable #10801
 
 ## 1.5.0 (2020-05-04)
 

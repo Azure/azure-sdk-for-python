@@ -3,18 +3,22 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import sys
-import pytest
+
 from azure.core.credentials import AccessToken
-from azure.identity import CredentialUnavailableError
+from azure.identity import CredentialUnavailableError, VSCodeCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
+from azure.identity._credentials.vscode import get_credentials
+import pytest
+from six.moves.urllib_parse import urlparse
+
 from helpers import build_aad_response, mock_response, Request, validating_transport
 
 try:
     from unittest import mock
 except ImportError:  # python < 3.3
     import mock
-from azure.identity._credentials.vscode_credential import VSCodeCredential, get_credentials
 
 
 def test_no_scopes():
@@ -48,6 +52,39 @@ def test_user_agent():
         credential.get_token("scope")
 
 
+@pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
+def test_request_url(authority):
+    """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
+
+    tenant_id = "expected_tenant"
+    access_token = "***"
+    parsed_authority = urlparse(authority)
+    expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
+    expected_refresh_token = "refresh-token"
+
+    def mock_send(request, **kwargs):
+        actual = urlparse(request.url)
+        assert actual.scheme == "https"
+        assert actual.netloc == expected_netloc
+        assert actual.path.startswith("/" + tenant_id)
+        assert request.body["refresh_token"] == expected_refresh_token
+        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": access_token})
+
+    credential = VSCodeCredential(
+        tenant_id=tenant_id, transport=mock.Mock(send=mock_send), authority=authority
+    )
+    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value=expected_refresh_token):
+        token = credential.get_token("scope")
+    assert token.token == access_token
+
+    # authority can be configured via environment variable
+    with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
+        credential = VSCodeCredential(tenant_id=tenant_id, transport=mock.Mock(send=mock_send))
+        with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value=expected_refresh_token):
+            credential.get_token("scope")
+    assert token.token == access_token
+
+
 def test_credential_unavailable_error():
     with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value=None):
         credential = VSCodeCredential()
@@ -57,16 +94,17 @@ def test_credential_unavailable_error():
 
 def test_redeem_token():
     expected_token = AccessToken("token", 42)
+    expected_value = "value"
 
     mock_client = mock.Mock(spec=object)
     mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.get_cached_access_token = mock.Mock(return_value=None)
 
-    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value="VALUE"):
+    with mock.patch(VSCodeCredential.__module__ + ".get_credentials", return_value=expected_value):
         credential = VSCodeCredential(_client=mock_client)
         token = credential.get_token("scope")
         assert token is expected_token
-        mock_client.obtain_token_by_refresh_token.assert_called_with("VALUE", ("scope",))
+        mock_client.obtain_token_by_refresh_token.assert_called_with(("scope",), expected_value)
         assert mock_client.obtain_token_by_refresh_token.call_count == 1
 
 
@@ -91,7 +129,7 @@ def test_cache_refresh_token():
 def test_no_obtain_token_if_cached():
     expected_token = AccessToken("token", 42)
 
-    mock_client = mock.Mock(spec=object)
+    mock_client = mock.Mock(should_refresh=lambda _: False)
     mock_client.obtain_token_by_refresh_token = mock.Mock(return_value=expected_token)
     mock_client.get_cached_access_token = mock.Mock(return_value="VALUE")
 
@@ -99,6 +137,12 @@ def test_no_obtain_token_if_cached():
         credential = VSCodeCredential(_client=mock_client)
         token = credential.get_token("scope")
         assert mock_client.obtain_token_by_refresh_token.call_count == 0
+
+
+@pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
+def test_segfault():
+    from azure.identity._internal.linux_vscode_adapter import _get_refresh_token
+    _get_refresh_token("test", "test")
 
 
 @pytest.mark.skipif(not sys.platform.startswith("darwin"), reason="This test only runs on MacOS")
@@ -115,9 +159,3 @@ def test_mac_keychain_error():
         credential = VSCodeCredential()
         with pytest.raises(CredentialUnavailableError):
             token = credential.get_token("scope")
-
-
-@pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
-def test_get_token():
-    with mock.patch("azure.identity._credentials.linux_vscode_adapter._get_refresh_token", return_value="VALUE"):
-        assert get_credentials() == "VALUE"

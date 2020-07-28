@@ -60,6 +60,7 @@ from typing import (
     Optional,
     Tuple,
     Iterator,
+    Type
 )
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
@@ -111,6 +112,18 @@ def _case_insensitive_dict(*args, **kwargs):
 
 
 def _format_url_section(template, **kwargs):
+    """String format the template with the kwargs, auto-skip sections of the template that are NOT in the kwargs.
+
+    By default in Python, "format" will raise a KeyError if a template element is not found. Here the section between
+    the slashes will be removed from the template instead.
+
+    This is used for API like Storage, where when Swagger has template section not defined as parameter.
+
+    :param str template: a string template to fill
+    :param dict[str,str] kwargs: Template values as string
+    :rtype: str
+    :returns: Template completed
+    """
     components = template.split("/")
     while components:
         try:
@@ -175,13 +188,13 @@ class HttpTransport(
 
     @abc.abstractmethod
     def send(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> PipelineResponse
+        # type: (HTTPRequestType, Any) -> HTTPResponseType
         """Send the request using this HTTP sender.
 
         :param request: The pipeline request object
-        :type request: ~azure.core.pipeline.PipelineRequest
+        :type request: ~azure.core.transport.HTTPRequest
         :return: The pipeline response object.
-        :rtype: ~azure.core.pipeline.PipelineResponse
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
 
     @abc.abstractmethod
@@ -287,7 +300,17 @@ class HttpRequest(object):
                 p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]
             }
             params.update(existing_params)
-        query_params = ["{}={}".format(k, v) for k, v in params.items()]
+        query_params = []
+        for k, v in params.items():
+            if isinstance(v, list):
+                for w in v:
+                    if w is None:
+                        raise ValueError("Query parameter {} cannot be None".format(k))
+                    query_params.append("{}={}".format(k, w))
+            else:
+                if v is None:
+                    raise ValueError("Query parameter {} cannot be None".format(k))
+                query_params.append("{}={}".format(k, v))
         query = "?" + "&".join(query_params)
         self.url = self.url + query
 
@@ -304,6 +327,19 @@ class HttpRequest(object):
                 "A streamable data source must be an open file-like object or iterable."
             )
         self.data = data
+        self.files = None
+
+    def set_text_body(self, data):
+        """Set a text as body of the request.
+
+        :param data: A text to send as body.
+        :type data: str
+        """
+        if data is None:
+            self.data = None
+        else:
+            self.data = data
+            self.headers["Content-Length"] = str(len(self.data))
         self.files = None
 
     def set_xml_body(self, data):
@@ -379,27 +415,30 @@ class HttpRequest(object):
 
         :keyword list[SansIOHTTPPolicy] policies: SansIOPolicy to apply at preparation time
         :keyword str boundary: Optional boundary
-
         :param requests: HttpRequests object
         """
         self.multipart_mixed_info = (
             requests,
             kwargs.pop("policies", []),
-            kwargs.pop("boundary", []),
+            kwargs.pop("boundary", None),
             kwargs
         )
 
-    def prepare_multipart_body(self):
-        # type: () -> None
+    def prepare_multipart_body(self, content_index=0):
+        # type: (int) -> int
         """Will prepare the body of this request according to the multipart information.
 
         This call assumes the on_request policies have been applied already in their
         correct context (sync/async)
 
         Does nothing if "set_multipart_mixed" was never called.
+
+        :param int content_index: The current index of parts within the batch message.
+        :returns: The updated index after all parts in this request have been added.
+        :rtype: int
         """
         if not self.multipart_mixed_info:
-            return
+            return 0
 
         requests = self.multipart_mixed_info[0]  # type: List[HttpRequest]
         boundary = self.multipart_mixed_info[2]  # type: Optional[str]
@@ -409,12 +448,22 @@ class HttpRequest(object):
         main_message.add_header("Content-Type", "multipart/mixed")
         if boundary:
             main_message.set_boundary(boundary)
-        for i, req in enumerate(requests):
+
+        for req in requests:
             part_message = Message()
-            part_message.add_header("Content-Type", "application/http")
-            part_message.add_header("Content-Transfer-Encoding", "binary")
-            part_message.add_header("Content-ID", str(i))
-            part_message.set_payload(req.serialize())
+            if req.multipart_mixed_info:
+                content_index = req.prepare_multipart_body(content_index=content_index)
+                part_message.add_header("Content-Type", req.headers['Content-Type'])
+                payload = req.serialize()
+                # We need to remove the ~HTTP/1.1 prefix along with the added content-length
+                payload = payload[payload.index(b'--'):]
+            else:
+                part_message.add_header("Content-Type", "application/http")
+                part_message.add_header("Content-Transfer-Encoding", "binary")
+                part_message.add_header("Content-ID", str(content_index))
+                payload = req.serialize()
+                content_index += 1
+            part_message.set_payload(payload)
             main_message.attach(part_message)
 
         try:
@@ -435,6 +484,7 @@ class HttpRequest(object):
         self.headers["Content-Type"] = (
             "multipart/mixed; boundary=" + main_message.get_boundary()
         )
+        return content_index
 
     def serialize(self):
         # type: () -> bytes
@@ -485,6 +535,31 @@ class _HttpResponseBase(object):
             encoding = "utf-8-sig"
         return self.body().decode(encoding)
 
+    def _decode_parts(self, message, http_response_type, requests):
+        # type: (Message, Type[_HttpResponseBase], List[HttpRequest]) -> List[HttpResponse]
+        """Rebuild an HTTP response from pure string."""
+        responses = []
+        for index, raw_reponse in enumerate(message.get_payload()):
+            content_type = raw_reponse.get_content_type()
+            if content_type == "application/http":
+                responses.append(
+                    _deserialize_response(
+                        raw_reponse.get_payload(decode=True),
+                        requests[index],
+                        http_response_type=http_response_type,
+                    )
+                )
+            elif content_type == "multipart/mixed" and requests[index].multipart_mixed_info:
+                # The message batch contains one or more change sets
+                changeset_requests = requests[index].multipart_mixed_info[0]  # type: ignore
+                changeset_responses = self._decode_parts(raw_reponse, http_response_type, changeset_requests)
+                responses.extend(changeset_responses)
+            else:
+                raise ValueError(
+                    "Multipart doesn't support part other than application/http for now"
+                )
+        return responses
+
     def _get_raw_parts(self, http_response_type=None):
         # type (Optional[Type[_HttpResponseBase]]) -> Iterator[HttpResponse]
         """Assuming this body is multipart, return the iterator or parts.
@@ -503,26 +578,9 @@ class _HttpResponseBase(object):
             + b"\r\n\r\n"
             + body_as_bytes
         )
-
         message = message_parser(http_body)  # type: Message
-
-        # Rebuild an HTTP response from pure string
         requests = self.request.multipart_mixed_info[0]  # type: List[HttpRequest]
-        responses = []
-        for request, raw_reponse in zip(requests, message.get_payload()):
-            if raw_reponse.get_content_type() == "application/http":
-                responses.append(
-                    _deserialize_response(
-                        raw_reponse.get_payload(decode=True),
-                        request,
-                        http_response_type=http_response_type,
-                    )
-                )
-            else:
-                raise ValueError(
-                    "Multipart doesn't support part other than application/http for now"
-                )
-        return responses
+        return self._decode_parts(message, http_response_type, requests)
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
@@ -568,7 +626,7 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
 
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 # List comprehension to raise exceptions if happened
-                [  # pylint: disable=expression-not-assigned
+                [  # pylint: disable=expression-not-assigned, unnecessary-comprehension
                     _ for _ in executor.map(parse_responses, responses)
                 ]
 
@@ -650,6 +708,11 @@ class PipelineClientBase(object):
         # type: (...) -> HttpRequest
         """Create HttpRequest object.
 
+        If content is not None, guesses will be used to set the right body:
+        - If content is an XML tree, will serialize as XML
+        - If content-type starts by "text/", set the content as text
+        - Else, try JSON serialization
+
         :param str method: HTTP method (GET, HEAD, etc.)
         :param str url: URL for the request.
         :param dict params: URL query parameters.
@@ -668,8 +731,15 @@ class PipelineClientBase(object):
             request.headers.update(headers)
 
         if content is not None:
+            content_type = request.headers.get("Content-Type")
             if isinstance(content, ET.Element):
                 request.set_xml_body(content)
+            # https://github.com/Azure/azure-sdk-for-python/issues/12137
+            # A string is valid JSON, make the difference between text
+            # and a plain JSON string.
+            # Content-Type is a good indicator of intent from user
+            elif content_type and content_type.startswith("text/"):
+                request.set_text_body(content)
             else:
                 try:
                     request.set_json_body(content)
@@ -695,7 +765,12 @@ class PipelineClientBase(object):
             parsed = urlparse(url)
             if not parsed.scheme or not parsed.netloc:
                 url = url.lstrip("/")
-                base = self._base_url.format(**kwargs).rstrip("/")
+                try:
+                    base = self._base_url.format(**kwargs).rstrip("/")
+                except KeyError as key:
+                    err_msg = "The value provided for the url part {} was incorrect, and resulted in an invalid url"
+                    raise ValueError(err_msg.format(key.args[0]))
+
                 url = _urljoin(base, url)
         else:
             url = self._base_url.format(**kwargs)

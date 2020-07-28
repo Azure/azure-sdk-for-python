@@ -12,28 +12,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.0b4 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
-        Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0-preview.1/sentiment?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/sentiment?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"3","sentiment":"positive","documentScores":{"positive":0.98,"neutral":0.02,"negative":0.0},"sentences":[{"sentiment":"positive","sentenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36},{"sentiment":"positive","sentenceScores":{"positive":0.96,"neutral":0.03,"negative":0.01},"offset":37,"length":23}]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
-        document in request.","innerError":{"code":"InvalidDocument","message":"Document
+      string: '{"documents":[{"id":"3","sentiment":"positive","confidenceScores":{"positive":0.98,"neutral":0.02,"negative":0.0},"sentences":[{"sentiment":"positive","confidenceScores":{"positive":1.0,"neutral":0.0,"negative":0.0},"offset":0,"length":36,"text":"The
+        restaurant had really good food."},{"sentiment":"positive","confidenceScores":{"positive":0.96,"neutral":0.03,"negative":0.01},"offset":37,"length":23,"text":"I
+        recommend you try it."}],"warnings":[]}],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}},{"id":"2","error":{"code":"InvalidArgument","message":"Invalid
-        Language Code.","innerError":{"code":"UnsupportedLanguageCode","message":"Supplied
-        language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant"}}}],"modelVersion":"2019-10-01"}'
+        Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Supplied
+        language not supported. Pass in one of: de,en,es,fr,it,ja,ko,nl,pt-PT,zh-Hans,zh-Hant"}}}],"modelVersion":"2020-04-01"}'
     headers:
-      apim-request-id: bb357944-277c-420a-91f0-021e716b5aeb
+      apim-request-id: 08ceaf98-7c7d-451f-9e66-f8c8040e69d5
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=1
-      date: Thu, 02 Apr 2020 15:06:14 GMT
+      date: Thu, 18 Jun 2020 19:52:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '108'
+      x-envoy-upstream-service-time: '107'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0-preview.1/sentiment?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/sentiment?showStats=false
 version: 1

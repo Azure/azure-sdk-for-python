@@ -1,5 +1,21 @@
 # Release History
 
+## 0.4.0 (2020-05-07)
+
+**Features**
+
+  - Model Operation has a new parameter is_data_action
+  - Model ImageTemplateSharedImageDistributor has a new parameter exclude_from_latest
+  - Model ImageTemplateSharedImageDistributor has a new parameter storage_account_type
+  - Model ImageTemplatePlatformImageSource has a new parameter plan_info
+  - Model ImageTemplateVmProfile has a new parameter vnet_config
+  - Model ImageTemplateVmProfile has a new parameter os_disk_size_gb
+  - Added operation VirtualMachineImageTemplatesOperations.cancel
+
+**Breaking changes**
+
+  - Parameter identity of model ImageTemplate is now required
+
 ## 0.3.0 (2019-11-19)
 
 **Features**

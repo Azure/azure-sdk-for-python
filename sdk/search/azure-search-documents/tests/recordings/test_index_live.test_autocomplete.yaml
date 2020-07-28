@@ -17,7 +17,7 @@ interactions:
       api-key:
       - AE8D684F8B07A67E43EB160C1A508354
     method: POST
-    uri: https://searche7b20da6.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2019-05-06-Preview
+    uri: https://searche7b20da6.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"text":"motel","queryPlusText":"motel"}]}'

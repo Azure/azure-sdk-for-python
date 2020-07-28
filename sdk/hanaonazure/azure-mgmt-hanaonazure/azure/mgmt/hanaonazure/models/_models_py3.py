@@ -21,40 +21,6 @@ class CloudError(Model):
     }
 
 
-class Disk(Model):
-    """Specifies the disk information fo the HANA instance.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param name: The disk name.
-    :type name: str
-    :param disk_size_gb: Specifies the size of an empty data disk in
-     gigabytes.
-    :type disk_size_gb: int
-    :ivar lun: Specifies the logical unit number of the data disk. This value
-     is used to identify data disks within the VM and therefore must be unique
-     for each data disk attached to a VM.
-    :vartype lun: int
-    """
-
-    _validation = {
-        'lun': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'lun': {'key': 'lun', 'type': 'int'},
-    }
-
-    def __init__(self, *, name: str=None, disk_size_gb: int=None, **kwargs) -> None:
-        super(Disk, self).__init__(**kwargs)
-        self.name = name
-        self.disk_size_gb = disk_size_gb
-        self.lun = None
-
-
 class Display(Model):
     """Detailed HANA operation information.
 
@@ -142,262 +108,6 @@ class ErrorResponseException(HttpOperationError):
         super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
 
 
-class Resource(Model):
-    """The resource model definition.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource ID
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :ivar tags: Resource tags
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, *, location: str=None, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = None
-
-
-class HanaInstance(Resource):
-    """HANA instance info on Azure (ARM properties and HANA properties).
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource ID
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :ivar tags: Resource tags
-    :vartype tags: dict[str, str]
-    :param hardware_profile: Specifies the hardware settings for the HANA
-     instance.
-    :type hardware_profile: ~azure.mgmt.hanaonazure.models.HardwareProfile
-    :param storage_profile: Specifies the storage settings for the HANA
-     instance disks.
-    :type storage_profile: ~azure.mgmt.hanaonazure.models.StorageProfile
-    :param os_profile: Specifies the operating system settings for the HANA
-     instance.
-    :type os_profile: ~azure.mgmt.hanaonazure.models.OSProfile
-    :param network_profile: Specifies the network settings for the HANA
-     instance.
-    :type network_profile: ~azure.mgmt.hanaonazure.models.NetworkProfile
-    :ivar hana_instance_id: Specifies the HANA instance unique ID.
-    :vartype hana_instance_id: str
-    :ivar power_state: Resource power state. Possible values include:
-     'starting', 'started', 'stopping', 'stopped', 'restarting', 'unknown'
-    :vartype power_state: str or
-     ~azure.mgmt.hanaonazure.models.HanaInstancePowerStateEnum
-    :ivar proximity_placement_group: Resource proximity placement group
-    :vartype proximity_placement_group: str
-    :ivar hw_revision: Hardware revision of a HANA instance
-    :vartype hw_revision: str
-    :param partner_node_id: ARM ID of another HanaInstance that will share a
-     network with this HanaInstance
-    :type partner_node_id: str
-    :ivar provisioning_state: State of provisioning of the HanaInstance.
-     Possible values include: 'Accepted', 'Creating', 'Updating', 'Failed',
-     'Succeeded', 'Deleting', 'Migrating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.hanaonazure.models.HanaProvisioningStatesEnum
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'tags': {'readonly': True},
-        'hana_instance_id': {'readonly': True},
-        'power_state': {'readonly': True},
-        'proximity_placement_group': {'readonly': True},
-        'hw_revision': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'os_profile': {'key': 'properties.osProfile', 'type': 'OSProfile'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
-        'hana_instance_id': {'key': 'properties.hanaInstanceId', 'type': 'str'},
-        'power_state': {'key': 'properties.powerState', 'type': 'str'},
-        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'str'},
-        'hw_revision': {'key': 'properties.hwRevision', 'type': 'str'},
-        'partner_node_id': {'key': 'properties.partnerNodeId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-    }
-
-    def __init__(self, *, location: str=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, partner_node_id: str=None, **kwargs) -> None:
-        super(HanaInstance, self).__init__(location=location, **kwargs)
-        self.hardware_profile = hardware_profile
-        self.storage_profile = storage_profile
-        self.os_profile = os_profile
-        self.network_profile = network_profile
-        self.hana_instance_id = None
-        self.power_state = None
-        self.proximity_placement_group = None
-        self.hw_revision = None
-        self.partner_node_id = partner_node_id
-        self.provisioning_state = None
-
-
-class HardwareProfile(Model):
-    """Specifies the hardware settings for the HANA instance.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar hardware_type: Name of the hardware type (vendor and/or their
-     product name). Possible values include: 'Cisco_UCS', 'HPE'
-    :vartype hardware_type: str or
-     ~azure.mgmt.hanaonazure.models.HanaHardwareTypeNamesEnum
-    :ivar hana_instance_size: Specifies the HANA instance SKU. Possible values
-     include: 'S72m', 'S144m', 'S72', 'S144', 'S192', 'S192m', 'S192xm', 'S96',
-     'S112', 'S224', 'S224m', 'S224om', 'S224oo', 'S224oom', 'S224ooo', 'S384',
-     'S384m', 'S384xm', 'S384xxm', 'S448', 'S448m', 'S448om', 'S448oo',
-     'S448oom', 'S448ooo', 'S576m', 'S576xm', 'S672', 'S672m', 'S672om',
-     'S672oo', 'S672oom', 'S672ooo', 'S768', 'S768m', 'S768xm', 'S896',
-     'S896m', 'S896om', 'S896oo', 'S896oom', 'S896ooo', 'S960m'
-    :vartype hana_instance_size: str or
-     ~azure.mgmt.hanaonazure.models.HanaInstanceSizeNamesEnum
-    """
-
-    _validation = {
-        'hardware_type': {'readonly': True},
-        'hana_instance_size': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'hardware_type': {'key': 'hardwareType', 'type': 'str'},
-        'hana_instance_size': {'key': 'hanaInstanceSize', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(HardwareProfile, self).__init__(**kwargs)
-        self.hardware_type = None
-        self.hana_instance_size = None
-
-
-class IpAddress(Model):
-    """Specifies the IP address of the network interface.
-
-    :param ip_address: Specifies the IP address of the network interface.
-    :type ip_address: str
-    """
-
-    _attribute_map = {
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-    }
-
-    def __init__(self, *, ip_address: str=None, **kwargs) -> None:
-        super(IpAddress, self).__init__(**kwargs)
-        self.ip_address = ip_address
-
-
-class MonitoringDetails(Model):
-    """Details needed to monitor a Hana Instance.
-
-    :param hana_subnet: ARM ID of an Azure Subnet with access to the HANA
-     instance.
-    :type hana_subnet: str
-    :param hana_hostname: Hostname of the HANA Instance blade.
-    :type hana_hostname: str
-    :param hana_db_name: Name of the database itself.
-    :type hana_db_name: str
-    :param hana_db_sql_port: The port number of the tenant DB. Used to connect
-     to the DB.
-    :type hana_db_sql_port: int
-    :param hana_db_username: Username for the HANA database to login to for
-     monitoring
-    :type hana_db_username: str
-    :param hana_db_password: Password for the HANA database to login for
-     monitoring
-    :type hana_db_password: str
-    """
-
-    _attribute_map = {
-        'hana_subnet': {'key': 'hanaSubnet', 'type': 'str'},
-        'hana_hostname': {'key': 'hanaHostname', 'type': 'str'},
-        'hana_db_name': {'key': 'hanaDbName', 'type': 'str'},
-        'hana_db_sql_port': {'key': 'hanaDbSqlPort', 'type': 'int'},
-        'hana_db_username': {'key': 'hanaDbUsername', 'type': 'str'},
-        'hana_db_password': {'key': 'hanaDbPassword', 'type': 'str'},
-    }
-
-    def __init__(self, *, hana_subnet: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, **kwargs) -> None:
-        super(MonitoringDetails, self).__init__(**kwargs)
-        self.hana_subnet = hana_subnet
-        self.hana_hostname = hana_hostname
-        self.hana_db_name = hana_db_name
-        self.hana_db_sql_port = hana_db_sql_port
-        self.hana_db_username = hana_db_username
-        self.hana_db_password = hana_db_password
-
-
-class NetworkProfile(Model):
-    """Specifies the network settings for the HANA instance disks.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param network_interfaces: Specifies the network interfaces for the HANA
-     instance.
-    :type network_interfaces: list[~azure.mgmt.hanaonazure.models.IpAddress]
-    :ivar circuit_id: Specifies the circuit id for connecting to express
-     route.
-    :vartype circuit_id: str
-    """
-
-    _validation = {
-        'circuit_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'network_interfaces': {'key': 'networkInterfaces', 'type': '[IpAddress]'},
-        'circuit_id': {'key': 'circuitId', 'type': 'str'},
-    }
-
-    def __init__(self, *, network_interfaces=None, **kwargs) -> None:
-        super(NetworkProfile, self).__init__(**kwargs)
-        self.network_interfaces = network_interfaces
-        self.circuit_id = None
-
-
 class Operation(Model):
     """HANA operation information.
 
@@ -427,79 +137,186 @@ class Operation(Model):
         self.display = display
 
 
-class OSProfile(Model):
-    """Specifies the operating system settings for the HANA instance.
+class Resource(Model):
+    """The core properties of ARM resources.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param computer_name: Specifies the host OS name of the HANA instance.
-    :type computer_name: str
-    :ivar os_type: This property allows you to specify the type of the OS.
-    :vartype os_type: str
-    :ivar version: Specifies version of operating system.
-    :vartype version: str
-    :param ssh_public_key: Specifies the SSH public key used to access the
-     operating system.
-    :type ssh_public_key: str
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Network/trafficManagerProfiles.
+    :vartype type: str
     """
 
     _validation = {
-        'os_type': {'readonly': True},
-        'version': {'readonly': True},
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'computer_name': {'key': 'computerName', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'ssh_public_key': {'key': 'sshPublicKey', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, computer_name: str=None, ssh_public_key: str=None, **kwargs) -> None:
-        super(OSProfile, self).__init__(**kwargs)
-        self.computer_name = computer_name
-        self.os_type = None
-        self.version = None
-        self.ssh_public_key = ssh_public_key
+    def __init__(self, **kwargs) -> None:
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
 
 
-class SapMonitor(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have
+    everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Network/trafficManagerProfiles.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class ProviderInstance(ProxyResource):
+    """A provider instance associated with a SAP monitor.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Network/trafficManagerProfiles.
+    :vartype type: str
+    :param provider_instance_type: The type of provider instance.
+    :type provider_instance_type: str
+    :param properties: A JSON string containing the properties of the provider
+     instance.
+    :type properties: str
+    :param metadata: A JSON string containing metadata of the provider
+     instance.
+    :type metadata: str
+    :ivar provisioning_state: State of provisioning of the provider instance.
+     Possible values include: 'Accepted', 'Creating', 'Updating', 'Failed',
+     'Succeeded', 'Deleting', 'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hanaonazure.models.HanaProvisioningStatesEnum
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'provider_instance_type': {'key': 'properties.type', 'type': 'str'},
+        'properties': {'key': 'properties.properties', 'type': 'str'},
+        'metadata': {'key': 'properties.metadata', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, provider_instance_type: str=None, properties: str=None, metadata: str=None, **kwargs) -> None:
+        super(ProviderInstance, self).__init__(**kwargs)
+        self.provider_instance_type = provider_instance_type
+        self.properties = properties
+        self.metadata = metadata
+        self.provisioning_state = None
+
+
+class TrackedResource(Resource):
+    """The resource model definition for a ARM tracked top level resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Network/trafficManagerProfiles.
+    :vartype type: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: The Azure Region where the resource lives
+    :type location: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(self, *, tags=None, location: str=None, **kwargs) -> None:
+        super(TrackedResource, self).__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class SapMonitor(TrackedResource):
     """SAP monitor info on Azure (ARM properties and SAP monitor properties).
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{resourceName}
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Network/trafficManagerProfiles.
     :vartype type: str
-    :param location: Resource location
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param location: The Azure Region where the resource lives
     :type location: str
-    :ivar tags: Resource tags
-    :vartype tags: dict[str, str]
-    :param hana_subnet: Specifies the SAP monitor unique ID.
-    :type hana_subnet: str
-    :param hana_hostname: Hostname of the HANA instance.
-    :type hana_hostname: str
-    :param hana_db_name: Database name of the HANA instance.
-    :type hana_db_name: str
-    :param hana_db_sql_port: Database port of the HANA instance.
-    :type hana_db_sql_port: int
-    :param hana_db_username: Database username of the HANA instance.
-    :type hana_db_username: str
-    :param hana_db_password: Database password of the HANA instance.
-    :type hana_db_password: str
-    :param hana_db_password_key_vault_url: KeyVault URL link to the password
-     for the HANA database.
-    :type hana_db_password_key_vault_url: str
-    :param hana_db_credentials_msi_id: MSI ID passed by customer which has
-     access to customer's KeyVault and to be assigned to the Collector VM.
-    :type hana_db_credentials_msi_id: str
-    :param key_vault_id: Key Vault ID containing customer's HANA credentials.
-    :type key_vault_id: str
     :ivar provisioning_state: State of provisioning of the HanaInstance.
      Possible values include: 'Accepted', 'Creating', 'Updating', 'Failed',
      'Succeeded', 'Deleting', 'Migrating'
@@ -520,91 +337,55 @@ class SapMonitor(Resource):
     :param log_analytics_workspace_shared_key: The shared key of the log
      analytics workspace that is used for monitoring
     :type log_analytics_workspace_shared_key: str
+    :ivar sap_monitor_collector_version: The version of the payload running in
+     the Collector VM
+    :vartype sap_monitor_collector_version: str
+    :param monitor_subnet: The subnet which the SAP monitor will be deployed
+     in
+    :type monitor_subnet: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'tags': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'managed_resource_group_name': {'readonly': True},
+        'sap_monitor_collector_version': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'hana_subnet': {'key': 'properties.hanaSubnet', 'type': 'str'},
-        'hana_hostname': {'key': 'properties.hanaHostname', 'type': 'str'},
-        'hana_db_name': {'key': 'properties.hanaDbName', 'type': 'str'},
-        'hana_db_sql_port': {'key': 'properties.hanaDbSqlPort', 'type': 'int'},
-        'hana_db_username': {'key': 'properties.hanaDbUsername', 'type': 'str'},
-        'hana_db_password': {'key': 'properties.hanaDbPassword', 'type': 'str'},
-        'hana_db_password_key_vault_url': {'key': 'properties.hanaDbPasswordKeyVaultUrl', 'type': 'str'},
-        'hana_db_credentials_msi_id': {'key': 'properties.hanaDbCredentialsMsiId', 'type': 'str'},
-        'key_vault_id': {'key': 'properties.keyVaultId', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
         'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmId', 'type': 'str'},
         'enable_customer_analytics': {'key': 'properties.enableCustomerAnalytics', 'type': 'bool'},
         'log_analytics_workspace_id': {'key': 'properties.logAnalyticsWorkspaceId', 'type': 'str'},
         'log_analytics_workspace_shared_key': {'key': 'properties.logAnalyticsWorkspaceSharedKey', 'type': 'str'},
+        'sap_monitor_collector_version': {'key': 'properties.sapMonitorCollectorVersion', 'type': 'str'},
+        'monitor_subnet': {'key': 'properties.monitorSubnet', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, hana_subnet: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, hana_db_password_key_vault_url: str=None, hana_db_credentials_msi_id: str=None, key_vault_id: str=None, log_analytics_workspace_arm_id: str=None, enable_customer_analytics: bool=None, log_analytics_workspace_id: str=None, log_analytics_workspace_shared_key: str=None, **kwargs) -> None:
-        super(SapMonitor, self).__init__(location=location, **kwargs)
-        self.hana_subnet = hana_subnet
-        self.hana_hostname = hana_hostname
-        self.hana_db_name = hana_db_name
-        self.hana_db_sql_port = hana_db_sql_port
-        self.hana_db_username = hana_db_username
-        self.hana_db_password = hana_db_password
-        self.hana_db_password_key_vault_url = hana_db_password_key_vault_url
-        self.hana_db_credentials_msi_id = hana_db_credentials_msi_id
-        self.key_vault_id = key_vault_id
+    def __init__(self, *, tags=None, location: str=None, log_analytics_workspace_arm_id: str=None, enable_customer_analytics: bool=None, log_analytics_workspace_id: str=None, log_analytics_workspace_shared_key: str=None, monitor_subnet: str=None, **kwargs) -> None:
+        super(SapMonitor, self).__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = None
         self.managed_resource_group_name = None
         self.log_analytics_workspace_arm_id = log_analytics_workspace_arm_id
         self.enable_customer_analytics = enable_customer_analytics
         self.log_analytics_workspace_id = log_analytics_workspace_id
         self.log_analytics_workspace_shared_key = log_analytics_workspace_shared_key
-
-
-class StorageProfile(Model):
-    """Specifies the storage settings for the HANA instance disks.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar nfs_ip_address: IP Address to connect to storage.
-    :vartype nfs_ip_address: str
-    :param os_disks: Specifies information about the operating system disk
-     used by the hana instance.
-    :type os_disks: list[~azure.mgmt.hanaonazure.models.Disk]
-    """
-
-    _validation = {
-        'nfs_ip_address': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'nfs_ip_address': {'key': 'nfsIpAddress', 'type': 'str'},
-        'os_disks': {'key': 'osDisks', 'type': '[Disk]'},
-    }
-
-    def __init__(self, *, os_disks=None, **kwargs) -> None:
-        super(StorageProfile, self).__init__(**kwargs)
-        self.nfs_ip_address = None
-        self.os_disks = os_disks
+        self.sap_monitor_collector_version = None
+        self.monitor_subnet = monitor_subnet
 
 
 class Tags(Model):
-    """Tags field of the HANA instance.
+    """Tags field of the resource.
 
-    :param tags: Tags field of the HANA instance.
+    :param tags: Tags field of the resource.
     :type tags: dict[str, str]
     """
 

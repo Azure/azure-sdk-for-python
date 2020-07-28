@@ -62,7 +62,7 @@ def _error_handler(error):
     return errors.ErrorAction(retry=True)
 
 
-def _create_servicebus_exception(logger, exception, handler):
+def _create_servicebus_exception(logger, exception, handler):  # pylint: disable=too-many-statements
     error_need_close_handler = True
     error_need_raise = False
     if isinstance(exception, errors.MessageAlreadySettled):
@@ -98,6 +98,9 @@ def _create_servicebus_exception(logger, exception, handler):
         logger.info("Handler detached due to exception: (%r).", exception)
         if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
             error = ServiceBusAuthorizationError(str(exception), exception)
+        elif exception.condition == constants.ErrorCodes.NotAllowed and 'requires sessions' in str(exception):
+            message = str(exception) + '\n\nDid you want ServiceBusClient.get_<queue/subscription>_session_receiver()?'
+            error = ServiceBusConnectionError(message, exception)
         else:
             error = ServiceBusConnectionError(str(exception), exception)
     elif isinstance(exception, errors.MessageHandlerError):

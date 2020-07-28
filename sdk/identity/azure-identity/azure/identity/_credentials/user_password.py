@@ -2,19 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import time
 from typing import TYPE_CHECKING
 
-from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
-
-from .._internal import wrap_exceptions, PublicClientCredential
+from .._internal import InteractiveCredential, wrap_exceptions
 
 if TYPE_CHECKING:
     from typing import Any
 
 
-class UsernamePasswordCredential(PublicClientCredential):
+class UsernamePasswordCredential(InteractiveCredential):
     """Authenticates a user with a username and password.
 
     In general, Microsoft doesn't recommend this kind of authentication, because it's less secure than other
@@ -33,54 +29,32 @@ class UsernamePasswordCredential(PublicClientCredential):
     :param str password: the user's password
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
     :keyword str tenant_id: tenant ID or a domain associated with a tenant. If not provided, defaults to the
           'organizations' tenant, which supports only Azure Active Directory work or school accounts.
+    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache shared by
+         other user credentials. Defaults to False.
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache on platforms
+          where encryption is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
     def __init__(self, client_id, username, password, **kwargs):
         # type: (str, str, str, Any) -> None
+
+        # The base class will accept an AuthenticationRecord, allowing this credential to authenticate silently the
+        # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
+        # validate the given password. This class therefore doesn't document the authentication_record argument, and we
+        # discard it here.
+        kwargs.pop("authentication_record", None)
         super(UsernamePasswordCredential, self).__init__(client_id=client_id, **kwargs)
         self._username = username
         self._password = password
 
     @wrap_exceptions
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
-        """Request an access token for `scopes`.
-
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
-
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
-          ``response`` attribute.
-        """
-        if not scopes:
-            raise ValueError("'get_token' requires at least one scope")
-
-        # MSAL requires scopes be a list
-        scopes = list(scopes)  # type: ignore
-        now = int(time.time())
-
+    def _request_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> dict
         app = self._get_app()
-        accounts = app.get_accounts(username=self._username)
-        result = None
-        for account in accounts:
-            result = app.acquire_token_silent(scopes, account=account)
-            if result:
-                break
-
-        if not result:
-            # cache miss -> request a new token
-            with self._adapter:
-                result = app.acquire_token_by_username_password(
-                    username=self._username, password=self._password, scopes=scopes
-                )
-
-        if "access_token" not in result:
-            raise ClientAuthenticationError(message="authentication failed: {}".format(result.get("error_description")))
-
-        return AccessToken(result["access_token"], now + int(result["expires_in"]))
+        return app.acquire_token_by_username_password(
+            username=self._username, password=self._password, scopes=list(scopes)
+        )

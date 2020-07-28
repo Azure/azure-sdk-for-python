@@ -5,19 +5,20 @@
 import logging
 import time
 import uuid
-from typing import Any, TYPE_CHECKING, Union, List
+from typing import Any, TYPE_CHECKING, Union, List, Optional
 
 import uamqp
 from uamqp import SendClient, types
+from uamqp.authentication.common import AMQPAuth
 
-from ._base_handler import BaseHandler
+from ._base_handler import BaseHandler, ServiceBusSharedKeyCredential, _convert_connection_string_to_kwargs
 from ._common import mgmt_handlers
 from ._common.message import Message, BatchMessage
 from .exceptions import (
     OperationTimeoutError,
     _ServiceBusErrorPolicy,
     )
-from ._common.utils import create_authentication
+from ._common.utils import create_authentication, copy_messages_to_sendable_if_needed
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
@@ -67,11 +68,12 @@ class SenderMixin(object):
             if not isinstance(message, Message):
                 raise ValueError("Scheduling batch messages only supports iterables containing Message Objects."
                                  " Received instead: {}".format(message.__class__.__name__))
+            message = copy_messages_to_sendable_if_needed(message)
             message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
-            message_data[MGMT_REQUEST_MESSAGE_ID] = message.properties.message_id
-            if message.properties.group_id:
-                message_data[MGMT_REQUEST_SESSION_ID] = message.properties.group_id
+            message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
+            if message.session_id:
+                message_data[MGMT_REQUEST_SESSION_ID] = message.session_id
             if message.partition_key:
                 message_data[MGMT_REQUEST_PARTITION_KEY] = message.partition_key
             if message.via_partition_key:
@@ -108,6 +110,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
 
     .. admonition:: Example:
 
@@ -137,9 +140,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             topic_name = kwargs.get("topic_name")
             if queue_name and topic_name:
                 raise ValueError("Queue/Topic name can not be specified simultaneously.")
-            if not (queue_name or topic_name):
-                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
             entity_name = queue_name or topic_name
+            if not entity_name:
+                raise ValueError("Queue/Topic name is missing. Please specify queue_name/topic_name.")
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
@@ -152,6 +155,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._connection = kwargs.get("connection")
 
     def _create_handler(self, auth):
+        # type: (AMQPAuth) -> None
         self._handler = SendClient(
             self._entity_uri,
             auth=auth,
@@ -183,11 +187,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             raise
 
     def _send(self, message, timeout=None, last_exception=None):
+        # type: (Message, Optional[float], Exception) -> None
         self._open()
         self._set_msg_timeout(timeout, last_exception)
         self._handler.send_message(message.message)
 
-    def schedule(self, messages, schedule_time_utc):
+    def schedule_messages(self, messages, schedule_time_utc):
         # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]
         """Send Message or multiple Messages to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
@@ -273,6 +278,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
         :rtype: ~azure.servicebus.ServiceBusSenderClient
 
         .. admonition:: Example:
@@ -285,13 +291,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Create a new instance of the ServiceBusSender from connection string.
 
         """
-        constructor_args = cls._from_connection_string(
+        constructor_args = _convert_connection_string_to_kwargs(
             conn_str,
+            ServiceBusSharedKeyCredential,
             **kwargs
         )
         return cls(**constructor_args)
 
-    def send(self, message):
+    def send_messages(self, message):
         # type: (Union[Message, BatchMessage, List[Message]]) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
@@ -320,13 +327,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        message = copy_messages_to_sendable_if_needed(message)
         try:
             batch = self.create_batch()
-            batch._from_list(message)
+            batch._from_list(message)  # pylint: disable=protected-access
             message = batch
         except TypeError:  # Message was not a list or generator.
             pass
-        if isinstance(message, BatchMessage) and len(message) == 0:
+        if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
             raise ValueError("A BatchMessage or list of Message must have at least one Message")
 
         self._do_retryable_operation(

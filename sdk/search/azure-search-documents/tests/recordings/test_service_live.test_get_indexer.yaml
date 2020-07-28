@@ -18,7 +18,7 @@ interactions:
       api-key:
       - EF6DF05F92A8948F94DCE2B89C2D1E9C
     method: POST
-    uri: https://searchf5c90dfb.search.windows.net/datasources?api-version=2019-05-06-Preview
+    uri: https://searchf5c90dfb.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchf5c90dfb.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7ED5130775CFC\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
@@ -38,7 +38,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://searchf5c90dfb.search.windows.net/datasources('sample-datasource')?api-version=2019-05-06-Preview
+      - https://searchf5c90dfb.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -71,7 +71,7 @@ interactions:
       api-key:
       - EF6DF05F92A8948F94DCE2B89C2D1E9C
     method: POST
-    uri: https://searchf5c90dfb.search.windows.net/indexes?api-version=2019-05-06-Preview
+    uri: https://searchf5c90dfb.search.windows.net/indexes?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchf5c90dfb.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7ED51313C576E\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":null,"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
@@ -91,7 +91,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://searchf5c90dfb.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+      - https://searchf5c90dfb.search.windows.net/indexes('hotels')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -124,7 +124,7 @@ interactions:
       api-key:
       - EF6DF05F92A8948F94DCE2B89C2D1E9C
     method: POST
-    uri: https://searchf5c90dfb.search.windows.net/indexers?api-version=2019-05-06-Preview
+    uri: https://searchf5c90dfb.search.windows.net/indexers?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchf5c90dfb.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D7ED5131BBB0C0\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null}'
@@ -144,7 +144,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://searchf5c90dfb.search.windows.net/indexers('sample-indexer')?api-version=2019-05-06-Preview
+      - https://searchf5c90dfb.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -172,7 +172,7 @@ interactions:
       api-key:
       - EF6DF05F92A8948F94DCE2B89C2D1E9C
     method: GET
-    uri: https://searchf5c90dfb.search.windows.net/indexers('sample-indexer')?api-version=2019-05-06-Preview
+    uri: https://searchf5c90dfb.search.windows.net/indexers('sample-indexer')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchf5c90dfb.search.windows.net/$metadata#indexers/$entity","@odata.etag":"\"0x8D7ED5131BBB0C0\"","name":"sample-indexer","description":null,"dataSourceName":"sample-datasource","skillsetName":null,"targetIndexName":"hotels","disabled":false,"schedule":null,"parameters":null,"fieldMappings":[],"outputFieldMappings":[],"cache":null}'

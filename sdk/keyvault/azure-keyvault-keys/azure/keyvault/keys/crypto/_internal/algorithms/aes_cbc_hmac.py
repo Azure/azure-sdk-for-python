@@ -15,6 +15,8 @@ from .._internal import _int_to_bigendian_8_bytes
 
 class _AesCbcHmacCryptoTransform(AuthenticatedCryptoTransform):
     def __init__(self, key, iv, auth_data, auth_tag):
+        super(_AesCbcHmacCryptoTransform, self).__init__()
+
         self._aes_key = key[: len(key) // 2]
         self._hmac_key = key[len(key) // 2 :]
         hash_algo = {256: hashes.SHA256(), 384: hashes.SHA384(), 512: hashes.SHA512()}[len(key) * 8]

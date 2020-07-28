@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "This won''t actually create a warning
+      :''(", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '98'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?showStats=false
+  response:
+    body:
+      string: '{"documents":[{"id":"1","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
+    headers:
+      apim-request-id:
+      - 641d43fc-98a8-427b-91e8-78b780173073
+      content-type:
+      - application/json; charset=utf-8
+      csp-billing-usage:
+      - CognitiveServices.TextAnalytics.BatchScoring=1
+      date:
+      - Thu, 18 Jun 2020 19:52:44 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '273'
+    status:
+      code: 200
+      message: OK
+version: 1

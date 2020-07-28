@@ -18,7 +18,7 @@ interactions:
       api-key:
       - 5466BA2F17F7BB274AF2C6FCDA6EE518
     method: POST
-    uri: https://search642c10fa.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://search642c10fa.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search642c10fa.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC943E5D3A13\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -39,7 +39,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search642c10fa.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+      - https://search642c10fa.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -67,7 +67,7 @@ interactions:
       api-key:
       - 5466BA2F17F7BB274AF2C6FCDA6EE518
     method: GET
-    uri: https://search642c10fa.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://search642c10fa.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search642c10fa.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D7EC943E5D3A13\"","name":"test-syn-map","format":"solr","synonyms":"USA,

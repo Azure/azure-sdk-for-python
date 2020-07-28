@@ -14,7 +14,7 @@ import json
 #    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
 #
 # 2. Microsoft Azure Cosmos
-#    pip install azure-cosmos==4.0.0b6
+#    pip install azure-cosmos>=4.0.0
 # ----------------------------------------------------------------------------------------------------------
 # Sample - how to get and use resource token that allows restricted access to data
 # ----------------------------------------------------------------------------------------------------------

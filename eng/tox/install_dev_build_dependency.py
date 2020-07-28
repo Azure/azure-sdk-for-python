@@ -13,23 +13,11 @@ import logging
 from os import path
 from subprocess import check_call
 
-from pip._internal.operations import freeze
-
-try:
-    # pip < 20
-    from pip._internal.req import parse_requirements
-    from pip._internal.download import PipSession
-except:
-    # pip >= 20
-    from pip._internal.req import parse_requirements
-    from pip._internal.network.session import PipSession
-
-
 # import common_task module
 root_dir = path.abspath(path.join(path.abspath(__file__), "..", "..", ".."))
 common_task_path = path.abspath(path.join(root_dir, "scripts", "devops_tasks"))
 sys.path.append(common_task_path)
-from common_tasks import process_glob_string
+from common_tasks import process_glob_string, get_installed_packages
 from tox_helper_tasks import get_package_details
 
 EXCLUDED_PKGS = [
@@ -44,10 +32,10 @@ logging.getLogger().setLevel(logging.INFO)
 # This script verifies installed package version and ensure all installed pacakges are dev build version
 
 
-def get_installed_packages(pkg_name_to_exclude):
+def get_installed_azure_packages(pkg_name_to_exclude):
     # This method returns a list of installed azure sdk packages
     installed_pkgs = [
-        p.split("==")[0] for p in freeze.freeze() if p.startswith("azure-")
+        p.split("==")[0] for p in get_installed_packages() if p.startswith("azure-")
     ]
 
     # Get valid list of Azure SDK packages in repo
@@ -110,7 +98,7 @@ def install_packages(packages):
 
 def install_dev_build_packages(pkg_name_to_exclude):
     # Uninstall GA version and reinstall dev build version of dependent packages
-    azure_pkgs = get_installed_packages(pkg_name_to_exclude)
+    azure_pkgs = get_installed_azure_packages(pkg_name_to_exclude)
     uninstall_packages(azure_pkgs)
     install_packages(azure_pkgs)
 
@@ -124,36 +112,15 @@ if __name__ == "__main__":
         "--target",
         dest="target_package",
         help="The target package directory on disk.",
-        required=False,
-    )
-
-    parser.add_argument(
-        "-r",
-        "--requirements",
-        dest="requirements_file",
-        help="Use dev builds of all installed azure-* packages",
-        required=False
+        required=True,
     )
 
     args = parser.parse_args()
-
-    if not args.target_package and not args.requirements_file:
-        raise "Must specify -t or -r"
 
     if args.target_package:
         # get target package name from target package path
         pkg_dir = path.abspath(args.target_package)
         pkg_name, _, ver = get_package_details(path.join(pkg_dir, "setup.py"))
         install_dev_build_packages(pkg_name)
-
-    elif args.requirements_file:
-        # Get package names from requirements.txt
-        requirements = parse_requirements(args.requirements_file, session=PipSession())
-        package_names = [item.req.name for item in requirements]
-
-        # Remove existing packages (that came from the public feed) and install
-        # from dev feed
-        uninstall_packages(package_names)
-        install_packages(package_names)
 
 
