@@ -41,8 +41,8 @@ class TableServiceClient(TableServiceClientBase):
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Union[str,TokenCredential]
+            key.
+        :type credential: str
         :returns: None
         """
 
@@ -58,7 +58,7 @@ class TableServiceClient(TableServiceClientBase):
         """Create TableServiceClient from a Connection String.
 
         :param conn_str:
-            A connection string to an Azure Storage account.
+            A connection string to an Azure Storage or Cosmos account.
         :type conn_str: str
         :returns: A Table service client.
         :rtype: ~azure.data.tables.TableServiceClient

@@ -52,8 +52,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                   The credentials with which to authenticate. This is optional if the
                   account URL already has a SAS token, or the connection string already has shared
                   access key values. The value can be a SAS token string, an account shared access
-                  key, or an instance of a TokenCredentials class from azure.identity.
-              :type credential: Union[str,TokenCredential]
+                  key.
+              :type credential: str
 
               :returns: None
               """

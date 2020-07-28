@@ -75,7 +75,7 @@ class TableClient(TableClientBase):
         """Create TableClient from a Connection String.
 
         :param conn_str:
-            A connection string to an Azure Storage account.
+            A connection string to an Azure Storage or Cosmos account.
         :type conn_str: str
         :param table_name: The table name.
         :type table_name: str
@@ -98,8 +98,8 @@ class TableClient(TableClientBase):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string, an account
-            shared access key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Union[str,TokenCredential]
+            shared access key.
+        :type credential: str
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
         """
