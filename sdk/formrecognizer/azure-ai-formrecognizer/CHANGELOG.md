@@ -10,7 +10,8 @@
 
 **New features**
 
-- `FormField` now has attribute `value_type` which contains the semantic data type of the field value
+- `FormField` now has attribute `value_type` which contains the semantic data type of the field value. The options for
+`value_type` are described in the enum `FieldValueType`
 
 **Fixes and improvements**
 
