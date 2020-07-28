@@ -8,7 +8,7 @@ import pytest
 import threading
 import time
 
-from azure.eventhub import EventData, CloseReason, LoadBalancingStrategy
+from azure.eventhub import EventData, CloseReason
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub._eventprocessor.event_processor import EventProcessor
 from azure.eventhub._eventprocessor.ownership_manager import OwnershipManager
@@ -384,7 +384,7 @@ def test_partition_processor_process_error_close_error():
 
     eventhub_client = MockEventHubClient()  # EventHubClient.from_connection_string(connection_str, receive_timeout=3)
     checkpoint_store = InMemoryCheckpointStore()
-    ownership_manager = MockOwnershipManager(eventhub_client, "$Default", "owner", checkpoint_store, 10.0, LoadBalancingStrategy.GREEDY, "0")
+    ownership_manager = MockOwnershipManager(eventhub_client, "$Default", "owner", checkpoint_store, 10.0, "0")
     event_processor = EventProcessor(eventhub_client=eventhub_client,
                                      consumer_group='$default',
                                      checkpoint_store=checkpoint_store,
@@ -484,7 +484,7 @@ def test_ownership_manager_release_partition():
             self.released = ownsership
 
     checkpoint_store = MockCheckpointStore()
-    ownership_manager = OwnershipManager(MockEventHubClient(), "$Default", "owner", checkpoint_store, 10.0, LoadBalancingStrategy.GREEDY, "0")
+    ownership_manager = OwnershipManager(MockEventHubClient(), "$Default", "owner", checkpoint_store, 10.0, "0")
     ownership_manager.cached_parition_ids = ["0", "1"]
     ownership_manager.owned_partitions = []
     ownership_manager.release_ownership("1")
@@ -517,14 +517,14 @@ def test_ownership_manager_release_partition():
         ([], ["0", "1", "2"], 3),
         (['ownership_active0', 'ownership_active1'], ["0", "1", "2"], 1),
         (['ownership_active0', 'ownership_expired'], ["0", "1", "2"], 2),
-        (['ownership_active0', 'ownership_expired', 'ownership_released'], ["0", "1", "2", "3"], 2),
-        (['ownership_active0'], ["0", "1", "2", "3"], 2),
+        (['ownership_active0', 'ownership_expired', 'ownership_released'], ["0", "1", "2", "3"], 3),
+        (['ownership_active0'], ["0", "1", "2", "3"], 3),
         (['ownership_expired', 'ownership_released'], ["0", "1", "2", "3"], 4),
         (['ownership_active0', 'ownership_active1'], ["0", "1"], 0),
         (['ownership_active0', 'ownership_self_owned'], ["0", "1"], 1),
     ]
 )
-def test_balance_ownership_greedy(ownerships, partitions, expected_result):
+def test_balance_ownership_on_init(ownerships, partitions, expected_result):
     ownership_ref = {
         'ownership_active0': {
             "fully_qualified_namespace": TEST_NAMESPACE,
@@ -578,7 +578,8 @@ def test_balance_ownership_greedy(ownerships, partitions, expected_result):
 
     mock_client = MockEventHubClient()
     current_ownerships = [ownership_ref[o] for o in ownerships]
-    om = OwnershipManager(mock_client, TEST_CONSUMER_GROUP, TEST_OWNER, None, 10, LoadBalancingStrategy.GREEDY, None)
+    om = OwnershipManager(mock_client, TEST_CONSUMER_GROUP, TEST_OWNER, None, 10, None)
+    om._initializing = True
     to_claim_ownership = om._balance_ownership(current_ownerships, partitions)
     assert len(to_claim_ownership) == expected_result
 
@@ -596,7 +597,7 @@ def test_balance_ownership_greedy(ownerships, partitions, expected_result):
         (['ownership_active0', 'ownership_self_owned'], ["0", "1"], 1),
     ]
 )
-def test_balance_ownership_balanced(ownerships, partitions, expected_result):
+def test_balance_ownership(ownerships, partitions, expected_result):
     ownership_ref = {
         'ownership_active0': {
             "fully_qualified_namespace": TEST_NAMESPACE,
@@ -650,6 +651,7 @@ def test_balance_ownership_balanced(ownerships, partitions, expected_result):
 
     mock_client = MockEventHubClient()
     current_ownerships = [ownership_ref[o] for o in ownerships]
-    om = OwnershipManager(mock_client, TEST_CONSUMER_GROUP, TEST_OWNER, None, 10, LoadBalancingStrategy.BALANCED, None)
+    om = OwnershipManager(mock_client, TEST_CONSUMER_GROUP, TEST_OWNER, None, 10, None)
+    om._initializing = False
     to_claim_ownership = om._balance_ownership(current_ownerships, partitions)
     assert len(to_claim_ownership) == expected_result

@@ -13,27 +13,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - a5bb5fb2-23aa-41f3-98f4-fb2b8ac9ce7d
+      - be9c02d9-3a78-4246-99f0-e2af6a48be43
       content-length:
       - '0'
       date:
-      - Fri, 10 Jul 2020 18:53:36 GMT
+      - Thu, 11 Jun 2020 15:44:30 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/a5bb5fb2-23aa-41f3-98f4-fb2b8ac9ce7d
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/be9c02d9-3a78-4246-99f0-e2af6a48be43
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '478'
+      - '253'
     status:
       code: 202
       message: Accepted
@@ -47,13 +48,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/a5bb5fb2-23aa-41f3-98f4-fb2b8ac9ce7d
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/be9c02d9-3a78-4246-99f0-e2af6a48be43
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:53:36Z",
-        "lastUpdatedDateTime": "2020-07-10T18:53:39Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T15:44:30Z",
+        "lastUpdatedDateTime": "2020-06-11T15:44:32Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0.2511, "width": 1688, "height":
         3000, "unit": "pixel", "language": "en"}], "documentResults": [{"docType":
         "prebuilt:receipt", "pageRange": [1, 1], "fields": {"ReceiptType": {"type":
@@ -92,11 +94,11 @@ interactions:
         2678.1, 948.2, 2661], "page": 1, "confidence": 0.774}}}]}}'
     headers:
       apim-request-id:
-      - bf3b1151-cbcf-4290-a65a-9e2fd54844b4
+      - d1d87fbb-92ad-4ada-92c1-f425a7960a4e
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:53:41 GMT
+      - Thu, 11 Jun 2020 15:44:35 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -104,7 +106,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '15'
+      - '14'
     status:
       code: 200
       message: OK

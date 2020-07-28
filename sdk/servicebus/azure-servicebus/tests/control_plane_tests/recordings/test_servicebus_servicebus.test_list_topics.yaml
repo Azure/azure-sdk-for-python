@@ -1,0 +1,58 @@
+interactions:
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pjxl
+      bnRyeSB4bWxuczpkPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL2Fkby8yMDA3LzA4L2Rh
+      dGFzZXJ2aWNlcyIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9hZG8vMjAw
+      Ny8wOC9kYXRhc2VydmljZXMvbWV0YWRhdGEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDA1
+      L0F0b20iPjx0aXRsZT48L3RpdGxlPjx1cGRhdGVkPjIwMTUtMDYtMzBUMjA6NTU6MjYuMDI3Mjc0
+      KzAwOjAwPC91cGRhdGVkPjxhdXRob3I+PG5hbWU+PC9uYW1lPjwvYXV0aG9yPjxpZD48L2lkPjxj
+      b250ZW50IHR5cGU9ImFwcGxpY2F0aW9uL3htbCI+PFRvcGljRGVzY3JpcHRpb24geG1sbnM6aT0i
+      aHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zPSJodHRwOi8v
+      c2NoZW1hcy5taWNyb3NvZnQuY29tL25ldHNlcnZpY2VzLzIwMTAvMTAvc2VydmljZWJ1cy9jb25u
+      ZWN0Ij48L1RvcGljRGVzY3JpcHRpb24+PC9jb250ZW50PjwvZW50cnk+
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['555']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.0]
+    method: PUT
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic8ba511ef
+  response:
+    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/uttopic8ba511ef</id><title
+        type="text">uttopic8ba511ef</title><published>2015-06-30T20:55:29Z</published><updated>2015-06-30T20:55:29Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/uttopic8ba511ef"/><content
+        type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><CreatedAt>2015-06-30T20:55:29.23</CreatedAt><UpdatedAt>2015-06-30T20:55:29.357</UpdatedAt></TopicDescription></content></entry>'}
+    headers:
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      Date: ['Tue, 30 Jun 2015 20:55:29 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [pyazure/0.20.0]
+    method: GET
+    uri: https://fakesbnamespace.servicebus.windows.net/$Resources/Topics
+  response:
+    body: {string: '<feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://fakesbnamespace.servicebus.windows.net/$Resources/Topics</id><updated>2015-06-30T20:55:30Z</updated><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/$Resources/Topics"/><entry
+        xml:base="https://fakesbnamespace.servicebus.windows.net/$Resources/Topics"><id>https://fakesbnamespace.servicebus.windows.net/uttopic8ba511ef</id><title
+        type="text">uttopic8ba511ef</title><published>2015-06-30T20:55:29Z</published><updated>2015-06-30T20:55:29Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="../uttopic8ba511ef"/><content type="application/xml"><TopicDescription
+        xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes></TopicDescription></content></entry></feed>'}
+    headers:
+      Content-Type: [application/atom+xml;type=feed;charset=utf-8]
+      Date: ['Tue, 30 Jun 2015 20:55:29 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+    status: {code: 200, message: OK}
+version: 1

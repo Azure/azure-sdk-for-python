@@ -246,7 +246,8 @@ class DirectoryOperations:
          default umask - 0027 will be used.
         :type posix_umask: str
         :param source_lease_id: A lease ID for the source path. If specified,
-         the source path must have an active lease and the lease ID must match.
+         the source path must have an active lease and the leaase ID must
+         match.
         :type source_lease_id: str
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage

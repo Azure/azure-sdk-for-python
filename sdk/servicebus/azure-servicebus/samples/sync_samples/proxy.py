@@ -27,8 +27,8 @@ HTTP_PROXY = {
 
 
 def send_single_message(sender):
-    message = Message("Single Message")
-    sender.send_messages(message)
+    message = Message("DATA" * 64)
+    sender.send(message)
 
 
 servicebus_client = ServiceBusClient.from_connection_string(

@@ -16,7 +16,7 @@ DESCRIPTION:
     fields' names and types.
 
     See fields found on a receipt here:
-    https://aka.ms/formrecognizer/receiptfields
+    https://aka.ms/azsdk/python/formrecognizer/receiptfields
 
 USAGE:
     python sample_strongly_typed_recognized_form.py
@@ -35,7 +35,7 @@ class Receipt(object):
     If a specific field is not found on the receipt, it will return None.
 
     See fields found on a receipt here:
-    https://aka.ms/formrecognizer/receiptfields
+    https://aka.ms/azsdk/python/formrecognizer/receiptfields
     """
 
     def __init__(self, form):

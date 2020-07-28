@@ -16,7 +16,6 @@ from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from . import get_default_authority, normalize_authority
-from .._constants import DEFAULT_TOKEN_REFRESH_RETRY_DELAY, DEFAULT_REFRESH_OFFSET
 
 try:
     from typing import TYPE_CHECKING
@@ -30,7 +29,7 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, List, Optional, Union
+    from typing import Any, Optional, Sequence, Union
     from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineResponse
     from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
@@ -49,36 +48,20 @@ class AadClientBase(ABC):
         self._cache = cache or TokenCache()
         self._client_id = client_id
         self._pipeline = self._build_pipeline(**kwargs)
-        self._token_refresh_retry_delay = DEFAULT_TOKEN_REFRESH_RETRY_DELAY
-        self._token_refresh_offset = DEFAULT_REFRESH_OFFSET
-        self._last_refresh_time = 0
 
     def get_cached_access_token(self, scopes, query=None):
-        # type: (Iterable[str], Optional[dict]) -> Optional[AccessToken]
+        # type: (Sequence[str], Optional[dict]) -> Optional[AccessToken]
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes), query=query)
         for token in tokens:
             expires_on = int(token["expires_on"])
-            if expires_on > int(time.time()):
+            if expires_on - 300 > int(time.time()):
                 return AccessToken(token["secret"], expires_on)
         return None
 
     def get_cached_refresh_tokens(self, scopes):
-        # type: (Iterable[str]) -> List[dict]
+        # type: (Sequence[str]) -> Sequence[dict]
         """Assumes all cached refresh tokens belong to the same user"""
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
-
-    def should_refresh(self, token):
-        # type: (AccessToken) -> bool
-        """ check if the token needs refresh or not
-        """
-        expires_on = int(token.expires_on)
-        now = int(time.time())
-        if expires_on - now > self._token_refresh_offset:
-            return False
-        if now - self._last_refresh_time < self._token_refresh_retry_delay:
-            return False
-        return True
-
 
     @abc.abstractmethod
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
@@ -102,7 +85,6 @@ class AadClientBase(ABC):
 
     def _process_response(self, response, request_time):
         # type: (PipelineResponse, int) -> AccessToken
-        self._last_refresh_time = request_time   # no matter succeed or not, update the last refresh time
 
         content = ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
@@ -154,7 +136,7 @@ class AadClientBase(ABC):
         return token
 
     def _get_auth_code_request(self, scopes, code, redirect_uri, client_secret=None):
-        # type: (Iterable[str], str, str, Optional[str]) -> HttpRequest
+        # type: (Sequence[str], str, str, Optional[str]) -> HttpRequest
         data = {
             "client_id": self._client_id,
             "code": code,
@@ -171,7 +153,7 @@ class AadClientBase(ABC):
         return request
 
     def _get_client_certificate_request(self, scopes, certificate):
-        # type: (Iterable[str], AadClientCertificate) -> HttpRequest
+        # type: (Sequence[str], AadClientCertificate) -> HttpRequest
         assertion = self._get_jwt_assertion(certificate)
         data = {
             "client_assertion": assertion,
@@ -187,7 +169,7 @@ class AadClientBase(ABC):
         return request
 
     def _get_client_secret_request(self, scopes, secret):
-        # type: (Iterable[str], str) -> HttpRequest
+        # type: (Sequence[str], str) -> HttpRequest
         data = {
             "client_id": self._client_id,
             "client_secret": secret,
@@ -225,7 +207,7 @@ class AadClientBase(ABC):
         return jwt_bytes.decode("utf-8")
 
     def _get_refresh_token_request(self, scopes, refresh_token):
-        # type: (Iterable[str], str) -> HttpRequest
+        # type: (Sequence[str], str) -> HttpRequest
         data = {
             "grant_type": "refresh_token",
             "refresh_token": refresh_token,

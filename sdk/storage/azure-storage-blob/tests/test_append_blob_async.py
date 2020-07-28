@@ -54,7 +54,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
+class StorageAppendBlobTestAsync(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
 
     async def _setup(self, bsc):
@@ -126,29 +126,7 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(blob_properties.etag, create_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
 
-    @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_get_blob_properties_using_vid(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
-                                transport=AiohttpTestTransport())
-        await self._setup(bsc)
-        blob_name = self._get_blob_reference()
-
-        # Act
-        blob = bsc.get_blob_client(self.container_name, blob_name)
-        create_resp = await blob.create_append_blob()
-        # create operation will return a version id
-        self.assertIsNotNone(create_resp['version_id'])
-
-        # Assert
-        blob_properties = await blob.get_blob_properties(version_id=create_resp['version_id'])
-        self.assertIsNotNone(blob_properties)
-        self.assertEqual(blob_properties.etag, create_resp.get('etag'))
-        self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
-
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_lease_id_async(self, resource_group, location, storage_account,
                                                    storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024,
@@ -1105,7 +1083,7 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = StorageAppendBlobAsyncTest.NonSeekableFile(stream)
+            non_seekable_file = StorageAppendBlobTestAsync.NonSeekableFile(stream)
             await blob.upload_blob(non_seekable_file, length=blob_size, blob_type=BlobType.AppendBlob)
 
         # Assert
@@ -1127,7 +1105,7 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = StorageAppendBlobAsyncTest.NonSeekableFile(stream)
+            non_seekable_file = StorageAppendBlobTestAsync.NonSeekableFile(stream)
             await blob.upload_blob(non_seekable_file, blob_type=BlobType.AppendBlob)
 
         # Assert

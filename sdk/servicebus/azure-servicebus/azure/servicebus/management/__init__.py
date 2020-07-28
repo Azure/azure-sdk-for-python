@@ -5,29 +5,16 @@
 
 from ._management_client import ServiceBusManagementClient
 from ._generated.models import AuthorizationRule, MessageCountDetails, \
-    AccessRights, EntityAvailabilityStatus, EntityStatus, \
-    NamespaceProperties, MessagingSku, NamespaceType
-
-from ._models import QueueRuntimeInfo, QueueDescription, TopicRuntimeInfo, TopicDescription, \
-    SubscriptionDescription, SubscriptionRuntimeInfo, RuleDescription, \
-    TrueRuleFilter, FalseRuleFilter, SqlRuleFilter, CorrelationRuleFilter, \
-    SqlRuleAction
+    AccessRights, EntityAvailabilityStatus, EntityStatus
+from ._models import QueueRuntimeInfo, QueueDescription
 
 __all__ = [
-    'ServiceBusManagementClient',
+    "ServiceBusManagementClient",
     'AuthorizationRule',
     'MessageCountDetails',
     'QueueDescription',
     'QueueRuntimeInfo',
-    'TopicDescription',
-    'TopicRuntimeInfo',
-    'SubscriptionDescription',
-    'SubscriptionRuntimeInfo',
     'AccessRights',
     'EntityAvailabilityStatus',
     'EntityStatus',
-    'RuleDescription',
-    'CorrelationRuleFilter', 'SqlRuleFilter', 'TrueRuleFilter', 'FalseRuleFilter',
-    'SqlRuleAction',
-    'NamespaceProperties', 'MessagingSku', 'NamespaceType',
 ]

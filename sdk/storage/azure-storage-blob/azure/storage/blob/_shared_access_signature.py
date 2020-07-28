@@ -24,7 +24,6 @@ if TYPE_CHECKING:
         BlobSasPermissions
     )
 
-
 class BlobQueryStringConstants(object):
     SIGNED_TIMESTAMP = 'snapshot'
 
@@ -51,7 +50,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         super(BlobSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
         self.user_delegation_key = user_delegation_key
 
-    def generate_blob(self, container_name, blob_name, snapshot=None, version_id=None, permission=None,
+    def generate_blob(self, container_name, blob_name, snapshot=None, permission=None,
                       expiry=None, start=None, policy_id=None, ip=None, protocol=None,
                       cache_control=None, content_disposition=None,
                       content_encoding=None, content_language=None,
@@ -123,12 +122,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas = _BlobSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
-
-        resource = 'bs' if snapshot else 'b'
-        resource = 'bv' if version_id else resource
-        sas.add_resource(resource)
-
-        sas.add_timestamp(snapshot or version_id)
+        sas.add_resource('b' if snapshot is None else 'bs')
+        sas.add_timestamp(snapshot)
         sas.add_override_response_headers(cache_control, content_disposition,
                                           content_encoding, content_language,
                                           content_type)
@@ -536,11 +531,6 @@ def generate_blob_sas(
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying ip=168.1.5.65 or ip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
-    :keyword str version_id:
-        An optional blob version ID. This parameter is only for versioning enabled account
-
-        .. versionadded:: 12.4.0
-            This keyword argument was introduced in API version '2019-12-12'.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
     :keyword str cache_control:
@@ -563,9 +553,7 @@ def generate_blob_sas(
     """
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
-    version_id = kwargs.pop('version_id', None)
-    if version_id and snapshot:
-        raise ValueError("snapshot and version_id cannot be set at the same time.")
+
     if user_delegation_key:
         sas = BlobSharedAccessSignature(account_name, user_delegation_key=user_delegation_key)
     else:
@@ -574,7 +562,6 @@ def generate_blob_sas(
         container_name,
         blob_name,
         snapshot=snapshot,
-        version_id=version_id,
         permission=permission,
         expiry=expiry,
         start=start,

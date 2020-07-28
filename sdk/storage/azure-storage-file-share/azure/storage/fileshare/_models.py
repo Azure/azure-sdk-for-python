@@ -275,18 +275,6 @@ class ShareProperties(DictMixin):
         share as metadata.
     :ivar str snapshot:
         Snapshot of the share.
-    :ivar bool deleted:
-        To indicate if this share is deleted or not.
-        This is a service returned value, and the value will be set when list shared including deleted ones.
-    :ivar datetime deleted:
-        To indicate the deleted time of the deleted share.
-        This is a service returned value, and the value will be set when list shared including deleted ones.
-    :ivar str version:
-        To indicate the version of deleted share.
-        This is a service returned value, and the value will be set when list shared including deleted ones.
-    :ivar int remaining_retention_days:
-        To indicate how many remaining days the deleted share will be kept.
-        This is a service returned value, and the value will be set when list shared including deleted ones.
     """
 
     def __init__(self, **kwargs):
@@ -297,10 +285,6 @@ class ShareProperties(DictMixin):
         self.next_allowed_quota_downgrade_time = kwargs.get('x-ms-share-next-allowed-quota-downgrade-time')
         self.metadata = kwargs.get('metadata')
         self.snapshot = None
-        self.deleted = None
-        self.deleted_time = None
-        self.version = None
-        self.remaining_retention_days = None
         self.provisioned_egress_mbps = kwargs.get('x-ms-share-provisioned-egress-mbps')
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
@@ -315,10 +299,6 @@ class ShareProperties(DictMixin):
         props.next_allowed_quota_downgrade_time = generated.properties.next_allowed_quota_downgrade_time
         props.metadata = generated.metadata
         props.snapshot = generated.snapshot
-        props.deleted = generated.deleted
-        props.deleted_time = generated.properties.deleted_time
-        props.version = generated.version
-        props.remaining_retention_days = generated.properties.remaining_retention_days
         props.provisioned_egress_mbps = generated.properties.provisioned_egress_mbps
         props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
         props.provisioned_iops = generated.properties.provisioned_iops

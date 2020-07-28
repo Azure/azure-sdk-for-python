@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
+
 from typing import (  # pylint: disable=unused-import
     Tuple, Dict, List,
     TYPE_CHECKING
@@ -11,16 +12,16 @@ from typing import (  # pylint: disable=unused-import
 
 from ._shared.response_handlers import deserialize_metadata
 from ._models import BlobProperties, ContainerProperties, BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy, \
-    StaticWebsite, ObjectReplicationPolicy, ObjectReplicationRule
+    StaticWebsite
 
 if TYPE_CHECKING:
     from azure.storage.blob._generated.models import PageList
 
 
 def deserialize_blob_properties(response, obj, headers):
+    metadata = deserialize_metadata(response, obj, headers)
     blob_properties = BlobProperties(
-        metadata=deserialize_metadata(response, obj, headers),
-        object_replication_source_properties=deserialize_ors_policies(response),
+        metadata=metadata,
         **headers
     )
     if 'Content-Range' in headers:
@@ -29,32 +30,6 @@ def deserialize_blob_properties(response, obj, headers):
         else:
             blob_properties.content_settings.content_md5 = None
     return blob_properties
-
-
-def deserialize_ors_policies(response):
-    # For source blobs (blobs that have policy ids and rule ids applied to them),
-    # the header will be formatted as "x-ms-or-<policy_id>_<rule_id>: {Complete, Failed}".
-    # The value of this header is the status of the replication.
-    or_policy_status_headers = {key: val for key, val in response.headers.items()
-                                if key.startswith('x-ms-or') and key != 'x-ms-or-policy-id'}
-
-    parsed_result = {}
-
-    # all the ors headers have the same prefix, so we note down its length here to avoid recalculating it repeatedly
-    header_prefix_length = len('x-ms-or-')
-
-    for key, val in or_policy_status_headers.items():
-        policy_and_rule_ids = key[header_prefix_length:].split('_')
-        policy_id = policy_and_rule_ids[0]
-        rule_id = policy_and_rule_ids[1]
-
-        # If we are seeing this policy for the first time, create a new list to store rule_id -> result
-        parsed_result[policy_id] = parsed_result.get(policy_id) or list()
-        parsed_result[policy_id].append(ObjectReplicationRule(rule_id=rule_id, status=val))
-
-    result_list = [ObjectReplicationPolicy(policy_id=k, rules=v) for k, v in parsed_result.items()]
-
-    return result_list
 
 
 def deserialize_blob_stream(response, obj, headers):
@@ -74,10 +49,10 @@ def deserialize_container_properties(response, obj, headers):
 
 def get_page_ranges_result(ranges):
     # type: (PageList) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
-    page_range = []  # type: ignore
-    clear_range = []  # type: List
+    page_range = [] # type: ignore
+    clear_range = [] # type: List
     if ranges.page_range:
-        page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range]  # type: ignore
+        page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range] # type: ignore
     if ranges.clear_range:
         clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
     return page_range, clear_range  # type: ignore

@@ -3,24 +3,13 @@
 class PackageProps
 {
     [string]$pkgName
-    [string]$pkgVersion
+    [AzureEngSemanticVersion]$pkgVersion
     [string]$pkgDirectoryPath
     [string]$pkgServiceName
     [string]$pkgReadMePath
     [string]$pkgChangeLogPath
-    [string]$pkgGroup
 
-    PackageProps([string]$pkgName,[string]$pkgVersion,[string]$pkgDirectoryPath,[string]$pkgServiceName)
-    {
-        $this.Initialize($pkgName, $pkgVersion, $pkgDirectoryPath, $pkgServiceName)
-    }
-
-    PackageProps([string]$pkgName,[string]$pkgVersion,[string]$pkgDirectoryPath,[string]$pkgServiceName,[string]$pkgGroup="")
-    {
-        $this.Initialize($pkgName, $pkgVersion, $pkgDirectoryPath, $pkgServiceName, $pkgGroup)
-    }
-
-    hidden [void]Initialize(
+    PackageProps(
         [string]$pkgName,
         [string]$pkgVersion,
         [string]$pkgDirectoryPath,
@@ -28,7 +17,11 @@ class PackageProps
     )
     {
         $this.pkgName = $pkgName
-        $this.pkgVersion = $pkgVersion
+        $this.pkgVersion = [AzureEngSemanticVersion]::ParseVersionString($pkgVersion)
+        if ($this.pkgVersion -eq $null)
+        {
+            Write-Error "Invalid version in $pkgDirectoryPath"
+        }
         $this.pkgDirectoryPath = $pkgDirectoryPath
         $this.pkgServiceName = $pkgServiceName
 
@@ -50,19 +43,9 @@ class PackageProps
             $this.pkgChangeLogPath = $null
         }
     }
-
-    hidden [void]Initialize(
-        [string]$pkgName,
-        [string]$pkgVersion,
-        [string]$pkgDirectoryPath,
-        [string]$pkgServiceName,
-        [string]$pkgGroup
-    )
-    {
-        $this.Initialize($pkgName, $pkgVersion, $pkgDirectoryPath, $pkgServiceName)
-        $this.pkgGroup = $pkgGroup
-    }
 }
+
+Install-Module -Name powershell-yaml -RequiredVersion 0.4.1 -Force -Scope CurrentUser
 
 function Extract-PkgProps ($pkgPath, $serviceName, $pkgName, $lang)
 {
@@ -123,7 +106,7 @@ function Extract-PythonPkgProps ($pkgPath, $serviceName, $pkgName)
     {
         $setupLocation = $pkgPath.Replace('\','/')
         pushd $RepoRoot
-        $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import parse_setup; obj=parse_setup('$setupLocation'); print('{0},{1}'.format(obj[0], obj[1]));") -split ","
+        $setupProps = (python -c "import scripts.devops_tasks.common_tasks; obj=scripts.devops_tasks.common_tasks.parse_setup('$setupLocation'); print('{0},{1}'.format(obj[0], obj[1]));") -split ","
         popd
         if (($setupProps -ne $null) -and ($setupProps[0] -eq $pkgName))
         {
@@ -143,11 +126,10 @@ function Extract-JavaPkgProps ($pkgPath, $serviceName, $pkgName)
         $projectData.load($projectPath)
         $projectPkgName = $projectData.project.artifactId
         $pkgVersion = $projectData.project.version
-        $pkgGroup = $projectData.project.groupId
 
         if ($projectPkgName -eq $pkgName)
         {
-            return [PackageProps]::new($pkgName, $pkgVersion.ToString(), $pkgPath, $serviceName, $pkgGroup)
+            return [PackageProps]::new($pkgName, $pkgVersion.ToString(), $pkgPath, $serviceName)
         }
     }
     return $null
@@ -255,19 +237,10 @@ function Operate-OnPackages ($activePkgList, $serviceName, $language, $repoRoot,
 
 function Get-PkgListFromYml ($ciYmlPath)
 {
-    $ProgressPreference = "SilentlyContinue"
-    Register-PSRepository -Default -ErrorAction:SilentlyContinue
-    Install-Module -Name powershell-yaml -RequiredVersion 0.4.1 -Force -Scope CurrentUser
     $ciYmlContent = Get-Content $ciYmlPath -Raw
     $ciYmlObj = ConvertFrom-Yaml $ciYmlContent -Ordered
-    if ($ciYmlObj.Contains("stages"))
-    {
-      $artifactsInCI = $ciYmlObj["stages"][0]["parameters"]["Artifacts"]
-    }
-    elseif ($ciYmlObj.Contains("extends")) 
-    {
-      $artifactsInCI = $ciYmlObj["extends"]["parameters"]["Artifacts"]
-    }
+    $artifactsInCI = $ciYmlObj["stages"][0]["parameters"]["Artifacts"]
+
     if ($artifactsInCI -eq $null)
     {
         Write-Error "Failed to retrive package names in ci $ciYmlPath"

@@ -16,25 +16,16 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
 from ._configuration import ServiceBusManagementClientConfiguration
-from .operations import EntityOperations
+from .operations import QueueOperations
 from .operations import ServiceBusManagementClientOperationsMixin
-from .operations import SubscriptionOperations
-from .operations import RuleOperations
-from .operations import NamespaceOperations
 from . import models
 
 
 class ServiceBusManagementClient(ServiceBusManagementClientOperationsMixin):
     """Azure Service Bus client for managing Queues, Topics, and Subscriptions.
 
-    :ivar entity: EntityOperations operations
-    :vartype entity: azure.servicebus.management._generated.operations.EntityOperations
-    :ivar subscription: SubscriptionOperations operations
-    :vartype subscription: azure.servicebus.management._generated.operations.SubscriptionOperations
-    :ivar rule: RuleOperations operations
-    :vartype rule: azure.servicebus.management._generated.operations.RuleOperations
-    :ivar namespace: NamespaceOperations operations
-    :vartype namespace: azure.servicebus.management._generated.operations.NamespaceOperations
+    :ivar queue: QueueOperations operations
+    :vartype queue: azure.servicebus.management._generated.operations.QueueOperations
     :param endpoint: The Service Bus fully qualified domain name.
     :type endpoint: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -54,13 +45,7 @@ class ServiceBusManagementClient(ServiceBusManagementClientOperationsMixin):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.entity = EntityOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.subscription = SubscriptionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.rule = RuleOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.namespace = NamespaceOperations(
+        self.queue = QueueOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):

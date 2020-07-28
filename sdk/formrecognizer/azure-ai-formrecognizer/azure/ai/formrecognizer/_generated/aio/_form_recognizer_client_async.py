@@ -34,7 +34,7 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin):
         endpoint: str,
         **kwargs: Any
     ) -> None:
-        base_url = '{endpoint}/formrecognizer/v2.0'
+        base_url = '{endpoint}/formrecognizer/v2.0-preview'
         self._config = FormRecognizerClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 

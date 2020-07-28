@@ -5,10 +5,13 @@
 # --------------------------------------------------------------------------
 
 from ._form_recognizer_client import FormRecognizerClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['FormRecognizerClient']
 
 try:
-    from ._patch import patch_sdk  # type: ignore
+    from ._patch import patch_sdk
     patch_sdk()
 except ImportError:
     pass

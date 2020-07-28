@@ -22,7 +22,7 @@ _RUN_ITERATOR = False
 
 
 async def process_message(message):
-    print(str(message))
+    print(message)
 
 
 def example_create_servicebus_client_async():
@@ -193,7 +193,7 @@ async def example_send_and_receive_async():
     # [START send_async]
     async with servicebus_sender:
         message = Message("Hello World")
-        await servicebus_sender.send_messages(message)
+        await servicebus_sender.send(message)
     # [END send_async]
 
     # [START create_batch_async]
@@ -204,16 +204,16 @@ async def example_send_and_receive_async():
 
     # [START peek_messages_async]
     async with servicebus_receiver:
-        messages = await servicebus_receiver.peek_messages()
+        messages = await servicebus_receiver.peek()
         for message in messages:
-            print(str(message))
+            print(message)
     # [END peek_messages_async]
 
     # [START receive_async]
     async with servicebus_receiver:
-        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        messages = await servicebus_receiver.receive(max_wait_time=5)
         for message in messages:
-            print(str(message))
+            print(message)
             await message.complete()
     # [END receive_async]
 
@@ -233,14 +233,14 @@ async def example_receive_deferred_async():
     servicebus_sender = await example_create_servicebus_sender_async()
     servicebus_receiver = await example_create_servicebus_receiver_async()
     async with servicebus_sender:
-        await servicebus_sender.send_messages(Message("Hello World"))
+        await servicebus_sender.send(Message("Hello World"))
     # [START receive_defer_async]
     async with servicebus_receiver:
         deferred_sequenced_numbers = []
-        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        messages = await servicebus_receiver.receive(max_wait_time=5)
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
-            print(str(message))
+            print(message)
             await message.defer()
 
         received_deferred_msg = await servicebus_receiver.receive_deferred_messages(
@@ -302,7 +302,7 @@ async def example_schedule_ops_async():
     async with servicebus_sender:
         scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
         scheduled_messages = [Message("Scheduled message") for _ in range(10)]
-        sequence_nums = await servicebus_sender.schedule_messages(scheduled_messages, scheduled_time_utc)
+        sequence_nums = await servicebus_sender.schedule(scheduled_messages, scheduled_time_utc)
     # [END scheduling_messages_async]
 
     # [START cancel_scheduled_messages_async]

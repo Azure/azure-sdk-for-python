@@ -181,7 +181,7 @@ def trace_link_message(events, parent_span=None):
 
     Will extract DiagnosticId if available.
     """
-    trace_events = events if isinstance(events, Iterable) else (events,)  # pylint:disable=isinstance-second-argument-not-valid-type
+    trace_events = events if isinstance(events, Iterable) else (events,)
     try:  # pylint:disable=too-many-nested-blocks
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
         if span_impl_type is not None:

@@ -22,10 +22,10 @@ from common_tasks import (
     filter_dev_requirements,
     find_packages_missing_on_pypi,
     find_whl,
-    find_tools_packages,
-    get_installed_packages
+    find_tools_packages
 )
 from git_helper import get_release_tag, git_checkout_tag, git_checkout_branch, clone_repo
+from pip._internal.operations import freeze
 
 AZURE_GLOB_STRING = "azure*"
 
@@ -199,21 +199,17 @@ class RegressionTest:
         if self.context.pytest_mark_arg:
             commands.extend(["-m", self.context.pytest_mark_arg])
 
-        test_dir = self._get_package_test_dir(dep_pkg_path)
-        if test_dir:
-            commands.append(test_dir)
-            run_check_call(commands, self.context.temp_path)
-        else:
-            logging.info("Test directory is not found in package root. Skipping {} from regression test.".format(self.context.package_name))
+        commands.append(self._get_package_test_dir(dep_pkg_path))
+        run_check_call(commands, self.context.temp_path)
 
     def _get_package_test_dir(self, pkg_root_path):
         # Returns path to test or tests folder within package root directory.
         paths = glob.glob(os.path.join(pkg_root_path, "test")) + glob.glob(os.path.join(pkg_root_path, "tests"))
-        if not paths:
+        if paths is None:
             # We will run into this situation only if test and tests are missing in repo.
             # For now, running test for package repo itself to keep it same as regular CI in such cases
             logging.error("'test' folder is not found in {}".format(pkg_root_path))
-            return
+            return pkg_root_path
         return paths[0]
 
     def _install_packages(self, dependent_pkg_path, pkg_to_exclude):
@@ -222,7 +218,7 @@ class RegressionTest:
         temp_dir = self.context.temp_path
 
         list_to_exclude = [pkg_to_exclude,]
-        installed_pkgs = [p.split('==')[0] for p in get_installed_packages(self.context.venv.lib_paths) if p.startswith('azure-')]
+        installed_pkgs = [p.split('==')[0] for p in list(freeze.freeze(paths=self.context.venv.lib_paths)) if p.startswith('azure-')]
         logging.info("Installed azure sdk packages:{}".format(installed_pkgs))
 
         # Do not exclude list of packages in tools directory and so these tools packages will be reinstalled from repo branch we are testing
@@ -257,7 +253,7 @@ class RegressionTest:
         venv_root = self.context.venv.path
         site_packages = self.context.venv.lib_paths
         logging.info("Searching for packages in :{}".format(site_packages))
-        installed_pkgs = get_installed_packages(site_packages)
+        installed_pkgs = list(freeze.freeze(paths=site_packages))
         logging.info("Installed packages: {}".format(installed_pkgs))
         # Verify installed package version
         # Search for exact version or dev build version of current version.

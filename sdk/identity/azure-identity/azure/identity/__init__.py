@@ -6,7 +6,7 @@
 
 from ._auth_record import AuthenticationRecord
 from ._exceptions import AuthenticationRequiredError, CredentialUnavailableError
-from ._constants import AzureAuthorityHosts, KnownAuthorities
+from ._constants import KnownAuthorities
 from ._credentials import (
     AzureCliCredential,
     AuthorizationCodeCredential,
@@ -26,10 +26,9 @@ from ._credentials import (
 
 __all__ = [
     "AuthenticationRecord",
+    "AzureCliCredential",
     "AuthenticationRequiredError",
     "AuthorizationCodeCredential",
-    "AzureAuthorityHosts",
-    "AzureCliCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
     "ClientSecretCredential",

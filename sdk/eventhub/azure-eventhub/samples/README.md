@@ -1,13 +1,3 @@
----
-page_type: sample
-languages:
-  - python
-products:
-  - azure
-  - azure-event-hubs
-urlFragment: eventhub-samples
----
-
 # Azure Event Hubs client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Event Hubs client library.
@@ -103,5 +93,5 @@ pip install azure-eventhub-checkpointstoreblob-aio  # async version
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.2.0b1/azure.eventhub.html) to learn more about
+Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.html) to learn more about
 what you can do with the Azure Event Hubs client library.

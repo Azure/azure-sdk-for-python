@@ -37,15 +37,13 @@ def run(cmd, my_env):
 
     return proc.returncode, stdout, stderr
 
-def _test_file(file_name, account, key):
+def _test_file(file_name, account, key, root_dir='./samples'):
     os.environ['AZURE_FORM_RECOGNIZER_ENDPOINT'] = account
     os.environ['AZURE_FORM_RECOGNIZER_KEY'] = key
-    path_to_sample = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "..", "./samples/" + file_name))
     my_env = dict(os.environ)
     if sys.version_info < (3, 5):
         my_env = {key: str(val) for key, val in my_env.items()}
-    code, out, err = run([sys.executable, path_to_sample], my_env=my_env)
+    code, out, err = run([sys.executable, root_dir + '/' + file_name], my_env=my_env)
     try:
         assert code == 0
         assert err is None
@@ -117,40 +115,3 @@ class TestSamples(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     def test_sample_strongly_typing_recognized_form(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         _test_file('sample_strongly_typing_recognized_form.py', form_recognizer_account, form_recognizer_account_key)
-
-    @pytest.mark.live_test_only
-    @GlobalFormRecognizerAccountPreparer()
-    def test_sample_copy_model(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        os.environ['CONTAINER_SAS_URL'] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
-        ftc = FormTrainingClient(form_recognizer_account,  AzureKeyCredential(form_recognizer_account_key))
-        container_sas_url = os.environ['CONTAINER_SAS_URL']
-        poller = ftc.begin_training(container_sas_url, use_training_labels=False)
-        model = poller.result()
-        os.environ['AZURE_SOURCE_MODEL_ID'] = model.model_id
-        os.environ["AZURE_FORM_RECOGNIZER_TARGET_ENDPOINT"] = form_recognizer_account
-        os.environ["AZURE_FORM_RECOGNIZER_TARGET_KEY"] = form_recognizer_account_key
-        os.environ["AZURE_FORM_RECOGNIZER_TARGET_REGION"] = location
-        os.environ["AZURE_FORM_RECOGNIZER_TARGET_RESOURCE_ID"] = \
-            "/subscriptions/" + self.get_settings_value("SUBSCRIPTION_ID") + "/resourceGroups/" + \
-            resource_group.name + "/providers/Microsoft.CognitiveServices/accounts/" + \
-            FormRecognizerTest._FORM_RECOGNIZER_NAME
-        _test_file('sample_copy_model.py', form_recognizer_account, form_recognizer_account_key)
-
-    @pytest.mark.live_test_only
-    @GlobalFormRecognizerAccountPreparer()
-    def test_sample_differentiate_output_models_trained_with_and_without_labels(
-            self, resource_group, location, form_recognizer_account, form_recognizer_account_key
-    ):
-        os.environ['CONTAINER_SAS_URL'] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
-        ftc = FormTrainingClient(form_recognizer_account,  AzureKeyCredential(form_recognizer_account_key))
-        container_sas_url = os.environ['CONTAINER_SAS_URL']
-        poller = ftc.begin_training(container_sas_url, use_training_labels=False)
-        unlabeled_model = poller.result()
-        poller = ftc.begin_training(container_sas_url, use_training_labels=True)
-        labeled_model = poller.result()
-        os.environ["ID_OF_MODEL_TRAINED_WITH_LABELS"] = labeled_model.model_id
-        os.environ["ID_OF_MODEL_TRAINED_WITHOUT_LABELS"] = unlabeled_model.model_id
-        _test_file('sample_differentiate_output_models_trained_with_and_without_labels.py',
-                   form_recognizer_account,
-                   form_recognizer_account_key
-                   )

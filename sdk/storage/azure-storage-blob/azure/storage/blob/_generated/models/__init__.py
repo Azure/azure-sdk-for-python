@@ -15,12 +15,10 @@ try:
     from ._models_py3 import BlobFlatListSegment
     from ._models_py3 import BlobHierarchyListSegment
     from ._models_py3 import BlobHTTPHeaders
-    from ._models_py3 import BlobItemInternal
+    from ._models_py3 import BlobItem
     from ._models_py3 import BlobMetadata
     from ._models_py3 import BlobPrefix
-    from ._models_py3 import BlobPropertiesInternal
-    from ._models_py3 import BlobTag
-    from ._models_py3 import BlobTags
+    from ._models_py3 import BlobProperties
     from ._models_py3 import Block
     from ._models_py3 import BlockList
     from ._models_py3 import BlockLookupList
@@ -33,12 +31,8 @@ try:
     from ._models_py3 import CpkScopeInfo
     from ._models_py3 import DataLakeStorageError, DataLakeStorageErrorException
     from ._models_py3 import DataLakeStorageErrorError
-    from ._models_py3 import DelimitedTextConfiguration
     from ._models_py3 import DirectoryHttpHeaders
-    from ._models_py3 import FilterBlobItem
-    from ._models_py3 import FilterBlobSegment
     from ._models_py3 import GeoReplication
-    from ._models_py3 import JsonTextConfiguration
     from ._models_py3 import KeyInfo
     from ._models_py3 import LeaseAccessConditions
     from ._models_py3 import ListBlobsFlatSegmentResponse
@@ -49,9 +43,6 @@ try:
     from ._models_py3 import ModifiedAccessConditions
     from ._models_py3 import PageList
     from ._models_py3 import PageRange
-    from ._models_py3 import QueryFormat
-    from ._models_py3 import QueryRequest
-    from ._models_py3 import QuerySerialization
     from ._models_py3 import RetentionPolicy
     from ._models_py3 import SequenceNumberAccessConditions
     from ._models_py3 import SignedIdentifier
@@ -67,12 +58,10 @@ except (SyntaxError, ImportError):
     from ._models import BlobFlatListSegment
     from ._models import BlobHierarchyListSegment
     from ._models import BlobHTTPHeaders
-    from ._models import BlobItemInternal
+    from ._models import BlobItem
     from ._models import BlobMetadata
     from ._models import BlobPrefix
-    from ._models import BlobPropertiesInternal
-    from ._models import BlobTag
-    from ._models import BlobTags
+    from ._models import BlobProperties
     from ._models import Block
     from ._models import BlockList
     from ._models import BlockLookupList
@@ -85,12 +74,8 @@ except (SyntaxError, ImportError):
     from ._models import CpkScopeInfo
     from ._models import DataLakeStorageError, DataLakeStorageErrorException
     from ._models import DataLakeStorageErrorError
-    from ._models import DelimitedTextConfiguration
     from ._models import DirectoryHttpHeaders
-    from ._models import FilterBlobItem
-    from ._models import FilterBlobSegment
     from ._models import GeoReplication
-    from ._models import JsonTextConfiguration
     from ._models import KeyInfo
     from ._models import LeaseAccessConditions
     from ._models import ListBlobsFlatSegmentResponse
@@ -101,9 +86,6 @@ except (SyntaxError, ImportError):
     from ._models import ModifiedAccessConditions
     from ._models import PageList
     from ._models import PageRange
-    from ._models import QueryFormat
-    from ._models import QueryRequest
-    from ._models import QuerySerialization
     from ._models import RetentionPolicy
     from ._models import SequenceNumberAccessConditions
     from ._models import SignedIdentifier
@@ -119,7 +101,6 @@ from ._azure_blob_storage_enums import (
     AccessTierRequired,
     AccountKind,
     ArchiveStatus,
-    BlobExpiryOptions,
     BlobType,
     BlockListType,
     CopyStatusType,
@@ -134,7 +115,6 @@ from ._azure_blob_storage_enums import (
     PathRenameMode,
     PremiumPageBlobAccessTier,
     PublicAccessType,
-    QueryFormatType,
     RehydratePriority,
     SequenceNumberActionType,
     SkuName,
@@ -148,12 +128,10 @@ __all__ = [
     'BlobFlatListSegment',
     'BlobHierarchyListSegment',
     'BlobHTTPHeaders',
-    'BlobItemInternal',
+    'BlobItem',
     'BlobMetadata',
     'BlobPrefix',
-    'BlobPropertiesInternal',
-    'BlobTag',
-    'BlobTags',
+    'BlobProperties',
     'Block',
     'BlockList',
     'BlockLookupList',
@@ -166,12 +144,8 @@ __all__ = [
     'CpkScopeInfo',
     'DataLakeStorageError', 'DataLakeStorageErrorException',
     'DataLakeStorageErrorError',
-    'DelimitedTextConfiguration',
     'DirectoryHttpHeaders',
-    'FilterBlobItem',
-    'FilterBlobSegment',
     'GeoReplication',
-    'JsonTextConfiguration',
     'KeyInfo',
     'LeaseAccessConditions',
     'ListBlobsFlatSegmentResponse',
@@ -182,9 +156,6 @@ __all__ = [
     'ModifiedAccessConditions',
     'PageList',
     'PageRange',
-    'QueryFormat',
-    'QueryRequest',
-    'QuerySerialization',
     'RetentionPolicy',
     'SequenceNumberAccessConditions',
     'SignedIdentifier',
@@ -204,12 +175,10 @@ __all__ = [
     'BlobType',
     'StorageErrorCode',
     'GeoReplicationStatusType',
-    'QueryFormatType',
     'AccessTierRequired',
     'AccessTierOptional',
     'PremiumPageBlobAccessTier',
     'RehydratePriority',
-    'BlobExpiryOptions',
     'BlockListType',
     'DeleteSnapshotsOptionType',
     'EncryptionAlgorithmType',

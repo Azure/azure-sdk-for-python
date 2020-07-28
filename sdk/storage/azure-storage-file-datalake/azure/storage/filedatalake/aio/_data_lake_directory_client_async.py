@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method
-
 from ._data_lake_file_client_async import DataLakeFileClient
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
 from .._models import DirectoryProperties

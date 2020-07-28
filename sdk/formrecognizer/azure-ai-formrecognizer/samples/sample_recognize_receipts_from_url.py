@@ -15,7 +15,7 @@ DESCRIPTION:
     from receipts, see sample_strongly_typed_recognized_form.py.
 
     See fields found on a receipt here:
-    https://aka.ms/formrecognizer/receiptfields
+    https://aka.ms/azsdk/python/formrecognizer/receiptfields
 
 USAGE:
     python sample_recognize_receipts_from_url.py

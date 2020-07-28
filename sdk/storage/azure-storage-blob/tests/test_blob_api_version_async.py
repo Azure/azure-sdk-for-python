@@ -15,7 +15,6 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobClient,
 )
-from azure.storage.blob._generated.version import VERSION
 from _shared.testcase import GlobalStorageAccountPreparer
 from _shared.asynctestcase import AsyncStorageTestCase
 
@@ -27,7 +26,7 @@ class StorageClientTest(AsyncStorageTestCase):
     def setUp(self):
         super(StorageClientTest, self).setUp()
         self.api_version_1 = "2019-02-02"
-        self.api_version_2 = VERSION
+        self.api_version_2 = "2019-07-07"
         self.container_name = self.get_resource_name('utcontainer')
 
     # --Helpers-----------------------------------------------------------------

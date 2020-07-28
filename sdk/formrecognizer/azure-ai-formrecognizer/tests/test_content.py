@@ -50,7 +50,7 @@ class TestContentFromStream(FormRecognizerTest):
             myfile = fd.read()
         poller = client.begin_recognize_content(
             myfile,
-            content_type=FormContentType.APPLICATION_PDF
+            content_type=FormContentType.application_pdf
         )
         result = poller.result()
         self.assertIsNotNone(result)

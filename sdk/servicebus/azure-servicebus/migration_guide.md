@@ -14,19 +14,19 @@ Note: The large version gap is in order to normalize service bus SDK versions ac
 
 ### Specific clients for sending and receiving
 In v7 we've simplified the API surface, making two distinct clients, rather than one for each of queue, topic, and subscription:
-* `ServiceBusSender` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b4/azure.servicebus.html#azure.servicebus.ServiceBusSender)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b4/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSender)
-* `ServiceBusReceiver` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b4/azure.servicebus.html#azure.servicebus.ServiceBusReceiver)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b4/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusReceiver)
-* `ServiceBusSessionReceiver` for receiving messages from a session. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b4/azure.servicebus.html#azure.servicebus.ServiceBusSessionReceiver)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b4/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSessionReceiver)
+* `ServiceBusSender` for sending messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusSender)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSender)
+* `ServiceBusReceiver` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusReceiver)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusReceiver)
+* `ServiceBusSessionReceiver` for receiving messages from a session. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.html#azure.servicebus.ServiceBusSessionReceiver)
+and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/7.0.0b3/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSessionReceiver)
 
 As a user this will be largely transparent to you, as initialization will still occur primarily via the top level ServiceBusClient,
 the primary difference will be that rather than creating a queue_client, for instance, and then a sender off of that, you would simply
 create a servicebus queue sender off of your ServiceBusClient instance via the "get_queue_sender" method.
 
-It should also be noted that many of the helper methods that previously existed on the intermediary client (e.g. QueueClient and `peek()`) now
-exist on the receiver (in the case of `peek()`) or sender itself.  This is to better consolidate functionality and align messaging link lifetime
+It should also be noted that many of the helper methods that previously existed on the intermediary client (e.g. QueueClient and Peek) now
+exist on the receiver (in the case of peek) or sender itself.  This is to better consolidate functionality and align messaging link lifetime
 semantics with the sender or receiver lifetime.
 
 ### Client constructors
@@ -40,28 +40,27 @@ semantics with the sender or receiver lifetime.
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `QueueClient.from_connection_string().get_receiver().fetch_next()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().fetch_next()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive_messages()`| [Get a receiver and receive a single batch of messages](./samples/sync_samples/receive_queue.py) |
-| `QueueClient.from_connection_string().get_receiver().peek()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().peek()`| `ServiceBusClient.from_connection_string().get_queue_receiver().peek_messages()`| [Get a receiver and receive a single batch of messages](./samples/sync_samples/receive_queue.py) |
+| `QueueClient.from_connection_string().get_receiver().fetch_next()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().fetch_next()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive()`| [Get a receiver and receive a single batch of messages](./samples/sync_samples/receive_queue.py) |
 
 ### Sending messages
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `QueueClient.from_connection_string().send()  and ServiceBusClient.from_connection_string().get_queue().get_sender().send()`| `ServiceBusClient.from_connection_string().get_queue_sender().send_messages()`| [Get a sender and send a message](./samples/sync_samples/send_queue.py) |
-| `queue_client.send(BatchMessage(["data 1", "data 2", ...]))`| `batch = queue_sender.create_batch()  batch.add(Message("data 1"))  queue_sender.send_messages(batch)`| [Create and send a batch of messages](./samples/sync_samples/send_queue.py) |
+| `QueueClient.from_connection_string().send()  and ServiceBusClient.from_connection_string().get_queue().get_sender().send()`| `ServiceBusClient.from_connection_string().get_queue_sender().send()`| [Get a sender and send a message](./samples/sync_samples/send_queue.py) |
+| `queue_client.send(BatchMessage(["data 1", "data 2", ...]))`| `batch = queue_sender.create_batch()  batch.add(Message("data 1"))  queue_sender.send(batch)`| [Create and send a batch of messages](./samples/sync_samples/send_queue.py) |
 
 ### Scheduling messages and cancelling scheduled messages 
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `queue_client.get_sender().schedule(schedule_time_utc, message1, message2)` | `sb_client.get_queue_sender().schedule_messages([message1, message2], schedule_time_utc)` | [Schedule messages](./samples/sync_samples/schedule_messages_and_cancellation.py) |
+| `queue_client.get_sender().schedule(schedule_time_utc, message1, message2)` | `sb_client.get_queue_sender().schedule([message1, message2], schedule_time_utc)` | [Schedule messages](./samples/sync_samples/schedule_messages_and_cancellation.py) |
 | `queue_client.get_sender().cancel_scheduled_messages(sequence_number1, sequence_number2)`| `sb_client.get_queue_sender().cancel_scheduled_messages([sequence_number1, sequence_number2])` | [Cancel scheduled messages](./samples/sync_samples/schedule_messages_and_cancellation.py)|
 
 ### Working with sessions
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send_messages(Message('body', session_id='foo'))`| [Send a message to a session](./samples/sync_samples/session_send_receive.py) |
+| `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send(Message('body', session_id='foo'))`| [Send a message to a session](./samples/sync_samples/session_send_receive.py) |
 | `AutoLockRenew().register(queue_client.get_receiver(session='foo'))`| `AutoLockRenew().register(sb_client.get_queue_session_receiver(session_id='foo').session)`| [Access a session and ensure its lock is auto-renewed](./samples/sync_samples/session_send_receive.py) |
 | `receiver.get_session_state()` | `receiver.session.get_session_state()` | [Perform session specific operations on a receiver](./samples/sync_samples/session_send_receive.py)
 
@@ -76,11 +75,6 @@ semantics with the sender or receiver lifetime.
 |---|---|---|
 | `azure.servicebus.control_client.ServiceBusService().create_queue(queue_name)` | `azure.servicebus.management.ServiceBusManagementClient().create_queue(queue_name)` | [Create a queue](./samples/sync_samples/mgmt_queue.py) |
 | `azure.servicebus.ServiceBusClient().list_queues()` | `azure.servicebus.management.ServiceBusManagementClient().list_queues()` | [List queues](./samples/sync_samples/mgmt_queue.py ) |
-
-### Working with AutoLockRenew
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `azure.servicebus.AutoLockRenew().shutdown()` | `azure.servicebus.AutoLockRenew().close()` | [Close an auto-lock-renewer](./samples/sync_samples/auto_lock_renew.py) |
 
 
 ## Migration samples
@@ -124,7 +118,7 @@ Becomes this in v7:
 with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
 
     with client.get_queue_receiver(queue_name=QUEUE_NAME) as receiver:
-        batch = receiver.receive_messages(max_batch_size=10, max_wait_time=5)
+        batch = receiver.receive(max_batch_size=10, max_wait_time=5)
         for message in batch:
             print("Message: {}".format(message))
             message.complete()
@@ -154,12 +148,12 @@ with queue_client.get_sender() as sender:
     # Send one at a time.
     for i in range(100):
         message = Message("Sample message no. {}".format(i))
-        sender.schedule_messages(message)
+        sender.send(message)
 
     # Send as a batch.
     messages_to_batch = [Message("Batch message no. {}".format(i)) for i in range(10)]
     batch = BatchMessage(messages_to_batch)
-    sender.schedule_messages(batch)
+    sender.send(batch)
 ```
 
 In v7:
@@ -170,11 +164,11 @@ with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
         # Sending one at a time.
         for i in range(100):
             message = Message("Sample message no. {}".format(i))
-            sender.schedule_messages(message)
+            sender.send(message)
 
         # Send as a batch
         batch = new BatchMessage()
         for i in range(10):
             batch.add(Message("Batch message no. {}".format(i)))
-        sender.schedule_messages(batch)
+        sender.send(batch)
 ```

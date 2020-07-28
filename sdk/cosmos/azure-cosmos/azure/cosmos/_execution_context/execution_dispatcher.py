@@ -68,7 +68,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._query = query
         self._fetch_function = fetch_function
 
-    def __next__(self):
+    def next(self):
         """Returns the next query result.
 
         :return: The next query result.
@@ -128,9 +128,6 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
                                          query_execution_info)
 
-    next = __next__  # Python 2 compatibility.
-
-
 class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=abstract-method
 
     DEFAULT_PAGE_SIZE = 1000
@@ -174,7 +171,7 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
             else:
                 self._endpoint = endpoint_component._QueryExecutionDistinctUnorderedEndpointComponent(self._endpoint)
 
-    def __next__(self):
+    def next(self):
         """Returns the next query result.
 
         :return: The next query result.
@@ -204,5 +201,3 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
                 # no more results
                 break
         return results
-
-    next = __next__  # Python 2 compatibility.

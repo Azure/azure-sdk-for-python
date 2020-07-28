@@ -12,7 +12,7 @@ For the older Azure Service Management (ASM) libraries, see
 library.
 
 For a more complete set of Azure libraries, see the
-[azure sdk python release](https://aka.ms/azsdk/python/all).
+[azure](https://pypi.python.org/pypi/azure) bundle package.
 
 ## Compatibility
 
@@ -31,6 +31,12 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 ``` shell
 pip uninstall azure
 ```
+
+## Usage
+
+For code examples, see [DocumentDB
+Management](https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-documentdb.html)
+on readthedocs.org.
 
 ## Provide Feedback
 

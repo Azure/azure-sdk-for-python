@@ -4,37 +4,21 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib2 import quote  # type: ignore
 
 from azure.core import MatchConditions
 
-from ._models import (
-    ContainerEncryptionScope,
-    DelimitedJSON
-)
+from ._models import ContainerEncryptionScope
 from ._generated.models import (
     ModifiedAccessConditions,
     SourceModifiedAccessConditions,
     CpkScopeInfo,
-    ContainerCpkScopeInfo,
-    QueryFormat,
-    QuerySerialization,
-    DelimitedTextConfiguration,
-    JsonTextConfiguration,
-    QueryFormatType,
-    BlobTag,
-    BlobTags
+    ContainerCpkScopeInfo
 )
 
 
 _SUPPORTED_API_VERSIONS = [
     '2019-02-02',
-    '2019-07-07',
-    '2019-10-10',
-    '2019-12-12',
+    '2019-07-07'
 ]
 
 
@@ -117,61 +101,3 @@ def get_api_version(kwargs, default):
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
         raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
     return api_version or default
-
-
-def serialize_blob_tags_header(tags=None):
-    # type: (Optional[Dict[str, str]]) -> str
-    if tags is None:
-        return None
-
-    components = list()
-    if tags:
-        for key, value in tags.items():
-            components.append(quote(key, safe='.-'))
-            components.append('=')
-            components.append(quote(value, safe='.-'))
-            components.append('&')
-
-    if components:
-        del components[-1]
-
-    return ''.join(components)
-
-
-def serialize_blob_tags(tags=None):
-    # type: (Optional[Dict[str, str]]) -> Union[BlobTags, None]
-    tag_list = list()
-    if tags:
-        tag_list = [BlobTag(key=k, value=v) for k, v in tags.items()]
-    return BlobTags(blob_tag_set=tag_list)
-
-
-def serialize_query_format(formater):
-    if isinstance(formater, DelimitedJSON):
-        serialization_settings = JsonTextConfiguration(
-            record_separator=formater.delimiter
-        )
-        qq_format = QueryFormat(
-            type=QueryFormatType.json,
-            json_text_configuration=serialization_settings)
-    elif hasattr(formater, 'quotechar'):  # This supports a csv.Dialect as well
-        try:
-            headers = formater.has_header
-        except AttributeError:
-            headers = False
-        serialization_settings = DelimitedTextConfiguration(
-            column_separator=formater.delimiter,
-            field_quote=formater.quotechar,
-            record_separator=formater.lineterminator,
-            escape_char=formater.escapechar,
-            headers_present=headers
-        )
-        qq_format = QueryFormat(
-            type=QueryFormatType.delimited,
-            delimited_text_configuration=serialization_settings
-        )
-    elif not formater:
-        return None
-    else:
-        raise TypeError("Format must be DelimitedTextDialect or DelimitedJSON.")
-    return QuerySerialization(format=qq_format)

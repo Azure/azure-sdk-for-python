@@ -27,7 +27,7 @@ class MgmtListTestHelperInterface(object):
 
 class MgmtQueueListTestHelper(MgmtListTestHelperInterface):
     def list_resource_method(self, start_index=0, max_count=100):
-        return list(self.sb_mgmt_client.list_queues(start_index=start_index, max_count=max_count))
+        return self.sb_mgmt_client.list_queues(start_index=start_index, max_count=max_count)
 
     def create_resource_method(self, name):
         self.sb_mgmt_client.create_queue(name)
@@ -41,7 +41,7 @@ class MgmtQueueListTestHelper(MgmtListTestHelperInterface):
 
 class MgmtQueueListRuntimeInfoTestHelper(MgmtListTestHelperInterface):
     def list_resource_method(self, start_index=0, max_count=100):
-        return list(self.sb_mgmt_client.list_queues_runtime_info(start_index=start_index, max_count=max_count))
+        return self.sb_mgmt_client.list_queues_runtime_info(start_index=start_index, max_count=max_count)
 
     def create_resource_method(self, name):
         self.sb_mgmt_client.create_queue(name)
@@ -122,20 +122,3 @@ def run_test_mgmt_list_with_negative_parameters(test_helper):
     result = test_helper.list_resource_method()
     assert len(result) == 0
 
-
-def clear_queues(servicebus_management_client):
-    queues = list(servicebus_management_client.list_queues())
-    for queue in queues:
-        try:
-            servicebus_management_client.delete_queue(queue)
-        except:
-            pass
-
-
-def clear_topics(servicebus_management_client):
-    topics = list(servicebus_management_client.list_topics())
-    for topic in topics:
-        try:
-            servicebus_management_client.delete_topic(topic)
-        except:
-            pass

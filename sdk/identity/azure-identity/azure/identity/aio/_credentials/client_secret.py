@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 
 from .base import AsyncCredentialBase
 from .._internal import AadClient
-from .._internal.decorators import log_get_token_async
 from ..._internal import ClientSecretCredentialBase
 
 if TYPE_CHECKING:
@@ -22,7 +21,7 @@ class ClientSecretCredential(AsyncCredentialBase, ClientSecretCredentialBase):
     :param str client_secret: one of the service principal's client secrets
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
           defines authorities for other clouds.
     :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache. Defaults to
           False.
@@ -39,7 +38,6 @@ class ClientSecretCredential(AsyncCredentialBase, ClientSecretCredentialBase):
 
         await self._client.__aexit__()
 
-    @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 
@@ -57,11 +55,6 @@ class ClientSecretCredential(AsyncCredentialBase, ClientSecretCredentialBase):
         token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
         if not token:
             token = await self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
-        elif self._client.should_refresh(token):
-            try:
-                await self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
-            except Exception:  # pylint: disable=broad-except
-                pass
         return token
 
     def _get_auth_client(self, tenant_id, client_id, **kwargs):

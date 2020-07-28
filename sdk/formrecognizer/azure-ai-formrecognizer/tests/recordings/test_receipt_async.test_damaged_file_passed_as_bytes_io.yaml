@@ -10,23 +10,24 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "3d563543-3dfe-4c9f-a3e1-bf14656c2dd0"},
+      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "4eca74f4-5f04-493f-b8c9-e717ad71a63d"},
         "message": "The input data is not a valid image or password protected."}}'
     headers:
-      apim-request-id: 3d563543-3dfe-4c9f-a3e1-bf14656c2dd0
+      apim-request-id: 4eca74f4-5f04-493f-b8c9-e717ad71a63d
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 18:54:21 GMT
+      date: Thu, 11 Jun 2020 15:43:56 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5'
+      x-envoy-upstream-service-time: '8'
     status:
       code: 400
       message: Bad Request
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
 version: 1

@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method
 from azure.storage.blob.aio import BlobClient
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._path_client import PathClient as PathClientBase

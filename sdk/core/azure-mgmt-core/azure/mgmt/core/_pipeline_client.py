@@ -65,5 +65,5 @@ class ARMPipelineClient(PipelineClient):
             config.custom_hook_policy,
             config.logging_policy,
             DistributedTracingPolicy(**kwargs),
-            config.http_logging_policy or ARMHttpLoggingPolicy(**kwargs),
+            ARMHttpLoggingPolicy(**kwargs),
         ]

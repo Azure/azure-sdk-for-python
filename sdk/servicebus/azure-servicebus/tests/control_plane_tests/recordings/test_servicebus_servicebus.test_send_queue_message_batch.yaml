@@ -1,0 +1,117 @@
+interactions:
+- request:
+    body: <?xml version="1.0" encoding="utf-8" standalone="yes"?><entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2017-01-12T00:03:01.811134+00:00</updated><author><name></name></author><id></id><content
+      type="application/xml"><QueueDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"></QueueDescription></content></entry>
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['555']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.3]
+    method: PUT
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueue97ed1715
+  response:
+    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/utqueue97ed1715</id><title
+        type="text">utqueue97ed1715</title><published>2017-01-12T00:03:03Z</published><updated>2017-01-12T00:03:03Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/utqueue97ed1715"/><content
+        type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><CreatedAt>2017-01-12T00:03:03.507</CreatedAt><UpdatedAt>2017-01-12T00:03:03.553</UpdatedAt></QueueDescription></content></entry>'}
+    headers:
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      Date: ['Thu, 12 Jan 2017 00:03:02 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000]
+      Transfer-Encoding: [chunked]
+    status: {code: 201, message: Created}
+- request:
+    body: '[{"BrokerProperties": {"Label": "M1", "TimeToLiveTimeSpan": "0.00:00:40"},
+      "Body": "This is the first message"}, {"BrokerProperties": {"Label": "M2"},
+      "UserProperties": {"Priority": "Low"}, "Body": "This is the second message"},
+      {"BrokerProperties": {"Label": "M3"}, "UserProperties": {"Customer": "ABC",
+      "Priority": "Medium"}, "Body": "This is the third message"}]'
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['365']
+      Content-Type: [application/vnd.microsoft.servicebus.json]
+      User-Agent: [pyazure/0.20.3]
+    method: POST
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueue97ed1715/messages
+  response:
+    body: {string: ''}
+    headers:
+      Content-Type: [application/xml; charset=utf-8]
+      Date: ['Thu, 12 Jan 2017 00:03:02 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000]
+      Transfer-Encoding: [chunked]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.3]
+    method: DELETE
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueue97ed1715/messages/head?timeout=60
+  response:
+    body: {string: This is the first message}
+    headers:
+      BrokerProperties: ['{"DeliveryCount":1,"EnqueuedSequenceNumber":0,"EnqueuedTimeUtc":"Thu,
+          12 Jan 2017 00:03:02 GMT","Label":"M1","MessageId":"d44c5dfd06394b59bdf39d1efb17c467","SequenceNumber":1,"State":"Active","TimeToLive":40}']
+      Content-Type: [application/xml; charset=utf-8]
+      Date: ['Thu, 12 Jan 2017 00:03:02 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000]
+      Transfer-Encoding: [chunked]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.3]
+    method: DELETE
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueue97ed1715/messages/head?timeout=60
+  response:
+    body: {string: This is the second message}
+    headers:
+      BrokerProperties: ['{"DeliveryCount":1,"EnqueuedSequenceNumber":0,"EnqueuedTimeUtc":"Thu,
+          12 Jan 2017 00:03:02 GMT","Label":"M2","MessageId":"6754352881264e7c84f6ce45c41dbc36","SequenceNumber":2,"State":"Active","TimeToLive":922337203685.47754}']
+      Content-Type: [application/xml; charset=utf-8]
+      Date: ['Thu, 12 Jan 2017 00:03:02 GMT']
+      Priority: ['"Low"']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000]
+      Transfer-Encoding: [chunked]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.3]
+    method: DELETE
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueue97ed1715/messages/head?timeout=60
+  response:
+    body: {string: This is the third message}
+    headers:
+      BrokerProperties: ['{"DeliveryCount":1,"EnqueuedSequenceNumber":0,"EnqueuedTimeUtc":"Thu,
+          12 Jan 2017 00:03:02 GMT","Label":"M3","MessageId":"cb8203000b8c4f26a91b7f35d4326a8c","SequenceNumber":3,"State":"Active","TimeToLive":922337203685.47754}']
+      Content-Type: [application/xml; charset=utf-8]
+      Customer: ['"ABC"']
+      Date: ['Thu, 12 Jan 2017 00:03:02 GMT']
+      Priority: ['"Medium"']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000]
+      Transfer-Encoding: [chunked]
+    status: {code: 200, message: OK}
+version: 1

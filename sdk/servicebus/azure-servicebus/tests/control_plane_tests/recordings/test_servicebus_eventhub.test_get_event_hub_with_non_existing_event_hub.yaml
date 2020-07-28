@@ -1,0 +1,22 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [pyazure/0.20.0]
+    method: GET
+    uri: https://fakehubnamespace.servicebus.windows.net/uthub25641d75
+  response:
+    body: {string: '<feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Publicly
+        Listed Services</title><subtitle type="text">This is the list of publicly-listed
+        services currently available.</subtitle><id>uuid:ee981bc3-69c2-4be6-ac2c-d5b48d6e1e9d;id=293</id><updated>2015-06-30T21:43:01Z</updated><generator>Service
+        Bus 1.1</generator></feed>'}
+    headers:
+      Content-Type: [application/atom+xml;type=feed;charset=utf-8]
+      Date: ['Tue, 30 Jun 2015 21:43:01 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+    status: {code: 200, message: OK}
+version: 1

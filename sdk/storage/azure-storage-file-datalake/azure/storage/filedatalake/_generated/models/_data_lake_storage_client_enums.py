@@ -30,14 +30,6 @@ class PathUpdateAction(str, Enum):
     flush = "flush"
     set_properties = "setProperties"
     set_access_control = "setAccessControl"
-    set_access_control_recursive = "setAccessControlRecursive"
-
-
-class PathSetAccessControlRecursiveMode(str, Enum):
-
-    set = "set"
-    modify = "modify"
-    remove = "remove"
 
 
 class PathLeaseAction(str, Enum):

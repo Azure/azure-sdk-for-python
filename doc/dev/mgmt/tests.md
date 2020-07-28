@@ -176,7 +176,7 @@ providing several features useful for the SDK tests, for example:
 *   Patches for overriding functions and methods that don't work well with tests
     (such as long-running operations)
 
-Code in the [`azure-sdk-tools/devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/master/tools/azure-sdk-tools/devtools_testutils) directory
+Code in the [`azure-sdk-tools/devtools_testutils`](tools/azure-sdk-tools/devtools_testutils) directory
 provides concrete implementations of the features provided in `scenario_tests`
 that are oriented around use in SDK testing
 and that you can use directly in your unit tests.

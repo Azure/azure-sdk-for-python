@@ -79,6 +79,7 @@ setup(
     ],
     extras_require={
         ":python_version<'3.0'": ["azure-nspkg"],
+        ":python_version<'3.3'": ["mock"],
         ":python_version<'3.5'": ["typing"],
     },
 )

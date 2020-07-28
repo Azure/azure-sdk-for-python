@@ -12,7 +12,7 @@ from azure.identity._internal.user_agent import USER_AGENT
 
 import pytest
 
-from helpers import build_aad_response, mock_response, Request
+from helpers import mock_response, Request
 from helpers_async import async_validating_transport
 
 MANAGED_IDENTITY_ENVIRON = "azure.identity.aio._credentials.managed_identity.os.environ"
@@ -223,41 +223,6 @@ async def test_app_service_user_assigned_identity():
     ):
         token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
         assert token == expected_token
-
-
-@pytest.mark.asyncio
-async def test_client_id_none():
-    """the credential should ignore client_id=None"""
-
-    expected_access_token = "****"
-
-    async def send(request, **_):
-        assert "client_id" not in request.query  # IMDS
-        assert "clientid" not in request.query  # App Service 2017-09-01
-        if request.data:
-            assert "client_id" not in request.body  # Cloud Shell
-        return mock_response(json_payload=(build_aad_response(access_token=expected_access_token)))
-
-    with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, {}, clear=True):
-        credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
-        token = await credential.get_token("scope")
-    assert token.token == expected_access_token
-
-    with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: "https://localhost", EnvironmentVariables.MSI_SECRET: "secret"},
-        clear=True,
-    ):
-        credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
-        token = await credential.get_token("scope")
-    assert token.token == expected_access_token
-
-    with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True,
-    ):
-        credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
-        token = await credential.get_token("scope")
-    assert token.token == expected_access_token
 
 
 @pytest.mark.asyncio

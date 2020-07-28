@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import tempfile
 
 import pytest
 
@@ -17,7 +16,6 @@ from os import (
     urandom,
     path,
     remove,
-    unlink
 )
 
 from azure.core.exceptions import HttpResponseError
@@ -668,15 +666,13 @@ class StorageBlobEncryptionTest(StorageTestCase):
         stream = BytesIO(content)
         self._create_blob_from_star(BlobType.PageBlob, content, stream, length=512)
 
-        stream = tempfile.NamedTemporaryFile(delete=False)
-        path_name = stream.name
-        stream.write(content)
-        stream.close()
+        file_name = 'page_blob_from_star.temp.dat'
+        with open(file_name, 'wb') as stream:
+            stream.write(content)
 
-        with open(path_name, 'rb') as stream:
+        with open(file_name, 'rb') as stream:
             self._create_blob_from_star(BlobType.PageBlob, content, stream)
-
-        unlink(stream.name)
+        self._teardown(file_name)
 
     def _create_blob_from_star(self, blob_type, content, data, **kwargs):
         blob_name = self._get_blob_reference(blob_type)

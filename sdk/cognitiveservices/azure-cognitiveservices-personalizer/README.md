@@ -5,7 +5,7 @@ This is the Microsoft Azure Personalizer Client Library.
 This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
 
 For a more complete set of Azure libraries, see the
-[azure sdk python release](https://aka.ms/azsdk/python/all).
+[azure](https://pypi.python.org/pypi/azure) bundle package.
 
 ## What is Personalizer?
 
@@ -17,7 +17,7 @@ For a more complete set of Azure libraries, see the
 ## Usage
 
 [Quickstart: Personalize client library for
-Python](https://docs.microsoft.com/azure/cognitive-services/personalizer/sdk-learning-loop?pivots=programming-language-python)
+Python](https://docs.microsoft.com/azure/cognitive-services/personalizer/python-quickstart-commandline-feedback-loop)
 
 ## Documentation
 

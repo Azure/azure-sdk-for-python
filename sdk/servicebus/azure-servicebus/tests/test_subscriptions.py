@@ -42,7 +42,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
         ) as sb_client:
             with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
                 message = Message(b"Sample topic message")
-                sender.send_messages(message)
+                sender.send(message)
 
             with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
@@ -74,7 +74,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
 
             with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
                 message = Message(b"Sample topic message")
-                sender.send_messages(message)
+                sender.send(message)
 
             with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
@@ -132,16 +132,16 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                     for i in range(10):
                         message = Message("Dead lettered message no. {}".format(i))
-                        sender.send_messages(message)
+                        sender.send(message)
 
                 count = 0
-                messages = receiver.receive_messages()
+                messages = receiver.receive()
                 while messages:
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
                         message.dead_letter(reason="Testing reason", description="Testing description")
-                    messages = receiver.receive_messages()
+                    messages = receiver.receive()
 
             assert count == 10
 
@@ -168,8 +168,6 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 for message in dl_receiver:
                     message.complete()
                     count += 1
-                    assert message.dead_letter_reason == 'Testing reason'
-                    assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10

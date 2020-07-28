@@ -97,7 +97,6 @@ class ListSharesIncludeType(str, Enum):
 
     snapshots = "snapshots"
     metadata = "metadata"
-    deleted = "deleted"
 
 
 class CopyStatusType(str, Enum):

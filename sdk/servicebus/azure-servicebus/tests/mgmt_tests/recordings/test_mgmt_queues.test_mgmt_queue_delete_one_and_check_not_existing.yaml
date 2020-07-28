@@ -1,38 +1,9 @@
 interactions:
 - request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://servicebustestsbname.servicebus.windows.net/$Resources/queues?$skip=0&$top=100&api-version=2017-04
-  response:
-    body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-07-02T05:57:57Z</updated><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
-    headers:
-      content-type:
-      - application/atom+xml;type=feed;charset=utf-8
-      date:
-      - Thu, 02 Jul 2020 05:57:56 GMT
-      server:
-      - Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription /></ns0:content></ns0:entry>'
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -41,25 +12,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '248'
+      - '256'
       Content-Type:
-      - application/atom+xml
+      - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/queue0?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue0?api-version=2017-04</id><title
-        type="text">queue0</title><published>2020-07-02T05:57:57Z</published><updated>2020-07-02T05:57:57Z</updated><author><name>servicebustestshi5frbomp</name></author><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/queue0?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue0?api-version=2017-04</id><title
+        type="text">queue0</title><published>2020-06-05T23:12:32Z</published><updated>2020-06-05T23:12:32Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
+        rel="self" href="https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue0?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:57:57.61Z</CreatedAt><UpdatedAt>2020-07-02T05:57:57.647Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:32.183Z</CreatedAt><UpdatedAt>2020-06-05T23:12:32.22Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:57:57 GMT
+      - Fri, 05 Jun 2020 23:12:31 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -72,8 +43,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription /></ns0:content></ns0:entry>'
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -82,25 +53,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '248'
+      - '256'
       Content-Type:
-      - application/atom+xml
+      - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/queue1?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue1?api-version=2017-04</id><title
-        type="text">queue1</title><published>2020-07-02T05:57:58Z</published><updated>2020-07-02T05:57:58Z</updated><author><name>servicebustestshi5frbomp</name></author><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/queue1?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue1?api-version=2017-04</id><title
+        type="text">queue1</title><published>2020-06-05T23:12:33Z</published><updated>2020-06-05T23:12:33Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
+        rel="self" href="https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue1?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:57:58.54Z</CreatedAt><UpdatedAt>2020-07-02T05:57:58.567Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:33.113Z</CreatedAt><UpdatedAt>2020-06-05T23:12:33.183Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:57:58 GMT
+      - Fri, 05 Jun 2020 23:12:33 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -113,8 +84,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription /></ns0:content></ns0:entry>'
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -123,25 +94,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '248'
+      - '256'
       Content-Type:
-      - application/atom+xml
+      - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/queue2?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue2?api-version=2017-04</id><title
-        type="text">queue2</title><published>2020-07-02T05:57:59Z</published><updated>2020-07-02T05:57:59Z</updated><author><name>servicebustestshi5frbomp</name></author><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/queue2?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue2?api-version=2017-04</id><title
+        type="text">queue2</title><published>2020-06-05T23:12:34Z</published><updated>2020-06-05T23:12:34Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
+        rel="self" href="https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue2?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:57:59.427Z</CreatedAt><UpdatedAt>2020-07-02T05:57:59.46Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:34.07Z</CreatedAt><UpdatedAt>2020-06-05T23:12:34.137Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:57:59 GMT
+      - Fri, 05 Jun 2020 23:12:34 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -154,8 +125,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription /></ns0:content></ns0:entry>'
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -164,25 +135,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '248'
+      - '256'
       Content-Type:
-      - application/atom+xml
+      - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/queue3?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue3?api-version=2017-04</id><title
-        type="text">queue3</title><published>2020-07-02T05:58:00Z</published><updated>2020-07-02T05:58:00Z</updated><author><name>servicebustestshi5frbomp</name></author><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/queue3?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue3?api-version=2017-04</id><title
+        type="text">queue3</title><published>2020-06-05T23:12:35Z</published><updated>2020-06-05T23:12:35Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
+        rel="self" href="https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue3?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:00.377Z</CreatedAt><UpdatedAt>2020-07-02T05:58:00.407Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:35.07Z</CreatedAt><UpdatedAt>2020-06-05T23:12:35.147Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:00 GMT
+      - Fri, 05 Jun 2020 23:12:35 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -195,8 +166,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription /></ns0:content></ns0:entry>'
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -205,25 +176,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '248'
+      - '256'
       Content-Type:
-      - application/atom+xml
+      - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/queue4?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue4?api-version=2017-04</id><title
-        type="text">queue4</title><published>2020-07-02T05:58:01Z</published><updated>2020-07-02T05:58:01Z</updated><author><name>servicebustestshi5frbomp</name></author><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/queue4?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue4?api-version=2017-04</id><title
+        type="text">queue4</title><published>2020-06-05T23:12:36Z</published><updated>2020-06-05T23:12:36Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
+        rel="self" href="https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue4?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:01.247Z</CreatedAt><UpdatedAt>2020-07-02T05:58:01.273Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:36.223Z</CreatedAt><UpdatedAt>2020-06-05T23:12:36.39Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:01 GMT
+      - Fri, 05 Jun 2020 23:12:36 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -236,8 +207,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription /></ns0:content></ns0:entry>'
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -246,25 +217,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '248'
+      - '256'
       Content-Type:
-      - application/atom+xml
+      - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/queue5?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue5?api-version=2017-04</id><title
-        type="text">queue5</title><published>2020-07-02T05:58:02Z</published><updated>2020-07-02T05:58:02Z</updated><author><name>servicebustestshi5frbomp</name></author><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/queue5?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue5?api-version=2017-04</id><title
+        type="text">queue5</title><published>2020-06-05T23:12:37Z</published><updated>2020-06-05T23:12:37Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
+        rel="self" href="https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue5?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:02.23Z</CreatedAt><UpdatedAt>2020-07-02T05:58:02.27Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:37.18Z</CreatedAt><UpdatedAt>2020-06-05T23:12:37.23Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:02 GMT
+      - Fri, 05 Jun 2020 23:12:37 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -277,8 +248,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription /></ns0:content></ns0:entry>'
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -287,25 +258,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '248'
+      - '256'
       Content-Type:
-      - application/atom+xml
+      - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/queue6?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue6?api-version=2017-04</id><title
-        type="text">queue6</title><published>2020-07-02T05:58:03Z</published><updated>2020-07-02T05:58:03Z</updated><author><name>servicebustestshi5frbomp</name></author><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/queue6?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue6?api-version=2017-04</id><title
+        type="text">queue6</title><published>2020-06-05T23:12:38Z</published><updated>2020-06-05T23:12:38Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
+        rel="self" href="https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue6?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:03.087Z</CreatedAt><UpdatedAt>2020-07-02T05:58:03.11Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:38.163Z</CreatedAt><UpdatedAt>2020-06-05T23:12:38.197Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:03 GMT
+      - Fri, 05 Jun 2020 23:12:38 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -318,8 +289,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription /></ns0:content></ns0:entry>'
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -328,25 +299,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '248'
+      - '256'
       Content-Type:
-      - application/atom+xml
+      - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/queue7?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue7?api-version=2017-04</id><title
-        type="text">queue7</title><published>2020-07-02T05:58:04Z</published><updated>2020-07-02T05:58:04Z</updated><author><name>servicebustestshi5frbomp</name></author><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/queue7?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue7?api-version=2017-04</id><title
+        type="text">queue7</title><published>2020-06-05T23:12:39Z</published><updated>2020-06-05T23:12:39Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
+        rel="self" href="https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue7?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:04.023Z</CreatedAt><UpdatedAt>2020-07-02T05:58:04.093Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:39.15Z</CreatedAt><UpdatedAt>2020-06-05T23:12:39.18Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:04 GMT
+      - Fri, 05 Jun 2020 23:12:39 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -359,8 +330,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription /></ns0:content></ns0:entry>'
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -369,25 +340,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '248'
+      - '256'
       Content-Type:
-      - application/atom+xml
+      - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/queue8?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue8?api-version=2017-04</id><title
-        type="text">queue8</title><published>2020-07-02T05:58:04Z</published><updated>2020-07-02T05:58:05Z</updated><author><name>servicebustestshi5frbomp</name></author><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/queue8?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue8?api-version=2017-04</id><title
+        type="text">queue8</title><published>2020-06-05T23:12:40Z</published><updated>2020-06-05T23:12:40Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
+        rel="self" href="https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue8?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:04.99Z</CreatedAt><UpdatedAt>2020-07-02T05:58:05.023Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:40.09Z</CreatedAt><UpdatedAt>2020-06-05T23:12:40.143Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:05 GMT
+      - Fri, 05 Jun 2020 23:12:40 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -400,8 +371,8 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
-      type="application/xml"><QueueDescription /></ns0:content></ns0:entry>'
+      <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"><ns0:content
+      type="application/xml"><ns1:QueueDescription /></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -410,25 +381,25 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '248'
+      - '256'
       Content-Type:
-      - application/atom+xml
+      - application/xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/queue9?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue9?api-version=2017-04</id><title
-        type="text">queue9</title><published>2020-07-02T05:58:05Z</published><updated>2020-07-02T05:58:06Z</updated><author><name>servicebustestshi5frbomp</name></author><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/queue9?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue9?api-version=2017-04</id><title
+        type="text">queue9</title><published>2020-06-05T23:12:41Z</published><updated>2020-06-05T23:12:41Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
+        rel="self" href="https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue9?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:05.973Z</CreatedAt><UpdatedAt>2020-07-02T05:58:06.007Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:41.073Z</CreatedAt><UpdatedAt>2020-06-05T23:12:41.1Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:06 GMT
+      - Fri, 05 Jun 2020 23:12:41 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -450,7 +421,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/queue0?api-version=2017-04
   response:
@@ -460,9 +431,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:06 GMT
+      - Fri, 05 Jun 2020 23:12:42 GMT
       etag:
-      - '637292662776470000'
+      - '637269955522200000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -480,72 +451,72 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: GET
     uri: https://servicebustestsbname.servicebus.windows.net/$Resources/queues?$skip=0&$top=100&api-version=2017-04
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-07-02T05:58:07Z</updated><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"/><entry
-        xml:base="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue1?api-version=2017-04</id><title
-        type="text">queue1</title><published>2020-07-02T05:57:58Z</published><updated>2020-07-02T05:57:58Z</updated><author><name>servicebustestshi5frbomp</name></author><link
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-06-05T23:12:42Z</updated><link
+        rel="self" href="https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"/><entry
+        xml:base="https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue1?api-version=2017-04</id><title
+        type="text">queue1</title><published>2020-06-05T23:12:33Z</published><updated>2020-06-05T23:12:33Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
         rel="self" href="../queue1?api-version=2017-04"/><content type="application/xml"><QueueDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:57:58.54Z</CreatedAt><UpdatedAt>2020-07-02T05:57:58.567Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:33.113Z</CreatedAt><UpdatedAt>2020-06-05T23:12:33.183Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
         xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry><entry
-        xml:base="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue2?api-version=2017-04</id><title
-        type="text">queue2</title><published>2020-07-02T05:57:59Z</published><updated>2020-07-02T05:57:59Z</updated><author><name>servicebustestshi5frbomp</name></author><link
+        xml:base="https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue2?api-version=2017-04</id><title
+        type="text">queue2</title><published>2020-06-05T23:12:34Z</published><updated>2020-06-05T23:12:34Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
         rel="self" href="../queue2?api-version=2017-04"/><content type="application/xml"><QueueDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:57:59.4432753Z</CreatedAt><UpdatedAt>2020-07-02T05:57:59.4432753Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:34.07Z</CreatedAt><UpdatedAt>2020-06-05T23:12:34.137Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
         xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry><entry
-        xml:base="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue3?api-version=2017-04</id><title
-        type="text">queue3</title><published>2020-07-02T05:58:00Z</published><updated>2020-07-02T05:58:00Z</updated><author><name>servicebustestshi5frbomp</name></author><link
+        xml:base="https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue3?api-version=2017-04</id><title
+        type="text">queue3</title><published>2020-06-05T23:12:35Z</published><updated>2020-06-05T23:12:35Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
         rel="self" href="../queue3?api-version=2017-04"/><content type="application/xml"><QueueDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:00.377Z</CreatedAt><UpdatedAt>2020-07-02T05:58:00.407Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:35.07Z</CreatedAt><UpdatedAt>2020-06-05T23:12:35.147Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
         xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry><entry
-        xml:base="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue4?api-version=2017-04</id><title
-        type="text">queue4</title><published>2020-07-02T05:58:01Z</published><updated>2020-07-02T05:58:01Z</updated><author><name>servicebustestshi5frbomp</name></author><link
+        xml:base="https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue4?api-version=2017-04</id><title
+        type="text">queue4</title><published>2020-06-05T23:12:36Z</published><updated>2020-06-05T23:12:36Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
         rel="self" href="../queue4?api-version=2017-04"/><content type="application/xml"><QueueDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:01.247Z</CreatedAt><UpdatedAt>2020-07-02T05:58:01.273Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:36.223Z</CreatedAt><UpdatedAt>2020-06-05T23:12:36.39Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
         xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry><entry
-        xml:base="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue5?api-version=2017-04</id><title
-        type="text">queue5</title><published>2020-07-02T05:58:02Z</published><updated>2020-07-02T05:58:02Z</updated><author><name>servicebustestshi5frbomp</name></author><link
+        xml:base="https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue5?api-version=2017-04</id><title
+        type="text">queue5</title><published>2020-06-05T23:12:37Z</published><updated>2020-06-05T23:12:37Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
         rel="self" href="../queue5?api-version=2017-04"/><content type="application/xml"><QueueDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:02.23Z</CreatedAt><UpdatedAt>2020-07-02T05:58:02.27Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:37.18Z</CreatedAt><UpdatedAt>2020-06-05T23:12:37.23Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
         xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry><entry
-        xml:base="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue6?api-version=2017-04</id><title
-        type="text">queue6</title><published>2020-07-02T05:58:03Z</published><updated>2020-07-02T05:58:03Z</updated><author><name>servicebustestshi5frbomp</name></author><link
+        xml:base="https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue6?api-version=2017-04</id><title
+        type="text">queue6</title><published>2020-06-05T23:12:38Z</published><updated>2020-06-05T23:12:38Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
         rel="self" href="../queue6?api-version=2017-04"/><content type="application/xml"><QueueDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:03.087Z</CreatedAt><UpdatedAt>2020-07-02T05:58:03.11Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:38.163Z</CreatedAt><UpdatedAt>2020-06-05T23:12:38.197Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
         xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry><entry
-        xml:base="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue7?api-version=2017-04</id><title
-        type="text">queue7</title><published>2020-07-02T05:58:04Z</published><updated>2020-07-02T05:58:04Z</updated><author><name>servicebustestshi5frbomp</name></author><link
+        xml:base="https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue7?api-version=2017-04</id><title
+        type="text">queue7</title><published>2020-06-05T23:12:39Z</published><updated>2020-06-05T23:12:39Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
         rel="self" href="../queue7?api-version=2017-04"/><content type="application/xml"><QueueDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:04.023Z</CreatedAt><UpdatedAt>2020-07-02T05:58:04.093Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:39.15Z</CreatedAt><UpdatedAt>2020-06-05T23:12:39.18Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
         xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry><entry
-        xml:base="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue8?api-version=2017-04</id><title
-        type="text">queue8</title><published>2020-07-02T05:58:04Z</published><updated>2020-07-02T05:58:05Z</updated><author><name>servicebustestshi5frbomp</name></author><link
+        xml:base="https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue8?api-version=2017-04</id><title
+        type="text">queue8</title><published>2020-06-05T23:12:40Z</published><updated>2020-06-05T23:12:40Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
         rel="self" href="../queue8?api-version=2017-04"/><content type="application/xml"><QueueDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:04.99Z</CreatedAt><UpdatedAt>2020-07-02T05:58:05.023Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:40.09Z</CreatedAt><UpdatedAt>2020-06-05T23:12:40.143Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
         xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry><entry
-        xml:base="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestshi5frbomp.servicebus.windows.net/queue9?api-version=2017-04</id><title
-        type="text">queue9</title><published>2020-07-02T05:58:05Z</published><updated>2020-07-02T05:58:06Z</updated><author><name>servicebustestshi5frbomp</name></author><link
+        xml:base="https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/queue9?api-version=2017-04</id><title
+        type="text">queue9</title><published>2020-06-05T23:12:41Z</published><updated>2020-06-05T23:12:41Z</updated><author><name>servicebustestxcyy2mhkzt</name></author><link
         rel="self" href="../queue9?api-version=2017-04"/><content type="application/xml"><QueueDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:05.973Z</CreatedAt><UpdatedAt>2020-07-02T05:58:06.007Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-06-05T23:12:41.073Z</CreatedAt><UpdatedAt>2020-06-05T23:12:41.1Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
         xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:06 GMT
+      - Fri, 05 Jun 2020 23:12:42 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -565,7 +536,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/queue1?api-version=2017-04
   response:
@@ -575,9 +546,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:07 GMT
+      - Fri, 05 Jun 2020 23:12:42 GMT
       etag:
-      - '637292662785670000'
+      - '637269955531830000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -597,7 +568,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/queue2?api-version=2017-04
   response:
@@ -607,9 +578,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:07 GMT
+      - Fri, 05 Jun 2020 23:12:43 GMT
       etag:
-      - '637292662794600000'
+      - '637269955541370000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -629,7 +600,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/queue3?api-version=2017-04
   response:
@@ -639,9 +610,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:08 GMT
+      - Fri, 05 Jun 2020 23:12:43 GMT
       etag:
-      - '637292662804070000'
+      - '637269955551470000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -661,7 +632,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/queue4?api-version=2017-04
   response:
@@ -671,9 +642,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:08 GMT
+      - Fri, 05 Jun 2020 23:12:44 GMT
       etag:
-      - '637292662812730000'
+      - '637269955563900000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -693,7 +664,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/queue5?api-version=2017-04
   response:
@@ -703,9 +674,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:09 GMT
+      - Fri, 05 Jun 2020 23:12:45 GMT
       etag:
-      - '637292662822700000'
+      - '637269955572300000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -725,7 +696,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/queue6?api-version=2017-04
   response:
@@ -735,9 +706,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:09 GMT
+      - Fri, 05 Jun 2020 23:12:45 GMT
       etag:
-      - '637292662831100000'
+      - '637269955581970000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -757,7 +728,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/queue7?api-version=2017-04
   response:
@@ -767,9 +738,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:10 GMT
+      - Fri, 05 Jun 2020 23:12:46 GMT
       etag:
-      - '637292662840930000'
+      - '637269955591800000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -789,7 +760,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/queue8?api-version=2017-04
   response:
@@ -799,9 +770,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:10 GMT
+      - Fri, 05 Jun 2020 23:12:46 GMT
       etag:
-      - '637292662850230000'
+      - '637269955601430000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -821,7 +792,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/queue9?api-version=2017-04
   response:
@@ -831,9 +802,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:11 GMT
+      - Fri, 05 Jun 2020 23:12:47 GMT
       etag:
-      - '637292662860070000'
+      - '637269955611000000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -851,18 +822,18 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.19631-SP0)
     method: GET
     uri: https://servicebustestsbname.servicebus.windows.net/$Resources/queues?$skip=0&$top=100&api-version=2017-04
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-07-02T05:58:12Z</updated><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-06-05T23:12:47Z</updated><link
+        rel="self" href="https://servicebustestxcyy2mhkzt.servicebus.windows.net/$Resources/queues?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:11 GMT
+      - Fri, 05 Jun 2020 23:12:47 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

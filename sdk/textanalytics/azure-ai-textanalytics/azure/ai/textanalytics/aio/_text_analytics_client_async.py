@@ -62,9 +62,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         Defaults to "US". If you don't want to use a country hint, pass the string "none".
     :keyword str default_language: Sets the default language to use for all operations.
         Defaults to "en".
-    :keyword api_version: The API version of the service to use for requests. It defaults to the
-        latest service version. Setting to an older version may result in reduced feature compatibility.
-    :paramtype api_version: str or ~azure.ai.textanalytics.ApiVersion
 
     .. admonition:: Example:
 

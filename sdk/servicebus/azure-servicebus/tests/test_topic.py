@@ -40,7 +40,7 @@ class ServiceBusTopicsTests(AzureMgmtTestCase):
         ) as sb_client:
             with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                 message = Message(b"Sample topic message")
-                sender.send_messages(message)
+                sender.send(message)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -59,7 +59,7 @@ class ServiceBusTopicsTests(AzureMgmtTestCase):
         ) as sb_client:
             with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                 message = Message(b"Sample topic message")
-                sender.send_messages(message)
+                sender.send(message)
 
     @pytest.mark.skip(reason="Pending management apis")
     @pytest.mark.liveTest

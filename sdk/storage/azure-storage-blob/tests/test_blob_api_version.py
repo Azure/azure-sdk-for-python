@@ -17,7 +17,6 @@ from azure.storage.blob import (
     BlobClient,
     BlobSasPermissions
 )
-from azure.storage.blob._generated.version import VERSION
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
@@ -29,7 +28,7 @@ class StorageClientTest(StorageTestCase):
     def setUp(self):
         super(StorageClientTest, self).setUp()
         self.api_version_1 = "2019-02-02"
-        self.api_version_2 = VERSION
+        self.api_version_2 = "2019-07-07"
         self.container_name = self.get_resource_name('utcontainer')
 
     # --Helpers-----------------------------------------------------------------

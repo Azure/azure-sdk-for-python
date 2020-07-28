@@ -300,17 +300,7 @@ class HttpRequest(object):
                 p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]
             }
             params.update(existing_params)
-        query_params = []
-        for k, v in params.items():
-            if isinstance(v, list):
-                for w in v:
-                    if w is None:
-                        raise ValueError("Query parameter {} cannot be None".format(k))
-                    query_params.append("{}={}".format(k, w))
-            else:
-                if v is None:
-                    raise ValueError("Query parameter {} cannot be None".format(k))
-                query_params.append("{}={}".format(k, v))
+        query_params = ["{}={}".format(k, v) for k, v in params.items()]
         query = "?" + "&".join(query_params)
         self.url = self.url + query
 
@@ -626,7 +616,7 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
 
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 # List comprehension to raise exceptions if happened
-                [  # pylint: disable=expression-not-assigned, unnecessary-comprehension
+                [  # pylint: disable=expression-not-assigned
                     _ for _ in executor.map(parse_responses, responses)
                 ]
 

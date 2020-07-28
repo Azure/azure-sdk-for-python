@@ -7,14 +7,19 @@
 import pytest
 import asyncio
 
-from azure.identity.aio import EnvironmentCredential
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_client_secret_credential_async(live_eventhub):
+async def test_client_secret_credential_async(aad_credential, live_eventhub):
+    try:
+        from azure.identity.aio import EnvironmentCredential
+    except ImportError:
+        pytest.skip("No azure identity library")
+        return
+
     credential = EnvironmentCredential()
     producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
                                              eventhub_name=live_eventhub['event_hub'],

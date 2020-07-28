@@ -36,7 +36,7 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, 'version.py')
+with open(os.path.join(package_folder_path, 'version.py') 
           if os.path.exists(os.path.join(package_folder_path, 'version.py'))
           else os.path.join(package_folder_path, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
@@ -87,9 +87,6 @@ setup(
         {%- endif %}
         'azure-common~=1.1',
         {%- if need_azurecore %}
-        'azure-core>=1.6.0,<2.0.0',
-        {%- endif %}
-        {%- if need_azuremgmtcore %}
         'azure-mgmt-core>=1.0.0,<2.0.0',
         {%- endif %}
     ],

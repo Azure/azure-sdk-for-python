@@ -1,24 +1,6 @@
 # Release History
 
-## 1.4.0b8 (Unreleased)
-- `DefaultAzureCredential` uses the value of environment variable
-`AZURE_CLIENT_ID` to configure a user-assigned managed identity.
-([#10931](https://github.com/Azure/azure-sdk-for-python/issues/10931))
-
-
-## 1.4.0b7 (2020-07-22)
-- `DefaultAzureCredential` has a new optional keyword argument,
-`visual_studio_code_tenant_id`, which sets the tenant the credential should
-authenticate in when authenticating as the Azure user signed in to Visual
-Studio Code.
-- Renamed `AuthenticationRecord.deserialize` positional parameter `json_string`
-to `data`.
-
-
-## 1.4.0b6 (2020-07-07)
-- `AzureCliCredential` no longer raises an exception due to unexpected output
-  from the CLI when run by PyCharm (thanks @NVolcz)
-  ([#11362](https://github.com/Azure/azure-sdk-for-python/pull/11362))
+## 1.4.0b6 (Unreleased)
 - Upgraded minimum `msal` version to 1.3.0
 - The async `AzureCliCredential` correctly invokes `/bin/sh`
   ([#12048](https://github.com/Azure/azure-sdk-for-python/issues/12048))
@@ -212,7 +194,7 @@ the Azure CLI's client ID will be used.
   `client_id`
   - transport configuration is now done through keyword arguments as
   described in
-  [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/azure-identity_1.0.0/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
+  [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/configuration.md)
 
 ### Fixes and improvements:
 - Authenticating with a single sign-on shared with other Microsoft applications
@@ -287,9 +269,9 @@ revamped configuration API. Static `create_config` methods have been renamed
 
 ### New features:
 - Added credentials for authenticating users:
- - `DeviceCodeCredential`
- - `InteractiveBrowserCredential`
- - `UsernamePasswordCredential`
+[`DeviceCodeCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.DeviceCodeCredential),
+[`InteractiveBrowserCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.InteractiveBrowserCredential),
+[`UsernamePasswordCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.UsernamePasswordCredential)
   - async versions of these credentials will be added in a future release
 
 ## 1.0.0b1 (2019-06-28)

@@ -1,0 +1,68 @@
+interactions:
+- request:
+    body: <?xml version="1.0" encoding="utf-8" standalone="yes"?><entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2016-08-11T23:42:06.853853+00:00</updated><author><name></name></author><id></id><content
+      type="application/xml"><QueueDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"></QueueDescription></content></entry>
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['555']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.2]
+    method: PUT
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueue2f0623eb
+  response:
+    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/utqueue2f0623eb</id><title
+        type="text">utqueue2f0623eb</title><published>2016-08-11T23:42:08Z</published><updated>2016-08-11T23:42:08Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/utqueue2f0623eb"/><content
+        type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><CreatedAt>2016-08-11T23:42:08.373</CreatedAt><UpdatedAt>2016-08-11T23:42:08.413</UpdatedAt></QueueDescription></content></entry>'}
+    headers:
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      Date: ['Thu, 11 Aug 2016 23:42:07 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000]
+      Transfer-Encoding: [chunked]
+    status: {code: 201, message: Created}
+- request:
+    body: receive message
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['15']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.2]
+    method: POST
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueue2f0623eb/messages
+  response:
+    body: {string: ''}
+    headers:
+      Content-Type: [application/xml; charset=utf-8]
+      Date: ['Thu, 11 Aug 2016 23:42:07 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000]
+      Transfer-Encoding: [chunked]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.2]
+    method: DELETE
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueue2f0623eb/messages/head?timeout=60
+  response:
+    body: {string: receive message}
+    headers:
+      BrokerProperties: ['{"DeliveryCount":1,"EnqueuedSequenceNumber":0,"EnqueuedTimeUtc":"Thu,
+          11 Aug 2016 23:42:07 GMT","MessageId":"caaf99e88cc44461ad07497fa5d597b6","SequenceNumber":1,"State":"Active","TimeToLive":922337203685.47754}']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      Date: ['Thu, 11 Aug 2016 23:42:08 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000]
+      Transfer-Encoding: [chunked]
+    status: {code: 200, message: OK}
+version: 1

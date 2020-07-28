@@ -27,7 +27,7 @@ class AsyncMgmtListTestHelperInterface(object):
 
 class AsyncMgmtQueueListTestHelper(AsyncMgmtListTestHelperInterface):
     async def list_resource_method(self, start_index=0, max_count=100):
-        return await async_pageable_to_list(self.sb_mgmt_client.list_queues(start_index=start_index, max_count=max_count))
+        return await self.sb_mgmt_client.list_queues(start_index=start_index, max_count=max_count)
 
     async def create_resource_method(self, name):
         await self.sb_mgmt_client.create_queue(name)
@@ -41,7 +41,7 @@ class AsyncMgmtQueueListTestHelper(AsyncMgmtListTestHelperInterface):
 
 class AsyncMgmtQueueListRuntimeInfoTestHelper(AsyncMgmtListTestHelperInterface):
     async def list_resource_method(self, start_index=0, max_count=100):
-        return await async_pageable_to_list(self.sb_mgmt_client.list_queues_runtime_info(start_index=start_index, max_count=max_count))
+        return await self.sb_mgmt_client.list_queues_runtime_info(start_index=start_index, max_count=max_count)
 
     async def create_resource_method(self, name):
         await self.sb_mgmt_client.create_queue(name)
@@ -122,27 +122,3 @@ async def run_test_async_mgmt_list_with_negative_parameters(test_helper):
     result = await test_helper.list_resource_method()
     assert len(result) == 0
 
-
-async def async_pageable_to_list(pageable):
-    res = []
-    async for item in pageable:
-        res.append(item)
-    return res
-
-
-async def clear_queues(servicebus_management_client):
-    queues = await async_pageable_to_list(servicebus_management_client.list_queues())
-    for queue in queues:
-        try:
-            await servicebus_management_client.delete_queue(queue)
-        except:
-            pass
-
-
-async def clear_topics(servicebus_management_client):
-    topics = await async_pageable_to_list(servicebus_management_client.list_topics())
-    for topic in topics:
-        try:
-            await servicebus_management_client.delete_topic(topic)
-        except:
-            pass

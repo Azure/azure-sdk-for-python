@@ -1,3 +1,4 @@
+# Template for all Python Scripts in this repository
 parameters: 
   OSVmImage: $(OSVmImage)
 

@@ -3,7 +3,7 @@ parameters:
   ServiceDirectory: ''
 
 steps:
-  - template: /eng/common/pipelines/templates/steps/daily-dev-build-variable.yml
+  - template: tools/daily-dev-build-variable/daily-dev-build-variable.yml@azure-sdk-tools
 
   - task: PythonScript@0
     condition: eq(variables['SetDevVersion'],'true')

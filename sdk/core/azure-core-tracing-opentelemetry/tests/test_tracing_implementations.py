@@ -11,7 +11,6 @@ try:
 except ImportError:
     import mock
 
-from opentelemetry import trace
 from opentelemetry.trace import SpanKind as OpenTelemetrySpanKind
 
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
@@ -27,30 +26,30 @@ class TestOpentelemetryWrapper:
             wrapped_span = OpenTelemetrySpan(parent)
 
             assert wrapped_span.span_instance.name == "parent"
-            assert parent is trace.get_current_span()
-            assert wrapped_span.span_instance is trace.get_current_span()
+            assert parent is tracer.get_current_span()
+            assert wrapped_span.span_instance is tracer.get_current_span()
 
-            assert parent is trace.get_current_span()
+            assert parent is tracer.get_current_span()
 
     def test_no_span_passed_in_with_no_environ(self, tracer):
         with tracer.start_as_current_span("Root") as parent:
             with OpenTelemetrySpan() as wrapped_span:
 
                 assert wrapped_span.span_instance.name == "span"
-                assert wrapped_span.span_instance is trace.get_current_span()
+                assert wrapped_span.span_instance is tracer.get_current_span()
 
-            assert parent is trace.get_current_span()
+            assert parent is tracer.get_current_span()
 
 
     def test_span(self, tracer):
         with tracer.start_as_current_span("Root") as parent:
             assert OpenTelemetrySpan.get_current_tracer().source is tracer.source
             with OpenTelemetrySpan() as wrapped_span:
-                assert wrapped_span.span_instance is trace.get_current_span()
+                assert wrapped_span.span_instance is tracer.get_current_span()
 
                 with wrapped_span.span() as child:
                     assert child.span_instance.name == "span"
-                    assert child.span_instance is trace.get_current_span()
+                    assert child.span_instance is tracer.get_current_span()
                     assert child.span_instance.parent is wrapped_span.span_instance.context
 
     def test_start_finish(self, tracer):
@@ -69,7 +68,7 @@ class TestOpentelemetryWrapper:
         with tracer.start_as_current_span("Root") as parent:
             with OpenTelemetrySpan() as wrapped_class:
                 with OpenTelemetrySpan.change_context(parent):
-                    assert trace.get_current_span() is parent
+                    assert tracer.get_current_span() is parent
 
     def test_to_header(self, tracer):
         with tracer.start_as_current_span("Root") as parent:

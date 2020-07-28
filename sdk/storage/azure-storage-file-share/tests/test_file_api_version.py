@@ -3,17 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import unittest
 import pytest
+import platform
+from datetime import datetime, timedelta
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
-from azure.core.exceptions import ResourceExistsError
+from azure.core.exceptions import AzureError, ResourceExistsError
 from azure.storage.fileshare import (
+    VERSION,
     ShareServiceClient,
     ShareClient,
     ShareDirectoryClient,
     ShareFileClient
 )
-from azure.storage.fileshare._generated import __version__ as version
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'
@@ -23,7 +27,7 @@ class StorageClientTest(StorageTestCase):
     def setUp(self):
         super(StorageClientTest, self).setUp()
         self.api_version_1 = "2019-02-02"
-        self.api_version_2 = version
+        self.api_version_2 = "2019-07-07"
         self.short_byte_data = self.get_random_bytes(1024)
 
     # --Helpers-----------------------------------------------------------------

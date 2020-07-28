@@ -70,6 +70,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
+        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(train_request, 'TrainRequest')
         body_content_kwargs['content'] = body_content
@@ -133,6 +134,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
+        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -187,6 +189,7 @@ class FormRecognizerClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
+        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -231,6 +234,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
+        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if header_parameters['Content-Type'].split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
             body_content_kwargs['stream_content'] = file_stream
@@ -271,13 +275,13 @@ class FormRecognizerClientOperationsMixin(object):
         file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[None]
+        # type: (...) -> LROPoller
         """Analyze Form.
 
         Extract key-value pairs, tables, and semantic values from a given document. The input document
-        must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or
-        'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local
-        path) of the document to be analyzed.
+    must be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or
+    'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local
+    path) of the document to be analyzed.
 
         :param model_id: Model identifier.
         :type model_id: str
@@ -373,6 +377,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
+        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -417,6 +422,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
+        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(copy_request, 'CopyRequest')
         body_content_kwargs['content'] = body_content
@@ -445,11 +451,11 @@ class FormRecognizerClientOperationsMixin(object):
         copy_request,  # type: "models.CopyRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[None]
+        # type: (...) -> LROPoller
         """Copy Custom Model.
 
         Copy custom model stored in this resource (the source) to user specified target Form Recognizer
-        resource.
+    resource.
 
         :param model_id: Model identifier.
         :type model_id: str
@@ -542,6 +548,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
+        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -592,6 +599,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
+        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -639,6 +647,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
+        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if header_parameters['Content-Type'].split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
             body_content_kwargs['stream_content'] = file_stream
@@ -678,13 +687,13 @@ class FormRecognizerClientOperationsMixin(object):
         file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[None]
+        # type: (...) -> LROPoller
         """Analyze Receipt.
 
         Extract field text and semantic values from a given receipt document. The input document must
-        be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or
-        'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local
-        path) of the document to be analyzed.
+    be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or
+    'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri or local
+    path) of the document to be analyzed.
 
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
@@ -773,6 +782,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
+        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -815,6 +825,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
 
+        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         if header_parameters['Content-Type'].split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
             body_content_kwargs['stream_content'] = file_stream
@@ -853,13 +864,13 @@ class FormRecognizerClientOperationsMixin(object):
         file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller[None]
+        # type: (...) -> LROPoller
         """Analyze Layout.
 
         Extract text and layout information from a given document. The input document must be of one of
-        the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'.
-        Alternatively, use 'application/json' type to specify the location (Uri or local path) of the
-        document to be analyzed.
+    the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'.
+    Alternatively, use 'application/json' type to specify the location (Uri or local path) of the
+    document to be analyzed.
 
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: ~azure.ai.formrecognizer.models.SourcePath
@@ -945,6 +956,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
+        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -983,10 +995,6 @@ class FormRecognizerClientOperationsMixin(object):
         op = "full"
 
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
             if not next_link:
                 # Construct URL
                 url = self.list_custom_models.metadata['url']  # type: ignore
@@ -998,7 +1006,6 @@ class FormRecognizerClientOperationsMixin(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['op'] = self._serialize.query("op", op, 'str')
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
@@ -1006,7 +1013,12 @@ class FormRecognizerClientOperationsMixin(object):
                     'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
-                request = self._client.get(url, query_parameters, header_parameters)
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -1069,6 +1081,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
+        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response

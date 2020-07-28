@@ -12,10 +12,7 @@ from azure.common.credentials import (
 SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
 
 # Keyvault tests
-# Note: Keyvault tests require EnvironmentCredential variables to be populated as well. (AZURE_CLIENT_ID etc)
 TENANT_ID = '00000000-0000-0000-0000-000000000000'
-# Note: Not the OID from the azure portal.  Use 'az ad sp show --id <id> | grep objectId'
-CLIENT_OID = '00000000-0000-0000-0000-000000000000' 
 # Cognitive Services tests
 CS_SUBSCRIPTION_KEY = '0000000000000000000000000000'
 # Event Grid key

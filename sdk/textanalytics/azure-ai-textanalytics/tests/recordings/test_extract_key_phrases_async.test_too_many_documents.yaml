@@ -3,15 +3,12 @@ interactions:
     body: '{"documents": [{"id": "0", "text": "One", "language": "en"}, {"id": "1",
       "text": "Two", "language": "en"}, {"id": "2", "text": "Three", "language": "en"},
       {"id": "3", "text": "Four", "language": "en"}, {"id": "4", "text": "Five", "language":
-      "en"}, {"id": "5", "text": "Six", "language": "en"}, {"id": "6", "text": "Seven",
-      "language": "en"}, {"id": "7", "text": "Eight", "language": "en"}, {"id": "8",
-      "text": "Nine", "language": "en"}, {"id": "9", "text": "Ten", "language": "en"},
-      {"id": "10", "text": "Eleven", "language": "en"}]}'
+      "en"}, {"id": "5", "text": "Six", "language": "en"}]}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '534'
+      - '295'
       Content-Type:
       - application/json
       User-Agent:
@@ -20,19 +17,16 @@ interactions:
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]},{"id":"6","keyPhrases":[],"warnings":[]},{"id":"7","keyPhrases":[],"warnings":[]},{"id":"8","keyPhrases":[],"warnings":[]},{"id":"9","keyPhrases":[],"warnings":[]},{"id":"10","keyPhrases":[],"warnings":[]}],"errors":[{"id":"","error":{"code":"InvalidRequest","message":"The
-        request has exceeded the allowed document limits.","innererror":{"code":"InvalidDocumentBatch","message":"The
-        number of documents in the request have exceeded the data limitations. See
-        https://aka.ms/text-analytics-data-limits for additional information"}}}],"modelVersion":"2019-10-01"}'
+      string: '{"documents":[{"id":"0","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 146279f0-8cf2-4535-9b76-c747d7ac701d
+      apim-request-id: 410c6001-b69d-4c27-90cb-07427f049ed7
       content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=11
-      date: Mon, 06 Jul 2020 22:22:33 GMT
+      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=6
+      date: Thu, 18 Jun 2020 19:52:41 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '21'
+      x-envoy-upstream-service-time: '7'
     status:
       code: 200
       message: OK

@@ -41,7 +41,7 @@ class ServiceBusTopicsAsyncTests(AzureMgmtTestCase):
         ) as sb_client:
             async with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                 message = Message(b"Sample topic message")
-                await sender.send_messages(message)
+                await sender.send(message)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -60,4 +60,4 @@ class ServiceBusTopicsAsyncTests(AzureMgmtTestCase):
         ) as sb_client:
             async with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                 message = Message(b"Sample topic message")
-                await sender.send_messages(message)
+                await sender.send(message)

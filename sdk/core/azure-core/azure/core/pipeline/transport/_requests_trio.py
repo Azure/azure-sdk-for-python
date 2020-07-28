@@ -150,10 +150,10 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         return super(TrioRequestsTransport, self).__exit__()
 
-    async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
+    async def sleep(self, duration):
         await trio.sleep(duration)
 
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore # pylint:disable=invalid-overridden-method
+    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest

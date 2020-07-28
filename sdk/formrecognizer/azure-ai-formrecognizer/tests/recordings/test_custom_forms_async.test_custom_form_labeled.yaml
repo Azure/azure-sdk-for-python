@@ -8,36 +8,38 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: bf229dfe-aa94-4948-b083-0dd3b44569ad
+      apim-request-id: 3ce81228-96c0-42aa-967f-d90454ecdcde
       content-length: '0'
-      date: Fri, 10 Jul 2020 18:48:44 GMT
-      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a971b699-69e3-4397-a985-b3d48cf3ca3d
+      date: Thu, 11 Jun 2020 15:42:02 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/bfc1ac2f-ec2e-4320-976f-e68969b8655a
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '186'
+      x-envoy-upstream-service-time: '799'
     status:
       code: 201
       message: Created
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a971b699-69e3-4397-a985-b3d48cf3ca3d?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/bfc1ac2f-ec2e-4320-976f-e68969b8655a?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "a971b699-69e3-4397-a985-b3d48cf3ca3d", "status":
-        "ready", "createdDateTime": "2020-07-10T18:48:45Z", "lastUpdatedDateTime":
-        "2020-07-10T18:48:48Z"}, "trainResult": {"averageModelAccuracy": 0.973, "trainingDocuments":
+      string: '{"modelInfo": {"modelId": "bfc1ac2f-ec2e-4320-976f-e68969b8655a", "status":
+        "ready", "createdDateTime": "2020-06-11T15:42:02Z", "lastUpdatedDateTime":
+        "2020-06-11T15:42:04Z"}, "trainResult": {"averageModelAccuracy": 0.973, "trainingDocuments":
         [{"documentName": "Form_1.jpg", "pages": 1, "status": "succeeded"}, {"documentName":
         "Form_2.jpg", "pages": 1, "status": "succeeded"}, {"documentName": "Form_3.jpg",
         "pages": 1, "status": "succeeded"}, {"documentName": "Form_4.jpg", "pages":
@@ -53,17 +55,17 @@ interactions:
         "VendorName", "accuracy": 1.0}, {"fieldName": "Website", "accuracy": 1.0}],
         "errors": []}}'
     headers:
-      apim-request-id: 4963ef95-74db-49a3-a40d-27df810878e7
+      apim-request-id: d2fa7135-e4cb-466e-a202-894a4401b043
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 18:48:50 GMT
+      date: Thu, 11 Jun 2020 15:42:07 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '20'
+      x-envoy-upstream-service-time: '733'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a971b699-69e3-4397-a985-b3d48cf3ca3d?includeKeys=true
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/bfc1ac2f-ec2e-4320-976f-e68969b8655a?includeKeys=true
 - request:
     body: !!binary |
       /9j/4AAQSkZJRgABAQEAyADIAAD/4QBmRXhpZgAATU0AKgAAAAgABAEaAAUAAAABAAAAPgEbAAUA
@@ -8479,58 +8481,37 @@ interactions:
       Content-Type:
       - image/jpeg
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a971b699-69e3-4397-a985-b3d48cf3ca3d/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/bfc1ac2f-ec2e-4320-976f-e68969b8655a/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 712bb28e-d4fb-4cf8-9e64-96110e62605c
+      apim-request-id: 87761ddc-9a93-4bf1-b659-54a578aba96a
       content-length: '0'
-      date: Fri, 10 Jul 2020 18:48:52 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a971b699-69e3-4397-a985-b3d48cf3ca3d/analyzeresults/0f1309ed-3361-4b5f-8744-caf01b71bb59
+      date: Thu, 11 Jun 2020 15:42:09 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/bfc1ac2f-ec2e-4320-976f-e68969b8655a/analyzeresults/d3b486ac-a444-48e3-94fd-e76b54f81861
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '944'
+      x-envoy-upstream-service-time: '127'
     status:
       code: 202
       message: Accepted
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models/a971b699-69e3-4397-a985-b3d48cf3ca3d/analyze?includeTextDetails=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/bfc1ac2f-ec2e-4320-976f-e68969b8655a/analyze?includeTextDetails=false
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a971b699-69e3-4397-a985-b3d48cf3ca3d/analyzeresults/0f1309ed-3361-4b5f-8744-caf01b71bb59
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/bfc1ac2f-ec2e-4320-976f-e68969b8655a/analyzeresults/d3b486ac-a444-48e3-94fd-e76b54f81861
   response:
     body:
-      string: '{"status": "notStarted", "createdDateTime": "2020-07-10T18:48:52Z",
-        "lastUpdatedDateTime": "2020-07-10T18:48:54Z"}'
-    headers:
-      apim-request-id: 7779d10c-3bf9-420d-abc8-6e085e5fa509
-      content-length: '109'
-      content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 18:48:57 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '50'
-    status:
-      code: 200
-      message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a971b699-69e3-4397-a985-b3d48cf3ca3d/analyzeresults/0f1309ed-3361-4b5f-8744-caf01b71bb59
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a971b699-69e3-4397-a985-b3d48cf3ca3d/analyzeresults/0f1309ed-3361-4b5f-8744-caf01b71bb59
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:48:52Z",
-        "lastUpdatedDateTime": "2020-07-10T18:48:58Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T15:42:09Z",
+        "lastUpdatedDateTime": "2020-06-11T15:42:13Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "language": "en", "angle": 0, "width":
         1700, "height": 2200, "unit": "pixel"}], "pageResults": [{"page": 1, "tables":
         [{"rows": 4, "columns": 3, "cells": [{"rowIndex": 1, "columnIndex": 1, "text":
@@ -8575,55 +8556,54 @@ interactions:
         2, "text": "5,00", "boundingBox": [1072, 1216, 1309, 1216, 1309, 1260, 1072,
         1260]}, {"rowIndex": 4, "columnIndex": 3, "text": "100.00", "boundingBox":
         [1309, 1216, 1544, 1216, 1544, 1260, 1309, 1260]}]}]}], "documentResults":
-        [{"docType": "custom:form", "pageRange": [1, 1], "fields": {"DatedAs": {"type":
-        "string", "valueString": "12/20/2020", "text": "12/20/2020", "page": 1, "boundingBox":
-        [1168.0, 420.0, 1317.0, 420.0, 1317.0, 450.0, 1168.0, 450.0], "confidence":
-        1.0}, "Merchant": {"type": "string", "valueString": "Hero Limited", "text":
-        "Hero Limited", "page": 1, "boundingBox": [621.0, 202.0, 1075.0, 202.0, 1075.0,
-        266.0, 621.0, 266.0], "confidence": 1.0}, "PhoneNumber": {"type": "string",
-        "valueString": "555-348-6512", "text": "555-348-6512", "page": 1, "boundingBox":
-        [367.0, 351.0, 529.0, 351.0, 529.0, 378.0, 367.0, 378.0], "confidence": 1.0},
-        "CompanyAddress": {"type": "string", "valueString": "938 NE Burner Road Boulder
-        City, CO 92848", "text": "938 NE Burner Road Boulder City, CO 92848", "page":
-        1, "boundingBox": [277.0, 685.0, 568.0, 685.0, 568.0, 754.0, 277.0, 754.0],
-        "confidence": 1.0}, "CompanyPhoneNumber": {"type": "string", "valueString":
-        "938-294-2949", "text": "938-294-2949", "page": 1, "boundingBox": [713.0,
-        722.0, 884.0, 722.0, 884.0, 750.0, 713.0, 750.0], "confidence": 1.0}, "Email":
-        {"type": "string", "valueString": "accounts@herolimited.com", "text": "accounts@herolimited.com",
-        "page": 1, "boundingBox": [166.0, 480.0, 475.0, 480.0, 475.0, 503.0, 166.0,
-        503.0], "confidence": 1.0}, "PurchaseOrderNumber": {"type": "string", "valueString":
-        "948284", "text": "948284", "page": 1, "boundingBox": [1282.0, 461.0, 1377.0,
-        461.0, 1377.0, 489.0, 1282.0, 489.0], "confidence": 1.0}, "Quantity": {"type":
+        [{"docType": "custom:form", "pageRange": [1, 1], "fields": {"Quantity": {"type":
         "number", "text": "20", "page": 1, "boundingBox": [861.0, 1089.0, 895.0, 1089.0,
-        895.0, 1120.0, 861.0, 1120.0], "confidence": 1.0}, "VendorName": {"type":
-        "string", "valueString": "Hillary Swank", "text": "Hillary Swank", "page":
-        1, "boundingBox": [351.0, 609.0, 518.0, 609.0, 518.0, 641.0, 351.0, 641.0],
-        "confidence": 1.0}, "CompanyName": {"type": "string", "valueString": "Higgly
-        Wiggly Books", "text": "Higgly Wiggly Books", "page": 1, "boundingBox": [378.0,
-        646.0, 629.0, 646.0, 629.0, 682.0, 378.0, 682.0], "confidence": 1.0}, "Website":
-        {"type": "string", "valueString": "www.herolimited.com", "text": "www.herolimited.com",
-        "page": 1, "boundingBox": [274.0, 393.0, 529.0, 393.0, 529.0, 419.0, 274.0,
-        419.0], "confidence": 1.0}, "Signature": {"type": "string", "valueString":
-        "Bernie Sanders", "text": "Bernie Sanders", "page": 1, "boundingBox": [482.0,
-        1670.0, 764.0, 1670.0, 764.0, 1709.0, 482.0, 1709.0], "confidence": 1.0},
-        "Subtotal": {"type": "string", "valueString": "$140.00", "text": "$140.00",
-        "page": 1, "boundingBox": [1429.0, 1570.0, 1530.0, 1570.0, 1530.0, 1599.0,
-        1429.0, 1599.0], "confidence": 1.0}, "Total": {"type": "string", "valueString":
-        "$144.00", "text": "$144.00", "page": 1, "boundingBox": [1429.0, 1669.0, 1530.0,
-        1669.0, 1530.0, 1697.0, 1429.0, 1697.0], "confidence": 1.0}, "Tax": {"type":
-        "string", "valueString": "$4.00", "text": "$4.00", "page": 1, "boundingBox":
-        [1461.0, 1614.0, 1530.0, 1614.0, 1530.0, 1642.0, 1461.0, 1642.0], "confidence":
-        1.0}}}], "errors": []}}'
+        895.0, 1120.0, 861.0, 1120.0], "confidence": 1.0}, "PhoneNumber": {"type":
+        "string", "valueString": "555-348-6512", "text": "555-348-6512", "page": 1,
+        "boundingBox": [367.0, 351.0, 529.0, 351.0, 529.0, 378.0, 367.0, 378.0], "confidence":
+        1.0}, "Tax": {"type": "string", "valueString": "$4.00", "text": "$4.00", "page":
+        1, "boundingBox": [1461.0, 1614.0, 1530.0, 1614.0, 1530.0, 1642.0, 1461.0,
+        1642.0], "confidence": 1.0}, "Email": {"type": "string", "valueString": "accounts@herolimited.com",
+        "text": "accounts@herolimited.com", "page": 1, "boundingBox": [166.0, 480.0,
+        475.0, 480.0, 475.0, 503.0, 166.0, 503.0], "confidence": 1.0}, "PurchaseOrderNumber":
+        {"type": "string", "valueString": "948284", "text": "948284", "page": 1, "boundingBox":
+        [1282.0, 461.0, 1377.0, 461.0, 1377.0, 489.0, 1282.0, 489.0], "confidence":
+        1.0}, "Signature": {"type": "string", "valueString": "Bernie Sanders", "text":
+        "Bernie Sanders", "page": 1, "boundingBox": [482.0, 1670.0, 764.0, 1670.0,
+        764.0, 1709.0, 482.0, 1709.0], "confidence": 1.0}, "Merchant": {"type": "string",
+        "valueString": "Hero Limited", "text": "Hero Limited", "page": 1, "boundingBox":
+        [621.0, 202.0, 1075.0, 202.0, 1075.0, 266.0, 621.0, 266.0], "confidence":
+        1.0}, "CompanyName": {"type": "string", "valueString": "Higgly Wiggly Books",
+        "text": "Higgly Wiggly Books", "page": 1, "boundingBox": [378.0, 646.0, 629.0,
+        646.0, 629.0, 682.0, 378.0, 682.0], "confidence": 1.0}, "CompanyPhoneNumber":
+        {"type": "string", "valueString": "938-294-2949", "text": "938-294-2949",
+        "page": 1, "boundingBox": [713.0, 722.0, 884.0, 722.0, 884.0, 750.0, 713.0,
+        750.0], "confidence": 1.0}, "VendorName": {"type": "string", "valueString":
+        "Hillary Swank", "text": "Hillary Swank", "page": 1, "boundingBox": [351.0,
+        609.0, 518.0, 609.0, 518.0, 641.0, 351.0, 641.0], "confidence": 1.0}, "Total":
+        {"type": "string", "valueString": "$144.00", "text": "$144.00", "page": 1,
+        "boundingBox": [1429.0, 1669.0, 1530.0, 1669.0, 1530.0, 1697.0, 1429.0, 1697.0],
+        "confidence": 1.0}, "DatedAs": {"type": "string", "valueString": "12/20/2020",
+        "text": "12/20/2020", "page": 1, "boundingBox": [1168.0, 420.0, 1317.0, 420.0,
+        1317.0, 450.0, 1168.0, 450.0], "confidence": 1.0}, "CompanyAddress": {"type":
+        "string", "valueString": "938 NE Burner Road Boulder City, CO 92848", "text":
+        "938 NE Burner Road Boulder City, CO 92848", "page": 1, "boundingBox": [277.0,
+        685.0, 568.0, 685.0, 568.0, 754.0, 277.0, 754.0], "confidence": 1.0}, "Subtotal":
+        {"type": "string", "valueString": "$140.00", "text": "$140.00", "page": 1,
+        "boundingBox": [1429.0, 1570.0, 1530.0, 1570.0, 1530.0, 1599.0, 1429.0, 1599.0],
+        "confidence": 1.0}, "Website": {"type": "string", "valueString": "www.herolimited.com",
+        "text": "www.herolimited.com", "page": 1, "boundingBox": [274.0, 393.0, 529.0,
+        393.0, 529.0, 419.0, 274.0, 419.0], "confidence": 1.0}}}], "errors": []}}'
     headers:
-      apim-request-id: 42a844f5-b1a4-449b-be18-5da9f70432e4
+      apim-request-id: 4df8c7e1-2ff9-478d-a6b7-3d8c9e1ac835
       content-length: '5839'
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 18:49:02 GMT
+      date: Thu, 11 Jun 2020 15:42:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '21'
+      x-envoy-upstream-service-time: '50'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a971b699-69e3-4397-a985-b3d48cf3ca3d/analyzeresults/0f1309ed-3361-4b5f-8744-caf01b71bb59
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/bfc1ac2f-ec2e-4320-976f-e68969b8655a/analyzeresults/d3b486ac-a444-48e3-94fd-e76b54f81861
 version: 1

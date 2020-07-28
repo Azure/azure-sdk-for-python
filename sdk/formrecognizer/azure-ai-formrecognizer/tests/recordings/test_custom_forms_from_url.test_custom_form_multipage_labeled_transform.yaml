@@ -14,27 +14,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 092c7827-58f9-4194-8ab4-78c5d04fe8da
+      - 717c43aa-2c51-44b0-88f8-d632a53d30b6
       content-length:
       - '0'
       date:
-      - Fri, 10 Jul 2020 18:53:32 GMT
+      - Thu, 11 Jun 2020 15:41:23 GMT
       location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/da106f9f-2e86-4565-9545-059cde796f36
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/1fcaff93-bef7-4309-b090-d890bce7badd
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '238'
+      - '123'
     status:
       code: 201
       message: Created
@@ -48,14 +49,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/da106f9f-2e86-4565-9545-059cde796f36?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/1fcaff93-bef7-4309-b090-d890bce7badd?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "da106f9f-2e86-4565-9545-059cde796f36", "status":
-        "ready", "createdDateTime": "2020-07-10T18:53:32Z", "lastUpdatedDateTime":
-        "2020-07-10T18:53:35Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
+      string: '{"modelInfo": {"modelId": "1fcaff93-bef7-4309-b090-d890bce7badd", "status":
+        "ready", "createdDateTime": "2020-06-11T15:41:23Z", "lastUpdatedDateTime":
+        "2020-06-11T15:41:25Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
         [{"documentName": "multipage_invoice1.pdf", "pages": 3, "status": "succeeded"},
         {"documentName": "multipage_invoice2.pdf", "pages": 3, "status": "succeeded"},
         {"documentName": "multipage_invoice3.pdf", "pages": 3, "status": "succeeded"},
@@ -74,11 +76,11 @@ interactions:
         1.0}, {"fieldName": "Total2", "accuracy": 1.0}], "errors": []}}'
     headers:
       apim-request-id:
-      - 37704c84-fa1d-4863-b636-932b716aa979
+      - a01b1136-a36d-4a70-99d9-eee8ec0002d3
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:53:36 GMT
+      - Thu, 11 Jun 2020 15:41:28 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -86,7 +88,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '18'
+      - '127'
     status:
       code: 200
       message: OK
@@ -104,27 +106,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/da106f9f-2e86-4565-9545-059cde796f36/analyze?includeTextDetails=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/1fcaff93-bef7-4309-b090-d890bce7badd/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 324d9727-de8d-44a7-85fa-126a47893f77
+      - 1c2f4beb-1e0a-45c9-a609-bc6a19e7ddef
       content-length:
       - '0'
       date:
-      - Fri, 10 Jul 2020 18:53:37 GMT
+      - Thu, 11 Jun 2020 15:41:29 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/da106f9f-2e86-4565-9545-059cde796f36/analyzeresults/0d0ab61c-f2c3-4d96-a591-0a21d7325a73
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/1fcaff93-bef7-4309-b090-d890bce7badd/analyzeresults/d63f57bf-81d6-4c2b-97fd-0658b436593c
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '232'
+      - '173'
     status:
       code: 202
       message: Accepted
@@ -138,28 +141,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/da106f9f-2e86-4565-9545-059cde796f36/analyzeresults/0d0ab61c-f2c3-4d96-a591-0a21d7325a73
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/1fcaff93-bef7-4309-b090-d890bce7badd/analyzeresults/d63f57bf-81d6-4c2b-97fd-0658b436593c
   response:
     body:
-      string: '{"status": "notStarted", "createdDateTime": "2020-07-10T18:53:38Z",
-        "lastUpdatedDateTime": "2020-07-10T18:53:39Z"}'
+      string: '{"status": "notStarted", "createdDateTime": "2020-06-11T15:41:29Z",
+        "lastUpdatedDateTime": "2020-06-11T15:41:34Z"}'
     headers:
       apim-request-id:
-      - bf729046-b856-4935-8799-3e8ab3f53b7c
+      - e620af2a-52ea-4142-afaf-57df3b2e4abb
       content-length:
       - '109'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:53:42 GMT
+      - Thu, 11 Jun 2020 15:41:34 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '20'
+      - '52'
     status:
       code: 200
       message: OK
@@ -173,48 +177,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/da106f9f-2e86-4565-9545-059cde796f36/analyzeresults/0d0ab61c-f2c3-4d96-a591-0a21d7325a73
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/1fcaff93-bef7-4309-b090-d890bce7badd/analyzeresults/d63f57bf-81d6-4c2b-97fd-0658b436593c
   response:
     body:
-      string: '{"status": "notStarted", "createdDateTime": "2020-07-10T18:53:38Z",
-        "lastUpdatedDateTime": "2020-07-10T18:53:39Z"}'
-    headers:
-      apim-request-id:
-      - 40115dbd-2a7c-4594-bf2a-0c35a5c578d7
-      content-length:
-      - '109'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Fri, 10 Jul 2020 18:53:47 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '20'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/da106f9f-2e86-4565-9545-059cde796f36/analyzeresults/0d0ab61c-f2c3-4d96-a591-0a21d7325a73
-  response:
-    body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:53:38Z",
-        "lastUpdatedDateTime": "2020-07-10T18:53:49Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T15:41:29Z",
+        "lastUpdatedDateTime": "2020-06-11T15:41:38Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "language": "en", "angle": 0, "width":
         8.5, "height": 11, "unit": "inch", "lines": [{"boundingBox": [0.8861, 1.1217,
         2.3783, 1.1217, 2.3783, 1.2812, 0.8861, 1.2812], "text": "Company A Invoice",
@@ -595,85 +565,85 @@ interactions:
         {"rowIndex": 7, "columnIndex": 2, "text": "220.00", "boundingBox": [5.3353,
         4.4181, 7.4997, 4.4181, 7.4997, 4.6281, 5.3353, 4.6281], "elements": ["#/readResults/2/lines/33/words/0"]}]}]}],
         "documentResults": [{"docType": "custom:form", "pageRange": [1, 3], "fields":
-        {"Total2": {"type": "string", "valueString": "4300.00", "text": "4300.00",
-        "page": 3, "boundingBox": [5.94, 5.565, 6.48, 5.565, 6.48, 5.675, 5.94, 5.675],
-        "confidence": 1.0, "elements": ["#/analyzeResult/readResults/2/lines/37/words/1"]},
-        "FirstItem": {"type": "string", "valueString": "A", "text": "A", "page": 1,
-        "boundingBox": [1.085, 3.21, 1.175, 3.21, 1.175, 3.3200000000000003, 1.085,
-        3.3200000000000003], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/13/words/0"]},
+        {"Tip": {"type": "string", "valueString": "100.00", "text": "100.00", "page":
+        1, "boundingBox": [5.8100000000000005, 5.345, 6.26, 5.345, 6.26, 5.455, 5.8100000000000005,
+        5.455], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/36/words/1"]},
+        "MerchantPhoneNumber": {"type": "string", "valueString": "555-555-5555", "text":
+        "555-555-5555", "page": 1, "boundingBox": [0.885, 2.29, 1.81, 2.29, 1.81,
+        2.395, 0.885, 2.395], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/9/words/0"]},
+        "Customer2": {"type": "string", "valueString": "Frodo Baggins", "text": "Frodo
+        Baggins", "page": 3, "boundingBox": [6.015000000000001, 1.45, 6.95, 1.45,
+        6.95, 1.595, 6.015000000000001, 1.595], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/2/lines/3/words/0",
+        "#/analyzeResult/readResults/2/lines/3/words/1"]}, "Signature": {"type": "string",
+        "valueString": "Bilbo Baggins", "text": "Bilbo Baggins", "page": 1, "boundingBox":
+        [2.05, 6.655, 3.04, 6.655, 3.04, 6.8, 2.05, 6.8], "confidence": 1.0, "elements":
+        ["#/analyzeResult/readResults/0/lines/38/words/1", "#/analyzeResult/readResults/0/lines/38/words/2"]},
         "Total": {"type": "string", "valueString": "430.00", "text": "430.00", "page":
         1, "boundingBox": [5.94, 5.565, 6.4, 5.565, 6.4, 5.675, 5.94, 5.675], "confidence":
-        1.0, "elements": ["#/analyzeResult/readResults/0/lines/37/words/1"]}, "CustomerPhoneNumber":
-        {"type": "string", "valueString": "555-555-5555", "text": "555-555-5555",
-        "page": 1, "boundingBox": [6.01, 2.12, 6.9350000000000005, 2.12, 6.9350000000000005,
-        2.225, 6.01, 2.225], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/8/words/0"]},
+        1.0, "elements": ["#/analyzeResult/readResults/0/lines/37/words/1"]}, "Merchant":
+        {"type": "string", "valueString": "A", "text": "A", "page": 1, "boundingBox":
+        [1.67, 1.125, 1.7750000000000001, 1.125, 1.7750000000000001, 1.245, 1.67,
+        1.245], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/0/words/1"]},
         "Merchant2": {"type": "string", "valueString": "Company", "text": "Company",
         "page": 1, "boundingBox": [0.885, 1.125, 1.62, 1.125, 1.62, 1.28, 0.885, 1.28],
         "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/0/words/0"]},
-        "FirstQuantity": {"type": "string", "valueString": "1", "text": "1", "page":
-        1, "boundingBox": [3.2600000000000002, 3.21, 3.3200000000000003, 3.21, 3.3200000000000003,
-        3.3200000000000003, 3.2600000000000002, 3.3200000000000003], "confidence":
-        1.0, "elements": ["#/analyzeResult/readResults/0/lines/14/words/0"]}, "MerchantPhoneNumber":
-        {"type": "string", "valueString": "555-555-5555", "text": "555-555-5555",
-        "page": 1, "boundingBox": [0.885, 2.29, 1.81, 2.29, 1.81, 2.395, 0.885, 2.395],
-        "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/9/words/0"]},
-        "CustomerName": {"type": "string", "valueString": "Bilbo Baggins", "text":
-        "Bilbo Baggins", "page": 1, "boundingBox": [6.015000000000001, 1.45, 6.8950000000000005,
-        1.45, 6.8950000000000005, 1.595, 6.015000000000001, 1.595], "confidence":
-        1.0, "elements": ["#/analyzeResult/readResults/0/lines/3/words/0", "#/analyzeResult/readResults/0/lines/3/words/1"]},
-        "Subtotal": {"type": "string", "valueString": "300.00", "text": "300.00",
-        "page": 1, "boundingBox": [6.18, 4.905, 6.63, 4.905, 6.63, 5.015, 6.18, 5.015],
-        "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/34/words/1"]},
+        "Total2": {"type": "string", "valueString": "4300.00", "text": "4300.00",
+        "page": 3, "boundingBox": [5.94, 5.565, 6.48, 5.565, 6.48, 5.675, 5.94, 5.675],
+        "confidence": 1.0, "elements": ["#/analyzeResult/readResults/2/lines/37/words/1"]},
+        "Tax": {"type": "string", "valueString": "30.00", "text": "30.00", "page":
+        1, "boundingBox": [5.835, 5.125, 6.2, 5.125, 6.2, 5.235, 5.835, 5.235], "confidence":
+        1.0, "elements": ["#/analyzeResult/readResults/0/lines/35/words/1"]}, "FirstQuantity":
+        {"type": "string", "valueString": "1", "text": "1", "page": 1, "boundingBox":
+        [3.2600000000000002, 3.21, 3.3200000000000003, 3.21, 3.3200000000000003, 3.3200000000000003,
+        3.2600000000000002, 3.3200000000000003], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/14/words/0"]},
         "Signature2": {"type": "string", "valueString": "Frodo Baggins", "text": "Frodo
         Baggins", "page": 3, "boundingBox": [2.07, 6.655, 3.09, 6.655, 3.09, 6.8,
         2.07, 6.8], "confidence": 0.16, "elements": ["#/analyzeResult/readResults/2/lines/38/words/1",
-        "#/analyzeResult/readResults/2/lines/38/words/2"]}, "FirstPrice": {"type":
-        "string", "valueString": "10.99", "text": "10.99", "page": 1, "boundingBox":
-        [5.425, 3.21, 5.78, 3.21, 5.78, 3.3200000000000003, 5.425, 3.3200000000000003],
-        "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/15/words/0"]},
+        "#/analyzeResult/readResults/2/lines/38/words/2"]}, "CustomerName": {"type":
+        "string", "valueString": "Bilbo Baggins", "text": "Bilbo Baggins", "page":
+        1, "boundingBox": [6.015000000000001, 1.45, 6.8950000000000005, 1.45, 6.8950000000000005,
+        1.595, 6.015000000000001, 1.595], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/3/words/0",
+        "#/analyzeResult/readResults/0/lines/3/words/1"]}, "CustomerPhoneNumber":
+        {"type": "string", "valueString": "555-555-5555", "text": "555-555-5555",
+        "page": 1, "boundingBox": [6.01, 2.12, 6.9350000000000005, 2.12, 6.9350000000000005,
+        2.225, 6.01, 2.225], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/8/words/0"]},
         "CustomerAddress": {"type": "string", "valueString": "123 Hobbit Lane Redmond,
         WA", "text": "123 Hobbit Lane Redmond, WA", "page": 1, "boundingBox": [6.015000000000001,
         1.67, 7.1000000000000005, 1.67, 7.1000000000000005, 2.0300000000000002, 6.015000000000001,
         2.0300000000000002], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/4/words/0",
         "#/analyzeResult/readResults/0/lines/4/words/1", "#/analyzeResult/readResults/0/lines/4/words/2",
         "#/analyzeResult/readResults/0/lines/6/words/0", "#/analyzeResult/readResults/0/lines/6/words/1"]},
-        "Tip": {"type": "string", "valueString": "100.00", "text": "100.00", "page":
-        1, "boundingBox": [5.8100000000000005, 5.345, 6.26, 5.345, 6.26, 5.455, 5.8100000000000005,
-        5.455], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/36/words/1"]},
-        "Merchant": {"type": "string", "valueString": "A", "text": "A", "page": 1,
-        "boundingBox": [1.67, 1.125, 1.7750000000000001, 1.125, 1.7750000000000001,
-        1.245, 1.67, 1.245], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/0/words/1"]},
+        "Subtotal": {"type": "string", "valueString": "300.00", "text": "300.00",
+        "page": 1, "boundingBox": [6.18, 4.905, 6.63, 4.905, 6.63, 5.015, 6.18, 5.015],
+        "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/34/words/1"]},
+        "FirstPrice": {"type": "string", "valueString": "10.99", "text": "10.99",
+        "page": 1, "boundingBox": [5.425, 3.21, 5.78, 3.21, 5.78, 3.3200000000000003,
+        5.425, 3.3200000000000003], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/0/lines/15/words/0"]},
         "MerchantAddress": {"type": "string", "valueString": "567 Main St. Redmond,
         WA", "text": "567 Main St. Redmond, WA", "page": 1, "boundingBox": [0.885,
         1.845, 1.855, 1.845, 1.855, 2.2, 0.885, 2.2], "confidence": 1.0, "elements":
         ["#/analyzeResult/readResults/0/lines/5/words/0", "#/analyzeResult/readResults/0/lines/5/words/1",
         "#/analyzeResult/readResults/0/lines/5/words/2", "#/analyzeResult/readResults/0/lines/7/words/0",
-        "#/analyzeResult/readResults/0/lines/7/words/1"]}, "Signature": {"type": "string",
-        "valueString": "Bilbo Baggins", "text": "Bilbo Baggins", "page": 1, "boundingBox":
-        [2.05, 6.655, 3.04, 6.655, 3.04, 6.8, 2.05, 6.8], "confidence": 1.0, "elements":
-        ["#/analyzeResult/readResults/0/lines/38/words/1", "#/analyzeResult/readResults/0/lines/38/words/2"]},
-        "Customer2": {"type": "string", "valueString": "Frodo Baggins", "text": "Frodo
-        Baggins", "page": 3, "boundingBox": [6.015000000000001, 1.45, 6.95, 1.45,
-        6.95, 1.595, 6.015000000000001, 1.595], "confidence": 1.0, "elements": ["#/analyzeResult/readResults/2/lines/3/words/0",
-        "#/analyzeResult/readResults/2/lines/3/words/1"]}, "Tax": {"type": "string",
-        "valueString": "30.00", "text": "30.00", "page": 1, "boundingBox": [5.835,
-        5.125, 6.2, 5.125, 6.2, 5.235, 5.835, 5.235], "confidence": 1.0, "elements":
-        ["#/analyzeResult/readResults/0/lines/35/words/1"]}}}], "errors": []}}'
+        "#/analyzeResult/readResults/0/lines/7/words/1"]}, "FirstItem": {"type": "string",
+        "valueString": "A", "text": "A", "page": 1, "boundingBox": [1.085, 3.21, 1.175,
+        3.21, 1.175, 3.3200000000000003, 1.085, 3.3200000000000003], "confidence":
+        1.0, "elements": ["#/analyzeResult/readResults/0/lines/13/words/0"]}}}], "errors":
+        []}}'
     headers:
       apim-request-id:
-      - 9667c217-9002-4810-b2b0-280e3e4a7965
+      - 45d2d3ba-0c39-495a-9adf-86c4437c601e
       content-length:
       - '32675'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:53:52 GMT
+      - Thu, 11 Jun 2020 15:41:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '27'
+      - '130'
     status:
       code: 200
       message: OK

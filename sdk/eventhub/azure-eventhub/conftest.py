@@ -3,21 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-import sys
+
 import os
 import pytest
 import logging
+import sys
 import uuid
 import warnings
 from logging.handlers import RotatingFileHandler
-
-from azure.identity import EnvironmentCredential
-from azure.mgmt.resource import ResourceManagementClient
-from azure.mgmt.eventhub import EventHubManagementClient
-from azure.eventhub import EventHubProducerClient
-from uamqp import ReceiveClient
-from uamqp.authentication import SASTokenAuth
-
 
 # Ignore async tests for Python < 3.5
 collect_ignore = []
@@ -26,14 +19,15 @@ if sys.version_info < (3, 5):
     collect_ignore.append("tests/unittest/asynctests")
     collect_ignore.append("features")
     collect_ignore.append("samples/async_samples")
+    collect_ignore.append("examples/async_examples")
+
+from azure.servicebus._control_client import ServiceBusService, EventHub
+from azure.eventhub import EventHubProducerClient
+import uamqp
+from uamqp import authentication
+
 PARTITION_COUNT = 2
 CONN_STR = "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}"
-RES_GROUP_PREFIX = "eh-res-group"
-NAMESPACE_PREFIX = "eh-ns"
-EVENTHUB_PREFIX = "eh"
-EVENTHUB_DEFAULT_AUTH_RULE_NAME = 'RootManageSharedAccessKey'
-LOCATION = "westus"
-
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -72,81 +66,59 @@ def get_logger(filename, level=logging.INFO):
 log = get_logger(None, logging.DEBUG)
 
 
-@pytest.fixture(scope="session")
-def resource_group():
-    try:
-        SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
-    except KeyError:
-        pytest.skip('AZURE_SUBSCRIPTION_ID undefined')
-        return
-    resource_client = ResourceManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
-    resource_group_name = RES_GROUP_PREFIX + str(uuid.uuid4())
-    try:
-        rg = resource_client.resource_groups.create_or_update(
-           resource_group_name, {"location": LOCATION}
-        )
-        yield rg
-    finally:
-        try:
-            resource_client.resource_groups.begin_delete(resource_group_name)
-        except:
-            warnings.warn(UserWarning("resource group teardown failed"))
+def create_eventhub(eventhub_config, client=None):
+    hub_name = str(uuid.uuid4())
+    hub_value = EventHub(partition_count=PARTITION_COUNT)
+    client = client or ServiceBusService(
+        service_namespace=eventhub_config['namespace'],
+        shared_access_key_name=eventhub_config['key_name'],
+        shared_access_key_value=eventhub_config['access_key'])
+    if client.create_event_hub(hub_name, hub=hub_value, fail_on_exist=True):
+        return hub_name
+    raise ValueError("EventHub creation failed.")
+
+
+def cleanup_eventhub(eventhub_config, hub_name, client=None):
+    client = client or ServiceBusService(
+        service_namespace=eventhub_config['namespace'],
+        shared_access_key_name=eventhub_config['key_name'],
+        shared_access_key_value=eventhub_config['access_key'])
+    client.delete_event_hub(hub_name)
 
 
 @pytest.fixture(scope="session")
-def eventhub_namespace(resource_group):
+def live_eventhub_config():
     try:
-        SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
+        config = {}
+        config['hostname'] = os.environ['EVENT_HUB_HOSTNAME']
+        config['event_hub'] = os.environ['EVENT_HUB_NAME']
+        config['key_name'] = os.environ['EVENT_HUB_SAS_POLICY']
+        config['access_key'] = os.environ['EVENT_HUB_SAS_KEY']
+        config['namespace'] = os.environ['EVENT_HUB_NAMESPACE']
+        config['consumer_group'] = "$Default"
+        config['partition'] = "0"
+        config['connection_str'] = CONN_STR
     except KeyError:
-        pytest.skip('AZURE_SUBSCRIPTION_ID defined')
-        return
-    resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
-    namespace_name = NAMESPACE_PREFIX + str(uuid.uuid4())
-    try:
-        namespace = resource_client.namespaces.begin_create_or_update(
-            resource_group.name, namespace_name, {"location": LOCATION}
-        ).result()
-        key = resource_client.namespaces.list_keys(resource_group.name, namespace_name, EVENTHUB_DEFAULT_AUTH_RULE_NAME)
-        connection_string = key.primary_connection_string
-        key_name = key.key_name
-        primary_key = key.primary_key
-        yield namespace.name, connection_string, key_name, primary_key
-    finally:
-        try:
-            resource_client.namespaces.begin_delete(resource_group.name, namespace_name).wait()
-        except:
-            warnings.warn(UserWarning("eventhub namespace teardown failed"))
+        pytest.skip("Live EventHub configuration not found.")
+    else:
+        return config
 
 
 @pytest.fixture()
-def live_eventhub(resource_group, eventhub_namespace):  # pylint: disable=redefined-outer-name
+def live_eventhub(live_eventhub_config):  # pylint: disable=redefined-outer-name
+    client = ServiceBusService(
+        service_namespace=live_eventhub_config['namespace'],
+        shared_access_key_name=live_eventhub_config['key_name'],
+        shared_access_key_value=live_eventhub_config['access_key'])
     try:
-        SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
-    except KeyError:
-        pytest.skip('AZURE_SUBSCRIPTION_ID defined')
-        return
-    resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
-    eventhub_name = EVENTHUB_PREFIX + str(uuid.uuid4())
-    eventhub_ns_name, connection_string, key_name, primary_key = eventhub_namespace
-    try:
-        eventhub = resource_client.event_hubs.create_or_update(
-            resource_group.name, eventhub_ns_name, eventhub_name, {"partition_count": PARTITION_COUNT}
-        )
-        live_eventhub_config = {
-            'resource_group': resource_group.name,
-            'hostname': "{}.servicebus.windows.net".format(eventhub_ns_name),
-            'key_name': key_name,
-            'access_key': primary_key,
-            'namespace': eventhub_ns_name,
-            'event_hub': eventhub.name,
-            'consumer_group': '$Default',
-            'partition': '0',
-            'connection_str': connection_string + ";EntityPath="+eventhub.name
-        }
+        hub_name = create_eventhub(live_eventhub_config, client=client)
+        print("Created EventHub {}".format(hub_name))
+        live_eventhub_config['event_hub'] = hub_name
         yield live_eventhub_config
     finally:
         try:
-            resource_client.event_hubs.delete(resource_group.name, eventhub_ns_name, eventhub_name)
+            cleanup_eventhub(live_eventhub_config, hub_name, client=client)
+            print("Deleted EventHub {}".format(hub_name))
         except:
             warnings.warn(UserWarning("eventhub teardown failed"))
 
@@ -161,48 +133,55 @@ def connection_str(live_eventhub):
 
 
 @pytest.fixture()
-def invalid_hostname(live_eventhub):
+def invalid_hostname(live_eventhub_config):
     return CONN_STR.format(
         "invalid123.servicebus.windows.net",
-        live_eventhub['key_name'],
-        live_eventhub['access_key'],
-        live_eventhub['event_hub'])
+        live_eventhub_config['key_name'],
+        live_eventhub_config['access_key'],
+        live_eventhub_config['event_hub'])
 
 
 @pytest.fixture()
-def invalid_key(live_eventhub):
+def invalid_key(live_eventhub_config):
     return CONN_STR.format(
-        live_eventhub['hostname'],
-        live_eventhub['key_name'],
+        live_eventhub_config['hostname'],
+        live_eventhub_config['key_name'],
         "invalid",
-        live_eventhub['event_hub'])
+        live_eventhub_config['event_hub'])
 
 
 @pytest.fixture()
-def invalid_policy(live_eventhub):
+def invalid_policy(live_eventhub_config):
     return CONN_STR.format(
-        live_eventhub['hostname'],
+        live_eventhub_config['hostname'],
         "invalid",
-        live_eventhub['access_key'],
-        live_eventhub['event_hub'])
+        live_eventhub_config['access_key'],
+        live_eventhub_config['event_hub'])
 
 
 @pytest.fixture()
-def connstr_receivers(live_eventhub):
-    connection_str = live_eventhub["connection_str"]
+def aad_credential():
+    try:
+        return os.environ['AZURE_CLIENT_ID'], os.environ['AZURE_CLIENT_SECRET'], os.environ['AZURE_TENANT_ID']
+    except KeyError:
+        pytest.skip('No Azure Active Directory credential found')
+
+
+@pytest.fixture()
+def connstr_receivers(connection_str, live_eventhub_config):
     partitions = [str(i) for i in range(PARTITION_COUNT)]
     receivers = []
     for p in partitions:
-        uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-        sas_auth = SASTokenAuth.from_shared_access_key(
-            uri, live_eventhub['key_name'], live_eventhub['access_key'])
+        uri = "sb://{}/{}".format(live_eventhub_config['hostname'], live_eventhub_config['event_hub'])
+        sas_auth = authentication.SASTokenAuth.from_shared_access_key(
+            uri, live_eventhub_config['key_name'], live_eventhub_config['access_key'])
 
         source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
-            live_eventhub['hostname'],
-            live_eventhub['event_hub'],
-            live_eventhub['consumer_group'],
+            live_eventhub_config['hostname'],
+            live_eventhub_config['event_hub'],
+            live_eventhub_config['consumer_group'],
             p)
-        receiver = ReceiveClient(source, auth=sas_auth, debug=False, timeout=0, prefetch=500)
+        receiver = uamqp.ReceiveClient(source, auth=sas_auth, debug=False, timeout=0, prefetch=500)
         receiver.open()
         receivers.append(receiver)
     yield connection_str, receivers
@@ -211,8 +190,7 @@ def connstr_receivers(live_eventhub):
 
 
 @pytest.fixture()
-def connstr_senders(live_eventhub):
-    connection_str = live_eventhub["connection_str"]
+def connstr_senders(connection_str):
     client = EventHubProducerClient.from_connection_string(connection_str)
     partitions = client.get_partition_ids()
 

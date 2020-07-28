@@ -39,6 +39,7 @@ class _AesCbcDecryptor(_AesCbcCryptoTransform):
         padded = self._ctx.finalize()
         return self._padder.update(padded) + self._padder.finalize()
 
+    @property
     def block_size(self):
         # return self._cipher.block_size
         raise NotImplementedError()
@@ -58,6 +59,7 @@ class _AesCbcEncryptor(_AesCbcCryptoTransform):
         padded = self._padder.finalize()
         return self._ctx.update(padded) + self._ctx.finalize()
 
+    @property
     def block_size(self):
         # return self._cipher.block_size
         raise NotImplementedError()

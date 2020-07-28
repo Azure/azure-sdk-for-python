@@ -23,7 +23,7 @@ from functools import partial
 from .partition_context import PartitionContext
 from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .ownership_manager import OwnershipManager
-from .common import CloseReason, LoadBalancingStrategy
+from .common import CloseReason
 from ._eventprocessor_mixin import EventProcessorMixin
 
 if TYPE_CHECKING:
@@ -86,9 +86,7 @@ class EventProcessor(
         self._load_balancing_interval = kwargs.get(
             "load_balancing_interval", 10.0
         )  # type: float
-        self._load_balancing_strategy = kwargs.get("load_balancing_strategy") or LoadBalancingStrategy.GREEDY
-        self._ownership_timeout = kwargs.get(
-            "partition_ownership_expiration_interval", self._load_balancing_interval * 6)
+        self._ownership_timeout = self._load_balancing_interval * 6
 
         self._partition_contexts = {}  # type: Dict[str, PartitionContext]
 
@@ -111,7 +109,6 @@ class EventProcessor(
             self._id,
             self._checkpoint_store,
             self._ownership_timeout,
-            self._load_balancing_strategy,
             self._partition_id,
         )
 

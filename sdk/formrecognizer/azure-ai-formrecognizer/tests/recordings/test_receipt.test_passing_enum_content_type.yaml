@@ -31798,27 +31798,28 @@ interactions:
       Content-Type:
       - image/png
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 2b2b880e-6f32-4181-8978-ecc00cd8b4cf
+      - 80cfbdad-af20-49d6-b31f-d3e06bbdd7b3
       content-length:
       - '0'
       date:
-      - Fri, 10 Jul 2020 18:53:11 GMT
+      - Thu, 11 Jun 2020 15:43:44 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/2b2b880e-6f32-4181-8978-ecc00cd8b4cf
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/80cfbdad-af20-49d6-b31f-d3e06bbdd7b3
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '673'
+      - '672'
     status:
       code: 202
       message: Accepted
@@ -31832,13 +31833,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/2b2b880e-6f32-4181-8978-ecc00cd8b4cf
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/prebuilt/receipt/analyzeResults/80cfbdad-af20-49d6-b31f-d3e06bbdd7b3
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:53:11Z",
-        "lastUpdatedDateTime": "2020-07-10T18:53:12Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-06-11T15:43:44Z",
+        "lastUpdatedDateTime": "2020-06-11T15:43:47Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0.2511, "width": 1688, "height":
         3000, "unit": "pixel", "language": "en"}], "documentResults": [{"docType":
         "prebuilt:receipt", "pageRange": [1, 1], "fields": {"ReceiptType": {"type":
@@ -31855,7 +31857,7 @@ interactions:
         1223.5, 506, 1224, 505.8, 1289, 303, 1288.5], "page": 1, "confidence": 0.985},
         "TransactionTime": {"type": "time", "valueTime": "13:59:00", "text": "13:59",
         "boundingBox": [518, 1225, 628.1, 1227, 627, 1291, 516.8, 1289], "page": 1,
-        "confidence": 0.968}, "Items": {"type": "array", "valueArray": [{"type": "object",
+        "confidence": 0.97}, "Items": {"type": "array", "valueArray": [{"type": "object",
         "valueObject": {"Name": {"type": "string", "valueString": "8GB RAM (Black)",
         "text": "8GB RAM (Black)", "boundingBox": [370.7, 1781.5, 731, 1785, 730.3,
         1854, 370, 1850.6], "page": 1, "confidence": 0.916}, "TotalPrice": {"type":
@@ -31877,11 +31879,11 @@ interactions:
         2678.1, 948.2, 2661], "page": 1, "confidence": 0.774}}}]}}'
     headers:
       apim-request-id:
-      - a32f8c66-4d67-4561-82c2-1c862f440e11
+      - fdf76957-b800-4b84-a93d-5b47e7d855dc
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:53:16 GMT
+      - Thu, 11 Jun 2020 15:43:50 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -31889,7 +31891,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '15'
+      - '14'
     status:
       code: 200
       message: OK

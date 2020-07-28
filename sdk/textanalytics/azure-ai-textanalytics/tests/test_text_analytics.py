@@ -7,7 +7,7 @@
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.ai.textanalytics import _models
-from azure.ai.textanalytics._generated.v3_1_preview_1 import models as _generated_models
+from azure.ai.textanalytics._generated import models as _generated_models
 from testcase import GlobalTextAnalyticsAccountPreparer
 from testcase import TextAnalyticsTest as TestAnalyticsTestCase
 

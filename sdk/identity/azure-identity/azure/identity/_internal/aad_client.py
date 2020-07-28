@@ -21,7 +21,7 @@ from .user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, List, Optional, Union
+    from typing import Any, List, Optional, Sequence, Union
     from azure.core.credentials import AccessToken
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import HttpTransport
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
 class AadClient(AadClientBase):
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
-        # type: (Iterable[str], str, str, Optional[str], **Any) -> AccessToken
+        # type: (Sequence[str], str, str, Optional[str], **Any) -> AccessToken
         request = self._get_auth_code_request(
             scopes=scopes, code=code, redirect_uri=redirect_uri, client_secret=client_secret
         )
@@ -41,21 +41,21 @@ class AadClient(AadClientBase):
         return self._process_response(response, now)
 
     def obtain_token_by_client_certificate(self, scopes, certificate, **kwargs):
-        # type: (Iterable[str], AadClientCertificate, **Any) -> AccessToken
+        # type: (Sequence[str], AadClientCertificate, **Any) -> AccessToken
         request = self._get_client_certificate_request(scopes, certificate)
         now = int(time.time())
         response = self._pipeline.run(request, stream=False, **kwargs)
         return self._process_response(response, now)
 
     def obtain_token_by_client_secret(self, scopes, secret, **kwargs):
-        # type: (Iterable[str], str, **Any) -> AccessToken
+        # type: (Sequence[str], str, **Any) -> AccessToken
         request = self._get_client_secret_request(scopes, secret)
         now = int(time.time())
         response = self._pipeline.run(request, stream=False, **kwargs)
         return self._process_response(response, now)
 
     def obtain_token_by_refresh_token(self, scopes, refresh_token, **kwargs):
-        # type: (Iterable[str], str, **Any) -> AccessToken
+        # type: (Sequence[str], str, **Any) -> AccessToken
         request = self._get_refresh_token_request(scopes, refresh_token)
         now = int(time.time())
         response = self._pipeline.run(request, stream=False, **kwargs)

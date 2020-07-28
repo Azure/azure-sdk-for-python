@@ -27,28 +27,10 @@ from ._models import (
     TextAnalyticsWarning
 )
 
-def _get_too_many_documents_error(obj):
-    try:
-        too_many_documents_errors = [
-            error for error in obj.errors if error.id == ""
-        ]
-    except AttributeError:
-        too_many_documents_errors = [
-            error for error in obj["errors"] if error["id"] == ""
-        ]
-    if too_many_documents_errors:
-        return too_many_documents_errors[0]
-    return None
-
 class CSODataV4Format(ODataV4Format):
 
     def __init__(self, odata_error):
-
         try:
-            if not odata_error.get("error"):
-                odata_error = _get_too_many_documents_error(odata_error)
-            if not odata_error:
-                raise ValueError("Service encountered an error without any details")
             if odata_error["error"]["innererror"]:
                 super(CSODataV4Format, self).__init__(odata_error["error"]["innererror"])
         except KeyError:
@@ -84,10 +66,13 @@ def prepare_result(func):
 
     def _deal_with_too_many_documents(response, obj):
         # special case for now if there are too many documents in the request
-        too_many_documents_error = _get_too_many_documents_error(obj)
-        if too_many_documents_error:
-            response.reason = "Bad Request"
+        too_many_documents_errors = [
+            error for error in obj.errors if error.id == ""
+        ]
+        if too_many_documents_errors:
+            too_many_documents_error = too_many_documents_errors[0]
             response.status_code = 400
+            response.reason = "Bad Request"
             code, message = _get_error_code_and_message(too_many_documents_error)
             raise HttpResponseError(
                 message="({}) {}".format(code, message),

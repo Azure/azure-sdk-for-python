@@ -1,6 +1,10 @@
 trigger: none
 pr: none
 
+variables:
+  Skip.MyPy: true
+  Skip.Pylint: true
+  Skip.ApiStubGen: true
 
 jobs:
 - job: 'ValidateDependencies'
@@ -11,11 +15,7 @@ jobs:
     vmImage: 'windows-2019'
 
   steps:
-  - template: ../common/pipelines/templates/steps/verify-links.yml
-    parameters:
-      Directory: ""
-
-  - template: /eng/pipelines/templates/steps/analyze_dependency.yml
+  - template: ./templates/steps/analyze.yml
 
   - task: AzureFileCopy@2
     displayName: 'Upload dependency report'

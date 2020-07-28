@@ -8,36 +8,38 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 0065a544-c0c1-4b18-88c0-b4773cd1b412
+      apim-request-id: bf23ed2b-190b-463e-a034-2af24900e38a
       content-length: '0'
-      date: Fri, 10 Jul 2020 19:00:25 GMT
-      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/912674ba-d5f0-40d7-912b-471871d3b8f7
+      date: Thu, 11 Jun 2020 15:45:13 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/f037141b-616d-4f06-a904-e7bfa35caebe
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '912'
+      x-envoy-upstream-service-time: '67'
     status:
       code: 201
       message: Created
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+        Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/912674ba-d5f0-40d7-912b-471871d3b8f7?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/f037141b-616d-4f06-a904-e7bfa35caebe?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "912674ba-d5f0-40d7-912b-471871d3b8f7", "status":
-        "ready", "createdDateTime": "2020-07-10T19:00:24Z", "lastUpdatedDateTime":
-        "2020-07-10T19:00:28Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
+      string: '{"modelInfo": {"modelId": "f037141b-616d-4f06-a904-e7bfa35caebe", "status":
+        "ready", "createdDateTime": "2020-06-11T15:45:13Z", "lastUpdatedDateTime":
+        "2020-06-11T15:45:15Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
         [{"documentName": "multipage_invoice1.pdf", "pages": 3, "status": "succeeded"},
         {"documentName": "multipage_invoice2.pdf", "pages": 3, "status": "succeeded"},
         {"documentName": "multipage_invoice3.pdf", "pages": 3, "status": "succeeded"},
@@ -55,15 +57,15 @@ interactions:
         1.0}, {"fieldName": "Tip", "accuracy": 1.0}, {"fieldName": "Total", "accuracy":
         1.0}, {"fieldName": "Total2", "accuracy": 1.0}], "errors": []}}'
     headers:
-      apim-request-id: 1792f338-debf-4bb0-a8a8-235c92ff17c5
+      apim-request-id: fc708af3-5030-4b3f-a8ad-1d8f795b0485
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 19:00:30 GMT
+      date: Thu, 11 Jun 2020 15:45:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '17'
+      x-envoy-upstream-service-time: '18'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/912674ba-d5f0-40d7-912b-471871d3b8f7?includeKeys=true
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/f037141b-616d-4f06-a904-e7bfa35caebe?includeKeys=true
 version: 1

@@ -14,7 +14,7 @@ from azure.identity import ManagedIdentityCredential
 from azure.identity._constants import Endpoints, EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 
-from helpers import build_aad_response, validating_transport, mock_response, Request
+from helpers import validating_transport, mock_response, Request
 
 MANAGED_IDENTITY_ENVIRON = "azure.identity._credentials.managed_identity.os.environ"
 
@@ -257,39 +257,6 @@ def test_imds():
     with mock.patch.dict("os.environ", clear=True):
         token = ManagedIdentityCredential(transport=transport).get_token(scope)
     assert token == expected_token
-
-
-def test_client_id_none():
-    """the credential should ignore client_id=None"""
-
-    expected_access_token = "****"
-
-    def send(request, **_):
-        assert "client_id" not in request.query  # IMDS
-        assert "clientid" not in request.query  # App Service 2017-09-01
-        if request.data:
-            assert "client_id" not in request.body  # Cloud Shell
-        return mock_response(json_payload=(build_aad_response(access_token=expected_access_token)))
-
-    credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
-    token = credential.get_token("scope")
-    assert token.token == expected_access_token
-
-    with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: "https://localhost", EnvironmentVariables.MSI_SECRET: "secret"},
-        clear=True,
-    ):
-        credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
-        token = credential.get_token("scope")
-    assert token.token == expected_access_token
-
-    with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True,
-    ):
-        credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
-        token = credential.get_token("scope")
-    assert token.token == expected_access_token
 
 
 def test_imds_user_assigned_identity():

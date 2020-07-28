@@ -9,7 +9,8 @@ steps:
     displayName: 'Use Python 3.7'
     inputs:
      versionSpec: '3.7'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))    
+    condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))
+    
 
   - script: |
       pip install -r eng/ci_tools.txt
@@ -26,6 +27,6 @@ steps:
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="lint"
         --disablecov
-        --filter-type="Omit_management"
+        --omit-management
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))

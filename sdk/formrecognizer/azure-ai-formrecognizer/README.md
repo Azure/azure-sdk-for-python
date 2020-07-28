@@ -125,8 +125,6 @@ See the full details regarding [authentication][cognitive_authentication] of cog
  - Recognizing common fields from US receipts, using a pre-trained receipt model on the Form Recognizer service. These fields and meta-data are returned in a collection of `RecognizedForm` objects.
  - Recognizing form content, including tables, lines and words, without the need to train a model. Form content is returned in a collection of `FormPage` objects.
 
-Sample code snippets are provided to illustrate using a FormRecognizerClient [here](#recognize-forms-using-a-custom-model "Recognize Forms Using a Custom Model").
-
 ### FormTrainingClient
 `FormTrainingClient` provides operations for:
 
@@ -136,8 +134,6 @@ Sample code snippets are provided to illustrate using a FormRecognizerClient [he
 - Copying a custom model from one Form Recognizer resource to another.
 
 Please note that models can also be trained using a graphical user interface such as the [Form Recognizer Labeling Tool][fr-labeling-tool].
-
-Sample code snippets are provided to illustrate using a FormTrainingClient [here](#train-a-model "Train a model").
 
 ### Long-Running Operations
 Long-running operations are operations which consist of an initial request sent to the service to start an operation,
@@ -186,16 +182,6 @@ for recognized_form in result:
         print("Field '{}' has value '{}' with a confidence score of {}".format(
             label, field.value, field.confidence
         ))
-```
-
-Alternatively, a form url can also be used to recognize custom forms using the `begin_recognize_custom_forms_from_url` method. The `_from_url` methods exist for
-all the recognize methods.
-
-
-```
-form_url = "<url_of_the_form>"
-poller = form_recognizer_client.begin_recognize_custom_forms_from_url(model_id=model_id, form_url=form_url)
-result = poller.result()
 ```
 
 ### Recognize Content
@@ -337,14 +323,6 @@ except ResourceNotFoundError:
     print("Successfully deleted model with id {}".format(custom_model.model_id))
 ```
 
-## Async APIs
-This library also includes a complete async API supported on Python 3.5+. To use it, you must
-first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
-See
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
-for more information.
-
-
 ## Optional Configuration
 
 Optional keyword arguments can be passed in at the client and per-operation level.
@@ -354,7 +332,7 @@ describes available configurations for retries, logging, transport protocols, an
 ## Troubleshooting
 
 ### General
-Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
+Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_ref_docs].
 
 ### Logging
 This library uses the standard
@@ -429,7 +407,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-fr-product-docs]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview
 [python-fr-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [python-fr-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples
-[train-a-model-using-labeled-data]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/python-labeled-data#train-a-model-using-labeled-data
 
 
 [quickstart_training]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/curl-train-extract#train-a-form-recognizer-model
@@ -446,7 +423,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
-[azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [python_logging]: https://docs.python.org/3/library/logging.html
 [multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show

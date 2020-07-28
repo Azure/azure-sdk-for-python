@@ -337,9 +337,6 @@ class DataLakeFileClient(PathClient):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword int chunk_size:
-            The maximum chunk size for uploading a file in chunks.
-            Defaults to 100*1024*1024, or 100MB.
         :return: response dict (Etag and last modified).
         """
         options = self._upload_options(

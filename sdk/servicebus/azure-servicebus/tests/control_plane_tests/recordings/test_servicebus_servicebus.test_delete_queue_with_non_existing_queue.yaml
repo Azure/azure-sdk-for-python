@@ -1,0 +1,23 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.0]
+    method: DELETE
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueuecfc61c4c
+  response:
+    body: {string: '<Error><Code>404</Code><Detail>No service is hosted at the specified
+        address. TrackingId:0a6794c0-9335-41fd-a9be-c2d8890c2ad9_G45,TimeStamp:6/30/2015
+        8:56:33 PM</Detail></Error>'}
+    headers:
+      Content-Type: [application/xml; charset=utf-8]
+      Date: ['Tue, 30 Jun 2015 20:56:32 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+    status: {code: 404, message: Not Found}
+version: 1

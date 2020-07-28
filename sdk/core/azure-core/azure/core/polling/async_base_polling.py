@@ -40,7 +40,7 @@ class AsyncLROBasePolling(LROBasePolling):
     """A subclass or LROBasePolling that redefine "run" as async.
     """
 
-    async def run(self):  # pylint:disable=invalid-overridden-method
+    async def run(self):
         try:
             await self._poll()
         except BadStatus as err:
@@ -62,7 +62,7 @@ class AsyncLROBasePolling(LROBasePolling):
                 response=self._pipeline_response.http_response, error=err
             )
 
-    async def _poll(self):  # pylint:disable=invalid-overridden-method
+    async def _poll(self):
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
 
@@ -85,17 +85,17 @@ class AsyncLROBasePolling(LROBasePolling):
             self._pipeline_response = await self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
-    async def _sleep(self, delay):  # pylint:disable=invalid-overridden-method
+    async def _sleep(self, delay):
         await self._transport.sleep(delay)
 
-    async def _delay(self):  # pylint:disable=invalid-overridden-method
+    async def _delay(self):
         """Check for a 'retry-after' header to set timeout,
         otherwise use configured timeout.
         """
         delay = self._extract_delay()
         await self._sleep(delay)
 
-    async def update_status(self):  # pylint:disable=invalid-overridden-method
+    async def update_status(self):
         """Update the current status of the LRO.
         """
         self._pipeline_response = await self.request_status(
@@ -104,7 +104,7 @@ class AsyncLROBasePolling(LROBasePolling):
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    async def request_status(self, status_link):  # pylint:disable=invalid-overridden-method
+    async def request_status(self, status_link):
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.

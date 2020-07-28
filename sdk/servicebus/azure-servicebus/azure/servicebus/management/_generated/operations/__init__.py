@@ -6,16 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._entity_operations import EntityOperations
+from ._queue_operations import QueueOperations
 from ._service_bus_management_client_operations import ServiceBusManagementClientOperationsMixin
-from ._subscription_operations import SubscriptionOperations
-from ._rule_operations import RuleOperations
-from ._namespace_operations import NamespaceOperations
 
 __all__ = [
-    'EntityOperations',
+    'QueueOperations',
     'ServiceBusManagementClientOperationsMixin',
-    'SubscriptionOperations',
-    'RuleOperations',
-    'NamespaceOperations',
 ]

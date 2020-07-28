@@ -131,6 +131,18 @@ class TestDetectLanguage(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
+    @pytest.mark.xfail
+    def test_too_many_documents(self, client):
+        # marking as xfail since the service hasn't added this error to this endpoint
+        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+
+        try:
+            client.detect_language(docs)
+        except HttpResponseError as e:
+            assert e.status_code == 400
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
     def test_output_same_order_as_input(self, client):
         docs = [
             DetectLanguageInput(id="1", text="one"),

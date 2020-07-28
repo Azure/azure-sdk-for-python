@@ -39,6 +39,8 @@ class DataLakeStorageClientConfiguration(Configuration):
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
+        # if file_system is None:
+        #     raise ValueError("Parameter 'file_system' must not be None.")
 
         super(DataLakeStorageClientConfiguration, self).__init__(**kwargs)
         self._configure(**kwargs)
@@ -51,7 +53,7 @@ class DataLakeStorageClientConfiguration(Configuration):
         self.file_system = file_system
         self.path1 = path1
         self.resource = "filesystem"
-        self.version = "2019-12-12"
+        self.version = "2019-02-02"
 
     def _configure(self, **kwargs):
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)

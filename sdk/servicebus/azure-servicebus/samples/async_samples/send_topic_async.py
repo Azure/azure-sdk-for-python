@@ -21,25 +21,20 @@ TOPIC_NAME = os.environ["SERVICE_BUS_TOPIC_NAME"]
 
 
 async def send_single_message(sender):
-    message = Message("Single Message")
-    await sender.send_messages(message)
-
-
-async def send_a_list_of_messages(sender):
-    messages = [Message("Message in list") for _ in range(10)]
-    await sender.send_messages(messages)
+    message = Message("DATA" * 64)
+    await sender.send(message)
 
 
 async def send_batch_message(sender):
     batch_message = await sender.create_batch()
-    for _ in range(10):
+    while True:
         try:
-            batch_message.add(Message("Message inside a BatchMessage"))
+            batch_message.add(Message("DATA" * 256))
         except ValueError:
             # BatchMessage object reaches max_size.
             # New BatchMessage object can be created here to send more data.
             break
-    await sender.send_messages(batch_message)
+    await sender.send(batch_message)
 
 
 async def main():

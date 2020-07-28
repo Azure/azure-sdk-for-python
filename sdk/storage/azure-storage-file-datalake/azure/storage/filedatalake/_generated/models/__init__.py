@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import AclFailedEntry
     from ._models_py3 import FileSystem
     from ._models_py3 import FileSystemList
     from ._models_py3 import LeaseAccessConditions
@@ -18,12 +17,10 @@ try:
     from ._models_py3 import Path
     from ._models_py3 import PathHTTPHeaders
     from ._models_py3 import PathList
-    from ._models_py3 import SetAccessControlRecursiveResponse
     from ._models_py3 import SourceModifiedAccessConditions
     from ._models_py3 import StorageError, StorageErrorException
     from ._models_py3 import StorageErrorError
 except (SyntaxError, ImportError):
-    from ._models import AclFailedEntry
     from ._models import FileSystem
     from ._models import FileSystemList
     from ._models import LeaseAccessConditions
@@ -31,7 +28,6 @@ except (SyntaxError, ImportError):
     from ._models import Path
     from ._models import PathHTTPHeaders
     from ._models import PathList
-    from ._models import SetAccessControlRecursiveResponse
     from ._models import SourceModifiedAccessConditions
     from ._models import StorageError, StorageErrorException
     from ._models import StorageErrorError
@@ -40,12 +36,10 @@ from ._data_lake_storage_client_enums import (
     PathLeaseAction,
     PathRenameMode,
     PathResourceType,
-    PathSetAccessControlRecursiveMode,
     PathUpdateAction,
 )
 
 __all__ = [
-    'AclFailedEntry',
     'FileSystem',
     'FileSystemList',
     'LeaseAccessConditions',
@@ -53,14 +47,12 @@ __all__ = [
     'Path',
     'PathHTTPHeaders',
     'PathList',
-    'SetAccessControlRecursiveResponse',
     'SourceModifiedAccessConditions',
     'StorageError', 'StorageErrorException',
     'StorageErrorError',
     'PathResourceType',
     'PathRenameMode',
     'PathUpdateAction',
-    'PathSetAccessControlRecursiveMode',
     'PathLeaseAction',
     'PathGetPropertiesAction',
 ]

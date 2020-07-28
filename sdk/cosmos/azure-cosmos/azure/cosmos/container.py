@@ -282,7 +282,7 @@ class ContainerProxy(object):
     def query_items(
         self,
         query,  # type: str
-        parameters=None,  # type: Optional[List[Dict[str, object]]]
+        parameters=None,  # type: Optional[List[str]]
         partition_key=None,  # type: Optional[Any]
         enable_cross_partition_query=None,  # type: Optional[bool]
         max_item_count=None,  # type: Optional[int]
@@ -299,9 +299,7 @@ class ContainerProxy(object):
         the WHERE clause.
 
         :param query: The Azure Cosmos DB SQL query to execute.
-        :param parameters: Optional array of parameters to the query.
-            Each parameter is a dict() with 'name' and 'value' keys.
-            Ignored if no query is provided.
+        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param partition_key: Specifies the partition key value for the item.
         :param enable_cross_partition_query: Allows sending of more than one request to
             execute the query in the Azure Cosmos DB service.
@@ -451,11 +449,7 @@ class ContainerProxy(object):
             request_options["postTriggerInclude"] = post_trigger_include
 
         result = self.client_connection.UpsertItem(
-            database_or_container_link=self.container_link,
-            document=body,
-            options=request_options,
-            **kwargs
-        )
+            database_or_container_link=self.container_link, document=body, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result

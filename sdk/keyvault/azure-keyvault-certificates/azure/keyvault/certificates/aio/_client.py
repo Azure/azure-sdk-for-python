@@ -343,7 +343,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             certificate_name=certificate_name,
             base64_encoded_certificate=base64_encoded_certificate,
             password=password,
-            certificate_policy=policy._to_certificate_policy_bundle() if policy else None,
+            certificate_policy=CertificatePolicy._to_certificate_policy_bundle(policy),
             certificate_attributes=attributes,
             error_map=_error_map,
             **kwargs

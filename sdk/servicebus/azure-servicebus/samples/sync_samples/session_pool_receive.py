@@ -13,7 +13,7 @@ from azure.servicebus.exceptions import NoActiveSession
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 # Note: This must be a session-enabled queue.
-SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
+QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 
 def message_processing(sb_client, queue_name, messages):
@@ -26,9 +26,10 @@ def message_processing(sb_client, queue_name, messages):
                 for message in receiver:
                     messages.append(message)
                     print("Message: {}".format(message))
-                    print("Time to live: {}".format(message.time_to_live))
+                    print("Time to live: {}".format(message.header.time_to_live))
                     print("Sequence number: {}".format(message.sequence_number))
-                    print("Enqueue Sequence number: {}".format(message.enqueued_sequence_number))
+                    print("Enqueue Sequence number: {}".format(message.enqueue_sequence_number))
+                    print("Partition ID: {}".format(message.partition_id))
                     print("Partition Key: {}".format(message.partition_key))
                     print("Locked until: {}".format(message.locked_until_utc))
                     print("Lock Token: {}".format(message.lock_token))
@@ -52,7 +53,7 @@ def sample_session_send_receive_with_pool(connection_string, queue_name):
             for session_id in sessions:
                 for i in range(20):
                     message = Message("Sample message no. {}".format(i), session_id=session_id)
-                    sender.send_messages(message)
+                    sender.send(message)
 
         all_messages = []
         futures = []
@@ -65,4 +66,4 @@ def sample_session_send_receive_with_pool(connection_string, queue_name):
 
 
 if __name__ == '__main__':
-    sample_session_send_receive_with_pool(CONNECTION_STR, SESSION_QUEUE_NAME)
+    sample_session_send_receive_with_pool(CONNECTION_STR, QUEUE_NAME)

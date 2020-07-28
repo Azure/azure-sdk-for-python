@@ -1,11 +1,7 @@
-# Release History
+# Change Log azure-ai-textanalytics
 
-## 5.0.1 (Unreleased)
+## 1.0.1 (Unreleased)
 
-
-## 5.0.0 (2020-07-27)
-
-- Re-release of GA version 1.0.0 with an updated version
 
 ## 1.0.0 (2020-06-09)
 

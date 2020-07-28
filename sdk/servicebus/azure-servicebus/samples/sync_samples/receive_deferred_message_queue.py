@@ -12,7 +12,7 @@ Example to show receiving deferred message from a Service Bus Queue.
 # pylint: disable=C0111
 
 import os
-from azure.servicebus import Message, ServiceBusClient
+from azure.servicebus import ServiceBusClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
@@ -20,14 +20,9 @@ QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
 
 with servicebus_client:
-    sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
-    messages = [Message("Message to be deferred") for _ in range(10)]
-    with sender:
-        sender.send_messages(messages)
-
-    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
+    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch=10)
     with receiver:
-        received_msgs = receiver.receive_messages(max_batch_size=10, max_wait_time=5)
+        received_msgs = receiver.receive(max_batch_size=10, max_wait_time=5)
         deferred_sequenced_numbers = []
         for msg in received_msgs:
             print("Deferring msg: {}".format(str(msg)))

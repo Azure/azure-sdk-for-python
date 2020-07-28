@@ -276,9 +276,10 @@ class ServiceOperations:
          of 5000.
         :type maxresults: int
         :param include: Include this parameter to specify that the container's
-         metadata be returned as part of the response body.
-        :type include: list[str or
-         ~azure.storage.blob.models.ListContainersIncludeType]
+         metadata be returned as part of the response body. Possible values
+         include: 'metadata'
+        :type include: str or
+         ~azure.storage.blob.models.ListContainersIncludeType
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -314,7 +315,7 @@ class ServiceOperations:
         if maxresults is not None:
             query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', minimum=1)
         if include is not None:
-            query_parameters['include'] = self._serialize.query("include", include, '[ListContainersIncludeType]', div=',')
+            query_parameters['include'] = self._serialize.query("include", include, 'ListContainersIncludeType')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
@@ -564,101 +565,3 @@ class ServiceOperations:
 
         return deserialized
     submit_batch.metadata = {'url': '/'}
-
-    async def filter_blobs(self, timeout=None, request_id=None, where=None, marker=None, maxresults=None, *, cls=None, **kwargs):
-        """The Filter Blobs operation enables callers to list blobs across all
-        containers whose tags match a given search expression.  Filter blobs
-        searches across all containers within a storage account but can be
-        scoped within the expression to a single container.
-
-        :param timeout: The timeout parameter is expressed in seconds. For
-         more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>
-        :type timeout: int
-        :param request_id: Provides a client-generated, opaque value with a 1
-         KB character limit that is recorded in the analytics logs when storage
-         analytics logging is enabled.
-        :type request_id: str
-        :param where: Filters the results to return only to return only blobs
-         whose tags match the specified expression.
-        :type where: str
-        :param marker: A string value that identifies the portion of the list
-         of containers to be returned with the next listing operation. The
-         operation returns the NextMarker value within the response body if the
-         listing operation did not return all containers remaining to be listed
-         with the current page. The NextMarker value can be used as the value
-         for the marker parameter in a subsequent call to request the next page
-         of list items. The marker value is opaque to the client.
-        :type marker: str
-        :param maxresults: Specifies the maximum number of containers to
-         return. If the request does not specify maxresults, or specifies a
-         value greater than 5000, the server will return up to 5000 items. Note
-         that if the listing operation crosses a partition boundary, then the
-         service will return a continuation token for retrieving the remainder
-         of the results. For this reason, it is possible that the service will
-         return fewer results than specified by maxresults, or than the default
-         of 5000.
-        :type maxresults: int
-        :param callable cls: A custom type or function that will be passed the
-         direct response
-        :return: FilterBlobSegment or the result of cls(response)
-        :rtype: ~azure.storage.blob.models.FilterBlobSegment
-        :raises:
-         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
-        """
-        error_map = kwargs.pop('error_map', None)
-        comp = "blobs"
-
-        # Construct URL
-        url = self.filter_blobs.metadata['url']
-        path_format_arguments = {
-            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        if timeout is not None:
-            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-        if where is not None:
-            query_parameters['where'] = self._serialize.query("where", where, 'str')
-        if marker is not None:
-            query_parameters['marker'] = self._serialize.query("marker", marker, 'str')
-        if maxresults is not None:
-            query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', minimum=1)
-        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/xml'
-        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
-        if request_id is not None:
-            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise models.StorageErrorException(response, self._deserialize)
-
-        header_dict = {}
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('FilterBlobSegment', response)
-            header_dict = {
-                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
-                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
-                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
-                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
-                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
-            }
-
-        if cls:
-            return cls(response, deserialized, header_dict)
-
-        return deserialized
-    filter_blobs.metadata = {'url': '/'}

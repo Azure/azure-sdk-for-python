@@ -40,13 +40,13 @@ indexers_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
 
 async def create_indexer():
     # create an index
-    index_name = "indexer-hotels"
+    index_name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double)
     ]
     index = SearchIndex(name=index_name, fields=fields)
-    ind_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
+    ind_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
     async with ind_client:
         await ind_client.create_index(index)
 
@@ -59,8 +59,8 @@ async def create_indexer():
         connection_string=connection_string,
         container=container
     )
-    async with indexers_client:
-        data_source = await indexers_client.create_data_source_connection(data_source_connection)
+    async with ind_client:
+        data_source = await ind_client.create_data_source_connection(data_source_connection)
 
     # create an indexer
     indexer = SearchIndexer(

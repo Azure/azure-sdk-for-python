@@ -46,7 +46,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with client:
             with pytest.raises(ServiceBusError):
                 with client.get_queue_sender(servicebus_queue.name) as sender:
-                    sender.send_messages(Message("test"))
+                    sender.send(Message("test"))
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -59,7 +59,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with client:
             with pytest.raises(ServiceBusError):
                 with client.get_queue_sender('invalidqueue') as sender:
-                    sender.send_messages(Message("test"))
+                    sender.send(Message("test"))
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -72,7 +72,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with client:
             with pytest.raises(ServiceBusConnectionError):
                 with client.get_queue_sender("invalid") as sender:
-                    sender.send_messages(Message("test"))
+                    sender.send(Message("test"))
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -85,11 +85,11 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
         with client:
             with client.get_queue_receiver(servicebus_queue.name) as receiver:
-                messages = receiver.receive_messages(max_batch_size=1, max_wait_time=1)
+                messages = receiver.receive(max_batch_size=1, max_wait_time=1)
 
             with pytest.raises(ServiceBusError): 
                 with client.get_queue_sender(servicebus_queue.name) as sender:
-                    sender.send_messages(Message("test"))
+                    sender.send(Message("test"))
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -103,13 +103,13 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with client:
             with pytest.raises(ServiceBusError):
                 with client.get_queue_receiver(servicebus_queue.name) as receiver:
-                    messages = receiver.receive_messages(max_batch_size=1, max_wait_time=1)
+                    messages = receiver.receive(max_batch_size=1, max_wait_time=1)
 
             with client.get_queue_sender(servicebus_queue.name) as sender:
-                sender.send_messages(Message("test"))
+                sender.send(Message("test"))
 
                 with pytest.raises(ValueError):
-                    sender.send_messages("cat")
+                    sender.send("cat")
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -125,4 +125,4 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with client:
             with pytest.raises(ServiceBusError):
                 with client.get_queue_sender(wrong_queue.name) as sender:
-                    sender.send_messages(Message("test"))
+                    sender.send(Message("test"))

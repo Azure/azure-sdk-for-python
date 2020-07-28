@@ -37,19 +37,6 @@ class BaseSession(object):
         self._locked_until_utc = None  # type: Optional[datetime.datetime]
         self.auto_renew_error = None
 
-    def _check_live(self):
-        if self._lock_expired:
-            raise SessionLockExpired(inner_exception=self.auto_renew_error)
-
-    @property
-    def _lock_expired(self):
-        # type: () -> bool
-        """Whether the receivers lock on a particular session has expired.
-
-        :rtype: bool
-        """
-        return bool(self._locked_until_utc and self._locked_until_utc <= utc_now())
-
     @property
     def session_id(self):
         # type: () -> str
@@ -61,6 +48,15 @@ class BaseSession(object):
         return self._session_id
 
     @property
+    def expired(self):
+        # type: () -> bool
+        """Whether the receivers lock on a particular session has expired.
+
+        :rtype: bool
+        """
+        return bool(self._locked_until_utc and self._locked_until_utc <= utc_now())
+
+    @property
     def locked_until_utc(self):
         # type: () -> Optional[datetime.datetime]
         """The time at which this session's lock will expire.
@@ -68,6 +64,10 @@ class BaseSession(object):
         :rtype: datetime.datetime
         """
         return self._locked_until_utc
+
+    def _check_live(self):
+        if self.expired:
+            raise SessionLockExpired(inner_exception=self.auto_renew_error)
 
 
 class ServiceBusSession(BaseSession):
@@ -148,10 +148,8 @@ class ServiceBusSession(BaseSession):
 
         This operation must be performed periodically in order to retain a lock on the
         session to continue message processing.
-
-        Once the lock is lost the connection will be closed; an expired lock cannot be renewed.
-
-        This operation can also be performed as a threaded background task by registering the session
+        Once the lock is lost the connection will be closed. This operation can
+        also be performed as a threaded background task by registering the session
         with an `azure.servicebus.AutoLockRenew` instance.
 
         .. admonition:: Example:

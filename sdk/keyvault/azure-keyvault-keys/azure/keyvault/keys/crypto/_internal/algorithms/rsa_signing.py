@@ -11,7 +11,6 @@ from ..transform import SignatureTransform
 
 class RsaSignatureTransform(SignatureTransform):
     def __init__(self, key, padding_function, hash_algorithm):
-        super(RsaSignatureTransform, self).__init__()
         self._key = key
         self._padding_function = padding_function
         self._hash_algorithm = hash_algorithm

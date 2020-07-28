@@ -1,10 +1,5 @@
 # Release History
 
-## 7.0.0b2 (2020-07-21)
-
-**Bugfixes**
-  - Use service api_version "2015-11-01" instead of "2016-10-01".
-
 ## 7.0.0b1 (2020-06-17)
 
 This is beta preview version.

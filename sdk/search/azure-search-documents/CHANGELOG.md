@@ -1,8 +1,5 @@
 # Release History
 
-## 11.0.1 (Unreleased)
-
-
 ## 11.0.0 (2020-07-07)
 
 **Features**

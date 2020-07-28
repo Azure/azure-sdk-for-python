@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-import platform
 import time
 
 from msal import TokenCache
@@ -28,7 +27,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, List, Mapping, Optional
+    from typing import Any, Iterable, List, Mapping, Optional, Sequence
     from .._internal import AadClientBase
     from azure.identity import AuthenticationRecord
 
@@ -108,26 +107,20 @@ class SharedTokenCacheBase(ABC):
             self._tenant_id = kwargs.pop("tenant_id", None)
 
         self._cache = kwargs.pop("_cache", None)
-        self._client = None  # type: Optional[AadClientBase]
-        self._client_kwargs = kwargs
-        self._client_kwargs["tenant_id"] = authenticating_tenant
-        self._initialized = False
-
-    def _initialize(self):
-        if self._initialized:
-            return
-
-        if not self._cache and self.supported():
-            allow_unencrypted = self._client_kwargs.get("allow_unencrypted_cache", False)
+        if not self._cache:
+            allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
             try:
                 self._cache = load_user_cache(allow_unencrypted)
             except Exception:  # pylint:disable=broad-except
                 pass
 
         if self._cache:
-            self._client = self._get_auth_client(authority=self._authority, cache=self._cache, **self._client_kwargs)
-
-        self._initialized = True
+            self._client = self._get_auth_client(
+                authority=self._authority, cache=self._cache, tenant_id=authenticating_tenant, **kwargs
+            )  # type: Optional[AadClientBase]
+        else:
+            # couldn't load the cache -> credential will be unavailable
+            self._client = None
 
     @abc.abstractmethod
     def _get_auth_client(self, **kwargs):
@@ -203,7 +196,7 @@ class SharedTokenCacheBase(ABC):
         raise CredentialUnavailableError(message=message)
 
     def _get_cached_access_token(self, scopes, account):
-        # type: (Iterable[str], CacheItem) -> Optional[AccessToken]
+        # type: (Sequence[str], CacheItem) -> Optional[AccessToken]
         if "home_account_id" not in account:
             return None
 
@@ -243,4 +236,12 @@ class SharedTokenCacheBase(ABC):
 
         :rtype: bool
         """
-        return platform.system() in {"Darwin", "Linux", "Windows"}
+        try:
+            load_user_cache(allow_unencrypted=False)
+        except NotImplementedError:
+            return False
+        except ValueError:
+            # cache is supported but can't be encrypted
+            pass
+
+        return True

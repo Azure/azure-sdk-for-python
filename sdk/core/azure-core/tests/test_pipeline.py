@@ -46,12 +46,10 @@ import pytest
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
-from azure.core import PipelineClient
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
     RedirectPolicy,
-    HttpLoggingPolicy
 )
 from azure.core.pipeline.transport._base import PipelineClientBase
 from azure.core.pipeline.transport import (
@@ -61,26 +59,6 @@ from azure.core.pipeline.transport import (
 )
 
 from azure.core.exceptions import AzureError
-
-def test_default_http_logging_policy():
-    config = Configuration()
-    pipeline_client = PipelineClient(base_url="test")
-    pipeline = pipeline_client._build_pipeline(config)
-    http_logging_policy = pipeline._impl_policies[-1]._policy
-    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
-
-def test_pass_in_http_logging_policy():
-    config = Configuration()
-    http_logging_policy = HttpLoggingPolicy()
-    http_logging_policy.allowed_header_names.update(
-        {"x-ms-added-header"}
-    )
-    config.http_logging_policy = http_logging_policy
-
-    pipeline_client = PipelineClient(base_url="test")
-    pipeline = pipeline_client._build_pipeline(config)
-    http_logging_policy = pipeline._impl_policies[-1]._policy
-    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
 
 
 def test_sans_io_exception():
@@ -285,29 +263,6 @@ class TestClientRequest(unittest.TestCase):
         request.format_parameters({"g": "h"})
 
         self.assertIn(request.url, ["a/b/c?g=h&t=y", "a/b/c?t=y&g=h"])
-    
-    def test_request_url_with_params_as_list(self):
-
-        request = HttpRequest("GET", "/")
-        request.url = "a/b/c?t=y"
-        request.format_parameters({"g": ["h","i"]})
-
-        self.assertIn(request.url, ["a/b/c?g=h&g=i&t=y", "a/b/c?t=y&g=h&g=i"])
-
-    def test_request_url_with_params_with_none_in_list(self):
-
-        request = HttpRequest("GET", "/")
-        request.url = "a/b/c?t=y"
-        with pytest.raises(ValueError):
-            request.format_parameters({"g": ["h",None]})
-    
-    def test_request_url_with_params_with_none(self):
-
-        request = HttpRequest("GET", "/")
-        request.url = "a/b/c?t=y"
-        with pytest.raises(ValueError):
-            request.format_parameters({"g": None})
-
 
     def test_request_text(self):
         client = PipelineClientBase('http://example.org')

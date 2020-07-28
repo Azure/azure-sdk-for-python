@@ -520,10 +520,8 @@ class IterStreamer(object):
     def seekable(self):
         return False
 
-    def __next__(self):
+    def next(self):
         return next(self.iterator)
-
-    next = __next__  # Python 2 compatibility.
 
     def tell(self, *args, **kwargs):
         raise UnsupportedOperation("Data generator does not support tell.")
@@ -536,7 +534,7 @@ class IterStreamer(object):
         count = len(self.leftover)
         try:
             while count < size:
-                chunk = self.__next__()
+                chunk = self.next()
                 if isinstance(chunk, six.text_type):
                     chunk = chunk.encode(self.encoding)
                 data += chunk

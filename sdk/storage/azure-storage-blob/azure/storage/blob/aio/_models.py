@@ -10,13 +10,13 @@ from typing import List, Any, TYPE_CHECKING # pylint: disable=unused-import
 
 from azure.core.async_paging import AsyncPageIterator, AsyncItemPaged
 
-from .._models import BlobProperties, ContainerProperties, FilteredBlob
+from .._models import BlobProperties, ContainerProperties
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from .._shared.models import DictMixin
 
 from .._generated.models import StorageErrorException
 from .._generated.models import BlobPrefix as GenBlobPrefix
-from .._generated.models import BlobItemInternal, FilterBlobItem
+from .._generated.models import BlobItem
 
 
 class ContainerPropertiesPaged(AsyncPageIterator):
@@ -154,77 +154,9 @@ class BlobPropertiesPaged(AsyncPageIterator):
     def _build_item(self, item):
         if isinstance(item, BlobProperties):
             return item
-        if isinstance(item, BlobItemInternal):
+        if isinstance(item, BlobItem):
             blob = BlobProperties._from_generated(item)  # pylint: disable=protected-access
             blob.container = self.container
-            return blob
-        return item
-
-
-class FilteredBlobPaged(AsyncPageIterator):
-    """An Iterable of Blob properties.
-
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.BlobProperties)
-    :ivar str container: The container that the blobs are listed from.
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str container: The name of the container.
-    :param int results_per_page: The maximum number of blobs to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
-    :param location_mode: Specifies the location the request should be sent to.
-        This mode only applies for RA-GRS accounts which allow secondary read access.
-        Options include 'primary' or 'secondary'.
-    """
-    def __init__(
-            self, command,
-            container=None,
-            results_per_page=None,
-            continuation_token=None,
-            location_mode=None):
-        super(FilteredBlobPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
-        )
-        self._command = command
-        self.service_endpoint = None
-        self.marker = continuation_token
-        self.results_per_page = results_per_page
-        self.container = container
-        self.current_page = None
-        self.location_mode = location_mode
-
-    async def _get_next_cb(self, continuation_token):
-        try:
-            return await self._command(
-                marker=continuation_token or None,
-                maxresults=self.results_per_page,
-                cls=return_context_and_deserialized,
-                use_location=self.location_mode)
-        except StorageErrorException as error:
-            process_storage_error(error)
-
-    async def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response = get_next_return
-        self.service_endpoint = self._response.service_endpoint
-        self.marker = self._response.next_marker
-        self.current_page = [self._build_item(item) for item in self._response.blobs]
-
-        return self._response.next_marker or None, self.current_page
-
-    @staticmethod
-    def _build_item(item):
-        if isinstance(item, FilterBlobItem):
-            blob = FilteredBlob(name=item.name, container_name=item.container_name, tag_value=item.tag_value)  # pylint: disable=protected-access
             return blob
         return item
 

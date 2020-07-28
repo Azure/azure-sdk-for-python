@@ -69,7 +69,7 @@ class AsyncPollingMethod(Generic[PollingReturnType]):
 class AsyncNoPolling(_NoPolling):
     """An empty async poller that returns the deserialized initial response.
     """
-    async def run(self):  # pylint:disable=invalid-overridden-method
+    async def run(self):
         """Empty run, no polling.
         Just override initial run to add "async"
         """

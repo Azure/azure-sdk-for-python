@@ -84,7 +84,6 @@ azure-nspkg
 azure-keyvault-nspkg
 azure-search-nspkg
 azure-security-nspkg
-azure-synapse-nspkg
 azure-servicebus~=0.21.1
 azure-servicefabric~=6.3.0.0
 azure-servicemanagement-legacy~=0.20.6
@@ -109,9 +108,8 @@ aiohttp>=3.0
 aiodns>=2.0
 python-dateutil>=2.8.0
 six>=1.6
-isodate>=0.6.0
 #override azure azure-keyvault~=1.0
-#override azure-mgmt-core azure-core<2.0.0,>=1.7.0
+#override azure-mgmt-core azure-core<2.0.0,>=1.4.0
 #override azure-appconfiguration azure-core<2.0.0,>=1.0.0
 #override azure-core-tracing-opencensus azure-core<2.0.0,>=1.0.0
 #override azure-core-tracing-opentelemetry azure-core<2.0.0,>=1.0.0
@@ -131,27 +129,23 @@ isodate>=0.6.0
 #override azure-ai-formrecognizer azure-core<2.0.0,>=1.6.0
 #override azure-storage-blob azure-core<2.0.0,>=1.6.0
 #override azure-storage-blob msrest>=0.6.10
-#override azure-storage-blob-changefeed azure-storage-blob~=12.4.0b1
 #override azure-storage-queue azure-core<2.0.0,>=1.6.0
 #override azure-storage-queue msrest>=0.6.10
 #override azure-storage-file-share msrest>=0.6.10
 #override azure-storage-file-datalake azure-core<2.0.0,>=1.6.0
 #override azure-storage-file-datalake msrest>=0.6.10
-#override azure-storage-file-datalake azure-storage-blob>=12.3.1
+#override azure-storage-file-datalake azure-storage-blob~=12.0
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
-opentelemetry-api==0.10b0
+opentelemetry-api==0.8b0
 #override azure-eventhub-checkpointstoreblob msrest>=0.6.10
 #override azure-eventhub-checkpointstoreblob-aio msrest>=0.6.10
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
 #override azure-eventhub uamqp<2.0,>=1.2.7
 #override azure-appconfiguration msrest>=0.6.10
-#override azure-servicebus uamqp>=1.2.9,<2.0.0
-#override azure-servicebus msrest>=0.6.17,<2.0.0
+#override azure-servicebus uamqp>=1.2.8,<2.0.0
+#override azure-servicebus msrest>=0.6.15,<2.0.0
 #override azure-servicebus azure-core<2.0.0,>=1.6.0
 #override azure-search-documents msrest>=0.6.10
-#override azure-synapse-accesscontrol azure-core>=1.6.0,<2.0.0
-#override azure-synapse-spark azure-core>=1.6.0,<2.0.0
-#override azure-synapse-artifacts azure-core>=1.6.0,<2.0.0
 #override azure-data-tables msrest>=0.6.10

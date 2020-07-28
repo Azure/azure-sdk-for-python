@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
-
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
@@ -17,8 +15,6 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Optional
     from azure.core.credentials import AccessToken, TokenCredential
-
-_LOGGER = logging.getLogger(__name__)
 
 
 def _get_error_message(history):
@@ -65,26 +61,16 @@ class ChainedTokenCredential(object):
         for credential in self.credentials:
             try:
                 token = credential.get_token(*scopes, **kwargs)
-                _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
                 self._successful_credential = credential
                 return token
             except CredentialUnavailableError as ex:
                 # credential didn't attempt authentication because it lacks required data or state -> continue
                 history.append((credential, ex.message))
-                _LOGGER.info("%s - %s is unavailable", self.__class__.__name__, credential.__class__.__name__)
             except Exception as ex:  # pylint: disable=broad-except
                 # credential failed to authenticate, or something unexpectedly raised -> break
                 history.append((credential, str(ex)))
-                _LOGGER.warning(
-                    '%s.get_token failed: %s raised unexpected error "%s"',
-                    self.__class__.__name__,
-                    credential.__class__.__name__,
-                    ex,
-                    exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
-                )
                 break
 
         attempts = _get_error_message(history)
         message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts
-        _LOGGER.warning(message)
         raise ClientAuthenticationError(message=message)

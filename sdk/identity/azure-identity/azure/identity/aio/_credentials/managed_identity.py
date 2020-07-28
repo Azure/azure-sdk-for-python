@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-import logging
 import os
 from typing import TYPE_CHECKING
 
@@ -11,18 +10,15 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
+from azure.identity._credentials.managed_identity import _ManagedIdentityBase
 from .base import AsyncCredentialBase
 from .._authn_client import AsyncAuthnClient
-from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._constants import Endpoints, EnvironmentVariables
-from ..._credentials.managed_identity import _ManagedIdentityBase
 
 if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.configuration import Configuration
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class ManagedIdentityCredential(AsyncCredentialBase):
@@ -41,10 +37,8 @@ class ManagedIdentityCredential(AsyncCredentialBase):
     def __init__(self, **kwargs: "Any") -> None:
         self._credential = None
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
-            _LOGGER.info("%s will use MSI", self.__class__.__name__)
             self._credential = MsiCredential(**kwargs)
         else:
-            _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
 
     async def __aenter__(self):
@@ -57,7 +51,6 @@ class ManagedIdentityCredential(AsyncCredentialBase):
         if self._credential:
             await self._credential.__aexit__()
 
-    @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 
@@ -127,7 +120,6 @@ class ImdsCredential(_AsyncManagedIdentityBase):
             except Exception:  # pylint:disable=broad-except
                 # if anything else was raised, assume the endpoint is unavailable
                 self._endpoint_available = False
-                _LOGGER.info("No response from the IMDS endpoint.")
 
         if not self._endpoint_available:
             message = "ManagedIdentityCredential authentication unavailable, no managed identity endpoint found."
@@ -138,37 +130,28 @@ class ImdsCredential(_AsyncManagedIdentityBase):
 
         token = self._client.get_cached_token(scopes)
         if not token:
-            token = await self._refresh_token(*scopes)
-        elif self._client.should_refresh(token):
+            resource = scopes[0]
+            if resource.endswith("/.default"):
+                resource = resource[: -len("/.default")]
+            params = {"api-version": "2018-02-01", "resource": resource, **self._identity_config}
+
             try:
-                token = await self._refresh_token(*scopes)
-            except Exception:  # pylint: disable=broad-except
-                pass
+                token = await self._client.request_token(scopes, method="GET", params=params)
+            except HttpResponseError as ex:
+                # 400 in response to a token request indicates managed identity is disabled,
+                # or the identity with the specified client_id is not available
+                if ex.status_code == 400:
+                    self._endpoint_available = False
+                    message = "ManagedIdentityCredential authentication unavailable. "
+                    if self._identity_config:
+                        message += "The requested identity has not been assigned to this resource."
+                    else:
+                        message += "No identity has been assigned to this resource."
+                    raise CredentialUnavailableError(message=message) from ex
 
-        return token
+                # any other error is unexpected
+                raise ClientAuthenticationError(message=ex.message, response=ex.response) from None
 
-    async def _refresh_token(self, *scopes):
-        resource = scopes[0]
-        if resource.endswith("/.default"):
-            resource = resource[: -len("/.default")]
-        params = {"api-version": "2018-02-01", "resource": resource, **self._identity_config}
-
-        try:
-            token = await self._client.request_token(scopes, method="GET", params=params)
-        except HttpResponseError as ex:
-            # 400 in response to a token request indicates managed identity is disabled,
-            # or the identity with the specified client_id is not available
-            if ex.status_code == 400:
-                self._endpoint_available = False
-                message = "ManagedIdentityCredential authentication unavailable. "
-                if self._identity_config:
-                    message += "The requested identity has not been assigned to this resource."
-                else:
-                    message += "No identity has been assigned to this resource."
-                raise CredentialUnavailableError(message=message) from ex
-
-            # any other error is unexpected
-            raise ClientAuthenticationError(message=ex.message, response=ex.response) from None
         return token
 
 
@@ -201,26 +184,17 @@ class MsiCredential(_AsyncManagedIdentityBase):
 
         token = self._client.get_cached_token(scopes)
         if not token:
-            token = await self._refresh_token(*scopes)
-        elif self._client.should_refresh(token):
-            try:
-                token = await self._refresh_token(*scopes)
-            except Exception:  # pylint: disable=broad-except
-                pass
-        return token
+            resource = scopes[0]
+            if resource.endswith("/.default"):
+                resource = resource[: -len("/.default")]
 
-    async def _refresh_token(self, *scopes):
-        resource = scopes[0]
-        if resource.endswith("/.default"):
-            resource = resource[: -len("/.default")]
-
-        secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
-        if secret:
-            # MSI_ENDPOINT and MSI_SECRET set -> App Service
-            token = await self._request_app_service_token(scopes=scopes, resource=resource, secret=secret)
-        else:
-            # only MSI_ENDPOINT set -> legacy-style MSI (Cloud Shell)
-            token = await self._request_legacy_token(scopes=scopes, resource=resource)
+            secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
+            if secret:
+                # MSI_ENDPOINT and MSI_SECRET set -> App Service
+                token = await self._request_app_service_token(scopes=scopes, resource=resource, secret=secret)
+            else:
+                # only MSI_ENDPOINT set -> legacy-style MSI (Cloud Shell)
+                token = await self._request_legacy_token(scopes=scopes, resource=resource)
         return token
 
     async def _request_app_service_token(self, scopes, resource, secret):

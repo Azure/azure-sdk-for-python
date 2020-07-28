@@ -1,0 +1,61 @@
+interactions:
+- request:
+    body: !!binary |
+      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pjxl
+      bnRyeSB4bWxuczpkPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL2Fkby8yMDA3LzA4L2Rh
+      dGFzZXJ2aWNlcyIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9hZG8vMjAw
+      Ny8wOC9kYXRhc2VydmljZXMvbWV0YWRhdGEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDA1
+      L0F0b20iPjx0aXRsZT48L3RpdGxlPjx1cGRhdGVkPjIwMTUtMDYtMzBUMjE6NDE6NTcuNDc3Mzg5
+      KzAwOjAwPC91cGRhdGVkPjxhdXRob3I+PG5hbWU+PC9uYW1lPjwvYXV0aG9yPjxpZD48L2lkPjxj
+      b250ZW50IHR5cGU9ImFwcGxpY2F0aW9uL3htbCI+PEV2ZW50SHViRGVzY3JpcHRpb24geG1sbnM6
+      aT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zPSJodHRw
+      Oi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL25ldHNlcnZpY2VzLzIwMTAvMTAvc2VydmljZWJ1cy9j
+      b25uZWN0Ij48TWVzc2FnZVJldGVudGlvbkluRGF5cz41PC9NZXNzYWdlUmV0ZW50aW9uSW5EYXlz
+      PjxTdGF0dXM+QWN0aXZlPC9TdGF0dXM+PFVzZXJNZXRhZGF0YT5oZWxsbyB3b3JsZDwvVXNlck1l
+      dGFkYXRhPjxQYXJ0aXRpb25Db3VudD4zMjwvUGFydGl0aW9uQ291bnQ+PC9FdmVudEh1YkRlc2Ny
+      aXB0aW9uPjwvY29udGVudD48L2VudHJ5Pg==
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['709']
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      User-Agent: [pyazure/0.20.0]
+    method: PUT
+    uri: https://fakehubnamespace.servicebus.windows.net/uthubde421881?api-version=2014-01
+  response:
+    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakehubnamespace.servicebus.windows.net/uthubde421881?api-version=2014-01</id><title
+        type="text">uthubde421881</title><published>2015-06-30T21:41:59Z</published><updated>2015-06-30T21:42:01Z</updated><author><name>fakehubnamespace</name></author><link
+        rel="self" href="https://fakehubnamespace.servicebus.windows.net/uthubde421881?api-version=2014-01"/><content
+        type="application/xml"><EventHubDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><MessageRetentionInDays>5</MessageRetentionInDays><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2015-06-30T21:41:59.88</CreatedAt><UpdatedAt>2015-06-30T21:42:01.353</UpdatedAt><UserMetadata>hello
+        world</UserMetadata><PartitionCount>32</PartitionCount><PartitionIds xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays"><d2p1:string>0</d2p1:string><d2p1:string>1</d2p1:string><d2p1:string>2</d2p1:string><d2p1:string>3</d2p1:string><d2p1:string>4</d2p1:string><d2p1:string>5</d2p1:string><d2p1:string>6</d2p1:string><d2p1:string>7</d2p1:string><d2p1:string>8</d2p1:string><d2p1:string>9</d2p1:string><d2p1:string>10</d2p1:string><d2p1:string>11</d2p1:string><d2p1:string>12</d2p1:string><d2p1:string>13</d2p1:string><d2p1:string>14</d2p1:string><d2p1:string>15</d2p1:string><d2p1:string>16</d2p1:string><d2p1:string>17</d2p1:string><d2p1:string>18</d2p1:string><d2p1:string>19</d2p1:string><d2p1:string>20</d2p1:string><d2p1:string>21</d2p1:string><d2p1:string>22</d2p1:string><d2p1:string>23</d2p1:string><d2p1:string>24</d2p1:string><d2p1:string>25</d2p1:string><d2p1:string>26</d2p1:string><d2p1:string>27</d2p1:string><d2p1:string>28</d2p1:string><d2p1:string>29</d2p1:string><d2p1:string>30</d2p1:string><d2p1:string>31</d2p1:string></PartitionIds></EventHubDescription></content></entry>'}
+    headers:
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      Date: ['Tue, 30 Jun 2015 21:42:00 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [pyazure/0.20.0]
+    method: GET
+    uri: https://fakehubnamespace.servicebus.windows.net/uthubde421881
+  response:
+    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakehubnamespace.servicebus.windows.net/uthubde421881</id><title
+        type="text">uthubde421881</title><published>2015-06-30T21:41:59Z</published><updated>2015-06-30T21:42:01Z</updated><author><name>fakehubnamespace</name></author><link
+        rel="self" href="https://fakehubnamespace.servicebus.windows.net/uthubde421881"/><content
+        type="application/xml"><EventHubDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><MessageRetentionInDays>5</MessageRetentionInDays><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2015-06-30T21:41:59.88</CreatedAt><UpdatedAt>2015-06-30T21:42:01.353</UpdatedAt><UserMetadata>hello
+        world</UserMetadata><PartitionCount>32</PartitionCount><PartitionIds xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays"><d2p1:string>0</d2p1:string><d2p1:string>1</d2p1:string><d2p1:string>2</d2p1:string><d2p1:string>3</d2p1:string><d2p1:string>4</d2p1:string><d2p1:string>5</d2p1:string><d2p1:string>6</d2p1:string><d2p1:string>7</d2p1:string><d2p1:string>8</d2p1:string><d2p1:string>9</d2p1:string><d2p1:string>10</d2p1:string><d2p1:string>11</d2p1:string><d2p1:string>12</d2p1:string><d2p1:string>13</d2p1:string><d2p1:string>14</d2p1:string><d2p1:string>15</d2p1:string><d2p1:string>16</d2p1:string><d2p1:string>17</d2p1:string><d2p1:string>18</d2p1:string><d2p1:string>19</d2p1:string><d2p1:string>20</d2p1:string><d2p1:string>21</d2p1:string><d2p1:string>22</d2p1:string><d2p1:string>23</d2p1:string><d2p1:string>24</d2p1:string><d2p1:string>25</d2p1:string><d2p1:string>26</d2p1:string><d2p1:string>27</d2p1:string><d2p1:string>28</d2p1:string><d2p1:string>29</d2p1:string><d2p1:string>30</d2p1:string><d2p1:string>31</d2p1:string></PartitionIds></EventHubDescription></content></entry>'}
+    headers:
+      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
+      Date: ['Tue, 30 Jun 2015 21:42:00 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+    status: {code: 200, message: OK}
+version: 1
