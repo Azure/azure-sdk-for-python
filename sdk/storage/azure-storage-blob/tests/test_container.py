@@ -839,7 +839,7 @@ class StorageContainerTest(StorageTestCase):
         # Act
         for blob_properties in container.list_blobs():
             if blob_properties.name == blob_client.blob_name:
-                self.assertEqual(blob_properties.blob_rehydrate_priority, "Standard")
+                self.assertEqual(blob_properties.rehydrate_priority, "Standard")
 
     @GlobalStorageAccountPreparer()
     def test_list_blobs(self, resource_group, location, storage_account, storage_account_key):

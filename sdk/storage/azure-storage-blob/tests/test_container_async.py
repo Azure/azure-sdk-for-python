@@ -874,7 +874,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         # Act
         async for blob_properties in container.list_blobs():
             if blob_properties.name == blob_client.blob_name:
-                self.assertEqual(blob_properties.blob_rehydrate_priority, "Standard")
+                self.assertEqual(blob_properties.rehydrate_priority, "Standard")
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
