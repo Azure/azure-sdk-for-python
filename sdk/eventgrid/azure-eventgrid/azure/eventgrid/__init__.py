@@ -10,7 +10,8 @@ from ._publisher_client import EventGridPublisherClient
 from ._consumer import EventGridConsumer
 from ._helpers import generate_shared_access_signature
 from ._models import CloudEvent, CustomEvent, EventGridEvent, DeserializedEvent
+from .shared_access_signature_credential import EventGridSharedAccessSignatureCredential
 from .version import VERSION
 
-__all__ = ['EventGridPublisherClient', 'EventGridConsumer', 'CloudEvent', 'CustomEvent', 'DeserializedEvent', 'EventGridEvent', 'generate_shared_access_signature']
+__all__ = ['EventGridPublisherClient', 'EventGridConsumer', 'CloudEvent', 'CustomEvent', 'DeserializedEvent', 'EventGridEvent', 'generate_shared_access_signature', 'EventGridSharedAccessSignatureCredential']
 __version__ = VERSION

@@ -9,7 +9,6 @@ PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.mgmt.eventgrid import EventGridManagementClient
 from azure.eventgrid._publisher_client import EventGridPublisherClient
@@ -20,10 +19,7 @@ from azure.core.exceptions import (
     ClientAuthenticationError
 )
 
-#key = os.environ.get("DEMO_ACCESS_KEY")
 key = os.environ.get("CUSTOM_ACCESS_KEY")
-print(key)
-#topic_hostname = "eg-azure-sdk-demo.westus2-1.eventgrid.azure.net"
 topic_hostname = "eventgridcloudeventsub.eastus-1.eventgrid.azure.net"
 
 # authenticate client

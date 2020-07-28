@@ -13,7 +13,6 @@ PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.mgmt.eventgrid import EventGridManagementClient
 from azure.eventgrid._publisher_client import EventGridPublisherClient
@@ -52,6 +51,6 @@ while True:
         event_list.append(event)
 
     # publish list of events
-    client.publish_events(event_list)
+    client.send(event_list)
     print("Batch of size {} published".format(len(event_list)))
     time.sleep(randint(1, 5))

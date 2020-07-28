@@ -16,8 +16,11 @@ if TYPE_CHECKING:
 
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
+from .shared_access_signature_credential import EventGridSharedAccessSignatureCredential
+from ._signature_credential_policy import EventGridSharedAccessSignatureCredentialPolicy
 from ._models import CloudEvent, EventGridEvent
 from ._generated.event_grid_publisher_client._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
+from .shared_access_signature_credential import EventGridSharedAccessSignatureCredential
 from . import _constants as constants
 
 class EventGridPublisherClient(object):
@@ -25,16 +28,16 @@ class EventGridPublisherClient(object):
 
     :param str topic_hostname: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which implements SAS key authentication or SAS token authentication.
-    :type credential: Union[~azure.core.credentials.AzureKeyCredential, ~azure.core.credentials.TokenCredential]
+    :type credential: Union[~azure.core.credentials.AzureKeyCredential, azure.eventgrid.EventGridSharedAccessSignatureCredential]
     """
 
     def __init__(
         self,
         topic_hostname,  # type: str
-        credential,  # type: Union[azure.core.credential.AzureKeyCredential, azure.core.credential.TokenCredential]
+        credential,  # type: Union[azure.core.credential.AzureKeyCredential, azure.eventgrid.EventGridSharedAccessSignatureCredential]
         **kwargs  # type: Any
     ):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+        # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
         auth_policy = EventGridPublisherClient._get_authentication_policy(credential)
         self._credential = credential
         self._topic_hostname = topic_hostname
@@ -67,4 +70,6 @@ class EventGridPublisherClient(object):
             raise ValueError("Parameter 'credential' must not be None.")
         if isinstance(credential, AzureKeyCredential):
             authentication_policy = AzureKeyCredentialPolicy(credential=credential, name=constants.EVENTGRID_KEY_HEADER)
+        if isinstance(credential, EventGridSharedAccessSignatureCredential):
+            authentication_policy = EventGridSharedAccessSignatureCredentialPolicy(credential=credential, name=constants.EVENTGRID_TOKEN_HEADER)
         return authentication_policy

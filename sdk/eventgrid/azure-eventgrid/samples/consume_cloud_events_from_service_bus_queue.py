@@ -19,22 +19,25 @@ from azure.core.exceptions import (
 from azure.eventgrid._consumer import EventGridConsumer
 from azure.servicebus import ServiceBusClient, Message
 
-connection_str = 'Endpoint=sb://t-swpill-service-bus-queue.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=EBfVpjF0v8p0G4Ksh35qi1VouzNxo1GQeKvDp2wx1I0='
+def get_deserialized_events(msg):
+    events = consumer.deserialize_events(msg)
+    for event in events:
+        if 'specversion' in event:
+            print(event["time"])
+        else:
+            print(event.model.eventTime)
+
+connection_str = os.environ.get('SB_CONN_STR')
 
 sb_client = ServiceBusClient.from_connection_string(connection_str)
 consumer = EventGridConsumer()
 
-with sb_client:
-    receiver = sb_client.get_queue_receiver("cloudeventqueue", prefetch=1)
-    with receiver:
-        msgs = receiver.receive(max_batch_size=1, max_wait_time=5)
-        for msg in msgs:
-            print(type(msg))
-            msg.complete()
-            get_deserialized_events(msg)
-
-def get_deserialized_events(msg):
-    events = consumer.deserialize_events(msg)
-    for event in events:
-        print(event["time"])
-        print(type(event.model.time))
+while True:
+    with sb_client:
+        receiver = sb_client.get_queue_receiver("cloudeventqueue", prefetch=1)
+        with receiver:
+            msgs = receiver.receive(max_batch_size=1, max_wait_time=5)
+            for msg in msgs:
+                print(msg)
+                msg.complete()
+                get_deserialized_events(msg)

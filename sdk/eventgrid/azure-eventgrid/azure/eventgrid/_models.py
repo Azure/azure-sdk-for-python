@@ -98,7 +98,7 @@ class EventGridEvent(InternalEventGridEvent):
         'data_version': {'key': 'dataVersion', 'type': 'str'},
     }
 
-    def __init__(self, subject, event_type, **kwargs):
+    def __init__(self, subject, event_type, data_version, **kwargs):
         # type: (Any) -> None
         self.id = kwargs.get('id', uuid.uuid4())
         self.topic = kwargs.get('topic', None)
@@ -106,8 +106,8 @@ class EventGridEvent(InternalEventGridEvent):
         self.data = kwargs.get('data', None)
         self.event_type = event_type
         self.event_time = kwargs.get('event_time', dt.datetime.now(tzutc()).isoformat())
-        self.metadata_version = None
-        self.data_version = kwargs.get('data_version', None)
+        self.metadata_version = "1"
+        self.data_version = data_version
 
 
 class DictMixin(object):
@@ -117,6 +117,9 @@ class DictMixin(object):
 
     def __getitem__(self, key):
         return self.__dict__[key]
+
+    def __contains__(self, key):
+        return key in self.__dict__
 
     def __repr__(self):
         return str(self)

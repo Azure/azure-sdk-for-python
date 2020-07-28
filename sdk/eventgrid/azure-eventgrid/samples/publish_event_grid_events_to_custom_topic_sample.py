@@ -9,27 +9,21 @@ PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-from dateutil.tz import tzutc
-from datetime import timedelta, timezone
-import datetime as dt
-
-from azure.eventgrid import EventGridSharedAccessSignatureCredential
+from azure.core.credentials import AzureKeyCredential
 from azure.mgmt.eventgrid import EventGridManagementClient
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent, CloudEvent, generate_shared_access_signature
+from azure.eventgrid._publisher_client import EventGridPublisherClient
+from azure.eventgrid._models import EventGridEvent, CloudEvent
 from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError,
     ClientAuthenticationError
 )
 
-key = os.environ.get("CUSTOM_ACCESS_KEY")
-topic_hostname = "eventgridcloudeventsub.eastus-1.eventgrid.azure.net"
-expiration_date_utc = dt.datetime.now(tzutc()) + timedelta(hours=1)
-
-signature = generate_shared_access_signature(topic_hostname, key, expiration_date_utc)
+key = os.environ.get("EG_ACCESS_KEY")
+topic_hostname = "eventgridegsub.eastus-1.eventgrid.azure.net"
 
 # authenticate client
-credential = EventGridSharedAccessSignatureCredential(signature)
+credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(topic_hostname, credential)
 
 team_members = ["Josh", "Kerri", "Kieran", "Laurent", "Lily", "Matt", "Soren", "Srikanta", "Swathi"]    # possible values for data field
@@ -41,10 +35,11 @@ while True:
     # create events and append to list
     for j in range(randint(1, 3)):
         sample_members = sample(team_members, k=randint(1, 9))      # select random subset of team members
-        event = CloudEvent(
-                type="Azure.Sdk.Demo",
-                source="https://egdemo.dev/demowithsignature",
-                data={"team": sample_members}
+        event = EventGridEvent(
+                subject="Door1",
+                data={"team": sample_members},
+                event_type="Azure.Sdk.Demo",
+                data_version="2.0"
                 )
         event_list.append(event)
 
