@@ -140,13 +140,15 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             try:
                 return self._do_retryable_operation(self._iter_next)
             except StopIteration:
-                self.close()
+                self._message_iter = None
                 raise
 
     next = __next__  # for python2.7
 
     def _iter_next(self):
         self._open()
+        if not self._message_iter:
+            self._message_iter = self._handler.receive_messages_iter()  # pylint: disable=attribute-defined-outside-init
         uamqp_message = next(self._message_iter)
         message = self._build_message(uamqp_message)
         return message
@@ -166,20 +168,20 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
             timeout=self._idle_timeout * 1000 if self._idle_timeout else 0,
-            prefetch=self._prefetch
+            prefetch=self._prefetch,
+            shutdown_after_timeout=False
         )
 
     def _open(self):
         if self._running:
             return
-        if self._handler:
+        if self._handler and not self._handler._shutdown:
             self._handler.close()
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
             self._handler.open(connection=self._connection)
-            self._message_iter = self._handler.receive_messages_iter()  # pylint: disable=attribute-defined-outside-init
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._running = True

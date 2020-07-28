@@ -1293,7 +1293,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_TESTTEST(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_receiver_alive_after_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
                 logging_enable=False) as sb_client:
@@ -1307,13 +1307,14 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
                     
                     for message in receiver.receive_forever():
-                        message.complete()
                         messages.append(message)
                         break
 
                     for message in receiver.receive_forever():
-                        message.complete()
                         messages.append(message)
+
+                    for m in messages:
+                        m.complete()
 
                     assert len(messages) == 2
                     assert str(messages[0]) == "0"
@@ -1324,12 +1325,16 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     sender.send_messages([message_2, message_3])
 
                     for message in receiver.receive_forever():
-                        message.complete()
                         messages.append(message)
                         for message in receiver.receive_forever():
-                            message.complete()
                             messages.append(message)
 
                     assert len(messages) == 4
                     assert str(messages[2]) == "2"
                     assert str(messages[3]) == "3"
+
+                    for m in messages[2:]:
+                        m.complete()
+
+                    messages = receiver.receive_messages()
+                    assert not messages
