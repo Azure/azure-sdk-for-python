@@ -53,14 +53,13 @@ class ManageCustomModelsSampleAsync(object):
             print("We have models with the following IDs:")
 
             # Let's pull out the first model
-            first_model = None
+            first_model = await custom_models.__anext__()
+            print(first_model.model_id)
             async for model in custom_models:
                 print(model.model_id)
-                if not first_model:
-                    first_model = model
             # [END list_custom_models_async]
 
-            # Now we'll get the first custom model in the paged list
+            # Now we'll get information for the first custom model in the paged list
             # [START get_custom_model_async]
             custom_model = await form_training_client.get_custom_model(model_id=first_model.model_id)
             print("\nModel ID: {}".format(custom_model.model_id))

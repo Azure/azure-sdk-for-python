@@ -56,7 +56,7 @@ class ManageCustomModelsSample(object):
             print(model.model_id)
         # [END list_custom_models]
 
-        # Now we'll get the first custom model in the paged list
+        # Now we'll get information for the first custom model in the paged list
         # [START get_custom_model]
         custom_model = form_training_client.get_custom_model(model_id=first_model.model_id)
         print("\nModel ID: {}".format(custom_model.model_id))
