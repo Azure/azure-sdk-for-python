@@ -28,6 +28,7 @@ pip install --pre azure-data-tables
 ```
 
 ### Create a storage account
+If you wish to create a new cosmos storage account, you can use the [Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/create-cosmosdb-resources-portal)
 If you wish to create a new storage account, you can use the
 [Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal),
 [Azure PowerShell](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-powershell),
