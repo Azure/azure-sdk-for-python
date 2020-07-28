@@ -65,7 +65,7 @@ class RecognizeCustomFormsSampleAsync(object):
                             field.confidence
                         ))
                     # each field is of type FormField
-                    # The value of the field can also be a FormField, or a list of FormFields - in our sample, it is not.
+                    # The value of the field can also be a Dict[str, FormField], or a List[FormField] - in our sample, it is not.
                     print("...Label '{}' has value '{}' with a confidence score of {}".format(
                         field.label_data.text if field.label_data else name, field.value, field.confidence
                     ))

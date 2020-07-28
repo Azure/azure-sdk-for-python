@@ -63,7 +63,7 @@ class GetBoundingBoxesSampleAsync(object):
                 print("Form has type ID: {}".format(form.form_type))
                 for name, field in form.fields.items():
                     # each field is of type FormField
-                    # The value of the field can also be a FormField, or a list of FormFields - in our sample, it is not.
+                    # The value of the field can also be a Dict[str, FormField], or a List[FormField] - in our sample, it is not.
                     print("...Field '{}' has label '{}' with value '{}' within bounding box '{}', with a confidence score of {}".format(
                         name,
                         field.label_data.text if field.label_data else name,
