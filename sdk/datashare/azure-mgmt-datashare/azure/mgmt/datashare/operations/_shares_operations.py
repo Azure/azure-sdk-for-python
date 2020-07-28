@@ -277,7 +277,7 @@ class SharesOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataShare/accounts/{accountName}/shares/{shareName}'}
 
     def list_by_account(
-            self, resource_group_name, account_name, skip_token=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, skip_token=None, filter=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """List of available shares under an account.
 
         List shares in an account.
@@ -288,6 +288,10 @@ class SharesOperations(object):
         :type account_name: str
         :param skip_token: Continuation Token
         :type skip_token: str
+        :param filter: Filters the results using OData syntax.
+        :type filter: str
+        :param orderby: Sorts the results using OData syntax.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -315,6 +319,10 @@ class SharesOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if skip_token is not None:
                     query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
 
             else:
                 url = next_link
@@ -354,7 +362,7 @@ class SharesOperations(object):
     list_by_account.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataShare/accounts/{accountName}/shares'}
 
     def list_synchronizations(
-            self, resource_group_name, account_name, share_name, skip_token=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, share_name, skip_token=None, filter=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """List Synchronizations in a share.
 
         List synchronizations of a share.
@@ -367,6 +375,10 @@ class SharesOperations(object):
         :type share_name: str
         :param skip_token: Continuation token
         :type skip_token: str
+        :param filter: Filters the results using OData syntax.
+        :type filter: str
+        :param orderby: Sorts the results using OData syntax.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -395,6 +407,10 @@ class SharesOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if skip_token is not None:
                     query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
 
             else:
                 url = next_link
@@ -434,7 +450,7 @@ class SharesOperations(object):
     list_synchronizations.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataShare/accounts/{accountName}/shares/{shareName}/listSynchronizations'}
 
     def list_synchronization_details(
-            self, resource_group_name, account_name, share_name, share_synchronization, skip_token=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, share_name, share_synchronization, skip_token=None, filter=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """List data set level details for a share synchronization.
 
         List synchronization details.
@@ -450,6 +466,10 @@ class SharesOperations(object):
          ~azure.mgmt.datashare.models.ShareSynchronization
         :param skip_token: Continuation token
         :type skip_token: str
+        :param filter: Filters the results using OData syntax.
+        :type filter: str
+        :param orderby: Sorts the results using OData syntax.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -478,6 +498,10 @@ class SharesOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if skip_token is not None:
                     query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
 
             else:
                 url = next_link
