@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
 import unittest
 from datetime import datetime, timedelta
 import asyncio
@@ -85,7 +86,10 @@ class StorageShareTest(AsyncStorageTestCase):
 
     async def _create_share(self, prefix=TEST_SHARE_PREFIX):
         share_client = self._get_share_reference(prefix)
-        share = await share_client.create_share()
+        try:
+            await share_client.create_share()
+        except:
+            pass
         return share_client
 
     # --Test cases for shares -----------------------------------------
@@ -165,6 +169,67 @@ class StorageShareTest(AsyncStorageTestCase):
         deleted = await share.delete_share(delete_snapshots=True)
         self.assertIsNone(deleted)
         await self._delete_shares(share.share_name)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_undelete_share(self, resource_group, location, storage_account, storage_account_key):
+        # share soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        self._setup(storage_account, storage_account_key)
+        share_client = await self._create_share(prefix="sharerestore")
+
+        # Act
+        await share_client.delete_share()
+        # to make sure the share deleted
+        with self.assertRaises(ResourceNotFoundError):
+            await share_client.get_share_properties()
+
+        share_list = list()
+        async for share in self.fsc.list_shares(include_deleted=True):
+            share_list.append(share)
+        self.assertTrue(len(share_list) >= 1)
+
+        for share in share_list:
+            # find the deleted share and restore it
+            if share.deleted and share.name == share_client.share_name:
+                if self.is_live:
+                    time.sleep(60)
+                restored_share_client = await self.fsc.undelete_share(share.name, share.version)
+
+                # to make sure the deleted share is restored
+                props = await restored_share_client.get_share_properties()
+                self.assertIsNotNone(props)
+                break
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_restore_to_existing_share(self, resource_group, location, storage_account, storage_account_key):
+        # share soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        self._setup(storage_account, storage_account_key)
+        # Act
+        share_client = await self._create_share()
+        await share_client.delete_share()
+        # to make sure the share deleted
+        with self.assertRaises(ResourceNotFoundError):
+            await share_client.get_share_properties()
+
+        # create a share with the same name as the deleted one
+        if self.is_live:
+            time.sleep(30)
+        await share_client.create_share()
+
+        share_list = []
+        async for share in self.fsc.list_shares(include_deleted=True):
+            share_list.append(share)
+        self.assertTrue(len(share_list) >= 1)
+
+        for share in share_list:
+            # find the deleted share and restore it
+            if share.deleted and share.name == share_client.share_name:
+                with self.assertRaises(HttpResponseError):
+                    await self.fsc.undelete_share(share.name, share.version)
+                break
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

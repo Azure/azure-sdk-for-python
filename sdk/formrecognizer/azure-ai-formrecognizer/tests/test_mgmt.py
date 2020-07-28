@@ -160,3 +160,10 @@ class TestManagement(FormRecognizerTest):
                 frc.begin_recognize_receipts_from_url(self.receipt_url_jpg).wait()
             ftc.get_account_properties()
             assert transport.session is not None
+
+    @GlobalFormRecognizerAccountPreparer()
+    def test_api_version_form_training_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        with self.assertRaises(ValueError):
+            ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), api_version="2.1")
+        
+        ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), api_version="2.0")

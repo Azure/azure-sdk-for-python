@@ -4,9 +4,11 @@
 # ------------------------------------
 import asyncio
 import sys
+import os
 
 from azure.core.exceptions import ClientAuthenticationError
 from .._credentials.base import AsyncCredentialBase
+from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._credentials.azure_cli import (
     AzureCliCredential as _SyncAzureCliCredential,
@@ -26,6 +28,7 @@ class AzureCliCredential(AsyncCredentialBase):
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
     """
 
+    @log_get_token_async
     async def get_token(self, *scopes, **kwargs):
         """Request an access token for `scopes`.
 
@@ -68,7 +71,11 @@ async def _run_command(command):
 
     try:
         proc = await asyncio.create_subprocess_exec(
-            *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT, cwd=working_directory
+            *args,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.STDOUT,
+            cwd=working_directory,
+            env=dict(os.environ, AZURE_CORE_NO_COLOR="true")
         )
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'; CLI may or may not be installed

@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
 import unittest
 from datetime import datetime, timedelta
 
@@ -62,7 +63,10 @@ class StorageShareTest(StorageTestCase):
 
     def _create_share(self, prefix=TEST_SHARE_PREFIX):
         share_client = self._get_share_reference(prefix)
-        share = share_client.create_share()
+        try:
+            share_client.create_share()
+        except:
+            pass
         return share_client
     
     def _delete_shares(self, prefix=TEST_SHARE_PREFIX):
@@ -143,6 +147,59 @@ class StorageShareTest(StorageTestCase):
         deleted = share.delete_share(delete_snapshots=True)
         self.assertIsNone(deleted)
         self._delete_shares()
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_undelete_share(self, resource_group, location, storage_account, storage_account_key):
+        # share soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        self._setup(storage_account, storage_account_key)
+        share_client = self._create_share(prefix="sharerestore")
+
+        # Act
+        share_client.delete_share()
+        # to make sure the share deleted
+        with self.assertRaises(ResourceNotFoundError):
+            share_client.get_share_properties()
+
+        share_list = list(self.fsc.list_shares(include_deleted=True, include_snapshots=True, include_metadata=True))
+        self.assertTrue(len(share_list) >= 1)
+
+        for share in share_list:
+            # find the deleted share and restore it
+            if share.deleted and share.name == share_client.share_name:
+                if self.is_live:
+                    time.sleep(60)
+                restored_share_client = self.fsc.undelete_share(share.name, share.version)
+
+                # to make sure the deleted share is restored
+                props = restored_share_client.get_share_properties()
+                self.assertIsNotNone(props)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_restore_to_existing_share(self, resource_group, location, storage_account, storage_account_key):
+        # share soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        self._setup(storage_account, storage_account_key)
+        # Act
+        share_client = self._create_share()
+        share_client.delete_share()
+        # to make sure the share deleted
+        with self.assertRaises(ResourceNotFoundError):
+            share_client.get_share_properties()
+
+        # create a share with the same name as the deleted one
+        if self.is_live:
+            time.sleep(30)
+        share_client.create_share()
+
+        share_list = list(self.fsc.list_shares(include_deleted=True))
+        self.assertTrue(len(share_list) >= 1)
+
+        for share in share_list:
+            # find the deleted share and restore it
+            if share.deleted and share.name == share_client.share_name:
+                with self.assertRaises(HttpResponseError):
+                    self.fsc.undelete_share(share.name, share.version)
 
     @GlobalStorageAccountPreparer()
     def test_delete_snapshot(self, resource_group, location, storage_account, storage_account_key):

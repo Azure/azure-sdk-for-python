@@ -636,6 +636,10 @@ class ShareItem(Model):
     :type name: str
     :param snapshot:
     :type snapshot: str
+    :param deleted:
+    :type deleted: bool
+    :param version:
+    :type version: str
     :param properties: Required.
     :type properties: ~azure.storage.fileshare.models.ShareProperties
     :param metadata:
@@ -650,6 +654,8 @@ class ShareItem(Model):
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
         'snapshot': {'key': 'Snapshot', 'type': 'str', 'xml': {'name': 'Snapshot'}},
+        'deleted': {'key': 'Deleted', 'type': 'bool', 'xml': {'name': 'Deleted'}},
+        'version': {'key': 'Version', 'type': 'str', 'xml': {'name': 'Version'}},
         'properties': {'key': 'Properties', 'type': 'ShareProperties', 'xml': {'name': 'Properties'}},
         'metadata': {'key': 'Metadata', 'type': '{str}', 'xml': {'name': 'Metadata'}},
     }
@@ -657,10 +663,12 @@ class ShareItem(Model):
         'name': 'Share'
     }
 
-    def __init__(self, *, name: str, properties, snapshot: str=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, name: str, properties, snapshot: str=None, deleted: bool=None, version: str=None, metadata=None, **kwargs) -> None:
         super(ShareItem, self).__init__(**kwargs)
         self.name = name
         self.snapshot = snapshot
+        self.deleted = deleted
+        self.version = version
         self.properties = properties
         self.metadata = metadata
 
@@ -709,6 +717,10 @@ class ShareProperties(Model):
     :type provisioned_egress_mbps: int
     :param next_allowed_quota_downgrade_time:
     :type next_allowed_quota_downgrade_time: datetime
+    :param deleted_time:
+    :type deleted_time: datetime
+    :param remaining_retention_days:
+    :type remaining_retention_days: int
     """
 
     _validation = {
@@ -725,11 +737,13 @@ class ShareProperties(Model):
         'provisioned_ingress_mbps': {'key': 'ProvisionedIngressMBps', 'type': 'int', 'xml': {'name': 'ProvisionedIngressMBps'}},
         'provisioned_egress_mbps': {'key': 'ProvisionedEgressMBps', 'type': 'int', 'xml': {'name': 'ProvisionedEgressMBps'}},
         'next_allowed_quota_downgrade_time': {'key': 'NextAllowedQuotaDowngradeTime', 'type': 'rfc-1123', 'xml': {'name': 'NextAllowedQuotaDowngradeTime'}},
+        'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123', 'xml': {'name': 'DeletedTime'}},
+        'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int', 'xml': {'name': 'RemainingRetentionDays'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, last_modified, etag: str, quota: int, provisioned_iops: int=None, provisioned_ingress_mbps: int=None, provisioned_egress_mbps: int=None, next_allowed_quota_downgrade_time=None, **kwargs) -> None:
+    def __init__(self, *, last_modified, etag: str, quota: int, provisioned_iops: int=None, provisioned_ingress_mbps: int=None, provisioned_egress_mbps: int=None, next_allowed_quota_downgrade_time=None, deleted_time=None, remaining_retention_days: int=None, **kwargs) -> None:
         super(ShareProperties, self).__init__(**kwargs)
         self.last_modified = last_modified
         self.etag = etag
@@ -738,6 +752,8 @@ class ShareProperties(Model):
         self.provisioned_ingress_mbps = provisioned_ingress_mbps
         self.provisioned_egress_mbps = provisioned_egress_mbps
         self.next_allowed_quota_downgrade_time = next_allowed_quota_downgrade_time
+        self.deleted_time = deleted_time
+        self.remaining_retention_days = remaining_retention_days
 
 
 class ShareStats(Model):
