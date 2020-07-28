@@ -14,9 +14,9 @@ from devtools_testutils import (
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
 EVENTGRID_TOPIC_PARAM = 'eventgrid_topic'
-EVENTGRID_TOPIC_LOCATION = 'eastus'
+EVENTGRID_TOPIC_LOCATION = 'westus'
 
-# Shared base class for service bus sub-resources that require a namespace and RG to exist.
+# Shared base class for event grid sub-resources that require a RG to exist.
 class _EventGridChildResourcePreparer(AzureMgmtPreparer):
     def __init__(self,
                  name_prefix='',
@@ -33,6 +33,7 @@ class _EventGridChildResourcePreparer(AzureMgmtPreparer):
 class EventGridTopicPreparer(_EventGridChildResourcePreparer):
     def __init__(self,
                  name_prefix='',
+                 use_cache=True,
                  parameter_name=EVENTGRID_TOPIC_PARAM,
                  parameter_location=EVENTGRID_TOPIC_LOCATION,
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
@@ -69,7 +70,6 @@ class EventGridTopicPreparer(_EventGridChildResourcePreparer):
         return {
             self.parameter_name: self.resource,
             '{}_primary_key'.format(self.parameter_name): self.primary_key,
-            '{}_location'.format(self.parameter_name): self.parameter_location,
         }
 
     def remove_resource(self, name, **kwargs):
