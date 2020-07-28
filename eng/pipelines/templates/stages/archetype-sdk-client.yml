@@ -30,6 +30,7 @@ stages:
     - template: ../jobs/archetype-sdk-client.yml
       parameters:
         ServiceDirectory: ${{parameters.ServiceDirectory}}
+        Artifacts: ${{parameters.Artifacts}}
         ToxEnvParallel: ${{parameters.ToxEnvParallel}}
         BuildDocs: ${{parameters.BuildDocs}}
         InjectedPackages: ${{parameters.InjectedPackages}}
