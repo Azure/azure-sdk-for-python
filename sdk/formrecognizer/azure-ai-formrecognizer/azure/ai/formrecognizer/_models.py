@@ -12,6 +12,16 @@ import re
 import six
 
 
+def adjust_value_type(value_type):
+    if value_type == "array":
+        value_type = "list"
+    if value_type == "number":
+        value_type = "float"
+    if value_type == "object":
+        value_type = "dictionary"
+    return value_type
+
+
 def adjust_confidence(score):
     """Adjust confidence when not returned.
     """
@@ -83,10 +93,10 @@ class FieldValueType(str, Enum):
     DATE = "date"
     TIME = "time"
     PHONE_NUMBER = "phoneNumber"
-    NUMBER = "number"
+    FLOAT = "float"
     INTEGER = "integer"
-    ARRAY = "array"
-    OBJECT = "object"
+    LIST = "list"
+    DICTIONARY = "dictionary"
 
 
 class LengthUnit(str, Enum):
@@ -202,9 +212,9 @@ class RecognizedForm(object):
 class FormField(object):
     """Represents a field recognized in an input form.
 
-    :ivar value_type: The type of `value` found on FormField. Possible types include: 'string',
-        'date', 'time', 'phoneNumber', 'number', 'integer', 'object', or 'array'.
-    :vartype value_type: str or ~azure.ai.formrecognizer.FieldValueType
+    :ivar str value_type: The type of `value` found on FormField. Described in
+        :class:`~azure.ai.formrecognizer.FieldValueType`, possible types include: 'string',
+        'date', 'time', 'phoneNumber', 'float', 'integer', 'dictionary', or 'list'.
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and field elements for the field label.
     :ivar ~azure.ai.formrecognizer.FieldData value_data:
@@ -213,7 +223,7 @@ class FormField(object):
     :ivar value:
         The value for the recognized field. Its semantic data type is described by `value_type`.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
-        :class:`~azure.ai.formrecognizer.FormField`, or list[:class:`~azure.ai.formrecognizer.FormField`]
+        dict[str, :class:`~azure.ai.formrecognizer.FormField`], or list[:class:`~azure.ai.formrecognizer.FormField`]
     :ivar float confidence:
         Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
     """
@@ -229,7 +239,7 @@ class FormField(object):
     @classmethod
     def _from_generated(cls, field, value, read_result):
         return cls(
-            value_type=value.type if value else None,
+            value_type=adjust_value_type(value.type) if value else None,
             label_data=FieldData._from_generated(field, read_result),
             value_data=FieldData._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
