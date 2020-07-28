@@ -1371,6 +1371,8 @@ class ExportPipeline(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :param location: The location of the export pipeline.
+    :type location: str
     :param identity: The identity of the export pipeline.
     :type identity:
      ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
@@ -1399,14 +1401,16 @@ class ExportPipeline(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'target': {'key': 'properties.target', 'type': 'ExportPipelineTargetProperties'},
         'options': {'key': 'properties.options', 'type': '[str]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, target, identity=None, options=None, **kwargs) -> None:
+    def __init__(self, *, target, location: str=None, identity=None, options=None, **kwargs) -> None:
         super(ExportPipeline, self).__init__(**kwargs)
+        self.location = location
         self.identity = identity
         self.target = target
         self.options = options
@@ -1820,6 +1824,8 @@ class ImportPipeline(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :param location: The location of the import pipeline.
+    :type location: str
     :param identity: The identity of the import pipeline.
     :type identity:
      ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
@@ -1852,6 +1858,7 @@ class ImportPipeline(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'source': {'key': 'properties.source', 'type': 'ImportPipelineSourceProperties'},
         'trigger': {'key': 'properties.trigger', 'type': 'PipelineTriggerProperties'},
@@ -1859,8 +1866,9 @@ class ImportPipeline(ProxyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, source, identity=None, trigger=None, options=None, **kwargs) -> None:
+    def __init__(self, *, source, location: str=None, identity=None, trigger=None, options=None, **kwargs) -> None:
         super(ImportPipeline, self).__init__(**kwargs)
+        self.location = location
         self.identity = identity
         self.source = source
         self.trigger = trigger
@@ -4197,14 +4205,12 @@ class Task(Resource):
         self.credentials = credentials
 
 
-class TaskRun(Resource):
+class TaskRun(ProxyResource):
     """The task run that has the ARM resource and properties.
     The task run will have the information of request and result of a run.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -4212,11 +4218,6 @@ class TaskRun(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: Required. The location of the resource. This cannot be
-     changed after the resource is created.
-    :type location: str
-    :param tags: The tags of the resource.
-    :type tags: dict[str, str]
     :param identity: Identity for the resource.
     :type identity:
      ~azure.mgmt.containerregistry.v2019_12_01_preview.models.IdentityProperties
@@ -4234,13 +4235,14 @@ class TaskRun(Resource):
     :param force_update_tag: How the run should be forced to rerun even if the
      run request configuration has not changed
     :type force_update_tag: str
+    :param location: The location of the resource
+    :type location: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'run_result': {'readonly': True},
     }
@@ -4249,22 +4251,22 @@ class TaskRun(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
         'run_result': {'key': 'properties.runResult', 'type': 'Run'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, run_request=None, force_update_tag: str=None, **kwargs) -> None:
-        super(TaskRun, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, identity=None, run_request=None, force_update_tag: str=None, location: str=None, **kwargs) -> None:
+        super(TaskRun, self).__init__(**kwargs)
         self.identity = identity
         self.provisioning_state = None
         self.run_request = run_request
         self.run_result = None
         self.force_update_tag = force_update_tag
+        self.location = location
 
 
 class TaskRunRequest(RunRequest):
@@ -4320,6 +4322,8 @@ class TaskRunUpdateParameters(Model):
     :param force_update_tag: How the run should be forced to rerun even if the
      run request configuration has not changed
     :type force_update_tag: str
+    :param location: The location of the resource
+    :type location: str
     :param tags: The ARM resource tags.
     :type tags: dict[str, str]
     """
@@ -4328,14 +4332,16 @@ class TaskRunUpdateParameters(Model):
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, identity=None, run_request=None, force_update_tag: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, identity=None, run_request=None, force_update_tag: str=None, location: str=None, tags=None, **kwargs) -> None:
         super(TaskRunUpdateParameters, self).__init__(**kwargs)
         self.identity = identity
         self.run_request = run_request
         self.force_update_tag = force_update_tag
+        self.location = location
         self.tags = tags
 
 

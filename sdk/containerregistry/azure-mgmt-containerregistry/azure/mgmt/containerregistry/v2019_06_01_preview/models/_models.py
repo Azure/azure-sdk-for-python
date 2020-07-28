@@ -3451,14 +3451,12 @@ class Task(Resource):
         self.credentials = kwargs.get('credentials', None)
 
 
-class TaskRun(Resource):
+class TaskRun(ProxyResource):
     """The task run that has the ARM resource and properties.
     The task run will have the information of request and result of a run.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -3466,11 +3464,6 @@ class TaskRun(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: Required. The location of the resource. This cannot be
-     changed after the resource is created.
-    :type location: str
-    :param tags: The tags of the resource.
-    :type tags: dict[str, str]
     :param identity: Identity for the resource.
     :type identity:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
@@ -3488,13 +3481,14 @@ class TaskRun(Resource):
     :param force_update_tag: How the run should be forced to rerun even if the
      run request configuration has not changed
     :type force_update_tag: str
+    :param location: The location of the resource
+    :type location: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'run_result': {'readonly': True},
     }
@@ -3503,13 +3497,12 @@ class TaskRun(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
         'run_result': {'key': 'properties.runResult', 'type': 'Run'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -3519,6 +3512,7 @@ class TaskRun(Resource):
         self.run_request = kwargs.get('run_request', None)
         self.run_result = None
         self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.location = kwargs.get('location', None)
 
 
 class TaskRunRequest(RunRequest):
@@ -3574,6 +3568,8 @@ class TaskRunUpdateParameters(Model):
     :param force_update_tag: How the run should be forced to rerun even if the
      run request configuration has not changed
     :type force_update_tag: str
+    :param location: The location of the resource
+    :type location: str
     :param tags: The ARM resource tags.
     :type tags: dict[str, str]
     """
@@ -3582,6 +3578,7 @@ class TaskRunUpdateParameters(Model):
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
         'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -3590,6 +3587,7 @@ class TaskRunUpdateParameters(Model):
         self.identity = kwargs.get('identity', None)
         self.run_request = kwargs.get('run_request', None)
         self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.location = kwargs.get('location', None)
         self.tags = kwargs.get('tags', None)
 
 
