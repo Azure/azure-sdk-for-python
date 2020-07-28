@@ -86,7 +86,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         account = parsed_url.netloc.split(".{}.core.".format(service_name))
 
         self.account_name = account[0] if len(account) > 1 else None
-        if not self.account_name and parsed_url.netloc.startswith("localhost") or parsed_url.netloc.startswith("127.0.0.1"):
+        if not self.account_name and parsed_url.netloc.startswith("localhost") \
+                or parsed_url.netloc.startswith("127.0.0.1"):
             self.account_name = parsed_url.path.strip("/")
 
         self.credential = format_shared_key_credential(self.account_name, credential)
