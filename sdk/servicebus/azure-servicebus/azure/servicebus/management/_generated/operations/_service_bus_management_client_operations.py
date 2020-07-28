@@ -23,6 +23,148 @@ if TYPE_CHECKING:
 
 class ServiceBusManagementClientOperationsMixin(object):
 
+    def list_subscriptions(
+        self,
+        topic_name,  # type: str
+        skip=0,  # type: Optional[int]
+        top=100,  # type: Optional[int]
+        api_version="2017_04",  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> object
+        """Get the details about the subscriptions of the given topic.
+
+        Get subscriptions.
+
+        :param topic_name: name of the topic.
+        :type topic_name: str
+        :param skip:
+        :type skip: int
+        :param top:
+        :type top: int
+        :param api_version: Api Version.
+        :type api_version: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: object, or the result of cls(response)
+        :rtype: object
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
+
+        # Construct URL
+        url = self.list_subscriptions.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        if skip is not None:
+            query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+        if top is not None:
+            query_parameters['$top'] = self._serialize.query("top", top, 'int')
+        if api_version is not None:
+            query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = 'application/xml'
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(models.ServiceBusManagementError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('object', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    list_subscriptions.metadata = {'url': '/{topicName}/subscriptions'}  # type: ignore
+
+    def list_rules(
+        self,
+        topic_name,  # type: str
+        subscription_name,  # type: str
+        skip=0,  # type: Optional[int]
+        top=100,  # type: Optional[int]
+        api_version="2017_04",  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> object
+        """Get the details about the rules of the given topic subscription.
+
+        Get rules of a topic subscription.
+
+        :param topic_name: name of the topic.
+        :type topic_name: str
+        :param subscription_name: name of the subscription.
+        :type subscription_name: str
+        :param skip:
+        :type skip: int
+        :param top:
+        :type top: int
+        :param api_version: Api Version.
+        :type api_version: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: object, or the result of cls(response)
+        :rtype: object
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[object]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop('error_map', {}))
+
+        # Construct URL
+        url = self.list_rules.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
+            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', min_length=1),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        if skip is not None:
+            query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+        if top is not None:
+            query_parameters['$top'] = self._serialize.query("top", top, 'int')
+        if api_version is not None:
+            query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = 'application/xml'
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(models.ServiceBusManagementError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('object', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    list_rules.metadata = {'url': '/{topicName}/subscriptions/{subscriptionName}/rules'}  # type: ignore
+
     def list_entities(
         self,
         entity_type,  # type: str

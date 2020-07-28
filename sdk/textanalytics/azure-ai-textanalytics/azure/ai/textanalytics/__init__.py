@@ -6,6 +6,7 @@
 
 from ._text_analytics_client import TextAnalyticsClient
 from ._version import VERSION
+from ._multiapi import ApiVersion
 from ._models import (
     DetectLanguageInput,
     TextDocumentInput,
@@ -28,6 +29,7 @@ from ._models import (
 )
 
 __all__ = [
+    'ApiVersion',
     'TextAnalyticsClient',
     'DetectLanguageInput',
     'TextDocumentInput',

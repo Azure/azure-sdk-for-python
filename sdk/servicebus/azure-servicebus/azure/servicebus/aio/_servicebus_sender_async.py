@@ -19,6 +19,7 @@ from .._common.constants import (
     MGMT_REQUEST_SEQUENCE_NUMBERS
 )
 from .._common import mgmt_handlers
+from .._common.utils import copy_messages_to_sendable_if_needed
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
@@ -57,6 +58,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
 
     .. admonition:: Example:
 
@@ -134,9 +136,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._set_msg_timeout(timeout, last_exception)
         await self._handler.send_message_async(message.message)
 
-    async def schedule(self, messages, schedule_time_utc):
+    async def schedule_messages(self, messages, schedule_time_utc):
         # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]
-        """Send Message or multiple Messages to be enqueued at a specific time.
+        """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
         :param messages: The message or list of messages to schedule.
         :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
@@ -217,6 +219,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
 
         .. admonition:: Example:
@@ -236,7 +239,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
         return cls(**constructor_args)
 
-    async def send(self, message):
+    async def send_messages(self, message):
         # type: (Union[Message, BatchMessage, List[Message]]) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
@@ -265,6 +268,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        message = copy_messages_to_sendable_if_needed(message)
         try:
             batch = await self.create_batch()
             batch._from_list(message)  # pylint: disable=protected-access

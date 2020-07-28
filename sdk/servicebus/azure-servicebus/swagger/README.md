@@ -17,7 +17,7 @@ autorest --use=@autorest/python@5.0.0-preview.6
 ```
 ### Settings
 ``` yaml
-input-file: servicebus-swagger.json
+input-file: https://raw.githubusercontent.com/YijunXieMS/azure-rest-api-specs-pr/servicebus_mgmt/specification/servicebus/data-plane/servicebus-swagger.json?token=ALQFVABEGSXQX2IEVU26V2K7AYZ4K
 output-folder: ../azure/servicebus/management/_generated
 namespace: azure.servicebus.management._generated
 no-namespace-folders: true

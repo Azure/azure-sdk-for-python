@@ -102,6 +102,8 @@ class AsyncStorageAccountHostsMixin(object):
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
         ]
+        if kwargs.get("_additional_pipeline_policies"):
+            policies = policies + kwargs.get("_additional_pipeline_policies")
         return config, AsyncPipeline(config.transport, policies=policies)
 
     async def _batch_send(

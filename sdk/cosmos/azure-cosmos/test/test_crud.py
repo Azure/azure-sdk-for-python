@@ -246,14 +246,6 @@ class CRUDTests(unittest.TestCase):
                     {'name': '@id', 'value': collection_id}
                 ]
             }))
-        # Replacing indexing policy is allowed.
-        lazy_policy = {'indexingMode': 'lazy'}
-        created_properties = created_collection.read()
-        replaced_collection = created_db.replace_container(created_collection,
-                                                           partition_key=created_properties['partitionKey'],
-                                                           indexing_policy=lazy_policy)
-        replaced_properties = replaced_collection.read()                                                   
-        self.assertEqual('lazy', replaced_properties['indexingPolicy']['indexingMode'])
 
         self.assertTrue(collections)
         # delete collection
@@ -983,6 +975,15 @@ class CRUDTests(unittest.TestCase):
         # Upsert should create new document since the id is different
         new_document = created_collection.upsert_item(body=created_document)
 
+        # Test modified access conditions
+        created_document['spam'] = 'more eggs'
+        created_collection.upsert_item(body=created_document)
+        with pytest.raises(exceptions.CosmosHttpResponseError):
+            created_collection.upsert_item(
+                body=created_document,
+                match_condition=MatchConditions.IfNotModified,
+                etag=new_document['_etag'])
+
         # verify id property
         self.assertEqual(created_document['id'],
                          new_document['id'],
@@ -1677,21 +1678,6 @@ class CRUDTests(unittest.TestCase):
 
         db.delete_container(container=collection)
 
-        lazy_collection = db.create_container(
-            id='test_collection_indexing_policy lazy collection ' + str(uuid.uuid4()),
-            indexing_policy={
-                'indexingMode': documents.IndexingMode.Lazy
-            },
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-
-        lazy_collection_properties = lazy_collection.read()
-        self.assertEqual(lazy_collection_properties['indexingPolicy']['indexingMode'],
-                         documents.IndexingMode.Lazy,
-                         'indexing mode should be lazy')
-
-        db.delete_container(container=lazy_collection)
-
         consistent_collection = db.create_container(
             id='test_collection_indexing_policy consistent collection ' + str(uuid.uuid4()),
             indexing_policy={
@@ -1711,7 +1697,7 @@ class CRUDTests(unittest.TestCase):
             id='CollectionWithIndexingPolicy ' + str(uuid.uuid4()),
             indexing_policy={
                 'automatic': True,
-                'indexingMode': documents.IndexingMode.Lazy,
+                'indexingMode': documents.IndexingMode.Consistent,
                 'includedPaths': [
                     {
                         'path': '/',
@@ -1759,7 +1745,7 @@ class CRUDTests(unittest.TestCase):
         collection = db.create_container(
             id='test_create_default_indexing_policy TestCreateDefaultPolicy01' + str(uuid.uuid4()),
             indexing_policy={
-                    'indexingMode': documents.IndexingMode.Lazy, 'automatic': True
+                    'indexingMode': documents.IndexingMode.Consistent, 'automatic': True
                 },
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
@@ -2376,16 +2362,6 @@ class CRUDTests(unittest.TestCase):
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
-        lazy_coll = created_db.create_container(
-            id='test_index_progress_headers lazy_coll ' + str(uuid.uuid4()),
-            indexing_policy={'indexingMode': documents.IndexingMode.Lazy},
-            partition_key=PartitionKey(path="/id", kind='Hash')
-        )
-        created_container = created_db.get_container_client(container=lazy_coll)
-        created_container.read(populate_quota_info=True)
-        self.assertTrue(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
-        self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
-
         none_coll = created_db.create_container(
             id='test_index_progress_headers none_coll ' + str(uuid.uuid4()),
             indexing_policy={
@@ -2400,7 +2376,6 @@ class CRUDTests(unittest.TestCase):
         self.assertTrue(HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers)
 
         created_db.delete_container(consistent_coll)
-        created_db.delete_container(lazy_coll)
         created_db.delete_container(none_coll)
 
     def test_id_validation(self):
@@ -2629,6 +2604,71 @@ class CRUDTests(unittest.TestCase):
         # read permission with properties
         read_permission = created_user.get_permission(created_permission.properties)
         self.assertEqual(read_permission.id, created_permission.id)
+
+    # Temporarily commenting analytical storage tests until emulator support comes.
+    # def test_create_container_with_analytical_store_off(self):
+    #     # don't run test, for the time being, if running against the emulator
+    #     if 'localhost' in self.host or '127.0.0.1' in self.host:
+    #         return
+
+    #     created_db = self.databaseForTest
+    #     collection_id = 'test_create_container_with_analytical_store_off_' + str(uuid.uuid4())
+    #     collection_indexing_policy = {'indexingMode': 'consistent'}
+    #     created_recorder = RecordDiagnostics()
+    #     created_collection = created_db.create_container(id=collection_id,
+    #                                                      indexing_policy=collection_indexing_policy,
+    #                                                      partition_key=PartitionKey(path="/pk", kind="Hash"), 
+    #                                                      response_hook=created_recorder)
+    #     properties = created_collection.read()
+    #     ttl_key = "analyticalStorageTtl"
+    #     self.assertTrue(ttl_key not in properties or properties[ttl_key] == None)
+
+    # def test_create_container_with_analytical_store_on(self):
+    #     # don't run test, for the time being, if running against the emulator
+    #     if 'localhost' in self.host or '127.0.0.1' in self.host:
+    #         return
+
+    #     created_db = self.databaseForTest
+    #     collection_id = 'test_create_container_with_analytical_store_on_' + str(uuid.uuid4())
+    #     collection_indexing_policy = {'indexingMode': 'consistent'}
+    #     created_recorder = RecordDiagnostics()
+    #     created_collection = created_db.create_container(id=collection_id,
+    #                                                      analytical_storage_ttl=-1,
+    #                                                      indexing_policy=collection_indexing_policy,
+    #                                                      partition_key=PartitionKey(path="/pk", kind="Hash"), 
+    #                                                      response_hook=created_recorder)
+    #     properties = created_collection.read()
+    #     ttl_key = "analyticalStorageTtl"
+    #     self.assertTrue(ttl_key in properties and properties[ttl_key] == -1)
+
+    # def test_create_container_if_not_exists_with_analytical_store_on(self):
+    #     # don't run test, for the time being, if running against the emulator
+    #     if 'localhost' in self.host or '127.0.0.1' in self.host:
+    #         return
+
+    #     # first, try when we know the container doesn't exist.
+    #     created_db = self.databaseForTest
+    #     collection_id = 'test_create_container_if_not_exists_with_analytical_store_on_' + str(uuid.uuid4())
+    #     collection_indexing_policy = {'indexingMode': 'consistent'}
+    #     created_recorder = RecordDiagnostics()
+    #     created_collection = created_db.create_container_if_not_exists(id=collection_id,
+    #                                                                    analytical_storage_ttl=-1,
+    #                                                                    indexing_policy=collection_indexing_policy,
+    #                                                                    partition_key=PartitionKey(path="/pk", kind="Hash"),
+    #                                                                    response_hook=created_recorder)
+    #     properties = created_collection.read()
+    #     ttl_key = "analyticalStorageTtl"
+    #     self.assertTrue(ttl_key in properties and properties[ttl_key] == -1)
+
+    #     # next, try when we know the container DOES exist. This way both code paths are tested.
+    #     created_collection = created_db.create_container_if_not_exists(id=collection_id,
+    #                                                                    analytical_storage_ttl=-1,
+    #                                                                    indexing_policy=collection_indexing_policy,
+    #                                                                    partition_key=PartitionKey(path="/pk", kind="Hash"),
+    #                                                                    response_hook=created_recorder)
+    #     properties = created_collection.read()
+    #     ttl_key = "analyticalStorageTtl"
+    #     self.assertTrue(ttl_key in properties and properties[ttl_key] == -1)
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
