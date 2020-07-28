@@ -280,7 +280,7 @@ if __name__ == "__main__":
         dest="filter_type",
         default='Build',
         help="Filter type to identify eligible packages. for e.g. packages filtered in Build can pass filter type as Build,",
-        choices=['Build', "Docs", "Regression", "Omit_management", "Bandit"]
+        choices=['Build', "Docs", "Regression", "Omit_management"]
     )
 
 
