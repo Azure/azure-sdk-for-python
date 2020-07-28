@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-from datetime import datetime
 import functools
 import logging
 import json
@@ -70,7 +69,9 @@ class CertificateClientTests(KeyVaultTestCase):
             validity_in_months=12,
             key_usage=["digitalSignature", "keyEncipherment"],
         )
-        return await client.import_certificate(cert_name, CertificateClientTests.CERT_CONTENT_PASSWORD_ENODED, policy=cert_policy, password=cert_password)
+        return await client.import_certificate(
+            cert_name, CertificateClientTests.CERT_CONTENT_PASSWORD_ENODED, policy=cert_policy, password=cert_password
+        )
 
     def _validate_certificate_operation(self, pending_cert_operation, vault, cert_name, original_cert_policy):
         self.assertIsNotNone(pending_cert_operation)
@@ -234,7 +235,7 @@ class CertificateClientTests(KeyVaultTestCase):
         certificate = await client.import_certificate(
             certificate_name="importPasswordEncodedCertificate",
             certificate_bytes=CertificateClientTests.CERT_CONTENT_PASSWORD_ENODED,
-            password="123"
+            password="123",
         )
         self.assertIsNotNone(certificate.policy)
 
@@ -638,14 +639,25 @@ class CertificateClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    async def test_versions(self, client, **kwargs):
+    async def test_get_certificate_version(self, client, **kwargs):
         cert_name = self.get_resource_name("cert")
-        for _ in range(self.list_test_size):
-            await client.create_certificate(cert_name, CertificatePolicy.get_default())
+        policy = CertificatePolicy.get_default()
+        await asyncio.gather(*[client.create_certificate(cert_name, policy) for _ in range(self.list_test_size)])
 
-        today = datetime.utcnow().strftime("%m%d%Y")
-        async for version in client.list_properties_of_certificate_versions(cert_name):
-            cert = await client.get_certificate_version(version.name, version.version)
-            assert cert.name == cert_name
-            for date in (version.created_on, version.updated_on, version.not_before):
-                assert date.strftime("%m%d%Y") == today
+        async for version_properties in client.list_properties_of_certificate_versions(cert_name):
+            cert = await client.get_certificate_version(version_properties.name, version_properties.version)
+
+            # This isn't factored out into a helper method because the properties are not exactly equal.
+            # get_certificate_version sets "recovery_days" and "recovery_level" but the list method does not.
+            # (This is Key Vault's behavior, not an SDK limitation.)
+            assert version_properties.created_on == cert.properties.created_on
+            assert version_properties.enabled == cert.properties.enabled
+            assert version_properties.expires_on == cert.properties.expires_on
+            assert version_properties.id == cert.properties.id
+            assert version_properties.name == cert.properties.name
+            assert version_properties.not_before == cert.properties.not_before
+            assert version_properties.tags == cert.properties.tags
+            assert version_properties.updated_on == cert.properties.updated_on
+            assert version_properties.vault_url == cert.properties.vault_url
+            assert version_properties.version == cert.properties.version
+            assert version_properties.x509_thumbprint == cert.properties.x509_thumbprint
