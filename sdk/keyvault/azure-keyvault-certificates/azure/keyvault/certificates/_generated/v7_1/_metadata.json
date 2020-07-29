@@ -1,6 +1,6 @@
 {
-    "chosen_version": "7.1-preview",
-    "total_api_version_list": ["7.1-preview"],
+    "chosen_version": "7.1",
+    "total_api_version_list": ["7.1"],
     "client": {
         "name": "KeyVaultClient",
         "filename": "_key_vault_client",

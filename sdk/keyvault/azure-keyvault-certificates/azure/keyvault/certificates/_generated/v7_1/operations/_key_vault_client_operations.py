@@ -53,7 +53,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         def prepare_request(next_link=None):
             # Construct headers
@@ -136,7 +136,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedCertificateBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.delete_certificate.metadata['url']  # type: ignore
@@ -195,7 +195,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Contacts"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -256,7 +256,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Contacts"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.get_certificate_contacts.metadata['url']  # type: ignore
@@ -311,7 +311,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.Contacts"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.delete_certificate_contacts.metadata['url']  # type: ignore
@@ -371,7 +371,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateIssuerListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         def prepare_request(next_link=None):
             # Construct headers
@@ -454,7 +454,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.IssuerBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -522,7 +522,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.IssuerBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -588,7 +588,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.IssuerBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.get_certificate_issuer.metadata['url']  # type: ignore
@@ -647,7 +647,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.IssuerBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.delete_certificate_issuer.metadata['url']  # type: ignore
@@ -709,7 +709,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateOperation"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -779,7 +779,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -848,7 +848,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         def prepare_request(next_link=None):
             # Construct headers
@@ -930,7 +930,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificatePolicy"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.get_certificate_policy.metadata['url']  # type: ignore
@@ -992,7 +992,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificatePolicy"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1064,7 +1064,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1134,7 +1134,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.get_certificate.metadata['url']  # type: ignore
@@ -1197,7 +1197,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateOperation"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1262,7 +1262,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateOperation"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.get_certificate_operation.metadata['url']  # type: ignore
@@ -1322,7 +1322,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateOperation"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.delete_certificate_operation.metadata['url']  # type: ignore
@@ -1385,7 +1385,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1451,7 +1451,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupCertificateResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.backup_certificate.metadata['url']  # type: ignore
@@ -1510,7 +1510,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1581,7 +1581,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedCertificateListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         def prepare_request(next_link=None):
             # Construct headers
@@ -1664,7 +1664,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedCertificateBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.get_deleted_certificate.metadata['url']  # type: ignore
@@ -1724,7 +1724,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.purge_deleted_certificate.metadata['url']  # type: ignore
@@ -1781,7 +1781,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.CertificateBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.recover_deleted_certificate.metadata['url']  # type: ignore
