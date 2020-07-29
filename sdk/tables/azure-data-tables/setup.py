@@ -74,6 +74,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.2.2",
         "msrest>=0.6.10"
+        # azure-data-tables
     ],
     extras_require={
         ":python_version<'3.0'": ['futures'],
