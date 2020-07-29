@@ -19,6 +19,10 @@ from ._iot_security_solution_operations import IotSecuritySolutionOperations
 from ._iot_security_solution_analytics_operations import IotSecuritySolutionAnalyticsOperations
 from ._iot_security_solutions_analytics_aggregated_alert_operations import IotSecuritySolutionsAnalyticsAggregatedAlertOperations
 from ._iot_security_solutions_analytics_recommendation_operations import IotSecuritySolutionsAnalyticsRecommendationOperations
+from ._iot_alert_types_operations import IotAlertTypesOperations
+from ._iot_alerts_operations import IotAlertsOperations
+from ._iot_recommendation_types_operations import IotRecommendationTypesOperations
+from ._iot_recommendations_operations import IotRecommendationsOperations
 from ._locations_operations import LocationsOperations
 from ._operations import Operations
 from ._tasks_operations import TasksOperations
@@ -42,10 +46,13 @@ from ._allowed_connections_operations import AllowedConnectionsOperations
 from ._topology_operations import TopologyOperations
 from ._jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
 from ._discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
+from ._security_solutions_reference_data_operations import SecuritySolutionsReferenceDataOperations
 from ._external_security_solutions_operations import ExternalSecuritySolutionsOperations
 from ._secure_scores_operations import SecureScoresOperations
 from ._secure_score_controls_operations import SecureScoreControlsOperations
 from ._secure_score_control_definitions_operations import SecureScoreControlDefinitionsOperations
+from ._security_solutions_operations import SecuritySolutionsOperations
+from ._connectors_operations import ConnectorsOperations
 
 __all__ = [
     'ComplianceResultsOperations',
@@ -58,6 +65,10 @@ __all__ = [
     'IotSecuritySolutionAnalyticsOperations',
     'IotSecuritySolutionsAnalyticsAggregatedAlertOperations',
     'IotSecuritySolutionsAnalyticsRecommendationOperations',
+    'IotAlertTypesOperations',
+    'IotAlertsOperations',
+    'IotRecommendationTypesOperations',
+    'IotRecommendationsOperations',
     'LocationsOperations',
     'Operations',
     'TasksOperations',
@@ -81,8 +92,11 @@ __all__ = [
     'TopologyOperations',
     'JitNetworkAccessPoliciesOperations',
     'DiscoveredSecuritySolutionsOperations',
+    'SecuritySolutionsReferenceDataOperations',
     'ExternalSecuritySolutionsOperations',
     'SecureScoresOperations',
     'SecureScoreControlsOperations',
     'SecureScoreControlDefinitionsOperations',
+    'SecuritySolutionsOperations',
+    'ConnectorsOperations',
 ]

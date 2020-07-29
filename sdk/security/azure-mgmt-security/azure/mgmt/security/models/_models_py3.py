@@ -381,6 +381,129 @@ class ActiveConnectionsNotInAllowedRange(TimeWindowCustomAlertRule):
         self.rule_type = 'ActiveConnectionsNotInAllowedRange'
 
 
+class AdaptiveApplicationControlGroup(Model):
+    """AdaptiveApplicationControlGroup.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :ivar location: Location where the resource is stored
+    :vartype location: str
+    :param enforcement_mode: Possible values include: 'Audit', 'Enforce',
+     'None'
+    :type enforcement_mode: str or ~azure.mgmt.security.models.enum
+    :param protection_mode:
+    :type protection_mode: ~azure.mgmt.security.models.ProtectionMode
+    :ivar configuration_status: Possible values include: 'Configured',
+     'NotConfigured', 'InProgress', 'Failed', 'NoStatus'
+    :vartype configuration_status: str or ~azure.mgmt.security.models.enum
+    :ivar recommendation_status: Possible values include: 'Recommended',
+     'NotRecommended', 'NotAvailable', 'NoStatus'
+    :vartype recommendation_status: str or ~azure.mgmt.security.models.enum
+    :ivar issues:
+    :vartype issues:
+     list[~azure.mgmt.security.models.AdaptiveApplicationControlIssueSummary]
+    :ivar source_system: Possible values include: 'Azure_AppLocker',
+     'Azure_AuditD', 'NonAzure_AppLocker', 'NonAzure_AuditD', 'None'
+    :vartype source_system: str or ~azure.mgmt.security.models.enum
+    :param vm_recommendations:
+    :type vm_recommendations:
+     list[~azure.mgmt.security.models.VmRecommendation]
+    :param path_recommendations:
+    :type path_recommendations:
+     list[~azure.mgmt.security.models.PathRecommendation]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+        'configuration_status': {'readonly': True},
+        'recommendation_status': {'readonly': True},
+        'issues': {'readonly': True},
+        'source_system': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'enforcement_mode': {'key': 'properties.enforcementMode', 'type': 'str'},
+        'protection_mode': {'key': 'properties.protectionMode', 'type': 'ProtectionMode'},
+        'configuration_status': {'key': 'properties.configurationStatus', 'type': 'str'},
+        'recommendation_status': {'key': 'properties.recommendationStatus', 'type': 'str'},
+        'issues': {'key': 'properties.issues', 'type': '[AdaptiveApplicationControlIssueSummary]'},
+        'source_system': {'key': 'properties.sourceSystem', 'type': 'str'},
+        'vm_recommendations': {'key': 'properties.vmRecommendations', 'type': '[VmRecommendation]'},
+        'path_recommendations': {'key': 'properties.pathRecommendations', 'type': '[PathRecommendation]'},
+    }
+
+    def __init__(self, *, enforcement_mode=None, protection_mode=None, vm_recommendations=None, path_recommendations=None, **kwargs) -> None:
+        super(AdaptiveApplicationControlGroup, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = None
+        self.enforcement_mode = enforcement_mode
+        self.protection_mode = protection_mode
+        self.configuration_status = None
+        self.recommendation_status = None
+        self.issues = None
+        self.source_system = None
+        self.vm_recommendations = vm_recommendations
+        self.path_recommendations = path_recommendations
+
+
+class AdaptiveApplicationControlGroups(Model):
+    """Represents a list of machine groups and set of rules that are recommended
+    by Azure Security Center to be allowed.
+
+    :param value:
+    :type value:
+     list[~azure.mgmt.security.models.AdaptiveApplicationControlGroup]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[AdaptiveApplicationControlGroup]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(AdaptiveApplicationControlGroups, self).__init__(**kwargs)
+        self.value = value
+
+
+class AdaptiveApplicationControlIssueSummary(Model):
+    """Represents a summary of the alerts of the machine group.
+
+    :param issue: Possible values include: 'ViolationsAudited',
+     'ViolationsBlocked', 'MsiAndScriptViolationsAudited',
+     'MsiAndScriptViolationsBlocked', 'ExecutableViolationsAudited',
+     'RulesViolatedManually'
+    :type issue: str or ~azure.mgmt.security.models.enum
+    :param number_of_vms: The number of machines in the group that have this
+     alert
+    :type number_of_vms: float
+    """
+
+    _attribute_map = {
+        'issue': {'key': 'issue', 'type': 'str'},
+        'number_of_vms': {'key': 'numberOfVms', 'type': 'float'},
+    }
+
+    def __init__(self, *, issue=None, number_of_vms: float=None, **kwargs) -> None:
+        super(AdaptiveApplicationControlIssueSummary, self).__init__(**kwargs)
+        self.issue = issue
+        self.number_of_vms = number_of_vms
+
+
 class Resource(Model):
     """Describes an Azure resource.
 
@@ -1139,128 +1262,6 @@ class AmqpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         self.rule_type = 'AmqpD2CMessagesNotInAllowedRange'
 
 
-class AppWhitelistingGroup(Model):
-    """AppWhitelistingGroup.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :ivar location: Location where the resource is stored
-    :vartype location: str
-    :param enforcement_mode: Possible values include: 'Audit', 'Enforce',
-     'None'
-    :type enforcement_mode: str or ~azure.mgmt.security.models.enum
-    :param protection_mode:
-    :type protection_mode: ~azure.mgmt.security.models.ProtectionMode
-    :ivar configuration_status: Possible values include: 'Configured',
-     'NotConfigured', 'InProgress', 'Failed', 'NoStatus'
-    :vartype configuration_status: str or ~azure.mgmt.security.models.enum
-    :ivar recommendation_status: Possible values include: 'Recommended',
-     'NotRecommended', 'NotAvailable', 'NoStatus'
-    :vartype recommendation_status: str or ~azure.mgmt.security.models.enum
-    :ivar issues:
-    :vartype issues:
-     list[~azure.mgmt.security.models.AppWhitelistingIssueSummary]
-    :ivar source_system: Possible values include: 'Azure_AppLocker',
-     'Azure_AuditD', 'NonAzure_AppLocker', 'NonAzure_AuditD', 'None'
-    :vartype source_system: str or ~azure.mgmt.security.models.enum
-    :param vm_recommendations:
-    :type vm_recommendations:
-     list[~azure.mgmt.security.models.VmRecommendation]
-    :param path_recommendations:
-    :type path_recommendations:
-     list[~azure.mgmt.security.models.PathRecommendation]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'configuration_status': {'readonly': True},
-        'recommendation_status': {'readonly': True},
-        'issues': {'readonly': True},
-        'source_system': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'enforcement_mode': {'key': 'properties.enforcementMode', 'type': 'str'},
-        'protection_mode': {'key': 'properties.protectionMode', 'type': 'ProtectionMode'},
-        'configuration_status': {'key': 'properties.configurationStatus', 'type': 'str'},
-        'recommendation_status': {'key': 'properties.recommendationStatus', 'type': 'str'},
-        'issues': {'key': 'properties.issues', 'type': '[AppWhitelistingIssueSummary]'},
-        'source_system': {'key': 'properties.sourceSystem', 'type': 'str'},
-        'vm_recommendations': {'key': 'properties.vmRecommendations', 'type': '[VmRecommendation]'},
-        'path_recommendations': {'key': 'properties.pathRecommendations', 'type': '[PathRecommendation]'},
-    }
-
-    def __init__(self, *, enforcement_mode=None, protection_mode=None, vm_recommendations=None, path_recommendations=None, **kwargs) -> None:
-        super(AppWhitelistingGroup, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = None
-        self.enforcement_mode = enforcement_mode
-        self.protection_mode = protection_mode
-        self.configuration_status = None
-        self.recommendation_status = None
-        self.issues = None
-        self.source_system = None
-        self.vm_recommendations = vm_recommendations
-        self.path_recommendations = path_recommendations
-
-
-class AppWhitelistingGroups(Model):
-    """Represents a list of VM/server groups and set of rules that are Recommended
-    by Azure Security Center to be allowed.
-
-    :param value:
-    :type value: list[~azure.mgmt.security.models.AppWhitelistingGroup]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[AppWhitelistingGroup]'},
-    }
-
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(AppWhitelistingGroups, self).__init__(**kwargs)
-        self.value = value
-
-
-class AppWhitelistingIssueSummary(Model):
-    """Represents a summary of the alerts of the VM/server group.
-
-    :param issue: Possible values include: 'ViolationsAudited',
-     'ViolationsBlocked', 'MsiAndScriptViolationsAudited',
-     'MsiAndScriptViolationsBlocked', 'ExecutableViolationsAudited',
-     'RulesViolatedManually'
-    :type issue: str or ~azure.mgmt.security.models.enum
-    :param number_of_vms: The number of machines in the VM/server group that
-     have this alert
-    :type number_of_vms: float
-    """
-
-    _attribute_map = {
-        'issue': {'key': 'issue', 'type': 'str'},
-        'number_of_vms': {'key': 'numberOfVms', 'type': 'float'},
-    }
-
-    def __init__(self, *, issue=None, number_of_vms: float=None, **kwargs) -> None:
-        super(AppWhitelistingIssueSummary, self).__init__(**kwargs)
-        self.issue = issue
-        self.number_of_vms = number_of_vms
-
-
 class AscLocation(Resource):
     """The ASC location of the subscription is in the "name" field.
 
@@ -1450,6 +1451,54 @@ class AtaSolutionProperties(ExternalSecuritySolutionProperties):
     def __init__(self, *, additional_properties=None, device_vendor: str=None, device_type: str=None, workspace=None, last_event_received: str=None, **kwargs) -> None:
         super(AtaSolutionProperties, self).__init__(additional_properties=additional_properties, device_vendor=device_vendor, device_type=device_type, workspace=workspace, **kwargs)
         self.last_event_received = last_event_received
+
+
+class AuthenticationDetailsProperties(Model):
+    """Settings for cloud authentication management.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AwsCredsAuthenticationDetailsProperties,
+    AwAssumeRoleAuthenticationDetailsProperties,
+    GcpCredentialsDetailsProperties
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar authentication_provisioning_state: State of the multi-cloud
+     connector. Possible values include: 'Valid', 'Invalid', 'Expired',
+     'IncorrectPolicy'
+    :vartype authentication_provisioning_state: str or
+     ~azure.mgmt.security.models.AuthenticationProvisioningState
+    :ivar granted_permissions: The permissions detected in the cloud account.
+    :vartype granted_permissions: list[str or
+     ~azure.mgmt.security.models.PermissionProperty]
+    :param authentication_type: Required. Constant filled by server.
+    :type authentication_type: str
+    """
+
+    _validation = {
+        'authentication_provisioning_state': {'readonly': True},
+        'granted_permissions': {'readonly': True},
+        'authentication_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_provisioning_state': {'key': 'authenticationProvisioningState', 'type': 'str'},
+        'granted_permissions': {'key': 'grantedPermissions', 'type': '[str]'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'authentication_type': {'awsCreds': 'AwsCredsAuthenticationDetailsProperties', 'awsAssumeRole': 'AwAssumeRoleAuthenticationDetailsProperties', 'gcpCredentials': 'GcpCredentialsDetailsProperties'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AuthenticationDetailsProperties, self).__init__(**kwargs)
+        self.authentication_provisioning_state = None
+        self.granted_permissions = None
+        self.authentication_type = None
 
 
 class TrackedResource(Model):
@@ -1869,6 +1918,121 @@ class AutoProvisioningSetting(Resource):
     def __init__(self, *, auto_provision, **kwargs) -> None:
         super(AutoProvisioningSetting, self).__init__(**kwargs)
         self.auto_provision = auto_provision
+
+
+class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsProperties):
+    """AWS cloud account connector based assume role, the role enables delegating
+    access to your AWS resources. The role is composed of role arn and external
+    id, for more details, refer to <a
+    href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user.html">Creating
+    a Role to Delegate Permissions to an IAM User (write only)</a>.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar authentication_provisioning_state: State of the multi-cloud
+     connector. Possible values include: 'Valid', 'Invalid', 'Expired',
+     'IncorrectPolicy'
+    :vartype authentication_provisioning_state: str or
+     ~azure.mgmt.security.models.AuthenticationProvisioningState
+    :ivar granted_permissions: The permissions detected in the cloud account.
+    :vartype granted_permissions: list[str or
+     ~azure.mgmt.security.models.PermissionProperty]
+    :param authentication_type: Required. Constant filled by server.
+    :type authentication_type: str
+    :ivar account_id: The ID of the cloud account
+    :vartype account_id: str
+    :param aws_assume_role_arn: Required. Assumed role ID is an identifier
+     that you can use to create temporary security credentials.
+    :type aws_assume_role_arn: str
+    :param aws_external_id: Required. A unique identifier that is required
+     when you assume a role in another account.
+    :type aws_external_id: str
+    """
+
+    _validation = {
+        'authentication_provisioning_state': {'readonly': True},
+        'granted_permissions': {'readonly': True},
+        'authentication_type': {'required': True},
+        'account_id': {'readonly': True},
+        'aws_assume_role_arn': {'required': True},
+        'aws_external_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_provisioning_state': {'key': 'authenticationProvisioningState', 'type': 'str'},
+        'granted_permissions': {'key': 'grantedPermissions', 'type': '[str]'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'account_id': {'key': 'accountId', 'type': 'str'},
+        'aws_assume_role_arn': {'key': 'awsAssumeRoleArn', 'type': 'str'},
+        'aws_external_id': {'key': 'awsExternalId', 'type': 'str'},
+    }
+
+    def __init__(self, *, aws_assume_role_arn: str, aws_external_id: str, **kwargs) -> None:
+        super(AwAssumeRoleAuthenticationDetailsProperties, self).__init__(**kwargs)
+        self.account_id = None
+        self.aws_assume_role_arn = aws_assume_role_arn
+        self.aws_external_id = aws_external_id
+        self.authentication_type = 'awsAssumeRole'
+
+
+class AwsCredsAuthenticationDetailsProperties(AuthenticationDetailsProperties):
+    """AWS cloud account connector based credentials, the credentials is composed
+    of access key id and secret key, for more details, refer to <a
+    href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html">Creating
+    an IAM User in Your AWS Account (write only)</a>.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar authentication_provisioning_state: State of the multi-cloud
+     connector. Possible values include: 'Valid', 'Invalid', 'Expired',
+     'IncorrectPolicy'
+    :vartype authentication_provisioning_state: str or
+     ~azure.mgmt.security.models.AuthenticationProvisioningState
+    :ivar granted_permissions: The permissions detected in the cloud account.
+    :vartype granted_permissions: list[str or
+     ~azure.mgmt.security.models.PermissionProperty]
+    :param authentication_type: Required. Constant filled by server.
+    :type authentication_type: str
+    :ivar account_id: The ID of the cloud account
+    :vartype account_id: str
+    :param aws_access_key_id: Required. Public key element of the AWS
+     credential object (write only)
+    :type aws_access_key_id: str
+    :param aws_secret_access_key: Required. Secret key element of the AWS
+     credential object (write only)
+    :type aws_secret_access_key: str
+    """
+
+    _validation = {
+        'authentication_provisioning_state': {'readonly': True},
+        'granted_permissions': {'readonly': True},
+        'authentication_type': {'required': True},
+        'account_id': {'readonly': True},
+        'aws_access_key_id': {'required': True},
+        'aws_secret_access_key': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_provisioning_state': {'key': 'authenticationProvisioningState', 'type': 'str'},
+        'granted_permissions': {'key': 'grantedPermissions', 'type': '[str]'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'account_id': {'key': 'accountId', 'type': 'str'},
+        'aws_access_key_id': {'key': 'awsAccessKeyId', 'type': 'str'},
+        'aws_secret_access_key': {'key': 'awsSecretAccessKey', 'type': 'str'},
+    }
+
+    def __init__(self, *, aws_access_key_id: str, aws_secret_access_key: str, **kwargs) -> None:
+        super(AwsCredsAuthenticationDetailsProperties, self).__init__(**kwargs)
+        self.account_id = None
+        self.aws_access_key_id = aws_access_key_id
+        self.aws_secret_access_key = aws_secret_access_key
+        self.authentication_type = 'awsCreds'
 
 
 class ResourceDetails(Model):
@@ -2327,6 +2491,48 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
     def __init__(self, *, is_enabled: bool, allowlist_values, **kwargs) -> None:
         super(ConnectionToIpNotAllowed, self).__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
         self.rule_type = 'ConnectionToIpNotAllowed'
+
+
+class ConnectorSetting(Resource):
+    """The connector setting.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param hybrid_compute_settings: Settings for hybrid compute management,
+     these settings are relevant only Arc autoProvision (Hybrid Compute).
+    :type hybrid_compute_settings:
+     ~azure.mgmt.security.models.HybridComputeSettingsProperties
+    :param authentication_details: Settings for authentication management,
+     these settings are relevant only for the cloud connector.
+    :type authentication_details:
+     ~azure.mgmt.security.models.AuthenticationDetailsProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'hybrid_compute_settings': {'key': 'properties.hybridComputeSettings', 'type': 'HybridComputeSettingsProperties'},
+        'authentication_details': {'key': 'properties.authenticationDetails', 'type': 'AuthenticationDetailsProperties'},
+    }
+
+    def __init__(self, *, hybrid_compute_settings=None, authentication_details=None, **kwargs) -> None:
+        super(ConnectorSetting, self).__init__(**kwargs)
+        self.hybrid_compute_settings = hybrid_compute_settings
+        self.authentication_details = authentication_details
 
 
 class ContainerRegistryVulnerabilityProperties(AdditionalData):
@@ -2943,6 +3149,106 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
         self.rule_type = 'FileUploadsNotInAllowedRange'
 
 
+class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):
+    """GCP cloud account connector based service to service credentials, the
+    credentials is composed of organization id and json api key (write
+    only)</a>.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar authentication_provisioning_state: State of the multi-cloud
+     connector. Possible values include: 'Valid', 'Invalid', 'Expired',
+     'IncorrectPolicy'
+    :vartype authentication_provisioning_state: str or
+     ~azure.mgmt.security.models.AuthenticationProvisioningState
+    :ivar granted_permissions: The permissions detected in the cloud account.
+    :vartype granted_permissions: list[str or
+     ~azure.mgmt.security.models.PermissionProperty]
+    :param authentication_type: Required. Constant filled by server.
+    :type authentication_type: str
+    :param organization_id: Required. The Organization ID of the GCP cloud
+     account
+    :type organization_id: str
+    :param type: Required. Type field of the API key (write only)
+    :type type: str
+    :param project_id: Required. Project Id field of the API key (write only)
+    :type project_id: str
+    :param private_key_id: Required. Private key Id field of the API key
+     (write only)
+    :type private_key_id: str
+    :param private_key: Required. Private key field of the API key (write
+     only)
+    :type private_key: str
+    :param client_email: Required. Client email field of the API key (write
+     only)
+    :type client_email: str
+    :param client_id: Required. Client Id field of the API key (write only)
+    :type client_id: str
+    :param auth_uri: Required. Auth Uri field of the API key (write only)
+    :type auth_uri: str
+    :param token_uri: Required. Token Uri field of the API key (write only)
+    :type token_uri: str
+    :param auth_provider_x509_cert_url: Required. Auth provider x509
+     certificate url field of the API key (write only)
+    :type auth_provider_x509_cert_url: str
+    :param client_x509_cert_url: Required. Client x509 certificate url field
+     of the API key (write only)
+    :type client_x509_cert_url: str
+    """
+
+    _validation = {
+        'authentication_provisioning_state': {'readonly': True},
+        'granted_permissions': {'readonly': True},
+        'authentication_type': {'required': True},
+        'organization_id': {'required': True},
+        'type': {'required': True},
+        'project_id': {'required': True},
+        'private_key_id': {'required': True},
+        'private_key': {'required': True},
+        'client_email': {'required': True},
+        'client_id': {'required': True},
+        'auth_uri': {'required': True},
+        'token_uri': {'required': True},
+        'auth_provider_x509_cert_url': {'required': True},
+        'client_x509_cert_url': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_provisioning_state': {'key': 'authenticationProvisioningState', 'type': 'str'},
+        'granted_permissions': {'key': 'grantedPermissions', 'type': '[str]'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+        'organization_id': {'key': 'organizationId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'project_id': {'key': 'projectId', 'type': 'str'},
+        'private_key_id': {'key': 'privateKeyId', 'type': 'str'},
+        'private_key': {'key': 'privateKey', 'type': 'str'},
+        'client_email': {'key': 'clientEmail', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'auth_uri': {'key': 'authUri', 'type': 'str'},
+        'token_uri': {'key': 'tokenUri', 'type': 'str'},
+        'auth_provider_x509_cert_url': {'key': 'authProviderX509CertUrl', 'type': 'str'},
+        'client_x509_cert_url': {'key': 'clientX509CertUrl', 'type': 'str'},
+    }
+
+    def __init__(self, *, organization_id: str, type: str, project_id: str, private_key_id: str, private_key: str, client_email: str, client_id: str, auth_uri: str, token_uri: str, auth_provider_x509_cert_url: str, client_x509_cert_url: str, **kwargs) -> None:
+        super(GcpCredentialsDetailsProperties, self).__init__(**kwargs)
+        self.organization_id = organization_id
+        self.type = type
+        self.project_id = project_id
+        self.private_key_id = private_key_id
+        self.private_key = private_key
+        self.client_email = client_email
+        self.client_id = client_id
+        self.auth_uri = auth_uri
+        self.token_uri = token_uri
+        self.auth_provider_x509_cert_url = auth_provider_x509_cert_url
+        self.client_x509_cert_url = client_x509_cert_url
+        self.authentication_type = 'gcpCredentials'
+
+
 class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
     """Number of cloud to device messages (HTTP protocol) is not in allowed range.
 
@@ -3091,6 +3397,61 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         self.rule_type = 'HttpD2CMessagesNotInAllowedRange'
 
 
+class HybridComputeSettingsProperties(Model):
+    """Settings for hybrid compute management.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar hybrid_compute_provisioning_state: State of the service principal
+     and its secret. Possible values include: 'Valid', 'Invalid', 'Expired'
+    :vartype hybrid_compute_provisioning_state: str or
+     ~azure.mgmt.security.models.HybridComputeProvisioningState
+    :param auto_provision: Required. Whether or not to automatically install
+     Azure Arc (hybrid compute) agents on machines. Possible values include:
+     'On', 'Off'
+    :type auto_provision: str or ~azure.mgmt.security.models.AutoProvision
+    :param resource_group_name: The name of the resource group where Arc
+     (Hybrid Compute) connectors are connected.
+    :type resource_group_name: str
+    :param region: The location where the meta data of machines will be stored
+    :type region: str
+    :param proxy_server: For a non-Azure machine that is not connected
+     directly to the internet, specify a proxy server that the non-Azure
+     machine can use.
+    :type proxy_server: ~azure.mgmt.security.models.ProxyServerProperties
+    :param service_principal: An object to access resources that are secured
+     by an Azure AD tenant.
+    :type service_principal:
+     ~azure.mgmt.security.models.ServicePrincipalProperties
+    """
+
+    _validation = {
+        'hybrid_compute_provisioning_state': {'readonly': True},
+        'auto_provision': {'required': True},
+    }
+
+    _attribute_map = {
+        'hybrid_compute_provisioning_state': {'key': 'hybridComputeProvisioningState', 'type': 'str'},
+        'auto_provision': {'key': 'autoProvision', 'type': 'str'},
+        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
+        'region': {'key': 'region', 'type': 'str'},
+        'proxy_server': {'key': 'proxyServer', 'type': 'ProxyServerProperties'},
+        'service_principal': {'key': 'servicePrincipal', 'type': 'ServicePrincipalProperties'},
+    }
+
+    def __init__(self, *, auto_provision, resource_group_name: str=None, region: str=None, proxy_server=None, service_principal=None, **kwargs) -> None:
+        super(HybridComputeSettingsProperties, self).__init__(**kwargs)
+        self.hybrid_compute_provisioning_state = None
+        self.auto_provision = auto_provision
+        self.resource_group_name = resource_group_name
+        self.region = region
+        self.proxy_server = proxy_server
+        self.service_principal = service_principal
+
+
 class InformationProtectionKeyword(Model):
     """The information type keyword.
 
@@ -3210,6 +3571,308 @@ class InformationType(Model):
         self.enabled = enabled
         self.custom = custom
         self.keywords = keywords
+
+
+class IotAlert(Model):
+    """IoT alert.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar system_alert_id: Holds the product canonical identifier of the alert
+     within the scope of a product
+    :vartype system_alert_id: str
+    :ivar compromised_entity: Display name of the main entity being reported
+     on
+    :vartype compromised_entity: str
+    :ivar alert_type: The type name of the alert
+    :vartype alert_type: str
+    :ivar start_time_utc: The impact start time of the alert (the time of the
+     first event or activity included in the alert)
+    :vartype start_time_utc: str
+    :ivar end_time_utc: The impact end time of the alert (the time of the last
+     event or activity included in the alert)
+    :vartype end_time_utc: str
+    :param entities: A list of entities related to the alert
+    :type entities: list[object]
+    :param extended_properties: A bag of fields which extends the alert
+     information
+    :type extended_properties: object
+    """
+
+    _validation = {
+        'system_alert_id': {'readonly': True},
+        'compromised_entity': {'readonly': True},
+        'alert_type': {'readonly': True},
+        'start_time_utc': {'readonly': True},
+        'end_time_utc': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'system_alert_id': {'key': 'properties.systemAlertId', 'type': 'str'},
+        'compromised_entity': {'key': 'properties.compromisedEntity', 'type': 'str'},
+        'alert_type': {'key': 'properties.alertType', 'type': 'str'},
+        'start_time_utc': {'key': 'properties.startTimeUtc', 'type': 'str'},
+        'end_time_utc': {'key': 'properties.endTimeUtc', 'type': 'str'},
+        'entities': {'key': 'properties.entities', 'type': '[object]'},
+        'extended_properties': {'key': 'properties.extendedProperties', 'type': 'object'},
+    }
+
+    def __init__(self, *, entities=None, extended_properties=None, **kwargs) -> None:
+        super(IotAlert, self).__init__(**kwargs)
+        self.system_alert_id = None
+        self.compromised_entity = None
+        self.alert_type = None
+        self.start_time_utc = None
+        self.end_time_utc = None
+        self.entities = entities
+        self.extended_properties = extended_properties
+
+
+class IotAlertType(Resource):
+    """IoT alert type.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :ivar alert_display_name: The display name of the alert
+    :vartype alert_display_name: str
+    :ivar severity: The severity of the alert. Possible values include:
+     'Informational', 'Low', 'Medium', 'High'
+    :vartype severity: str or ~azure.mgmt.security.models.AlertSeverity
+    :ivar description: Description of the suspected vulnerability and meaning.
+    :vartype description: str
+    :ivar provider_name: The name of the alert provider or internal partner
+    :vartype provider_name: str
+    :ivar product_name: The name of the product which published this alert
+    :vartype product_name: str
+    :ivar product_component_name: The name of a component inside the product
+     which generated the alert
+    :vartype product_component_name: str
+    :ivar vendor_name: The name of the vendor that raise the alert
+    :vartype vendor_name: str
+    :ivar intent: Kill chain related intent behind the alert. Could contain
+     multiple enum values (separated by commas). Possible values include:
+     'Unknown', 'PreAttack', 'InitialAccess', 'Persistence',
+     'PrivilegeEscalation', 'DefenseEvasion', 'CredentialAccess', 'Discovery',
+     'LateralMovement', 'Execution', 'Collection', 'Exfiltration',
+     'CommandAndControl', 'Impact', 'Probing', 'Exploitation'
+    :vartype intent: str or ~azure.mgmt.security.models.AlertIntent
+    :ivar remediation_steps: Manual action items to take to remediate the
+     alert
+    :vartype remediation_steps: list[str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'alert_display_name': {'readonly': True},
+        'severity': {'readonly': True},
+        'description': {'readonly': True},
+        'provider_name': {'readonly': True},
+        'product_name': {'readonly': True},
+        'product_component_name': {'readonly': True},
+        'vendor_name': {'readonly': True},
+        'intent': {'readonly': True},
+        'remediation_steps': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'alert_display_name': {'key': 'properties.alertDisplayName', 'type': 'str'},
+        'severity': {'key': 'properties.severity', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'provider_name': {'key': 'properties.providerName', 'type': 'str'},
+        'product_name': {'key': 'properties.productName', 'type': 'str'},
+        'product_component_name': {'key': 'properties.productComponentName', 'type': 'str'},
+        'vendor_name': {'key': 'properties.vendorName', 'type': 'str'},
+        'intent': {'key': 'properties.intent', 'type': 'str'},
+        'remediation_steps': {'key': 'properties.remediationSteps', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(IotAlertType, self).__init__(**kwargs)
+        self.alert_display_name = None
+        self.severity = None
+        self.description = None
+        self.provider_name = None
+        self.product_name = None
+        self.product_component_name = None
+        self.vendor_name = None
+        self.intent = None
+        self.remediation_steps = None
+
+
+class IotAlertTypeList(Model):
+    """List of alert types.
+
+    :param value: List data
+    :type value: list[~azure.mgmt.security.models.IotAlertType]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IotAlertType]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(IotAlertTypeList, self).__init__(**kwargs)
+        self.value = value
+
+
+class IotRecommendation(Resource):
+    """IoT recommendation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :ivar device_id: Identifier of the device being reported on
+    :vartype device_id: str
+    :ivar recommendation_type: The type name of the recommendation
+    :vartype recommendation_type: str
+    :ivar discovered_time_utc: The discovery time of the recommendation
+    :vartype discovered_time_utc: str
+    :param recommendation_additional_data: A bag of fields which extends the
+     recommendation information
+    :type recommendation_additional_data: object
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'device_id': {'readonly': True},
+        'recommendation_type': {'readonly': True},
+        'discovered_time_utc': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'device_id': {'key': 'properties.deviceId', 'type': 'str'},
+        'recommendation_type': {'key': 'properties.recommendationType', 'type': 'str'},
+        'discovered_time_utc': {'key': 'properties.discoveredTimeUtc', 'type': 'str'},
+        'recommendation_additional_data': {'key': 'properties.recommendationAdditionalData', 'type': 'object'},
+    }
+
+    def __init__(self, *, recommendation_additional_data=None, **kwargs) -> None:
+        super(IotRecommendation, self).__init__(**kwargs)
+        self.device_id = None
+        self.recommendation_type = None
+        self.discovered_time_utc = None
+        self.recommendation_additional_data = recommendation_additional_data
+
+
+class IotRecommendationType(Resource):
+    """IoT recommendation type.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :ivar recommendation_display_name: The display name of the recommendation
+    :vartype recommendation_display_name: str
+    :ivar severity: The severity of the recommendation. Possible values
+     include: 'Unknown', 'NotApplicable', 'Healthy', 'OffByPolicy', 'Low',
+     'Medium', 'High'
+    :vartype severity: str or
+     ~azure.mgmt.security.models.RecommendationSeverity
+    :ivar description: Description of the suspected vulnerability and meaning.
+    :vartype description: str
+    :ivar product_name: The name of the product which published this
+     recommendation
+    :vartype product_name: str
+    :ivar product_component_name: The name of a component inside the product
+     which generated the recommendation
+    :vartype product_component_name: str
+    :ivar vendor_name: The name of the vendor that raised the recommendation
+    :vartype vendor_name: str
+    :ivar control: The name of the recommendation's control category
+    :vartype control: str
+    :ivar remediation_steps: Manual action items to take to resolve the
+     recommendation
+    :vartype remediation_steps: list[str]
+    :ivar data_source: The alert's data source
+    :vartype data_source: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'recommendation_display_name': {'readonly': True},
+        'severity': {'readonly': True},
+        'description': {'readonly': True},
+        'product_name': {'readonly': True},
+        'product_component_name': {'readonly': True},
+        'vendor_name': {'readonly': True},
+        'control': {'readonly': True},
+        'remediation_steps': {'readonly': True},
+        'data_source': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'recommendation_display_name': {'key': 'properties.recommendationDisplayName', 'type': 'str'},
+        'severity': {'key': 'properties.severity', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'product_name': {'key': 'properties.productName', 'type': 'str'},
+        'product_component_name': {'key': 'properties.productComponentName', 'type': 'str'},
+        'vendor_name': {'key': 'properties.vendorName', 'type': 'str'},
+        'control': {'key': 'properties.control', 'type': 'str'},
+        'remediation_steps': {'key': 'properties.remediationSteps', 'type': '[str]'},
+        'data_source': {'key': 'properties.dataSource', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(IotRecommendationType, self).__init__(**kwargs)
+        self.recommendation_display_name = None
+        self.severity = None
+        self.description = None
+        self.product_name = None
+        self.product_component_name = None
+        self.vendor_name = None
+        self.control = None
+        self.remediation_steps = None
+        self.data_source = None
+
+
+class IotRecommendationTypeList(Model):
+    """List of recommendation types.
+
+    :param value: List data
+    :type value: list[~azure.mgmt.security.models.IotRecommendationType]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IotRecommendationType]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(IotRecommendationTypeList, self).__init__(**kwargs)
+        self.value = value
 
 
 class IoTSecurityAggregatedAlert(Model):
@@ -4375,6 +5038,9 @@ class MqttD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
 class OnPremiseResourceDetails(ResourceDetails):
     """Details of the On Premise resource that was assessed.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: OnPremiseSqlResourceDetails
+
     All required parameters must be populated in order to send to Azure.
 
     :param source: Required. Constant filled by server.
@@ -4407,6 +5073,10 @@ class OnPremiseResourceDetails(ResourceDetails):
         'machine_name': {'key': 'machineName', 'type': 'str'},
     }
 
+    _subtype_map = {
+        'source': {'OnPremiseSql': 'OnPremiseSqlResourceDetails'}
+    }
+
     def __init__(self, *, workspace_id: str, vmuuid: str, source_computer_id: str, machine_name: str, **kwargs) -> None:
         super(OnPremiseResourceDetails, self).__init__(**kwargs)
         self.workspace_id = workspace_id
@@ -4414,6 +5084,57 @@ class OnPremiseResourceDetails(ResourceDetails):
         self.source_computer_id = source_computer_id
         self.machine_name = machine_name
         self.source = 'OnPremise'
+
+
+class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
+    """Details of the On Premise Sql resource that was assessed.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source: Required. Constant filled by server.
+    :type source: str
+    :param workspace_id: Required. Azure resource Id of the workspace the
+     machine is attached to
+    :type workspace_id: str
+    :param vmuuid: Required. The unique Id of the machine
+    :type vmuuid: str
+    :param source_computer_id: Required. The oms agent Id installed on the
+     machine
+    :type source_computer_id: str
+    :param machine_name: Required. The name of the machine
+    :type machine_name: str
+    :param server_name: Required. The Sql server name installed on the machine
+    :type server_name: str
+    :param database_name: Required. The Sql database name installed on the
+     machine
+    :type database_name: str
+    """
+
+    _validation = {
+        'source': {'required': True},
+        'workspace_id': {'required': True},
+        'vmuuid': {'required': True},
+        'source_computer_id': {'required': True},
+        'machine_name': {'required': True},
+        'server_name': {'required': True},
+        'database_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'source': {'key': 'source', 'type': 'str'},
+        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
+        'vmuuid': {'key': 'vmuuid', 'type': 'str'},
+        'source_computer_id': {'key': 'sourceComputerId', 'type': 'str'},
+        'machine_name': {'key': 'machineName', 'type': 'str'},
+        'server_name': {'key': 'serverName', 'type': 'str'},
+        'database_name': {'key': 'databaseName', 'type': 'str'},
+    }
+
+    def __init__(self, *, workspace_id: str, vmuuid: str, source_computer_id: str, machine_name: str, server_name: str, database_name: str, **kwargs) -> None:
+        super(OnPremiseSqlResourceDetails, self).__init__(workspace_id=workspace_id, vmuuid=vmuuid, source_computer_id=source_computer_id, machine_name=machine_name, **kwargs)
+        self.server_name = server_name
+        self.database_name = database_name
+        self.source = 'OnPremiseSql'
 
 
 class Operation(Model):
@@ -4489,7 +5210,8 @@ class OperationDisplay(Model):
 class PathRecommendation(Model):
     """Represents a path that is recommended to be allowed and its properties.
 
-    :param path: The full path to whitelist
+    :param path: The full path of the file, or an identifier of the
+     application
     :type path: str
     :param action: Possible values include: 'Recommended', 'Add', 'Remove'
     :type action: str or ~azure.mgmt.security.models.enum
@@ -4499,7 +5221,7 @@ class PathRecommendation(Model):
     :type type: str or ~azure.mgmt.security.models.enum
     :param publisher_info:
     :type publisher_info: ~azure.mgmt.security.models.PublisherInfo
-    :param common: Whether the path is commonly run on the machine
+    :param common: Whether the application is commonly run on the machine
     :type common: bool
     :param user_sids:
     :type user_sids: list[str]
@@ -4685,6 +5407,27 @@ class ProtectionMode(Model):
         self.msi = msi
         self.script = script
         self.executable = executable
+
+
+class ProxyServerProperties(Model):
+    """For a non-Azure machine that is not connected directly to the internet,
+    specify a proxy server that the non-Azure machine can use.
+
+    :param ip: Proxy server IP
+    :type ip: str
+    :param port: Proxy server port
+    :type port: str
+    """
+
+    _attribute_map = {
+        'ip': {'key': 'ip', 'type': 'str'},
+        'port': {'key': 'port', 'type': 'str'},
+    }
+
+    def __init__(self, *, ip: str=None, port: str=None, **kwargs) -> None:
+        super(ProxyServerProperties, self).__init__(**kwargs)
+        self.ip = ip
+        self.port = port
 
 
 class PublisherInfo(Model):
@@ -5648,6 +6391,164 @@ class SecurityContact(Resource):
         self.alerts_to_admins = alerts_to_admins
 
 
+class SecuritySolution(Model):
+    """SecuritySolution.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :ivar location: Location where the resource is stored
+    :vartype location: str
+    :param security_family: Required. The security family of the security
+     solution. Possible values include: 'Waf', 'Ngfw', 'SaasWaf', 'Va'
+    :type security_family: str or ~azure.mgmt.security.models.SecurityFamily
+    :param provisioning_state: Required. The security family provisioning
+     State. Possible values include: 'Succeeded', 'Failed', 'Updating'
+    :type provisioning_state: str or
+     ~azure.mgmt.security.models.ProvisioningState
+    :param template: Required. The security solutions' template
+    :type template: str
+    :param protection_status: Required. The security solutions' status
+    :type protection_status: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+        'security_family': {'required': True},
+        'provisioning_state': {'required': True},
+        'template': {'required': True},
+        'protection_status': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'security_family': {'key': 'properties.securityFamily', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'template': {'key': 'properties.template', 'type': 'str'},
+        'protection_status': {'key': 'properties.protectionStatus', 'type': 'str'},
+    }
+
+    def __init__(self, *, security_family, provisioning_state, template: str, protection_status: str, **kwargs) -> None:
+        super(SecuritySolution, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = None
+        self.security_family = security_family
+        self.provisioning_state = provisioning_state
+        self.template = template
+        self.protection_status = protection_status
+
+
+class SecuritySolutionsReferenceData(Model):
+    """SecuritySolutionsReferenceData.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :ivar location: Location where the resource is stored
+    :vartype location: str
+    :param security_family: Required. The security family of the security
+     solution. Possible values include: 'Waf', 'Ngfw', 'SaasWaf', 'Va'
+    :type security_family: str or ~azure.mgmt.security.models.SecurityFamily
+    :param alert_vendor_name: Required. The security solutions' vendor name
+    :type alert_vendor_name: str
+    :param package_info_url: Required. The security solutions' package info
+     url
+    :type package_info_url: str
+    :param product_name: Required. The security solutions' product name
+    :type product_name: str
+    :param publisher: Required. The security solutions' publisher
+    :type publisher: str
+    :param publisher_display_name: Required. The security solutions' publisher
+     display name
+    :type publisher_display_name: str
+    :param template: Required. The security solutions' template
+    :type template: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+        'security_family': {'required': True},
+        'alert_vendor_name': {'required': True},
+        'package_info_url': {'required': True},
+        'product_name': {'required': True},
+        'publisher': {'required': True},
+        'publisher_display_name': {'required': True},
+        'template': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'security_family': {'key': 'properties.securityFamily', 'type': 'str'},
+        'alert_vendor_name': {'key': 'properties.alertVendorName', 'type': 'str'},
+        'package_info_url': {'key': 'properties.packageInfoUrl', 'type': 'str'},
+        'product_name': {'key': 'properties.productName', 'type': 'str'},
+        'publisher': {'key': 'properties.publisher', 'type': 'str'},
+        'publisher_display_name': {'key': 'properties.publisherDisplayName', 'type': 'str'},
+        'template': {'key': 'properties.template', 'type': 'str'},
+    }
+
+    def __init__(self, *, security_family, alert_vendor_name: str, package_info_url: str, product_name: str, publisher: str, publisher_display_name: str, template: str, **kwargs) -> None:
+        super(SecuritySolutionsReferenceData, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = None
+        self.security_family = security_family
+        self.alert_vendor_name = alert_vendor_name
+        self.package_info_url = package_info_url
+        self.product_name = product_name
+        self.publisher = publisher
+        self.publisher_display_name = publisher_display_name
+        self.template = template
+
+
+class SecuritySolutionsReferenceDataList(Model):
+    """SecuritySolutionsReferenceDataList.
+
+    :param value:
+    :type value:
+     list[~azure.mgmt.security.models.SecuritySolutionsReferenceData]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SecuritySolutionsReferenceData]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(SecuritySolutionsReferenceDataList, self).__init__(**kwargs)
+        self.value = value
+
+
 class SecuritySubAssessment(Resource):
     """Security sub-assessment on a resource.
 
@@ -5957,6 +6858,27 @@ class ServerVulnerabilityProperties(AdditionalData):
         self.published_time = None
         self.vendor_references = None
         self.assessed_resource_type = 'ServerVulnerabilityAssessment'
+
+
+class ServicePrincipalProperties(Model):
+    """Details of the service principal.
+
+    :param application_id: Application id of service principal.
+    :type application_id: str
+    :param secret: A secret string that the application uses to prove its
+     identity, also can be referred to as application password (write only).
+    :type secret: str
+    """
+
+    _attribute_map = {
+        'application_id': {'key': 'applicationId', 'type': 'str'},
+        'secret': {'key': 'secret', 'type': 'str'},
+    }
+
+    def __init__(self, *, application_id: str=None, secret: str=None, **kwargs) -> None:
+        super(ServicePrincipalProperties, self).__init__(**kwargs)
+        self.application_id = application_id
+        self.secret = secret
 
 
 class SqlServerVulnerabilityProperties(AdditionalData):
@@ -6459,7 +7381,7 @@ class VendorReference(Model):
 
 
 class VmRecommendation(Model):
-    """Represents a machine that is part of a VM/server group.
+    """Represents a machine that is part of a machine group.
 
     :param configuration_status: Possible values include: 'Configured',
      'NotConfigured', 'InProgress', 'Failed', 'NoStatus'
