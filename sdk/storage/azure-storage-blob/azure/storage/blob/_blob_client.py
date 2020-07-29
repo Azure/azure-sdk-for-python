@@ -1485,6 +1485,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         options = {
             'copy_source': source_url,
+            'seal_blob': kwargs.pop('seal_destination_blob', None),
             'timeout': timeout,
             'modified_access_conditions': dest_mod_conditions,
             'blob_tags_string': blob_tags_string,
