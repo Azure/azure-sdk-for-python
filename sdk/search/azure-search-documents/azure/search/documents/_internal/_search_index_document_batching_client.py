@@ -39,7 +39,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
     :keyword persistence: persistence hook. If it is set, the batch client will dump actions queue when it changes
     :keyword str api_version: The Search API version to use for requests.
     """
-
+    # pylint: disable=too-many-instance-attributes
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
     _DEFAULT_WINDOW = 0
     _DEFAULT_BATCH_SIZE = 1000

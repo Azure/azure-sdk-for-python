@@ -73,7 +73,7 @@ class IndexDocumentsBatch(object):
         :type documents: dict or list[dict]
         :rtype: List[IndexAction]
         """
-        self._extend_batch(flatten_args(documents), "delete")
+        return self._extend_batch(flatten_args(documents), "delete")
 
     def add_merge_actions(self, *documents):
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
@@ -90,7 +90,7 @@ class IndexDocumentsBatch(object):
         :type documents: dict or list[dict]
         :rtype: List[IndexAction]
         """
-        self._extend_batch(flatten_args(documents), "merge")
+        return self._extend_batch(flatten_args(documents), "merge")
 
     def add_merge_or_upload_actions(self, *documents):
         # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
@@ -107,7 +107,7 @@ class IndexDocumentsBatch(object):
         :type documents: dict or list[dict]
         :rtype: List[IndexAction]
         """
-        self._extend_batch(flatten_args(documents), "mergeOrUpload")
+        return self._extend_batch(flatten_args(documents), "mergeOrUpload")
 
     @property
     def actions(self):
