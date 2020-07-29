@@ -6,6 +6,8 @@
 from enum import Enum
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
+from azure.data.tables._generated.models import TableServiceStats as GenTableServiceStats
+
 from ._deserialize import _convert_to_entity
 from ._shared.models import Services
 from ._shared.response_handlers import return_context_and_deserialized, process_table_error
@@ -14,6 +16,16 @@ from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
+
+
+class TableServiceStats(GenTableServiceStats):
+    """Stats for the service
+    :param geo_replication: Geo-Replication information for the Secondary Storage Service.
+    :type geo_replication: ~azure_table.models.GeoReplication
+    """
+
+    def __init__(self, geo_replication=None, **kwargs):  # pylint:disable=W0231
+        self.geo_replication = geo_replication
 
 
 class AccessPolicy(GenAccessPolicy):
