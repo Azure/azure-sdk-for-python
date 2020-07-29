@@ -5,6 +5,21 @@
 `AZURE_CLIENT_ID` to configure a user-assigned managed identity.
 ([#10931](https://github.com/Azure/azure-sdk-for-python/issues/10931))
 
+### Breaking Changes
+- Removed application authentication APIs added in 1.4.0 beta versions. These
+  will be reintroduced in 1.5.0b1.
+  - Changes to `DeviceCodeCredential`, `InteractiveBrowserCredential`, and
+    `UsernamePasswordCredential`:
+    - Removed `authenticate` method
+    - Removed `allow_unencrypted_cache` and `enable_persistent_cache` keyword
+      arguments
+  - Removed `allow_unencrypted_cache` and `enable_persistent_cache` keyword
+    arguments from `CertificateCredential` and `ClientSecretCredential`
+  - Changes to `SharedTokenCacheCredential`:
+    - Removed `allow_unencrypted_cache` keyword argument
+    - On Linux, `SharedTokenCacheCredential.supported()` returns `False` and
+      this credential is not part of `DefaultAzureCredential`
+  - Removed classes `AuthenticationRecord` and `AuthenticationRequiredError`
 
 ## 1.4.0b7 (2020-07-22)
 - `DefaultAzureCredential` has a new optional keyword argument,
