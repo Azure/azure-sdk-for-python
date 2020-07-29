@@ -8,13 +8,14 @@
 ### Breaking Changes
 - Removed application authentication APIs added in 1.4.0 beta versions. These
   will be reintroduced in 1.5.0b1.
-  - Changes to `DeviceCodeCredential`, `InteractiveBrowserCredential`, and
-    `UsernamePasswordCredential`:
-    - Removed `authenticate` method
-    - Removed `allow_unencrypted_cache` and `enable_persistent_cache` keyword
-      arguments
+  - Removed `authenticate` method from `DeviceCodeCredential`,
+    `InteractiveBrowserCredential`, and `UsernamePasswordCredential`
   - Removed `allow_unencrypted_cache` and `enable_persistent_cache` keyword
-    arguments from `CertificateCredential` and `ClientSecretCredential`
+    arguments from `CertificateCredential`, `ClientSecretCredential`,
+    `DeviceCodeCredential`, `InteractiveBrowserCredential`, and
+    `UsernamePasswordCredential`
+  - Removed `disable_automatic_authentication` keyword argument from
+    `DeviceCodeCredential` and `InteractiveBrowserCredential`
   - Changes to `SharedTokenCacheCredential`:
     - Removed `allow_unencrypted_cache` keyword argument
     - On Linux, `SharedTokenCacheCredential.supported()` returns `False` and
