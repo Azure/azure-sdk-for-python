@@ -253,8 +253,8 @@ class DocumentLanguage(msrest.serialization.Model):
 
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
-    :param detected_languages: Required. A list of extracted languages.
-    :type detected_languages: list[~azure.ai.textanalytics.v3_1_preview_1.models.DetectedLanguage]
+    :param detected_language: Required. Detected Language.
+    :type detected_language: ~azure.ai.textanalytics.v3_1_preview_1.models.DetectedLanguage
     :param warnings: Required. Warnings encountered while processing document.
     :type warnings: list[~azure.ai.textanalytics.v3_1_preview_1.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this field will contain
@@ -264,13 +264,13 @@ class DocumentLanguage(msrest.serialization.Model):
 
     _validation = {
         'id': {'required': True},
-        'detected_languages': {'required': True},
+        'detected_language': {'required': True},
         'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'detected_languages': {'key': 'detectedLanguages', 'type': '[DetectedLanguage]'},
+        'detected_language': {'key': 'detectedLanguage', 'type': 'DetectedLanguage'},
         'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
@@ -279,14 +279,14 @@ class DocumentLanguage(msrest.serialization.Model):
         self,
         *,
         id: str,
-        detected_languages: List["DetectedLanguage"],
+        detected_language: "DetectedLanguage",
         warnings: List["TextAnalyticsWarning"],
         statistics: Optional["DocumentStatistics"] = None,
         **kwargs
     ):
         super(DocumentLanguage, self).__init__(**kwargs)
         self.id = id
-        self.detected_languages = detected_languages
+        self.detected_language = detected_language
         self.warnings = warnings
         self.statistics = statistics
 
