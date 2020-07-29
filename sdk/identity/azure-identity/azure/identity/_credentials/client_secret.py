@@ -24,7 +24,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
     :param str client_secret: one of the service principal's client secrets
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
     :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache. Defaults to
           False.

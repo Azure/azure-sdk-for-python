@@ -6,7 +6,7 @@
 
 from ._text_analytics_client import TextAnalyticsClient
 from ._version import VERSION
-from ._multiapi import ApiVersion
+from ._base_client import ApiVersion
 from ._models import (
     DetectLanguageInput,
     TextDocumentInput,
