@@ -52,7 +52,7 @@ class AsyncKeyVaultClientBase(object):
             }
         )
 
-        if not transport:
+        if not transport and not pipeline:
             from azure.core.pipeline.transport import AioHttpTransport
             transport = AioHttpTransport(**kwargs)
 
