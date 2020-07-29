@@ -139,7 +139,7 @@ def test_scopes_round_trip():
     with pytest.raises(AuthenticationRequiredError) as ex:
         credential.get_token(scope)
 
-    credential.authenticate(scopes=ex.value.scopes)
+    credential._authenticate(scopes=ex.value.scopes)
 
     assert request_token.call_count == 1, "validation method wasn't called"
 
@@ -161,7 +161,7 @@ def test_authenticate_default_scopes(authority, expected_scope):
         return {"access_token": "**", "expires_in": 42}
 
     request_token = Mock(wraps=validate_scopes)
-    MockCredential(authority=authority, request_token=request_token).authenticate()
+    MockCredential(authority=authority, request_token=request_token)._authenticate()
     assert request_token.call_count == 1
 
 
@@ -169,7 +169,7 @@ def test_authenticate_unknown_cloud():
     """authenticate should raise when given no scopes in an unknown cloud"""
 
     with pytest.raises(CredentialUnavailableError):
-        MockCredential(authority="localhost").authenticate()
+        MockCredential(authority="localhost")._authenticate()
 
 
 @pytest.mark.parametrize("option", (True, False))
@@ -177,7 +177,7 @@ def test_authenticate_ignores_disable_automatic_authentication(option):
     """authenticate should prompt for authentication regardless of the credential's configuration"""
 
     request_token = Mock(return_value={"access_token": "**", "expires_in": 42})
-    MockCredential(request_token=request_token, disable_automatic_authentication=option).authenticate()
+    MockCredential(request_token=request_token, disable_automatic_authentication=option)._authenticate()
     assert request_token.call_count == 1, "credential didn't begin interactive authentication"
 
 
@@ -292,7 +292,7 @@ def test_home_account_id_client_info():
         def _request_token(self, *_, **__):
             return msal_response
 
-    record = TestCredential().authenticate()
+    record = TestCredential()._authenticate()
     assert record.home_account_id == "{}.{}".format(object_id, home_tenant)
 
 
@@ -317,5 +317,5 @@ def test_home_account_id_no_client_info():
         def _request_token(self, *_, **__):
             return msal_response
 
-    record = TestCredential().authenticate()
+    record = TestCredential()._authenticate()
     assert record.home_account_id == subject

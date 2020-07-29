@@ -140,7 +140,7 @@ class InteractiveCredential(MsalCredential):
         _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-    def authenticate(self, **kwargs):
+    def _authenticate(self, **kwargs):
         # type: (**Any) -> AuthenticationRecord
         """Interactively authenticate a user.
 

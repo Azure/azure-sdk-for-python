@@ -81,7 +81,7 @@ def test_authenticate():
                 tenant_id=tenant_id,
                 transport=transport,
             )
-            record = credential.authenticate(scopes=(scope,))
+            record = credential._authenticate(scopes=(scope,))
 
     assert record.authority == environment
     assert record.home_account_id == object_id + "." + home_tenant
