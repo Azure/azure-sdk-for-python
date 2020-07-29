@@ -4,7 +4,7 @@
 # -------------------------------------
 from collections import namedtuple
 from ._shared import parse_vault_id
-from ._generated.v7_0.models import JsonWebKey as _JsonWebKey
+from ._generated.v7_1.models import JsonWebKey as _JsonWebKey
 
 try:
     from typing import TYPE_CHECKING
