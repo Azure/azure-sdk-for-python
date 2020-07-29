@@ -30,7 +30,7 @@ from ._shared.response_handlers import process_table_error
 from ._version import VERSION
 
 
-from ._models import TableEntityPropertiesPaged, UpdateMode
+from ._models import TableEntityPropertiesPaged, UpdateMode, Table
 
 from ._shared.response_handlers import return_headers_and_deserialized
 
@@ -186,7 +186,7 @@ class TableClient(TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> str
+        # type: (...) -> Table
         """Creates a new table under the current account.
 
         :return: Table created
@@ -195,7 +195,7 @@ class TableClient(TableClientBase):
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         table = self._client.table.create(table_properties)
-        return table.table_name
+        return Table(table=table)
 
     @distributed_trace
     def delete_table(

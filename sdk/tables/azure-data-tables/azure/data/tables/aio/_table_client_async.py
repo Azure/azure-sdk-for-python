@@ -24,7 +24,7 @@ from azure.data.tables._shared.request_handlers import serialize_iso
 from azure.data.tables._shared.response_handlers import return_headers_and_deserialized, process_table_error
 
 from .._models import UpdateMode
-from ._models import TableEntityPropertiesPaged
+from ._models import TableEntityPropertiesPaged, Table
 from .._deserialize import _convert_to_entity
 from .._serialize import _add_entity_properties, _get_match_headers
 from .._shared._table_client_base import TableClientBase
@@ -133,7 +133,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         table = await self._client.table.create(table_properties)
-        return table
+        return Table(table)
 
     @distributed_trace_async
     async def delete_table(
