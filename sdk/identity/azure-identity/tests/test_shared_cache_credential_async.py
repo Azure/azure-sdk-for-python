@@ -706,6 +706,7 @@ async def test_authentication_record_authenticating_tenant():
     assert kwargs["tenant_id"] == expected_tenant_id
 
 
+@pytest.mark.skip("in 1.4.0 allow_unencrypted_cache is private and defaults to True")
 @pytest.mark.asyncio
 async def test_allow_unencrypted_cache():
     """The credential should use an unencrypted cache when encryption is unavailable and the user explicitly allows it.
@@ -729,9 +730,9 @@ async def test_allow_unencrypted_cache():
 
     # encryption unavailable, no opt in to unencrypted cache -> credential should be unavailable
     credential = SharedTokenCacheCredential()
-    assert mock_extensions.PersistedTokenCache.call_count == 0
     with pytest.raises(CredentialUnavailableError):
         await credential.get_token("scope")
+    assert mock_extensions.PersistedTokenCache.call_count == 0
 
     # still no encryption, but now we allow the unencrypted fallback
     SharedTokenCacheCredential(_allow_unencrypted_cache=True)

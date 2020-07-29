@@ -118,7 +118,7 @@ class SharedTokenCacheBase(ABC):
             return
 
         if not self._cache and self.supported():
-            allow_unencrypted = self._client_kwargs.get("_allow_unencrypted_cache", False)
+            allow_unencrypted = self._client_kwargs.get("_allow_unencrypted_cache", True)
             try:
                 self._cache = load_user_cache(allow_unencrypted)
             except Exception:  # pylint:disable=broad-except
