@@ -511,7 +511,7 @@ def test_authority_environment_variable():
 def test_authentication_record_empty_cache():
     record = AuthenticationRecord("tenant_id", "client_id", "authority", "home_account_id", "username")
     transport = Mock(side_effect=Exception("the credential shouldn't send a request"))
-    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=TokenCache())
+    credential = SharedTokenCacheCredential(_authentication_record=record, transport=transport, _cache=TokenCache())
 
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
@@ -532,7 +532,7 @@ def test_authentication_record_no_match():
             "not-" + username, "not-" + object_id, "different-" + tenant_id, client_id="not-" + client_id,
         ),
     )
-    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=cache)
+    credential = SharedTokenCacheCredential(_authentication_record=record, transport=transport, _cache=cache)
 
     with pytest.raises(CredentialUnavailableError):
         credential.get_token("scope")
@@ -558,7 +558,7 @@ def test_authentication_record():
         requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
     )
-    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=cache)
+    credential = SharedTokenCacheCredential(_authentication_record=record, transport=transport, _cache=cache)
 
     token = credential.get_token("scope")
     assert token.token == expected_access_token
@@ -594,7 +594,7 @@ def test_auth_record_multiple_accounts_for_username():
         requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
     )
-    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=cache)
+    credential = SharedTokenCacheCredential(_authentication_record=record, transport=transport, _cache=cache)
 
     token = credential.get_token("scope")
     assert token.token == expected_access_token
@@ -609,7 +609,7 @@ def test_allow_unencrypted_cache(mock_extensions):
     """
 
     # the credential should prefer an encrypted cache even when the user allows an unencrypted one
-    SharedTokenCacheCredential(allow_unencrypted_cache=True)
+    SharedTokenCacheCredential(_allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
     mock_extensions.PersistedTokenCache.reset_mock()
 
@@ -622,7 +622,7 @@ def test_allow_unencrypted_cache(mock_extensions):
     assert mock_extensions.PersistedTokenCache.call_count == 0
 
     # still no encryption, but now we allow the unencrypted fallback
-    SharedTokenCacheCredential(allow_unencrypted_cache=True)
+    SharedTokenCacheCredential(_allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
 
@@ -742,7 +742,7 @@ def test_authentication_record_authenticating_tenant():
 
     with patch.object(SharedTokenCacheCredential, "_get_auth_client") as get_auth_client:
         credential = SharedTokenCacheCredential(
-            authentication_record=record, _cache=TokenCache(), tenant_id=expected_tenant_id
+            _authentication_record=record, _cache=TokenCache(), tenant_id=expected_tenant_id
         )
         with pytest.raises(CredentialUnavailableError):
             # this raises because the cache is empty

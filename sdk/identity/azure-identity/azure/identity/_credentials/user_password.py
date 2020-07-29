@@ -42,7 +42,7 @@ class UsernamePasswordCredential(InteractiveCredential):
         # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we
         # discard it here.
-        kwargs.pop("authentication_record", None)
+        kwargs.pop("_authentication_record", None)
         super(UsernamePasswordCredential, self).__init__(client_id=client_id, **kwargs)
         self._username = username
         self._password = password

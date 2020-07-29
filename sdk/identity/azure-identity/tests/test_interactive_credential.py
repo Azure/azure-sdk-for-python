@@ -64,7 +64,7 @@ def test_authentication_record_argument():
 
     app_factory = Mock(wraps=validate_app_parameters)
     credential = MockCredential(
-        authentication_record=record, disable_automatic_authentication=True, msal_app_factory=app_factory,
+        _authentication_record=record, disable_automatic_authentication=True, msal_app_factory=app_factory,
     )
     with pytest.raises(AuthenticationRequiredError):
         credential.get_token("scope")
@@ -87,7 +87,7 @@ def test_tenant_argument_overrides_record():
         return Mock(get_accounts=Mock(return_value=[]))
 
     credential = MockCredential(
-        authentication_record=record,
+        _authentication_record=record,
         tenant_id=expected_tenant,
         disable_automatic_authentication=True,
         msal_app_factory=validate_authority,
@@ -107,7 +107,7 @@ def test_disable_automatic_authentication():
     )
 
     credential = MockCredential(
-        authentication_record=record,
+        _authentication_record=record,
         disable_automatic_authentication=True,
         msal_app_factory=lambda *_, **__: msal_app,
         request_token=Mock(side_effect=Exception("credential shouldn't begin interactive authentication")),
@@ -190,7 +190,7 @@ def test_get_token_wraps_exceptions():
         acquire_token_silent_with_error=Mock(side_effect=CustomException(expected_message)),
         get_accounts=Mock(return_value=[{"home_account_id": record.home_account_id}]),
     )
-    credential = MockCredential(msal_app_factory=lambda *_, **__: msal_app, authentication_record=record)
+    credential = MockCredential(msal_app_factory=lambda *_, **__: msal_app, _authentication_record=record)
     with pytest.raises(ClientAuthenticationError) as ex:
         credential.get_token("scope")
 
@@ -220,20 +220,20 @@ def test_enable_persistent_cache():
             assert credential._cache is in_memory_cache
 
             # allowing an unencrypted cache doesn't count as opting in to the persistent cache
-            credential = TestCredential(allow_unencrypted_cache=True)
+            credential = TestCredential(_allow_unencrypted_cache=True)
             assert credential._cache is in_memory_cache
 
     # keyword argument opts in to persistent cache
     with patch(persistent_cache + ".msal_extensions") as mock_extensions:
-        TestCredential(enable_persistent_cache=True)
+        TestCredential(_enable_persistent_cache=True)
     assert mock_extensions.PersistedTokenCache.call_count == 1
 
     # opting in on an unsupported platform raises an exception
     with patch(persistent_cache + ".sys.platform", "commodore64"):
         with pytest.raises(NotImplementedError):
-            TestCredential(enable_persistent_cache=True)
+            TestCredential(_enable_persistent_cache=True)
         with pytest.raises(NotImplementedError):
-            TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
+            TestCredential(_enable_persistent_cache=True, _allow_unencrypted_cache=True)
 
 
 @patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
@@ -252,7 +252,7 @@ def test_persistent_cache_linux(mock_extensions):
             pass
 
     # the credential should prefer an encrypted cache even when the user allows an unencrypted one
-    TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
+    TestCredential(_enable_persistent_cache=True, _allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
     mock_extensions.PersistedTokenCache.reset_mock()
 
@@ -261,9 +261,9 @@ def test_persistent_cache_linux(mock_extensions):
 
     # encryption unavailable, no opt in to unencrypted cache -> credential should raise
     with pytest.raises(ValueError):
-        TestCredential(enable_persistent_cache=True)
+        TestCredential(_enable_persistent_cache=True)
 
-    TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
+    TestCredential(_enable_persistent_cache=True, _allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
 
