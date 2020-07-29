@@ -47,7 +47,7 @@ class KeyVaultClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -111,7 +111,7 @@ class KeyVaultClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSecretBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.delete_secret.metadata['url']  # type: ignore
@@ -176,7 +176,7 @@ class KeyVaultClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -245,7 +245,7 @@ class KeyVaultClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.get_secret.metadata['url']  # type: ignore
@@ -306,7 +306,7 @@ class KeyVaultClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         def prepare_request(next_link=None):
             # Construct headers
@@ -389,7 +389,7 @@ class KeyVaultClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         def prepare_request(next_link=None):
             # Construct headers
@@ -471,7 +471,7 @@ class KeyVaultClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSecretListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         def prepare_request(next_link=None):
             # Construct headers
@@ -550,7 +550,7 @@ class KeyVaultClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedSecretBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.get_deleted_secret.metadata['url']  # type: ignore
@@ -609,7 +609,7 @@ class KeyVaultClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.purge_deleted_secret.metadata['url']  # type: ignore
@@ -663,7 +663,7 @@ class KeyVaultClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.recover_deleted_secret.metadata['url']  # type: ignore
@@ -721,7 +721,7 @@ class KeyVaultClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupSecretResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.backup_secret.metadata['url']  # type: ignore
@@ -779,7 +779,7 @@ class KeyVaultClientOperationsMixin:
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SecretBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL

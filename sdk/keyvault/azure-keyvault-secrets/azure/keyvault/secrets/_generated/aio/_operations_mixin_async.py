@@ -121,8 +121,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v2016_10_01.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.0':
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.1-preview':
-            from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.1':
+            from ..v7_1.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -515,8 +515,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v2016_10_01.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.0':
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.1-preview':
-            from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.1':
+            from ..v7_1.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -1133,8 +1133,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v2016_10_01.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.0':
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.1-preview':
-            from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.1':
+            from ..v7_1.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -1170,8 +1170,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v2016_10_01.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.0':
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.1-preview':
-            from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.1':
+            from ..v7_1.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -1459,8 +1459,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v2016_10_01.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.0':
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.1-preview':
-            from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.1':
+            from ..v7_1.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -1499,8 +1499,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v2016_10_01.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.0':
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.1-preview':
-            from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.1':
+            from ..v7_1.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -1537,8 +1537,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v2016_10_01.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.0':
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.1-preview':
-            from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.1':
+            from ..v7_1.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -1824,8 +1824,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v2016_10_01.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.0':
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.1-preview':
-            from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.1':
+            from ..v7_1.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -2001,8 +2001,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v2016_10_01.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.0':
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.1-preview':
-            from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.1':
+            from ..v7_1.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -2179,8 +2179,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v2016_10_01.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.0':
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.1-preview':
-            from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.1':
+            from ..v7_1.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -2360,8 +2360,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v2016_10_01.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.0':
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.1-preview':
-            from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.1':
+            from ..v7_1.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -2751,8 +2751,8 @@ class KeyVaultClientOperationsMixin(object):
             from ..v2016_10_01.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.0':
             from ..v7_0.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.1-preview':
-            from ..v7_1_preview.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.1':
+            from ..v7_1.aio.operations_async import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()

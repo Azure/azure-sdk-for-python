@@ -40,11 +40,77 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '7.0'
+    DEFAULT_API_VERSION = '7.1'
     _PROFILE_TAG = "azure.keyvault.KeyVaultClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
+            'backup_certificate': '7.0',
+            'backup_key': '7.0',
+            'backup_storage_account': '7.0',
+            'create_certificate': '7.0',
+            'create_key': '7.0',
+            'decrypt': '7.0',
+            'delete_certificate': '7.0',
+            'delete_certificate_contacts': '7.0',
+            'delete_certificate_issuer': '7.0',
+            'delete_certificate_operation': '7.0',
+            'delete_key': '7.0',
+            'delete_sas_definition': '7.0',
+            'delete_storage_account': '7.0',
+            'encrypt': '7.0',
+            'get_certificate': '7.0',
+            'get_certificate_contacts': '7.0',
+            'get_certificate_issuer': '7.0',
+            'get_certificate_issuers': '7.0',
+            'get_certificate_operation': '7.0',
+            'get_certificate_policy': '7.0',
+            'get_certificate_versions': '7.0',
+            'get_certificates': '7.0',
+            'get_deleted_certificate': '7.0',
+            'get_deleted_certificates': '7.0',
+            'get_deleted_key': '7.0',
+            'get_deleted_keys': '7.0',
+            'get_deleted_sas_definition': '7.0',
+            'get_deleted_sas_definitions': '7.0',
+            'get_deleted_storage_account': '7.0',
+            'get_deleted_storage_accounts': '7.0',
+            'get_key': '7.0',
+            'get_key_versions': '7.0',
+            'get_keys': '7.0',
+            'get_sas_definition': '7.0',
+            'get_sas_definitions': '7.0',
+            'get_storage_account': '7.0',
+            'get_storage_accounts': '7.0',
+            'import_certificate': '7.0',
+            'import_key': '7.0',
+            'merge_certificate': '7.0',
+            'purge_deleted_certificate': '7.0',
+            'purge_deleted_key': '7.0',
+            'purge_deleted_storage_account': '7.0',
+            'recover_deleted_certificate': '7.0',
+            'recover_deleted_key': '7.0',
+            'recover_deleted_sas_definition': '7.0',
+            'recover_deleted_storage_account': '7.0',
+            'regenerate_storage_account_key': '7.0',
+            'restore_certificate': '7.0',
+            'restore_key': '7.0',
+            'restore_storage_account': '7.0',
+            'set_certificate_contacts': '7.0',
+            'set_certificate_issuer': '7.0',
+            'set_sas_definition': '7.0',
+            'set_storage_account': '7.0',
+            'sign': '7.0',
+            'unwrap_key': '7.0',
+            'update_certificate': '7.0',
+            'update_certificate_issuer': '7.0',
+            'update_certificate_operation': '7.0',
+            'update_certificate_policy': '7.0',
+            'update_key': '7.0',
+            'update_sas_definition': '7.0',
+            'update_storage_account': '7.0',
+            'verify': '7.0',
+            'wrap_key': '7.0',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -52,11 +118,13 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
     def __init__(
         self,
         api_version=None,
-        base_url=None,
         profile=KnownProfiles.default,
         **kwargs  # type: Any
     ):
-        base_url = '{vaultBaseUrl}'
+        if api_version == '2016-10-01' or api_version == '7.0' or api_version == '7.1':
+            base_url = '{vaultBaseUrl}'
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
         self._config = KeyVaultClientConfiguration(**kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(KeyVaultClient, self).__init__(
@@ -74,7 +142,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
 
            * 2016-10-01: :mod:`v2016_10_01.models<azure.keyvault.v2016_10_01.models>`
            * 7.0: :mod:`v7_0.models<azure.keyvault.v7_0.models>`
-           * 7.1-preview: :mod:`v7_1_preview.models<azure.keyvault.v7_1_preview.models>`
+           * 7.1: :mod:`v7_1.models<azure.keyvault.v7_1.models>`
         """
         if api_version == '2016-10-01':
             from .v2016_10_01 import models
@@ -82,8 +150,8 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
         elif api_version == '7.0':
             from .v7_0 import models
             return models
-        elif api_version == '7.1-preview':
-            from .v7_1_preview import models
+        elif api_version == '7.1':
+            from .v7_1 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
