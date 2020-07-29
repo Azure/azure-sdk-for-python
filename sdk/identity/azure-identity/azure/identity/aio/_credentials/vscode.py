@@ -9,7 +9,7 @@ from .._credentials.base import AsyncCredentialBase
 from ..._constants import AZURE_VSCODE_CLIENT_ID
 from .._internal.aad_client import AadClient
 from .._internal.decorators import log_get_token_async
-from ..._credentials.vscode_credential import get_credentials
+from ..._credentials.vscode import get_credentials
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports

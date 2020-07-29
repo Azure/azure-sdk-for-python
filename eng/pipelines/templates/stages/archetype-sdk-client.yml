@@ -20,6 +20,9 @@ parameters:
 - name: TargetDocRepoName
   type: string
   default: azure-docs-sdk-python
+- name: SkipPythonVersion
+  type: string
+  default: ''
 
 stages:
   - stage: Build
@@ -30,6 +33,7 @@ stages:
         ToxEnvParallel: ${{parameters.ToxEnvParallel}}
         BuildDocs: ${{parameters.BuildDocs}}
         InjectedPackages: ${{parameters.InjectedPackages}}
+        SkipPythonVersion: ${{parameters.SkipPythonVersion}}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -41,4 +45,4 @@ stages:
         ArtifactName: packages
         DocArtifact: documentation
         TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
-        TargetDocRepoName: ${{parameters.TargetDocRepoName}} 
+        TargetDocRepoName: ${{parameters.TargetDocRepoName}}

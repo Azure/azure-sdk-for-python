@@ -23,7 +23,7 @@
 /sdk/eventhub/                                                       @annatisch @yunhaoling @YijunXieMS
 
 # PRLabel: %Storage
-/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft    
+/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft @kasobol-msft
 
 /sdk/applicationinsights/                                            @alexeldeib      
 
