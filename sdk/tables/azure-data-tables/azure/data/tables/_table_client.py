@@ -190,7 +190,7 @@ class TableClient(TableClientBase):
         """Creates a new table under the current account.
 
         :return: Table created
-        :rtype: str
+        :rtype: Table
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)

@@ -128,7 +128,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         # type: (...) -> Table
         """Creates a new table under the given account.
         :return: Table created
-        :rtype: str
+        :rtype: Table
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
