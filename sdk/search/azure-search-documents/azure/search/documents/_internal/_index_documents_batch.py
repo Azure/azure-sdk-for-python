@@ -32,6 +32,8 @@ class IndexDocumentsBatch(object):
     def __init__(self):
         # type: () -> None
         self._actions = []  # type: List[IndexAction]
+        self._succeeded_actions = []  # type: List[IndexAction]
+        self._failed_actions = []     # type: List[IndexAction]
         self._lock = Lock()
 
     def __repr__(self):
@@ -39,7 +41,7 @@ class IndexDocumentsBatch(object):
         return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions))[:1024]
 
     def add_upload_actions(self, *documents):
-        # type (Union[List[dict], List[List[dict]]]) -> None
+        # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
         """Add documents to upload to the Azure search index.
 
         An upload action is similar to an "upsert" where the document will be
@@ -49,11 +51,12 @@ class IndexDocumentsBatch(object):
         :param documents: Documents to upload to an Azure search index. May be
          a single list of documents, or documents as individual parameters.
         :type documents: dict or list[dict]
+        :rtype: List[IndexAction]
         """
-        self._extend_batch(flatten_args(documents), "upload")
+        return self._extend_batch(flatten_args(documents), "upload")
 
     def add_delete_actions(self, *documents):
-        # type (Union[List[dict], List[List[dict]]]) -> None
+        # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
         """Add documents to delete to the Azure search index.
 
         Delete removes the specified document from the index. Any field you
@@ -68,11 +71,12 @@ class IndexDocumentsBatch(object):
         :param documents: Documents to delete from an Azure search index. May be
          a single list of documents, or documents as individual parameters.
         :type documents: dict or list[dict]
+        :rtype: List[IndexAction]
         """
         self._extend_batch(flatten_args(documents), "delete")
 
     def add_merge_actions(self, *documents):
-        # type (Union[List[dict], List[List[dict]]]) -> None
+        # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
         """Add documents to merge in to existing documets in the Azure search
         index.
 
@@ -84,11 +88,12 @@ class IndexDocumentsBatch(object):
         :param documents: Documents to merge into an Azure search index. May be
          a single list of documents, or documents as individual parameters.
         :type documents: dict or list[dict]
+        :rtype: List[IndexAction]
         """
         self._extend_batch(flatten_args(documents), "merge")
 
     def add_merge_or_upload_actions(self, *documents):
-        # type (Union[List[dict], List[List[dict]]]) -> None
+        # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
         """Add documents to merge in to existing documets in the Azure search
         index, or upload if they do not yet exist.
 
@@ -100,17 +105,36 @@ class IndexDocumentsBatch(object):
          index. May be a single list of documents, or documents as individual
          parameters.
         :type documents: dict or list[dict]
+        :rtype: List[IndexAction]
         """
         self._extend_batch(flatten_args(documents), "mergeOrUpload")
 
     @property
     def actions(self):
         # type: () -> List[IndexAction]
-        """The list of currently configured index actions.
+        """The list of currently index actions to index.
 
         :rtype: List[IndexAction]
         """
         return list(self._actions)
+
+    @property
+    def succeeded_actions(self):
+        # type: () -> List[IndexAction]
+        """The list of currently succeeded index actions.
+
+        :rtype: List[IndexAction]
+        """
+        return list(self._succeeded_actions)
+
+    @property
+    def failed_actions(self):
+        # type: () -> List[IndexAction]
+        """The list of currently failed index actions.
+
+        :rtype: List[IndexAction]
+        """
+        return list(self._failed_actions)
 
     def dequeue_actions(self):
         # type: () -> List[IndexAction]
@@ -125,17 +149,31 @@ class IndexDocumentsBatch(object):
 
     def enqueue_actions(self, new_actions):
         # type: (List[IndexAction]) -> None
-        """Enqueue a list of configured index actions.
-           This is used for the case of partial success
+        """Enqueue a list of index actions to index.
         """
         with self._lock:
             self._actions.extend(new_actions)
 
+    def enqueue_succeeded_actions(self, succeeded_actions):
+        # type: (List[IndexAction]) -> None
+        """Enqueue a list of succeeded index actions.
+        """
+        with self._lock:
+            self._succeeded_actions.extend(succeeded_actions)
+
+    def enqueue_failed_actions(self, failed_actions):
+        # type: (List[IndexAction]) -> None
+        """Enqueue a list of failed index actions.
+        """
+        with self._lock:
+            self._failed_actions.extend(failed_actions)
+
     def _extend_batch(self, documents, action_type):
-        # type: (List[dict], str) -> None
+        # type: (List[dict], str) -> List[IndexAction]
         new_actions = [
             IndexAction(additional_properties=document, action_type=action_type)
             for document in documents
         ]
         with self._lock:
             self._actions.extend(new_actions)
+        return new_actions

@@ -36,16 +36,8 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
     :keyword int window: how many seconds if there is no changes that triggers auto flush.
         if window is less or equal than 0, it will disable auto flush
     :keyword int batch_size: batch size. It only takes affect when auto_flush is on
+    :keyword persistence: persistence hook. If it is set, the batch client will dump actions queue when it changes
     :keyword str api_version: The Search API version to use for requests.
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
-            :start-after: [START create_search_client_with_key_async]
-            :end-before: [END create_search_client_with_key_async]
-            :language: python
-            :dedent: 4
-            :caption: Creating the SearchClient with an API key.
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=none"  # type: str
@@ -70,6 +62,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         )  # type: SearchIndexClient
         if self._auto_flush:
             self._timer = Timer(self._window, self.flush)
+        self._persistence = kwargs.pop('persistence', None)
 
     def cleanup(self):
         # type: () -> None
@@ -85,10 +78,28 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
     @property
     def actions(self):
         # type: () -> List[IndexAction]
-        """The list of currently configured index actions in queue.
+        """The list of currently index actions in queue to index.
         :rtype: List[IndexAction]
         """
         return self._index_documents_batch.actions
+
+    @property
+    def succeeded_actions(self):
+        # type: () -> List[IndexAction]
+        """The list of currently succeeded index actions in queue.
+
+        :rtype: List[IndexAction]
+        """
+        return self._index_documents_batch.succeeded_actions
+
+    @property
+    def failed_actions(self):
+        # type: () -> List[IndexAction]
+        """The list of currently failed index actions in queue.
+
+        :rtype: List[IndexAction]
+        """
+        return self._index_documents_batch.failed_actions
 
     @property
     def batch_size(self):
@@ -126,12 +137,26 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
                             self._index_key = field.name
                             break
 
-            for result in results:
-                if is_retryable_status_code(result.status_code):
-                    requeue = [x for x in actions if x.get(self._index_key) == result.key]
-                    self._index_documents_batch.enqueue_actions(requeue)
+            has_error = False
 
-            if raise_error:
+            for result in results:
+                action = [x for x in actions if x.get(self._index_key) == result.key]
+                if is_retryable_status_code(result.status_code):
+                    self._index_documents_batch.enqueue_actions(action)
+                    has_error = True
+                elif result.status_code in [200, 201]:
+                    if self._persistence:
+                        self._persistence.remove_queued_actions(action)
+                        self._persistence.add_succeeded_actions(action)
+                    self._index_documents_batch.enqueue_succeeded_actions(action)
+                else:
+                    if self._persistence:
+                        self._persistence.remove_queued_actions(action)
+                        self._persistence.add_failed_actions(action)
+                    self._index_documents_batch.enqueue_failed_actions(action)
+                    has_error = True
+
+            if has_error and raise_error:
                 raise HttpResponseError(message="Some actions failed. Failed actions are re-queued.")
 
         except Exception:  # pylint: disable=broad-except
@@ -165,7 +190,9 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :param documents: A list of documents to upload.
         :type documents: List[dict]
         """
-        self._index_documents_batch.add_upload_actions(documents)
+        actions = self._index_documents_batch.add_upload_actions(documents)
+        if self._persistence:
+            self._persistence.add_queued_actions(actions)
         await self._flush_if_needed()
 
     async def delete_documents_actions(self, documents):
@@ -174,7 +201,9 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :param documents: A list of documents to delete.
         :type documents: List[dict]
         """
-        self._index_documents_batch.add_delete_actions(documents)
+        actions = self._index_documents_batch.add_delete_actions(documents)
+        if self._persistence:
+            self._persistence.add_queued_actions(actions)
         await self._flush_if_needed()
 
     async def merge_documents_actions(self, documents):
@@ -183,7 +212,9 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :param documents: A list of documents to merge.
         :type documents: List[dict]
         """
-        self._index_documents_batch.add_merge_actions(documents)
+        actions = self._index_documents_batch.add_merge_actions(documents)
+        if self._persistence:
+            self._persistence.add_queued_actions(actions)
         await self._flush_if_needed()
 
     async def merge_or_upload_documents_actions(self, documents):
@@ -192,7 +223,9 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :param documents: A list of documents to merge or upload.
         :type documents: List[dict]
         """
-        self._index_documents_batch.add_merge_or_upload_actions(documents)
+        actions = self._index_documents_batch.add_merge_or_upload_actions(documents)
+        if self._persistence:
+            self._persistence.add_queued_actions(actions)
         await self._flush_if_needed()
 
     @distributed_trace_async

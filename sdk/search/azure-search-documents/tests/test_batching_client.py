@@ -39,6 +39,32 @@ class TestSearchBatchingClient(object):
         assert len(client.actions) == 7
 
 
+    def test_succeeded_queue(self):
+        client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL)
+
+        assert client._index_documents_batch
+        client.upload_documents_actions(["upload1"])
+        client.delete_documents_actions(["delete1", "delete2"])
+        client.merge_documents_actions(["merge1", "merge2", "merge3"])
+        client.merge_or_upload_documents_actions(["merge_or_upload1"])
+        actions = client._index_documents_batch.dequeue_actions()
+        client._index_documents_batch.enqueue_succeeded_actions(actions)
+        assert len(client.succeeded_actions) == 7
+
+
+    def test_failed_queue(self):
+        client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL)
+
+        assert client._index_documents_batch
+        client.upload_documents_actions(["upload1"])
+        client.delete_documents_actions(["delete1", "delete2"])
+        client.merge_documents_actions(["merge1", "merge2", "merge3"])
+        client.merge_or_upload_documents_actions(["merge_or_upload1"])
+        actions = client._index_documents_batch.dequeue_actions()
+        client._index_documents_batch.enqueue_failed_actions(actions)
+        assert len(client.failed_actions) == 7
+
+
     @mock.patch(
         "azure.search.documents._internal._search_index_document_batching_client.SearchIndexDocumentBatchingClient.flush"
     )
