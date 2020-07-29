@@ -443,7 +443,7 @@ Authenticate the client with a Cognitive Services/Text Analytics API key or a to
 In a batch of documents:
 * Analyze sentiment: [sample_analyze_sentiment.py][analyze_sentiment_sample] ([async version][analyze_sentiment_sample_async])
 * Recognize entities: [sample_recognize_entities.py][recognize_entities_sample] ([async version][recognize_entities_sample_async])
-* Recognize personally identifiable information: [sample_recognize_pii_entities.py][recognize_pii_entities_sample] ([async version][recognize_pii_entities_sample_async])
+* Recognize personally identifiable information: [sample_recognize_pii_entities.py](`https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py`)([async version](`https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py`))
 * Recognize linked entities: [sample_recognize_linked_entities.py][recognize_linked_entities_sample] ([async version][recognize_linked_entities_sample_async])
 * Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
 * Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
@@ -531,8 +531,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [recognize_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_entities_async.py
 [recognize_linked_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_linked_entities.py
 [recognize_linked_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
-[recognize_pii_entities_sample]: `https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py`
-[recognize_pii_entities_sample_async]: `https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py`
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
