@@ -271,7 +271,7 @@ class StorageTableTest(TableTestCase):
         table_name = self._get_table_reference()
 
         # Act
-        with self.assertRaises(ResourceNotFoundError):
+        with self.assertRaises(HttpResponseError):
             ts.delete_table(table_name)
 
         # Assert

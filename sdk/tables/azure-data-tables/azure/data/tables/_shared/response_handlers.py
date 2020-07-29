@@ -90,14 +90,23 @@ def process_table_error(storage_error):
     additional_data = {}
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
-        if error_body:
-            for info in error_body.iter():
-                if info.tag.lower() == 'code':
-                    error_code = info.text
-                elif info.tag.lower() == 'message':
-                    error_message = info.text
+        if isinstance(error_body, dict):
+            for info in error_body['odata.error']:
+                if info == 'code':
+                    error_code = error_body['odata.error'][info]
+                elif info == 'message':
+                    error_message = error_body['odata.error'][info]['value']
                 else:
                     additional_data[info.tag] = info.text
+        else:
+            if error_body:
+                for info in error_body.iter():
+                    if info.tag.lower().find('code') != -1:
+                        error_code = info.text
+                    elif info.tag.lower().find('message') != -1:
+                        error_message = info.text
+                    else:
+                        additional_data[info.tag] = info.text
     except DecodeError:
         pass
 
@@ -110,20 +119,22 @@ def process_table_error(storage_error):
                               TableErrorCode.authentication_failed]:
                 raise_error = ClientAuthenticationError
             if error_code in [TableErrorCode.resource_not_found,
-                              TableErrorCode.table_not_found]:
+                              TableErrorCode.table_not_found,
+                              TableErrorCode.entity_not_found,
+                              ResourceNotFoundError]:
                 raise_error = ResourceNotFoundError
-            if error_code in [TableErrorCode.account_already_exists,
-                              TableErrorCode.account_being_created,
-                              TableErrorCode.resource_already_exists,
-                              TableErrorCode.resource_type_mismatch,
+            if error_code in [TableErrorCode.resource_already_exists,
                               TableErrorCode.table_already_exists,
-                              TableErrorCode.table_being_deleted]:
+                              TableErrorCode.account_already_exists,
+                              TableErrorCode.entity_already_exists,
+                              ResourceExistsError]:
                 raise_error = ResourceExistsError
     except ValueError:
         # Got an unknown error code
         pass
 
     try:
+
         error_message += "\nErrorCode:{}".format(error_code.value)
     except AttributeError:
         error_message += "\nErrorCode:{}".format(error_code)

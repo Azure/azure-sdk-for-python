@@ -14,7 +14,7 @@ except ImportError:
     from urllib2 import unquote  # type: ignore
 
 from azure.core.paging import ItemPaged
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.core.tracing.decorator import distributed_trace
 from ._deserialize import _convert_to_entity
 from ._entity import TableEntity
@@ -28,7 +28,6 @@ from ._shared.request_handlers import serialize_iso
 from ._shared.response_handlers import process_table_error
 
 from ._version import VERSION
-
 
 from ._models import TableEntityPropertiesPaged, UpdateMode, Table
 
@@ -323,8 +322,8 @@ class TableClient(TableClientBase):
                     **kwargs)
             elif mode is UpdateMode.MERGE:
                 self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
-                                            row_key=row_key, if_match=if_match or if_not_match or "*",
-                                            table_entity_properties=entity, **kwargs)
+                                                row_key=row_key, if_match=if_match or if_not_match or "*",
+                                                table_entity_properties=entity, **kwargs)
             else:
                 raise ValueError('Mode type is not supported')
         except HttpResponseError as error:
@@ -376,7 +375,7 @@ class TableClient(TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
-        filter = self._parameter_filter_substitution(parameters, filter)   # pylint: disable = W0622
+        filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable = W0622
 
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
@@ -414,9 +413,9 @@ class TableClient(TableClientBase):
         """
         try:
             entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
-                                                                              partition_key=partition_key,
-                                                                              row_key=row_key,
-                                                                              **kwargs)
+                                                                                  partition_key=partition_key,
+                                                                                  row_key=row_key,
+                                                                                  **kwargs)
             properties = _convert_to_entity(entity.additional_properties)
             return properties
         except HttpResponseError as error:
