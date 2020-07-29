@@ -125,7 +125,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> str
+        # type: (...) -> Table
         """Creates a new table under the given account.
         :return: Table created
         :rtype: str
