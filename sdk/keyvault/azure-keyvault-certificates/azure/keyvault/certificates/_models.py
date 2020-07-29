@@ -320,11 +320,17 @@ class KeyVaultCertificate(object):
         # type: (models.CertificateBundle) -> KeyVaultCertificate
         """Construct a certificate from an autorest-generated certificateBundle"""
         # pylint:disable=protected-access
+
+        if certificate_bundle.policy:
+            policy = CertificatePolicy._from_certificate_policy_bundle(certificate_bundle.policy)
+        else:
+            policy = None
+
         return cls(
             properties=CertificateProperties._from_certificate_item(certificate_bundle),
             key_id=certificate_bundle.kid,
             secret_id=certificate_bundle.sid,
-            policy=CertificatePolicy._from_certificate_policy_bundle(certificate_bundle.policy),
+            policy=policy,
             cer=certificate_bundle.cer,
         )
 

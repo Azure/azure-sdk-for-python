@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
+import logging
 from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -14,6 +15,8 @@ if TYPE_CHECKING:
     from typing import Any, Optional
     from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ChainedTokenCredential(AsyncCredentialBase):
@@ -53,14 +56,23 @@ class ChainedTokenCredential(AsyncCredentialBase):
         for credential in self.credentials:
             try:
                 token = await credential.get_token(*scopes, **kwargs)
+                _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
                 self._successful_credential = credential
                 return token
             except CredentialUnavailableError as ex:
                 # credential didn't attempt authentication because it lacks required data or state -> continue
                 history.append((credential, ex.message))
+                _LOGGER.info("%s - %s is unavailable", self.__class__.__name__, credential.__class__.__name__)
             except Exception as ex:  # pylint: disable=broad-except
                 # credential failed to authenticate, or something unexpectedly raised -> break
                 history.append((credential, str(ex)))
+                _LOGGER.warning(
+                    '%s.get_token failed: %s raised unexpected error "%s"',
+                    self.__class__.__name__,
+                    credential.__class__.__name__,
+                    ex,
+                    exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+                )
                 break
 
         attempts = _get_error_message(history)

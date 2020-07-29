@@ -30,34 +30,38 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
         with self.assertRaises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(form_recognizer_account_key))
-            poller = await client.begin_recognize_receipts(myfile)
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_receipts(myfile)
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_authentication_successful_key(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
-        poller = await client.begin_recognize_receipts(myfile)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts(myfile)
+            result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_authentication_bad_key(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential("xxxx"))
         with self.assertRaises(ClientAuthenticationError):
-            poller = await client.begin_recognize_receipts(b"xx", content_type="image/jpeg")
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_receipts(b"xx", content_type="image/jpeg")
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_passing_enum_content_type(self, client):
         with open(self.receipt_png, "rb") as fd:
             myfile = fd.read()
-        poller = await client.begin_recognize_receipts(
-            myfile,
-            content_type=FormContentType.IMAGE_PNG
-        )
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts(
+                myfile,
+                content_type=FormContentType.IMAGE_PNG
+            )
+            result = await poller.result()
         self.assertIsNotNone(result)
 
     @GlobalFormRecognizerAccountPreparer()
@@ -65,40 +69,44 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     async def test_damaged_file_passed_as_bytes(self, client):
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
         with self.assertRaises(HttpResponseError):
-            poller = await client.begin_recognize_receipts(
-                damaged_pdf,
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_receipts(
+                    damaged_pdf,
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
-            poller = await client.begin_recognize_receipts(
-                damaged_pdf,
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_receipts(
+                    damaged_pdf,
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_damaged_file_passed_as_bytes_io(self, client):
         damaged_pdf = BytesIO(b"\x25\x50\x44\x46\x55\x55\x55")  # still has correct bytes to be recognized as PDF
         with self.assertRaises(HttpResponseError):
-            poller = await client.begin_recognize_receipts(
-                damaged_pdf,
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_receipts(
+                    damaged_pdf,
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     async def test_damaged_file_bytes_io_fails_autodetect(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         client = FormRecognizerClient(form_recognizer_account, AzureKeyCredential(form_recognizer_account_key))
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with self.assertRaises(ValueError):
-            poller = await client.begin_recognize_receipts(
-                damaged_pdf,
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_receipts(
+                    damaged_pdf,
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -106,10 +114,11 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
         with open(self.blank_pdf, "rb") as fd:
             blank = fd.read()
-        poller = await client.begin_recognize_receipts(
-            blank,
-        )
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts(
+                blank,
+            )
+            result = await poller.result()
         self.assertIsNotNone(result)
 
     @GlobalFormRecognizerAccountPreparer()
@@ -118,18 +127,20 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
         with self.assertRaises(ValueError):
-            poller = await client.begin_recognize_receipts(
-                myfile,
-                content_type="application/jpeg"
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_receipts(
+                    myfile,
+                    content_type="application/jpeg"
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_passing_unsupported_url_content_type(self, client):
         with self.assertRaises(TypeError):
-            poller = await client.begin_recognize_receipts("https://badurl.jpg", content_type="application/json")
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_receipts("https://badurl.jpg", content_type="application/json")
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -138,10 +149,11 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
             myfile = fd.read()
 
         with self.assertRaises(ValueError):
-            poller = await client.begin_recognize_receipts(
-                myfile,
-            )
-            result = await poller.result()
+            async with client:
+                poller = await client.begin_recognize_receipts(
+                    myfile,
+                )
+                result = await poller.result()
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -158,12 +170,13 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_png, "rb") as fd:
             myfile = fd.read()
 
-        poller = await client.begin_recognize_receipts(
-            receipt=myfile,
-            include_field_elements=True,
-            cls=callback
-        )
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts(
+                receipt=myfile,
+                include_field_elements=True,
+                cls=callback
+            )
+            result = await poller.result()
 
         raw_response = responses[0]
         returned_model = responses[1]
@@ -212,12 +225,13 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             myfile = fd.read()
 
-        poller = await client.begin_recognize_receipts(
-            receipt=myfile,
-            include_field_elements=True,
-            cls=callback
-        )
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts(
+                receipt=myfile,
+                include_field_elements=True,
+                cls=callback
+            )
+            result = await poller.result()
 
         raw_response = responses[0]
         returned_model = responses[1]
@@ -260,8 +274,9 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
 
-        poller = await client.begin_recognize_receipts(receipt)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts(receipt)
+            result = await poller.result()
 
         self.assertEqual(len(result), 1)
         receipt = result[0]
@@ -288,8 +303,9 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read()
 
-        poller = await client.begin_recognize_receipts(receipt)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts(receipt)
+            result = await poller.result()
         self.assertEqual(len(result), 1)
         receipt = result[0]
         self.assertEqual(receipt.fields.get("MerchantAddress").value, '123 Main Street Redmond, WA 98052')
@@ -311,8 +327,9 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     async def test_receipt_jpg_include_field_elements(self, client):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
-        poller = await client.begin_recognize_receipts(receipt, include_field_elements=True)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts(receipt, include_field_elements=True)
+            result = await poller.result()
 
         self.assertEqual(len(result), 1)
         receipt = result[0]
@@ -321,18 +338,19 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         for field, value in receipt.__dict__.items():
             if field not in ["receipt_items", "page_range", "pages", "fields", "form_type"]:
                 form_field = getattr(receipt, field)
-                self.assertTextContentHasValues(form_field.value_data.field_elements, receipt.page_range.first_page_number)
+                self.assertFieldElementsHasValues(form_field.value_data.field_elements, receipt.page_range.first_page_number)
 
         for field, value in receipt.fields.items():
-            self.assertTextContentHasValues(value.value_data.field_elements, receipt.page_range.first_page_number)
+            self.assertFieldElementsHasValues(value.value_data.field_elements, receipt.page_range.first_page_number)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     async def test_receipt_multipage(self, client):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             receipt = fd.read()
-        poller = await client.begin_recognize_receipts(receipt, include_field_elements=True)
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts(receipt, include_field_elements=True)
+            result = await poller.result()
 
         self.assertEqual(len(result), 3)
         receipt = result[0]
@@ -374,12 +392,13 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myfile = fd.read()
 
-        poller = await client.begin_recognize_receipts(
-            receipt=myfile,
-            include_field_elements=True,
-            cls=callback
-        )
-        result = await poller.result()
+        async with client:
+            poller = await client.begin_recognize_receipts(
+                receipt=myfile,
+                include_field_elements=True,
+                cls=callback
+            )
+            result = await poller.result()
 
         raw_response = responses[0]
         returned_model = responses[1]
@@ -427,9 +446,10 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
 
-        initial_poller = await client.begin_recognize_receipts(receipt)
-        cont_token = initial_poller.continuation_token()
-        poller = await client.begin_recognize_receipts(receipt, continuation_token=cont_token)
-        result = await poller.result()
-        self.assertIsNotNone(result)
-        await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        async with client:
+            initial_poller = await client.begin_recognize_receipts(receipt)
+            cont_token = initial_poller.continuation_token()
+            poller = await client.begin_recognize_receipts(receipt, continuation_token=cont_token)
+            result = await poller.result()
+            self.assertIsNotNone(result)
+            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

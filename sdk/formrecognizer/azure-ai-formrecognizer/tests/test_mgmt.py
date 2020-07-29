@@ -163,8 +163,7 @@ class TestManagement(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     def test_api_version_form_training_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        transport = RequestsTransport()
         with self.assertRaises(ValueError):
-            ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport, api_version="2.1")
+            ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), api_version="2.1")
         
-        ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport, api_version="2.0")
+        ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), api_version="2.0")
