@@ -53,7 +53,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -122,7 +122,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -189,7 +189,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedKeyBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.delete_key.metadata['url']  # type: ignore
@@ -255,7 +255,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -325,7 +325,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.get_key.metadata['url']  # type: ignore
@@ -389,7 +389,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         def prepare_request(next_link=None):
             # Construct headers
@@ -474,7 +474,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         def prepare_request(next_link=None):
             # Construct headers
@@ -563,7 +563,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.BackupKeyResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.backup_key.metadata['url']  # type: ignore
@@ -630,7 +630,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -706,7 +706,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyOperationResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -782,7 +782,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyOperationResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -855,7 +855,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyOperationResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -930,7 +930,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyVerifyResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1006,7 +1006,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyOperationResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1080,7 +1080,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyOperationResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -1150,7 +1150,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedKeyListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         def prepare_request(next_link=None):
             # Construct headers
@@ -1231,7 +1231,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.DeletedKeyBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.get_deleted_key.metadata['url']  # type: ignore
@@ -1291,7 +1291,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.purge_deleted_key.metadata['url']  # type: ignore
@@ -1348,7 +1348,7 @@ class KeyVaultClientOperationsMixin(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyBundle"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "7.1-preview"
+        api_version = "7.1"
 
         # Construct URL
         url = self.recover_deleted_key.metadata['url']  # type: ignore

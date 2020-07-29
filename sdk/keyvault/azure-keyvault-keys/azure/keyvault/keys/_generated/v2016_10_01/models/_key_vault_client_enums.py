@@ -6,89 +6,107 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from enum import Enum, EnumMeta
+from six import with_metaclass
 
-class ActionType(str, Enum):
+class _CaseInsensitiveEnumMeta(EnumMeta):
+    def __getitem__(self, name):
+        return super().__getitem__(name.upper())
+
+    def __getattr__(cls, name):
+        """Return the enum member matching `name`
+        We use __getattr__ instead of descriptors or inserting into the enum
+        class' __dict__ in order to support `name` and `value` being both
+        properties for enum members (which live in the class' __dict__) and
+        enum members themselves.
+        """
+        try:
+            return cls._member_map_[name.upper()]
+        except KeyError:
+            raise AttributeError(name)
+
+
+class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the action.
     """
 
-    email_contacts = "EmailContacts"
-    auto_renew = "AutoRenew"
+    EMAIL_CONTACTS = "EmailContacts"
+    AUTO_RENEW = "AutoRenew"
 
-class DeletionRecoveryLevel(str, Enum):
+class DeletionRecoveryLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Reflects the deletion recovery level currently in effect for keys in the current vault. If it
     contains 'Purgeable' the key can be permanently deleted by a privileged user; otherwise, only
     the system can purge the key, at the end of the retention interval.
     """
 
-    purgeable = "Purgeable"  #: Soft-delete is not enabled for this vault. A DELETE operation results in immediate and irreversible data loss.
-    recoverable_purgeable = "Recoverable+Purgeable"  #: Soft-delete is enabled for this vault; A privileged user may trigger an immediate, irreversible deletion(purge) of a deleted entity.
-    recoverable = "Recoverable"  #: Soft-delete is enabled for this vault and purge has been disabled. A deleted entity will remain in this state until recovered, or the end of the retention interval.
-    recoverable_protected_subscription = "Recoverable+ProtectedSubscription"  #: Soft-delete is enabled for this vault, and the subscription is protected against immediate deletion.
+    PURGEABLE = "Purgeable"  #: Soft-delete is not enabled for this vault. A DELETE operation results in immediate and irreversible data loss.
+    RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"  #: Soft-delete is enabled for this vault; A privileged user may trigger an immediate, irreversible deletion(purge) of a deleted entity.
+    RECOVERABLE = "Recoverable"  #: Soft-delete is enabled for this vault and purge has been disabled. A deleted entity will remain in this state until recovered, or the end of the retention interval.
+    RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"  #: Soft-delete is enabled for this vault, and the subscription is protected against immediate deletion.
 
-class JsonWebKeyCurveName(str, Enum):
+class JsonWebKeyCurveName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Elliptic curve name. For valid values, see JsonWebKeyCurveName.
     """
 
-    p256 = "P-256"  #: The NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
-    p384 = "P-384"  #: The NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
-    p521 = "P-521"  #: The NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
-    secp256_k1 = "SECP256K1"  #: The SECG SECP256K1 elliptic curve.
+    P256 = "P-256"  #: The NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
+    P384 = "P-384"  #: The NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
+    P521 = "P-521"  #: The NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
+    SECP256_K1 = "SECP256K1"  #: The SECG SECP256K1 elliptic curve.
 
-class JsonWebKeyEncryptionAlgorithm(str, Enum):
+class JsonWebKeyEncryptionAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """algorithm identifier
     """
 
-    rsa_oaep = "RSA-OAEP"
-    rsa_oaep256 = "RSA-OAEP-256"
-    rsa1_5 = "RSA1_5"
+    RSA_OAEP = "RSA-OAEP"
+    RSA_OAEP256 = "RSA-OAEP-256"
+    RSA1_5 = "RSA1_5"
 
-class JsonWebKeyOperation(str, Enum):
+class JsonWebKeyOperation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """JSON web key operations. For more information, see JsonWebKeyOperation.
     """
 
-    encrypt = "encrypt"
-    decrypt = "decrypt"
-    sign = "sign"
-    verify = "verify"
-    wrap_key = "wrapKey"
-    unwrap_key = "unwrapKey"
+    ENCRYPT = "encrypt"
+    DECRYPT = "decrypt"
+    SIGN = "sign"
+    VERIFY = "verify"
+    WRAP_KEY = "wrapKey"
+    UNWRAP_KEY = "unwrapKey"
 
-class JsonWebKeySignatureAlgorithm(str, Enum):
+class JsonWebKeySignatureAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The signing/verification algorithm identifier. For more information on possible algorithm
     types, see JsonWebKeySignatureAlgorithm.
     """
 
-    ps256 = "PS256"
-    ps384 = "PS384"
-    ps512 = "PS512"
-    rs256 = "RS256"
-    rs384 = "RS384"
-    rs512 = "RS512"
-    rsnull = "RSNULL"
-    es256 = "ES256"
-    es384 = "ES384"
-    es512 = "ES512"
-    ecdsa256 = "ECDSA256"
+    PS256 = "PS256"
+    PS384 = "PS384"
+    PS512 = "PS512"
+    RS256 = "RS256"
+    RS384 = "RS384"
+    RS512 = "RS512"
+    RSNULL = "RSNULL"
+    ES256 = "ES256"
+    ES384 = "ES384"
+    ES512 = "ES512"
+    ECDSA256 = "ECDSA256"
 
-class JsonWebKeyType(str, Enum):
+class JsonWebKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """JsonWebKey key type (kty).
     """
 
-    ec = "EC"
-    ec_hsm = "EC-HSM"
-    rsa = "RSA"
-    rsa_hsm = "RSA-HSM"
-    oct = "oct"
+    EC = "EC"
+    EC_HSM = "EC-HSM"
+    RSA = "RSA"
+    RSA_HSM = "RSA-HSM"
+    OCT = "oct"
 
-class KeyUsageType(str, Enum):
+class KeyUsageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    digital_signature = "digitalSignature"
-    non_repudiation = "nonRepudiation"
-    key_encipherment = "keyEncipherment"
-    data_encipherment = "dataEncipherment"
-    key_agreement = "keyAgreement"
-    key_cert_sign = "keyCertSign"
-    c_rl_sign = "cRLSign"
-    encipher_only = "encipherOnly"
-    decipher_only = "decipherOnly"
+    DIGITAL_SIGNATURE = "digitalSignature"
+    NON_REPUDIATION = "nonRepudiation"
+    KEY_ENCIPHERMENT = "keyEncipherment"
+    DATA_ENCIPHERMENT = "dataEncipherment"
+    KEY_AGREEMENT = "keyAgreement"
+    KEY_CERT_SIGN = "keyCertSign"
+    C_RL_SIGN = "cRLSign"
+    ENCIPHER_ONLY = "encipherOnly"
+    DECIPHER_ONLY = "decipherOnly"

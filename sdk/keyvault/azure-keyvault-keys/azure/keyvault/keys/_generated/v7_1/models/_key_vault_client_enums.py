@@ -26,13 +26,6 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the action.
-    """
-
-    EMAIL_CONTACTS = "EmailContacts"
-    AUTO_RENEW = "AutoRenew"
-
 class DeletionRecoveryLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Reflects the deletion recovery level currently in effect for keys in the current vault. If it
     contains 'Purgeable' the key can be permanently deleted by a privileged user; otherwise, only
@@ -74,6 +67,7 @@ class JsonWebKeyOperation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VERIFY = "verify"
     WRAP_KEY = "wrapKey"
     UNWRAP_KEY = "unwrapKey"
+    IMPORT_ENUM = "import"
 
 class JsonWebKeySignatureAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The signing/verification algorithm identifier. For more information on possible algorithm
@@ -102,22 +96,3 @@ class JsonWebKeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RSA = "RSA"  #: RSA (https://tools.ietf.org/html/rfc3447).
     RSA_HSM = "RSA-HSM"  #: RSA with a private key which is not exportable from the HSM.
     OCT = "oct"  #: Octet sequence (used to represent symmetric keys).
-
-class KeyUsageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    DIGITAL_SIGNATURE = "digitalSignature"
-    NON_REPUDIATION = "nonRepudiation"
-    KEY_ENCIPHERMENT = "keyEncipherment"
-    DATA_ENCIPHERMENT = "dataEncipherment"
-    KEY_AGREEMENT = "keyAgreement"
-    KEY_CERT_SIGN = "keyCertSign"
-    C_RL_SIGN = "cRLSign"
-    ENCIPHER_ONLY = "encipherOnly"
-    DECIPHER_ONLY = "decipherOnly"
-
-class SasTokenType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of SAS token the SAS definition will create.
-    """
-
-    ACCOUNT = "account"
-    SERVICE = "service"
