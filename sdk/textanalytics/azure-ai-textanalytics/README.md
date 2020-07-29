@@ -294,7 +294,7 @@ and [supported types][linked_entities_categories].
 
 ### Recognize PII entities
 [recognize_pii_entities][recognize_pii_entities] recognizes and categorizes Personally Identifiable Information (PII) entities in its input text, such as
-Social Security Numbers, bank account information, credit card numbers, and more.
+Social Security Numbers, bank account information, credit card numbers, and more. This endpoint is only available for v3.1-preview.1 and up.
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -303,7 +303,7 @@ from azure.ai.textanalytics import TextAnalyticsClient, ApiVersion
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"
 
-text_analytics_client = TextAnalyticsClient(endpoint, credential, api_version=ApiVersion.V3_1_preview_1)
+text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "The employee's SSN is 859-98-0987.",

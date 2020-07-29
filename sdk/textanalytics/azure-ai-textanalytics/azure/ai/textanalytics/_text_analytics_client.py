@@ -289,7 +289,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except AttributeError as error:
             if "'TextAnalyticsClient' object has no attribute 'entities_recognition_pii'" in str(error):
                 raise NotImplementedError(
-                    "'recognize_pii_entities' endpoint is only available for API version v3.1-preview.1"
+                    "'recognize_pii_entities' endpoint is only available for API version v3.1-preview.1 and up"
                 )
             raise error
         except HttpResponseError as error:

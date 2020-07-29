@@ -11,6 +11,7 @@ FILE: sample_recognize_pii_entities.py
 
 DESCRIPTION:
     This sample demonstrates how to recognize personally identifiable information in a batch of documents.
+    The endpoint recognize_pii_entities is only available for API version v3.1-preview.1 and up.
 
 USAGE:
     python sample_recognize_pii_entities.py
@@ -34,7 +35,7 @@ class RecognizePiiEntitiesSample(object):
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
         text_analytics_client = TextAnalyticsClient(
-            endpoint=endpoint, credential=AzureKeyCredential(key), api_version=ApiVersion.V3_1_preview_1
+            endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         documents = [
             "The employee's SSN is 859-98-0987.",
