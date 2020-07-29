@@ -101,14 +101,3 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
             next_entity = {'PartitionKey': self._headers['x-ms-continuation-NextPartitionKey'],
                            'RowKey': self._headers['x-ms-continuation-NextRowKey']}
         return next_entity or None, props_list
-
-
-class Table(object):
-    """
-    Represents an Azure Table. Returned by list_tables.
-
-    :ivar str name: The name of the table.
-    """
-
-    def __init__(self, table):
-        self.table = table

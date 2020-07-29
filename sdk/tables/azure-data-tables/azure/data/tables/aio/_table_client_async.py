@@ -17,14 +17,14 @@ from azure.data.tables import VERSION
 from azure.data.tables._entity import TableEntity
 from azure.data.tables._generated.aio._azure_table_async import AzureTable
 from azure.data.tables._generated.models import SignedIdentifier, TableProperties, QueryOptions
-from azure.data.tables._models import AccessPolicy
+from azure.data.tables._models import AccessPolicy, Table
 from azure.data.tables._shared.base_client_async import AsyncStorageAccountHostsMixin
 from azure.data.tables._shared.policies_async import ExponentialRetry
 from azure.data.tables._shared.request_handlers import serialize_iso
 from azure.data.tables._shared.response_handlers import return_headers_and_deserialized, process_table_error
 
 from .._models import UpdateMode
-from ._models import TableEntityPropertiesPaged, Table
+from ._models import TableEntityPropertiesPaged
 from .._deserialize import _convert_to_entity
 from .._serialize import _add_entity_properties, _get_match_headers
 from .._shared._table_client_base import TableClientBase
