@@ -21,9 +21,9 @@ class TableEntity(dict):
 
     def _set_metadata(self):
         if 'Timestamp' in self.keys():
-            self._metadata = {'etag': self.pop('etag'), "timestamp": self.pop('Timestamp')}
+            self._metadata = {'etag': self.pop('etag'), "timestamp": self.pop('Timestamp')}  # pylint:disable=W0201
         else:
-            self._metadata = {'etag': self.pop('etag')}
+            self._metadata = {'etag': self.pop('etag')}  # pylint:disable=W0201
 
     def metadata(self, **kwargs):  # pylint: disable = W0613
         # type: (...) -> Dict[str,Any]
