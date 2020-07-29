@@ -96,12 +96,11 @@ class GlobalTextAnalyticsAccountPreparer(AzureMgmtPreparer):
         }
 
 class TextAnalyticsClientPreparer(AzureMgmtPreparer):
-    def __init__(self, client_cls, api_version=None, client_kwargs={}, **kwargs):
+    def __init__(self, client_cls, client_kwargs={}, **kwargs):
         super(TextAnalyticsClientPreparer, self).__init__(
             name_prefix='',
             random_name_length=42
         )
-        self.api_version = api_version
         self.client_kwargs = client_kwargs
         self.client_cls = client_cls
 
@@ -110,7 +109,6 @@ class TextAnalyticsClientPreparer(AzureMgmtPreparer):
         return {"client": client}
 
     def create_text_analytics_client(self, **kwargs):
-        self.client_kwargs["api_version"] = self.api_version
         text_analytics_account = self.client_kwargs.pop("text_analytics_account", None)
         if text_analytics_account is None:
             text_analytics_account = kwargs.pop("text_analytics_account")

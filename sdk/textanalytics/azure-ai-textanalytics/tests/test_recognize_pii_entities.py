@@ -15,13 +15,12 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
-    VERSION,
-    ApiVersion
+    VERSION
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 # the first one
-TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient, api_version=ApiVersion.V3_1_preview_1)
+TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
 # TODO: add back offset and length checks throughout this test once I add them
 
@@ -379,7 +378,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         credential = AzureKeyCredential(text_analytics_account_key)
-        client = TextAnalyticsClient(text_analytics_account, credential, api_version=ApiVersion.V3_1_preview_1)
+        client = TextAnalyticsClient(text_analytics_account, credential)
 
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
