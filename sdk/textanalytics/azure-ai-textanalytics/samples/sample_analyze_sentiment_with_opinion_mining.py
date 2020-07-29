@@ -29,8 +29,8 @@ USAGE:
 import os
 
 
-class AnalyzeSentimentWithAspectsSample(object):
-    def analyze_sentiment_with_aspects(self):
+class AnalyzeSentimentWithOpinionMiningSample(object):
+    def sample_analyze_sentiment_with_opinion_mining(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient, ApiVersion
 
@@ -82,7 +82,7 @@ class AnalyzeSentimentWithAspectsSample(object):
                     else:
                         negative_mined_opinions.append(mined_opinion)
 
-        print("\n\nLet's look at the {} positive opinions of this hotel".format(len(positive_mined_opinions)))
+        print("\n\nLet's look at the {} positive aspects of this hotel".format(len(positive_mined_opinions)))
         for mined_opinion in positive_mined_opinions:
             print("...Reviewers have the following opinions for the overall positive '{}' aspect of the hotel".format(mined_opinion.aspect.text))
             for opinion in mined_opinion.opinions:
@@ -107,5 +107,5 @@ class AnalyzeSentimentWithAspectsSample(object):
 
 
 if __name__ == '__main__':
-    sample = AnalyzeSentimentWithAspectsSample()
-    sample.analyze_sentiment_with_aspects()
+    sample = AnalyzeSentimentWithOpinionMiningSample()
+    sample.sample_analyze_sentiment_with_opinion_mining()
