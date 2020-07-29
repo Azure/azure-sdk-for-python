@@ -160,7 +160,7 @@ def _convert_to_entity(entry_element):
 
     # extract etag from entry
     etag = odata.get('etag')
-    if timestamp:
+    if timestamp and not etag:
         etag = 'W/"datetime\'' + url_quote(timestamp) + '\'"'
     entity['etag'] = etag
 
