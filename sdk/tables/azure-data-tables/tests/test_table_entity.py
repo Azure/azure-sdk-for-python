@@ -125,8 +125,7 @@ class StorageTableEntityTest(TableTestCase):
         # etag = self.table.create_item(entity, response_hook=lambda e, h: h['etag'])
         e = self.table.create_entity(entity)
         metadata = e.metadata()
-        etag = e.etag
-        return entity, etag
+        return entity, metadata['etag']
 
     def _create_updated_entity_dict(self, partition, row):
         """
@@ -295,8 +294,8 @@ class StorageTableEntityTest(TableTestCase):
         with self.assertRaises(AttributeError):
             etag = entity1.etag
 
-        entity1.metadata()
-        self.assertIsNotNone(entity1.etag)
+
+        self.assertIsNotNone(entity1.metadata())
 
     # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()

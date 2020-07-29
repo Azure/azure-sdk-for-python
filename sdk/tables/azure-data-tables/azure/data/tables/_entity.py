@@ -21,9 +21,9 @@ class TableEntity(dict):
 
     def _set_metadata(self):
         if 'Timestamp' in self.keys():
-            self['metadata'] = {'etag': self.pop('etag'), "timestamp": self.pop('Timestamp')}
+            self._metadata = {'etag': self.pop('etag'), "timestamp": self.pop('Timestamp')}
         else:
-            self['metadata'] = {'etag': self.pop('etag')}
+            self._metadata = {'etag': self.pop('etag')}
 
     def metadata(self, **kwargs):  # pylint: disable = W0613
         # type: (...) -> Dict[str,Any]
@@ -31,10 +31,7 @@ class TableEntity(dict):
         :return Dict of entity metadata
         :rtype Dict[str, Any]
         """
-        metadata = self.pop('metadata')
-        self['etag'] = metadata['etag']
-        self['timestamp'] = metadata['timestamp']
-        return metadata
+        return self._metadata
 
     def __getattr__(self, name):
         """
@@ -59,7 +56,7 @@ class TableEntity(dict):
             if name is not None:
                 del self[name]
         except KeyError:
-            raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('Entity', name))
+            raise AttributeError(_ERROR_ATTRIBUTE_MISSING.format('TableEntity', name))
 
     def __dir__(self):
         return dir({}) + list(self.keys())
