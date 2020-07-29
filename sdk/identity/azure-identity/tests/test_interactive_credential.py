@@ -3,12 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity import (
-    AuthenticationRequiredError,
-    AuthenticationRecord,
-    KnownAuthorities,
-    CredentialUnavailableError,
-)
+from azure.identity import KnownAuthorities, CredentialUnavailableError
+from azure.identity._auth_record import AuthenticationRecord
+from azure.identity._exceptions import AuthenticationRequiredError
 from azure.identity._internal import InteractiveCredential
 from msal import TokenCache
 import pytest

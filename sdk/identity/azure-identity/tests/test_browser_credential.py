@@ -10,7 +10,8 @@ import time
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import AuthenticationRequiredError, CredentialUnavailableError, InteractiveBrowserCredential
+from azure.identity import CredentialUnavailableError, InteractiveBrowserCredential
+from azure.identity._exceptions import AuthenticationRequiredError
 from azure.identity._internal import AuthCodeRedirectServer
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache

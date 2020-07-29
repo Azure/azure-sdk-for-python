@@ -6,7 +6,8 @@ import datetime
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import AuthenticationRequiredError, DeviceCodeCredential
+from azure.identity import DeviceCodeCredential
+from azure.identity._exceptions import AuthenticationRequiredError
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest

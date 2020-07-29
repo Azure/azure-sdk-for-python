@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Iterable, List, Mapping, Optional
     from .._internal import AadClientBase
-    from azure.identity import AuthenticationRecord
+    from azure.identity._auth_record import AuthenticationRecord
 
     CacheItem = Mapping[str, str]
 

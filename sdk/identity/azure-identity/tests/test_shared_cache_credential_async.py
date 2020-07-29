@@ -7,8 +7,8 @@ from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import AuthenticationRecord, CredentialUnavailableError
-from azure.identity.aio import SharedTokenCacheCredential
+from azure.identity import CredentialUnavailableError
+from azure.identity._auth_record import AuthenticationRecord
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
     KNOWN_ALIASES,
@@ -18,6 +18,7 @@ from azure.identity._internal.shared_token_cache import (
     NO_MATCHING_ACCOUNTS,
 )
 from azure.identity._internal.user_agent import USER_AGENT
+from azure.identity.aio import SharedTokenCacheCredential
 from msal import TokenCache
 import pytest
 
