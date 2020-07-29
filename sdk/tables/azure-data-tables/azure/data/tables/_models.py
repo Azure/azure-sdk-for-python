@@ -470,7 +470,7 @@ class Table(object):
     """
 
     def __init__(self, table):
-        self.table = table
+        self.table_name = table
 
 
 class TablePayloadFormat(object):
