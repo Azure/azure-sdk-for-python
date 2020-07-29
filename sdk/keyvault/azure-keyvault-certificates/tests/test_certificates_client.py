@@ -660,3 +660,12 @@ class CertificateClientTests(KeyVaultTestCase):
             assert version_properties.vault_url == cert.properties.vault_url
             assert version_properties.version == cert.properties.version
             assert version_properties.x509_thumbprint == cert.properties.x509_thumbprint
+
+    class _CustomHookPolicy(object):
+        pass
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer(client_kwargs={"custom_hook_policy": _CustomHookPolicy()})
+    def test_custom_hook_policy(self, client, **kwargs):
+        assert isinstance(client._client._config.custom_hook_policy, CertificateClientTests._CustomHookPolicy)
