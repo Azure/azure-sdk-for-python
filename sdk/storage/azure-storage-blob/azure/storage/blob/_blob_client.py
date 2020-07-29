@@ -1627,7 +1627,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             this is only applicable to block blobs on standard storage accounts.
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
-        :keyword bool seal_blob:
+        :keyword bool seal_destination_blob:
             Seal the destination append blob. This operation is only for append blob.
 
             .. versionadded:: 12.4.0

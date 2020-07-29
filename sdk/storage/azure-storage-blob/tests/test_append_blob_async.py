@@ -1345,9 +1345,9 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
-        # copy unsealed blob with seal_blob=True will get a sealed blob
+        # copy unsealed blob with seal_destination_blob=True will get a sealed blob
         copied_blob2 = bsc.get_blob_client(self.container_name, "copiedblob2")
-        await copied_blob2.start_copy_from_url(blob.url, seal_blob=True)
+        await copied_blob2.start_copy_from_url(blob.url, seal_destination_blob=True)
         prop = await copied_blob2.get_blob_properties()
 
         self.assertTrue(prop.is_append_blob_sealed)
@@ -1366,10 +1366,10 @@ class StorageAppendBlobAsyncTest(AsyncStorageTestCase):
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
-        # copy sealed blob with seal_blob=True will get a sealed blob
+        # copy sealed blob with seal_destination_blob=True will get a sealed blob
         await blob.seal_append_blob()
         copied_blob3 = bsc.get_blob_client(self.container_name, "copiedblob3")
-        await copied_blob3.start_copy_from_url(blob.url, seal_blob=False)
+        await copied_blob3.start_copy_from_url(blob.url, seal_destination_blob=False)
 
         prop = await copied_blob3.get_blob_properties()
 

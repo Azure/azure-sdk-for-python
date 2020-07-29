@@ -1266,9 +1266,9 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
-        # copy unsealed blob with seal_blob=True will get a sealed blob
+        # copy unsealed blob with seal_destination_blob=True will get a sealed blob
         copied_blob2 = bsc.get_blob_client(self.container_name, "copiedblob2")
-        copied_blob2.start_copy_from_url(blob.url, seal_blob=True)
+        copied_blob2.start_copy_from_url(blob.url, seal_destination_blob=True)
         prop = copied_blob2.get_blob_properties()
 
         self.assertTrue(prop.is_append_blob_sealed)
@@ -1286,10 +1286,10 @@ class StorageAppendBlobTest(StorageTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
-        # copy sealed blob with seal_blob=False will get a unsealed blob
+        # copy sealed blob with seal_destination_blob=False will get a unsealed blob
         blob.seal_append_blob()
         copied_blob3 = bsc.get_blob_client(self.container_name, "copiedblob3")
-        copied_blob3.start_copy_from_url(blob.url, seal_blob=False)
+        copied_blob3.start_copy_from_url(blob.url, seal_destination_blob=False)
         prop = copied_blob3.get_blob_properties()
 
         self.assertIsNone(prop.is_append_blob_sealed)
