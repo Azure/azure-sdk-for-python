@@ -101,7 +101,7 @@ def test_disable_automatic_authentication():
     empty_cache = TokenCache()  # empty cache makes silent auth impossible
     transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
     credential = InteractiveBrowserCredential(
-        disable_automatic_authentication=True, transport=transport, _cache=empty_cache
+        _disable_automatic_authentication=True, transport=transport, _cache=empty_cache
     )
 
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential shouldn't try interactive authentication"))):

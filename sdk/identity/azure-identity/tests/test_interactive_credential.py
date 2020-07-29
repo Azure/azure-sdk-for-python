@@ -64,7 +64,7 @@ def test_authentication_record_argument():
 
     app_factory = Mock(wraps=validate_app_parameters)
     credential = MockCredential(
-        _authentication_record=record, disable_automatic_authentication=True, msal_app_factory=app_factory,
+        _authentication_record=record, _disable_automatic_authentication=True, msal_app_factory=app_factory,
     )
     with pytest.raises(AuthenticationRequiredError):
         credential.get_token("scope")
@@ -89,7 +89,7 @@ def test_tenant_argument_overrides_record():
     credential = MockCredential(
         _authentication_record=record,
         tenant_id=expected_tenant,
-        disable_automatic_authentication=True,
+        _disable_automatic_authentication=True,
         msal_app_factory=validate_authority,
     )
     with pytest.raises(AuthenticationRequiredError):
@@ -108,7 +108,7 @@ def test_disable_automatic_authentication():
 
     credential = MockCredential(
         _authentication_record=record,
-        disable_automatic_authentication=True,
+        _disable_automatic_authentication=True,
         msal_app_factory=lambda *_, **__: msal_app,
         request_token=Mock(side_effect=Exception("credential shouldn't begin interactive authentication")),
     )
@@ -132,7 +132,7 @@ def test_scopes_round_trip():
         return {"access_token": "**", "expires_in": 42}
 
     request_token = Mock(wraps=validate_scopes)
-    credential = MockCredential(disable_automatic_authentication=True, request_token=request_token)
+    credential = MockCredential(_disable_automatic_authentication=True, request_token=request_token)
     with pytest.raises(AuthenticationRequiredError) as ex:
         credential.get_token(scope)
 
@@ -174,7 +174,7 @@ def test_authenticate_ignores_disable_automatic_authentication(option):
     """authenticate should prompt for authentication regardless of the credential's configuration"""
 
     request_token = Mock(return_value={"access_token": "**", "expires_in": 42})
-    MockCredential(request_token=request_token, disable_automatic_authentication=option)._authenticate()
+    MockCredential(request_token=request_token, _disable_automatic_authentication=option)._authenticate()
     assert request_token.call_count == 1, "credential didn't begin interactive authentication"
 
 

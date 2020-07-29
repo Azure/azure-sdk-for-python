@@ -94,7 +94,7 @@ def test_disable_automatic_authentication():
 
     empty_cache = TokenCache()  # empty cache makes silent auth impossible
     transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
-    credential = DeviceCodeCredential("client-id", disable_automatic_authentication=True, transport=transport, _cache=empty_cache)
+    credential = DeviceCodeCredential("client-id", _disable_automatic_authentication=True, transport=transport, _cache=empty_cache)
 
     with pytest.raises(AuthenticationRequiredError):
         credential.get_token("scope")
