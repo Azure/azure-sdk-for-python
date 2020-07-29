@@ -194,8 +194,11 @@ class TableClient(TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
-        table = self._client.table.create(table_properties)
-        return Table(table=table)
+        try:
+            table = self._client.table.create(table_properties)
+            return Table(table=table)
+        except HttpResponseError as error:
+            process_table_error(error)
 
     @distributed_trace
     def delete_table(
@@ -208,7 +211,10 @@ class TableClient(TableClientBase):
         :return: None
         :rtype: None
         """
-        self._client.table.delete(table=self.table_name, **kwargs)
+        try:
+            self._client.table.delete(table=self.table_name, **kwargs)
+        except HttpResponseError as error:
+            process_table_error(error)
 
     @distributed_trace
     def delete_entity(
@@ -234,13 +240,15 @@ class TableClient(TableClientBase):
         if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
-
-        self._client.table.delete_entity(
-            table=self.table_name,
-            partition_key=partition_key,
-            row_key=row_key,
-            if_match=if_match or if_not_match or '*',
-            **kwargs)
+        try:
+            self._client.table.delete_entity(
+                table=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                if_match=if_match or if_not_match or '*',
+                **kwargs)
+        except HttpResponseError as error:
+            process_table_error(error)
 
     @distributed_trace
     def create_entity(
@@ -304,21 +312,23 @@ class TableClient(TableClientBase):
         partition_key = entity['PartitionKey']
         row_key = entity['RowKey']
         entity = _add_entity_properties(entity)
-
-        if mode is UpdateMode.REPLACE:
-            self._client.table.update_entity(
-                table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=entity,
-                if_match=if_match or if_not_match or "*",
-                **kwargs)
-        elif mode is UpdateMode.MERGE:
-            self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
+        try:
+            if mode is UpdateMode.REPLACE:
+                self._client.table.update_entity(
+                    table=self.table_name,
+                    partition_key=partition_key,
+                    row_key=row_key,
+                    table_entity_properties=entity,
+                    if_match=if_match or if_not_match or "*",
+                    **kwargs)
+            elif mode is UpdateMode.MERGE:
+                self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
                                             row_key=row_key, if_match=if_match or if_not_match or "*",
                                             table_entity_properties=entity, **kwargs)
-        else:
-            raise ValueError('Mode type is not supported')
+            else:
+                raise ValueError('Mode type is not supported')
+        except HttpResponseError as error:
+            process_table_error(error)
 
     @distributed_trace
     def list_entities(
@@ -402,13 +412,15 @@ class TableClient(TableClientBase):
         :rtype: ~azure.data.tables.TableEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-
-        entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
+        try:
+            entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
                                                                               partition_key=partition_key,
                                                                               row_key=row_key,
                                                                               **kwargs)
-        properties = _convert_to_entity(entity.additional_properties)
-        return properties
+            properties = _convert_to_entity(entity.additional_properties)
+            return properties
+        except HttpResponseError as error:
+            process_table_error(error)
 
     @distributed_trace
     def upsert_entity(  # pylint:disable=R1710

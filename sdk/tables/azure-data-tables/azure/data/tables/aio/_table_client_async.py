@@ -132,8 +132,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
-        table = await self._client.table.create(table_properties)
-        return Table(table)
+        try:
+            table = await self._client.table.create(table_properties)
+            return Table(table)
+        except HttpResponseError as error:
+            process_table_error(error)
 
     @distributed_trace_async
     async def delete_table(
@@ -145,7 +148,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :return: None
         :rtype: None
         """
-        await self._client.table.delete(table=self.table_name, **kwargs)
+        try:
+            await self._client.table.delete(table=self.table_name, **kwargs)
+        except HttpResponseError as error:
+            process_table_error(error)
 
     @distributed_trace_async
     async def delete_entity(
@@ -169,13 +175,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         if_match, if_not_match = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
                                                                 match_condition=kwargs.pop('match_condition', None)),
                                                     etag_param='etag', match_param='match_condition')
-
-        await self._client.table.delete_entity(
-            table=self.table_name,
-            partition_key=partition_key,
-            row_key=row_key,
-            if_match=if_match or if_not_match or '*',
-            **kwargs)
+        try:
+            await self._client.table.delete_entity(
+                table=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                if_match=if_match or if_not_match or '*',
+                **kwargs)
+        except HttpResponseError as error:
+            process_table_error(error)
 
     @distributed_trace_async
     async def create_entity(
@@ -240,21 +248,23 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         partition_key = entity['PartitionKey']
         row_key = entity['RowKey']
         entity = _add_entity_properties(entity)
-
-        if mode is UpdateMode.REPLACE:
-            await self._client.table.update_entity(
-                table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
-                table_entity_properties=entity,
-                if_match=if_match or if_not_match or "*",
-                **kwargs)
-        elif mode is UpdateMode.MERGE:
-            await self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
-                                                  row_key=row_key, if_match=if_match or if_not_match or "*",
-                                                  table_entity_properties=entity, **kwargs)
-        else:
-            raise ValueError('Mode type is not supported')
+        try:
+            if mode is UpdateMode.REPLACE:
+                await self._client.table.update_entity(
+                    table=self.table_name,
+                    partition_key=partition_key,
+                    row_key=row_key,
+                    table_entity_properties=entity,
+                    if_match=if_match or if_not_match or "*",
+                    **kwargs)
+            elif mode is UpdateMode.MERGE:
+                await self._client.table.merge_entity(table=self.table_name, partition_key=partition_key,
+                                                      row_key=row_key, if_match=if_match or if_not_match or "*",
+                                                      table_entity_properties=entity, **kwargs)
+            else:
+                raise ValueError('Mode type is not supported')
+        except HttpResponseError as error:
+            process_table_error(error)
 
     @distributed_trace
     def list_entities(
@@ -337,13 +347,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :rtype: ~azure.data.tables.TableEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-
-        entity = await self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
-                                                                                    partition_key=partition_key,
-                                                                                    row_key=row_key,
-                                                                                    **kwargs)
-        properties = _convert_to_entity(entity.additional_properties)
-        return properties
+        try:
+            entity = await self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
+                                                                                        partition_key=partition_key,
+                                                                                        row_key=row_key,
+                                                                                        **kwargs)
+            properties = _convert_to_entity(entity.additional_properties)
+            return properties
+        except HttpResponseError as error:
+            process_table_error(error)
 
     @distributed_trace_async
     async def upsert_entity(
