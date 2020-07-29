@@ -627,7 +627,7 @@ class DelimitedTextDialect(BlobDelimitedTextDialect):
     """
 
 
-class DataLakeFileQueryError(Exception):
+class DataLakeFileQueryError(object):
     """The error happened during quick query operation.
 
     :ivar str error:
@@ -646,7 +646,3 @@ class DataLakeFileQueryError(Exception):
         self.is_fatal = is_fatal
         self.description = description
         self.position = position
-        message = self.error
-        if self.description:
-            message += ": {}".format(self.description)
-        super(DataLakeFileQueryError, self).__init__(message)

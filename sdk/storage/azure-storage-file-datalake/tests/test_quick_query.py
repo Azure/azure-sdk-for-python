@@ -410,7 +410,7 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
 
         def on_error(error):
-            raise error
+            raise Exception(error.description)
 
         input_format = DelimitedJSON()
         output_format = DelimitedTextDialect(
@@ -424,7 +424,7 @@ class StorageQuickQueryTest(StorageTestCase):
             on_error=on_error,
             file_format=input_format,
             output_format=output_format)
-        with pytest.raises(DataLakeFileQueryError):
+        with pytest.raises(Exception):
             query_result = resp.readall()
 
     @record
@@ -447,7 +447,7 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
 
         def on_error(error):
-            raise error
+            raise Exception(error.description)
 
         input_format = DelimitedJSON()
         output_format = DelimitedTextDialect(
@@ -462,7 +462,7 @@ class StorageQuickQueryTest(StorageTestCase):
             file_format=input_format,
             output_format=output_format)
 
-        with pytest.raises(DataLakeFileQueryError):
+        with pytest.raises(Exception):
             for record in resp.records():
                 print(record)
 
