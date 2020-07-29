@@ -495,5 +495,5 @@ class UpdateMode(str, Enum):
 
 
 class SASProtocol(str, Enum):
-    https = "https"
-    http = "http"
+    HTTPS = "https"
+    HTTP = "http"
