@@ -97,8 +97,6 @@ class InteractiveCredential(MsalCredential):
           required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason.
-        :raises AuthenticationRequiredError: user interaction is necessary to acquire a token, and the credential is
-          configured not to begin this automatically. Call :func:`authenticate` to begin interactive authentication.
         """
         if not scopes:
             message = "'get_token' requires at least one scope"
