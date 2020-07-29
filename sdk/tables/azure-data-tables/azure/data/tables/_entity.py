@@ -95,13 +95,13 @@ class EdmType(str, Enum):
     """
 
     BINARY = "Edm.Binary"
-    ''' Represents byte data. Must be specified. '''
+    ''' Represents byte data. This type will be inferred for Python bytes.. '''
 
     INT64 = "Edm.Int64"
     ''' Represents a number between -(2^31) and 2^31. This is the default type for Python numbers. '''
 
     GUID = "Edm.Guid"
-    ''' Represents a GUID. Must be specified. '''
+    ''' Represents a GUID. This type will be inferred for uuid.UUID. '''
 
     DATETIME = "Edm.DateTime"
     ''' Represents a date. This type will be inferred for Python datetime objects. '''
