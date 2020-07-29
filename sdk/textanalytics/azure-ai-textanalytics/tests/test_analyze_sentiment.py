@@ -582,10 +582,11 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             "It has a sleek premium aluminum design that makes it beautiful to look at."
         ]
 
-        document = client.analyze_sentiment(documents=documents, show_aspects=True)[0]
+        document = client.analyze_sentiment(documents=documents, mine_opinions=True)[0]
 
         for sentence in document.sentences:
-            for aspect in sentence.aspects:
+            for mined_opinion in sentence.mined_opinions:
+                aspect = mined_opinion.aspect
                 self.assertEqual('design', aspect.text)
                 self.assertEqual('positive', aspect.sentiment)
                 self.assertIsNotNone(aspect.confidence_scores.positive)
@@ -594,7 +595,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 self.assertEqual(32, aspect.offset)
                 self.assertEqual(6, aspect.length)
 
-                sleek_opinion = aspect.opinions[0]
+                sleek_opinion = mined_opinion.opinions[0]
                 self.assertEqual('sleek', sleek_opinion.text)
                 self.assertEqual('positive', sleek_opinion.sentiment)
                 self.assertIsNotNone(sleek_opinion.confidence_scores.positive)
@@ -604,7 +605,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 self.assertEqual(5, sleek_opinion.length)
                 self.assertFalse(sleek_opinion.is_negated)
 
-                premium_opinion = aspect.opinions[1]
+                premium_opinion = mined_opinion.opinions[1]
                 self.assertEqual('premium', premium_opinion.text)
                 self.assertEqual('positive', premium_opinion.sentiment)
                 self.assertIsNotNone(premium_opinion.confidence_scores.positive)
@@ -621,11 +622,11 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             "The food and service is not good"
         ]
 
-        document = client.analyze_sentiment(documents=documents, show_aspects=True)[0]
+        document = client.analyze_sentiment(documents=documents, mine_opinions=True)[0]
 
         for sentence in document.sentences:
-            food_aspect = sentence.aspects[0]
-            service_aspect = sentence.aspects[1]
+            food_aspect = sentence.mined_opinions[0].aspect
+            service_aspect = sentence.mined_opinions[1].aspect
 
             self.assertEqual('food', food_aspect.text)
             self.assertEqual('negative', food_aspect.sentiment)
@@ -643,8 +644,8 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             self.assertEqual(13, service_aspect.offset)
             self.assertEqual(7, service_aspect.length)
 
-            food_opinion = food_aspect.opinions[0]
-            service_opinion = service_aspect.opinions[0]
+            food_opinion = sentence.mined_opinions[0].opinions[0]
+            service_opinion = sentence.mined_opinions[1].opinions[0]
             self.assertOpinionsEqual(food_opinion, service_opinion)
 
             self.assertEqual('good', food_opinion.text)
@@ -660,6 +661,6 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_aspect_based_sentiment_analysis_v3(self, client):
         with pytest.raises(TypeError) as excinfo:
-            client.analyze_sentiment(["will fail"], show_aspects=True)
+            client.analyze_sentiment(["will fail"], mine_opinions=True)
 
-        assert "'show_aspects' is only added for API version v3.1-preview.1 and up" in str(excinfo.value)
+        assert "'mine_opinions' is only added for API version v3.1-preview.1 and up" in str(excinfo.value)

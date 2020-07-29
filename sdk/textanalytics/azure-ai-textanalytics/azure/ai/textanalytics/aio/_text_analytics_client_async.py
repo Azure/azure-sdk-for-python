@@ -378,12 +378,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
-        :keyword bool show_aspects: Whether to conduct more granular analysis around the aspects of
-            a product or service (also known as aspect-based sentiment analysis). For example,
-            in the review "The food at Hotel Foo is good", "food" is an aspect of "Hotel Foo", and
-            setting `show_aspects` to True will go into the sentiment and opinions of "food".
-            If set to true, the returned :class:`~azure.ai.textanalytics.SentenceSentiment` objects
-            will have property `aspects` containing the result of this analysis. Only available for
+        :keyword bool mine_opinions: Whether to mine the opinions of a sentence and conduct more
+            granular analysis around the aspects of a product or service (also known as
+            aspect-based sentiment analysis). If set to true, the returned
+            :class:`~azure.ai.textanalytics.SentenceSentiment` objects
+            will have property `mined_opinions` containing the result of this analysis. Only available for
             API version v3.1-preview.1.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -395,7 +394,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         .. versionadded:: v3.1-preview.1
-            The *show_aspects* parameter.
+            The *mine_opinions* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -417,15 +416,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        show_aspects = kwargs.pop("show_aspects", None)
+        mine_opinions = kwargs.pop("mine_opinions", None)
 
-        if show_aspects is not None:
+        if mine_opinions is not None:
             if self._api_version == "v3.0":
                 raise TypeError(
-                    "Parameter 'show_aspects' is only added for API version v3.1-preview.1 and up"
+                    "Parameter 'mine_opinions' is only added for API version v3.1-preview.1 and up"
                 )
             if self._api_version == "v3.1-preview.1":
-                kwargs.update({"opinion_mining": show_aspects})
+                kwargs.update({"opinion_mining": mine_opinions})
 
         try:
             return await self._client.sentiment(

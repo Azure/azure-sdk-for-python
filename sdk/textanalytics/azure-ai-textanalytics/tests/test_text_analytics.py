@@ -112,7 +112,7 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
 
         aspect_opinion_confidence_score = _models.SentimentConfidenceScores(positive=0.5, negative=0.5)
 
-        aspect_opinion = _models.OpinionSentiment(
+        opinion_sentiment = _models.OpinionSentiment(
             text="opinion",
             sentiment="positive",
             confidence_scores=aspect_opinion_confidence_score,
@@ -121,13 +121,17 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
             is_negated=False
         )
 
-        sentence_aspect = _models.AspectSentiment(
+        aspect_sentiment = _models.AspectSentiment(
             text="aspect",
             sentiment="positive",
             confidence_scores=aspect_opinion_confidence_score,
             offset=10,
-            length=6,
-            opinions=[aspect_opinion]
+            length=6
+        )
+
+        mined_opinion = _models.MinedOpinion(
+            aspect=aspect_sentiment,
+            opinions=[opinion_sentiment]
         )
 
         self.assertEqual("DetectedLanguage(name=English, iso6391_name=en, confidence_score=1.0)", repr(detected_language))
@@ -189,16 +193,18 @@ class TextAnalyticsTest(TestAnalyticsTestCase):
         self.assertEqual("TextDocumentBatchStatistics(document_count=1, valid_document_count=2, "
                          "erroneous_document_count=3, transaction_count=4)", repr(text_document_batch_statistics))
 
-        aspect_opinion_repr = (
+        opinion_sentiment_repr = (
             "OpinionSentiment(text=opinion, sentiment=positive, confidence_scores=SentimentConfidenceScores("
             "positive=0.5, neutral=0.0, negative=0.5), offset=3, length=7, is_negated=False)"
         )
-        self.assertEqual(aspect_opinion_repr, repr(aspect_opinion))
-        self.assertEqual(
+        self.assertEqual(opinion_sentiment_repr, repr(opinion_sentiment))
+
+        aspect_sentiment_repr = (
             "AspectSentiment(text=aspect, sentiment=positive, confidence_scores=SentimentConfidenceScores("
-            "positive=0.5, neutral=0.0, negative=0.5), opinions=[{}], offset=10, length=6)".format(aspect_opinion_repr),
-            repr(sentence_aspect)
+            "positive=0.5, neutral=0.0, negative=0.5), offset=10, length=6)"
         )
+        self.assertEqual(aspect_sentiment_repr, repr(aspect_sentiment))
+        self.assertEqual("MinedOpinion(aspect={}, opinions=[{}])".format(aspect_sentiment_repr, opinion_sentiment_repr), repr(mined_opinion))
 
 
     def test_inner_error_takes_precedence(self):
