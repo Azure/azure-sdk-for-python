@@ -10,7 +10,7 @@ Common uses of Azure Data Tables include:
 * Storing structured data in the form of tables
 * Quickly querying data using a clustered index
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk) | [Package (PyPI)](https://pypi.org/project/) | [API reference documentation](https://aka.ms/azsdk/python/tables/docs) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk) | [Package (PyPI)](https://pypi.org) | [API reference documentation](https://aka.ms/azsdk/python/tables/docs) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk)
 
 ## Getting started
 
