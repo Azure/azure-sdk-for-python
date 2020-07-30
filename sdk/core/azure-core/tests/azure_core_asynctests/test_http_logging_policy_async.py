@@ -254,7 +254,10 @@ def test_http_logger_with_body():
 def test_http_logger_with_generator_body():
 
     async def _g():
-        yield 1
+        try:
+            yield 1
+        except SyntaxError:
+            pass
 
     class MockHandler(logging.Handler):
         def __init__(self):
