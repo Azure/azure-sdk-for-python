@@ -12,7 +12,7 @@ from azure.core.pipeline import Pipeline
 from azure.table._generated import AzureTable
 from azure.table._generated.models import TableProperties, TableServiceProperties, QueryOptions
 from azure.table._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
-from azure.table._shared.base_client import parse_connection_str, TransportWrapper
+from azure.table._base_client import parse_connection_str, TransportWrapper
 from azure.table._shared.models import LocationMode
 from azure.table._shared.response_handlers import process_table_error
 from azure.table._version import VERSION
@@ -21,7 +21,7 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.table._table_client import TableClient
 from azure.table._shared._error import _validate_table_name
-from azure.table._shared._table_service_client_base import TableServiceClientBase
+from azure.table._table_service_client_base import TableServiceClientBase
 
 
 class TableServiceClient(TableServiceClientBase):

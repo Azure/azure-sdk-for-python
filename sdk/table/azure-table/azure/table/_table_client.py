@@ -19,8 +19,8 @@ from azure.table._entity import Entity
 from azure.table._generated import AzureTable
 from azure.table._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
 from azure.table._serialize import _get_match_headers, _add_entity_properties
-from azure.table._shared.base_client import parse_connection_str
-from azure.table._shared._table_client_base import TableClientBase
+from azure.table._base_client import parse_connection_str
+from azure.table._table_client_base import TableClientBase
 
 from azure.table._shared.request_handlers import serialize_iso
 from azure.table._shared.response_handlers import process_table_error

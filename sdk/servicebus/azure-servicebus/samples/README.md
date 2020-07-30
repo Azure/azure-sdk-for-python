@@ -51,6 +51,7 @@ Both [sync version](./sync_samples) and [async version](./async_samples) of samp
 - [auto_lock_renew.py](./sync_samples/auto_lock_renew.py) ([async_version](./async_samples/auto_lock_renew_async.py)) - Examples to show usage of AutoLockRenew:
     - Automatically renew lock on message received from non-sessionful entity
     - Automatically renew lock on the session of sessionful entity
+    - Configure a callback to be triggered on auto lock renew failures.
 - [mgmt_queue](./sync_samples/mgmt_queue.py) ([async_version](./async_samples/mgmt_queue_async.py)) - Examples to manage queue entities under a given servicebus namespace
     - Create a queue
     - Delete a queue

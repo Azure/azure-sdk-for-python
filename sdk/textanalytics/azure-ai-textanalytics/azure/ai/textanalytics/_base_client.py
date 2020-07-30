@@ -3,12 +3,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
+from enum import Enum
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
+from ._generated import TextAnalyticsClient as _TextAnalyticsClient
 from ._policies import TextAnalyticsResponseHookPolicy
 from ._user_agent import USER_AGENT
-from ._generated import TextAnalyticsClient
+
+class ApiVersion(str, Enum):
+    """Text Analytics API versions supported by this package"""
+
+    #: this is the default version
+    V3_1_PREVIEW_1 = "v3.1-preview.1"
+    V3_0 = "v3.0"
 
 def _authentication_policy(credential):
     authentication_policy = None
@@ -26,9 +33,10 @@ def _authentication_policy(credential):
 
 class TextAnalyticsClientBase(object):
     def __init__(self, endpoint, credential, **kwargs):
-        self._client = TextAnalyticsClient(
+        self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,
+            api_version=kwargs.pop("api_version", ApiVersion.V3_1_PREVIEW_1),
             sdk_moniker=USER_AGENT,
             authentication_policy=_authentication_policy(credential),
             custom_hook_policy=TextAnalyticsResponseHookPolicy(**kwargs),

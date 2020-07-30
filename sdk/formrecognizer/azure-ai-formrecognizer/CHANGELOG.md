@@ -2,6 +2,21 @@
 
 ## 1.0.0b5 (Unreleased)
 
+**Breaking Changes**
+
+- Values are now capitalized for enums `FormContentType`, `LengthUnit`, `TrainingStatus`, and `CustomFormModelStatus`
+- `document_name` renamed to `name` on `TrainingDocumentInfo`
+- Keyword argument `include_sub_folders` renamed to `include_subfolders` on `begin_training` methods
+
+**New features**
+
+- `FormField` now has attribute `value_type` which contains the semantic data type of the field value. The options for
+`value_type` are described in the enum `FieldValueType`
+
+**Fixes and improvements**
+
+- Fixes a bug where error code and message weren't being returned on `HttpResponseError` if operation failed during polling
+
 
 ## 1.0.0b4 (2020-07-07)
 

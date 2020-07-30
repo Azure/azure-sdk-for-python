@@ -109,6 +109,7 @@ aiohttp>=3.0
 aiodns>=2.0
 python-dateutil>=2.8.0
 six>=1.6
+isodate>=0.6.0
 #override azure azure-keyvault~=1.0
 #override azure-mgmt-core azure-core<2.0.0,>=1.7.0
 #override azure-appconfiguration azure-core<2.0.0,>=1.0.0
@@ -153,3 +154,7 @@ opentelemetry-api==0.10b0
 #override azure-synapse-accesscontrol azure-core>=1.6.0,<2.0.0
 #override azure-synapse-spark azure-core>=1.6.0,<2.0.0
 #override azure-synapse-artifacts azure-core>=1.6.0,<2.0.0
+<<<<<<< HEAD
+=======
+#override azure-data-tables msrest>=0.6.10
+>>>>>>> 48a813342e74e02b2a291201277b93cbd164c13f

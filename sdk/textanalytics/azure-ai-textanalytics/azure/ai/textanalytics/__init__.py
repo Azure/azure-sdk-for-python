@@ -6,6 +6,7 @@
 
 from ._text_analytics_client import TextAnalyticsClient
 from ._version import VERSION
+from ._base_client import ApiVersion
 from ._models import (
     DetectLanguageInput,
     TextDocumentInput,
@@ -24,10 +25,13 @@ from ._models import (
     LinkedEntityMatch,
     TextDocumentBatchStatistics,
     SentenceSentiment,
-    SentimentConfidenceScores
+    SentimentConfidenceScores,
+    RecognizePiiEntitiesResult,
+    PiiEntity
 )
 
 __all__ = [
+    'ApiVersion',
     'TextAnalyticsClient',
     'DetectLanguageInput',
     'TextDocumentInput',
@@ -46,7 +50,9 @@ __all__ = [
     'LinkedEntityMatch',
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
-    'SentimentConfidenceScores'
+    'SentimentConfidenceScores',
+    'RecognizePiiEntitiesResult',
+    'PiiEntity',
 ]
 
 __version__ = VERSION

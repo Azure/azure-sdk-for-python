@@ -71,7 +71,7 @@ class TrainModelWithLabelsSampleAsync(object):
 
             # Training result information
             for doc in model.training_documents:
-                print("Document name: {}".format(doc.document_name))
+                print("Document name: {}".format(doc.name))
                 print("Document status: {}".format(doc.status))
                 print("Document page count: {}".format(doc.page_count))
                 print("Document errors: {}".format(doc.errors))

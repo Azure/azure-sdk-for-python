@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from azure.table._entity import Entity, EntityProperty, EdmType
 from azure.table._generated.models import TableServiceStats
-from azure.table._shared.table_shared_access_signature import generate_table_sas, \
+from azure.table._table_shared_access_signature import generate_table_sas, \
     generate_account_sas
 from azure.table._table_client import TableClient
 from azure.table._table_service_client import TableServiceClient
