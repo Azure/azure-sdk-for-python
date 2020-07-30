@@ -674,6 +674,13 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             self.assertTrue(food_opinion.is_negated)
 
     @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    async def test_opinion_mining_no_mined_opinions(self, client):
+        document = (await client.analyze_sentiment(documents=["today is a hot day"], show_opinion_mining=True))[0]
+
+        assert not document.sentences[0].mined_opinions
+
+    @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": ApiVersion.V3_0})
     async def test_opinion_mining_v3(self, client):
         with pytest.raises(NotImplementedError) as excinfo:
