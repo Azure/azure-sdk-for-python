@@ -5,6 +5,7 @@
   are no longer redacted in logging output.
 - Updated minimum `azure-core` version to 1.4.0
 - Users can pass in CustomHookPolicy through the kwarg `custom_hook_policy` when initializing the client
+- RequestIdPolicy is now always set for all requests. This policy sets the id of the request in the header.
 
 ## 4.2.0b1 (2020-03-10)
 - Support for Key Vault API version 7.1-preview
