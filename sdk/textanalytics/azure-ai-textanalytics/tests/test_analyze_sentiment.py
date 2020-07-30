@@ -577,7 +577,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_aspect_based_sentiment_analysis(self, client):
+    def test_opinion_mining(self, client):
         documents = [
             "It has a sleek premium aluminum design that makes it beautiful to look at."
         ]
@@ -617,7 +617,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_aspect_based_sentiment_analysis_negated_opinion(self, client):
+    def test_opinion_mining_with_negated_opinion(self, client):
         documents = [
             "The food and service is not good"
         ]
@@ -659,7 +659,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": ApiVersion.V3_0})
-    def test_aspect_based_sentiment_analysis_v3(self, client):
+    def test_opinion_mining_v3(self, client):
         with pytest.raises(NotImplementedError) as excinfo:
             client.analyze_sentiment(["will fail"], show_opinion_mining=True)
 
