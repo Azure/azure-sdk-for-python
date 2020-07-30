@@ -74,7 +74,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
-            self.assertIsNotNone(doc.document_name)
+            self.assertIsNotNone(doc.name)
             self.assertIsNotNone(doc.page_count)
             self.assertIsNotNone(doc.status)
             self.assertEqual(doc.errors, [])
@@ -97,7 +97,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
-            self.assertIsNotNone(doc.document_name)
+            self.assertIsNotNone(doc.name)
             self.assertIsNotNone(doc.page_count)
             self.assertIsNotNone(doc.status)
             self.assertEqual(doc.errors, [])
@@ -163,7 +163,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
-            self.assertIsNotNone(doc.document_name)
+            self.assertIsNotNone(doc.name)
             self.assertIsNotNone(doc.page_count)
             self.assertIsNotNone(doc.status)
             self.assertEqual(doc.errors, [])
@@ -186,7 +186,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertEqual(model.errors, [])
         self.assertEqual(model.status, "ready")
         for doc in model.training_documents:
-            self.assertIsNotNone(doc.document_name)
+            self.assertIsNotNone(doc.name)
             self.assertIsNotNone(doc.page_count)
             self.assertIsNotNone(doc.status)
             self.assertEqual(doc.errors, [])
@@ -241,15 +241,15 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @GlobalClientPreparer(training=True)
     async def test_training_with_files_filter(self, client, container_sas_url):
         async with client:
-            poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False, include_sub_folders=True)
+            poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False, include_subfolders=True)
             model = await poller.result()
             self.assertEqual(len(model.training_documents), 6)
-            self.assertEqual(model.training_documents[-1].document_name, "subfolder/Form_6.jpg")  # we traversed subfolders
+            self.assertEqual(model.training_documents[-1].name, "subfolder/Form_6.jpg")  # we traversed subfolders
 
-            poller = await client.begin_training(container_sas_url, use_training_labels=False, prefix="subfolder", include_sub_folders=True)
+            poller = await client.begin_training(container_sas_url, use_training_labels=False, prefix="subfolder", include_subfolders=True)
             model = await poller.result()
             self.assertEqual(len(model.training_documents), 1)
-            self.assertEqual(model.training_documents[0].document_name, "subfolder/Form_6.jpg")  # we filtered for only subfolders
+            self.assertEqual(model.training_documents[0].name, "subfolder/Form_6.jpg")  # we filtered for only subfolders
 
             with pytest.raises(HttpResponseError) as e:
                 poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False, prefix="xxx")

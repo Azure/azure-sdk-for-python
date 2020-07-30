@@ -13,7 +13,7 @@ from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
-from .vscode_credential import VSCodeCredential
+from .vscode import VSCodeCredential
 
 if TYPE_CHECKING:
     from typing import Any

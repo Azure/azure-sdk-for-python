@@ -13,6 +13,7 @@ import pytest
 import re
 import logging
 from azure.core.credentials import AzureKeyCredential, AccessToken
+from azure.ai.formrecognizer._models import adjust_value_type
 from devtools_testutils import (
     AzureTestCase,
     AzureMgmtPreparer,
@@ -137,7 +138,7 @@ class FormRecognizerTest(AzureTestCase):
         self.assertEqual(model.status, actual.model_info.status)
         self.assertEqual(model.errors, actual.train_result.errors)
         for m, a in zip(model.training_documents, actual.train_result.training_documents):
-            self.assertEqual(m.document_name, a.document_name)
+            self.assertEqual(m.name, a.document_name)
             if m.errors and a.errors:
                 self.assertEqual(m.errors, a.errors)
             self.assertEqual(m.page_count, a.pages)
@@ -222,7 +223,7 @@ class FormRecognizerTest(AzureTestCase):
             self.assertBoundingBoxTransformCorrect(b[label].value_data.bounding_box, a.bounding_box)
             self.assertEqual(a.text, b[label].value_data.text)
             field_type = a.type
-            self.assertEqual(field_type, b[label].value_type)
+            self.assertEqual(adjust_value_type(field_type), b[label].value_type)
             if field_type == "string":
                 self.assertEqual(b[label].value, a.value_string)
             if field_type == "number":
@@ -268,7 +269,7 @@ class FormRecognizerTest(AzureTestCase):
         if actual_field is None:
             return
         field_type = actual_field.type
-        self.assertEqual(field_type, receipt_field.value_type)
+        self.assertEqual(adjust_value_type(field_type), receipt_field.value_type)
         if field_type == "string":
             self.assertEqual(receipt_field.value, actual_field.value_string)
         if field_type == "number":
@@ -320,7 +321,7 @@ class FormRecognizerTest(AzureTestCase):
 
     def assertReceiptItemsHasValues(self, items, page_number, include_field_elements):
         for item in items:
-            self.assertEqual(item.value_type, "object")
+            self.assertEqual(item.value_type, "dictionary")
             self.assertBoundingBoxHasPoints(item.value.get("Name").value_data.bounding_box)
             self.assertIsNotNone(item.value.get("Name").confidence)
             self.assertIsNotNone(item.value.get("Name").value_data.text)

@@ -123,14 +123,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             validity_in_months=24,
         )
 
-        create_certificate_pollers = []
-        for i in range(4):
-            create_certificate_pollers.append(
-                certificate_client.create_certificate(certificate_name="certificate{}".format(i), policy=cert_policy)
-            )
-
-        for poller in create_certificate_pollers:
-            await poller
+        certificate_name = self.get_replayable_random_resource_name("cert")
+        await certificate_client.create_certificate(certificate_name, cert_policy)
 
         # [START list_properties_of_certificates]
 
@@ -145,6 +139,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.enabled)
 
         # [END list_properties_of_certificates]
+
+        # create a second version of the cert
+        await certificate_client.create_certificate(certificate_name, cert_policy)
+
         # [START list_properties_of_certificate_versions]
 
         # get an iterator of all versions of a certificate
@@ -156,6 +154,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.properties.version)
 
         # [END list_properties_of_certificate_versions]
+
+        await certificate_client.delete_certificate(certificate_name)
+
         # [START list_deleted_certificates]
 
         # get an iterator of deleted certificates (requires soft-delete enabled for the vault)
