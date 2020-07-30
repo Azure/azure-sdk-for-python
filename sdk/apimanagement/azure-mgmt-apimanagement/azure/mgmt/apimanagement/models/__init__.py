@@ -65,6 +65,10 @@ try:
     from ._models_py3 import CertificateInformation
     from ._models_py3 import ClientSecretContract
     from ._models_py3 import ConnectivityStatusContract
+    from ._models_py3 import ContentItemCollection
+    from ._models_py3 import ContentItemContract
+    from ._models_py3 import ContentTypeCollection
+    from ._models_py3 import ContentTypeContract
     from ._models_py3 import DeployConfigurationParameters
     from ._models_py3 import DiagnosticContract
     from ._models_py3 import EmailTemplateContract
@@ -135,6 +139,7 @@ try:
     from ._models_py3 import QuotaCounterContract
     from ._models_py3 import QuotaCounterValueContract
     from ._models_py3 import QuotaCounterValueContractProperties
+    from ._models_py3 import QuotaCounterValueUpdateContract
     from ._models_py3 import RecipientEmailCollection
     from ._models_py3 import RecipientEmailContract
     from ._models_py3 import RecipientsContractProperties
@@ -236,6 +241,10 @@ except (SyntaxError, ImportError):
     from ._models import CertificateInformation
     from ._models import ClientSecretContract
     from ._models import ConnectivityStatusContract
+    from ._models import ContentItemCollection
+    from ._models import ContentItemContract
+    from ._models import ContentTypeCollection
+    from ._models import ContentTypeContract
     from ._models import DeployConfigurationParameters
     from ._models import DiagnosticContract
     from ._models import EmailTemplateContract
@@ -306,6 +315,7 @@ except (SyntaxError, ImportError):
     from ._models import QuotaCounterContract
     from ._models import QuotaCounterValueContract
     from ._models import QuotaCounterValueContractProperties
+    from ._models import QuotaCounterValueUpdateContract
     from ._models import RecipientEmailCollection
     from ._models import RecipientEmailContract
     from ._models import RecipientsContractProperties
@@ -487,6 +497,10 @@ __all__ = [
     'CertificateInformation',
     'ClientSecretContract',
     'ConnectivityStatusContract',
+    'ContentItemCollection',
+    'ContentItemContract',
+    'ContentTypeCollection',
+    'ContentTypeContract',
     'DeployConfigurationParameters',
     'DiagnosticContract',
     'EmailTemplateContract',
@@ -557,6 +571,7 @@ __all__ = [
     'QuotaCounterContract',
     'QuotaCounterValueContract',
     'QuotaCounterValueContractProperties',
+    'QuotaCounterValueUpdateContract',
     'RecipientEmailCollection',
     'RecipientEmailContract',
     'RecipientsContractProperties',
