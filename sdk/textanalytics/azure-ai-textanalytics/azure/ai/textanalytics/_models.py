@@ -709,7 +709,7 @@ class SentenceSentiment(DictMixin):
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in "The food is good, but the service is bad", we would
         mind these two opinions "food is good", "service is bad". Only returned
-        if `mine_opinions` is set to True in the call to `analyze_sentiment`.
+        if `show_opinion_mining` is set to True in the call to `analyze_sentiment`.
     :vartype mined_opinions:
         list[~azure.ai.textanalytics.MinedOpinion]
     """

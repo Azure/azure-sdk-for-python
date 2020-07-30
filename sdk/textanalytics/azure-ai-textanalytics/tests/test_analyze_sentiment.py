@@ -582,7 +582,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             "It has a sleek premium aluminum design that makes it beautiful to look at."
         ]
 
-        document = client.analyze_sentiment(documents=documents, mine_opinions=True)[0]
+        document = client.analyze_sentiment(documents=documents, show_opinion_mining=True)[0]
 
         for sentence in document.sentences:
             for mined_opinion in sentence.mined_opinions:
@@ -622,7 +622,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             "The food and service is not good"
         ]
 
-        document = client.analyze_sentiment(documents=documents, mine_opinions=True)[0]
+        document = client.analyze_sentiment(documents=documents, show_opinion_mining=True)[0]
 
         for sentence in document.sentences:
             food_aspect = sentence.mined_opinions[0].aspect
@@ -661,6 +661,6 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": ApiVersion.V3_0})
     def test_aspect_based_sentiment_analysis_v3(self, client):
         with pytest.raises(NotImplementedError) as excinfo:
-            client.analyze_sentiment(["will fail"], mine_opinions=True)
+            client.analyze_sentiment(["will fail"], show_opinion_mining=True)
 
-        assert "'mine_opinions' is only available for API version v3.1-preview.1 and up" in str(excinfo.value)
+        assert "'show_opinion_mining' is only available for API version v3.1-preview.1 and up" in str(excinfo.value)

@@ -451,7 +451,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
-        :keyword bool mine_opinions: Whether to mine the opinions of a sentence and conduct more
+        :keyword bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
             granular analysis around the aspects of a product or service (also known as
             aspect-based sentiment analysis). If set to true, the returned
             :class:`~azure.ai.textanalytics.SentenceSentiment` objects
@@ -467,7 +467,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         .. versionadded:: v3.1-preview.1
-            The *mine_opinions* parameter.
+            The *show_opinion_mining* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -489,10 +489,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        mine_opinions = kwargs.pop("mine_opinions", None)
+        show_opinion_mining = kwargs.pop("show_opinion_mining", None)
 
-        if mine_opinions is not None:
-            kwargs.update({"opinion_mining": mine_opinions})
+        if show_opinion_mining is not None:
+            kwargs.update({"opinion_mining": show_opinion_mining})
         try:
             return self._client.sentiment(
                 documents=docs,
@@ -504,7 +504,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except TypeError as error:
             if "opinion_mining" in str(error):
                 raise NotImplementedError(
-                    "'mine_opinions' is only available for API version v3.1-preview.1 and up"
+                    "'show_opinion_mining' is only available for API version v3.1-preview.1 and up"
                 )
             raise error
         except HttpResponseError as error:
