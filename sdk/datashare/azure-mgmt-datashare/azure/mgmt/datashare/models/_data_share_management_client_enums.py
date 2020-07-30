@@ -44,12 +44,6 @@ class InvitationStatus(str, Enum):
     withdrawn = "Withdrawn"
 
 
-class ShareKind(str, Enum):
-
-    copy_based = "CopyBased"
-    in_place = "InPlace"
-
-
 class SynchronizationMode(str, Enum):
 
     incremental = "Incremental"
@@ -78,6 +72,12 @@ class ShareSubscriptionStatus(str, Enum):
     revoked = "Revoked"
     source_deleted = "SourceDeleted"
     revoking = "Revoking"
+
+
+class ShareKind(str, Enum):
+
+    copy_based = "CopyBased"
+    in_place = "InPlace"
 
 
 class RecurrenceInterval(str, Enum):
