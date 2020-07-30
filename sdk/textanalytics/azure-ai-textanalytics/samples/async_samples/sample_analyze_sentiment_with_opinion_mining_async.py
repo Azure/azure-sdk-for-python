@@ -30,8 +30,8 @@ import os
 import asyncio
 
 
-class AnalyzeSentimentWithAspectsSampleAsync(object):
-    async def analyze_sentiment_with_aspects(self):
+class AnalyzeSentimentWithOpinionMiningSampleAsync(object):
+    async def analyze_sentiment_with_opinion_mining(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         from azure.ai.textanalytics import ApiVersion
@@ -108,8 +108,8 @@ class AnalyzeSentimentWithAspectsSampleAsync(object):
         )
 
 async def main():
-    sample = AnalyzeSentimentWithAspectsSampleAsync()
-    await sample.analyze_sentiment_with_aspects()
+    sample = AnalyzeSentimentWithOpinionMiningSampleAsync()
+    await sample.analyze_sentiment_with_opinion_mining()
 
 
 if __name__ == '__main__':
