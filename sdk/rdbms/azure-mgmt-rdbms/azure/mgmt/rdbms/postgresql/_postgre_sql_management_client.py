@@ -23,11 +23,11 @@ from .operations import LogFilesOperations
 from .operations import ServerAdministratorsOperations
 from .operations import LocationBasedPerformanceTierOperations
 from .operations import CheckNameAvailabilityOperations
-from .operations import ServerSecurityAlertPoliciesOperations
 from .operations import Operations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import ServerKeysOperations
+from .operations import ServerSecurityAlertPoliciesOperations
 from . import models
 
 
@@ -57,8 +57,6 @@ class PostgreSQLManagementClient(SDKClient):
     :vartype location_based_performance_tier: azure.mgmt.rdbms.postgresql.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailability operations
     :vartype check_name_availability: azure.mgmt.rdbms.postgresql.operations.CheckNameAvailabilityOperations
-    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
-    :vartype server_security_alert_policies: azure.mgmt.rdbms.postgresql.operations.ServerSecurityAlertPoliciesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.postgresql.operations.Operations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
@@ -67,6 +65,8 @@ class PostgreSQLManagementClient(SDKClient):
     :vartype private_link_resources: azure.mgmt.rdbms.postgresql.operations.PrivateLinkResourcesOperations
     :ivar server_keys: ServerKeys operations
     :vartype server_keys: azure.mgmt.rdbms.postgresql.operations.ServerKeysOperations
+    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
+    :vartype server_security_alert_policies: azure.mgmt.rdbms.postgresql.operations.ServerSecurityAlertPoliciesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -106,8 +106,6 @@ class PostgreSQLManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
@@ -115,4 +113,6 @@ class PostgreSQLManagementClient(SDKClient):
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_keys = ServerKeysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
