@@ -83,13 +83,13 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
     The base class for Exponential and Linear retries containing shared code.
     """
 
-    async def sleep(self, settings, transport):
+    async def sleep(self, settings, transport):  # pylint: disable =W0236
         backoff = self.get_backoff_time(settings)
         if not backoff or backoff < 0:
             return
         await transport.sleep(backoff)
 
-    async def send(self, request):
+    async def send(self, request):  # pylint: disable =W0236
         retries_remaining = True
         response = None
         retry_settings = self.configure_retries(request)

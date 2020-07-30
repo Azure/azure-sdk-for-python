@@ -251,10 +251,6 @@ class TableServiceClient(TableServiceClientBase):
        :rtype: ~azure.data.tables.TableClient
 
        """
-        try:
-            table_name = table_name.name
-        except AttributeError:
-            table_name = table_name
 
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
