@@ -24,6 +24,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_detect_language.py][detect_language] and [sample_detect_language_async.py][detect_language_async]|Detect language in documents|
 |[sample_recognize_entities.py][recognize_entities] and [sample_recognize_entities_async.py][recognize_entities_async]|Recognize named entities in documents|
 |[sample_recognize_linked_entities.py][recognize_linked_entities] and [sample_recognize_linked_entities_async.py][recognize_linked_entities_async]|Recognize linked entities in documents|
+|[sample_recognize_pii_entities.py](`https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py`) and [sample_recognize_pii_entities_async.py](`https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py`)|Recognize personally identifiable information in documents|
 |[sample_extract_key_phrases.py][extract_key_phrases] and [sample_extract_key_phrases_async.py][extract_key_phrases_async]|Extract key phrases from documents|
 |[sample_analyze_sentiment.py][analyze_sentiment] and [sample_analyze_sentiment_async.py][analyze_sentiment_async]|Analyze the sentiment of documents|
 |[sample_alternative_document_input.py][sample_alternative_document_input] and [sample_alternative_document_input_async.py][sample_alternative_document_input_async]|Pass documents to an endpoint using dicts|

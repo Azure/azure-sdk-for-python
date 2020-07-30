@@ -576,7 +576,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert res == "cls result"
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": ApiVersion.V3_1_PREVIEW_1})
+    @TextAnalyticsClientPreparer()
     def test_aspect_based_sentiment_analysis(self, client):
         documents = [
             "It has a sleek premium aluminum design that makes it beautiful to look at."
@@ -616,7 +616,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 self.assertFalse(premium_opinion.is_negated)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": ApiVersion.V3_1_PREVIEW_1})
+    @TextAnalyticsClientPreparer()
     def test_aspect_based_sentiment_analysis_negated_opinion(self, client):
         documents = [
             "The food and service is not good"
@@ -658,9 +658,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             self.assertTrue(food_opinion.is_negated)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": ApiVersion.V3_0})
     def test_aspect_based_sentiment_analysis_v3(self, client):
-        with pytest.raises(TypeError) as excinfo:
+        with pytest.raises(NotImplementedError) as excinfo:
             client.analyze_sentiment(["will fail"], mine_opinions=True)
 
-        assert "'mine_opinions' is only added for API version v3.1-preview.1 and up" in str(excinfo.value)
+        assert "'mine_opinions' is only available for API version v3.1-preview.1 and up" in str(excinfo.value)

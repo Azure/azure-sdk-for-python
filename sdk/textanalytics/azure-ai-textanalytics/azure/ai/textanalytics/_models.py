@@ -106,7 +106,7 @@ class RecognizeEntitiesResult(DictMixin):
     :vartype entities:
         list[~azure.ai.textanalytics.CategorizedEntity]
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
-     if there are warnings, but they may not be fully accurate.
+        if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
@@ -128,6 +128,40 @@ class RecognizeEntitiesResult(DictMixin):
             .format(self.id, repr(self.entities), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
 
 
+class RecognizePiiEntitiesResult(DictMixin):
+    """RecognizePiiEntitiesResult is a result object which contains
+    the recognized Personally Identifiable Information (PII) entities
+    from a particular document.
+
+    :ivar str id: Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document.
+    :ivar entities: Recognized PII entities in the document.
+    :vartype entities:
+        list[~azure.ai.textanalytics.PiiEntity]
+    :ivar warnings: Warnings encountered while processing document. Results will still be returned
+        if there are warnings, but they may not be fully accurate.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If show_stats=true was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics:
+        ~azure.ai.textanalytics.TextDocumentStatistics
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a RecognizePiiEntitiesResult.
+    """
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id", None)
+        self.entities = kwargs.get("entities", None)
+        self.warnings = kwargs.get("warnings", [])
+        self.statistics = kwargs.get("statistics", None)
+        self.is_error = False
+
+    def __repr__(self):
+        return "RecognizePiiEntitiesResult(id={}, entities={}, warnings={}, statistics={}, is_error={})" \
+            .format(self.id, repr(self.entities), repr(self.warnings), repr(self.statistics), self.is_error)[:1024]
+
+
 class DetectLanguageResult(DictMixin):
     """DetectLanguageResult is a result object which contains
     the detected language of a particular document.
@@ -139,7 +173,7 @@ class DetectLanguageResult(DictMixin):
     :ivar primary_language: The primary language detected in the document.
     :vartype primary_language: ~azure.ai.textanalytics.DetectedLanguage
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
-     if there are warnings, but they may not be fully accurate.
+        if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
@@ -196,6 +230,39 @@ class CategorizedEntity(DictMixin):
         return "CategorizedEntity(text={}, category={}, subcategory={}, confidence_score={})".format(
             self.text, self.category, self.subcategory, self.confidence_score
         )[:1024]
+
+class PiiEntity(DictMixin):
+    """PiiEntity contains information about a Personally Identifiable
+    Information (PII) entity found in text.
+
+    :ivar str text: Entity text as appears in the request.
+    :ivar str category: Entity category, such as Financial Account
+        Identification/Social Security Number/Phone Number, etc.
+    :ivar str subcategory: Entity subcategory, such as Credit Card/EU
+        Phone number/ABA Routing Numbers, etc.
+    :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
+        entity.
+    """
+
+    def __init__(self, **kwargs):
+        self.text = kwargs.get('text', None)
+        self.category = kwargs.get('category', None)
+        self.subcategory = kwargs.get('subcategory', None)
+        self.confidence_score = kwargs.get('confidence_score', None)
+
+    @classmethod
+    def _from_generated(cls, entity):
+        return cls(
+            text=entity.text,
+            category=entity.category,
+            subcategory=entity.subcategory,
+            confidence_score=entity.confidence_score,
+        )
+
+    def __repr__(self):
+        return "PiiEntity(text={}, category={}, subcategory={}, confidence_score={})".format(
+                   self.text, self.category, self.subcategory, self.confidence_score
+                )[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -278,7 +345,7 @@ class ExtractKeyPhrasesResult(DictMixin):
         in the input document.
     :vartype key_phrases: list[str]
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
-     if there are warnings, but they may not be fully accurate.
+        if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
@@ -312,7 +379,7 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     :vartype entities:
         list[~azure.ai.textanalytics.LinkedEntity]
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
-     if there are warnings, but they may not be fully accurate.
+        if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
@@ -348,7 +415,7 @@ class AnalyzeSentimentResult(DictMixin):
         'neutral', 'negative', 'mixed'
     :vartype sentiment: str
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
-     if there are warnings, but they may not be fully accurate.
+        if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
     :ivar statistics: If show_stats=true was specified in the request this
         field will contain information about the document payload.
@@ -433,7 +500,7 @@ class DocumentError(DictMixin):
     def __getattr__(self, attr):
         result_set = set()
         result_set.update(
-            RecognizeEntitiesResult().keys()
+            RecognizeEntitiesResult().keys() + RecognizePiiEntitiesResult().keys()
             + DetectLanguageResult().keys() + RecognizeLinkedEntitiesResult().keys()
             + AnalyzeSentimentResult().keys() + ExtractKeyPhrasesResult().keys()
         )
@@ -661,7 +728,7 @@ class SentenceSentiment(DictMixin):
             confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
             mined_opinions=(
                 [MinedOpinion._from_generated(aspect, results) for aspect in sentence.aspects]  # pylint: disable=protected-access
-                if hasattr(sentence, "aspects") else None
+                if (hasattr(sentence, "aspects") and sentence.aspects) else None
             )
         )
 

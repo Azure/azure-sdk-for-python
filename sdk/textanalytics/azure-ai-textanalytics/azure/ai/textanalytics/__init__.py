@@ -6,7 +6,7 @@
 
 from ._text_analytics_client import TextAnalyticsClient
 from ._version import VERSION
-from ._multiapi import ApiVersion
+from ._base_client import ApiVersion
 from ._models import (
     DetectLanguageInput,
     TextDocumentInput,
@@ -29,6 +29,8 @@ from ._models import (
     MinedOpinion,
     AspectSentiment,
     OpinionSentiment,
+    RecognizePiiEntitiesResult,
+    PiiEntity,
 )
 
 __all__ = [
@@ -55,6 +57,8 @@ __all__ = [
     'MinedOpinion',
     'AspectSentiment',
     'OpinionSentiment',
+    'RecognizePiiEntitiesResult',
+    'PiiEntity',
 ]
 
 __version__ = VERSION
