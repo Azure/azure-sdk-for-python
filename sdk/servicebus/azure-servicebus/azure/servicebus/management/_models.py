@@ -599,7 +599,7 @@ class SubscriptionRuntimeProperties(object):
     """Runtime properties of a Service Bus topic subscription resource.
 
     :ivar str name:
-    :ivar created_at: The exact time the queue was created.
+    :ivar created_at: The exact time the subscription was created.
     :type created_at: ~datetime.datetime
     :ivar updated_at: The exact time a message was updated in the queue.
     :type updated_at: ~datetime.datetime
@@ -608,12 +608,10 @@ class SubscriptionRuntimeProperties(object):
     :type accessed_at: ~datetime.datetime
     :ivar total_message_count: The number of messages in the subscription.
     :type total_message_count: int
-    :ivar active_message_count: Number of active messages in the queue, topic, or subscription.
+    :ivar active_message_count: Number of active messages in the subscription.
     :type active_message_count: int
     :ivar dead_letter_message_count: Number of messages that are dead lettered.
     :type dead_letter_message_count: int
-    :ivar scheduled_message_count: Number of scheduled messages.
-    :type scheduled_message_count: int
     :ivar transfer_dead_letter_message_count: Number of messages transferred into dead letters.
     :type transfer_dead_letter_message_count: int
     :ivar transfer_message_count: Number of messages transferred to another queue, topic, or
@@ -661,10 +659,6 @@ class SubscriptionRuntimeProperties(object):
     @property
     def dead_letter_message_count(self):
         return self._internal_sd.message_count_details.dead_letter_message_count
-
-    @property
-    def scheduled_message_count(self):
-        return self._internal_sd.message_count_details.scheduled_message_count
 
     @property
     def transfer_dead_letter_message_count(self):
