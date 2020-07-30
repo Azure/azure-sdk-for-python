@@ -10,7 +10,7 @@ Common uses of Azure Data Tables include:
 * Storing structured data in the form of tables
 * Quickly querying data using a clustered index
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-data-tables/azure/data/tables) | [Package (PyPI)](https://pypi.org/project/azure-data-tables/) | [API reference documentation](https://aka.ms/azsdk/python/table/docs) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/azure/data/tables) | [Package (PyPI)](https://pypi.org/project/azure-data-tables/) | [API reference documentation](https://aka.ms/azsdk/python/tables/docs) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples)
 
 ## Getting started
 
@@ -130,12 +130,12 @@ use of a dedicated client object.
 
 ### Clients
 Two different clients are provided to to interact with the various components of the Table Service:
-1. [TableServiceClient](https://aka.ms/azsdk/python/table/docs) -
+1. [TableServiceClient](https://aka.ms/azsdk/python/tables/docs) -
     this client represents interaction with the Azure account itself, and allows you to acquire preconfigured
     client instances to access the tables within. It provides operations to retrieve and configure the account
     properties as well as query, create, and delete tables within the account. To perform operations on a specific table,
     retrieve a client using the `get_table_client` method.
-2. [TableClient](https://aka.ms/azsdk/python/table/docs) -
+2. [TableClient](https://aka.ms/azsdk/python/tables/docs) -
     this client represents interaction with a specific table (which need not exist yet). It provides operations to
     create, delete, or update a table and includes operations to query, get, and upsert entities
     within it.
@@ -267,20 +267,20 @@ service_client.get_service_stats(logging_enable=True)
 
 ## Next steps
 
-Get started with our [Table samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-data-tables/samples).
+Get started with our [Table samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples).
 
 Several Azure Data Tables Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables:
 
-* [table_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-data-tables/samples/table_samples_authentication.py) - Examples found in this article:
+* [table_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/table_samples_authentication.py) - Examples found in this article:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
-* [table_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-data-tables/samples/table_samples_service.py) - Examples found in this article:
+* [table_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/table_samples_service.py) - Examples found in this article:
     * Get and set service properties
     * List tables in a account
     * Create and delete a table from the service
     * Get the TableClient
-* [table_samples_client.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/table/azure-data-tables/samples/table_samples_client.py) - Examples found in this article:
+* [table_samples_client.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/table_samples_client.py) - Examples found in this article:
     * Client creation
     * Create a table
     * Create and Delete entities
