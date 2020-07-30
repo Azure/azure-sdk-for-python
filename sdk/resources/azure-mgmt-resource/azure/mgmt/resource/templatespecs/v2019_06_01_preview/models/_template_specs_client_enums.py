@@ -12,30 +12,9 @@
 from enum import Enum
 
 
-class SubscriptionState(str, Enum):
+class CreatedByType(str, Enum):
 
-    enabled = "Enabled"
-    warned = "Warned"
-    past_due = "PastDue"
-    disabled = "Disabled"
-    deleted = "Deleted"
-
-
-class SpendingLimit(str, Enum):
-
-    on = "On"
-    off = "Off"
-    current_period_off = "CurrentPeriodOff"
-
-
-class TenantCategory(str, Enum):
-
-    home = "Home"
-    projected_by = "ProjectedBy"
-    managed_by = "ManagedBy"
-
-
-class ResourceNameStatus(str, Enum):
-
-    allowed = "Allowed"
-    reserved = "Reserved"
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
