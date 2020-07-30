@@ -215,3 +215,29 @@ def _add_entity_properties(source):
 
     # generate the entity_body
     return properties
+
+def serialize_iso(attr):
+    """Serialize Datetime object into ISO-8601 formatted string.
+    :param Datetime attr: Object to be serialized.
+    :rtype: str
+    :raises: ValueError if format invalid.
+    """
+    if not attr:
+        return None
+    if isinstance(attr, str):
+        attr = isodate.parse_datetime(attr)
+    try:
+        utc = attr.utctimetuple()
+        if utc.tm_year > 9999 or utc.tm_year < 1:
+            raise OverflowError("Hit max or min date")
+
+        date = "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}".format(
+            utc.tm_year, utc.tm_mon, utc.tm_mday,
+            utc.tm_hour, utc.tm_min, utc.tm_sec)
+        return date + 'Z'
+    except (ValueError, OverflowError) as err:
+        msg = "Unable to serialize datetime object."
+        raise_with_traceback(ValueError, msg, err)
+    except AttributeError as err:
+        msg = "ISO-8601 object must be valid Datetime object."
+        raise_with_traceback(TypeError, msg, err)

@@ -13,21 +13,21 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.data.tables import VERSION
-from azure.data.tables._entity import TableEntity
-from azure.data.tables._generated.aio._azure_table_async import AzureTable
-from azure.data.tables._generated.models import SignedIdentifier, TableProperties, QueryOptions
-from azure.data.tables._models import AccessPolicy, Table
-from azure.data.tables._shared.base_client_async import AsyncStorageAccountHostsMixin
-from azure.data.tables._shared.policies_async import ExponentialRetry
-from azure.data.tables._shared.request_handlers import serialize_iso
-from azure.data.tables._shared.response_handlers import return_headers_and_deserialized, process_table_error
 
+from .. import VERSION
+from .._entity import TableEntity
+from .._generated.aio._azure_table_async import AzureTable
+from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
+from .._models import AccessPolicy, Table
+from .._base_client_async import AsyncStorageAccountHostsMixin
+from .._policies_async import ExponentialRetry
+from .._serialize import serialize_iso
+from .._shared.response_handlers import return_headers_and_deserialized, process_table_error
 from .._models import UpdateMode
-from ._models import TableEntityPropertiesPaged
 from .._deserialize import _convert_to_entity
 from .._serialize import _add_entity_properties, _get_match_headers
-from .._shared._table_client_base import TableClientBase
+from .._table_client_base import TableClientBase
+from ._models import TableEntityPropertiesPaged
 
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):

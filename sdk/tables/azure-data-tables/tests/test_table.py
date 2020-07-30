@@ -33,7 +33,7 @@ from azure.core.exceptions import (
     ResourceExistsError)
 
 # ------------------------------------------------------------------------------
-from azure.data.tables._shared.table_shared_access_signature import generate_account_sas
+from azure.data.tables.table_shared_access_signature import generate_account_sas
 
 TEST_TABLE_PREFIX = 'pytablesync'
 

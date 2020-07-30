@@ -21,18 +21,18 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
-from .constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from .authentication import SharedKeyCredentialPolicy
-from .base_client import create_configuration
-from .policies import (
+from ._shared.constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from ._shared.authentication import SharedKeyCredentialPolicy
+from ._base_client import create_configuration
+from ._policies import (
     StorageContentValidation,
     StorageRequestHook,
     StorageHosts,
     StorageHeadersPolicy
 )
-from .policies_async import AsyncStorageResponseHook
+from ._policies_async import AsyncStorageResponseHook
 
-from .response_handlers import process_table_error, PartialBatchErrorException
+from ._shared.response_handlers import process_table_error, PartialBatchErrorException
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline

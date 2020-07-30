@@ -9,9 +9,8 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-from azure.data.tables._shared._error import _validate_table_name
-from azure.data.tables._shared.base_client import parse_query
-from .base_client import StorageAccountHostsMixin
+from ._shared._error import _validate_table_name
+from ._base_client import StorageAccountHostsMixin, parse_query
 
 
 class TableClientBase(StorageAccountHostsMixin):

@@ -26,7 +26,7 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 import six
-from azure.data.tables._shared.shared_access_signature import QueryStringConstants
+from azure.data.tables.shared_access_signature import QueryStringConstants
 from azure.core.configuration import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
@@ -41,10 +41,10 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy
 )
 
-from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from .models import LocationMode
-from .authentication import SharedKeyCredentialPolicy
-from .policies import (
+from ._shared.constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from ._shared.models import LocationMode
+from ._shared.authentication import SharedKeyCredentialPolicy
+from ._policies import (
     StorageHeadersPolicy,
     StorageContentValidation,
     StorageRequestHook,
@@ -52,8 +52,8 @@ from .policies import (
     StorageLoggingPolicy,
     StorageHosts, ExponentialRetry,
 )
-from .._version import VERSION
-from .response_handlers import process_table_error, PartialBatchErrorException
+from ._version import VERSION
+from ._shared.response_handlers import process_table_error, PartialBatchErrorException
 
 
 _LOGGER = logging.getLogger(__name__)

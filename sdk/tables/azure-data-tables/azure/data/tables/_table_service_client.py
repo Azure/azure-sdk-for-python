@@ -15,13 +15,13 @@ from ._models import Table
 from ._generated import AzureTable
 from ._generated.models import TableProperties, TableServiceProperties, QueryOptions
 from ._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
-from ._shared.base_client import parse_connection_str, TransportWrapper
+from ._base_client import parse_connection_str, TransportWrapper
 from ._shared.models import LocationMode
 from ._shared.response_handlers import process_table_error
 from ._version import VERSION
 
 from ._table_client import TableClient
-from ._shared._table_service_client_base import TableServiceClientBase
+from ._table_service_client_base import TableServiceClientBase
 
 
 class TableServiceClient(TableServiceClientBase):

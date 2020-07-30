@@ -17,7 +17,7 @@ class CreateDeleteTable(object):
 
     def sas_token_auth(self):
         from azure.data.tables import TableServiceClient
-        from azure.data.tables._shared.table_shared_access_signature import generate_account_sas
+        from azure.data.tables.table_shared_access_signature import generate_account_sas
         from azure.data.tables import ResourceTypes
         from azure.data.tables import AccountSasPermissions
         import datetime

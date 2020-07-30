@@ -6,7 +6,7 @@
 from azure.data.tables._models import TableServiceStats
 
 from ._entity import TableEntity, EntityProperty, EdmType
-from ._shared.table_shared_access_signature import generate_table_sas, \
+from .table_shared_access_signature import generate_table_sas, \
     generate_account_sas
 from ._table_client import TableClient
 from ._table_service_client import TableServiceClient
@@ -22,7 +22,7 @@ from ._shared.models import (
     AccountSasPermissions,
     TableErrorCode
 )
-from ._shared.policies import ExponentialRetry, LinearRetry
+from ._policies import ExponentialRetry, LinearRetry
 from ._version import VERSION
 
 __version__ = VERSION
