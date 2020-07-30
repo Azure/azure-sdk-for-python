@@ -5,6 +5,8 @@
 """Tests for the HttpLoggingPolicy."""
 
 import logging
+import pytest
+import sys
 try:
     from unittest import mock
 except ImportError:
@@ -248,6 +250,7 @@ def test_http_logger_with_body():
     mock_handler.reset()
 
 
+@pytest.mark.skipif(sys.version_info < (3, 6), reason="yield in async function is not supported in 3.5")
 def test_http_logger_with_generator_body():
 
     async def _g():
