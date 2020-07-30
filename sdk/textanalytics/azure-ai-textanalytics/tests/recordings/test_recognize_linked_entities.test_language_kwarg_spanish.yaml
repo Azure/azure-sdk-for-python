@@ -16,7 +16,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/entities/linking?model-version=latest&showStats=true
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/linking?model-version=latest&showStats=true
   response:
     body:
       string: '{"statistics":{"documentsCount":1,"validDocumentsCount":1,"erroneousDocumentsCount":0,"transactionsCount":1},"documents":[{"id":"0","statistics":{"charactersCount":35,"transactionsCount":1},"entities":[{"name":"Bill
@@ -26,13 +26,13 @@ interactions:
         ejecutivo","url":"https://es.wikipedia.org/wiki/Director_ejecutivo","dataSource":"Wikipedia"}],"warnings":[]}],"errors":[],"modelVersion":"2020-02-01"}'
     headers:
       apim-request-id:
-      - 0db9ed9d-ca58-45e3-9bef-0ff18be1b7fa
+      - 3c3df070-832f-433d-a960-661858c31770
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=1
       date:
-      - Thu, 18 Jun 2020 19:52:44 GMT
+      - Fri, 24 Jul 2020 16:32:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '24'
+      - '36'
     status:
       code: 200
       message: OK
