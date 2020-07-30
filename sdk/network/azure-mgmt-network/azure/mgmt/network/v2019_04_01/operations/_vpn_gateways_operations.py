@@ -87,7 +87,6 @@ class VpnGatewaysOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -137,7 +136,6 @@ class VpnGatewaysOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(vpn_gateway_parameters, 'VpnGateway')
         body_content_kwargs['content'] = body_content
@@ -151,7 +149,6 @@ class VpnGatewaysOperations(object):
             error = self._deserialize(models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VpnGateway', pipeline_response)
 
@@ -171,7 +168,7 @@ class VpnGatewaysOperations(object):
         vpn_gateway_parameters,  # type: "models.VpnGateway"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VpnGateway"]
         """Creates a virtual wan vpn gateway if it doesn't exist else updates the existing gateway.
 
         :param resource_group_name: The resource group name of the VpnGateway.
@@ -263,7 +260,6 @@ class VpnGatewaysOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(vpn_gateway_parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
@@ -277,7 +273,6 @@ class VpnGatewaysOperations(object):
             error = self._deserialize(models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VpnGateway', pipeline_response)
 
@@ -297,7 +292,7 @@ class VpnGatewaysOperations(object):
         vpn_gateway_parameters,  # type: "models.TagsObject"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VpnGateway"]
         """Updates virtual wan vpn gateway tags.
 
         :param resource_group_name: The resource group name of the VpnGateway.
@@ -384,7 +379,6 @@ class VpnGatewaysOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -405,7 +399,7 @@ class VpnGatewaysOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes a virtual wan vpn gateway.
 
         :param resource_group_name: The resource group name of the VpnGateway.
@@ -464,8 +458,8 @@ class VpnGatewaysOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VpnGateway"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VpnGateway"]
+        # type: (...) -> Optional["models.VpnGateway"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.VpnGateway"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-04-01"
@@ -487,7 +481,6 @@ class VpnGatewaysOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -512,7 +505,7 @@ class VpnGatewaysOperations(object):
         gateway_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VpnGateway"]
         """Resets the primary of the vpn gateway in the specified resource group.
 
         :param resource_group_name: The resource group name of the VpnGateway.
@@ -589,6 +582,10 @@ class VpnGatewaysOperations(object):
         api_version = "2019-04-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -601,15 +598,11 @@ class VpnGatewaysOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -655,6 +648,10 @@ class VpnGatewaysOperations(object):
         api_version = "2019-04-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -666,15 +663,11 @@ class VpnGatewaysOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
