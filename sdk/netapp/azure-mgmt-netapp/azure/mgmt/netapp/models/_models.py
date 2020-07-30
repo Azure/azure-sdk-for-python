@@ -38,6 +38,10 @@ class ActiveDirectory(Model):
     :param site: The Active Directory site the service will limit Domain
      Controller discovery to
     :type site: str
+    :param backup_operators: Users to be added to the Built-in Backup Operator
+     active directory group. A list of unique usernames without domain
+     specifier
+    :type backup_operators: list[str]
     """
 
     _attribute_map = {
@@ -50,6 +54,7 @@ class ActiveDirectory(Model):
         'smb_server_name': {'key': 'smbServerName', 'type': 'str'},
         'organizational_unit': {'key': 'organizationalUnit', 'type': 'str'},
         'site': {'key': 'site', 'type': 'str'},
+        'backup_operators': {'key': 'backupOperators', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -63,6 +68,7 @@ class ActiveDirectory(Model):
         self.smb_server_name = kwargs.get('smb_server_name', None)
         self.organizational_unit = kwargs.get('organizational_unit', None)
         self.site = kwargs.get('site', None)
+        self.backup_operators = kwargs.get('backup_operators', None)
 
 
 class AuthorizeRequest(Model):
@@ -242,9 +248,10 @@ class ExportPolicyRule(Model):
     :type unix_read_write: bool
     :param cifs: Allows CIFS protocol
     :type cifs: bool
-    :param nfsv3: Allows NFSv3 protocol
+    :param nfsv3: Allows NFSv3 protocol. Enable only for NFSv3 type volumes
     :type nfsv3: bool
-    :param nfsv41: Allows NFSv4.1 protocol
+    :param nfsv41: Allows NFSv4.1 protocol. Enable only for NFSv4.1 type
+     volumes
     :type nfsv41: bool
     :param allowed_clients: Client ingress specification as comma separated
      string with IPv4 CIDRs, IPv4 host addresses and host names
@@ -825,9 +832,6 @@ class Snapshot(Model):
     :vartype type: str
     :ivar snapshot_id: snapshotId. UUID v4 used to identify the Snapshot
     :vartype snapshot_id: str
-    :param file_system_id: fileSystemId. UUID v4 used to identify the
-     FileSystem
-    :type file_system_id: str
     :ivar created: name. The creation date of the snapshot
     :vartype created: datetime
     :ivar provisioning_state: Azure lifecycle management
@@ -840,7 +844,6 @@ class Snapshot(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'snapshot_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'file_system_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'created': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -851,7 +854,6 @@ class Snapshot(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'snapshot_id': {'key': 'properties.snapshotId', 'type': 'str'},
-        'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
@@ -863,7 +865,6 @@ class Snapshot(Model):
         self.name = None
         self.type = None
         self.snapshot_id = None
-        self.file_system_id = kwargs.get('file_system_id', None)
         self.created = None
         self.provisioning_state = None
 
@@ -926,6 +927,10 @@ class Volume(Model):
      ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
     :param is_restoring: Restoring
     :type is_restoring: bool
+    :param snapshot_directory_visible: If enabled (true) the volume will
+     contain a read-only .snapshot directory which provides access to each of
+     the volume's snapshots (default to true).
+    :type snapshot_directory_visible: bool
     """
 
     _validation = {
@@ -962,6 +967,7 @@ class Volume(Model):
         'volume_type': {'key': 'properties.volumeType', 'type': 'str'},
         'data_protection': {'key': 'properties.dataProtection', 'type': 'VolumePropertiesDataProtection'},
         'is_restoring': {'key': 'properties.isRestoring', 'type': 'bool'},
+        'snapshot_directory_visible': {'key': 'properties.snapshotDirectoryVisible', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -985,6 +991,7 @@ class Volume(Model):
         self.volume_type = kwargs.get('volume_type', None)
         self.data_protection = kwargs.get('data_protection', None)
         self.is_restoring = kwargs.get('is_restoring', None)
+        self.snapshot_directory_visible = kwargs.get('snapshot_directory_visible', None)
 
 
 class VolumePatch(Model):
@@ -1073,15 +1080,19 @@ class VolumePropertiesDataProtection(Model):
 
     :param replication: Replication. Replication properties
     :type replication: ~azure.mgmt.netapp.models.ReplicationObject
+    :param snapshot: Snapshot. Snapshot properties.
+    :type snapshot: ~azure.mgmt.netapp.models.VolumeSnapshotProperties
     """
 
     _attribute_map = {
         'replication': {'key': 'replication', 'type': 'ReplicationObject'},
+        'snapshot': {'key': 'snapshot', 'type': 'VolumeSnapshotProperties'},
     }
 
     def __init__(self, **kwargs):
         super(VolumePropertiesDataProtection, self).__init__(**kwargs)
         self.replication = kwargs.get('replication', None)
+        self.snapshot = kwargs.get('snapshot', None)
 
 
 class VolumePropertiesExportPolicy(Model):
@@ -1116,3 +1127,19 @@ class VolumeRevert(Model):
     def __init__(self, **kwargs):
         super(VolumeRevert, self).__init__(**kwargs)
         self.snapshot_id = kwargs.get('snapshot_id', None)
+
+
+class VolumeSnapshotProperties(Model):
+    """Volume Snapshot Properties.
+
+    :param snapshot_policy_id: Snapshot Policy ResourceId
+    :type snapshot_policy_id: str
+    """
+
+    _attribute_map = {
+        'snapshot_policy_id': {'key': 'snapshotPolicyId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VolumeSnapshotProperties, self).__init__(**kwargs)
+        self.snapshot_policy_id = kwargs.get('snapshot_policy_id', None)
