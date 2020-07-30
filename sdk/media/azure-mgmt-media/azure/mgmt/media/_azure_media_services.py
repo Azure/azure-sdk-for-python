@@ -16,6 +16,8 @@ from ._configuration import AzureMediaServicesConfiguration
 from .operations import AccountFiltersOperations
 from .operations import Operations
 from .operations import MediaservicesOperations
+from .operations import PrivateLinkResourcesOperations
+from .operations import PrivateEndpointConnectionsOperations
 from .operations import LocationsOperations
 from .operations import AssetsOperations
 from .operations import AssetFiltersOperations
@@ -42,6 +44,10 @@ class AzureMediaServices(SDKClient):
     :vartype operations: azure.mgmt.media.operations.Operations
     :ivar mediaservices: Mediaservices operations
     :vartype mediaservices: azure.mgmt.media.operations.MediaservicesOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.media.operations.PrivateLinkResourcesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.media.operations.PrivateEndpointConnectionsOperations
     :ivar locations: Locations operations
     :vartype locations: azure.mgmt.media.operations.LocationsOperations
     :ivar assets: Assets operations
@@ -81,7 +87,7 @@ class AzureMediaServices(SDKClient):
         super(AzureMediaServices, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-07-01'
+        self.api_version = '2020-05-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -90,6 +96,10 @@ class AzureMediaServices(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.mediaservices = MediaservicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.locations = LocationsOperations(
             self._client, self.config, self._serialize, self._deserialize)

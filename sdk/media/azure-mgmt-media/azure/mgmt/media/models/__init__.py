@@ -12,6 +12,7 @@
 try:
     from ._models_py3 import AacAudio
     from ._models_py3 import AbsoluteClipTime
+    from ._models_py3 import AccountEncryption
     from ._models_py3 import AccountFilter
     from ._models_py3 import AkamaiAccessControl
     from ._models_py3 import AkamaiSignatureHeaderAuthenticationKey
@@ -24,6 +25,7 @@ try:
     from ._models_py3 import Audio
     from ._models_py3 import AudioAnalyzerPreset
     from ._models_py3 import AudioOverlay
+    from ._models_py3 import AzureEntityResource
     from ._models_py3 import BuiltInStandardEncoderPreset
     from ._models_py3 import CbcsDrmConfiguration
     from ._models_py3 import CencDrmConfiguration
@@ -94,6 +96,7 @@ try:
     from ._models_py3 import JpgFormat
     from ._models_py3 import JpgImage
     from ._models_py3 import JpgLayer
+    from ._models_py3 import KeyVaultProperties
     from ._models_py3 import Layer
     from ._models_py3 import ListContainerSasInput
     from ._models_py3 import ListContentKeysResponse
@@ -110,10 +113,11 @@ try:
     from ._models_py3 import LiveEventPreviewAccessControl
     from ._models_py3 import LiveOutput
     from ._models_py3 import Location
+    from ._models_py3 import LogSpecification
     from ._models_py3 import MediaService
-    from ._models_py3 import Metric
+    from ._models_py3 import MediaServiceIdentity
     from ._models_py3 import MetricDimension
-    from ._models_py3 import MetricProperties
+    from ._models_py3 import MetricSpecification
     from ._models_py3 import Mp4Format
     from ._models_py3 import MultiBitrateFormat
     from ._models_py3 import NoEncryption
@@ -127,6 +131,13 @@ try:
     from ._models_py3 import PngLayer
     from ._models_py3 import PresentationTimeRange
     from ._models_py3 import Preset
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointConnectionListResult
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkServiceConnectionState
+    from ._models_py3 import Properties
     from ._models_py3 import Provider
     from ._models_py3 import ProxyResource
     from ._models_py3 import Rectangle
@@ -147,7 +158,6 @@ try:
     from ._models_py3 import StreamingPolicyFairPlayConfiguration
     from ._models_py3 import StreamingPolicyPlayReadyConfiguration
     from ._models_py3 import StreamingPolicyWidevineConfiguration
-    from ._models_py3 import SubscriptionMediaService
     from ._models_py3 import SyncStorageKeysInput
     from ._models_py3 import TrackedResource
     from ._models_py3 import TrackPropertyCondition
@@ -162,6 +172,7 @@ try:
 except (SyntaxError, ImportError):
     from ._models import AacAudio
     from ._models import AbsoluteClipTime
+    from ._models import AccountEncryption
     from ._models import AccountFilter
     from ._models import AkamaiAccessControl
     from ._models import AkamaiSignatureHeaderAuthenticationKey
@@ -174,6 +185,7 @@ except (SyntaxError, ImportError):
     from ._models import Audio
     from ._models import AudioAnalyzerPreset
     from ._models import AudioOverlay
+    from ._models import AzureEntityResource
     from ._models import BuiltInStandardEncoderPreset
     from ._models import CbcsDrmConfiguration
     from ._models import CencDrmConfiguration
@@ -244,6 +256,7 @@ except (SyntaxError, ImportError):
     from ._models import JpgFormat
     from ._models import JpgImage
     from ._models import JpgLayer
+    from ._models import KeyVaultProperties
     from ._models import Layer
     from ._models import ListContainerSasInput
     from ._models import ListContentKeysResponse
@@ -260,10 +273,11 @@ except (SyntaxError, ImportError):
     from ._models import LiveEventPreviewAccessControl
     from ._models import LiveOutput
     from ._models import Location
+    from ._models import LogSpecification
     from ._models import MediaService
-    from ._models import Metric
+    from ._models import MediaServiceIdentity
     from ._models import MetricDimension
-    from ._models import MetricProperties
+    from ._models import MetricSpecification
     from ._models import Mp4Format
     from ._models import MultiBitrateFormat
     from ._models import NoEncryption
@@ -277,6 +291,13 @@ except (SyntaxError, ImportError):
     from ._models import PngLayer
     from ._models import PresentationTimeRange
     from ._models import Preset
+    from ._models import PrivateEndpoint
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointConnectionListResult
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourceListResult
+    from ._models import PrivateLinkServiceConnectionState
+    from ._models import Properties
     from ._models import Provider
     from ._models import ProxyResource
     from ._models import Rectangle
@@ -297,7 +318,6 @@ except (SyntaxError, ImportError):
     from ._models import StreamingPolicyFairPlayConfiguration
     from ._models import StreamingPolicyPlayReadyConfiguration
     from ._models import StreamingPolicyWidevineConfiguration
-    from ._models import SubscriptionMediaService
     from ._models import SyncStorageKeysInput
     from ._models import TrackedResource
     from ._models import TrackPropertyCondition
@@ -321,7 +341,6 @@ from ._paged_models import OperationPaged
 from ._paged_models import StreamingEndpointPaged
 from ._paged_models import StreamingLocatorPaged
 from ._paged_models import StreamingPolicyPaged
-from ._paged_models import SubscriptionMediaServicePaged
 from ._paged_models import TransformPaged
 from ._azure_media_services_enums import (
     FilterTrackPropertyType,
@@ -329,6 +348,11 @@ from ._azure_media_services_enums import (
     MetricUnit,
     MetricAggregationType,
     StorageAccountType,
+    StorageAuthentication,
+    AccountEncryptionKeyType,
+    ManagedIdentityType,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateEndpointServiceConnectionStatus,
     AssetStorageEncryptionFormat,
     AssetContainerPermission,
     ContentKeyPolicyPlayReadyUnknownOutputPassingOption,
@@ -339,6 +363,7 @@ from ._azure_media_services_enums import (
     AacAudioProfile,
     AnalysisResolution,
     StretchMode,
+    VideoSyncMode,
     DeinterlaceParity,
     DeinterlaceMode,
     Rotation,
@@ -369,6 +394,7 @@ from ._azure_media_services_enums import (
 __all__ = [
     'AacAudio',
     'AbsoluteClipTime',
+    'AccountEncryption',
     'AccountFilter',
     'AkamaiAccessControl',
     'AkamaiSignatureHeaderAuthenticationKey',
@@ -381,6 +407,7 @@ __all__ = [
     'Audio',
     'AudioAnalyzerPreset',
     'AudioOverlay',
+    'AzureEntityResource',
     'BuiltInStandardEncoderPreset',
     'CbcsDrmConfiguration',
     'CencDrmConfiguration',
@@ -451,6 +478,7 @@ __all__ = [
     'JpgFormat',
     'JpgImage',
     'JpgLayer',
+    'KeyVaultProperties',
     'Layer',
     'ListContainerSasInput',
     'ListContentKeysResponse',
@@ -467,10 +495,11 @@ __all__ = [
     'LiveEventPreviewAccessControl',
     'LiveOutput',
     'Location',
+    'LogSpecification',
     'MediaService',
-    'Metric',
+    'MediaServiceIdentity',
     'MetricDimension',
-    'MetricProperties',
+    'MetricSpecification',
     'Mp4Format',
     'MultiBitrateFormat',
     'NoEncryption',
@@ -484,6 +513,13 @@ __all__ = [
     'PngLayer',
     'PresentationTimeRange',
     'Preset',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionState',
+    'Properties',
     'Provider',
     'ProxyResource',
     'Rectangle',
@@ -504,7 +540,6 @@ __all__ = [
     'StreamingPolicyFairPlayConfiguration',
     'StreamingPolicyPlayReadyConfiguration',
     'StreamingPolicyWidevineConfiguration',
-    'SubscriptionMediaService',
     'SyncStorageKeysInput',
     'TrackedResource',
     'TrackPropertyCondition',
@@ -519,7 +554,6 @@ __all__ = [
     'AccountFilterPaged',
     'OperationPaged',
     'MediaServicePaged',
-    'SubscriptionMediaServicePaged',
     'AssetPaged',
     'AssetFilterPaged',
     'ContentKeyPolicyPaged',
@@ -535,6 +569,11 @@ __all__ = [
     'MetricUnit',
     'MetricAggregationType',
     'StorageAccountType',
+    'StorageAuthentication',
+    'AccountEncryptionKeyType',
+    'ManagedIdentityType',
+    'PrivateEndpointConnectionProvisioningState',
+    'PrivateEndpointServiceConnectionStatus',
     'AssetStorageEncryptionFormat',
     'AssetContainerPermission',
     'ContentKeyPolicyPlayReadyUnknownOutputPassingOption',
@@ -545,6 +584,7 @@ __all__ = [
     'AacAudioProfile',
     'AnalysisResolution',
     'StretchMode',
+    'VideoSyncMode',
     'DeinterlaceParity',
     'DeinterlaceMode',
     'Rotation',

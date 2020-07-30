@@ -24,7 +24,7 @@ class MediaservicesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The Version of the API to be used with the client request. Constant value: "2018-07-01".
+    :ivar api_version: The Version of the API to be used with the client request. Constant value: "2020-05-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class MediaservicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01"
+        self.api_version = "2020-05-01"
 
         self.config = config
 
@@ -290,7 +290,7 @@ class MediaservicesOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             raise models.ApiErrorException(self._deserialize, response)
 
         if raw:
@@ -515,9 +515,9 @@ class MediaservicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SubscriptionMediaService
+        :return: An iterator like instance of MediaService
         :rtype:
-         ~azure.mgmt.media.models.SubscriptionMediaServicePaged[~azure.mgmt.media.models.SubscriptionMediaService]
+         ~azure.mgmt.media.models.MediaServicePaged[~azure.mgmt.media.models.MediaService]
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
@@ -566,7 +566,7 @@ class MediaservicesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.SubscriptionMediaServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.MediaServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Media/mediaservices'}
@@ -584,8 +584,8 @@ class MediaservicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SubscriptionMediaService or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.media.models.SubscriptionMediaService or
+        :return: MediaService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.MediaService or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
@@ -621,7 +621,7 @@ class MediaservicesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SubscriptionMediaService', response)
+            deserialized = self._deserialize('MediaService', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

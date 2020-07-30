@@ -51,19 +51,6 @@ class MediaServicePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(MediaServicePaged, self).__init__(*args, **kwargs)
-class SubscriptionMediaServicePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`SubscriptionMediaService <azure.mgmt.media.models.SubscriptionMediaService>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SubscriptionMediaService]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(SubscriptionMediaServicePaged, self).__init__(*args, **kwargs)
 class AssetPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Asset <azure.mgmt.media.models.Asset>` object
