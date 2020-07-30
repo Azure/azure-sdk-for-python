@@ -5,7 +5,7 @@
 
 ## 1.0.1 (Unreleased)
 
-### Features
+### Fixes
 
 - Doc & Sample fixes
 
