@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_bot_service import AzureBotService
-from .version import VERSION
+from ._configuration import AzureBotServiceConfiguration
+from ._azure_bot_service import AzureBotService
+__all__ = ['AzureBotService', 'AzureBotServiceConfiguration']
 
-__all__ = ['AzureBotService']
+from .version import VERSION
 
 __version__ = VERSION
 
