@@ -10,7 +10,7 @@ Common uses of Azure Data Tables include:
 * Storing structured data in the form of tables
 * Quickly querying data using a clustered index
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/azure/data/tables) | [Package (PyPI)](https://pypi.org/project/azure-data-tables/) | [API reference documentation](https://aka.ms/azsdk/python/tables/docs) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk) | [Package (PyPI)](https://pypi.org/project/) | [API reference documentation](https://aka.ms/azsdk/python/tables/docs) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk)
 
 ## Getting started
 
@@ -267,20 +267,20 @@ service_client.get_service_stats(logging_enable=True)
 
 ## Next steps
 
-Get started with our [Table samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples).
+Get started with our [Table samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk).
 
 Several Azure Data Tables Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables:
 
-* [table_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/table_samples_authentication.py) - Examples found in this article:
+* [table_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk) - Examples found in this article:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
-* [table_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/table_samples_service.py) - Examples found in this article:
+* [table_samples_service.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk) - Examples found in this article:
     * Get and set service properties
     * List tables in a account
     * Create and delete a table from the service
     * Get the TableClient
-* [table_samples_client.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/table_samples_client.py) - Examples found in this article:
+* [table_samples_client.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk) - Examples found in this article:
     * Client creation
     * Create a table
     * Create and Delete entities
