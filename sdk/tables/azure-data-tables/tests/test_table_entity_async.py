@@ -127,9 +127,8 @@ class StorageTableEntityTest(TableTestCase):
         # , response_hook=lambda e, h: h['etag']
         e = await self.table.create_entity(entity=entity)
         metadata = e.metadata()
-        etag = e.etag
         # etag = e['etag']
-        return entity, etag
+        return entity, metadata['etag']
 
     def _create_updated_entity_dict(self, partition, row):
         """
