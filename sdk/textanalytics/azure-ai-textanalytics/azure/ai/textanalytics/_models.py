@@ -722,14 +722,18 @@ class SentenceSentiment(DictMixin):
 
     @classmethod
     def _from_generated(cls, sentence, results):
+        if hasattr(sentence, "aspects"):
+            mined_opinions = (
+                [MinedOpinion._from_generated(aspect, results) for aspect in sentence.aspects]  # pylint: disable=protected-access
+                if sentence.aspects else []
+            )
+        else:
+            mined_opinions = None
         return cls(
             text=sentence.text,
             sentiment=sentence.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
-            mined_opinions=(
-                [MinedOpinion._from_generated(aspect, results) for aspect in sentence.aspects]  # pylint: disable=protected-access
-                if (hasattr(sentence, "aspects") and sentence.aspects) else None
-            )
+            mined_opinions=mined_opinions
         )
 
     def __repr__(self):
