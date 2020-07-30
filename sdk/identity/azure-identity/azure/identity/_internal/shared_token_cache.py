@@ -243,4 +243,4 @@ class SharedTokenCacheBase(ABC):
 
         :rtype: bool
         """
-        return platform.system() in {"Darwin", "Windows"}
+        return platform.system() in {"Darwin", "Linux", "Windows"}

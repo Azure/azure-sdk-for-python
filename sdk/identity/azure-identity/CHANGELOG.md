@@ -16,10 +16,8 @@
     `UsernamePasswordCredential`
   - Removed `disable_automatic_authentication` keyword argument from
     `DeviceCodeCredential` and `InteractiveBrowserCredential`
-  - Changes to `SharedTokenCacheCredential`:
-    - Removed `allow_unencrypted_cache` keyword argument
-    - On Linux, `SharedTokenCacheCredential.supported()` returns `False` and
-      this credential is not part of `DefaultAzureCredential`
+  - Removed `allow_unencrypted_cache` keyword argument from
+    `SharedTokenCacheCredential`
   - Removed classes `AuthenticationRecord` and `AuthenticationRequiredError`
 
 ## 1.4.0b7 (2020-07-22)
