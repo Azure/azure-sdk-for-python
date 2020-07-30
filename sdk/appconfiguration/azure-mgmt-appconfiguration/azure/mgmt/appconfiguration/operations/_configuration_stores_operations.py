@@ -68,9 +68,13 @@ class ConfigurationStoresOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStoreListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01-preview"
+        api_version = "2020-06-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -84,15 +88,11 @@ class ConfigurationStoresOperations(object):
                 if skip_token is not None:
                     query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -145,9 +145,13 @@ class ConfigurationStoresOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStoreListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01-preview"
+        api_version = "2020-06-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -162,15 +166,11 @@ class ConfigurationStoresOperations(object):
                 if skip_token is not None:
                     query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -220,7 +220,7 @@ class ConfigurationStoresOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStore"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01-preview"
+        api_version = "2020-06-01"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -239,7 +239,6 @@ class ConfigurationStoresOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -268,7 +267,7 @@ class ConfigurationStoresOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStore"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01-preview"
+        api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -289,7 +288,6 @@ class ConfigurationStoresOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(config_store_creation_parameters, 'ConfigurationStore')
         body_content_kwargs['content'] = body_content
@@ -303,7 +301,6 @@ class ConfigurationStoresOperations(object):
             error = self._deserialize(models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ConfigurationStore', pipeline_response)
 
@@ -323,7 +320,7 @@ class ConfigurationStoresOperations(object):
         config_store_creation_parameters,  # type: "models.ConfigurationStore"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.ConfigurationStore"]
         """Creates a configuration store with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -393,7 +390,7 @@ class ConfigurationStoresOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01-preview"
+        api_version = "2020-06-01"
 
         # Construct URL
         url = self._delete_initial.metadata['url']  # type: ignore
@@ -411,7 +408,6 @@ class ConfigurationStoresOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -432,7 +428,7 @@ class ConfigurationStoresOperations(object):
         config_store_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes a configuration store.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -497,7 +493,7 @@ class ConfigurationStoresOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ConfigurationStore"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01-preview"
+        api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -518,7 +514,6 @@ class ConfigurationStoresOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(config_store_update_parameters, 'ConfigurationStoreUpdateParameters')
         body_content_kwargs['content'] = body_content
@@ -532,7 +527,6 @@ class ConfigurationStoresOperations(object):
             error = self._deserialize(models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ConfigurationStore', pipeline_response)
 
@@ -552,7 +546,7 @@ class ConfigurationStoresOperations(object):
         config_store_update_parameters,  # type: "models.ConfigurationStoreUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.ConfigurationStore"]
         """Updates a configuration store with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -640,9 +634,13 @@ class ConfigurationStoresOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiKeyListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01-preview"
+        api_version = "2020-06-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_keys.metadata['url']  # type: ignore
@@ -658,15 +656,11 @@ class ConfigurationStoresOperations(object):
                 if skip_token is not None:
                     query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
 
+                request = self._client.post(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.post(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
@@ -719,7 +713,7 @@ class ConfigurationStoresOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.ApiKey"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01-preview"
+        api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -740,7 +734,6 @@ class ConfigurationStoresOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(regenerate_key_parameters, 'RegenerateKeyParameters')
         body_content_kwargs['content'] = body_content
@@ -787,7 +780,7 @@ class ConfigurationStoresOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyValue"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01-preview"
+        api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -808,7 +801,6 @@ class ConfigurationStoresOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(list_key_value_parameters, 'ListKeyValueParameters')
         body_content_kwargs['content'] = body_content

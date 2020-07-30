@@ -47,7 +47,7 @@ class AppConfigurationManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2019-11-01-preview"
+        self.api_version = "2020-06-01"
         self.credential_scopes = ['https://management.azure.com/.default']
         self.credential_scopes.extend(kwargs.pop('credential_scopes', []))
         kwargs.setdefault('sdk_moniker', 'mgmt-appconfiguration/{}'.format(VERSION))
