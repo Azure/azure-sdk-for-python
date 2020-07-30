@@ -143,6 +143,7 @@ try:
     from ._models_py3 import Server
     from ._models_py3 import ServerAutomaticTuning
     from ._models_py3 import ServerAzureADAdministrator
+    from ._models_py3 import ServerAzureADOnlyAuthentication
     from ._models_py3 import ServerBlobAuditingPolicy
     from ._models_py3 import ServerCommunicationLink
     from ._models_py3 import ServerConnectionPolicy
@@ -325,6 +326,7 @@ except (SyntaxError, ImportError):
     from ._models import Server
     from ._models import ServerAutomaticTuning
     from ._models import ServerAzureADAdministrator
+    from ._models import ServerAzureADOnlyAuthentication
     from ._models import ServerBlobAuditingPolicy
     from ._models import ServerCommunicationLink
     from ._models import ServerConnectionPolicy
@@ -427,6 +429,7 @@ from ._paged_models import RestorableDroppedManagedDatabasePaged
 from ._paged_models import RestorePointPaged
 from ._paged_models import SensitivityLabelPaged
 from ._paged_models import ServerAzureADAdministratorPaged
+from ._paged_models import ServerAzureADOnlyAuthenticationPaged
 from ._paged_models import ServerBlobAuditingPolicyPaged
 from ._paged_models import ServerCommunicationLinkPaged
 from ._paged_models import ServerDnsAliasPaged
@@ -683,6 +686,7 @@ __all__ = [
     'Server',
     'ServerAutomaticTuning',
     'ServerAzureADAdministrator',
+    'ServerAzureADOnlyAuthentication',
     'ServerBlobAuditingPolicy',
     'ServerCommunicationLink',
     'ServerConnectionPolicy',
@@ -802,14 +806,15 @@ __all__ = [
     'ManagedInstanceLongTermRetentionPolicyPaged',
     'WorkloadGroupPaged',
     'WorkloadClassifierPaged',
-    'ServerAzureADAdministratorPaged',
     'ManagedInstanceOperationPaged',
+    'ServerAzureADAdministratorPaged',
     'SyncDatabaseIdPropertiesPaged',
     'SyncFullSchemaPropertiesPaged',
     'SyncGroupLogPropertiesPaged',
     'SyncGroupPaged',
     'SyncMemberPaged',
     'ManagedDatabasePaged',
+    'ServerAzureADOnlyAuthenticationPaged',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
     'SecurityAlertPolicyEmailAccountAdmins',

@@ -98,12 +98,13 @@ from .operations import LongTermRetentionManagedInstanceBackupsOperations
 from .operations import ManagedInstanceLongTermRetentionPoliciesOperations
 from .operations import WorkloadGroupsOperations
 from .operations import WorkloadClassifiersOperations
-from .operations import ServerAzureADAdministratorsOperations
 from .operations import ManagedInstanceOperations
+from .operations import ServerAzureADAdministratorsOperations
 from .operations import SyncGroupsOperations
 from .operations import SyncMembersOperations
 from .operations import ManagedDatabaseRestoreDetailsOperations
 from .operations import ManagedDatabasesOperations
+from .operations import ServerAzureADOnlyAuthenticationsOperations
 from . import models
 
 
@@ -283,10 +284,10 @@ class SqlManagementClient(SDKClient):
     :vartype workload_groups: azure.mgmt.sql.operations.WorkloadGroupsOperations
     :ivar workload_classifiers: WorkloadClassifiers operations
     :vartype workload_classifiers: azure.mgmt.sql.operations.WorkloadClassifiersOperations
-    :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
-    :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
     :ivar managed_instance_operations: ManagedInstanceOperations operations
     :vartype managed_instance_operations: azure.mgmt.sql.operations.ManagedInstanceOperations
+    :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
+    :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
     :ivar sync_groups: SyncGroups operations
     :vartype sync_groups: azure.mgmt.sql.operations.SyncGroupsOperations
     :ivar sync_members: SyncMembers operations
@@ -295,6 +296,8 @@ class SqlManagementClient(SDKClient):
     :vartype managed_database_restore_details: azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
     :ivar managed_databases: ManagedDatabases operations
     :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
+    :ivar server_azure_ad_only_authentications: ServerAzureADOnlyAuthentications operations
+    :vartype server_azure_ad_only_authentications: azure.mgmt.sql.operations.ServerAzureADOnlyAuthenticationsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -485,9 +488,9 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.workload_classifiers = WorkloadClassifiersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.managed_instance_operations = ManagedInstanceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sync_groups = SyncGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -496,4 +499,6 @@ class SqlManagementClient(SDKClient):
         self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_databases = ManagedDatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_azure_ad_only_authentications = ServerAzureADOnlyAuthenticationsOperations(
             self._client, self.config, self._serialize, self._deserialize)

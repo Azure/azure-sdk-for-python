@@ -935,19 +935,6 @@ class WorkloadClassifierPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(WorkloadClassifierPaged, self).__init__(*args, **kwargs)
-class ServerAzureADAdministratorPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ServerAzureADAdministrator <azure.mgmt.sql.models.ServerAzureADAdministrator>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ServerAzureADAdministrator]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ServerAzureADAdministratorPaged, self).__init__(*args, **kwargs)
 class ManagedInstanceOperationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ManagedInstanceOperation <azure.mgmt.sql.models.ManagedInstanceOperation>` object
@@ -961,6 +948,19 @@ class ManagedInstanceOperationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ManagedInstanceOperationPaged, self).__init__(*args, **kwargs)
+class ServerAzureADAdministratorPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerAzureADAdministrator <azure.mgmt.sql.models.ServerAzureADAdministrator>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerAzureADAdministrator]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerAzureADAdministratorPaged, self).__init__(*args, **kwargs)
 class SyncDatabaseIdPropertiesPaged(Paged):
     """
     A paging container for iterating over a list of :class:`SyncDatabaseIdProperties <azure.mgmt.sql.models.SyncDatabaseIdProperties>` object
@@ -1039,3 +1039,16 @@ class ManagedDatabasePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ManagedDatabasePaged, self).__init__(*args, **kwargs)
+class ServerAzureADOnlyAuthenticationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerAzureADOnlyAuthentication <azure.mgmt.sql.models.ServerAzureADOnlyAuthentication>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerAzureADOnlyAuthentication]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerAzureADOnlyAuthenticationPaged, self).__init__(*args, **kwargs)

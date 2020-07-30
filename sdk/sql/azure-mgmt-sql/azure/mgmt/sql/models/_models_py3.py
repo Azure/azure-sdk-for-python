@@ -7861,9 +7861,9 @@ class ServerAzureADAdministrator(ProxyResource):
     :type sid: str
     :param tenant_id: Tenant ID of the administrator.
     :type tenant_id: str
-    :param azure_ad_only_authentication: Azure Active Directory only
+    :ivar azure_ad_only_authentication: Azure Active Directory only
      Authentication enabled.
-    :type azure_ad_only_authentication: bool
+    :vartype azure_ad_only_authentication: bool
     """
 
     _validation = {
@@ -7873,6 +7873,7 @@ class ServerAzureADAdministrator(ProxyResource):
         'administrator_type': {'required': True, 'constant': True},
         'login': {'required': True},
         'sid': {'required': True},
+        'azure_ad_only_authentication': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7888,11 +7889,49 @@ class ServerAzureADAdministrator(ProxyResource):
 
     administrator_type = "ActiveDirectory"
 
-    def __init__(self, *, login: str, sid: str, tenant_id: str=None, azure_ad_only_authentication: bool=None, **kwargs) -> None:
+    def __init__(self, *, login: str, sid: str, tenant_id: str=None, **kwargs) -> None:
         super(ServerAzureADAdministrator, self).__init__(**kwargs)
         self.login = login
         self.sid = sid
         self.tenant_id = tenant_id
+        self.azure_ad_only_authentication = None
+
+
+class ServerAzureADOnlyAuthentication(ProxyResource):
+    """Azure Active Directory only authentication.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param azure_ad_only_authentication: Required. Azure Active Directory only
+     Authentication enabled.
+    :type azure_ad_only_authentication: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'azure_ad_only_authentication': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'azure_ad_only_authentication': {'key': 'properties.azureADOnlyAuthentication', 'type': 'bool'},
+    }
+
+    def __init__(self, *, azure_ad_only_authentication: bool, **kwargs) -> None:
+        super(ServerAzureADOnlyAuthentication, self).__init__(**kwargs)
         self.azure_ad_only_authentication = azure_ad_only_authentication
 
 
