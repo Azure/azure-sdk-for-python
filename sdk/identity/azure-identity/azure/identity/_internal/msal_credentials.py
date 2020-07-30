@@ -50,6 +50,7 @@ class MsalCredential(ABC):
 
         # postpone creating the wrapped application because its initializer uses the network
         self._msal_app = None  # type: Optional[msal.ClientApplication]
+        super(MsalCredential, self).__init__()
 
     @abc.abstractmethod
     def get_token(self, *scopes, **kwargs):

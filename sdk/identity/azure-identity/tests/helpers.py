@@ -156,7 +156,9 @@ def mock_response(status_code=200, headers=None, json_payload=None):
 
 def get_discovery_response(endpoint="https://a/b"):
     aad_metadata_endpoint_names = ("authorization_endpoint", "token_endpoint", "tenant_discovery_endpoint")
-    return mock_response(json_payload={name: endpoint for name in aad_metadata_endpoint_names})
+    payload = {name: endpoint for name in aad_metadata_endpoint_names}
+    payload["metadata"] = ""
+    return mock_response(json_payload=payload)
 
 
 def validating_transport(requests, responses):
@@ -175,6 +177,11 @@ def validating_transport(requests, responses):
         return response
 
     return mock.Mock(send=mock.Mock(wraps=validate_request))
+
+
+def msal_validating_transport(requests, responses):
+    """a validating transport with default responses to MSAL's discovery requests"""
+    return validating_transport([Request()] * 2 + requests, [get_discovery_response()] * 2 + responses)
 
 
 def urlsafeb64_decode(s):
