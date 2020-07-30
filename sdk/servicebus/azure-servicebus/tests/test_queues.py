@@ -1292,7 +1292,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
     def test_queue_receiver_alive_after_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
@@ -1338,3 +1338,31 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
                     messages = receiver.receive_messages()
                     assert not messages
+
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_queue_receiver_sender_resume_after_link_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = Message("0")
+                sender.send_messages(message)
+
+                time.sleep(60 * 5)
+
+                message_1 = Message("1")
+                sender.send_messages(message_1)
+
+                messages = []
+                with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+                    
+                    for message in receiver.receive_forever():
+                        messages.append(message)
+                assert len(messages) == 2

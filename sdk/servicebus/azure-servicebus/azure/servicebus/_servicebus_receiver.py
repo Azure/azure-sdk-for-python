@@ -132,7 +132,23 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._populate_attributes(**kwargs)
 
     def __iter__(self):
-        return self
+        return self._iter_contextual_wrapper()
+
+    def _iter_contextual_wrapper(self, max_wait_time=None):
+        original_timeout = None
+        while True:
+            # This is not threadsafe, but gives us a way to handle if someone passes
+            # different max_wait_times to different iterators and uses them in concert.
+            if max_wait_time:
+                original_timeout = self._handler._timeout
+                self._handler._timeout = max_wait_time * 1000
+            try:
+                yield next(self)
+            except StopIteration:
+                break
+            finally:
+                if original_timeout:
+                    self._handler._timeout = original_timeout
 
     def __next__(self):
         self._check_live()
@@ -259,8 +275,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             mgmt_handlers.lock_renew_op
         )
 
-    def receive_forever(self):
-        return self
+    def receive_forever(self, max_wait_time = None):
+        return self._iter_contextual_wrapper(max_wait_time)
 
     @classmethod
     def from_connection_string(

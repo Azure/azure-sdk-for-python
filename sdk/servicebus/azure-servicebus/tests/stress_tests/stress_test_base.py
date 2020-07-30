@@ -77,11 +77,11 @@ class StressTestRunner:
 
 
     # Plugin functions the caller can override to further tailor the test.
-    @staticmethod
-    def OnSend(state, sent_message):
+    def OnSend(self, state, sent_message):
         '''Called on every successful send'''
-        pass
-
+        print("OnSend")
+        if state.total_sent % 10 == 0:
+            time.sleep(10)
 
     @staticmethod
     def OnReceive(state, received_message):
@@ -140,9 +140,10 @@ class StressTestRunner:
 
 
     def _Receive(self, receiver, end_time):
-        receiver._config.idle_timeout = self.idle_timeout
+        receiver._idle_timeout = self.idle_timeout
         with receiver:
             while end_time > datetime.utcnow():
+                print("PRIMARY STRESS TEST LOOP================= " + str(datetime.utcnow()))
                 if self.receive_type == ReceiveType.pull:
                     batch = receiver.receive_messages()
                 elif self.receive_type == ReceiveType.push:
