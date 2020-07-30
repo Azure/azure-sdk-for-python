@@ -27,6 +27,9 @@ class MaintenanceScope(str, Enum):
     host = "Host"
     resource = "Resource"
     in_resource = "InResource"
+    os_image = "OSImage"
+    extension = "Extension"
+    in_guest_patch = "InGuestPatch"
 
 
 class ImpactType(str, Enum):
