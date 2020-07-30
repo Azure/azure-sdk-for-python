@@ -84,24 +84,5 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     return encoded_digest
 
 
-def _get_content_md5(data):
-    md5 = hashlib.md5()
-    if isinstance(data, bytes):
-        md5.update(data)
-    elif hasattr(data, 'read'):
-        pos = 0
-        pos = data.tell()
-        for chunk in iter(lambda: data.read(4096), b""):
-            md5.update(chunk)
-        try:
-            data.seek(pos, SEEK_SET)
-        except (AttributeError, IOError):
-            raise ValueError(_ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM.format('data'))
-    else:
-        raise ValueError(_ERROR_VALUE_SHOULD_BE_BYTES_OR_STREAM.format('data'))
-
-    return base64.b64encode(md5.digest()).decode('utf-8')
-
-
 def _lower(text):
     return text.lower()
