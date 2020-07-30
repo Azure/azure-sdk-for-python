@@ -248,9 +248,6 @@ def test_http_logger_with_body():
 
 def test_http_logger_with_generator_body():
 
-    def _g():
-        yield 1
-
     class MockHandler(logging.Handler):
         def __init__(self):
             super(MockHandler, self).__init__()
