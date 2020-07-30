@@ -427,9 +427,8 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             if http_request.body:
                 logger.info("A body is sent with the request")
                 return
-            else:
-                logger.info("No body was attached to the request")
-                return
+            logger.info("No body was attached to the request")
+            return
         except Exception as err:  # pylint: disable=broad-except
             logger.warning("Failed to log request: %s", repr(err))
 
