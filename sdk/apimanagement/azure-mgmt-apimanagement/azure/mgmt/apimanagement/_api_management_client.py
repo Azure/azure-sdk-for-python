@@ -33,6 +33,9 @@ from .operations import AuthorizationServerOperations
 from .operations import BackendOperations
 from .operations import CacheOperations
 from .operations import CertificateOperations
+from .operations import ContentTypeOperations
+from .operations import ContentTypesOperations
+from .operations import ContentItemOperations
 from .operations import ApiManagementOperations
 from .operations import ApiManagementServiceSkusOperations
 from .operations import ApiManagementServiceOperations
@@ -126,6 +129,12 @@ class ApiManagementClient(SDKClient):
     :vartype cache: azure.mgmt.apimanagement.operations.CacheOperations
     :ivar certificate: Certificate operations
     :vartype certificate: azure.mgmt.apimanagement.operations.CertificateOperations
+    :ivar content_type: ContentType operations
+    :vartype content_type: azure.mgmt.apimanagement.operations.ContentTypeOperations
+    :ivar content_types: ContentTypes operations
+    :vartype content_types: azure.mgmt.apimanagement.operations.ContentTypesOperations
+    :ivar content_item: ContentItem operations
+    :vartype content_item: azure.mgmt.apimanagement.operations.ContentItemOperations
     :ivar api_management_operations: ApiManagementOperations operations
     :vartype api_management_operations: azure.mgmt.apimanagement.operations.ApiManagementOperations
     :ivar api_management_service_skus: ApiManagementServiceSkus operations
@@ -275,6 +284,12 @@ class ApiManagementClient(SDKClient):
         self.cache = CacheOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.certificate = CertificateOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.content_type = ContentTypeOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.content_types = ContentTypesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.content_item = ContentItemOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.api_management_operations = ApiManagementOperations(
             self._client, self.config, self._serialize, self._deserialize)
