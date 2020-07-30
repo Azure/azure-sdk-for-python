@@ -39,8 +39,7 @@ class AnalyzeSentimentWithOpinionMiningSample(object):
 
         text_analytics_client = TextAnalyticsClient(
             endpoint=endpoint,
-            credential=AzureKeyCredential(key),
-            api_version=ApiVersion.V3_1_PREVIEW_1
+            credential=AzureKeyCredential(key)
         )
 
         print("In this sample we will be combing through the reviews of a potential hotel to stay at: Hotel Foo.")
@@ -57,16 +56,16 @@ class AnalyzeSentimentWithOpinionMiningSample(object):
             "I had a great unobstructed view of the Microsoft campus"
         ]
 
-        result = text_analytics_client.analyze_sentiment(documents, mine_opinions=True)
+        result = text_analytics_client.analyze_sentiment(documents, show_opinion_mining=True)
         doc_result = [doc for doc in result if not doc.is_error]
 
         print("\n\nLet's see how many positive and negative reviews of this hotel I have right now")
         positive_reviews = [doc for doc in doc_result if doc.sentiment == "positive"]
         negative_reviews = [doc for doc in doc_result if doc.sentiment == "negative"]
         print("...We have {} positive reviews and {} negative reviews. ".format(len(positive_reviews), len(negative_reviews)))
-        print("\nLooks more positive than negative, but still pretty mixed, so I'm going to drill deeper into the individual aspects of the hotel that are being reviewed")
+        print("\nLooks more positive than negative, but still pretty mixed, so I'm going to drill deeper into the opinions of individual aspects of this hotel")
 
-        print("\nIn order to do that, I'm going to sort them based on whether people have positive, mixed, or negative feelings about these aspects")
+        print("\nIn order to do that, I'm going to sort them based on whether these opinions are positive, mixed, or negative")
         positive_mined_opinions = []
         mixed_mined_opinions = []
         negative_mined_opinions = []
@@ -82,26 +81,26 @@ class AnalyzeSentimentWithOpinionMiningSample(object):
                     else:
                         negative_mined_opinions.append(mined_opinion)
 
-        print("\n\nLet's look at the {} positive aspects of this hotel".format(len(positive_mined_opinions)))
+        print("\n\nLet's look at the {} positive opinions users have expressed for aspects of this hotel".format(len(positive_mined_opinions)))
         for mined_opinion in positive_mined_opinions:
             print("...Reviewers have the following opinions for the overall positive '{}' aspect of the hotel".format(mined_opinion.aspect.text))
             for opinion in mined_opinion.opinions:
                 print("......'{}' opinion '{}'".format(opinion.sentiment, opinion.text))
 
-        print("\n\nNow let's look at the {} aspects with mixed sentiment".format(len(mixed_mined_opinions)))
+        print("\n\nNow let's look at the {} mixed opinions users have expressed for aspects of this hotel".format(len(mixed_mined_opinions)))
         for mined_opinion in mixed_mined_opinions:
             print("...Reviewers have the following opinions for the overall mixed '{}' aspect of the hotel".format(mined_opinion.aspect.text))
             for opinion in mined_opinion.opinions:
                 print("......'{}' opinion '{}'".format(opinion.sentiment, opinion.text))
 
-        print("\n\nFinally, let's see the {} negative aspects of this hotel".format(len(negative_mined_opinions)))
+        print("\n\nFinally, let's see the {} negative opinions users have expressed for aspects of this hotel".format(len(negative_mined_opinions)))
         for mined_opinion in negative_mined_opinions:
             print("...Reviewers have the following opinions for the overall negative '{}' aspect of the hotel".format(mined_opinion.aspect.text))
             for opinion in mined_opinion.opinions:
                 print("......'{}' opinion '{}'".format(opinion.sentiment, opinion.text))
 
         print(
-            "\n\nLooking at the breakdown, even though there were more positive aspects of this hotel, "
+            "\n\nLooking at the breakdown, even though there were more positive opinions of this hotel, "
             "I care the most about the food and the toilets in a hotel, so I will be staying elsewhere"
         )
 
