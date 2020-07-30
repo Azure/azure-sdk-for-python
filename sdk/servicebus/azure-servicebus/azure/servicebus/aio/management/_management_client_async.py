@@ -33,8 +33,8 @@ from ...management._generated.aio._service_bus_management_client_async import Se
     as ServiceBusManagementClientImpl
 from ...management import _constants as constants
 from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
-from ...management._models import QueueRuntimeInfo, QueueDescription, TopicDescription, TopicRuntimeInfo, \
-    SubscriptionDescription, SubscriptionRuntimeInfo, RuleDescription
+from ...management._models import QueueRuntimeProperties, QueueProperties, TopicProperties, TopicRuntimeProperties, \
+    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties
 from ...management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from ...management._handle_response_error import _handle_response_error
 from ...management._model_workaround import avoid_timedelta_overflow
@@ -143,42 +143,42 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             endpoint = endpoint[endpoint.index("//")+2:]
         return cls(endpoint, ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key), **kwargs)
 
-    async def get_queue(self, queue_name: str, **kwargs) -> QueueDescription:
+    async def get_queue(self, queue_name: str, **kwargs) -> QueueProperties:
         """Get the properties of a queue.
 
         :param str queue_name: The name of the queue.
-        :rtype: ~azure.servicebus.management.QueueDescription
+        :rtype: ~azure.servicebus.management.QueueProperties
         """
         entry_ele = await self._get_entity_element(queue_name, **kwargs)
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
-        queue_description = QueueDescription._from_internal_entity(queue_name,
+        queue_description = QueueProperties._from_internal_entity(queue_name,
             entry.content.queue_description)
         return queue_description
 
-    async def get_queue_runtime_info(self, queue_name: str, **kwargs) -> QueueRuntimeInfo:
+    async def get_queue_runtime_info(self, queue_name: str, **kwargs) -> QueueRuntimeProperties:
         """Get the runtime information of a queue.
 
         :param str queue_name: The name of the queue.
-        :rtype: ~azure.servicebus.management.QueueRuntimeInfo
+        :rtype: ~azure.servicebus.management.QueueRuntimeProperties
         """
         entry_ele = await self._get_entity_element(queue_name, **kwargs)
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Queue {} does not exist".format(queue_name))
-        runtime_info = QueueRuntimeInfo._from_internal_entity(queue_name,
+        runtime_info = QueueRuntimeProperties._from_internal_entity(queue_name,
             entry.content.queue_description)
         return runtime_info
 
-    async def create_queue(self, queue: Union[str, QueueDescription], **kwargs) -> QueueDescription:
+    async def create_queue(self, queue: Union[str, QueueProperties], **kwargs) -> QueueProperties:
         """Create a queue.
 
-        :param queue: The queue name or a `QueueDescription` instance. When it's a str, it will be the name
+        :param queue: The queue name or a `QueueProperties` instance. When it's a str, it will be the name
          of the created queue. Other properties of the created queue will have default values as defined by the
-         service. Use a `QueueDescription` if you want to set queue properties other than the queue name.
-        :type queue: Union[str, ~azure.servicebus.management.QueueDescription]
-        :rtype: ~azure.servicebus.management.QueueDescription
+         service. Use a `QueueProperties` if you want to set queue properties other than the queue name.
+        :type queue: Union[str, ~azure.servicebus.management.QueueProperties]
+        :rtype: ~azure.servicebus.management.QueueProperties
         """
         try:
             queue_name = queue.name  # type: ignore
@@ -202,12 +202,12 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             )
 
         entry = QueueDescriptionEntry.deserialize(entry_ele)
-        result = QueueDescription._from_internal_entity(queue_name,
+        result = QueueProperties._from_internal_entity(queue_name,
             entry.content.queue_description)
         return result
 
     async def update_queue(
-            self, queue: QueueDescription,
+            self, queue: QueueProperties,
             *,
             default_message_time_to_live: timedelta = None,
             lock_duration: timedelta = None,
@@ -217,10 +217,10 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             **kwargs) -> None:
         """Update a queue.
 
-        :param queue: The properties of this `QueueDescription` will be applied to the queue in
+        :param queue: The properties of this `QueueProperties` will be applied to the queue in
          ServiceBus. Only a portion of properties can be updated.
          Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
-        :type queue: ~azure.servicebus.management.QueueDescription
+        :type queue: ~azure.servicebus.management.QueueProperties
         :keyword timedelta default_message_time_to_live: The value you want to update to.
         :keyword timedelta lock_duration: The value you want to update to.
         :keyword bool dead_lettering_on_message_expiration: The value you want to update to.
@@ -258,11 +258,11 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    async def delete_queue(self, queue: Union[str, QueueDescription], **kwargs) -> None:
+    async def delete_queue(self, queue: Union[str, QueueProperties], **kwargs) -> None:
         """Delete a queue.
 
-        :param Union[str, azure.servicebus.management.QueueDescription] queue: The name of the queue or
-         a `QueueDescription` with name.
+        :param Union[str, azure.servicebus.management.QueueProperties] queue: The name of the queue or
+         a `QueueProperties` with name.
         :rtype: None
         """
         try:
@@ -274,15 +274,15 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         with _handle_response_error():
             await self._impl.entity.delete(queue_name, api_version=constants.API_VERSION, **kwargs)
 
-    def list_queues(self, **kwargs) -> AsyncItemPaged[QueueDescription]:
+    def list_queues(self, **kwargs) -> AsyncItemPaged[QueueProperties]:
         """List the queues of a ServiceBus namespace.
 
-        :returns: An iterable (auto-paging) response of QueueDescription.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.QueueDescription]
+        :returns: An iterable (auto-paging) response of QueueProperties.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.QueueProperties]
         """
 
         def entry_to_qd(entry):
-            qd = QueueDescription._from_internal_entity(entry.title, entry.content.queue_description)
+            qd = QueueProperties._from_internal_entity(entry.title, entry.content.queue_description)
             return qd
 
         extract_data = functools.partial(
@@ -294,15 +294,15 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data)
 
-    def list_queues_runtime_info(self, **kwargs) -> AsyncItemPaged[QueueRuntimeInfo]:
+    def list_queues_runtime_info(self, **kwargs) -> AsyncItemPaged[QueueRuntimeProperties]:
         """List the runtime information of the queues in a ServiceBus namespace.
 
-        :returns: An iterable (auto-paging) response of QueueRuntimeInfo.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.QueueRuntimeInfo]
+        :returns: An iterable (auto-paging) response of QueueRuntimeProperties.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.QueueRuntimeProperties]
         """
 
         def entry_to_qr(entry):
-            qd = QueueRuntimeInfo._from_internal_entity(entry.title, entry.content.queue_description)
+            qd = QueueRuntimeProperties._from_internal_entity(entry.title, entry.content.queue_description)
             return qd
 
         extract_data = functools.partial(
@@ -314,7 +314,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data)
 
-    async def get_topic(self, topic_name: str, **kwargs) -> TopicDescription:
+    async def get_topic(self, topic_name: str, **kwargs) -> TopicProperties:
         """Get the properties of a topic.
 
         :param str topic_name: The name of the topic.
@@ -324,30 +324,30 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         entry = TopicDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Topic '{}' does not exist".format(topic_name))
-        topic_description = TopicDescription._from_internal_entity(topic_name, entry.content.topic_description)
+        topic_description = TopicProperties._from_internal_entity(topic_name, entry.content.topic_description)
         return topic_description
 
-    async def get_topic_runtime_info(self, topic_name: str, **kwargs) -> TopicRuntimeInfo:
+    async def get_topic_runtime_info(self, topic_name: str, **kwargs) -> TopicRuntimeProperties:
         """Get the runtime information of a topic.
 
         :param str topic_name: The name of the topic.
-        :rtype: ~azure.servicebus.management.TopicRuntimeInfo
+        :rtype: ~azure.servicebus.management.TopicRuntimeProperties
         """
         entry_ele = await self._get_entity_element(topic_name, **kwargs)
         entry = TopicDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Topic {} does not exist".format(topic_name))
-        topic_description = TopicRuntimeInfo._from_internal_entity(topic_name, entry.content.topic_description)
+        topic_description = TopicRuntimeProperties._from_internal_entity(topic_name, entry.content.topic_description)
         return topic_description
 
-    async def create_topic(self, topic: Union[str, TopicDescription], **kwargs) -> TopicDescription:
+    async def create_topic(self, topic: Union[str, TopicProperties], **kwargs) -> TopicProperties:
         """Create a topic.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic name or a `TopicDescription`
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic name or a `TopicProperties`
          instance. When it's a str, it will be the name of the created topic. Other properties of the created topic
          will have default values as defined by the service.
-         Use a `TopicDescription` if you want to set queue properties other than the queue name.
-        :rtype: ~azure.servicebus.management.TopicDescription
+         Use a `TopicProperties` if you want to set queue properties other than the queue name.
+        :rtype: ~azure.servicebus.management.TopicProperties
         """
         try:
             topic_name = topic.name  # type: ignore
@@ -370,23 +370,23 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
                     request_body, api_version=constants.API_VERSION, **kwargs)
             )
         entry = TopicDescriptionEntry.deserialize(entry_ele)
-        result = TopicDescription._from_internal_entity(topic_name, entry.content.topic_description)
+        result = TopicProperties._from_internal_entity(topic_name, entry.content.topic_description)
         return result
 
     async def update_topic(
-            self, topic: TopicDescription,
+            self, topic: TopicProperties,
             *,
             default_message_time_to_live: timedelta = None,
             duplicate_detection_history_time_window: timedelta = None,
             **kwargs) -> None:
         """Update a topic.
 
-        Before calling this method, you should use `get_topic` to get a `TopicDescription` instance, then use the
+        Before calling this method, you should use `get_topic` to get a `TopicProperties` instance, then use the
         keyword arguments to update the properties you want to update.
         Only a portion of properties can be updated.
         Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-topic.
 
-        :param ~azure.servicebus.management.TopicDescription topic: The topic to be updated.
+        :param ~azure.servicebus.management.TopicProperties topic: The topic to be updated.
         :keyword timedelta default_message_time_to_live: The value you want to update to.
         :keyword timedelta duplicate_detection_history_time_window: The value you want to update to.
         :rtype: None
@@ -417,10 +417,10 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    async def delete_topic(self, topic: Union[str, TopicDescription], **kwargs) -> None:
+    async def delete_topic(self, topic: Union[str, TopicProperties], **kwargs) -> None:
         """Delete a topic.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic to be deleted.
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic to be deleted.
         :rtype: None
         """
         try:
@@ -429,14 +429,14 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             topic_name = topic
         await self._impl.entity.delete(topic_name, api_version=constants.API_VERSION, **kwargs)
 
-    def list_topics(self, **kwargs) -> AsyncItemPaged[TopicDescription]:
+    def list_topics(self, **kwargs) -> AsyncItemPaged[TopicProperties]:
         """List the topics of a ServiceBus namespace.
 
-        :returns: An iterable (auto-paging) response of TopicDescription.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.TopicDescription]
+        :returns: An iterable (auto-paging) response of TopicProperties.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.TopicProperties]
         """
         def entry_to_topic(entry):
-            topic = TopicDescription._from_internal_entity(entry.title, entry.content.topic_description)
+            topic = TopicProperties._from_internal_entity(entry.title, entry.content.topic_description)
             return topic
 
         extract_data = functools.partial(
@@ -448,14 +448,14 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data)
 
-    def list_topics_runtime_info(self, **kwargs) -> AsyncItemPaged[TopicRuntimeInfo]:
+    def list_topics_runtime_info(self, **kwargs) -> AsyncItemPaged[TopicRuntimeProperties]:
         """List the topics runtime information of a ServiceBus namespace.
 
-        :returns: An iterable (auto-paging) response of TopicRuntimeInfo.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.TopicRuntimeInfo]
+        :returns: An iterable (auto-paging) response of TopicRuntimeProperties.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.TopicRuntimeProperties]
         """
         def entry_to_topic(entry):
-            topic = TopicRuntimeInfo._from_internal_entity(entry.title, entry.content.topic_description)
+            topic = TopicRuntimeProperties._from_internal_entity(entry.title, entry.content.topic_description)
             return topic
 
         extract_data = functools.partial(
@@ -468,13 +468,13 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             get_next, extract_data)
 
     async def get_subscription(
-            self, topic: Union[str, TopicDescription], subscription_name: str, **kwargs
-    ) -> SubscriptionDescription:
+            self, topic: Union[str, TopicProperties], subscription_name: str, **kwargs
+    ) -> SubscriptionProperties:
         """Get the properties of a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
         :param str subscription_name: name of the subscription.
-        :rtype: ~azure.servicebus.management.SubscriptionDescription
+        :rtype: ~azure.servicebus.management.SubscriptionProperties
         """
         try:
             topic_name = topic.name  # type: ignore
@@ -485,18 +485,18 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         if not entry.content:
             raise ResourceNotFoundError(
                 "Subscription('Topic: {}, Subscription: {}') does not exist".format(subscription_name, topic_name))
-        subscription = SubscriptionDescription._from_internal_entity(
+        subscription = SubscriptionProperties._from_internal_entity(
             entry.title, entry.content.subscription_description)
         return subscription
 
     async def get_subscription_runtime_info(
-            self, topic: Union[str, TopicDescription], subscription_name: str, **kwargs
-    ) -> SubscriptionRuntimeInfo:
+            self, topic: Union[str, TopicProperties], subscription_name: str, **kwargs
+    ) -> SubscriptionRuntimeProperties:
         """Get a topic subscription runtime info.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
         :param str subscription_name: name of the subscription.
-        :rtype: ~azure.servicebus.management.SubscriptionRuntimeInfo
+        :rtype: ~azure.servicebus.management.SubscriptionRuntimeProperties
         """
         try:
             topic_name = topic.name  # type: ignore
@@ -507,21 +507,21 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         if not entry.content:
             raise ResourceNotFoundError(
                 "Subscription('Topic: {}, Subscription: {}') does not exist".format(subscription_name, topic_name))
-        subscription = SubscriptionRuntimeInfo._from_internal_entity(
+        subscription = SubscriptionRuntimeProperties._from_internal_entity(
             entry.title, entry.content.subscription_description)
         return subscription
 
     async def create_subscription(
-            self, topic: Union[str, TopicDescription], subscription: Union[str, SubscriptionDescription], **kwargs
-    ) -> SubscriptionDescription:
+            self, topic: Union[str, TopicProperties], subscription: Union[str, SubscriptionProperties], **kwargs
+    ) -> SubscriptionProperties:
         """Create a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that will own the
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that will own the
          to-be-created subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription name or a
-        `SubscriptionDescription` instance. When it's a str, it will be the name of the created subscription.
+        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription name or a
+        `SubscriptionProperties` instance. When it's a str, it will be the name of the created subscription.
          Other properties of the created subscription will have default values as defined by the service.
-        :rtype:  ~azure.servicebus.management.SubscriptionDescription
+        :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         try:
             topic_name = topic.name  # type: ignore
@@ -550,21 +550,21 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             )
 
         entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
-        result = SubscriptionDescription._from_internal_entity(
+        result = SubscriptionProperties._from_internal_entity(
             subscription_name, entry.content.subscription_description)
         return result
 
     async def update_subscription(
-            self, topic: Union[str, TopicDescription], subscription: SubscriptionDescription, **kwargs
+            self, topic: Union[str, TopicProperties], subscription: SubscriptionProperties, **kwargs
     ) -> None:
         """Update a subscription.
 
-        Before calling this method, you should use `get_subscription` to get a `SubscriptionDescription` instance,
+        Before calling this method, you should use `get_subscription` to get a `SubscriptionProperties` instance,
         then update the related attributes and call this method.
         Only a portion of properties can be updated.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :param ~azure.servicebus.management.SubscriptionDescription subscription: The subscription to be updated.
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :param ~azure.servicebus.management.SubscriptionProperties subscription: The subscription to be updated.
         :rtype: None
         """
         try:
@@ -594,12 +594,12 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             )
 
     async def delete_subscription(
-            self, topic: Union[str, TopicDescription], subscription: Union[str, SubscriptionDescription], **kwargs
+            self, topic: Union[str, TopicProperties], subscription: Union[str, SubscriptionProperties], **kwargs
     ) -> None:
         """Delete a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription
          to be deleted.
         :rtype: None
         """
@@ -614,12 +614,12 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         await self._impl.subscription.delete(topic_name, subscription_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_subscriptions(
-            self, topic: Union[str, TopicDescription], **kwargs) -> AsyncItemPaged[SubscriptionDescription]:
+            self, topic: Union[str, TopicProperties], **kwargs) -> AsyncItemPaged[SubscriptionProperties]:
         """List the subscriptions of a ServiceBus Topic.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :returns: An iterable (auto-paging) response of SubscriptionDescription.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.SubscriptionDescription]
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :returns: An iterable (auto-paging) response of SubscriptionProperties.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.SubscriptionProperties]
         """
         try:
             topic_name = topic.name  # type: ignore
@@ -627,7 +627,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             topic_name = topic
 
         def entry_to_subscription(entry):
-            subscription = SubscriptionDescription._from_internal_entity(
+            subscription = SubscriptionProperties._from_internal_entity(
                 entry.title, entry.content.subscription_description)
             return subscription
 
@@ -641,12 +641,12 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             get_next, extract_data)
 
     def list_subscriptions_runtime_info(
-            self, topic: Union[str, TopicDescription], **kwargs) -> AsyncItemPaged[SubscriptionRuntimeInfo]:
+            self, topic: Union[str, TopicProperties], **kwargs) -> AsyncItemPaged[SubscriptionRuntimeProperties]:
         """List the subscriptions runtime information of a ServiceBus.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :returns: An iterable (auto-paging) response of SubscriptionRuntimeInfo.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.SubscriptionRuntimeInfo]
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :returns: An iterable (auto-paging) response of SubscriptionRuntimeProperties.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.SubscriptionRuntimeProperties]
         """
         try:
             topic_name = topic.name  # type: ignore
@@ -654,7 +654,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             topic_name = topic
 
         def entry_to_subscription(entry):
-            subscription = SubscriptionRuntimeInfo._from_internal_entity(
+            subscription = SubscriptionRuntimeProperties._from_internal_entity(
                 entry.title, entry.content.subscription_description)
             return subscription
 
@@ -668,15 +668,15 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             get_next, extract_data)
 
     async def get_rule(
-            self, topic: Union[str, TopicDescription], subscription: Union[str, SubscriptionDescription],
-            rule_name: str, **kwargs) -> RuleDescription:
+            self, topic: Union[str, TopicProperties], subscription: Union[str, SubscriptionProperties],
+            rule_name: str, **kwargs) -> RuleProperties:
         """Get the properties of a topic subscription rule.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
          owns the rule.
         :param str rule_name: Name of the rule.
-        :rtype: ~azure.servicebus.management.RuleDescription
+        :rtype: ~azure.servicebus.management.RuleProperties
         """
         try:
             topic_name = topic.name  # type: ignore
@@ -692,22 +692,22 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             raise ResourceNotFoundError(
                 "Rule('Topic: {}, Subscription: {}, Rule {}') does not exist".format(
                     subscription_name, topic_name, rule_name))
-        rule_description = RuleDescription._from_internal_entity(rule_name, entry.content.rule_description)
+        rule_description = RuleProperties._from_internal_entity(rule_name, entry.content.rule_description)
         deserialize_rule_key_values(entry_ele, rule_description)  # to remove after #3535 is released.
         return rule_description
 
     async def create_rule(
-            self, topic: Union[str, TopicDescription], subscription: Union[str, SubscriptionDescription],
-            rule: RuleDescription, **kwargs) -> RuleDescription:
+            self, topic: Union[str, TopicProperties], subscription: Union[str, SubscriptionProperties],
+            rule: RuleProperties, **kwargs) -> RuleProperties:
         """Create a rule for a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that will own the
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that will own the
          to-be-created subscription rule.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that
+        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
          will own the to-be-created rule.
-        :param ~azure.servicebus.management.RuleDescription rule: The rule to be created.
+        :param ~azure.servicebus.management.RuleProperties rule: The rule to be created.
          Other properties of the created rule will have default values as defined by the service.
-        :rtype: ~azure.servicebus.management.RuleDescription
+        :rtype: ~azure.servicebus.management.RuleProperties
         """
         try:
             topic_name = topic.name  # type: ignore
@@ -734,23 +734,23 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
                 rule_name,
                 request_body, api_version=constants.API_VERSION, **kwargs)
         entry = RuleDescriptionEntry.deserialize(entry_ele)
-        result = RuleDescription._from_internal_entity(rule_name, entry.content.rule_description)
+        result = RuleProperties._from_internal_entity(rule_name, entry.content.rule_description)
         deserialize_rule_key_values(entry_ele, result)  # to remove after #3535 is released.
         return result
 
     async def update_rule(
-            self, topic: Union[str, TopicDescription], subscription: Union[str, SubscriptionDescription],
-            rule: RuleDescription, **kwargs) -> None:
+            self, topic: Union[str, TopicProperties], subscription: Union[str, SubscriptionProperties],
+            rule: RuleProperties, **kwargs) -> None:
         """Update a rule.
 
-        Before calling this method, you should use `get_rule` to get a `RuleDescription` instance,
+        Before calling this method, you should use `get_rule` to get a `RuleProperties` instance,
         then update the related attributes and call this method.
         Only a portion of properties can be updated.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
          owns this rule.
-        :param ~azure.servicebus.management.RuleDescription rule: The rule to be updated.
+        :param ~azure.servicebus.management.RuleProperties rule: The rule to be updated.
         :rtype: None
         """
 
@@ -784,14 +784,14 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             )
 
     async def delete_rule(
-            self, topic: Union[str, TopicDescription], subscription: Union[str, SubscriptionDescription],
-            rule: Union[str, RuleDescription], **kwargs) -> None:
+            self, topic: Union[str, TopicProperties], subscription: Union[str, SubscriptionProperties],
+            rule: Union[str, RuleProperties], **kwargs) -> None:
         """Delete a topic subscription rule.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
          owns the topic.
-        :param Union[str, ~azure.servicebus.management.RuleDescription] rule: The to-be-deleted rule.
+        :param Union[str, ~azure.servicebus.management.RuleProperties] rule: The to-be-deleted rule.
         :rtype: None
         """
         try:
@@ -810,15 +810,15 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             topic_name, subscription_name, rule_name, api_version=constants.API_VERSION, **kwargs)
 
     def list_rules(
-            self, topic: Union[str, TopicDescription], subscription: Union[str, SubscriptionDescription], **kwargs
-    ) -> AsyncItemPaged[RuleDescription]:
+            self, topic: Union[str, TopicProperties], subscription: Union[str, SubscriptionProperties], **kwargs
+    ) -> AsyncItemPaged[RuleProperties]:
         """List the rules of a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicDescription] topic: The topic that owns the subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionDescription] subscription: The subscription that
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
+        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
          owns the rules.
-        :returns: An iterable (auto-paging) response of RuleDescription.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.RuleDescription]
+        :returns: An iterable (auto-paging) response of RuleProperties.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.servicebus.management.RuleProperties]
         """
         try:
             topic_name = topic.name  # type: ignore
@@ -834,7 +834,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             `ele` will be removed after #3535 is released.
             """
             rule = entry.content.rule_description
-            rule_description = RuleDescription._from_internal_entity(entry.title, rule)
+            rule_description = RuleProperties._from_internal_entity(entry.title, rule)
             deserialize_rule_key_values(ele, rule_description)  # to remove after #3535 is released.
             return rule_description
 

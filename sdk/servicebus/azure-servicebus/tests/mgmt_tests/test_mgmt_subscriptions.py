@@ -261,7 +261,6 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
         assert info.dead_letter_message_count == 0
         assert info.transfer_dead_letter_message_count == 0
         assert info.transfer_message_count == 0
-        assert info.scheduled_message_count == 0
 
         mgmt_service.delete_subscription(topic_name, subscription_name)
         subs_infos = list(mgmt_service.list_subscriptions_runtime_info(topic_name))
@@ -291,7 +290,6 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
         assert sub_runtime_info.dead_letter_message_count == 0
         assert sub_runtime_info.transfer_dead_letter_message_count == 0
         assert sub_runtime_info.transfer_message_count == 0
-        assert sub_runtime_info.scheduled_message_count == 0
 
         mgmt_service.delete_subscription(topic_name, subscription_name)
         mgmt_service.delete_topic(topic_name)

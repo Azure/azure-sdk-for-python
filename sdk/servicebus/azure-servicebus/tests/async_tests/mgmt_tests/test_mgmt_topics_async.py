@@ -9,7 +9,7 @@ import datetime
 
 import msrest
 from azure.servicebus.aio.management import ServiceBusManagementClient
-from azure.servicebus.management import TopicDescription
+from azure.servicebus.management import TopicProperties
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
@@ -49,7 +49,7 @@ class ServiceBusManagementClientTopicAsyncTests(AzureMgmtTestCase):
         topic_name = "iweidk"
         try:
             await mgmt_service.create_topic(
-                TopicDescription(
+                TopicProperties(
                     name=topic_name,
                     auto_delete_on_idle=datetime.timedelta(minutes=10),
                     default_message_time_to_live=datetime.timedelta(minutes=11),
@@ -239,12 +239,11 @@ class ServiceBusManagementClientTopicAsyncTests(AzureMgmtTestCase):
         assert info.updated_at is not None
         assert info.subscription_count is 0
 
-        assert info.message_count_details
-        assert info.message_count_details.active_message_count == 0
-        assert info.message_count_details.dead_letter_message_count == 0
-        assert info.message_count_details.transfer_dead_letter_message_count == 0
-        assert info.message_count_details.transfer_message_count == 0
-        assert info.message_count_details.scheduled_message_count == 0
+        assert info.active_message_count == 0
+        assert info.dead_letter_message_count == 0
+        assert info.transfer_dead_letter_message_count == 0
+        assert info.transfer_message_count == 0
+        assert info.scheduled_message_count == 0
 
         await mgmt_service.delete_topic("test_topic")
         topics_infos = await async_pageable_to_list(mgmt_service.list_topics_runtime_info())
@@ -265,12 +264,10 @@ class ServiceBusManagementClientTopicAsyncTests(AzureMgmtTestCase):
             assert topic_runtime_info.accessed_at is not None
             assert topic_runtime_info.updated_at is not None
             assert topic_runtime_info.subscription_count is 0
-
-            assert topic_runtime_info.message_count_details
-            assert topic_runtime_info.message_count_details.active_message_count == 0
-            assert topic_runtime_info.message_count_details.dead_letter_message_count == 0
-            assert topic_runtime_info.message_count_details.transfer_dead_letter_message_count == 0
-            assert topic_runtime_info.message_count_details.transfer_message_count == 0
-            assert topic_runtime_info.message_count_details.scheduled_message_count == 0
+            assert topic_runtime_info.active_message_count == 0
+            assert topic_runtime_info.dead_letter_message_count == 0
+            assert topic_runtime_info.transfer_dead_letter_message_count == 0
+            assert topic_runtime_info.transfer_message_count == 0
+            assert topic_runtime_info.scheduled_message_count == 0
         finally:
             await mgmt_service.delete_topic("test_topic")

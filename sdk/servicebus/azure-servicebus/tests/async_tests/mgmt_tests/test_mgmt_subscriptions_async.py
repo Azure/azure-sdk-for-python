@@ -9,7 +9,7 @@ import datetime
 
 import msrest
 from azure.servicebus.aio.management import ServiceBusManagementClient
-from azure.servicebus.management import SubscriptionDescription
+from azure.servicebus.management import SubscriptionProperties
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
@@ -55,7 +55,7 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
             await mgmt_service.create_topic(topic_name)
             await mgmt_service.create_subscription(
                 topic_name,
-                SubscriptionDescription(
+                SubscriptionProperties(
                     name=subscription_name,
                     auto_delete_on_idle=datetime.timedelta(minutes=10),
                     dead_lettering_on_message_expiration=True,
@@ -257,13 +257,12 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
 
         assert info.accessed_at is not None
         assert info.updated_at is not None
-
-        assert info.message_count_details
-        assert info.message_count_details.active_message_count == 0
-        assert info.message_count_details.dead_letter_message_count == 0
-        assert info.message_count_details.transfer_dead_letter_message_count == 0
-        assert info.message_count_details.transfer_message_count == 0
-        assert info.message_count_details.scheduled_message_count == 0
+        assert info.created_at is not None
+        assert info.total_message_count == 0
+        assert info.active_message_count == 0
+        assert info.dead_letter_message_count == 0
+        assert info.transfer_dead_letter_message_count == 0
+        assert info.transfer_message_count == 0
 
         await mgmt_service.delete_subscription(topic_name, subscription_name)
         subs_infos = await async_pageable_to_list(mgmt_service.list_subscriptions_runtime_info(topic_name))
@@ -288,13 +287,11 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
         assert sub_runtime_info.created_at is not None
         assert sub_runtime_info.accessed_at is not None
         assert sub_runtime_info.updated_at is not None
-
-        assert sub_runtime_info.message_count_details
-        assert sub_runtime_info.message_count_details.active_message_count == 0
-        assert sub_runtime_info.message_count_details.dead_letter_message_count == 0
-        assert sub_runtime_info.message_count_details.transfer_dead_letter_message_count == 0
-        assert sub_runtime_info.message_count_details.transfer_message_count == 0
-        assert sub_runtime_info.message_count_details.scheduled_message_count == 0
+        assert sub_runtime_info.total_message_count == 0
+        assert sub_runtime_info.active_message_count == 0
+        assert sub_runtime_info.dead_letter_message_count == 0
+        assert sub_runtime_info.transfer_dead_letter_message_count == 0
+        assert sub_runtime_info.transfer_message_count == 0
 
         await mgmt_service.delete_subscription(topic_name, subscription_name)
         await mgmt_service.delete_topic(topic_name)

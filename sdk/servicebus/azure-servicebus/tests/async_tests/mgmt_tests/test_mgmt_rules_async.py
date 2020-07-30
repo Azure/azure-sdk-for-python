@@ -10,7 +10,7 @@ import pytest
 
 import msrest
 from azure.servicebus.aio.management import ServiceBusManagementClient
-from azure.servicebus.management import RuleDescription, CorrelationRuleFilter, SqlRuleFilter, TrueRuleFilter, SqlRuleAction
+from azure.servicebus.management import RuleProperties, CorrelationRuleFilter, SqlRuleFilter, TrueRuleFilter, SqlRuleAction
 from azure.servicebus.management._constants import INT32_MAX_VALUE
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
@@ -48,15 +48,15 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         sql_rule_action = SqlRuleAction(sql_expression="SET Priority = @param", parameters={
             "@param": datetime(2020, 7, 5, 11, 12, 13),
         })
-        rule_1 = RuleDescription(name=rule_name_1, filter=correlation_fitler, action=sql_rule_action)
+        rule_1 = RuleProperties(name=rule_name_1, filter=correlation_fitler, action=sql_rule_action)
 
         sql_filter = SqlRuleFilter("Priority = @param1", parameters={
             "@param1": "str1",
         })
-        rule_2 = RuleDescription(name=rule_name_2, filter=sql_filter)
+        rule_2 = RuleProperties(name=rule_name_2, filter=sql_filter)
 
         bool_filter = TrueRuleFilter()
-        rule_3 = RuleDescription(name=rule_name_3, filter=bool_filter)
+        rule_3 = RuleProperties(name=rule_name_3, filter=bool_filter)
 
         try:
             await mgmt_service.create_topic(topic_name)
@@ -102,7 +102,7 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         subscription_name = 'kkaqo'
         rule_name = 'rule'
         sql_filter = SqlRuleFilter("Priority = 'low'")
-        rule = RuleDescription(name=rule_name, filter=sql_filter)
+        rule = RuleProperties(name=rule_name, filter=sql_filter)
         try:
             await mgmt_service.create_topic(topic_name)
             await mgmt_service.create_subscription(topic_name, subscription_name)
@@ -123,7 +123,7 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         subscription_name = "eqkovc"
         rule_name = 'rule'
         sql_filter = SqlRuleFilter("Priority = 'low'")
-        rule = RuleDescription(name=rule_name, filter=sql_filter)
+        rule = RuleProperties(name=rule_name, filter=sql_filter)
 
         try:
             topic_description = await mgmt_service.create_topic(topic_name)
@@ -161,7 +161,7 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         subscription_name = "eqkovc"
         rule_name = 'rule'
         sql_filter = SqlRuleFilter("Priority = 'low'")
-        rule = RuleDescription(name=rule_name, filter=sql_filter)
+        rule = RuleProperties(name=rule_name, filter=sql_filter)
 
         try:
             topic_description = await mgmt_service.create_topic(topic_name)
@@ -209,9 +209,9 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         sql_filter_1 = SqlRuleFilter("Priority = 'low'")
         sql_filter_2 = SqlRuleFilter("Priority = 'middle'")
         sql_filter_3 = SqlRuleFilter("Priority = 'high'")
-        rule_1 = RuleDescription(name=rule_name_1, filter=sql_filter_1)
-        rule_2 = RuleDescription(name=rule_name_2, filter=sql_filter_2)
-        rule_3 = RuleDescription(name=rule_name_3, filter=sql_filter_3)
+        rule_1 = RuleProperties(name=rule_name_1, filter=sql_filter_1)
+        rule_2 = RuleProperties(name=rule_name_2, filter=sql_filter_2)
+        rule_3 = RuleProperties(name=rule_name_3, filter=sql_filter_3)
 
         try:
             await mgmt_service.create_topic(topic_name)
