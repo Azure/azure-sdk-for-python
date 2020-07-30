@@ -6,15 +6,8 @@
 import base64
 import hashlib
 import hmac
-from io import (SEEK_SET)
 import six
 from azure.data.tables._shared.parser import _str
-
-
-from ._error import (
-    _ERROR_VALUE_SHOULD_BE_BYTES_OR_STREAM,
-    _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM,
-)
 
 
 def _to_str(value):
