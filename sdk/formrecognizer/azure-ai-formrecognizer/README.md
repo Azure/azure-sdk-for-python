@@ -66,7 +66,7 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from [azure.core][azure_core],
+The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from [azure-core][azure_core],
 or as a credential type from Azure Active Directory.
 See the full details regarding [authentication][cognitive_authentication] of cognitive services.
 
@@ -350,7 +350,8 @@ except ResourceNotFoundError:
 
 ## Async APIs
 This library also includes a complete async API supported on Python 3.5+. To use it, you must
-first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
+are found under the `azure.ai.formrecognizer.aio` namespace.
 
 ## Optional Configuration
 

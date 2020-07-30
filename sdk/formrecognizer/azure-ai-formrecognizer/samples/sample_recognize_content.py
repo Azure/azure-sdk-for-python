@@ -44,9 +44,9 @@ class RecognizeContentSample(object):
         form_recognizer_client = FormRecognizerClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         with open(path_to_sample_forms, "rb") as f:
             poller = form_recognizer_client.begin_recognize_content(form=f)
-        contents = poller.result()
+        form_pages = poller.result()
 
-        for idx, content in enumerate(contents):
+        for idx, content in enumerate(form_pages):
             print("----Recognizing content from page #{}----".format(idx))
             print("Has width: {} and height: {}, measured with unit: {}".format(
                 content.width,
