@@ -9,18 +9,18 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: GET
     uri: https://servicebustestsbname.servicebus.windows.net/$Resources/topics?$skip=0&$top=100&api-version=2017-04
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-07-02T05:58:36Z</updated><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustestzca2g5qsmq.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-07-17T02:22:21Z</updated><link
+        rel="self" href="https://servicebustestzca2g5qsmq.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:36 GMT
+      - Fri, 17 Jul 2020 02:22:20 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -45,21 +45,21 @@ interactions:
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf?api-version=2017-04</id><title
-        type="text">topic_testaddf</title><published>2020-07-02T05:58:37Z</published><updated>2020-07-02T05:58:37Z</updated><author><name>servicebustestshi5frbomp</name></author><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf?api-version=2017-04</id><title
+        type="text">topic_testaddf</title><published>2020-07-17T02:22:21Z</published><updated>2020-07-17T02:22:22Z</updated><author><name>servicebustestzca2g5qsmq</name></author><link
+        rel="self" href="https://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf?api-version=2017-04"/><content
         type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:58:37.417Z</CreatedAt><UpdatedAt>2020-07-02T05:58:37.447Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-17T02:22:21.953Z</CreatedAt><UpdatedAt>2020-07-17T02:22:22.04Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:37 GMT
+      - Fri, 17 Jul 2020 02:22:21 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -86,23 +86,23 @@ interactions:
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk?api-version=2017-04</id><title
-        type="text">sub_testkkk</title><published>2020-07-02T05:58:37Z</published><updated>2020-07-02T05:58:37Z</updated><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk?api-version=2017-04</id><title
+        type="text">sub_testkkk</title><published>2020-07-17T02:22:22Z</published><updated>2020-07-17T02:22:22Z</updated><link
+        rel="self" href="https://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk?api-version=2017-04"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-07-02T05:58:37.9708001Z</CreatedAt><UpdatedAt>2020-07-02T05:58:37.9708001Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-07-17T02:22:22.6633698Z</CreatedAt><UpdatedAt>2020-07-17T02:22:22.6633698Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:37 GMT
+      - Fri, 17 Jul 2020 02:22:22 GMT
       etag:
-      - '637292663174470000'
+      - '637305493420400000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -117,8 +117,15 @@ interactions:
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><ns0:content type="application/xml"><RuleDescription><Filter
-      xsi:type="CorrelationFilter"><CorrelationId>testcid</CorrelationId></Filter><Action
-      xsi:type="SqlRuleAction"><SqlExpression>SET Priority = ''low''</SqlExpression></Action><Name>test_rule_1</Name></RuleDescription></ns0:content></ns0:entry>'
+      xsi:type="CorrelationFilter"><CorrelationId>testcid</CorrelationId><Properties><KeyValueOfstringanyType><Key>key_string</Key><Value
+      xmlns:d6p1="http://www.w3.org/2001/XMLSchema" xsi:type="d6p1:string">str1</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_int</Key><Value
+      xmlns:d6p1="http://www.w3.org/2001/XMLSchema" xsi:type="d6p1:int">2</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_long</Key><Value
+      xmlns:d6p1="http://www.w3.org/2001/XMLSchema" xsi:type="d6p1:long">2147483650</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_bool</Key><Value
+      xmlns:d6p1="http://www.w3.org/2001/XMLSchema" xsi:type="d6p1:boolean">false</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_datetime</Key><Value
+      xmlns:d6p1="http://www.w3.org/2001/XMLSchema" xsi:type="d6p1:dateTime">2020-07-05T11:12:13</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_duration</Key><Value
+      xmlns:d6p1="http://www.w3.org/2001/XMLSchema" xsi:type="d6p1:duration">P1DT2H3M</Value></KeyValueOfstringanyType></Properties></Filter><Action
+      xsi:type="SqlRuleAction"><SqlExpression>SET Priority = @param</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters><KeyValueOfstringanyType><Key>@param</Key><Value
+      xmlns:d6p1="http://www.w3.org/2001/XMLSchema" xsi:type="d6p1:dateTime">2020-07-05T11:12:13</Value></KeyValueOfstringanyType></Parameters></Action><Name>test_rule_1</Name></RuleDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -127,28 +134,35 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '518'
+      - '1765'
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04</id><title
-        type="text">test_rule_1</title><published>2020-07-02T05:58:38Z</published><updated>2020-07-02T05:58:38Z</updated><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04</id><title
+        type="text">test_rule_1</title><published>2020-07-17T02:22:23Z</published><updated>2020-07-17T02:22:23Z</updated><link
+        rel="self" href="https://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="CorrelationFilter"><CorrelationId>testcid</CorrelationId></Filter><Action
-        i:type="SqlRuleAction"><SqlExpression>SET Priority = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Action><CreatedAt>2020-07-02T05:58:38.1426348Z</CreatedAt><Name>test_rule_1</Name></RuleDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="CorrelationFilter"><CorrelationId>testcid</CorrelationId><Properties><KeyValueOfstringanyType><Key>key_string</Key><Value
+        i:type="d6p1:string" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">str1</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_int</Key><Value
+        i:type="d6p1:int" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">2</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_long</Key><Value
+        i:type="d6p1:long" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">2147483650</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_bool</Key><Value
+        i:type="d6p1:boolean" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">false</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_datetime</Key><Value
+        i:type="d6p1:dateTime" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">2020-07-05T11:12:13</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_duration</Key><Value
+        i:type="d6p1:duration" xmlns:d6p1="http://schemas.microsoft.com/2003/10/Serialization/">P1DT2H3M</Value></KeyValueOfstringanyType></Properties></Filter><Action
+        i:type="SqlRuleAction"><SqlExpression>SET Priority = @param</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters><KeyValueOfstringanyType><Key>@param</Key><Value
+        i:type="d6p1:dateTime" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">2020-07-05T11:12:13</Value></KeyValueOfstringanyType></Parameters></Action><CreatedAt>2020-07-17T02:22:23.0245154Z</CreatedAt><Name>test_rule_1</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:38 GMT
+      - Fri, 17 Jul 2020 02:22:22 GMT
       etag:
-      - '637292663174470000'
+      - '637305493420400000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -168,24 +182,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: GET
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?enrich=false&api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?enrich=false&amp;api-version=2017-04</id><title
-        type="text">test_rule_1</title><published>2020-07-02T05:58:38Z</published><updated>2020-07-02T05:58:38Z</updated><link
-        rel="self" href="sb://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?enrich=false&amp;api-version=2017-04</id><title
+        type="text">test_rule_1</title><published>2020-07-17T02:22:23Z</published><updated>2020-07-17T02:22:23Z</updated><link
+        rel="self" href="sb://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?enrich=false&amp;api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="CorrelationFilter"><CorrelationId>testcid</CorrelationId></Filter><Action
-        i:type="SqlRuleAction"><SqlExpression>SET Priority = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters/></Action><CreatedAt>2020-07-02T05:58:38.1487771Z</CreatedAt><Name>test_rule_1</Name></RuleDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="CorrelationFilter"><CorrelationId>testcid</CorrelationId><Properties><KeyValueOfstringanyType><Key>key_string</Key><Value
+        i:type="d6p1:string" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">str1</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_int</Key><Value
+        i:type="d6p1:int" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">2</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_long</Key><Value
+        i:type="d6p1:long" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">2147483650</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_bool</Key><Value
+        i:type="d6p1:boolean" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">false</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_datetime</Key><Value
+        i:type="d6p1:dateTime" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">2020-07-05T11:12:13</Value></KeyValueOfstringanyType><KeyValueOfstringanyType><Key>key_duration</Key><Value
+        i:type="d6p1:duration" xmlns:d6p1="http://schemas.microsoft.com/2003/10/Serialization/">P1DT2H3M</Value></KeyValueOfstringanyType></Properties></Filter><Action
+        i:type="SqlRuleAction"><SqlExpression>SET Priority = @param</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters><KeyValueOfstringanyType><Key>@param</Key><Value
+        i:type="d6p1:dateTime" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">2020-07-05T11:12:13</Value></KeyValueOfstringanyType></Parameters></Action><CreatedAt>2020-07-17T02:22:23.0289508Z</CreatedAt><Name>test_rule_1</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:38 GMT
+      - Fri, 17 Jul 2020 02:22:22 GMT
       etag:
-      - '637292663174470000'
+      - '637305493420400000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -200,7 +221,8 @@ interactions:
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><ns0:content type="application/xml"><RuleDescription><Filter
-      xsi:type="SqlFilter"><SqlExpression>Priority = ''low''</SqlExpression></Filter><Action
+      xsi:type="SqlFilter"><SqlExpression>Priority = @param1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters><KeyValueOfstringanyType><Key>@param1</Key><Value
+      xmlns:d6p1="http://www.w3.org/2001/XMLSchema" xsi:type="d6p1:string">str1</Value></KeyValueOfstringanyType></Parameters></Filter><Action
       xsi:type="EmptyRuleAction" /><Name>test_rule_2</Name></RuleDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
@@ -210,29 +232,30 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '463'
+      - '690'
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04</id><title
-        type="text">test_rule_2</title><published>2020-07-02T05:58:38Z</published><updated>2020-07-02T05:58:38Z</updated><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04</id><title
+        type="text">test_rule_2</title><published>2020-07-17T02:22:23Z</published><updated>2020-07-17T02:22:23Z</updated><link
+        rel="self" href="https://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-07-02T05:58:38.3926736Z</CreatedAt><Name>test_rule_2</Name></RuleDescription></content></entry>
+        = @param1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters><KeyValueOfstringanyType><Key>@param1</Key><Value
+        i:type="d6p1:string" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">str1</Value></KeyValueOfstringanyType></Parameters></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-07-17T02:22:23.2276052Z</CreatedAt><Name>test_rule_2</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:38 GMT
+      - Fri, 17 Jul 2020 02:22:22 GMT
       etag:
-      - '637292663174470000'
+      - '637305493420400000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -252,25 +275,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: GET
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?enrich=false&api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?enrich=false&amp;api-version=2017-04</id><title
-        type="text">test_rule_2</title><published>2020-07-02T05:58:38Z</published><updated>2020-07-02T05:58:38Z</updated><link
-        rel="self" href="sb://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?enrich=false&amp;api-version=2017-04</id><title
+        type="text">test_rule_2</title><published>2020-07-17T02:22:23Z</published><updated>2020-07-17T02:22:23Z</updated><link
+        rel="self" href="sb://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?enrich=false&amp;api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="SqlFilter"><SqlExpression>Priority
-        = 'low'</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters/></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-07-02T05:58:38.3837741Z</CreatedAt><Name>test_rule_2</Name></RuleDescription></content></entry>
+        = @param1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><Parameters><KeyValueOfstringanyType><Key>@param1</Key><Value
+        i:type="d6p1:string" xmlns:d6p1="http://www.w3.org/2001/XMLSchema">str1</Value></KeyValueOfstringanyType></Parameters></Filter><Action
+        i:type="EmptyRuleAction"/><CreatedAt>2020-07-17T02:22:23.2476778Z</CreatedAt><Name>test_rule_2</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:38 GMT
+      - Fri, 17 Jul 2020 02:22:22 GMT
       etag:
-      - '637292663174470000'
+      - '637305493420400000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -285,8 +309,8 @@ interactions:
 
       <ns0:entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><ns0:content type="application/xml"><RuleDescription><Filter
-      xsi:type="TrueFilter"><SqlExpression>1 = 1</SqlExpression></Filter><Action xsi:type="EmptyRuleAction"
-      /><Name>test_rule_3</Name></RuleDescription></ns0:content></ns0:entry>'
+      xsi:type="TrueFilter"><SqlExpression>1=1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel><RequiresPreprocessing>true</RequiresPreprocessing></Filter><Action
+      xsi:type="EmptyRuleAction" /><Name>test_rule_3</Name></RuleDescription></ns0:content></ns0:entry>'
     headers:
       Accept:
       - application/xml
@@ -295,28 +319,28 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '453'
+      - '545'
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04</id><title
-        type="text">test_rule_3</title><published>2020-07-02T05:58:38Z</published><updated>2020-07-02T05:58:38Z</updated><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04</id><title
+        type="text">test_rule_3</title><published>2020-07-17T02:22:23Z</published><updated>2020-07-17T02:22:23Z</updated><link
+        rel="self" href="https://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="TrueFilter"><SqlExpression>1=1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-07-02T05:58:38.7832611Z</CreatedAt><Name>test_rule_3</Name></RuleDescription></content></entry>
+        i:type="EmptyRuleAction"/><CreatedAt>2020-07-17T02:22:23.4776391Z</CreatedAt><Name>test_rule_3</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:38 GMT
+      - Fri, 17 Jul 2020 02:22:22 GMT
       etag:
-      - '637292663174470000'
+      - '637305493420400000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -336,24 +360,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: GET
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?enrich=false&api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?enrich=false&amp;api-version=2017-04</id><title
-        type="text">test_rule_3</title><published>2020-07-02T05:58:38Z</published><updated>2020-07-02T05:58:38Z</updated><link
-        rel="self" href="sb://servicebustestshi5frbomp.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?enrich=false&amp;api-version=2017-04</id><title
+        type="text">test_rule_3</title><published>2020-07-17T02:22:23Z</published><updated>2020-07-17T02:22:23Z</updated><link
+        rel="self" href="sb://servicebustestzca2g5qsmq.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?enrich=false&amp;api-version=2017-04"/><content
         type="application/xml"><RuleDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Filter i:type="TrueFilter"><SqlExpression>1=1</SqlExpression><CompatibilityLevel>20</CompatibilityLevel></Filter><Action
-        i:type="EmptyRuleAction"/><CreatedAt>2020-07-02T05:58:38.7744248Z</CreatedAt><Name>test_rule_3</Name></RuleDescription></content></entry>
+        i:type="EmptyRuleAction"/><CreatedAt>2020-07-17T02:22:23.4820344Z</CreatedAt><Name>test_rule_3</Name></RuleDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:38 GMT
+      - Fri, 17 Jul 2020 02:22:23 GMT
       etag:
-      - '637292663174470000'
+      - '637305493420400000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -375,7 +399,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_1?api-version=2017-04
   response:
@@ -385,9 +409,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:38 GMT
+      - Fri, 17 Jul 2020 02:22:23 GMT
       etag:
-      - '637292663174470000'
+      - '637305493420400000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -407,7 +431,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_2?api-version=2017-04
   response:
@@ -417,9 +441,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:38 GMT
+      - Fri, 17 Jul 2020 02:22:23 GMT
       etag:
-      - '637292663174470000'
+      - '637305493420400000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -439,7 +463,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk/rules/test_rule_3?api-version=2017-04
   response:
@@ -449,9 +473,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:39 GMT
+      - Fri, 17 Jul 2020 02:22:23 GMT
       etag:
-      - '637292663174470000'
+      - '637305493420400000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -471,7 +495,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf/subscriptions/sub_testkkk?api-version=2017-04
   response:
@@ -481,9 +505,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:39 GMT
+      - Fri, 17 Jul 2020 02:22:23 GMT
       etag:
-      - '637292663174470000'
+      - '637305493420400000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -503,7 +527,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.20161-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/topic_testaddf?api-version=2017-04
   response:
@@ -513,9 +537,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:58:39 GMT
+      - Fri, 17 Jul 2020 02:22:24 GMT
       etag:
-      - '637292663174470000'
+      - '637305493420400000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

@@ -18,7 +18,7 @@ from azure.servicebus import ServiceBusClient, Message
 
 
 def process_message(message):
-    print(message)
+    print(str(message))
 
 
 def example_create_servicebus_client_sync():
@@ -213,7 +213,7 @@ def example_send_and_receive_sync():
     with servicebus_receiver:
         messages = servicebus_receiver.peek_messages()
         for message in messages:
-            print(message)
+            print(str(message))
     # [END peek_messages_sync]
 
     # [START auto_lock_renew_message_sync]
@@ -232,7 +232,7 @@ def example_send_and_receive_sync():
     with servicebus_receiver:
         messages = servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
-            print(message)
+            print(str(message))
             message.complete()
     # [END receive_sync]
 
@@ -269,7 +269,7 @@ def example_receive_deferred_sync():
         messages = servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
-            print(message)
+            print(str(message))
             message.defer()
 
         received_deferred_msg = servicebus_receiver.receive_deferred_messages(

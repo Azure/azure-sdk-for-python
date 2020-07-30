@@ -12,6 +12,16 @@ import re
 import six
 
 
+def adjust_value_type(value_type):
+    if value_type == "array":
+        value_type = "list"
+    if value_type == "number":
+        value_type = "float"
+    if value_type == "object":
+        value_type = "dictionary"
+    return value_type
+
+
 def adjust_confidence(score):
     """Adjust confidence when not returned.
     """
@@ -73,6 +83,20 @@ def get_field_value(field, value, read_result):  # pylint: disable=too-many-retu
             for key, value in value.value_object.items()
         }
     return None
+
+
+class FieldValueType(str, Enum):
+    """Semantic data type of the field value.
+    """
+
+    STRING = "string"
+    DATE = "date"
+    TIME = "time"
+    PHONE_NUMBER = "phoneNumber"
+    FLOAT = "float"
+    INTEGER = "integer"
+    LIST = "list"
+    DICTIONARY = "dictionary"
 
 
 class LengthUnit(str, Enum):
@@ -188,21 +212,24 @@ class RecognizedForm(object):
 class FormField(object):
     """Represents a field recognized in an input form.
 
+    :ivar str value_type: The type of `value` found on FormField. Described in
+        :class:`~azure.ai.formrecognizer.FieldValueType`, possible types include: 'string',
+        'date', 'time', 'phoneNumber', 'float', 'integer', 'dictionary', or 'list'.
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and field elements for the field label.
     :ivar ~azure.ai.formrecognizer.FieldData value_data:
         Contains the text, bounding box, and field elements for the field value.
     :ivar str name: The unique name of the field or label.
     :ivar value:
-        The value for the recognized field. Possible types include: 'string',
-        'date', 'time', 'phoneNumber', 'number', 'integer', 'object', or 'array'.
+        The value for the recognized field. Its semantic data type is described by `value_type`.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
-        :class:`~azure.ai.formrecognizer.FormField`, or list[:class:`~azure.ai.formrecognizer.FormField`]
+        dict[str, :class:`~azure.ai.formrecognizer.FormField`], or list[:class:`~azure.ai.formrecognizer.FormField`]
     :ivar float confidence:
         Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
     """
 
     def __init__(self, **kwargs):
+        self.value_type = kwargs.get("value_type", None)
         self.label_data = kwargs.get("label_data", None)
         self.value_data = kwargs.get("value_data", None)
         self.name = kwargs.get("name", None)
@@ -212,6 +239,7 @@ class FormField(object):
     @classmethod
     def _from_generated(cls, field, value, read_result):
         return cls(
+            value_type=adjust_value_type(value.type) if value else None,
             label_data=FieldData._from_generated(field, read_result),
             value_data=FieldData._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
@@ -222,6 +250,7 @@ class FormField(object):
     @classmethod
     def _from_generated_unlabeled(cls, field, idx, page, read_result):
         return cls(
+            value_type="string",  # unlabeled only returns string
             label_data=FieldData._from_generated_unlabeled(field.key, page, read_result),
             value_data=FieldData._from_generated_unlabeled(field.value, page, read_result),
             value=field.value.text,
@@ -230,8 +259,8 @@ class FormField(object):
         )
 
     def __repr__(self):
-        return "FormField(label_data={}, value_data={}, name={}, value={}, confidence={})".format(
-            repr(self.label_data), repr(self.value_data), self.name, repr(self.value), self.confidence
+        return "FormField(value_type={}, label_data={}, value_data={}, name={}, value={}, confidence={})".format(
+            self.value_type, repr(self.label_data), repr(self.value_data), self.name, repr(self.value), self.confidence
         )[:1024]
 
 
@@ -648,7 +677,7 @@ class TrainingDocumentInfo(object):
     """Report for an individual document used for training
     a custom model.
 
-    :ivar str document_name:
+    :ivar str name:
         The name of the document.
     :ivar str status:
         The :class:`~azure.ai.formrecognizer.TrainingStatus`
@@ -661,7 +690,7 @@ class TrainingDocumentInfo(object):
     """
 
     def __init__(self, **kwargs):
-        self.document_name = kwargs.get("document_name", None)
+        self.name = kwargs.get("name", None)
         self.status = kwargs.get("status", None)
         self.page_count = kwargs.get("page_count", None)
         self.errors = kwargs.get("errors", [])
@@ -669,15 +698,15 @@ class TrainingDocumentInfo(object):
     @classmethod
     def _from_generated(cls, train_result):
         return [cls(
-            document_name=doc.document_name,
+            name=doc.document_name,
             status=doc.status,
             page_count=doc.pages,
             errors=FormRecognizerError._from_generated(doc.errors)
         ) for doc in train_result.training_documents] if train_result.training_documents else None
 
     def __repr__(self):
-        return "TrainingDocumentInfo(document_name={}, status={}, page_count={}, errors={})".format(
-            self.document_name, self.status, self.page_count, repr(self.errors)
+        return "TrainingDocumentInfo(name={}, status={}, page_count={}, errors={})".format(
+            self.name, self.status, self.page_count, repr(self.errors)
         )[:1024]
 
 

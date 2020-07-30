@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from .base import AsyncCredentialBase
 from .._internal import AadClient
+from .._internal.decorators import log_get_token_async
 from ..._internal import CertificateCredentialBase
 
 if TYPE_CHECKING:
@@ -21,7 +22,7 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
     :param str certificate_path: path to a PEM-encoded certificate file including the private key
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
           requires a different encoding, pass appropriately encoded bytes instead.
@@ -37,7 +38,8 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
 
         await self._client.__aexit__()
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    @log_get_token_async
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
 
         .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.

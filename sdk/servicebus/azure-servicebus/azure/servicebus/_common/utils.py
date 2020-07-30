@@ -7,25 +7,25 @@
 import sys
 import datetime
 import logging
-import threading
-import time
 import functools
+import platform
+from typing import Optional, Dict
 try:
     from urlparse import urlparse
 except ImportError:
     from urllib.parse import urlparse
-from concurrent.futures import ThreadPoolExecutor
 
-from uamqp import authentication
+from uamqp import authentication, types
 
-from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusError
-from .._version import VERSION as sdk_version
+from ..exceptions import ServiceBusError
+from .._version import VERSION
 from .constants import (
     JWT_TOKEN_SCOPE,
     TOKEN_TYPE_JWT,
     TOKEN_TYPE_SASTOKEN,
     DEAD_LETTER_QUEUE_SUFFIX,
-    TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
+    TRANSFER_DEAD_LETTER_QUEUE_SUFFIX,
+    USER_AGENT_PREFIX
 )
 
 _log = logging.getLogger(__name__)
@@ -93,12 +93,33 @@ def build_uri(address, entity):
     return address
 
 
-def create_properties():
+def create_properties(user_agent=None):
+    # type: (Optional[str]) -> Dict[types.AMQPSymbol, str]
+    """
+    Format the properties with which to instantiate the connection.
+    This acts like a user agent over HTTP.
+
+    :param str user_agent: If specified, this will be added in front of the built-in user agent string.
+
+    :rtype: dict
+    """
     properties = {}
-    properties["product"] = "servicebus.python"
-    properties["version"] = sdk_version
-    properties["framework"] = "Python {}.{}.{}".format(*sys.version_info[0:3])
-    properties["platform"] = sys.platform
+    properties[types.AMQPSymbol("product")] = USER_AGENT_PREFIX
+    properties[types.AMQPSymbol("version")] = VERSION
+    framework = "Python/{}.{}.{}".format(
+        sys.version_info[0], sys.version_info[1], sys.version_info[2]
+    )
+    properties[types.AMQPSymbol("framework")] = framework
+    platform_str = platform.platform()
+    properties[types.AMQPSymbol("platform")] = platform_str
+
+    final_user_agent = "{}/{} {} ({})".format(
+        USER_AGENT_PREFIX, VERSION, framework, platform_str
+    )
+    if user_agent:
+        final_user_agent = "{} {}".format(user_agent, final_user_agent)
+
+    properties[types.AMQPSymbol("user-agent")] = final_user_agent
     return properties
 
 
@@ -158,99 +179,21 @@ def generate_dead_letter_entity_name(
     return entity_name
 
 
-class AutoLockRenew(object):
-    """Auto renew locks for messages and sessions using a background thread pool.
-
-    :param executor: A user-specified thread pool. This cannot be combined with
-     setting `max_workers`.
-    :type executor: ~concurrent.futures.ThreadPoolExecutor
-    :param max_workers: Specify the maximum workers in the thread pool. If not
-     specified the number used will be derived from the core count of the environment.
-     This cannot be combined with `executor`.
-    :type max_workers: int
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-            :start-after: [START auto_lock_renew_message_sync]
-            :end-before: [END auto_lock_renew_message_sync]
-            :language: python
-            :dedent: 4
-            :caption: Automatically renew a message lock
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-            :start-after: [START auto_lock_renew_session_sync]
-            :end-before: [END auto_lock_renew_session_sync]
-            :language: python
-            :dedent: 4
-            :caption: Automatically renew a session lock
-
+def copy_messages_to_sendable_if_needed(messages):
     """
-
-    def __init__(self, executor=None, max_workers=None):
-        self.executor = executor or ThreadPoolExecutor(max_workers=max_workers)
-        self._shutdown = threading.Event()
-        self.sleep_time = 1
-        self.renew_period = 10
-
-    def __enter__(self):
-        if self._shutdown.is_set():
-            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
-                                  " auto lock renewing.")
-        return self
-
-    def __exit__(self, *args):
-        self.shutdown()
-
-    def _renewable(self, renewable):
-        if self._shutdown.is_set():
-            return False
-        if hasattr(renewable, '_settled') and renewable._settled:  # pylint: disable=protected-access
-            return False
-        if renewable._lock_expired:  # pylint: disable=protected-access
-            return False
-        return True
-
-    def _auto_lock_renew(self, renewable, starttime, timeout):
-        _log.debug("Running lock auto-renew thread for %r seconds", timeout)
+    This method is to convert single/multiple received messages to sendable messages to enable message resending.
+    """
+    # pylint: disable=protected-access
+    try:
+        msgs_to_return = []
+        for each in messages:
+            try:
+                msgs_to_return.append(each._to_outgoing_message())
+            except AttributeError:
+                msgs_to_return.append(each)
+        return msgs_to_return
+    except TypeError:
         try:
-            while self._renewable(renewable):
-                if (utc_now() - starttime) >= datetime.timedelta(seconds=timeout):
-                    _log.debug("Reached auto lock renew timeout - letting lock expire.")
-                    raise AutoLockRenewTimeout("Auto-renew period ({} seconds) elapsed.".format(timeout))
-                if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=self.renew_period):
-                    _log.debug("%r seconds or less until lock expires - auto renewing.", self.renew_period)
-                    renewable.renew_lock()
-                time.sleep(self.sleep_time)
-        except AutoLockRenewTimeout as e:
-            renewable.auto_renew_error = e
-        except Exception as e:  # pylint: disable=broad-except
-            _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
-            error = AutoLockRenewFailed(
-                "Failed to auto-renew lock",
-                inner_exception=e)
-            renewable.auto_renew_error = error
-
-    def register(self, renewable, timeout=300):
-        """Register a renewable entity for automatic lock renewal.
-
-        :param renewable: A locked entity that needs to be renewed.
-        :type renewable: ~azure.servicebus.ReceivedMessage or
-         ~azure.servicebus.Session
-        :param float timeout: A time in seconds that the lock should be maintained for.
-         Default value is 300 (5 minutes).
-        """
-        if self._shutdown.is_set():
-            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
-                                  " auto lock renewing.")
-        starttime = renewable_start_time(renewable)
-        self.executor.submit(self._auto_lock_renew, renewable, starttime, timeout)
-
-    def shutdown(self, wait=True):
-        """Shutdown the thread pool to clean up any remaining lock renewal threads.
-
-        :param wait: Whether to block until thread pool has shutdown. Default is `True`.
-        :type wait: bool
-        """
-        self._shutdown.set()
-        self.executor.shutdown(wait=wait)
+            return messages._to_outgoing_message()
+        except AttributeError:
+            return messages

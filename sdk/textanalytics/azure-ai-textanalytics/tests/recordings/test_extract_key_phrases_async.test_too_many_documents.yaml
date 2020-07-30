@@ -17,7 +17,7 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.0/keyPhrases?showStats=false
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/keyPhrases?showStats=false
   response:
     body:
       string: '{"documents":[{"id":"0","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]},{"id":"6","keyPhrases":[],"warnings":[]},{"id":"7","keyPhrases":[],"warnings":[]},{"id":"8","keyPhrases":[],"warnings":[]},{"id":"9","keyPhrases":[],"warnings":[]},{"id":"10","keyPhrases":[],"warnings":[]}],"errors":[{"id":"","error":{"code":"InvalidRequest","message":"The
@@ -25,16 +25,16 @@ interactions:
         number of documents in the request have exceeded the data limitations. See
         https://aka.ms/text-analytics-data-limits for additional information"}}}],"modelVersion":"2019-10-01"}'
     headers:
-      apim-request-id: 146279f0-8cf2-4535-9b76-c747d7ac701d
+      apim-request-id: e01332a2-e954-4808-a67d-16aeb9a9ea60
       content-type: application/json; charset=utf-8
       csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=11
-      date: Mon, 06 Jul 2020 22:22:33 GMT
+      date: Fri, 24 Jul 2020 16:32:49 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '21'
+      x-envoy-upstream-service-time: '7'
     status:
       code: 200
       message: OK
-    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.0/keyPhrases?showStats=false
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/keyPhrases?showStats=false
 version: 1
