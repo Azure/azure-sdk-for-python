@@ -5,10 +5,8 @@
 """Tests for the HttpLoggingPolicy."""
 
 import logging
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+import types
+from unittest.mock import Mock
 from azure.core.pipeline import (
     PipelineResponse,
     PipelineRequest,
@@ -270,7 +268,9 @@ def test_http_logger_with_generator_body():
     policy = HttpLoggingPolicy(logger=logger)
 
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
-    universal_request.body = _g()
+    mock = Mock()
+    mock.__class__ = types.GeneratorType
+    universal_request.body = mock
     http_response = HttpResponse(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))

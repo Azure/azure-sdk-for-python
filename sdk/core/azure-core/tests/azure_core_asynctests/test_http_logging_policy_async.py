@@ -5,12 +5,8 @@
 """Tests for the HttpLoggingPolicy."""
 
 import logging
-import pytest
-import sys
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+import types
+from unittest.mock import Mock
 from azure.core.pipeline import (
     PipelineResponse,
     PipelineRequest,
@@ -250,14 +246,7 @@ def test_http_logger_with_body():
     mock_handler.reset()
 
 
-@pytest.mark.skipif(sys.version_info < (3, 6), reason="yield in async function is not supported in 3.5")
 def test_http_logger_with_generator_body():
-
-    async def _g():
-        try:
-            yield 1
-        except SyntaxError:
-            pass
 
     class MockHandler(logging.Handler):
         def __init__(self):
@@ -276,7 +265,9 @@ def test_http_logger_with_generator_body():
     policy = HttpLoggingPolicy(logger=logger)
 
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
-    universal_request.body = _g()
+    mock = Mock()
+    mock.__class__ = types.AsyncGeneratorType
+    universal_request.body = mock
     http_response = HttpResponse(universal_request, None)
     http_response.status_code = 202
     request = PipelineRequest(universal_request, PipelineContext(None))
