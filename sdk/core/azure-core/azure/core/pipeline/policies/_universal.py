@@ -415,6 +415,21 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             for header, value in http_request.headers.items():
                 value = self._redact_header(header, value)
                 logger.info("    %r: %r", header, value)
+            if isinstance(http_request.body, types.GeneratorType):
+                logger.info("File upload")
+                return
+            try:
+                if isinstance(http_request.body, types.AsyncGeneratorType):
+                    logger.info("File upload")
+                    return
+            except AttributeError:
+                pass
+            if http_request.body:
+                logger.info("A body is sent with the request")
+                return
+            else:
+                logger.info("No body was attached to the request")
+                return
         except Exception as err:  # pylint: disable=broad-except
             logger.warning("Failed to log request: %s", repr(err))
 
