@@ -9,14 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._subscriptions_operations import SubscriptionsOperations
-from ._tenants_operations import TenantsOperations
-from ._subscription_client_operations import SubscriptionClientOperationsMixin
+VERSION = "2019-06-01-preview"
 
-__all__ = [
-    'Operations',
-    'SubscriptionsOperations',
-    'TenantsOperations',
-    'SubscriptionClientOperationsMixin',
-]

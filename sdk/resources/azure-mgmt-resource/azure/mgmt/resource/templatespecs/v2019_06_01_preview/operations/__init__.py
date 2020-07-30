@@ -9,14 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._subscriptions_operations import SubscriptionsOperations
-from ._tenants_operations import TenantsOperations
-from ._subscription_client_operations import SubscriptionClientOperationsMixin
+from ._template_specs_operations import TemplateSpecsOperations
+from ._template_spec_versions_operations import TemplateSpecVersionsOperations
 
 __all__ = [
-    'Operations',
-    'SubscriptionsOperations',
-    'TenantsOperations',
-    'SubscriptionClientOperationsMixin',
+    'TemplateSpecsOperations',
+    'TemplateSpecVersionsOperations',
 ]

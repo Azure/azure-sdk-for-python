@@ -1185,7 +1185,7 @@ class OnErrorDeploymentExtended(Model):
         self.deployment_name = kwargs.get('deployment_name', None)
 
 
-class Operation(Model):
+class Operation1(Model):
     """Microsoft.Resources operation.
 
     :param name: Operation name: {provider}/{resource}/{operation}
@@ -1201,7 +1201,7 @@ class Operation(Model):
     }
 
     def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
+        super(Operation1, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.display = kwargs.get('display', None)
 
@@ -1794,7 +1794,7 @@ class TagsPatchResource(Model):
     :param operation: The operation type for the patch API. Possible values
      include: 'Replace', 'Merge', 'Delete'
     :type operation: str or
-     ~azure.mgmt.resource.resources.v2019_10_01.models.enum
+     ~azure.mgmt.resource.resources.v2019_10_01.models.Operation
     :param properties: The set of tags.
     :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
     """

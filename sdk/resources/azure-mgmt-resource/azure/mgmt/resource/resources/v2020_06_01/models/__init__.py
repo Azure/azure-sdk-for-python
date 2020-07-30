@@ -12,7 +12,9 @@
 try:
     from ._models_py3 import Alias
     from ._models_py3 import AliasPath
+    from ._models_py3 import AliasPathMetadata
     from ._models_py3 import AliasPattern
+    from ._models_py3 import ApiProfile
     from ._models_py3 import BasicDependency
     from ._models_py3 import DebugSetting
     from ._models_py3 import Dependency
@@ -39,7 +41,7 @@ try:
     from ._models_py3 import IdentityUserAssignedIdentitiesValue
     from ._models_py3 import OnErrorDeployment
     from ._models_py3 import OnErrorDeploymentExtended
-    from ._models_py3 import Operation
+    from ._models_py3 import Operation1
     from ._models_py3 import OperationDisplay
     from ._models_py3 import ParametersLink
     from ._models_py3 import Plan
@@ -74,7 +76,9 @@ try:
 except (SyntaxError, ImportError):
     from ._models import Alias
     from ._models import AliasPath
+    from ._models import AliasPathMetadata
     from ._models import AliasPattern
+    from ._models import ApiProfile
     from ._models import BasicDependency
     from ._models import DebugSetting
     from ._models import Dependency
@@ -101,7 +105,7 @@ except (SyntaxError, ImportError):
     from ._models import IdentityUserAssignedIdentitiesValue
     from ._models import OnErrorDeployment
     from ._models import OnErrorDeploymentExtended
-    from ._models import Operation
+    from ._models import Operation1
     from ._models import OperationDisplay
     from ._models import ParametersLink
     from ._models import Plan
@@ -136,7 +140,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import DeploymentExtendedPaged
 from ._paged_models import DeploymentOperationPaged
 from ._paged_models import GenericResourceExpandedPaged
-from ._paged_models import OperationPaged
+from ._paged_models import Operation1Paged
 from ._paged_models import ProviderPaged
 from ._paged_models import ResourceGroupPaged
 from ._paged_models import TagDetailsPaged
@@ -144,6 +148,8 @@ from ._resource_management_client_enums import (
     DeploymentMode,
     OnErrorDeploymentType,
     WhatIfResultFormat,
+    AliasPathTokenType,
+    AliasPathAttributes,
     AliasPatternType,
     AliasType,
     ProvisioningState,
@@ -151,12 +157,15 @@ from ._resource_management_client_enums import (
     ProvisioningOperation,
     PropertyChangeType,
     ChangeType,
+    Operation,
 )
 
 __all__ = [
     'Alias',
     'AliasPath',
+    'AliasPathMetadata',
     'AliasPattern',
+    'ApiProfile',
     'BasicDependency',
     'DebugSetting',
     'Dependency',
@@ -183,7 +192,7 @@ __all__ = [
     'IdentityUserAssignedIdentitiesValue',
     'OnErrorDeployment',
     'OnErrorDeploymentExtended',
-    'Operation',
+    'Operation1',
     'OperationDisplay',
     'ParametersLink',
     'Plan',
@@ -215,7 +224,7 @@ __all__ = [
     'WhatIfChange',
     'WhatIfOperationResult',
     'WhatIfPropertyChange',
-    'OperationPaged',
+    'Operation1Paged',
     'DeploymentExtendedPaged',
     'ProviderPaged',
     'GenericResourceExpandedPaged',
@@ -225,6 +234,8 @@ __all__ = [
     'DeploymentMode',
     'OnErrorDeploymentType',
     'WhatIfResultFormat',
+    'AliasPathTokenType',
+    'AliasPathAttributes',
     'AliasPatternType',
     'AliasType',
     'ProvisioningState',
@@ -232,4 +243,5 @@ __all__ = [
     'ProvisioningOperation',
     'PropertyChangeType',
     'ChangeType',
+    'Operation',
 ]
