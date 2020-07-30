@@ -85,7 +85,7 @@ class PublicIPAddressesOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param public_ip_address_name: The name of the subnet.
+        :param public_ip_address_name: The name of the public IP address.
         :type public_ip_address_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -126,7 +126,7 @@ class PublicIPAddressesOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param public_ip_address_name: The name of the subnet.
+        :param public_ip_address_name: The name of the public IP address.
         :type public_ip_address_name: str
         :param expand: Expands referenced resources.
         :type expand: str
