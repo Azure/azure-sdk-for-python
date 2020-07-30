@@ -321,17 +321,17 @@ additional questions or comments.
 [azure_keyvault_secrets]: ../../keyvault/azure-keyvault-secrets
 [azure_storage_blob]: ../../storage/azure-storage-blob
 
-[ref_docs]: https://aka.ms/azsdk-python-identity-docs
-[ref_docs_aio]: https://aka.ms/azsdk-python-identity-aio-docs
-[cert_cred_ref]: https://aka.ms/azsdk-python-identity-cert-cred-ref
-[chain_cred_ref]: https://aka.ms/azsdk-python-identity-chain-cred-ref
-[client_secret_cred_ref]: https://aka.ms/azsdk-python-identity-client-secret-cred-ref
-[client_secret_cred_aio_ref]: https://aka.ms/azsdk-python-identity-client-secret-cred-aio-ref
-[default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
-[device_code_cred_ref]: https://aka.ms/azsdk-python-identity-device-code-cred-ref
-[environment_cred_ref]: https://aka.ms/azsdk-python-identity-environment-cred-ref
-[interactive_cred_ref]: https://aka.ms/azsdk-python-identity-interactive-cred-ref
-[managed_id_cred_ref]: https://aka.ms/azsdk-python-identity-managed-id-cred-ref
-[userpass_cred_ref]: https://aka.ms/azsdk-python-identity-userpass-cred-ref
+[ref_docs]: https://aka.ms/azsdk/python/identity/docs
+[ref_docs_aio]: https://aka.ms/azsdk/python/identity/aio/docs
+[cert_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.CertificateCredential
+[chain_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ChainedTokenCredential
+[client_secret_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ClientSecretCredential
+[client_secret_cred_aio_ref]: https://aka.ms/azsdk/python/identity/aio/docs#azure.identity.aio.ClientSecretCredential
+[default_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
+[device_code_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DeviceCodeCredential
+[environment_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.EnvironmentCredential
+[interactive_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.InteractiveBrowserCredential
+[managed_id_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ManagedIdentityCredential
+[userpass_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.UsernamePasswordCredential
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fidentity%2Fazure-identity%2FREADME.png)
