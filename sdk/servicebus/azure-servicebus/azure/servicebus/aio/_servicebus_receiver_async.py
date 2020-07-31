@@ -138,11 +138,13 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             try:
                 return await self._do_retryable_operation(self._iter_next)
             except StopAsyncIteration:
-                await self.close()
+                self._message_iter = None
                 raise
 
     async def _iter_next(self):
         await self._open()
+        if not self._message_iter:
+            self._message_iter = self._handler.receive_messages_iter_async()  # pylint: disable=attribute-defined-outside-init
         uamqp_message = await self._message_iter.__anext__()
         message = self._build_message(uamqp_message, ReceivedMessage)
         return message
@@ -161,19 +163,19 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
             timeout=self._idle_timeout * 1000 if self._idle_timeout else 0,
-            prefetch=self._prefetch
+            prefetch=self._prefetch,
+            shutdown_after_timeout=False
         )
 
     async def _open(self):
         if self._running:
             return
-        if self._handler:
+        if self._handler and self._handler._shutdown:
             await self._handler.close_async()
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
         try:
             await self._handler.open_async(connection=self._connection)
-            self._message_iter = self._handler.receive_messages_iter_async()  # pylint: disable=attribute-defined-outside-init
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
             self._running = True
@@ -247,6 +249,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             message,
             mgmt_handlers.lock_renew_op
         )
+
+    def receive_forever(self):
+        return self
 
     @classmethod
     def from_connection_string(

@@ -1646,3 +1646,83 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert message_1st_received_cnt == 20 and message_2nd_received_cnt == 20
                 # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
                 assert receive_counter < 10  # Dynamic link credit issuing come info effect
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_queue_receiver_alive_after_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = Message("0")
+                message_1 = Message("1")
+                sender.send_messages([message, message_1])
+
+                messages = []
+                with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+                    
+                    for message in receiver.receive_forever():
+                        messages.append(message)
+                        break
+
+                    for message in receiver.receive_forever():
+                        messages.append(message)
+
+                    for m in messages:
+                        m.complete()
+
+                    assert len(messages) == 2
+                    assert str(messages[0]) == "0"
+                    assert str(messages[1]) == "1"
+
+                    message_2 = Message("2")
+                    message_3 = Message("3")
+                    sender.send_messages([message_2, message_3])
+
+                    for message in receiver.receive_forever():
+                        messages.append(message)
+                        for message in receiver.receive_forever():
+                            messages.append(message)
+
+                    assert len(messages) == 4
+                    assert str(messages[2]) == "2"
+                    assert str(messages[3]) == "3"
+
+                    for m in messages[2:]:
+                        m.complete()
+
+                    messages = receiver.receive_messages()
+                    assert not messages
+
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_queue_receiver_sender_resume_after_link_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = Message("0")
+                sender.send_messages(message)
+
+                time.sleep(60 * 5)
+
+                message_1 = Message("1")
+                sender.send_messages(message_1)
+
+                messages = []
+                with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+                    
+                    for message in receiver.receive_forever():
+                        messages.append(message)
+                assert len(messages) == 2

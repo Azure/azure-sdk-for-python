@@ -133,7 +133,23 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._populate_attributes(**kwargs)
 
     def __iter__(self):
-        return self
+        return self._iter_contextual_wrapper()
+
+    def _iter_contextual_wrapper(self, max_wait_time=None):
+        original_timeout = None
+        while True:
+            # This is not threadsafe, but gives us a way to handle if someone passes
+            # different max_wait_times to different iterators and uses them in concert.
+            if max_wait_time:
+                original_timeout = self._handler._timeout
+                self._handler._timeout = max_wait_time * 1000
+            try:
+                yield next(self)
+            except StopIteration:
+                break
+            finally:
+                if original_timeout:
+                    self._handler._timeout = original_timeout
 
     def __next__(self):
         self._check_live()
@@ -141,13 +157,15 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             try:
                 return self._do_retryable_operation(self._iter_next)
             except StopIteration:
-                self.close()
+                self._message_iter = None
                 raise
 
     next = __next__  # for python2.7
 
     def _iter_next(self):
         self._open()
+        if not self._message_iter:
+            self._message_iter = self._handler.receive_messages_iter()  # pylint: disable=attribute-defined-outside-init
         uamqp_message = next(self._message_iter)
         message = self._build_message(uamqp_message)
         return message
@@ -167,20 +185,20 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
             timeout=self._idle_timeout * 1000 if self._idle_timeout else 0,
-            prefetch=self._prefetch
+            prefetch=self._prefetch,
+            shutdown_after_timeout=False
         )
 
     def _open(self):
         if self._running:
             return
-        if self._handler:
+        if self._handler and not self._handler._shutdown:
             self._handler.close()
 
         auth = None if self._connection else create_authentication(self)
         self._create_handler(auth)
         try:
             self._handler.open(connection=self._connection)
-            self._message_iter = self._handler.receive_messages_iter()  # pylint: disable=attribute-defined-outside-init
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._running = True
@@ -257,6 +275,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             message,
             mgmt_handlers.lock_renew_op
         )
+
+    def receive_forever(self, max_wait_time = None):
+        return self._iter_contextual_wrapper(max_wait_time)
 
     @classmethod
     def from_connection_string(
