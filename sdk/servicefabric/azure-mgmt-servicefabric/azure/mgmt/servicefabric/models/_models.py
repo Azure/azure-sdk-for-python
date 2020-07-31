@@ -2329,9 +2329,9 @@ class NodeType(ManagedProxyResource):
      This count should match the capacity property in the corresponding
      VirtualMachineScaleSet resource.
     :type vm_instance_count: int
-    :param disk_size_in_gb: Required. Disk size for each vm in the node type
+    :param data_disk_size_gb: Required. Disk size for each vm in the node type
      in GBs.
-    :type disk_size_in_gb: int
+    :type data_disk_size_gb: int
     :param placement_properties: The placement tags applied to nodes in the
      node type, which can be used to indicate where certain services (workload)
      should run.
@@ -2383,7 +2383,7 @@ class NodeType(ManagedProxyResource):
         'type': {'readonly': True},
         'is_primary': {'required': True},
         'vm_instance_count': {'required': True, 'maximum': 2147483647, 'minimum': 1},
-        'disk_size_in_gb': {'required': True},
+        'data_disk_size_gb': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -2394,7 +2394,7 @@ class NodeType(ManagedProxyResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'is_primary': {'key': 'properties.isPrimary', 'type': 'bool'},
         'vm_instance_count': {'key': 'properties.vmInstanceCount', 'type': 'int'},
-        'disk_size_in_gb': {'key': 'properties.diskSizeInGB', 'type': 'int'},
+        'data_disk_size_gb': {'key': 'properties.dataDiskSizeGB', 'type': 'int'},
         'placement_properties': {'key': 'properties.placementProperties', 'type': '{str}'},
         'capacities': {'key': 'properties.capacities', 'type': '{str}'},
         'application_ports': {'key': 'properties.applicationPorts', 'type': 'EndpointRangeDescription'},
@@ -2413,7 +2413,7 @@ class NodeType(ManagedProxyResource):
         super(NodeType, self).__init__(**kwargs)
         self.is_primary = kwargs.get('is_primary', None)
         self.vm_instance_count = kwargs.get('vm_instance_count', None)
-        self.disk_size_in_gb = kwargs.get('disk_size_in_gb', None)
+        self.data_disk_size_gb = kwargs.get('data_disk_size_gb', None)
         self.placement_properties = kwargs.get('placement_properties', None)
         self.capacities = kwargs.get('capacities', None)
         self.application_ports = kwargs.get('application_ports', None)

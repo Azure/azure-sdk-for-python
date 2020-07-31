@@ -2329,9 +2329,9 @@ class NodeType(ManagedProxyResource):
      This count should match the capacity property in the corresponding
      VirtualMachineScaleSet resource.
     :type vm_instance_count: int
-    :param disk_size_in_gb: Required. Disk size for each vm in the node type
+    :param data_disk_size_gb: Required. Disk size for each vm in the node type
      in GBs.
-    :type disk_size_in_gb: int
+    :type data_disk_size_gb: int
     :param placement_properties: The placement tags applied to nodes in the
      node type, which can be used to indicate where certain services (workload)
      should run.
@@ -2383,7 +2383,7 @@ class NodeType(ManagedProxyResource):
         'type': {'readonly': True},
         'is_primary': {'required': True},
         'vm_instance_count': {'required': True, 'maximum': 2147483647, 'minimum': 1},
-        'disk_size_in_gb': {'required': True},
+        'data_disk_size_gb': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -2394,7 +2394,7 @@ class NodeType(ManagedProxyResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'is_primary': {'key': 'properties.isPrimary', 'type': 'bool'},
         'vm_instance_count': {'key': 'properties.vmInstanceCount', 'type': 'int'},
-        'disk_size_in_gb': {'key': 'properties.diskSizeInGB', 'type': 'int'},
+        'data_disk_size_gb': {'key': 'properties.dataDiskSizeGB', 'type': 'int'},
         'placement_properties': {'key': 'properties.placementProperties', 'type': '{str}'},
         'capacities': {'key': 'properties.capacities', 'type': '{str}'},
         'application_ports': {'key': 'properties.applicationPorts', 'type': 'EndpointRangeDescription'},
@@ -2409,11 +2409,11 @@ class NodeType(ManagedProxyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, is_primary: bool, vm_instance_count: int, disk_size_in_gb: int, tags=None, placement_properties=None, capacities=None, application_ports=None, ephemeral_ports=None, vm_size: str=None, vm_image_publisher: str=None, vm_image_offer: str=None, vm_image_sku: str=None, vm_image_version: str=None, vm_secrets=None, vm_extensions=None, **kwargs) -> None:
+    def __init__(self, *, is_primary: bool, vm_instance_count: int, data_disk_size_gb: int, tags=None, placement_properties=None, capacities=None, application_ports=None, ephemeral_ports=None, vm_size: str=None, vm_image_publisher: str=None, vm_image_offer: str=None, vm_image_sku: str=None, vm_image_version: str=None, vm_secrets=None, vm_extensions=None, **kwargs) -> None:
         super(NodeType, self).__init__(tags=tags, **kwargs)
         self.is_primary = is_primary
         self.vm_instance_count = vm_instance_count
-        self.disk_size_in_gb = disk_size_in_gb
+        self.data_disk_size_gb = data_disk_size_gb
         self.placement_properties = placement_properties
         self.capacities = capacities
         self.application_ports = application_ports

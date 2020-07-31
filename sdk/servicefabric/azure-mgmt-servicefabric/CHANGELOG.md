@@ -4,21 +4,21 @@
 
 **Features**
 
-  - Model StatelessServiceUpdateProperties has a new parameter instance_close_delay_duration
-  - Model ApplicationResource has a new parameter managed_identities
-  - Model ApplicationResource has a new parameter identity
-  - Model StatefulServiceProperties has a new parameter service_dns_name
-  - Model ServiceResourceProperties has a new parameter service_dns_name
-  - Model ApplicationResourceUpdate has a new parameter managed_identities
-  - Model Cluster has a new parameter application_type_versions_cleanup_policy
-  - Model StatelessServiceProperties has a new parameter service_dns_name
   - Model StatelessServiceProperties has a new parameter instance_close_delay_duration
-  - Model ClusterUpdateParameters has a new parameter application_type_versions_cleanup_policy
-  - Model DiagnosticsStorageAccountConfig has a new parameter protected_account_key_name2
+  - Model StatelessServiceProperties has a new parameter service_dns_name
+  - Model StatelessServiceUpdateProperties has a new parameter instance_close_delay_duration
   - Model ServiceResource has a new parameter service_dns_name
+  - Model ServiceResourceProperties has a new parameter service_dns_name
+  - Model Cluster has a new parameter application_type_versions_cleanup_policy
+  - Model ApplicationResourceUpdate has a new parameter managed_identities
+  - Model StatefulServiceProperties has a new parameter service_dns_name
   - Model ApplicationUpgradePolicy has a new parameter upgrade_mode
-  - Added operation ClusterVersionsOperations.list_by_os
+  - Model DiagnosticsStorageAccountConfig has a new parameter protected_account_key_name2
+  - Model ApplicationResource has a new parameter identity
+  - Model ApplicationResource has a new parameter managed_identities
+  - Model ClusterUpdateParameters has a new parameter application_type_versions_cleanup_policy
   - Added operation group NodeTypesOperations
+  - Added operation group ManagedClusterVersionsOperations
   - Added operation group ManagedClustersOperations
 
 ## 0.4.0 (2019-08-19)

@@ -21,6 +21,7 @@ from .operations import ApplicationTypeVersionsOperations
 from .operations import ApplicationsOperations
 from .operations import ServicesOperations
 from .operations import ManagedClustersOperations
+from .operations import ManagedClusterVersionsOperations
 from .operations import NodeTypesOperations
 from . import models
 
@@ -47,6 +48,8 @@ class ServiceFabricManagementClient(SDKClient):
     :vartype services: azure.mgmt.servicefabric.operations.ServicesOperations
     :ivar managed_clusters: ManagedClusters operations
     :vartype managed_clusters: azure.mgmt.servicefabric.operations.ManagedClustersOperations
+    :ivar managed_cluster_versions: ManagedClusterVersions operations
+    :vartype managed_cluster_versions: azure.mgmt.servicefabric.operations.ManagedClusterVersionsOperations
     :ivar node_types: NodeTypes operations
     :vartype node_types: azure.mgmt.servicefabric.operations.NodeTypesOperations
 
@@ -83,6 +86,8 @@ class ServiceFabricManagementClient(SDKClient):
         self.services = ServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_clusters = ManagedClustersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_cluster_versions = ManagedClusterVersionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.node_types = NodeTypesOperations(
             self._client, self.config, self._serialize, self._deserialize)
