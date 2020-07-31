@@ -240,7 +240,7 @@ class FormField(object):
     def _from_generated(cls, field, value, read_result):
         return cls(
             value_type=adjust_value_type(value.type) if value else None,
-            label_data=FieldData._from_generated(field, read_result),
+            label_data=None,  # not returned with receipt/supervised
             value_data=FieldData._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
             name=field,
@@ -290,7 +290,7 @@ class FieldData(FormElement):
 
     @classmethod
     def _from_generated(cls, field, read_result):
-        if field is None or isinstance(field, six.string_types):
+        if field is None or all(field_data is None for field_data in [field.page, field.text, field.bounding_box]):
             return None
         return cls(
             page_number=field.page,
