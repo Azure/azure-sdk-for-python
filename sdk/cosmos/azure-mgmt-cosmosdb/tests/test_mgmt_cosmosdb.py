@@ -31,9 +31,13 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
             account_name,
             {
                 'location': location,
-                'locations': [{
-                    'location_name': self.region
-                }]
+                'properties': {
+                    'locations': [{
+                        'location_name': self.region
+                    }],
+                    "createMode": "Default"
+                }
+                
             }
         )
         account = async_cosmosdb_create.result()
