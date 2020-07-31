@@ -36,6 +36,7 @@ from ._paged_models import UpdatePaged
 from ._maintenance_management_client_enums import (
     UpdateStatus,
     MaintenanceScope,
+    Visibility,
     ImpactType,
 )
 
@@ -49,11 +50,12 @@ __all__ = [
     'OperationInfo',
     'Resource',
     'Update',
-    'ConfigurationAssignmentPaged',
     'MaintenanceConfigurationPaged',
+    'ConfigurationAssignmentPaged',
     'OperationPaged',
     'UpdatePaged',
     'UpdateStatus',
     'MaintenanceScope',
+    'Visibility',
     'ImpactType',
 ]

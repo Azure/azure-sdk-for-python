@@ -183,9 +183,48 @@ class MaintenanceConfiguration(Resource):
     :type extension_properties: dict[str, str]
     :param maintenance_scope: Gets or sets maintenanceScope of the
      configuration. Possible values include: 'All', 'Host', 'Resource',
-     'InResource'
+     'InResource', 'OSImage', 'Extension', 'InGuestPatch', 'SQLDB',
+     'SQLManagedInstance'
     :type maintenance_scope: str or
      ~azure.mgmt.maintenance.models.MaintenanceScope
+    :param start_date_time: Effective start date of the maintenance window in
+     YYYY-MM-DD hh:mm format. The start date can be set to either the current
+     date or future date. The window will be created in the time zone provided
+     and adjusted to daylight savings according to that time zone.
+    :type start_date_time: str
+    :param expiration_date_time: Effective expiration date of the maintenance
+     window in YYYY-MM-DD hh:mm format. The window will be created in the time
+     zone provided and adjusted to daylight savings according to that time
+     zone. Expiration date must be set to a future date. If not provided, it
+     will be set to the maximum datetime 9999-12-31 23:59:59.
+    :type expiration_date_time: str
+    :param duration: Duration of the maintenance window in HH:mm format. If
+     not provided, default value will be used based on maintenance scope
+     provided. Example: 05:00.
+    :type duration: str
+    :param time_zone: Name of the timezone. List of timezones can be obtained
+     by executing [System.TimeZoneInfo]::GetSystemTimeZones() in PowerShell.
+     Example: Pacific Standard Time, UTC, W. Europe Standard Time, Korea
+     Standard Time, Cen. Australia Standard Time.
+    :type time_zone: str
+    :param recur_every: Rate at which a Maintenance window is expected to
+     recur. The rate can be expressed as daily, weekly, or monthly schedules.
+     Daily schedule are formatted as recurEvery: [Frequency as
+     integer]['Day(s)']. If no frequency is provided, the default frequency is
+     1. Daily schedule examples are recurEvery: Day, recurEvery: 3Days.  Weekly
+     schedule are formatted as recurEvery: [Frequency as integer]['Week(s)']
+     [Optional comma separated list of weekdays Monday-Sunday]. Weekly schedule
+     examples are recurEvery: 3Weeks, recurEvery: Week Saturday,Sunday. Monthly
+     schedules are formatted as [Frequency as integer]['Month(s)'] [Comma
+     separated list of month days] or [Frequency as integer]['Month(s)'] [Week
+     of Month (First, Second, Third, Fourth, Last)] [Weekday Monday-Sunday].
+     Monthly schedule examples are recurEvery: Month, recurEvery: 2Months,
+     recurEvery: Month day23,day24, recurEvery: Month Last Sunday, recurEvery:
+     Month Fourth Monday.
+    :type recur_every: str
+    :param visibility: Gets or sets the visibility of the configuration.
+     Possible values include: 'Custom', 'Public'
+    :type visibility: str or ~azure.mgmt.maintenance.models.Visibility
     """
 
     _validation = {
@@ -203,6 +242,12 @@ class MaintenanceConfiguration(Resource):
         'namespace': {'key': 'properties.namespace', 'type': 'str'},
         'extension_properties': {'key': 'properties.extensionProperties', 'type': '{str}'},
         'maintenance_scope': {'key': 'properties.maintenanceScope', 'type': 'str'},
+        'start_date_time': {'key': 'properties.maintenanceWindow.startDateTime', 'type': 'str'},
+        'expiration_date_time': {'key': 'properties.maintenanceWindow.expirationDateTime', 'type': 'str'},
+        'duration': {'key': 'properties.maintenanceWindow.duration', 'type': 'str'},
+        'time_zone': {'key': 'properties.maintenanceWindow.timeZone', 'type': 'str'},
+        'recur_every': {'key': 'properties.maintenanceWindow.recurEvery', 'type': 'str'},
+        'visibility': {'key': 'properties.visibility', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -212,6 +257,12 @@ class MaintenanceConfiguration(Resource):
         self.namespace = kwargs.get('namespace', None)
         self.extension_properties = kwargs.get('extension_properties', None)
         self.maintenance_scope = kwargs.get('maintenance_scope', None)
+        self.start_date_time = kwargs.get('start_date_time', None)
+        self.expiration_date_time = kwargs.get('expiration_date_time', None)
+        self.duration = kwargs.get('duration', None)
+        self.time_zone = kwargs.get('time_zone', None)
+        self.recur_every = kwargs.get('recur_every', None)
+        self.visibility = kwargs.get('visibility', None)
 
 
 class MaintenanceError(Model):
@@ -302,7 +353,8 @@ class Update(Model):
     """Maintenance update on a resource.
 
     :param maintenance_scope: The impact area. Possible values include: 'All',
-     'Host', 'Resource', 'InResource'
+     'Host', 'Resource', 'InResource', 'OSImage', 'Extension', 'InGuestPatch',
+     'SQLDB', 'SQLManagedInstance'
     :type maintenance_scope: str or
      ~azure.mgmt.maintenance.models.MaintenanceScope
     :param impact_type: The impact type. Possible values include: 'None',
