@@ -7,5 +7,5 @@
 from ._text_analytics_client_async import TextAnalyticsClient
 
 __all__ = [
-    'TextAnalyticsClient'
+    'TextAnalyticsClient',
 ]
