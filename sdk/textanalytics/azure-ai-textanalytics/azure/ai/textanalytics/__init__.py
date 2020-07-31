@@ -26,8 +26,11 @@ from ._models import (
     TextDocumentBatchStatistics,
     SentenceSentiment,
     SentimentConfidenceScores,
+    MinedOpinion,
+    AspectSentiment,
+    OpinionSentiment,
     RecognizePiiEntitiesResult,
-    PiiEntity
+    PiiEntity,
 )
 
 __all__ = [
@@ -51,6 +54,9 @@ __all__ = [
     'TextDocumentBatchStatistics',
     'SentenceSentiment',
     'SentimentConfidenceScores',
+    'MinedOpinion',
+    'AspectSentiment',
+    'OpinionSentiment',
     'RecognizePiiEntitiesResult',
     'PiiEntity',
 ]

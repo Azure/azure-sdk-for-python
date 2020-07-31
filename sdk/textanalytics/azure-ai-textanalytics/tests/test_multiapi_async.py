@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import ApiVersion
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
