@@ -20,7 +20,8 @@
   - Removed instance variable `header`.
 
 * Removed several properties and instance variables on PeekMessage and ReceivedMessage.
-  - Removed proeprty `partition_id` on both type.
+  - Removed property `partition_id` on both type.
+  - Removed property `settled` on both type.
   - Removed instance variable `received_timestamp_utc` on both type.
   - Removed property `settled` on `PeekMessage`.
   - Removed property `expired` on `ReceivedMessage`.
