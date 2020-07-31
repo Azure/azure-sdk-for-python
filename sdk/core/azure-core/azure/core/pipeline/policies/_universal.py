@@ -288,8 +288,17 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                 # We don't want to log the binary data of a file upload.
                 if isinstance(http_request.body, types.GeneratorType):
                     _LOGGER.debug("File upload")
-                else:
+                    return
+                try:
+                    if isinstance(http_request.body, types.AsyncGeneratorType):
+                        _LOGGER.debug("File upload")
+                        return
+                except AttributeError:
+                    pass
+                if http_request.body:
                     _LOGGER.debug(str(http_request.body))
+                    return
+                _LOGGER.debug("This request has no body")
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
