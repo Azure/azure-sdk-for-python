@@ -103,17 +103,25 @@ class SecretClient(KeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
+        content_type = kwargs.pop("content_type", None)
         if enabled is not None or not_before is not None or expires_on is not None:
             attributes = self._models.SecretAttributes(
                 enabled=enabled, not_before=not_before, expires=expires_on
             )
         else:
             attributes = None
+
+        parameters = self._models.SecretSetParameters(
+            value=value,
+            tags=kwargs.pop("tags", None),
+            content_type=content_type,
+            secret_attributes=attributes
+        )
+
         bundle = self._client.set_secret(
             vault_base_url=self.vault_url,
             secret_name=name,
-            value=value,
-            secret_attributes=attributes,
+            parameters=parameters,
             error_map=_error_map,
             **kwargs
         )
@@ -152,17 +160,25 @@ class SecretClient(KeyVaultClientBase):
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
         expires_on = kwargs.pop("expires_on", None)
+        content_type = kwargs.pop("content_type", None)
         if enabled is not None or not_before is not None or expires_on is not None:
             attributes = self._models.SecretAttributes(
                 enabled=enabled, not_before=not_before, expires=expires_on
             )
         else:
             attributes = None
+
+        parameters = self._models.SecretUpdateParameters(
+            content_type=content_type,
+            secret_attributes=attributes,
+            tags=kwargs.pop("tags", None)
+        )
+
         bundle = self._client.update_secret(
             self.vault_url,
             name,
             secret_version=version or "",
-            secret_attributes=attributes,
+            parameters=parameters,
             error_map=_error_map,
             **kwargs
         )
@@ -268,7 +284,12 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
 
         """
-        bundle = self._client.restore_secret(self.vault_url, backup, error_map=_error_map, **kwargs)
+        bundle = self._client.restore_secret(
+            self.vault_url,
+            parameters=self._models.SecretRestoreParameters(secret_bundle_backup=backup),
+            error_map=_error_map,
+            **kwargs
+        )
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace
