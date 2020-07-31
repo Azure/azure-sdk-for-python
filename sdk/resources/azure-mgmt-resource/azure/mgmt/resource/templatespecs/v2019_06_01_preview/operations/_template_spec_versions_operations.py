@@ -52,18 +52,18 @@ class TemplateSpecVersionsOperations(object):
         :param template_spec_version_model: Template Spec Version supplied to
          the operation.
         :type template_spec_version_model:
-         ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecVersionModel
+         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecVersion
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TemplateSpecVersionModel or ClientRawResponse if raw=true
+        :return: TemplateSpecVersion or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecVersionModel
+         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecVersion
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecsErrorException>`
+         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsErrorException>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -91,7 +91,7 @@ class TemplateSpecVersionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(template_spec_version_model, 'TemplateSpecVersionModel')
+        body_content = self._serialize.body(template_spec_version_model, 'TemplateSpecVersion')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -102,9 +102,9 @@ class TemplateSpecVersionsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('TemplateSpecVersionModel', response)
+            deserialized = self._deserialize('TemplateSpecVersion', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('TemplateSpecVersionModel', response)
+            deserialized = self._deserialize('TemplateSpecVersion', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -131,12 +131,12 @@ class TemplateSpecVersionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TemplateSpecVersionModel or ClientRawResponse if raw=true
+        :return: TemplateSpecVersion or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecVersionModel
+         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecVersion
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecsErrorException>`
+         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsErrorException>`
         """
         template_spec_version_update_model = None
         if tags is not None:
@@ -182,7 +182,7 @@ class TemplateSpecVersionsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('TemplateSpecVersionModel', response)
+            deserialized = self._deserialize('TemplateSpecVersion', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -207,12 +207,12 @@ class TemplateSpecVersionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TemplateSpecVersionModel or ClientRawResponse if raw=true
+        :return: TemplateSpecVersion or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecVersionModel
+         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecVersion
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecsErrorException>`
+         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsErrorException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -247,7 +247,7 @@ class TemplateSpecVersionsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('TemplateSpecVersionModel', response)
+            deserialized = self._deserialize('TemplateSpecVersion', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -276,7 +276,7 @@ class TemplateSpecVersionsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecsErrorException>`
+         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsErrorException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -327,11 +327,11 @@ class TemplateSpecVersionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of TemplateSpecVersionModel
+        :return: An iterator like instance of TemplateSpecVersion
         :rtype:
-         ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecVersionModelPaged[~azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecVersionModel]
+         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecVersionPaged[~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecVersion]
         :raises:
-         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecsErrorException>`
+         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -380,7 +380,7 @@ class TemplateSpecVersionsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.TemplateSpecVersionModelPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.TemplateSpecVersionPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/{templateSpecName}/versions'}

@@ -25,9 +25,9 @@ class TemplateSpecsClient(SDKClient):
     :vartype config: TemplateSpecsClientConfiguration
 
     :ivar template_specs: TemplateSpecs operations
-    :vartype template_specs: azure.mgmt.resource.templatespecs.v2019_06_preview.operations.TemplateSpecsOperations
+    :vartype template_specs: azure.mgmt.resource.templatespecs.v2019_06_01_preview.operations.TemplateSpecsOperations
     :ivar template_spec_versions: TemplateSpecVersions operations
-    :vartype template_spec_versions: azure.mgmt.resource.templatespecs.v2019_06_preview.operations.TemplateSpecVersionsOperations
+    :vartype template_spec_versions: azure.mgmt.resource.templatespecs.v2019_06_01_preview.operations.TemplateSpecVersionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

@@ -28,7 +28,7 @@ class AzureResourceBase(Model):
     :ivar system_data: Azure Resource Manager metadata containing createdBy
      and modifiedBy information.
     :vartype system_data:
-     ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.SystemData
+     ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.SystemData
     """
 
     _validation = {
@@ -45,7 +45,7 @@ class AzureResourceBase(Model):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(AzureResourceBase, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -83,7 +83,7 @@ class ErrorAdditionalInfo(Model):
         'info': {'key': 'info', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -103,10 +103,10 @@ class ErrorResponse(Model):
     :vartype target: str
     :ivar details: The error details.
     :vartype details:
-     list[~azure.mgmt.resource.templatespecs.v2019_06_preview.models.ErrorResponse]
+     list[~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.ErrorResponse]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
-     list[~azure.mgmt.resource.templatespecs.v2019_06_preview.models.ErrorAdditionalInfo]
+     list[~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -125,7 +125,7 @@ class ErrorResponse(Model):
         'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -142,7 +142,7 @@ class SystemData(Model):
     :param created_by_type: The type of identity that created the resource.
      Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
     :type created_by_type: str or
-     ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.CreatedByType
+     ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.CreatedByType
     :param created_at: The timestamp of resource creation (UTC).
     :type created_at: datetime
     :param last_modified_by: The identity that last modified the resource.
@@ -151,7 +151,7 @@ class SystemData(Model):
      resource. Possible values include: 'User', 'Application',
      'ManagedIdentity', 'Key'
     :type last_modified_by_type: str or
-     ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.CreatedByType
+     ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.CreatedByType
     :param last_modified_at: The type of identity that last modified the
      resource.
     :type last_modified_at: datetime
@@ -166,51 +166,17 @@ class SystemData(Model):
         'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, created_by: str=None, created_by_type=None, created_at=None, last_modified_by: str=None, last_modified_by_type=None, last_modified_at=None, **kwargs) -> None:
         super(SystemData, self).__init__(**kwargs)
-        self.created_by = kwargs.get('created_by', None)
-        self.created_by_type = kwargs.get('created_by_type', None)
-        self.created_at = kwargs.get('created_at', None)
-        self.last_modified_by = kwargs.get('last_modified_by', None)
-        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
-        self.last_modified_at = kwargs.get('last_modified_at', None)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
-class TemplateSpecArtifact(Model):
-    """Represents a Template Spec artifact.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: TemplateSpecTemplateArtifact
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param path: Required. A filesystem safe relative path of the artifact.
-    :type path: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
-    """
-
-    _validation = {
-        'path': {'required': True},
-        'kind': {'required': True},
-    }
-
-    _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'kind': {'template': 'TemplateSpecTemplateArtifact'}
-    }
-
-    def __init__(self, **kwargs):
-        super(TemplateSpecArtifact, self).__init__(**kwargs)
-        self.path = kwargs.get('path', None)
-        self.kind = None
-
-
-class TemplateSpecModel(AzureResourceBase):
+class TemplateSpec(AzureResourceBase):
     """Template Spec object.
 
     Variables are only populated by the server, and will be ignored when
@@ -227,7 +193,7 @@ class TemplateSpecModel(AzureResourceBase):
     :ivar system_data: Azure Resource Manager metadata containing createdBy
      and modifiedBy information.
     :vartype system_data:
-     ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.SystemData
+     ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.SystemData
     :param location: Required. The location of the Template Spec. It cannot be
      changed after Template Spec creation. It must be one of the supported
      Azure locations.
@@ -261,12 +227,46 @@ class TemplateSpecModel(AzureResourceBase):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(TemplateSpecModel, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.description = kwargs.get('description', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, *, location: str, description: str=None, display_name: str=None, tags=None, **kwargs) -> None:
+        super(TemplateSpec, self).__init__(**kwargs)
+        self.location = location
+        self.description = description
+        self.display_name = display_name
+        self.tags = tags
+
+
+class TemplateSpecArtifact(Model):
+    """Represents a Template Spec artifact.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: TemplateSpecTemplateArtifact
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param path: Required. A filesystem safe relative path of the artifact.
+    :type path: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    """
+
+    _validation = {
+        'path': {'required': True},
+        'kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'path': {'key': 'path', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'template': 'TemplateSpecTemplateArtifact'}
+    }
+
+    def __init__(self, *, path: str, **kwargs) -> None:
+        super(TemplateSpecArtifact, self).__init__(**kwargs)
+        self.path = path
+        self.kind = None
 
 
 class TemplateSpecsError(Model):
@@ -274,16 +274,16 @@ class TemplateSpecsError(Model):
 
     :param error:
     :type error:
-     ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.ErrorResponse
+     ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.ErrorResponse
     """
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, error=None, **kwargs) -> None:
         super(TemplateSpecsError, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+        self.error = error
 
 
 class TemplateSpecsErrorException(HttpOperationError):
@@ -324,9 +324,9 @@ class TemplateSpecTemplateArtifact(TemplateSpecArtifact):
         'template': {'key': 'template', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(TemplateSpecTemplateArtifact, self).__init__(**kwargs)
-        self.template = kwargs.get('template', None)
+    def __init__(self, *, path: str, template, **kwargs) -> None:
+        super(TemplateSpecTemplateArtifact, self).__init__(path=path, **kwargs)
+        self.template = template
         self.kind = 'template'
 
 
@@ -345,7 +345,7 @@ class TemplateSpecUpdateModel(AzureResourceBase):
     :ivar system_data: Azure Resource Manager metadata containing createdBy
      and modifiedBy information.
     :vartype system_data:
-     ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.SystemData
+     ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.SystemData
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -365,12 +365,12 @@ class TemplateSpecUpdateModel(AzureResourceBase):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(TemplateSpecUpdateModel, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
+        self.tags = tags
 
 
-class TemplateSpecVersionModel(AzureResourceBase):
+class TemplateSpecVersion(AzureResourceBase):
     """Template Spec Version object.
 
     Variables are only populated by the server, and will be ignored when
@@ -387,13 +387,13 @@ class TemplateSpecVersionModel(AzureResourceBase):
     :ivar system_data: Azure Resource Manager metadata containing createdBy
      and modifiedBy information.
     :vartype system_data:
-     ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.SystemData
+     ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.SystemData
     :param location: Required. The location of the Template Spec Version. It
      must match the location of the parent Template Spec.
     :type location: str
     :param artifacts: An array of Template Spec artifacts.
     :type artifacts:
-     list[~azure.mgmt.resource.templatespecs.v2019_06_preview.models.TemplateSpecArtifact]
+     list[~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecArtifact]
     :param description: Template Spec version description.
     :type description: str
     :param template: The Azure Resource Manager template content.
@@ -423,13 +423,13 @@ class TemplateSpecVersionModel(AzureResourceBase):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(TemplateSpecVersionModel, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.artifacts = kwargs.get('artifacts', None)
-        self.description = kwargs.get('description', None)
-        self.template = kwargs.get('template', None)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, *, location: str, artifacts=None, description: str=None, template=None, tags=None, **kwargs) -> None:
+        super(TemplateSpecVersion, self).__init__(**kwargs)
+        self.location = location
+        self.artifacts = artifacts
+        self.description = description
+        self.template = template
+        self.tags = tags
 
 
 class TemplateSpecVersionUpdateModel(AzureResourceBase):
@@ -448,7 +448,7 @@ class TemplateSpecVersionUpdateModel(AzureResourceBase):
     :ivar system_data: Azure Resource Manager metadata containing createdBy
      and modifiedBy information.
     :vartype system_data:
-     ~azure.mgmt.resource.templatespecs.v2019_06_preview.models.SystemData
+     ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.SystemData
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -468,6 +468,6 @@ class TemplateSpecVersionUpdateModel(AzureResourceBase):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, tags=None, **kwargs) -> None:
         super(TemplateSpecVersionUpdateModel, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
+        self.tags = tags
