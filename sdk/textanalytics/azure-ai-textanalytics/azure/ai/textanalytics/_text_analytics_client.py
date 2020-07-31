@@ -451,6 +451,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
+        :keyword bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
+            granular analysis around the aspects of a product or service (also known as
+            aspect-based sentiment analysis). If set to true, the returned
+            :class:`~azure.ai.textanalytics.SentenceSentiment` objects
+            will have property `mined_opinions` containing the result of this analysis. Only available for
+            API version v3.1-preview.1.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -460,6 +466,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
+        .. versionadded:: v3.1-preview.1
+            The *show_opinion_mining* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -481,6 +489,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_batch_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        show_opinion_mining = kwargs.pop("show_opinion_mining", None)
+
+        if show_opinion_mining is not None:
+            kwargs.update({"opinion_mining": show_opinion_mining})
         try:
             return self._client.sentiment(
                 documents=docs,
@@ -489,5 +501,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
+        except TypeError as error:
+            if "opinion_mining" in str(error):
+                raise NotImplementedError(
+                    "'show_opinion_mining' is only available for API version v3.1-preview.1 and up"
+                )
+            raise error
         except HttpResponseError as error:
             process_batch_error(error)
