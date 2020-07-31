@@ -206,40 +206,19 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             entry.content.queue_description)
         return result
 
-    async def update_queue(
-            self, queue: QueueProperties,
-            *,
-            default_message_time_to_live: timedelta = None,
-            lock_duration: timedelta = None,
-            dead_lettering_on_message_expiration: bool = None,
-            duplicate_detection_history_time_window: timedelta = None,
-            max_delivery_count: int = None,
-            **kwargs) -> None:
+    async def update_queue(self, queue: QueueProperties, **kwargs) -> None:
         """Update a queue.
 
-        :param queue: The properties of this `QueueProperties` will be applied to the queue in
-         ServiceBus. Only a portion of properties can be updated.
-         Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
+        Before calling this method, you should use `get_queue` to get a `QueueProperties` instance, then update
+        the properties you want to update. Only a portion of properties can be updated.
+        Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
+
+        :param queue: The queue that is returned from `get_queue` and has the updated properties.
         :type queue: ~azure.servicebus.management.QueueProperties
-        :keyword timedelta default_message_time_to_live: The value you want to update to.
-        :keyword timedelta lock_duration: The value you want to update to.
-        :keyword bool dead_lettering_on_message_expiration: The value you want to update to.
-        :keyword timedelta duplicate_detection_history_time_window: The value you want to update to.
-        :keyword int max_delivery_count: The value you want to update to.
         :rtype: None
         """
 
         to_update = queue._to_internal_entity()
-
-        to_update.default_message_time_to_live = default_message_time_to_live \
-                                                 or queue.default_message_time_to_live
-        to_update.lock_duration = lock_duration or queue.lock_duration
-        to_update.dead_lettering_on_message_expiration = dead_lettering_on_message_expiration \
-                                                         or queue.dead_lettering_on_message_expiration
-        to_update.duplicate_detection_history_time_window = duplicate_detection_history_time_window or \
-                                                            queue.duplicate_detection_history_time_window
-        to_update.max_delivery_count = max_delivery_count or queue.max_delivery_count
-
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
 
@@ -373,31 +352,19 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         result = TopicProperties._from_internal_entity(topic_name, entry.content.topic_description)
         return result
 
-    async def update_topic(
-            self, topic: TopicProperties,
-            *,
-            default_message_time_to_live: timedelta = None,
-            duplicate_detection_history_time_window: timedelta = None,
-            **kwargs) -> None:
+    async def update_topic(self, topic: TopicProperties, **kwargs) -> None:
         """Update a topic.
 
-        Before calling this method, you should use `get_topic` to get a `TopicProperties` instance, then use the
-        keyword arguments to update the properties you want to update.
-        Only a portion of properties can be updated.
+        Before calling this method, you should use `get_topic` to get a `TopicProperties` instance, then
+        update the properties you want to update. Only a portion of properties can be updated.
         Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-topic.
 
-        :param ~azure.servicebus.management.TopicProperties topic: The topic to be updated.
-        :keyword timedelta default_message_time_to_live: The value you want to update to.
-        :keyword timedelta duplicate_detection_history_time_window: The value you want to update to.
+        :param topic: The topic that is returned from `get_topic` and has the updated properties.
+        :type topic: ~azure.servicebus.management.TopicProperties
         :rtype: None
         """
 
         to_update = topic._to_internal_entity()
-
-        to_update.default_message_time_to_live = default_message_time_to_live or \
-                                                 topic.default_message_time_to_live
-        to_update.duplicate_detection_history_time_window = duplicate_detection_history_time_window or \
-                                                            topic.duplicate_detection_history_time_window
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
@@ -560,11 +527,11 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         """Update a subscription.
 
         Before calling this method, you should use `get_subscription` to get a `SubscriptionProperties` instance,
-        then update the related attributes and call this method.
-        Only a portion of properties can be updated.
+        then update the properties you want to update.
 
         :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
-        :param ~azure.servicebus.management.SubscriptionProperties subscription: The subscription to be updated.
+        :param ~azure.servicebus.management.SubscriptionProperties subscription: The subscription that is returned
+         from `get_subscription` and has the updated properties.
         :rtype: None
         """
         try:
@@ -744,13 +711,13 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         """Update a rule.
 
         Before calling this method, you should use `get_rule` to get a `RuleProperties` instance,
-        then update the related attributes and call this method.
-        Only a portion of properties can be updated.
+        then update the properties you want to update.
 
         :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
         :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
          owns this rule.
-        :param ~azure.servicebus.management.RuleProperties rule: The rule to be updated.
+        :param ~azure.servicebus.management.RuleProperties rule: The rule that is returned
+         from `get_rule` and has the updated properties.
         :rtype: None
         """
 
