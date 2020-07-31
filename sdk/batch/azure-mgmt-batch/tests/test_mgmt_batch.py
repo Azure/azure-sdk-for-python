@@ -35,8 +35,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
         super(MgmtBatchTest, self).setUp()
         self.mgmt_batch_client = self.create_mgmt_client(
             azure.mgmt.batch.BatchManagementClient)
-        self.mgmt_keyvault_client = self.create_mgmt_client(
-            azure.mgmt.keyvault.KeyVaultManagementClient)
+        if self.is_live:
         self.mgmt_network = self.create_mgmt_client(
             azure.mgmt.network.NetworkManagementClient)
 
@@ -424,7 +423,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
             resource_group_name=resource_group.name,
             account_name=batch_account_name,
             parameters=batch_account).result()
-        self.mgmt_network.virtual_networks.create_or_update(
+        if self.is_live:
+            self.mgmt_network.virtual_networks.begin_create_or_update(
             resource_group_name=resource_group.name,
             virtual_network_name=vnet_name,
             parameters=self.mgmt_network.models().VirtualNetwork(
@@ -437,7 +437,7 @@ class MgmtBatchTest(AzureMgmtTestCase):
                         name=subnet_name,
                         private_endpoint_network_policies='Disabled')])
         ).result()
-        self.mgmt_network.private_endpoints.create_or_update(
+            self.mgmt_network.private_endpoints.begin_create_or_update(
             resource_group_name=resource_group.name,
             private_endpoint_name=private_endpoint_name,
             parameters=self.mgmt_network.models().PrivateEndpoint(

@@ -276,12 +276,13 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--omit-management",
-        dest="omit_management",
-        default=False,
-        action="store_true",
-        help="Flag that indicates to omit any management packages except any management packages that should not be filtered. for e.g azure-mgmt-core",
+        "--filter-type",
+        dest="filter_type",
+        default='Build',
+        help="Filter type to identify eligible packages. for e.g. packages filtered in Build can pass filter type as Build,",
+        choices=['Build', "Docs", "Regression", "Omit_management"]
     )
+
 
     args = parser.parse_args()
 
@@ -293,10 +294,7 @@ if __name__ == "__main__":
     else:
         target_dir = root_dir
 
-    if args.omit_management:
-        targeted_packages = process_glob_string(args.glob_string, target_dir, "", "Omit_management")
-    else:
-        targeted_packages = process_glob_string(args.glob_string, target_dir)
+    targeted_packages = process_glob_string(args.glob_string, target_dir, "", args.filter_type)
     extended_pytest_args = []
 
     if len(targeted_packages) == 0:
