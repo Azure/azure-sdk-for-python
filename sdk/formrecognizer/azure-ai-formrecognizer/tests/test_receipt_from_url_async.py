@@ -227,7 +227,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesHasValues(receipt.pages)
 
         for name, field in receipt.fields.items():
-            if field.value_type not in ["list", "dictionary"] and name != "ReceiptType":
+            if field.value_type not in ["list", "dictionary"] and name != "ReceiptType":  # receipt cases where value_data is None
                 self.assertFieldElementsHasValues(field.value_data.field_elements, receipt.page_range.first_page_number)
 
     @GlobalFormRecognizerAccountPreparer()
