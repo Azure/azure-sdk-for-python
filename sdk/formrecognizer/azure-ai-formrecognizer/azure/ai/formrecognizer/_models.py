@@ -9,7 +9,6 @@
 from enum import Enum
 from collections import namedtuple
 import re
-import six
 
 
 def adjust_value_type(value_type):
