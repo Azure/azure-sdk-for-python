@@ -51,6 +51,32 @@ class BindingResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(BindingResourcePaged, self).__init__(*args, **kwargs)
+class CertificateResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`CertificateResource <azure.mgmt.appplatform.models.CertificateResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CertificateResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(CertificateResourcePaged, self).__init__(*args, **kwargs)
+class CustomDomainResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`CustomDomainResource <azure.mgmt.appplatform.models.CustomDomainResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CustomDomainResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(CustomDomainResourcePaged, self).__init__(*args, **kwargs)
 class DeploymentResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`DeploymentResource <azure.mgmt.appplatform.models.DeploymentResource>` object
@@ -77,3 +103,16 @@ class OperationDetailPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationDetailPaged, self).__init__(*args, **kwargs)
+class ResourceSkuPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ResourceSku <azure.mgmt.appplatform.models.ResourceSku>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ResourceSku]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ResourceSkuPaged, self).__init__(*args, **kwargs)
