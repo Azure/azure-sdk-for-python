@@ -116,6 +116,13 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
         assert(result.total_received > 0)
 
 
+    # Cannot be defined at local scope due to pickling into multiproc runner.
+    class ReceiverTimeoutStressTestRunner(StressTestRunner):
+        def OnSend(self, state, sent_message):
+            '''Called on every successful send'''
+            if state.total_sent % 10 == 0:
+                time.sleep(self.idle_timeout + 5)
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -124,20 +131,13 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
     def test_stress_queue_pull_receive_timeout(self, servicebus_namespace_connection_string, servicebus_queue):
         sb_client = ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=True)
+        
 
-        #class IntervalStressTestRunner(StressTestRunner):
-        #    def OnSend(self, state, sent_message):
-        #        '''Called on every successful send'''
-        #        print("OnSend")
-        #        if state.total_sent % 10 == 0:
-        #            time.sleep(10)
-        #
-
-        stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
-                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
-                                       #send_delay = 10,
-                                       idle_timeout = 5,
-                                       duration=timedelta(seconds=600))
+        stress_test = ServiceBusQueueStressTests.ReceiverTimeoutStressTestRunner(
+            senders = [sb_client.get_queue_sender(servicebus_queue.name)],
+            receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
+            idle_timeout = 5,
+            duration=timedelta(seconds=600))
 
         result = stress_test.Run()
         assert(result.total_sent > 0)
