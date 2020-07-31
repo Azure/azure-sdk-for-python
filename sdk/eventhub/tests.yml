@@ -5,6 +5,7 @@ jobs:
     parameters:
       AllocateResourceGroup: 'false'
       ServiceDirectory: eventhub
+      InjectedPackages: $(WheelLocationsList)
       Matrix:
         Linux_Python35:
           OSVmImage: 'ubuntu-18.04'
