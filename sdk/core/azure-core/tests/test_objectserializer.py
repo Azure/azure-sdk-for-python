@@ -36,6 +36,23 @@ from azure.core.serialization import (
 
 def test_serialize_basic():
 
+
+    obj = {
+        'a': 42,
+        'b': 'bar'
+    }
+
+    serializer = JsonObjectSerializer()
+
+    stream = BytesIO()
+
+    serializer.serialize(stream, obj)
+
+    assert stream.getvalue() == b'{"a": 42, "b": "bar"}'
+
+
+def test_serialize_basic():
+
     class Foo:
         def __init__(self, a, b):
             self.a = a
