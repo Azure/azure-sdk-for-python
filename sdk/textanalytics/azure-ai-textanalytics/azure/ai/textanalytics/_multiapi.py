@@ -13,15 +13,11 @@ class ApiVersion(str, Enum):
     """Text Analytics API versions supported by this package"""
 
     #: this is the default version
-    V3_1_preview_1 = "v3.1-preview.1"
+    V3_1_PREVIEW_1 = "v3.1-preview.1"
     V3_0 = "v3.0"
 
 
-DEFAULT_VERSION = ApiVersion.V3_0
-
-
 def load_generated_api(api_version, aio=False):
-    api_version = api_version or DEFAULT_VERSION
     try:
         # api_version could be a string; map it to an instance of ApiVersion
         # (this is a no-op if it's already an instance of ApiVersion)
@@ -33,7 +29,7 @@ def load_generated_api(api_version, aio=False):
             + "Supported versions: {}".format(", ".join(v.value for v in ApiVersion))
         )
 
-    if api_version == ApiVersion.V3_1_preview_1:
+    if api_version == ApiVersion.V3_1_PREVIEW_1:
         if aio:
             from ._generated.v3_1_preview_1.aio import TextAnalyticsClient
         else:

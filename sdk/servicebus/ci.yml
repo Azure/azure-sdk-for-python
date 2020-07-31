@@ -33,3 +33,5 @@ extends:
       safeName: azuremgmtservicebus
     - name: azure_servicebus
       safeName: azureservicebus
+    SkipPythonVersion: 'pypy3'
+

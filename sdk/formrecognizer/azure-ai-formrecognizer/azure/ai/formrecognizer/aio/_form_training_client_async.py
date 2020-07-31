@@ -120,7 +120,7 @@ class FormTrainingClient(object):
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
             training. For example, when using a Azure storage blob URI, use the prefix to restrict sub
             folders for training.
-        :keyword bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
+        :keyword bool include_subfolders: A flag to indicate if subfolders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed. Not supported if
             training with labels.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -170,7 +170,7 @@ class FormTrainingClient(object):
                 use_label_file=use_training_labels,
                 source_filter=TrainSourceFilter(
                     prefix=kwargs.pop("prefix", ""),
-                    include_sub_folders=kwargs.pop("include_sub_folders", False)
+                    include_sub_folders=kwargs.pop("include_subfolders", False)
                 )
             ),
             cls=lambda pipeline_response, _, response_headers: pipeline_response,

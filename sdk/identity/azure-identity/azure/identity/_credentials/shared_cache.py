@@ -27,7 +27,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         contains tokens for multiple identities.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.

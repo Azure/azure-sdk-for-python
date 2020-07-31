@@ -51,7 +51,10 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session_id = str(uuid.uuid4())
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            session = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5)
+
+            with sender, session:
                 for i in range(3):
                     message = Message("Handler message no. {}".format(i))
                     message.session_id = session_id
@@ -67,11 +70,11 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message.reply_to_session_id = 'reply_to_session_id'
                     sender.send_messages(message)
 
-            with pytest.raises(ServiceBusConnectionError):
-                session = sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5)._open_with_retry()
+                with pytest.raises(ServiceBusConnectionError):
+                    session = sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5)._open_with_retry()
 
-            with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5) as session:
                 count = 0
+                received_cnt_dic = {}
                 for message in session:
                     print_message(_logger, message)
                     assert message.delivery_count == 0
@@ -80,7 +83,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     assert message.label == 'label'
                     assert message.content_type == 'application/text'
                     assert message.correlation_id == 'cid'
-                    assert message.message_id == str(count)
                     assert message.partition_key == 'pk'
                     assert message.via_partition_key == 'via_pk'
                     assert message.to == 'to'
@@ -91,8 +93,14 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     assert message.reply_to_session_id == 'reply_to_session_id'
                     count += 1
                     message.complete()
+                    if message.message_id not in received_cnt_dic:
+                        received_cnt_dic[message.message_id] = 1
+                        sender.send_messages(message)
+                    else:
+                        received_cnt_dic[message.message_id] += 1
 
-                assert count == 3
+                assert received_cnt_dic['0'] == 2 and received_cnt_dic['1'] == 2 and received_cnt_dic['2'] == 2
+                assert count == 6
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -575,10 +583,14 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message = Message("{}".format(i), session_id=session_id)
                     sender.send_messages(message)
 
+            results = []
+            def lock_lost_callback(renewable, error):
+                results.append(renewable)
+
             renewer = AutoLockRenew()
             messages = []
             with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
-                renewer.register(receiver.session, timeout=60)
+                renewer.register(receiver.session, timeout=60, on_lock_renew_failure = lock_lost_callback)
                 print("Registered lock renew thread", receiver.session._locked_until_utc, utc_now())
                 with pytest.raises(SessionLockExpired):
                     for message in receiver:
@@ -600,6 +612,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                             print("Starting second sleep")
                             time.sleep(40) # ensure renewer expires
                             print("Second sleep {}".format(receiver.session._locked_until_utc - utc_now()))
+                            assert not results
                             sleep_until_expired(receiver.session) # and then ensure it didn't slip a renew under the wire.
                             assert receiver.session._lock_expired
                             assert isinstance(receiver.session.auto_renew_error, AutoLockRenewTimeout)
@@ -610,7 +623,17 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                                 assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                             messages.append(message)
 
-            renewer.shutdown()
+            # While we're testing autolockrenew and sessions, let's make sure we don't call the lock-lost callback when a session exits.
+            renewer._renew_period = 1
+            session = None
+
+            with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, idle_timeout=5, mode=ReceiveSettleMode.PeekLock, prefetch=10) as receiver:
+                session = receiver.session
+                renewer.register(session, timeout=5, on_lock_renew_failure=lock_lost_callback)
+            sleep_until_expired(receiver.session)
+            assert not results
+
+            renewer.close()
             assert len(messages) == 2
 
 

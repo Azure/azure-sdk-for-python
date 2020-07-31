@@ -156,7 +156,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._running = False
         self._handler = None  # type: uamqp.AMQPClient
         self._auth_uri = None
-        self._properties = create_properties()
+        self._properties = create_properties(self._config.user_agent)
 
     def __enter__(self):
         self._open_with_retry()
