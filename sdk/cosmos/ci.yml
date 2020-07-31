@@ -7,6 +7,7 @@ resources:
       type: github
       name: Azure/azure-sdk-tools
       endpoint: azure
+      ref: 0aedb8f2c152440e22d49317ad417c7c1d10a67c
     - repository: azure-sdk-build-tools
       type: git
       name: internal/azure-sdk-build-tools
