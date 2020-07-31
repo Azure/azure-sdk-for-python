@@ -6,6 +6,8 @@
 
 import logging
 import types
+import pytest
+import sys
 from unittest.mock import Mock
 from azure.core.pipeline import (
     PipelineResponse,
@@ -246,6 +248,7 @@ def test_http_logger_with_body():
     mock_handler.reset()
 
 
+@pytest.mark.skipif(sys.version_info < (3, 6), reason="types.AsyncGeneratorType does not exist in 3.5")
 def test_http_logger_with_generator_body():
 
     class MockHandler(logging.Handler):
