@@ -5,7 +5,7 @@ jobs:
     parameters:
       ServiceDirectory: servicebus
       TestTimeoutInMinutes: 300
-      InjectedPackages: $(WheelLocationsList)
+      InjectedPackages: $(WheelLocationsList)
       BuildTargetingString: azure-servicebus*
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
