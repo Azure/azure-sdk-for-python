@@ -119,32 +119,32 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.reply_to = 'reply_to'
                     sender.send_messages(message)
 
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5)
-            count = 0
-            for message in receiver:
-                print_message(_logger, message)
-                assert message.delivery_count == 0
-                assert message.properties
-                assert message.properties[b'key'] == b'value'
-                assert message.label == 'label'
-                assert message.content_type == 'application/text'
-                assert message.correlation_id == 'cid'
-                assert message.message_id == str(count)
-                assert message.partition_key == 'pk'
-                assert message.via_partition_key == 'via_pk'
-                assert message.to == 'to'
-                assert message.reply_to == 'reply_to'
-                assert message.sequence_number
-                assert message.enqueued_time_utc
-                assert message.message.delivery_tag is not None
-                assert message.lock_token == message.message.delivery_annotations.get(_X_OPT_LOCK_TOKEN)
-                assert message.lock_token == uuid.UUID(bytes_le=message.message.delivery_tag)
-                assert not message.scheduled_enqueue_time_utc
-                assert not message.time_to_live
-                assert not message.session_id
-                assert not message.reply_to_session_id
-                count += 1
-                message.complete()
+            with sb_client.get_queue_receiver(servicebus_queue.name, idle_timeout=5) as receiver:
+                count = 0
+                for message in receiver:
+                    print_message(_logger, message)
+                    assert message.delivery_count == 0
+                    assert message.properties
+                    assert message.properties[b'key'] == b'value'
+                    assert message.label == 'label'
+                    assert message.content_type == 'application/text'
+                    assert message.correlation_id == 'cid'
+                    assert message.message_id == str(count)
+                    assert message.partition_key == 'pk'
+                    assert message.via_partition_key == 'via_pk'
+                    assert message.to == 'to'
+                    assert message.reply_to == 'reply_to'
+                    assert message.sequence_number
+                    assert message.enqueued_time_utc
+                    assert message.message.delivery_tag is not None
+                    assert message.lock_token == message.message.delivery_annotations.get(_X_OPT_LOCK_TOKEN)
+                    assert message.lock_token == uuid.UUID(bytes_le=message.message.delivery_tag)
+                    assert not message.scheduled_enqueue_time_utc
+                    assert not message.time_to_live
+                    assert not message.session_id
+                    assert not message.reply_to_session_id
+                    count += 1
+                    message.complete()
 
             assert count == 10
 
