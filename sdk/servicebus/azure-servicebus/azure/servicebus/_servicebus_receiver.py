@@ -474,3 +474,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             message,
             mgmt_handlers.peek_op
         )
+
+    def close(self):
+        # type: () -> None
+        super(ServiceBusReceiver, self).close()
+        self._message_iter = None  # pylint: disable=attribute-defined-outside-init

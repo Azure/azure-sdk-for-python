@@ -446,3 +446,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             message,
             mgmt_handlers.peek_op
         )
+
+    async def close(self):
+        # type: () -> None
+        await super(ServiceBusReceiver, self).close()
+        self._message_iter = None  # pylint: disable=attribute-defined-outside-init
