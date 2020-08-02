@@ -26,3 +26,9 @@ class SpendingLimit(str, Enum):
     on = "On"
     off = "Off"
     current_period_off = "CurrentPeriodOff"
+
+
+class ResourceNameStatus(str, Enum):
+
+    allowed = "Allowed"
+    reserved = "Reserved"
