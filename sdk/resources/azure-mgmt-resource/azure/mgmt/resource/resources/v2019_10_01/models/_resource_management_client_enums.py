@@ -81,3 +81,10 @@ class ChangeType(str, Enum):
     deploy = "Deploy"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource may or may not change.
     no_change = "NoChange"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource will not change.
     modify = "Modify"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource will change.
+
+
+class Operation(str, Enum):
+
+    replace = "Replace"  #: The 'replace' option replaces the entire set of existing tags with a new set.
+    merge = "Merge"  #: The 'merge' option allows adding tags with new names and updating the values of tags with existing names.
+    delete = "Delete"  #: The 'delete' option allows selectively deleting tags based on given names or name/value pairs.
