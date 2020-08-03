@@ -137,8 +137,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_detect_language.py
-                :start-after: [START batch_detect_language]
-                :end-before: [END batch_detect_language]
+                :start-after: [START detect_language]
+                :end-before: [END detect_language]
                 :language: python
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
@@ -202,8 +202,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_recognize_entities.py
-                :start-after: [START batch_recognize_entities]
-                :end-before: [END batch_recognize_entities]
+                :start-after: [START recognize_entities]
+                :end-before: [END recognize_entities]
                 :language: python
                 :dedent: 8
                 :caption: Recognize entities in a batch of documents.
@@ -267,8 +267,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_recognize_pii_entities.py
-                :start-after: [START batch_recognize_pii_entities]
-                :end-before: [END batch_recognize_pii_entities]
+                :start-after: [START recognize_pii_entities]
+                :end-before: [END recognize_pii_entities]
                 :language: python
                 :dedent: 8
                 :caption: Recognize personally identifiable information entities in a batch of documents.
@@ -339,8 +339,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_recognize_linked_entities.py
-                :start-after: [START batch_recognize_linked_entities]
-                :end-before: [END batch_recognize_linked_entities]
+                :start-after: [START recognize_linked_entities]
+                :end-before: [END recognize_linked_entities]
                 :language: python
                 :dedent: 8
                 :caption: Recognize linked entities in a batch of documents.
@@ -405,8 +405,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_extract_key_phrases.py
-                :start-after: [START batch_extract_key_phrases]
-                :end-before: [END batch_extract_key_phrases]
+                :start-after: [START extract_key_phrases]
+                :end-before: [END extract_key_phrases]
                 :language: python
                 :dedent: 8
                 :caption: Extract the key phrases in a batch of documents.
@@ -478,8 +478,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_analyze_sentiment.py
-                :start-after: [START batch_analyze_sentiment]
-                :end-before: [END batch_analyze_sentiment]
+                :start-after: [START analyze_sentiment]
+                :end-before: [END analyze_sentiment]
                 :language: python
                 :dedent: 8
                 :caption: Analyze sentiment in a batch of documents.

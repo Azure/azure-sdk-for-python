@@ -27,7 +27,7 @@ import os
 class AnalyzeSentimentSample(object):
 
     def analyze_sentiment(self):
-        # [START batch_analyze_sentiment]
+        # [START analyze_sentiment]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -48,7 +48,7 @@ class AnalyzeSentimentSample(object):
         for idx, doc in enumerate(docs):
             print("Document text: {}".format(documents[idx]))
             print("Overall sentiment: {}".format(doc.sentiment))
-        # [END batch_analyze_sentiment]
+        # [END analyze_sentiment]
             print("Overall confidence scores: positive={}; neutral={}; negative={} \n".format(
                 doc.confidence_scores.positive,
                 doc.confidence_scores.neutral,

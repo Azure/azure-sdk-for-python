@@ -141,8 +141,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_detect_language_async.py
-                :start-after: [START batch_detect_language_async]
-                :end-before: [END batch_detect_language_async]
+                :start-after: [START detect_language_async]
+                :end-before: [END detect_language_async]
                 :language: python
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
@@ -205,8 +205,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_recognize_entities_async.py
-                :start-after: [START batch_recognize_entities_async]
-                :end-before: [END batch_recognize_entities_async]
+                :start-after: [START recognize_entities_async]
+                :end-before: [END recognize_entities_async]
                 :language: python
                 :dedent: 8
                 :caption: Recognize entities in a batch of documents.
@@ -269,8 +269,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_recognize_pii_entities.py
-                :start-after: [START batch_recognize_pii_entities]
-                :end-before: [END batch_recognize_pii_entities]
+                :start-after: [START recognize_pii_entities]
+                :end-before: [END recognize_pii_entities]
                 :language: python
                 :dedent: 8
                 :caption: Recognize personally identifiable information entities in a batch of documents.
@@ -340,8 +340,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_recognize_linked_entities_async.py
-                :start-after: [START batch_recognize_linked_entities_async]
-                :end-before: [END batch_recognize_linked_entities_async]
+                :start-after: [START recognize_linked_entities_async]
+                :end-before: [END recognize_linked_entities_async]
                 :language: python
                 :dedent: 8
                 :caption: Recognize linked entities in a batch of documents.
@@ -405,8 +405,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_extract_key_phrases_async.py
-                :start-after: [START batch_extract_key_phrases_async]
-                :end-before: [END batch_extract_key_phrases_async]
+                :start-after: [START extract_key_phrases_async]
+                :end-before: [END extract_key_phrases_async]
                 :language: python
                 :dedent: 8
                 :caption: Extract the key phrases in a batch of documents.
@@ -477,8 +477,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_analyze_sentiment_async.py
-                :start-after: [START batch_analyze_sentiment_async]
-                :end-before: [END batch_analyze_sentiment_async]
+                :start-after: [START analyze_sentiment_async]
+                :end-before: [END analyze_sentiment_async]
                 :language: python
                 :dedent: 8
                 :caption: Analyze sentiment in a batch of documents.
