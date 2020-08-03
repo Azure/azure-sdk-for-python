@@ -32,7 +32,8 @@ import asyncio
 class RecognizeReceiptsSampleAsync(object):
 
     async def recognize_receipts(self):
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/receipt/contoso-allinone.jpg"))
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
+                                                            "..", "..", "./sample_forms/receipt/contoso-allinone.jpg"))
         # [START recognize_receipts_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
