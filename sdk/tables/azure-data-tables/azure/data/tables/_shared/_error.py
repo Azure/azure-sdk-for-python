@@ -9,7 +9,7 @@ from re import match
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 # from azure.data.tables._shared.parser import _str
 
-from ._constants import (
+from .._constants import (
     _ENCRYPTION_PROTOCOL_V1,
 )
 

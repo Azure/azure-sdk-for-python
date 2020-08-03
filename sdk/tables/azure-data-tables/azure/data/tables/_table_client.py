@@ -24,7 +24,7 @@ from ._serialize import _get_match_headers, _add_entity_properties
 from ._base_client import parse_connection_str
 from ._table_client_base import TableClientBase
 
-from ._shared.request_handlers import serialize_iso
+from ._serialize import serialize_iso
 from ._deserialize import process_table_error, return_headers_and_deserialized
 
 from ._version import VERSION

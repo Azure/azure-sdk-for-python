@@ -21,7 +21,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
-from .._shared._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .._authentication import SharedKeyCredentialPolicy
 from .._base_client import create_configuration
 from .._policies import (

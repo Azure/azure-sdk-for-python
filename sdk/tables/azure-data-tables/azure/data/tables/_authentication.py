@@ -16,7 +16,7 @@ except ImportError:
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
-from azure.data.tables._shared._constants import (
+from azure.data.tables._constants import (
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_SECONDARY_NAME
 )

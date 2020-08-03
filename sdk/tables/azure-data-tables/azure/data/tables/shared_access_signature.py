@@ -12,7 +12,7 @@ from ._shared._common_conversion import (
     _sign_string,
     _to_str, _to_utc_datetime,
 )
-from ._shared._constants import DEFAULT_X_MS_VERSION
+from ._constants import DEFAULT_X_MS_VERSION
 
 
 class SharedAccessSignature(object):

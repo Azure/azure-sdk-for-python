@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import platform
 import sys
-from .._generated.version import VERSION
+from ._generated.version import VERSION
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
 __version__ = '1.4.2'
