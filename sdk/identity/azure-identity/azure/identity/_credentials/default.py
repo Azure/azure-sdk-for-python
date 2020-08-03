@@ -13,7 +13,7 @@ from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
-from .vscode import VSCodeCredential
+from .vscode import VisualStudioCodeCredential
 
 
 try:
@@ -67,7 +67,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     :keyword str visual_studio_code_tenant_id: Tenant ID to use when authenticating with
-        :class:`~azure.identity.VSCodeCredential`.
+        :class:`~azure.identity.VisualStudioCodeCredential`.
     """
 
     def __init__(self, **kwargs):
@@ -112,7 +112,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VSCodeCredential(tenant_id=vscode_tenant_id))
+            credentials.append(VisualStudioCodeCredential(tenant_id=vscode_tenant_id))
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential())
         if not exclude_interactive_browser_credential:

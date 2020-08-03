@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class VSCodeCredential(AsyncCredentialBase):
+class VisualStudioCodeCredential(AsyncCredentialBase):
     """Authenticates as the Azure user signed in to Visual Studio Code.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
