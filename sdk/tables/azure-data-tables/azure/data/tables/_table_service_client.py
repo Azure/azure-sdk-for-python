@@ -21,7 +21,7 @@ from ._shared.response_handlers import process_table_error
 from ._version import VERSION
 
 from ._table_client import TableClient
-from ._shared._table_service_client_base import TableServiceClientBase
+from ._table_service_client_base import TableServiceClientBase
 
 
 class TableServiceClient(TableServiceClientBase):

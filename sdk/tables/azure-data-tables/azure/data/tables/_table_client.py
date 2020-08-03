@@ -22,7 +22,7 @@ from ._generated import AzureTable
 from ._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
 from ._serialize import _get_match_headers, _add_entity_properties
 from ._base_client import parse_connection_str
-from ._shared._table_client_base import TableClientBase
+from ._table_client_base import TableClientBase
 
 from ._shared.request_handlers import serialize_iso
 from ._shared.response_handlers import process_table_error

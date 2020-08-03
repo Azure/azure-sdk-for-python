@@ -9,8 +9,7 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-from azure.data.tables._base_client import parse_query
-from .._base_client import StorageAccountHostsMixin
+from ._base_client import parse_query, StorageAccountHostsMixin
 
 
 class TableServiceClientBase(StorageAccountHostsMixin):
