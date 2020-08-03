@@ -282,7 +282,7 @@ def test_multipart_send_with_one_changeset():
         HttpRequest("DELETE", "/container1/blob1")
     ]
 
-    changeset = HttpRequest(None, None)
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
         *requests,
         policies=[header_policy],
@@ -335,14 +335,14 @@ def test_multipart_send_with_multiple_changesets():
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
     })
 
-    changeset1 = HttpRequest(None, None)
+    changeset1 = HttpRequest("", "")
     changeset1.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1"),
         policies=[header_policy],
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
-    changeset2 = HttpRequest(None, None)
+    changeset2 = HttpRequest("", "")
     changeset2.set_multipart_mixed(
         HttpRequest("DELETE", "/container2/blob2"),
         HttpRequest("DELETE", "/container3/blob3"),
@@ -421,7 +421,7 @@ def test_multipart_send_with_combination_changeset_first():
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
     })
 
-    changeset = HttpRequest(None, None)
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1"),
@@ -484,7 +484,7 @@ def test_multipart_send_with_combination_changeset_last():
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
     })
 
-    changeset = HttpRequest(None, None)
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container1/blob1"),
         HttpRequest("DELETE", "/container2/blob2"),
@@ -547,7 +547,7 @@ def test_multipart_send_with_combination_changeset_middle():
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
     })
 
-    changeset = HttpRequest(None, None)
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container1/blob1"),
         policies=[header_policy],
