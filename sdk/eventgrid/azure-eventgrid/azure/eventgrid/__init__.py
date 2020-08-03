@@ -15,3 +15,9 @@ from .version import VERSION
 
 __all__ = ['EventGridPublisherClient', 'EventGridConsumer', 'CloudEvent', 'CustomEvent', 'DeserializedEvent', 'EventGridEvent', 'generate_shared_access_signature', 'EventGridSharedAccessSignatureCredential']
 __version__ = VERSION
+
+try:
+    from ._patch import patch_sdk
+    patch_sdk()
+except ImportError:
+    pass

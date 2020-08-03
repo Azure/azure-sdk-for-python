@@ -30,7 +30,6 @@ team_members = ["Josh", "Kerri", "Kieran", "Laurent", "Lily", "Matt", "Soren", "
 
 # publish events
 while True:
-
     event_list = []     # list of events to publish
     # create events and append to list
     for j in range(randint(1, 3)):

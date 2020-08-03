@@ -19,7 +19,7 @@ from azure.core.credentials import AzureKeyCredential
 from .shared_access_signature_credential import EventGridSharedAccessSignatureCredential
 from ._signature_credential_policy import EventGridSharedAccessSignatureCredentialPolicy
 from ._models import CloudEvent, EventGridEvent
-from ._generated.event_grid_publisher_client._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
+from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
 from .shared_access_signature_credential import EventGridSharedAccessSignatureCredential
 from . import _constants as constants
 
@@ -38,9 +38,9 @@ class EventGridPublisherClient(object):
         **kwargs  # type: Any
     ):
         # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
-        auth_policy = EventGridPublisherClient._get_authentication_policy(credential)
         self._credential = credential
         self._topic_hostname = topic_hostname
+        auth_policy = self._get_authentication_policy()
         self._client = EventGridPublisherClientImpl(authentication_policy=auth_policy, **kwargs)
 
     def send(
@@ -48,28 +48,30 @@ class EventGridPublisherClient(object):
         events,
         **kwargs
     ):
-        # type: (Union[List[CloudEvent], List[EventGridEvent], List[CustomEvent], dict], Any) -> None
+        # type: (Union[List[CloudEvent], List[EventGridEvent], List[CustomEvent]], Any) -> None
         """Sends event data to topic hostname specified during client initialization.
 
-        :param  events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent. If a dict is sent, it will be interpreted as a CloudEvent.
-        :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent], dict]
+        :param events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent. If a dict is sent, it will be interpreted as a CloudEvent.
+        :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent]]
         :rtype: None
          """
 
-        if isinstance(events[0], CloudEvent):
+        if all(isinstance(e, CloudEvent) for e in events):
+            print("sending")
+            print(events[0])
+            print(CloudEvent.serialize(events[0]))
             self._client.publish_cloud_event_events(self._topic_hostname, events)
-        elif isinstance(events[0], EventGridEvent):
+        elif all(isinstance(e, EventGridEvent) for e in events):
             self._client.publish_event_grid_events(self._topic_hostname, events)
         else:
-            print("Event schema is not correct. Please send as list of CloudEvent or list of EventGridEvent.")
-    
-    @classmethod
-    def _get_authentication_policy(cls, credential):
+          raise Exception("Event schema is not correct. Please send as list of all CloudEvents, list of all EventGridEvents, or list of all CustomEvents.")
+
+    def _get_authentication_policy(self):
         authentication_policy = None
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
-        if isinstance(credential, AzureKeyCredential):
-            authentication_policy = AzureKeyCredentialPolicy(credential=credential, name=constants.EVENTGRID_KEY_HEADER)
-        if isinstance(credential, EventGridSharedAccessSignatureCredential):
+        if self._credential is None:
+            raise ValueError("Parameter 'self._credential' must not be None.")
+        if isinstance(self._credential, AzureKeyCredential):
+            authentication_policy = AzureKeyCredentialPolicy(credential=self._credential, name=constants.EVENTGRID_KEY_HEADER)
+        if isinstance(self._credential, EventGridSharedAccessSignatureCredential):
             authentication_policy = EventGridSharedAccessSignatureCredentialPolicy(credential=credential, name=constants.EVENTGRID_TOKEN_HEADER)
         return authentication_policy

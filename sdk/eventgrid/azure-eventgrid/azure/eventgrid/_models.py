@@ -4,12 +4,12 @@
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
 from typing import Optional
-from dateutil.tz import tzutc
+from msrest.serialization import UTC
 import datetime as dt
 import uuid
 import json
 
-from ._generated.event_grid_publisher_client.models._models import StorageBlobCreatedEventData, \
+from ._generated.models._models import StorageBlobCreatedEventData, \
     EventGridEvent as InternalEventGridEvent, \
     CloudEvent as InternalCloudEvent
 
@@ -18,8 +18,8 @@ class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attrib
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required. Identifies the context in which an event happened. The combination of
-     id and source must be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
+    :param source: Required. Identifies the context in which an event happened. The combination of id and source must be 
+        unique for each distinct event. If publishing to a domain topic, source must be the domain name.
     :type source: str
     :param data: Event data specific to the event type.
     :type data: object
@@ -39,17 +39,34 @@ class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attrib
     :type id: str
     """
 
-    def __init__( self, source, type, **kwargs):
+    _validation = {
+        'source': {'required': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'data': {'key': 'data', 'type': 'object'},
+        'data_base64': {'key': 'data_base64', 'type': 'bytearray'},
+        'type': {'key': 'type', 'type': 'str'},
+        'time': {'key': 'time', 'type': 'iso-8601'},
+        'specversion': {'key': 'specversion', 'type': 'str'},
+        'dataschema': {'key': 'dataschema', 'type': 'str'},
+        'datacontenttype': {'key': 'datacontenttype', 'type': 'str'},
+        'subject': {'key': 'subject', 'type': 'str'},
+    }
+
+    def __init__(self, source, type, **kwargs):
         # type: (Any) -> None
-        self.id = kwargs.get('id', uuid.uuid4())
-        self.source = source
-        self.data = kwargs.get('data', None)
-        self.type = type
-        self.time = kwargs.get('time', dt.datetime.now(tzutc()).isoformat())
-        self.specversion = "1.0"
-        self.dataschema = kwargs.get('dataschema', None)
-        self.datacontenttype = kwargs.get('datacontenttype', None)
-        self.subject = kwargs.get('subject', None)
+        kwargs["id"] = kwargs.get('id', uuid.uuid4())
+        kwargs["source"] = source
+        kwargs["type"] = type
+        kwargs["time"] = kwargs.get('time', dt.datetime.now(UTC()).isoformat())
+        kwargs["specversion"] = "1.0"
+
+        super(CloudEvent, self).__init__(**kwargs)
 
 
 class EventGridEvent(InternalEventGridEvent):
@@ -59,21 +76,22 @@ class EventGridEvent(InternalEventGridEvent):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. An unique identifier for the event.
+    :param id: An unique identifier for the event. If not provided, one will be generated for the event.
     :type id: str
-    :param topic: The resource path of the event source.
+    :param topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
     :type topic: str
     :param subject: Required. A resource path relative to the topic path.
     :type subject: str
-    :param data: Required. Event data specific to the event type.
+    :param data: Event data specific to the event type.
     :type data: object
     :param event_type: Required. The type of the event that occurred.
     :type event_type: str
-    :param event_time: Required. The time (in UTC) the event was generated.
+    :param event_time: The time (in UTC) of the event. If not provided, it will be the time (in UTC) the event was generated.
     :type event_time: ~datetime.datetime
-    :ivar metadata_version: The schema version of the event metadata.
+    :ivar metadata_version: The schema version of the event metadata. If providedj, must match Event Grid Schema exactly.
+        If not provided, EventGrid will stamp onto event.
     :vartype metadata_version: str
-    :param data_version: Required. The schema version of the data object.
+    :param data_version: The schema version of the data object. If not provided, will be stamped with an empty value.
     :type data_version: str
     """
 
@@ -98,17 +116,15 @@ class EventGridEvent(InternalEventGridEvent):
         'data_version': {'key': 'dataVersion', 'type': 'str'},
     }
 
-    def __init__(self, subject, event_type, data_version, **kwargs):
+    def __init__(self, subject, event_type, **kwargs):
         # type: (Any) -> None
-        self.id = kwargs.get('id', uuid.uuid4())
-        self.topic = kwargs.get('topic', None)
-        self.subject = subject
-        self.data = kwargs.get('data', None)
-        self.event_type = event_type
-        self.event_time = kwargs.get('event_time', dt.datetime.now(tzutc()).isoformat())
-        self.metadata_version = "1"
-        self.data_version = data_version
+        kwargs["id"] = kwargs.get('id', uuid.uuid4())
+        kwargs["subject"] = subject
+        kwargs["event_type"] = event_type
+        kwargs["event_time"] = kwargs.get('event_time', dt.datetime.now(UTC()).isoformat())
+        kwargs["data"] = kwargs.get('data', None)
 
+        super(EventGridEvent, self).__init__(**kwargs)
 
 class DictMixin(object):
 
@@ -169,7 +185,7 @@ class DeserializedEvent(DictMixin):
         :param dict args: dict
     """
     # class variable
-    #_event_type_mappings = {'Microsoft.Storage.BlobCreated': StorageBlobCreatedEventData()}
+    _event_type_mappings = {'Microsoft.Storage.BlobCreated': StorageBlobCreatedEventData}
 
     def __init__(self, *args, **kwargs):
         # type: (Any) -> None
@@ -192,31 +208,33 @@ class DeserializedEvent(DictMixin):
 
         :rtype: Union[CloudEvent, EventGridEvent]
         """
+        event_type = ""
         if not self._model:
-            if 'specversion' in self.keys():
-                self._model = CloudEvent(**self)
-                self._model.time = dt.datetime.strptime(self._model.time, "%Y-%m-%dT%H:%M:%S.%fZ")
-                # replace all below, only for demo
-                if self['type'] == "Microsoft.Storage.BlobCreated":
-                    self._model.data = self._model.data.replace("'", "\"")
-                    self._model.data = self._model.data.replace("None", 'null')
-                    print(self._model.data)
-                    data_dict = json.loads(self._model.data)
-                    self._model.data = StorageBlobCreatedEventData(**data_dict)
+            try:
+                if 'specversion' in self.keys():
+                    self._model = CloudEvent.deserialize(self)
+                    event_type = self._model.type
                 else:
-                    self._model.data = None
-            else:
-                self._model = EventGridEvent(**self)
-                self._model.event_time = dt.datetime.strptime(self._model.time, "%Y-%m-%dT%H:%M:%S.%fZ")
-                if self['event_type'] == "Microsoft.Storage.BlobCreated":
-                    self._model.data = self._model.data.replace("'", "\"")
-                    self._model.data = self._model.data.replace("None", 'null')
-                    data_dict = json.loads(self._model.data)
-                    self._model.data = StorageBlobCreatedEventData(**data_dict)
-                else:
-                    self._model.data = None
+                    self._model = EventGridEvent.deserialize(self)
+                    event_type = self._model.event_type
+            except ValueError:
+                print("Event is not correctly formatted CloudEvent or EventGridEvent.")
+
+            self._set_strongly_typed_data_object(event_type)
 
         return self._model
+    
+    def _set_strongly_typed_data_object(self, event_type):
+        """
+        Sets self._model.data to strongly typed event object if event type exists in _event_type_mappings.
+        Otherwise, sets self._model.data to None.
+
+        :param str event_type: The event_type of the EventGridEvent object or the type of the CloudEvent object.
+        """
+        if event_type in DeserializedEvent._event_type_mappings:
+            self._model.data = (DeserializedEvent._event_type_mappings[event_type]).deserialize(self._model.data)
+        else:
+            self._model.data = None
     
 class CustomEvent(DictMixin):
     """The wrapper class for a CustomEvent, to be used when publishing events.

@@ -9,7 +9,7 @@
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
-from azure.servicebus import ReceivedMessage
+from azure.servicebus import Message
 from msrest import Deserializer, Serializer
 import json
 
@@ -21,28 +21,27 @@ from ._models import DeserializedEvent
 from ._helpers import generate_shared_access_signature
 from . import _constants as constants
 
-class EventGridConsumer:
+class EventGridConsumer(object):
     """
     A consumer responsible for deserializing event handler messages into a list of event type objects
     specified in the EventGridEvents/CloudEvents.
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        pass
-
     def deserialize_events(self, events, **kwargs):
-        # type: (azure.eventhub.EventData, azure.functions.EventGridEvent, azure.servicebus.message.ReceivedMessage, azure.functions.HttpRequest, azure.storage.queue.QueueMessage) -> List[models.DeserializedEvent]
+        # type: (Union[azure.eventhub.EventData, azure.servicebus.Message, azure.functions.HttpRequest, azure.storage.queue.QueueMessage, dict]) -> List[models.DeserializedEvent]
         """A message of a list of events in CloudEvent/EventGridEvent format from an event handler will be parsed and returned as a list of
         EventContainer objects.
         :param events: The event handler message to be deserialized.
-        :type events: azure.eventhub.EventData or azure.functions.EventGridEvent or  azure.servicebus.Message or azure.functions.HttpRequest or azure.storage.queue.QueueMessage
+        :type events: Union[azure.eventhub.EventData, azure.servicebus.Message, azure.functions.HttpRequest, azure.storage.queue.QueueMessage, dict]
         :rtype: List[models.DeserializedEvent]
 
         :raise: :class:`ValueError`, when events are not of CloudEvent or EventGridEvent format.
         """
-        if isinstance(events, ReceivedMessage):
-            dict_event = json.loads(str(events))
-            return [DeserializedEvent(dict_event)]
+        print(events)
+        #if isinstance(events, Message):
+        #    print('recieved sb queue message')
+        #    dict_event = json.loads(str(events))
+        #    print(dict_event)
+        return [DeserializedEvent(events)]
 
         return None

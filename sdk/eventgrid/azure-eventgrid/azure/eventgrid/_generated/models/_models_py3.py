@@ -6,6 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
+from typing import Dict, Optional
+
 import msrest.serialization
 
 
@@ -14,6 +17,9 @@ class CloudEvent(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
     :param id: Required. An identifier for the event. The combination of id and source must be
      unique for each distinct event.
     :type id: str
@@ -22,6 +28,8 @@ class CloudEvent(msrest.serialization.Model):
     :type source: str
     :param data: Event data specific to the event type.
     :type data: object
+    :param data_base64: Event data specific to the event type.
+    :type data_base64: bytearray
     :param type: Required. Type of event related to the originating occurrence.
     :type type: str
     :param time: The time (in UTC) the event was generated, in RFC3339 format.
@@ -46,9 +54,11 @@ class CloudEvent(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'id': {'key': 'id', 'type': 'str'},
         'source': {'key': 'source', 'type': 'str'},
         'data': {'key': 'data', 'type': 'object'},
+        'data_base64': {'key': 'data_base64', 'type': 'bytearray'},
         'type': {'key': 'type', 'type': 'str'},
         'time': {'key': 'time', 'type': 'iso-8601'},
         'specversion': {'key': 'specversion', 'type': 'str'},
@@ -59,18 +69,32 @@ class CloudEvent(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        id: str,
+        source: str,
+        type: str,
+        specversion: str,
+        additional_properties: Optional[Dict[str, object]] = None,
+        data: Optional[object] = None,
+        data_base64: Optional[bytearray] = None,
+        time: Optional[datetime.datetime] = None,
+        dataschema: Optional[str] = None,
+        datacontenttype: Optional[str] = None,
+        subject: Optional[str] = None,
         **kwargs
     ):
         super(CloudEvent, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.source = kwargs['source']
-        self.data = kwargs.get('data', None)
-        self.type = kwargs['type']
-        self.time = kwargs.get('time', None)
-        self.specversion = kwargs['specversion']
-        self.dataschema = kwargs.get('dataschema', None)
-        self.datacontenttype = kwargs.get('datacontenttype', None)
-        self.subject = kwargs.get('subject', None)
+        self.additional_properties = additional_properties
+        self.id = id
+        self.source = source
+        self.data = data
+        self.data_base64 = data_base64
+        self.type = type
+        self.time = time
+        self.specversion = specversion
+        self.dataschema = dataschema
+        self.datacontenttype = datacontenttype
+        self.subject = subject
 
 
 class EventGridEvent(msrest.serialization.Model):
@@ -121,17 +145,25 @@ class EventGridEvent(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        id: str,
+        subject: str,
+        data: object,
+        event_type: str,
+        event_time: datetime.datetime,
+        data_version: str,
+        topic: Optional[str] = None,
         **kwargs
     ):
         super(EventGridEvent, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.topic = kwargs.get('topic', None)
-        self.subject = kwargs['subject']
-        self.data = kwargs['data']
-        self.event_type = kwargs['event_type']
-        self.event_time = kwargs['event_time']
+        self.id = id
+        self.topic = topic
+        self.subject = subject
+        self.data = data
+        self.event_type = event_type
+        self.event_time = event_time
         self.metadata_version = None
-        self.data_version = kwargs['data_version']
+        self.data_version = data_version
 
 
 class StorageBlobCreatedEventData(msrest.serialization.Model):
@@ -187,21 +219,34 @@ class StorageBlobCreatedEventData(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        e_tag: Optional[str] = None,
+        content_type: Optional[str] = None,
+        content_length: Optional[int] = None,
+        content_offset: Optional[int] = None,
+        blob_type: Optional[str] = None,
+        url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+        storage_diagnostics: Optional[object] = None,
         **kwargs
     ):
         super(StorageBlobCreatedEventData, self).__init__(**kwargs)
-        self.api = kwargs.get('api', None)
-        self.client_request_id = kwargs.get('client_request_id', None)
-        self.request_id = kwargs.get('request_id', None)
-        self.e_tag = kwargs.get('e_tag', None)
-        self.content_type = kwargs.get('content_type', None)
-        self.content_length = kwargs.get('content_length', None)
-        self.content_offset = kwargs.get('content_offset', None)
-        self.blob_type = kwargs.get('blob_type', None)
-        self.url = kwargs.get('url', None)
-        self.sequencer = kwargs.get('sequencer', None)
-        self.identity = kwargs.get('identity', None)
-        self.storage_diagnostics = kwargs.get('storage_diagnostics', None)
+        self.api = api
+        self.client_request_id = client_request_id
+        self.request_id = request_id
+        self.e_tag = e_tag
+        self.content_type = content_type
+        self.content_length = content_length
+        self.content_offset = content_offset
+        self.blob_type = blob_type
+        self.url = url
+        self.sequencer = sequencer
+        self.identity = identity
+        self.storage_diagnostics = storage_diagnostics
 
 
 class StorageBlobDeletedEventData(msrest.serialization.Model):
@@ -247,18 +292,28 @@ class StorageBlobDeletedEventData(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        content_type: Optional[str] = None,
+        blob_type: Optional[str] = None,
+        url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+        storage_diagnostics: Optional[object] = None,
         **kwargs
     ):
         super(StorageBlobDeletedEventData, self).__init__(**kwargs)
-        self.api = kwargs.get('api', None)
-        self.client_request_id = kwargs.get('client_request_id', None)
-        self.request_id = kwargs.get('request_id', None)
-        self.content_type = kwargs.get('content_type', None)
-        self.blob_type = kwargs.get('blob_type', None)
-        self.url = kwargs.get('url', None)
-        self.sequencer = kwargs.get('sequencer', None)
-        self.identity = kwargs.get('identity', None)
-        self.storage_diagnostics = kwargs.get('storage_diagnostics', None)
+        self.api = api
+        self.client_request_id = client_request_id
+        self.request_id = request_id
+        self.content_type = content_type
+        self.blob_type = blob_type
+        self.url = url
+        self.sequencer = sequencer
+        self.identity = identity
+        self.storage_diagnostics = storage_diagnostics
 
 
 class StorageBlobRenamedEventData(msrest.serialization.Model):
@@ -300,17 +355,26 @@ class StorageBlobRenamedEventData(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        source_url: Optional[str] = None,
+        destination_url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+        storage_diagnostics: Optional[object] = None,
         **kwargs
     ):
         super(StorageBlobRenamedEventData, self).__init__(**kwargs)
-        self.api = kwargs.get('api', None)
-        self.client_request_id = kwargs.get('client_request_id', None)
-        self.request_id = kwargs.get('request_id', None)
-        self.source_url = kwargs.get('source_url', None)
-        self.destination_url = kwargs.get('destination_url', None)
-        self.sequencer = kwargs.get('sequencer', None)
-        self.identity = kwargs.get('identity', None)
-        self.storage_diagnostics = kwargs.get('storage_diagnostics', None)
+        self.api = api
+        self.client_request_id = client_request_id
+        self.request_id = request_id
+        self.source_url = source_url
+        self.destination_url = destination_url
+        self.sequencer = sequencer
+        self.identity = identity
+        self.storage_diagnostics = storage_diagnostics
 
 
 class StorageDirectoryCreatedEventData(msrest.serialization.Model):
@@ -352,17 +416,26 @@ class StorageDirectoryCreatedEventData(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        e_tag: Optional[str] = None,
+        url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+        storage_diagnostics: Optional[object] = None,
         **kwargs
     ):
         super(StorageDirectoryCreatedEventData, self).__init__(**kwargs)
-        self.api = kwargs.get('api', None)
-        self.client_request_id = kwargs.get('client_request_id', None)
-        self.request_id = kwargs.get('request_id', None)
-        self.e_tag = kwargs.get('e_tag', None)
-        self.url = kwargs.get('url', None)
-        self.sequencer = kwargs.get('sequencer', None)
-        self.identity = kwargs.get('identity', None)
-        self.storage_diagnostics = kwargs.get('storage_diagnostics', None)
+        self.api = api
+        self.client_request_id = client_request_id
+        self.request_id = request_id
+        self.e_tag = e_tag
+        self.url = url
+        self.sequencer = sequencer
+        self.identity = identity
+        self.storage_diagnostics = storage_diagnostics
 
 
 class StorageDirectoryDeletedEventData(msrest.serialization.Model):
@@ -404,17 +477,26 @@ class StorageDirectoryDeletedEventData(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        url: Optional[str] = None,
+        recursive: Optional[bool] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+        storage_diagnostics: Optional[object] = None,
         **kwargs
     ):
         super(StorageDirectoryDeletedEventData, self).__init__(**kwargs)
-        self.api = kwargs.get('api', None)
-        self.client_request_id = kwargs.get('client_request_id', None)
-        self.request_id = kwargs.get('request_id', None)
-        self.url = kwargs.get('url', None)
-        self.recursive = kwargs.get('recursive', None)
-        self.sequencer = kwargs.get('sequencer', None)
-        self.identity = kwargs.get('identity', None)
-        self.storage_diagnostics = kwargs.get('storage_diagnostics', None)
+        self.api = api
+        self.client_request_id = client_request_id
+        self.request_id = request_id
+        self.url = url
+        self.recursive = recursive
+        self.sequencer = sequencer
+        self.identity = identity
+        self.storage_diagnostics = storage_diagnostics
 
 
 class StorageDirectoryRenamedEventData(msrest.serialization.Model):
@@ -456,17 +538,26 @@ class StorageDirectoryRenamedEventData(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        api: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        source_url: Optional[str] = None,
+        destination_url: Optional[str] = None,
+        sequencer: Optional[str] = None,
+        identity: Optional[str] = None,
+        storage_diagnostics: Optional[object] = None,
         **kwargs
     ):
         super(StorageDirectoryRenamedEventData, self).__init__(**kwargs)
-        self.api = kwargs.get('api', None)
-        self.client_request_id = kwargs.get('client_request_id', None)
-        self.request_id = kwargs.get('request_id', None)
-        self.source_url = kwargs.get('source_url', None)
-        self.destination_url = kwargs.get('destination_url', None)
-        self.sequencer = kwargs.get('sequencer', None)
-        self.identity = kwargs.get('identity', None)
-        self.storage_diagnostics = kwargs.get('storage_diagnostics', None)
+        self.api = api
+        self.client_request_id = client_request_id
+        self.request_id = request_id
+        self.source_url = source_url
+        self.destination_url = destination_url
+        self.sequencer = sequencer
+        self.identity = identity
+        self.storage_diagnostics = storage_diagnostics
 
 
 class StorageLifecyclePolicyActionSummaryDetail(msrest.serialization.Model):
@@ -488,12 +579,16 @@ class StorageLifecyclePolicyActionSummaryDetail(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        total_objects_count: Optional[int] = None,
+        success_count: Optional[int] = None,
+        error_list: Optional[str] = None,
         **kwargs
     ):
         super(StorageLifecyclePolicyActionSummaryDetail, self).__init__(**kwargs)
-        self.total_objects_count = kwargs.get('total_objects_count', None)
-        self.success_count = kwargs.get('success_count', None)
-        self.error_list = kwargs.get('error_list', None)
+        self.total_objects_count = total_objects_count
+        self.success_count = success_count
+        self.error_list = error_list
 
 
 class StorageLifecyclePolicyCompletedEventData(msrest.serialization.Model):
@@ -524,13 +619,18 @@ class StorageLifecyclePolicyCompletedEventData(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        schedule_time: Optional[str] = None,
+        delete_summary: Optional["StorageLifecyclePolicyActionSummaryDetail"] = None,
+        tier_to_cool_summary: Optional["StorageLifecyclePolicyActionSummaryDetail"] = None,
+        tier_to_archive_summary: Optional["StorageLifecyclePolicyActionSummaryDetail"] = None,
         **kwargs
     ):
         super(StorageLifecyclePolicyCompletedEventData, self).__init__(**kwargs)
-        self.schedule_time = kwargs.get('schedule_time', None)
-        self.delete_summary = kwargs.get('delete_summary', None)
-        self.tier_to_cool_summary = kwargs.get('tier_to_cool_summary', None)
-        self.tier_to_archive_summary = kwargs.get('tier_to_archive_summary', None)
+        self.schedule_time = schedule_time
+        self.delete_summary = delete_summary
+        self.tier_to_cool_summary = tier_to_cool_summary
+        self.tier_to_archive_summary = tier_to_archive_summary
 
 
 class SubscriptionDeletedEventData(msrest.serialization.Model):
@@ -608,7 +708,9 @@ class SubscriptionValidationResponse(msrest.serialization.Model):
 
     def __init__(
         self,
+        *,
+        validation_response: Optional[str] = None,
         **kwargs
     ):
         super(SubscriptionValidationResponse, self).__init__(**kwargs)
-        self.validation_response = kwargs.get('validation_response', None)
+        self.validation_response = validation_response
