@@ -9,7 +9,7 @@ from ._shared.models import AccountSasPermissions
 from ._models import TableServices
 from ._shared._common_conversion import _sign_string
 from ._shared._error import _validate_not_none
-from ._shared.constants import X_MS_VERSION
+from ._shared._constants import X_MS_VERSION
 from .shared_access_signature import _SharedAccessHelper,\
     SharedAccessSignature, QueryStringConstants
 

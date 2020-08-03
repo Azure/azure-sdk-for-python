@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import platform
 import sys
+from .._generated.version import VERSION
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
 __version__ = '1.4.2'
@@ -49,3 +50,19 @@ _ENCRYPTION_PROTOCOL_V1 = '1.0'
 _AUTHORIZATION_HEADER_NAME = 'Authorization'
 _COPY_SOURCE_HEADER_NAME = 'x-ms-copy-source'
 _REDACTED_VALUE = 'REDACTED'
+
+
+X_MS_VERSION = VERSION
+
+# Socket timeout in seconds
+CONNECTION_TIMEOUT = 20
+READ_TIMEOUT = 20
+
+# for python 3.5+, there was a change to the definition of the socket timeout (as far as socket.sendall is concerned)
+# The socket timeout is now the maximum total duration to send all data.
+if sys.version_info >= (3, 5):
+    # the timeout to connect is 20 seconds, and the read timeout is 2000 seconds
+    # the 2000 seconds was calculated with: 100MB (max block size)/ 50KB/s (an arbitrarily chosen minimum upload speed)
+    READ_TIMEOUT = 2000
+
+STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
