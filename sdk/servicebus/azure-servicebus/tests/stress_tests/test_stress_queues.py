@@ -121,7 +121,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
         def OnSend(self, state, sent_message):
             '''Called on every successful send'''
             if state.total_sent % 10 == 0:
-                time.sleep(self.idle_timeout + 5)
+                time.sleep(self.max_wait_time + 5)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -132,11 +132,10 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
         sb_client = ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=True)
         
-
         stress_test = ServiceBusQueueStressTests.ReceiverTimeoutStressTestRunner(
             senders = [sb_client.get_queue_sender(servicebus_queue.name)],
             receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
-            idle_timeout = 5,
+            max_wait_time = 5,
             duration=timedelta(seconds=600))
 
         result = stress_test.Run()

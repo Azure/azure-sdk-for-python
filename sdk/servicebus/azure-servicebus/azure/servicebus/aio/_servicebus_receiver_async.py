@@ -6,7 +6,7 @@ import asyncio
 import collections
 import functools
 import logging
-from typing import Any, TYPE_CHECKING, List, Optional
+from typing import Any, TYPE_CHECKING, List, Optional, Iterator
 
 from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
@@ -68,7 +68,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      if the client fails to process the message.
      The default mode is PeekLock.
     :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-    :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+    :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
@@ -131,6 +131,29 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         self._populate_attributes(**kwargs)
 
+    # Python 3.5 does not allow for yielding from a coroutine, so instead of the try-finally functional wrapper
+    # trick to restore the timeout, let's use a wrapper class to maintain the override that may be specified.
+    class _IterContextualWrapper(collections.abc.AsyncIterator):
+        def __init__(self, receiver, max_wait_time=None):
+            self.receiver = receiver
+            self.max_wait_time = max_wait_time
+
+        async def __anext__(self):
+            original_timeout = None
+            # This is not threadsafe, but gives us a way to handle if someone passes
+            # different max_wait_times to different iterators and uses them in concert.
+            if self.max_wait_time and self.receiver and self.receiver._handler:
+                original_timeout = self.receiver._handler._timeout
+                self.receiver._handler._timeout = self.max_wait_time * 1000            
+            try:
+                return await self.receiver.__anext__()
+            finally:
+                if original_timeout:
+                    self._handler._timeout = original_timeout
+
+    def __aiter__(self):
+        return self._IterContextualWrapper(self)
+
     async def __anext__(self):
         self._check_live()
         while True:
@@ -161,7 +184,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
-            timeout=self._idle_timeout * 1000 if self._idle_timeout else 0,
+            timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch,
             shutdown_after_timeout=False
         )
@@ -190,7 +213,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         amqp_receive_client = self._handler
         received_messages_queue = amqp_receive_client._received_messages
         max_batch_size = max_batch_size or self._prefetch
-        timeout_ms = 1000 * (timeout or self._idle_timeout) if (timeout or self._idle_timeout) else 0
+        timeout_ms = 1000 * (timeout or self._max_wait_time) if (timeout or self._max_wait_time) else 0
         abs_timeout_ms = amqp_receive_client._counter.get_current_ms() + timeout_ms if timeout_ms else 0
 
         batch = []  # type: List[Message]
@@ -249,8 +272,18 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             mgmt_handlers.lock_renew_op
         )
 
-    def receive_forever(self):
-        return self
+    def receive_forever(self, max_wait_time: float = None) -> Iterator[ReceivedMessage]:
+        """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
+        such a timeout occurs.
+
+        :param float max_wait_time: Maximum time to wait in seconds for the next message to arrive.
+         If no messages arrive, and no timeout is specified, this call will not return
+         until the connection is closed. If specified, and no messages arrive for the
+         timeout period, the iterator will stop.
+
+         :rtype Iterator[ReceivedMessage]
+        """
+        return self._IterContextualWrapper(self, max_wait_time)
 
     @classmethod
     def from_connection_string(
@@ -273,7 +306,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          if the client fails to process the message.
          The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
@@ -334,7 +367,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          returned will depend on prefetch size and incoming stream rate.
         :param float max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. If specified, an no messages arrive within the
+         until the connection is closed. If specified, and no messages arrive within the
          timeout period, an empty list will be returned.
         :rtype: list[~azure.servicebus.aio.ReceivedMessage]
 

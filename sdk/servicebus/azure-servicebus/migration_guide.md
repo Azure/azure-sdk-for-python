@@ -35,6 +35,7 @@ semantics with the sender or receiver lifetime.
 |---|---|---|
 | `ServiceBusClient.from_connection_string()`    | `ServiceBusClient.from_connection_string()` | [using credential](./samples/sync_samples/sample_code_servicebus.py ) |
 | `QueueClient.from_connection_string()`    | `ServiceBusClient.from_connection_string().get_queue_<sender/receiver>()` | [client initialization](./samples/sync_samples/send_queue.py ) |
+| `QueueClient.from_connection_string(idle_timeout=None)` | `QueueClient.from_connection_string(max_wait_time=None)` | [providing a timeout](./samples/sync_samples/session_pool_receive.py) |
 
 ### Receiving messages
 

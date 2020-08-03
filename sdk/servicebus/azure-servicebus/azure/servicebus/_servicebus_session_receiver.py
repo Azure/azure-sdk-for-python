@@ -44,7 +44,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
      The default value is 0, meaning messages will be received from the service and processed
      one at a time. Increasing this value will improve message throughput performance but increase
      the change that messages will expire while they are cached if they're not processed fast enough.
-    :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+    :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
@@ -132,7 +132,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
          The default value is 0, meaning messages will be received from the service and processed
          one at a time. Increasing this value will improve message throughput performance but increase
          the change that messages will expire while they are cached if they're not processed fast enough.
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.

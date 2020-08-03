@@ -133,7 +133,7 @@ class StressTestRunner:
 
 
     def _Receive(self, receiver, end_time):
-        receiver._idle_timeout = self.idle_timeout
+        receiver._max_wait_time = self.max_wait_time
         with receiver:
             while end_time > datetime.utcnow():
                 print("PRIMARY STRESS TEST LOOP================= " + str(datetime.utcnow()))

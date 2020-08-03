@@ -2,6 +2,13 @@
 
 ## 7.0.0b5 (Unreleased)
 
+**New Features**
+
+* Added an explicit method to fetch the continuous receiving iterator, `receive_forever()` such that `max_wait_time` can be specified as an override.
+
+**Breaking Changes**
+
+* `idle_timeout` in `get_<queue/subscription>_receiver()` has been renamed to `max_wait_time` to normalize with naming elsewhere.
 
 ## 7.0.0b4 (2020-07-06)
 

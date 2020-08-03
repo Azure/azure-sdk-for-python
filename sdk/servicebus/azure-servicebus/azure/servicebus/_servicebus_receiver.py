@@ -5,7 +5,7 @@
 import time
 import logging
 import functools
-from typing import Any, List, TYPE_CHECKING, Optional, Dict
+from typing import Any, List, TYPE_CHECKING, Optional, Dict, Iterator
 
 from uamqp import ReceiveClient, types, Message
 from uamqp.constants import SenderSettleMode
@@ -61,7 +61,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
-    :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+    :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
@@ -183,7 +183,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             encoding=self._config.encoding,
             receive_settle_mode=self._mode.value,
             send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
-            timeout=self._idle_timeout * 1000 if self._idle_timeout else 0,
+            timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch,
             shutdown_after_timeout=False
         )
@@ -213,7 +213,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         amqp_receive_client = self._handler
         received_messages_queue = amqp_receive_client._received_messages
         max_batch_size = max_batch_size or self._prefetch
-        timeout_ms = 1000 * (timeout or self._idle_timeout) if (timeout or self._idle_timeout) else 0
+        timeout_ms = 1000 * (timeout or self._max_wait_time) if (timeout or self._max_wait_time) else 0
         abs_timeout_ms = amqp_receive_client._counter.get_current_ms() + timeout_ms if timeout_ms else 0
 
         batch = []  # type: List[Message]
@@ -276,6 +276,16 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
 
     def receive_forever(self, max_wait_time = None):
+        """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
+        such a timeout occurs.
+
+        :param float max_wait_time: Maximum time to wait in seconds for the next message to arrive.
+         If no messages arrive, and no timeout is specified, this call will not return
+         until the connection is closed. If specified, and no messages arrive for the
+         timeout period, the iterator will stop.
+
+         :rtype Iterator[ReceivedMessage]
+        """
         return self._iter_contextual_wrapper(max_wait_time)
 
     @classmethod
@@ -300,7 +310,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          if the client fails to process the message.
          The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
