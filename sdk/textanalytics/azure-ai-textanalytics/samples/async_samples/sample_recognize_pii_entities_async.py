@@ -28,7 +28,7 @@ import asyncio
 class RecognizePiiEntitiesSampleAsync(object):
 
     async def recognize_pii_entities_async(self):
-        # [START batch_recognize_pii_entities_async]
+        # [START recognize_pii_entities_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import ApiVersion
         from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -56,7 +56,7 @@ class RecognizePiiEntitiesSampleAsync(object):
                 print("Entity: {}".format(entity.text))
                 print("Category: {}".format(entity.category))
                 print("Confidence Score: {}\n".format(entity.confidence_score))
-        # [END batch_recognize_pii_entities_async]
+        # [END recognize_pii_entities_async]
 
 
 async def main():

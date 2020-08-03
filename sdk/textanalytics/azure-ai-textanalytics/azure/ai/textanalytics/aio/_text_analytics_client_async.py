@@ -15,9 +15,9 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from ._base_client_async import AsyncTextAnalyticsClientBase
-from .._request_handlers import _validate_batch_input
+from .._request_handlers import _validate_input
 from .._response_handlers import (
-    process_batch_error,
+    process_http_response_error,
     entities_result,
     linked_entities_result,
     key_phrases_result,
@@ -141,15 +141,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_detect_language_async.py
-                :start-after: [START batch_detect_language_async]
-                :end-before: [END batch_detect_language_async]
+                :start-after: [START detect_language_async]
+                :end-before: [END detect_language_async]
                 :language: python
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
         """
         country_hint_arg = kwargs.pop("country_hint", None)
         country_hint = country_hint_arg if country_hint_arg is not None else self._default_country_hint
-        docs = _validate_batch_input(documents, "country_hint", country_hint)
+        docs = _validate_input(documents, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -161,7 +161,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def recognize_entities(  # type: ignore
@@ -205,15 +205,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_recognize_entities_async.py
-                :start-after: [START batch_recognize_entities_async]
-                :end-before: [END batch_recognize_entities_async]
+                :start-after: [START recognize_entities_async]
+                :end-before: [END recognize_entities_async]
                 :language: python
                 :dedent: 8
                 :caption: Recognize entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -225,7 +225,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def recognize_pii_entities(  # type: ignore
@@ -269,15 +269,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_recognize_pii_entities.py
-                :start-after: [START batch_recognize_pii_entities]
-                :end-before: [END batch_recognize_pii_entities]
+                :start-after: [START recognize_pii_entities]
+                :end-before: [END recognize_pii_entities]
                 :language: python
                 :dedent: 8
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -295,7 +295,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 )
             raise error
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def recognize_linked_entities(  # type: ignore
@@ -340,15 +340,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_recognize_linked_entities_async.py
-                :start-after: [START batch_recognize_linked_entities_async]
-                :end-before: [END batch_recognize_linked_entities_async]
+                :start-after: [START recognize_linked_entities_async]
+                :end-before: [END recognize_linked_entities_async]
                 :language: python
                 :dedent: 8
                 :caption: Recognize linked entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -360,7 +360,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def extract_key_phrases(  # type: ignore
@@ -405,15 +405,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_extract_key_phrases_async.py
-                :start-after: [START batch_extract_key_phrases_async]
-                :end-before: [END batch_extract_key_phrases_async]
+                :start-after: [START extract_key_phrases_async]
+                :end-before: [END extract_key_phrases_async]
                 :language: python
                 :dedent: 8
                 :caption: Extract the key phrases in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -425,7 +425,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def analyze_sentiment(  # type: ignore
@@ -477,15 +477,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_analyze_sentiment_async.py
-                :start-after: [START batch_analyze_sentiment_async]
-                :end-before: [END batch_analyze_sentiment_async]
+                :start-after: [START analyze_sentiment_async]
+                :end-before: [END analyze_sentiment_async]
                 :language: python
                 :dedent: 8
                 :caption: Analyze sentiment in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
@@ -508,4 +508,4 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 )
             raise error
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
