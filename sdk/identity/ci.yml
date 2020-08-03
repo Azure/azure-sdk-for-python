@@ -31,7 +31,7 @@ extends:
   parameters:
     ServiceDirectory: identity
     AdditionalTestMatrix:
-      Linux_Python35:
+      Linux_Python35_msal:
         OSVmImage: 'ubuntu-18.04'
         PythonVersion: '3.5'
         CoverageArg: ''
