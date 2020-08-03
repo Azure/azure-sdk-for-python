@@ -58,7 +58,7 @@ class GetBoundingBoxesSample(object):
 
         for idx, form in enumerate(forms):
             print("--------RECOGNIZING FORM #{}--------".format(idx))
-            print("Form has type ID: {}".format(form.form_type))
+            print("Form has type: {}".format(form.form_type))
             for name, field in form.fields.items():
                 # each field is of type FormField
                 # The value of the field can also be a Dict[str, FormField], or a List[FormField] - in our sample, it is not.

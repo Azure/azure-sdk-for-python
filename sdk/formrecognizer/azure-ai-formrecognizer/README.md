@@ -130,7 +130,7 @@ Sample code snippets are provided to illustrate using a FormRecognizerClient [he
 ### FormTrainingClient
 `FormTrainingClient` provides operations for:
 
-- Training custom models without labels to recognize all fields and values found in your custom forms. A `CustomFormModel` is returned indicating the form type ID's the model will recognize, and the fields it will extract for each form type ID. See the [service documentation][fr-train-without-labels] for a more detailed explanation.
+- Training custom models without labels to recognize all fields and values found in your custom forms. A `CustomFormModel` is returned indicating the form type's the model will recognize, and the fields it will extract for each form type. See the [service documentation][fr-train-without-labels] for a more detailed explanation.
 - Training custom models with labels to recognize specific fields and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
 - Managing models created in your account.
 - Copying a custom model from one Form Recognizer resource to another.
@@ -181,7 +181,7 @@ poller = form_recognizer_client.begin_recognize_custom_forms(model_id=model_id, 
 result = poller.result()
 
 for recognized_form in result:
-    print("Form type ID: {}".format(recognized_form.form_type))
+    print("Form type: {}".format(recognized_form.form_type))
     for name, field in recognized_form.fields.items():
         print("Field '{}' has label '{}' with value '{}' and a confidence score of {}".format(
             name,
@@ -287,7 +287,7 @@ print("Training completed on: {}".format(model.training_completed_on))
 print("\nRecognized fields:")
 for submodel in model.submodels:
     print(
-        "The submodel with form type ID '{}' has recognized the following fields: {}".format(
+        "The submodel with form type '{}' has recognized the following fields: {}".format(
             submodel.form_type,
             ", ".join(
                 [
