@@ -85,6 +85,7 @@ jobs:
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
+      InjectedPackages: ${{ parameters.InjectedPackages }}
     - template: ../variables/globals.yml
     
     dependsOn:
@@ -106,9 +107,6 @@ jobs:
         
     pool:
       vmImage: '$(OSVmImage)'
-
-    variables:
-      InjectedPackages: ${{ parameters.InjectedPackages }}
 
     steps:    
     - pwsh: |
