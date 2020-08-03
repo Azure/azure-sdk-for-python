@@ -19,7 +19,7 @@ from azure.data.tables._generated.aio._azure_table_async import AzureTable
 from azure.data.tables._generated.models import SignedIdentifier, TableProperties, QueryOptions
 from azure.data.tables._models import AccessPolicy, Table
 from azure.data.tables._shared.base_client_async import AsyncStorageAccountHostsMixin
-from azure.data.tables._shared.policies_async import ExponentialRetry
+from azure.data.tables.aio._policies_async import ExponentialRetry
 from azure.data.tables._shared.request_handlers import serialize_iso
 from azure.data.tables._shared.response_handlers import return_headers_and_deserialized, process_table_error
 

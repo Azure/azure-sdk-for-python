@@ -5,14 +5,14 @@
 # --------------------------------------------------------------------------
 from datetime import date
 
-from azure.data.tables._shared import url_quote
+from ._shared import url_quote
 
 
-from ._common_conversion import (
+from ._shared._common_conversion import (
     _sign_string,
     _to_str, _to_utc_datetime,
 )
-from ._constants import DEFAULT_X_MS_VERSION
+from ._shared._constants import DEFAULT_X_MS_VERSION
 
 
 class SharedAccessSignature(object):

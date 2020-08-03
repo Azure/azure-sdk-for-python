@@ -23,14 +23,14 @@ from azure.core.pipeline.transport import AsyncHttpTransport
 
 from .constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .authentication import SharedKeyCredentialPolicy
-from .base_client import create_configuration
-from .policies import (
+from .._base_client import create_configuration
+from .._policies import (
     StorageContentValidation,
     StorageRequestHook,
     StorageHosts,
     StorageHeadersPolicy
 )
-from .policies_async import AsyncStorageResponseHook
+from ..aio._policies_async import AsyncStorageResponseHook
 
 from .response_handlers import process_table_error, PartialBatchErrorException
 
