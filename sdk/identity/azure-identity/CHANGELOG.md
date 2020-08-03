@@ -19,6 +19,7 @@
   - Removed `allow_unencrypted_cache` keyword argument from
     `SharedTokenCacheCredential`
   - Removed classes `AuthenticationRecord` and `AuthenticationRequiredError`
+  - Removed `identity_config` keyword argument from `ManagedIdentityCredential`
 
 ## 1.4.0b7 (2020-07-22)
 - `DefaultAzureCredential` has a new optional keyword argument,
