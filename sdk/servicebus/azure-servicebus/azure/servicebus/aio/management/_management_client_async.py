@@ -802,8 +802,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             name: str, **kwargs) -> RuleProperties:
         """Create a rule for a topic subscription.
 
-        :param name: Name of the rule.
-        :type name: str
         :keyword filter: The filter of the rule.
         :type filter: Union[~azure.servicebus.management.models.CorrelationRuleFilter,
          ~azure.servicebus.management.models.SqlRuleFilter]
