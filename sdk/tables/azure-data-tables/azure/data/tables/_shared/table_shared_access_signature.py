@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import Union
 
-from azure.data.tables._shared.models import AccountSasPermissions
+from ._shared.models import AccountSasPermissions
 from azure.data.tables._models import TableServices
 from azure.data.tables._shared._common_conversion import _sign_string
 from azure.data.tables._shared._error import _validate_not_none
