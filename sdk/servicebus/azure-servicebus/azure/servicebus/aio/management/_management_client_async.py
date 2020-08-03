@@ -188,10 +188,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
          duration of the duplicate detection history. The default value is 10 minutes.
         :type duplicate_detection_history_time_window: ~datetime.timedelta
-        :keyword entity_availability_status: Availibility status of the entity. Possible values include:
-         "Available", "Limited", "Renaming", "Restoring", "Unknown".
-        :type entity_availability_status: str or
-         ~azure.servicebus.management.EntityAvailabilityStatus
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
         :type enable_batched_operations: bool
@@ -220,9 +216,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :keyword requires_session: A value that indicates whether the queue supports the concept of
          sessions.
         :type requires_session: bool
-        :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
-         "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-        :type status: str or ~azure.servicebus.management.EntityStatus
         :keyword forward_to: The name of the recipient entity to which all the messages sent to the queue
          are forwarded to.
         :type forward_to: str
@@ -402,9 +395,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :keyword authorization_rules: Authorization rules for resource.
         :type authorization_rules:
          list[~azure.servicebus.management.AuthorizationRule]
-        :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
-         "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-        :type status: str or ~azure.servicebus.management.models.EntityStatus
         :keyword support_ordering: A value that indicates whether the topic supports ordering.
         :type support_ordering: bool
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
@@ -413,10 +403,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :keyword enable_partitioning: A value that indicates whether the topic is to be partitioned
          across multiple message brokers.
         :type enable_partitioning: bool
-        :keyword entity_availability_status: Availability status of the entity. Possible values include:
-         "Available", "Limited", "Renaming", "Restoring", "Unknown".
-        :type entity_availability_status: str or
-         ~azure.servicebus.management.models.EntityAvailabilityStatus
         :keyword enable_subscription_partitioning: A value that indicates whether the topic's
          subscription is to be partitioned.
         :type enable_subscription_partitioning: bool
@@ -605,9 +591,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
         :type enable_batched_operations: bool
-        :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
-         "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-        :type status: str or ~azure.servicebus.management.models.EntityStatus
         :keyword forward_to: The name of the recipient entity to which all the messages sent to the
          subscription are forwarded to.
         :type forward_to: str
@@ -620,10 +603,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
          automatically deleted. The minimum duration is 5 minutes.
         :type auto_delete_on_idle: ~datetime.timedelta
-        :keyword entity_availability_status: Availability status of the entity. Possible values include:
-         "Available", "Limited", "Renaming", "Restoring", "Unknown".
-        :type entity_availability_status: str or
-         ~azure.servicebus.management.models.EntityAvailabilityStatus
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         try:
