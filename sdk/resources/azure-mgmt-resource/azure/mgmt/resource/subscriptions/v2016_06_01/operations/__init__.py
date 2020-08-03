@@ -9,9 +9,11 @@
 from ._operations import Operations
 from ._subscriptions_operations import SubscriptionsOperations
 from ._tenants_operations import TenantsOperations
+from ._subscription_client_operations import SubscriptionClientOperationsMixin
 
 __all__ = [
     'Operations',
     'SubscriptionsOperations',
     'TenantsOperations',
+    'SubscriptionClientOperationsMixin',
 ]
