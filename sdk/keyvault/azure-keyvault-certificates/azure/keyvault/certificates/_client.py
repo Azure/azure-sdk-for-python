@@ -371,7 +371,7 @@ class CertificateClient(KeyVaultClientBase):
             password=kwargs.pop("password", None),
             certificate_policy=policy._to_certificate_policy_bundle() if policy else None,
             certificate_attributes=attributes,
-            tags=None,
+            tags=kwargs.pop("tags", None),
         )
 
         bundle = self._client.import_certificate(

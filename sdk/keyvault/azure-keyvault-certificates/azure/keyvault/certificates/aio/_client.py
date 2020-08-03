@@ -347,7 +347,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             password=kwargs.pop("password", None),
             certificate_policy=policy._to_certificate_policy_bundle() if policy else None,
             certificate_attributes=attributes,
-            tags=None,
+            tags=kwargs.pop("tags", None),
         )
 
         bundle = await self._client.import_certificate(
