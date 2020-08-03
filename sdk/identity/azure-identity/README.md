@@ -95,13 +95,11 @@ possible in a supported hosting environment. See Azure Active Directory's
 [managed identity documentation](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/services-support-managed-identities)
 for more information.
 
-#### Single sign-on
-During local development on Windows, [DefaultAzureCredential][default_cred_ref]
-can authenticate using a single sign-on shared with Microsoft applications, for
-example Visual Studio 2019. This may require additional configuration when
-multiple identities have signed in. In that case, set the environment variables
-`AZURE_USERNAME` (typically an email address) and `AZURE_TENANT_ID` to select
-the desired identity. Either, or both, may be set.
+## Development tool authentication
+[DefaultAzureCredential][default_cred_ref] can authenticate as the Azure user
+signed in to the Azure CLI, or Visual Studio Code. These identities are also
+available separately through [AzureCliCredential][cli_cred_ref] and
+[VisualStudioCodeCredential][vscode_cred_ref].
 
 ## Environment variables
 [DefaultAzureCredential][default_cred_ref] and
@@ -321,17 +319,19 @@ additional questions or comments.
 [azure_keyvault_secrets]: ../../keyvault/azure-keyvault-secrets
 [azure_storage_blob]: ../../storage/azure-storage-blob
 
-[ref_docs]: https://aka.ms/azsdk-python-identity-docs
-[ref_docs_aio]: https://aka.ms/azsdk-python-identity-aio-docs
-[cert_cred_ref]: https://aka.ms/azsdk-python-identity-cert-cred-ref
-[chain_cred_ref]: https://aka.ms/azsdk-python-identity-chain-cred-ref
-[client_secret_cred_ref]: https://aka.ms/azsdk-python-identity-client-secret-cred-ref
-[client_secret_cred_aio_ref]: https://aka.ms/azsdk-python-identity-client-secret-cred-aio-ref
-[default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
-[device_code_cred_ref]: https://aka.ms/azsdk-python-identity-device-code-cred-ref
-[environment_cred_ref]: https://aka.ms/azsdk-python-identity-environment-cred-ref
-[interactive_cred_ref]: https://aka.ms/azsdk-python-identity-interactive-cred-ref
-[managed_id_cred_ref]: https://aka.ms/azsdk-python-identity-managed-id-cred-ref
-[userpass_cred_ref]: https://aka.ms/azsdk-python-identity-userpass-cred-ref
+[ref_docs]: https://aka.ms/azsdk/python/identity/docs
+[ref_docs_aio]: https://aka.ms/azsdk/python/identity/aio/docs
+[cert_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.CertificateCredential
+[chain_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ChainedTokenCredential
+[cli_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureCliCredential
+[vscode_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.VisualStudioCodeCredential
+[client_secret_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ClientSecretCredential
+[client_secret_cred_aio_ref]: https://aka.ms/azsdk/python/identity/aio/docs#azure.identity.aio.ClientSecretCredential
+[default_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
+[device_code_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DeviceCodeCredential
+[environment_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.EnvironmentCredential
+[interactive_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.InteractiveBrowserCredential
+[managed_id_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.ManagedIdentityCredential
+[userpass_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.UsernamePasswordCredential
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fidentity%2Fazure-identity%2FREADME.png)
