@@ -17,7 +17,7 @@ from azure.core.exceptions import HttpResponseError
 from ._base_client_async import AsyncTextAnalyticsClientBase
 from .._request_handlers import _validate_input
 from .._response_handlers import (
-    process_batch_error,
+    process_http_response_error,
     entities_result,
     linked_entities_result,
     key_phrases_result,
@@ -161,7 +161,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def recognize_entities(  # type: ignore
@@ -225,7 +225,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def recognize_pii_entities(  # type: ignore
@@ -295,7 +295,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 )
             raise error
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def recognize_linked_entities(  # type: ignore
@@ -360,7 +360,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def extract_key_phrases(  # type: ignore
@@ -425,7 +425,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def analyze_sentiment(  # type: ignore
@@ -508,4 +508,4 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 )
             raise error
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
