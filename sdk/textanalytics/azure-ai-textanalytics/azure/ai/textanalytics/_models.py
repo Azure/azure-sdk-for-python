@@ -206,6 +206,8 @@ class CategorizedEntity(DictMixin):
     :vartype category: str
     :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
     :vartype subcategory: str
+    :param int offset: The entity text offset from the start of the sentence.
+    :param int length: The length of the entity text.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
@@ -215,6 +217,8 @@ class CategorizedEntity(DictMixin):
         self.text = kwargs.get('text', None)
         self.category = kwargs.get('category', None)
         self.subcategory = kwargs.get('subcategory', None)
+        self.offset = kwargs.get('offset', None)
+        self.length = kwargs.get('length', None)
         self.confidence_score = kwargs.get('confidence_score', None)
 
     @classmethod
@@ -223,12 +227,20 @@ class CategorizedEntity(DictMixin):
             text=entity.text,
             category=entity.category,
             subcategory=entity.subcategory,
+            offset=entity.offset,
+            length=entity.length,
             confidence_score=entity.confidence_score,
         )
 
     def __repr__(self):
-        return "CategorizedEntity(text={}, category={}, subcategory={}, confidence_score={})".format(
-            self.text, self.category, self.subcategory, self.confidence_score
+        return "CategorizedEntity(text={}, category={}, subcategory={}, "\
+            "offset={}, length={}, confidence_score={})".format(
+            self.text,
+            self.category,
+            self.subcategory,
+            self.offset,
+            self.length,
+            self.confidence_score
         )[:1024]
 
 class PiiEntity(DictMixin):
@@ -240,6 +252,8 @@ class PiiEntity(DictMixin):
         Identification/Social Security Number/Phone Number, etc.
     :ivar str subcategory: Entity subcategory, such as Credit Card/EU
         Phone number/ABA Routing Numbers, etc.
+    :param int offset: The PII entity text offset from the start of the sentence.
+    :param int length: The length of the PII entity text.
     :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     """
@@ -248,6 +262,8 @@ class PiiEntity(DictMixin):
         self.text = kwargs.get('text', None)
         self.category = kwargs.get('category', None)
         self.subcategory = kwargs.get('subcategory', None)
+        self.offset = kwargs.get('offset', None)
+        self.length = kwargs.get('length', None)
         self.confidence_score = kwargs.get('confidence_score', None)
 
     @classmethod
@@ -256,13 +272,23 @@ class PiiEntity(DictMixin):
             text=entity.text,
             category=entity.category,
             subcategory=entity.subcategory,
+            offset=entity.offset,
+            length=entity.length,
             confidence_score=entity.confidence_score,
         )
 
     def __repr__(self):
-        return "PiiEntity(text={}, category={}, subcategory={}, confidence_score={})".format(
-                   self.text, self.category, self.subcategory, self.confidence_score
-                )[:1024]
+        return (
+            "PiiEntity(text={}, category={}, subcategory={}, offset={}, length={}, "\
+            "confidence_score={})".format(
+                self.text,
+                self.category,
+                self.subcategory,
+                self.offset,
+                self.length,
+                self.confidence_score
+            )[:1024]
+        )
 
 
 class TextAnalyticsError(DictMixin):
@@ -609,23 +635,29 @@ class LinkedEntityMatch(DictMixin):
         returned.
     :vartype confidence_score: float
     :ivar text: Entity text as appears in the request.
+    :param int offset: The entity match text offset from the start of the sentence.
+    :param int length: The length of the entity match text.
     :vartype text: str
     """
 
     def __init__(self, **kwargs):
         self.confidence_score = kwargs.get("confidence_score", None)
         self.text = kwargs.get("text", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
 
     @classmethod
     def _from_generated(cls, match):
         return cls(
             confidence_score=match.confidence_score,
-            text=match.text
+            text=match.text,
+            offset=match.offset,
+            length=match.length
         )
 
     def __repr__(self):
-        return "LinkedEntityMatch(confidence_score={}, text={})".format(
-            self.confidence_score, self.text
+        return "LinkedEntityMatch(confidence_score={}, text={}, offset={}, length={})".format(
+            self.confidence_score, self.text, self.offset, self.length
         )[:1024]
 
 
@@ -706,6 +738,8 @@ class SentenceSentiment(DictMixin):
         and 1 for the sentence for all labels.
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
+    :ivar int offset: The sentence offset from the start of the sentence.
+    :ivar int length: The length of the sentence.
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in "The food is good, but the service is bad", we would
         mind these two opinions "food is good", "service is bad". Only returned
@@ -718,6 +752,8 @@ class SentenceSentiment(DictMixin):
         self.text = kwargs.get("text", None)
         self.sentiment = kwargs.get("sentiment", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
         self.mined_opinions = kwargs.get("mined_opinions", None)
 
     @classmethod
@@ -733,14 +769,19 @@ class SentenceSentiment(DictMixin):
             text=sentence.text,
             sentiment=sentence.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
+            offset=sentence.offset,
+            length=sentence.length,
             mined_opinions=mined_opinions
         )
 
     def __repr__(self):
-        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, mined_opinions={})".format(
+        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, "\
+            "offset={}, length={}, mined_opinions={})".format(
             self.text,
             self.sentiment,
             repr(self.confidence_scores),
+            self.offset,
+            self.length,
             repr(self.mined_opinions)
         )[:1024]
 
