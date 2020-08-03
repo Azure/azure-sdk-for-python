@@ -27,7 +27,7 @@ import os
 class RecognizePiiEntitiesSample(object):
 
     def recognize_pii_entities(self):
-        # [START batch_recognize_pii_entities]
+        # [START recognize_pii_entities]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient, ApiVersion
 
@@ -52,7 +52,7 @@ class RecognizePiiEntitiesSample(object):
                 print("Entity: {}".format(entity.text))
                 print("Category: {}".format(entity.category))
                 print("Confidence Score: {}\n".format(entity.confidence_score))
-        # [END batch_recognize_pii_entities]
+        # [END recognize_pii_entities]
 
 
 if __name__ == '__main__':

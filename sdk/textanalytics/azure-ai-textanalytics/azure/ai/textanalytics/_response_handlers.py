@@ -57,7 +57,7 @@ class CSODataV4Format(ODataV4Format):
             super(CSODataV4Format, self).__init__(odata_error)
 
 
-def process_batch_error(error):
+def process_http_response_error(error):
     """Raise detailed error message.
     """
     raise_error = HttpResponseError
@@ -108,14 +108,14 @@ def prepare_result(func):
             if hasattr(item, "error"):
                 results[idx] = DocumentError(id=item.id, error=TextAnalyticsError._from_generated(item.error))  # pylint: disable=protected-access
             else:
-                results[idx] = func(item)
+                results[idx] = func(item, results)
         return results
 
     return wrapper
 
 
 @prepare_result
-def language_result(language):
+def language_result(language, results):  # pylint: disable=unused-argument
     return DetectLanguageResult(
         id=language.id,
         primary_language=DetectedLanguage._from_generated(language.detected_language),  # pylint: disable=protected-access
@@ -125,7 +125,7 @@ def language_result(language):
 
 
 @prepare_result
-def entities_result(entity):
+def entities_result(entity, results):  # pylint: disable=unused-argument
     return RecognizeEntitiesResult(
         id=entity.id,
         entities=[CategorizedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
@@ -135,7 +135,7 @@ def entities_result(entity):
 
 
 @prepare_result
-def linked_entities_result(entity):
+def linked_entities_result(entity, results):  # pylint: disable=unused-argument
     return RecognizeLinkedEntitiesResult(
         id=entity.id,
         entities=[LinkedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
@@ -145,7 +145,7 @@ def linked_entities_result(entity):
 
 
 @prepare_result
-def key_phrases_result(phrases):
+def key_phrases_result(phrases, results):  # pylint: disable=unused-argument
     return ExtractKeyPhrasesResult(
         id=phrases.id,
         key_phrases=phrases.key_phrases,
@@ -155,18 +155,18 @@ def key_phrases_result(phrases):
 
 
 @prepare_result
-def sentiment_result(sentiment):
+def sentiment_result(sentiment, results):
     return AnalyzeSentimentResult(
         id=sentiment.id,
         sentiment=sentiment.sentiment,
         warnings=[TextAnalyticsWarning._from_generated(w) for w in sentiment.warnings],  # pylint: disable=protected-access
         statistics=TextDocumentStatistics._from_generated(sentiment.statistics),  # pylint: disable=protected-access
         confidence_scores=SentimentConfidenceScores._from_generated(sentiment.confidence_scores),  # pylint: disable=protected-access
-        sentences=[SentenceSentiment._from_generated(s) for s in sentiment.sentences],  # pylint: disable=protected-access
+        sentences=[SentenceSentiment._from_generated(s, results) for s in sentiment.sentences],  # pylint: disable=protected-access
     )
 
 @prepare_result
-def pii_entities_result(entity):
+def pii_entities_result(entity, results):  # pylint: disable=unused-argument
     return RecognizePiiEntitiesResult(
         id=entity.id,
         entities=[PiiEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access

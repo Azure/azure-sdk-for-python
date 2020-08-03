@@ -122,8 +122,8 @@ isodate>=0.6.0
 #override azure-keyvault-keys msrest>=0.6.0
 #override azure-keyvault-secrets msrest>=0.6.0
 #override azure-keyvault-certificates azure-core<2.0.0,>=1.4.0
-#override azure-keyvault-keys azure-core<2.0.0,>=1.4.0
-#override azure-keyvault-secrets azure-core<2.0.0,>=1.4.0
+#override azure-keyvault-keys azure-core<2.0.0,>=1.7.0
+#override azure-keyvault-secrets azure-core<2.0.0,>=1.7.0
 #override azure-ai-textanalytics msrest>=0.6.0
 #override azure-ai-textanalytics azure-core<2.0.0,>=1.4.0
 #override azure-search-documents azure-core<2.0.0,>=1.4.0
@@ -154,3 +154,4 @@ opentelemetry-api==0.10b0
 #override azure-synapse-accesscontrol azure-core>=1.6.0,<2.0.0
 #override azure-synapse-spark azure-core>=1.6.0,<2.0.0
 #override azure-synapse-artifacts azure-core>=1.6.0,<2.0.0
+#override azure-data-tables msrest>=0.6.10

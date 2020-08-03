@@ -261,7 +261,7 @@ Train a custom model on your own form type. The resulting model can be used to r
 Provide a container SAS URL to your Azure Storage Blob container where you're storing the training documents. 
 If training files are within a subfolder in the container, use the [prefix][prefix_ref_docs] keyword argument to specify under which folder to train.
 
-More details on setting up a container and required file structure can be found in the [service quickstart documentation][quickstart_training].
+More details on setting up a container and required file structure can be found in the [service documentation][training_data].
 
 ```python
 from azure.ai.formrecognizer import FormTrainingClient
@@ -440,7 +440,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [train-a-model-using-labeled-data]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/python-labeled-data#train-a-model-using-labeled-data
 
 
-[quickstart_training]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/curl-train-extract#train-a-form-recognizer-model
+[training_data]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
 [azure_subscription]: https://azure.microsoft.com/free/
 [FR_or_CS_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/

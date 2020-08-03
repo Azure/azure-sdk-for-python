@@ -51,6 +51,16 @@ class TextAnalyticsTest(AzureTestCase):
     def generate_fake_token(self):
         return FakeTokenCredential()
 
+    def assertOpinionsEqual(self, opinion_one, opinion_two):
+        self.assertEqual(opinion_one.sentiment, opinion_two.sentiment)
+        self.assertEqual(opinion_one.confidence_scores.positive, opinion_two.confidence_scores.positive)
+        self.assertEqual(opinion_one.confidence_scores.neutral, opinion_two.confidence_scores.neutral)
+        self.assertEqual(opinion_one.confidence_scores.negative, opinion_two.confidence_scores.negative)
+        self.assertEqual(opinion_one.offset, opinion_two.offset)
+        self.assertEqual(opinion_one.length, opinion_two.length)
+        self.assertEqual(opinion_one.text, opinion_two.text)
+        self.assertEqual(opinion_one.is_negated, opinion_two.is_negated)
+
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
     def __init__(self):
