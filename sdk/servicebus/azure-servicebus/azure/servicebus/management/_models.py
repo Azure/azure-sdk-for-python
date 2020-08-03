@@ -25,7 +25,58 @@ from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 adjust_attribute_map()
 
 
-class QueueProperties(object):  # pylint:disable=too-many-instance-attributes
+class DictMixin(object):
+
+    def __setitem__(self, key, item):
+        self.__dict__[key] = item
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __repr__(self):
+        return str(self)
+
+    def __len__(self):
+        return len(self.keys())
+
+    def __delitem__(self, key):
+        self.__dict__[key] = None
+
+    def __eq__(self, other):
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other):
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __str__(self):
+        return str({k: v for k, v in self.__dict__.items() if not k.startswith('_')})
+
+    def has_key(self, k):
+        return k in self.__dict__
+
+    def update(self, *args, **kwargs):
+        return self.__dict__.update(*args, **kwargs)
+
+    def keys(self):
+        return [k for k in self.__dict__ if not k.startswith('_')]
+
+    def values(self):
+        return [v for k, v in self.__dict__.items() if not k.startswith('_')]
+
+    def items(self):
+        return [(k, v) for k, v in self.__dict__.items() if not k.startswith('_')]
+
+    def get(self, key, default=None):
+        if key in self.__dict__:
+            return self.__dict__[key]
+        return default
+
+
+class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     """Properties of a Service Bus queue resource.
 
     :param name: Name of the queue.
@@ -269,7 +320,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.message_count_details.transfer_message_count
 
 
-class TopicProperties(object):  # pylint:disable=too-many-instance-attributes
+class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     """Properties of a Service Bus topic resource.
 
     :param name: Name of the topic.
@@ -299,10 +350,10 @@ class TopicProperties(object):  # pylint:disable=too-many-instance-attributes
     :type is_anonymous_accessible: bool
     :keyword authorization_rules: Authorization rules for resource.
     :type authorization_rules:
-     list[~azure.servicebus.management._generated.models.AuthorizationRule]
+     list[~azure.servicebus.management.AuthorizationRule]
     :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.servicebus.management._generated.models.EntityStatus
+    :type status: str or ~azure.servicebus.management.models.EntityStatus
     :keyword support_ordering: A value that indicates whether the topic supports ordering.
     :type support_ordering: bool
     :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
@@ -314,7 +365,7 @@ class TopicProperties(object):  # pylint:disable=too-many-instance-attributes
     :keyword entity_availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
     :type entity_availability_status: str or
-     ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
+     ~azure.servicebus.management.models.EntityAvailabilityStatus
     :keyword enable_subscription_partitioning: A value that indicates whether the topic's
      subscription is to be partitioned.
     :type enable_subscription_partitioning: bool
@@ -483,7 +534,7 @@ class TopicRuntimeProperties(object):
         return self._internal_td.message_count_details.transfer_message_count
 
 
-class SubscriptionProperties(object):  # pylint:disable=too-many-instance-attributes
+class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     """Properties of a Service Bus topic subscription resource.
 
     :param name: Name of the subscription.
@@ -513,7 +564,7 @@ class SubscriptionProperties(object):  # pylint:disable=too-many-instance-attrib
     :type enable_batched_operations: bool
     :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.servicebus.management._generated.models.EntityStatus
+    :type status: str or ~azure.servicebus.management.models.EntityStatus
     :keyword forward_to: The name of the recipient entity to which all the messages sent to the
      subscription are forwarded to.
     :type forward_to: str
@@ -529,7 +580,7 @@ class SubscriptionProperties(object):  # pylint:disable=too-many-instance-attrib
     :keyword entity_availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
     :type entity_availability_status: str or
-     ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
+     ~azure.servicebus.management.models.EntityAvailabilityStatus
     """
     def __init__(self, name, **kwargs):
         # type: (str, Any) -> None
@@ -669,7 +720,7 @@ class SubscriptionRuntimeProperties(object):
         return self._internal_sd.message_count_details.transfer_message_count
 
 
-class RuleProperties(object):
+class RuleProperties(DictMixin):
     """Properties of a topic subscription rule.
 
     :param name: Name of the rule.
