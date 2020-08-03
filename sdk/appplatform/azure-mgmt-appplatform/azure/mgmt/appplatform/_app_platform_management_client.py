@@ -16,8 +16,11 @@ from ._configuration import AppPlatformManagementClientConfiguration
 from .operations import ServicesOperations
 from .operations import AppsOperations
 from .operations import BindingsOperations
+from .operations import CertificatesOperations
+from .operations import CustomDomainsOperations
 from .operations import DeploymentsOperations
 from .operations import Operations
+from .operations import SkuOperations
 from . import models
 
 
@@ -33,10 +36,16 @@ class AppPlatformManagementClient(SDKClient):
     :vartype apps: azure.mgmt.appplatform.operations.AppsOperations
     :ivar bindings: Bindings operations
     :vartype bindings: azure.mgmt.appplatform.operations.BindingsOperations
+    :ivar certificates: Certificates operations
+    :vartype certificates: azure.mgmt.appplatform.operations.CertificatesOperations
+    :ivar custom_domains: CustomDomains operations
+    :vartype custom_domains: azure.mgmt.appplatform.operations.CustomDomainsOperations
     :ivar deployments: Deployments operations
     :vartype deployments: azure.mgmt.appplatform.operations.DeploymentsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.appplatform.operations.Operations
+    :ivar sku: Sku operations
+    :vartype sku: azure.mgmt.appplatform.operations.SkuOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -65,7 +74,13 @@ class AppPlatformManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.bindings = BindingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.certificates = CertificatesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.custom_domains = CustomDomainsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sku = SkuOperations(
             self._client, self.config, self._serialize, self._deserialize)
