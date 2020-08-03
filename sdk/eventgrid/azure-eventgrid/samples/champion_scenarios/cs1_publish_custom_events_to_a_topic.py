@@ -1,5 +1,4 @@
-from azure.eventgrid import EventGridPublisherClient
-from azure.eventgrid import EventGridEvent, CloudEvent
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent, CloudEvent
 from azure.core.credentials import AzureKeyCredential
 
 topic_hostname = "<YOUR-TOPIC-NAME>.<REGION-NAME>-1.eventgrid.azure.net"

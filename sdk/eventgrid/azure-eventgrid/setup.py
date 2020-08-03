@@ -26,6 +26,7 @@ try:
     import azure
     try:
         ver = azure.__version__
+        print(ver)
         raise Exception(
             'This package is incompatible with azure=={}. '.format(ver) +
             'Uninstall it with "pip uninstall azure".'
@@ -70,11 +71,11 @@ setup(
         'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: MIT License',
     ],
-    zip_safe=False,
+    zip_safe=True,
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
-        'azure',
+        #'azure',
     ]),
     install_requires=[
         'msrest>=0.5.0',

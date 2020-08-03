@@ -20,12 +20,16 @@ from azure.core.exceptions import (
     ClientAuthenticationError
 )
 
+import logging
+
+#logging.basicConfig(level=logging.DEBUG)
+
 key = os.environ.get("CUSTOM_ACCESS_KEY")
 topic_hostname = "eventgridcloudeventsub.eastus-1.eventgrid.azure.net"
 
 # authenticate client
 credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(topic_hostname, credential)
+client = EventGridPublisherClient(topic_hostname, credential)#, logging_enable=True)
 
 data_obj = StorageBlobCreatedEventData(
     api="PutBlockList",
@@ -58,11 +62,11 @@ data_dict = {
 }
 
 # publish events
-for i in range(30):
+for i in range(3):
 
     event_list = []     # list of events to publish
     # create events and append to list
-    for j in range(randint(3, 3)):
+    for j in range(randint(10, 10)):
         event = CloudEvent(
                 type="Microsoft.Storage.BlobCreated",
                 source="https://egdemo.dev/demoevent",

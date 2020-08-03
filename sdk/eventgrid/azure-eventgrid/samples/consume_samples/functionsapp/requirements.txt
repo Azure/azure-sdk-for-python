@@ -1,0 +1,3 @@
+azure-functions
+azure-eventgrid
+azure-servicebus
