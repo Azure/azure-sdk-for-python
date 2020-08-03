@@ -21,7 +21,7 @@ from azure.data.tables._models import AccessPolicy, Table
 from ._base_client_async import AsyncStorageAccountHostsMixin
 from ._policies_async import ExponentialRetry
 from azure.data.tables._shared.request_handlers import serialize_iso
-from azure.data.tables._shared.response_handlers import return_headers_and_deserialized, process_table_error
+from azure.data.tables._deserialize import return_headers_and_deserialized, process_table_error
 
 from .._models import UpdateMode
 from ._models import TableEntityPropertiesPaged

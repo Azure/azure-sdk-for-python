@@ -10,7 +10,7 @@ from azure.data.tables._generated.models import TableServiceStats as GenTableSer
 
 from ._deserialize import _convert_to_entity
 from ._shared.models import Services
-from ._shared.response_handlers import return_context_and_deserialized, process_table_error
+from ._deserialize import return_context_and_deserialized, process_table_error
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
@@ -497,3 +497,16 @@ class UpdateMode(str, Enum):
 class SASProtocol(str, Enum):
     HTTPS = "https"
     HTTP = "http"
+
+
+class PartialBatchErrorException(HttpResponseError):
+    """There is a partial failure in batch operations.
+
+    :param str message: The message of the exception.
+    :param response: Server response to be deserialized.
+    :param list parts: A list of the parts in multipart response.
+    """
+
+    def __init__(self, message, response, parts):
+        self.parts = parts
+        super(PartialBatchErrorException, self).__init__(message=message, response=response)

@@ -4,16 +4,40 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=unused-argument
+from typing import (  # pylint: disable=unused-import
+    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
+    TYPE_CHECKING
+)
+import logging
 import datetime
 from uuid import UUID
-from azure.core.exceptions import ResourceExistsError
+# from azure.core.exceptions import ResourceExistsError
+
+from azure.core.exceptions import (
+    HttpResponseError,
+    ResourceNotFoundError,
+    ResourceModifiedError,
+    ResourceExistsError,
+    ClientAuthenticationError,
+    DecodeError)
+from azure.core.pipeline.policies import ContentDecodePolicy
+
 from ._shared import url_quote
 from ._entity import EntityProperty, EdmType, TableEntity
 from ._shared._common_conversion import _decode_base64_to_bytes
 from ._generated.models import TableProperties
 
 
-from ._shared.models import TableErrorCode
+from ._shared.models import TableErrorCode, UserDelegationKey, get_enum_value
+
+
+if TYPE_CHECKING:
+    from datetime import datetime
+    from azure.core.exceptions import AzureError
+
+from ._shared._error import _to_utc_datetime
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def deserialize_metadata(response, _, headers):
@@ -174,3 +198,89 @@ def _extract_etag(response):
         return response.headers.get('etag')
 
     return None
+
+
+def normalize_headers(headers):
+    normalized = {}
+    for key, value in headers.items():
+        if key.startswith('x-ms-'):
+            key = key[5:]
+        normalized[key.lower().replace('-', '_')] = get_enum_value(value)
+    return normalized
+
+
+def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
+    raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
+    return {k[10:]: v for k, v in raw_metadata.items()}
+
+
+def return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+    return normalize_headers(response_headers), deserialized
+
+
+def return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+    return response.http_response.location_mode, deserialized, response_headers
+
+
+def process_table_error(storage_error):
+    raise_error = HttpResponseError
+    error_code = storage_error.response.headers.get('x-ms-error-code')
+    error_message = storage_error.message
+    additional_data = {}
+    try:
+        error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
+        if isinstance(error_body, dict):
+            for info in error_body['odata.error']:
+                if info == 'code':
+                    error_code = error_body['odata.error'][info]
+                elif info == 'message':
+                    error_message = error_body['odata.error'][info]['value']
+                else:
+                    additional_data[info.tag] = info.text
+        else:
+            if error_body:
+                for info in error_body.iter():
+                    if info.tag.lower().find('code') != -1:
+                        error_code = info.text
+                    elif info.tag.lower().find('message') != -1:
+                        error_message = info.text
+                    else:
+                        additional_data[info.tag] = info.text
+    except DecodeError:
+        pass
+
+    try:
+        if error_code:
+            error_code = TableErrorCode(error_code)
+            if error_code in [TableErrorCode.condition_not_met]:
+                raise_error = ResourceModifiedError
+            if error_code in [TableErrorCode.invalid_authentication_info,
+                              TableErrorCode.authentication_failed]:
+                raise_error = ClientAuthenticationError
+            if error_code in [TableErrorCode.resource_not_found,
+                              TableErrorCode.table_not_found,
+                              TableErrorCode.entity_not_found,
+                              ResourceNotFoundError]:
+                raise_error = ResourceNotFoundError
+            if error_code in [TableErrorCode.resource_already_exists,
+                              TableErrorCode.table_already_exists,
+                              TableErrorCode.account_already_exists,
+                              TableErrorCode.entity_already_exists,
+                              ResourceExistsError]:
+                raise_error = ResourceExistsError
+    except ValueError:
+        # Got an unknown error code
+        pass
+
+    try:
+
+        error_message += "\nErrorCode:{}".format(error_code.value)
+    except AttributeError:
+        error_message += "\nErrorCode:{}".format(error_code)
+    for name, info in additional_data.items():
+        error_message += "\n{}:{}".format(name, info)
+
+    error = raise_error(message=error_message, response=storage_error.response)
+    error.error_code = error_code
+    error.additional_info = additional_data
+    raise error

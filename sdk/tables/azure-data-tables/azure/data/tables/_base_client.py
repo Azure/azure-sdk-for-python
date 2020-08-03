@@ -43,7 +43,7 @@ from azure.core.pipeline.policies import (
 from .shared_access_signature import QueryStringConstants
 from ._shared.constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from ._shared.models import LocationMode
-from ._shared.authentication import SharedKeyCredentialPolicy
+from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
     StorageHeadersPolicy,
     StorageContentValidation,
@@ -53,7 +53,8 @@ from ._policies import (
     StorageHosts, ExponentialRetry,
 )
 from ._version import VERSION
-from ._shared.response_handlers import process_table_error, PartialBatchErrorException
+from ._deserialize import process_table_error
+from ._models import PartialBatchErrorException
 
 
 _LOGGER = logging.getLogger(__name__)

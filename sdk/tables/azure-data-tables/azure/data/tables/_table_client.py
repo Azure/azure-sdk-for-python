@@ -25,13 +25,13 @@ from ._base_client import parse_connection_str
 from ._table_client_base import TableClientBase
 
 from ._shared.request_handlers import serialize_iso
-from ._shared.response_handlers import process_table_error
+from ._deserialize import process_table_error, return_headers_and_deserialized
 
 from ._version import VERSION
 
 from ._models import TableEntityPropertiesPaged, UpdateMode, Table
 
-from ._shared.response_handlers import return_headers_and_deserialized
+# from ._shared.response_handlers import return_headers_and_deserialized
 
 
 class TableClient(TableClientBase):

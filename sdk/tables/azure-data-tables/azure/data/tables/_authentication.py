@@ -21,30 +21,15 @@ from azure.data.tables._shared._constants import (
     DEV_ACCOUNT_SECONDARY_NAME
 )
 
-from ._common_conversion import (
+from ._shared._common_conversion import (
     _sign_string,
 )
 
-from ._error import (
+from ._shared._error import (
     _wrap_exception,
 )
 
 logger = logging.getLogger(__name__)
-
-
-# wraps a given exception with the desired exception type
-def _wrap_exception(ex, desired_type):
-    msg = ""
-    if ex.args:
-        msg = ex.args[0]
-    if sys.version_info >= (3,):
-        # Automatic chaining in Python 3 means we keep the trace
-        return desired_type(msg)
-    # There isn't a good solution in 2 for keeping the stack trace
-    # in general, or that will not result in an error in 3
-    # However, we can keep the previous error type and message
-    # TODO: In the future we will log the trace
-    return desired_type('{}: {}'.format(ex.__class__.__name__, msg))
 
 
 class AzureSigningError(ClientAuthenticationError):

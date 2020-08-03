@@ -25,7 +25,7 @@ from azure.core.pipeline.policies import (
 )
 
 from _shared.testcase import TableTestCase, GlobalStorageAccountPreparer
-from azure.data.tables._shared.authentication import SharedKeyCredentialPolicy
+from azure.data.tables._authentication import SharedKeyCredentialPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,

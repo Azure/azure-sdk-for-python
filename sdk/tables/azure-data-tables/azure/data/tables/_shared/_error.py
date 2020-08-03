@@ -7,11 +7,16 @@ from sys import version_info
 from re import match
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
-from azure.data.tables._shared.parser import _str
+# from azure.data.tables._shared.parser import _str
 
 from ._constants import (
     _ENCRYPTION_PROTOCOL_V1,
 )
+
+
+def _to_utc_datetime(value):
+    return value.strftime('%Y-%m-%dT%H:%M:%SZ')
+
 
 def _to_str(value):
     return _str(value) if value is not None else None

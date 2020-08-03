@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from azure.data.tables._models import Table
 from azure.data.tables._deserialize import _convert_to_entity
-from azure.data.tables._shared.response_handlers import return_context_and_deserialized, process_table_error
+from azure.data.tables._deserialize import return_context_and_deserialized, process_table_error
 from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncPageIterator
 

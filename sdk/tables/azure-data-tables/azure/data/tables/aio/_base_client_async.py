@@ -22,7 +22,7 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.transport import AsyncHttpTransport
 
 from .._shared.constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from .._shared.authentication import SharedKeyCredentialPolicy
+from .._authentication import SharedKeyCredentialPolicy
 from .._base_client import create_configuration
 from .._policies import (
     StorageContentValidation,
@@ -32,7 +32,8 @@ from .._policies import (
 )
 from ._policies_async import AsyncStorageResponseHook
 
-from .._shared.response_handlers import process_table_error, PartialBatchErrorException
+from .._deserialize import process_table_error
+from .._models import PartialBatchErrorException
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
