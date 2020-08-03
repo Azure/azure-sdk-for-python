@@ -32,3 +32,16 @@ class OfferType(str, Enum):
 
     ms_azr_0017_p = "MS-AZR-0017P"
     ms_azr_0148_p = "MS-AZR-0148P"
+
+
+class WorkloadType(str, Enum):
+
+    production = "Production"
+    dev_test = "DevTest"
+
+
+class ProvisioningState(str, Enum):
+
+    accepted = "Accepted"
+    succeeded = "Succeeded"
+    failed = "Failed"
