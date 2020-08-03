@@ -264,8 +264,8 @@ class FormField(object):
 
 
 class FieldData(FormElement):
-    """Represents the text that is part of a form field. This includes
-    the location of the text in the form and a collection of the
+    """Contains the data for the form field. This includes the text,
+    location of the text on the form, and a collection of the
     elements that make up the text.
 
     :ivar int page_number:
