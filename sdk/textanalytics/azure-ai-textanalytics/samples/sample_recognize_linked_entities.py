@@ -28,7 +28,7 @@ import os
 class RecognizeLinkedEntitiesSample(object):
 
     def recognize_linked_entities(self):
-        # [START batch_recognize_linked_entities]
+        # [START recognize_linked_entities]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -55,7 +55,7 @@ class RecognizeLinkedEntitiesSample(object):
                     print("Confidence Score: {}".format(match.confidence_score))
                     print("Entity as appears in request: {}".format(match.text))
             print("------------------------------------------")
-        # [END batch_recognize_linked_entities]
+        # [END recognize_linked_entities]
 
 
 if __name__ == '__main__':

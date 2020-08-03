@@ -28,7 +28,7 @@ import asyncio
 class AnalyzeSentimentSampleAsync(object):
 
     async def analyze_sentiment_async(self):
-        # [START batch_analyze_sentiment_async]
+        # [START analyze_sentiment_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -51,7 +51,7 @@ class AnalyzeSentimentSampleAsync(object):
         for idx, doc in enumerate(docs):
             print("Document text: {}".format(documents[idx]))
             print("Overall sentiment: {}".format(doc.sentiment))
-        # [END batch_analyze_sentiment_async]
+        # [END analyze_sentiment_async]
             print("Overall confidence scores: positive={}; neutral={}; negative={} \n".format(
                 doc.confidence_scores.positive,
                 doc.confidence_scores.neutral,

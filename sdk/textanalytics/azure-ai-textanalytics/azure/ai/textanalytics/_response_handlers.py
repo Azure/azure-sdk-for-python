@@ -57,7 +57,7 @@ class CSODataV4Format(ODataV4Format):
             super(CSODataV4Format, self).__init__(odata_error)
 
 
-def process_batch_error(error):
+def process_http_response_error(error):
     """Raise detailed error message.
     """
     raise_error = HttpResponseError

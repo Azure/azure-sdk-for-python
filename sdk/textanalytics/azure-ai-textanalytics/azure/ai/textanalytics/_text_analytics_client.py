@@ -15,9 +15,9 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
-from ._request_handlers import _validate_batch_input
+from ._request_handlers import _validate_input
 from ._response_handlers import (
-    process_batch_error,
+    process_http_response_error,
     entities_result,
     linked_entities_result,
     key_phrases_result,
@@ -137,15 +137,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_detect_language.py
-                :start-after: [START batch_detect_language]
-                :end-before: [END batch_detect_language]
+                :start-after: [START detect_language]
+                :end-before: [END detect_language]
                 :language: python
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
         """
         country_hint_arg = kwargs.pop("country_hint", None)
         country_hint = country_hint_arg if country_hint_arg is not None else self._default_country_hint
-        docs = _validate_batch_input(documents, "country_hint", country_hint)
+        docs = _validate_input(documents, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -157,7 +157,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace
     def recognize_entities(  # type: ignore
@@ -202,15 +202,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_recognize_entities.py
-                :start-after: [START batch_recognize_entities]
-                :end-before: [END batch_recognize_entities]
+                :start-after: [START recognize_entities]
+                :end-before: [END recognize_entities]
                 :language: python
                 :dedent: 8
                 :caption: Recognize entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -222,7 +222,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace
     def recognize_pii_entities(  # type: ignore
@@ -267,15 +267,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_recognize_pii_entities.py
-                :start-after: [START batch_recognize_pii_entities]
-                :end-before: [END batch_recognize_pii_entities]
+                :start-after: [START recognize_pii_entities]
+                :end-before: [END recognize_pii_entities]
                 :language: python
                 :dedent: 8
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -293,7 +293,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 )
             raise error
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace
     def recognize_linked_entities(  # type: ignore
@@ -339,15 +339,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_recognize_linked_entities.py
-                :start-after: [START batch_recognize_linked_entities]
-                :end-before: [END batch_recognize_linked_entities]
+                :start-after: [START recognize_linked_entities]
+                :end-before: [END recognize_linked_entities]
                 :language: python
                 :dedent: 8
                 :caption: Recognize linked entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -359,7 +359,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace
     def extract_key_phrases(  # type: ignore
@@ -405,15 +405,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_extract_key_phrases.py
-                :start-after: [START batch_extract_key_phrases]
-                :end-before: [END batch_extract_key_phrases]
+                :start-after: [START extract_key_phrases]
+                :end-before: [END extract_key_phrases]
                 :language: python
                 :dedent: 8
                 :caption: Extract the key phrases in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -425,7 +425,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace
     def analyze_sentiment(  # type: ignore
@@ -478,15 +478,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_analyze_sentiment.py
-                :start-after: [START batch_analyze_sentiment]
-                :end-before: [END batch_analyze_sentiment]
+                :start-after: [START analyze_sentiment]
+                :end-before: [END analyze_sentiment]
                 :language: python
                 :dedent: 8
                 :caption: Analyze sentiment in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
@@ -508,4 +508,4 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 )
             raise error
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
