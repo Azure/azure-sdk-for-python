@@ -39,6 +39,7 @@ parameters:
       PythonVersion: 'pypy3'
       CoverageArg: '--disablecov'
       RunForPR: false
+    AdditionalTestMatrix: []
 
   
 jobs:
@@ -97,9 +98,17 @@ jobs:
             ${{ if ne(parameters.SkipPythonVersion, matrixEntry.value.PythonVersion) }}:
               ${{ matrixEntry.key }}:
                 ${{ insert }}: ${{ matrixEntry.value }}
+
+        ${{ each matrixEntry in parameters.AdditionalTestMatrix }}:
+          ${{ matrixEntry.key }}:
+            ${{ insert }}: ${{ matrixEntry.value }}
+
         
     pool:
       vmImage: '$(OSVmImage)'
+
+    variables:
+      InjectedPackages: ${{ parameters.InjectedPackages }}
 
     steps:    
     - pwsh: |
@@ -125,7 +134,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-        InjectedPackages: ${{ parameters.InjectedPackages }}
+        InjectedPackages: $(InjectedPackages)
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
