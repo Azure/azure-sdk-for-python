@@ -737,10 +737,11 @@ class SentenceSentiment(DictMixin):
         )
 
     def __repr__(self):
-        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={})".format(
+        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, mined_opinions={})".format(
             self.text,
             self.sentiment,
-            repr(self.confidence_scores)
+            repr(self.confidence_scores),
+            repr(self.mined_opinions)
         )[:1024]
 
 class MinedOpinion(DictMixin):
