@@ -30,6 +30,24 @@ class WhatIfResultFormat(str, Enum):
     full_resource_payloads = "FullResourcePayloads"
 
 
+class AliasPathTokenType(str, Enum):
+
+    not_specified = "NotSpecified"  #: The token type is not specified.
+    any = "Any"  #: The token type can be anything.
+    string = "String"  #: The token type is string.
+    object_enum = "Object"  #: The token type is object.
+    array = "Array"  #: The token type is array.
+    integer = "Integer"  #: The token type is integer.
+    number = "Number"  #: The token type is number.
+    boolean = "Boolean"  #: The token type is boolean.
+
+
+class AliasPathAttributes(str, Enum):
+
+    none = "None"  #: The token that the alias path is referring to has no attributes.
+    modifiable = "Modifiable"  #: The token that the alias path is referring to is modifiable by policies with 'modify' effect.
+
+
 class AliasPatternType(str, Enum):
 
     not_specified = "NotSpecified"  #: NotSpecified is not allowed.
@@ -97,3 +115,10 @@ class ChangeType(str, Enum):
     deploy = "Deploy"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource may or may not change.
     no_change = "NoChange"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource will not change.
     modify = "Modify"  #: The resource exists in the current state and the desired state and will be redeployed when the deployment is executed. The properties of the resource will change.
+
+
+class TagsPatchOperation(str, Enum):
+
+    replace = "Replace"  #: The 'replace' option replaces the entire set of existing tags with a new set.
+    merge = "Merge"  #: The 'merge' option allows adding tags with new names and updating the values of tags with existing names.
+    delete = "Delete"  #: The 'delete' option allows selectively deleting tags based on given names or name/value pairs.

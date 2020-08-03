@@ -148,6 +148,7 @@ from ._resource_management_client_enums import (
     ProvisioningOperation,
     PropertyChangeType,
     ChangeType,
+    TagsPatchOperation,
 )
 
 __all__ = [
@@ -227,4 +228,5 @@ __all__ = [
     'ProvisioningOperation',
     'PropertyChangeType',
     'ChangeType',
+    'TagsPatchOperation',
 ]
