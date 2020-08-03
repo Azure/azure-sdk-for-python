@@ -19,10 +19,7 @@ from ._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
     QueueDescriptionEntry, SubscriptionDescriptionFeed, SubscriptionDescriptionEntry, RuleDescriptionEntry, \
     RuleDescriptionFeed, NamespacePropertiesEntry, CreateTopicBody, CreateTopicBodyContent, \
     TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, \
-    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, \
-    QueueDescription as InternalQueueDescription, TopicDescription as InternalTopicDescription, \
-    SubscriptionDescription as InternalSubscriptionDescription, \
-    NamespaceProperties
+    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, NamespaceProperties
 from ._utils import extract_data_template, get_next_template, deserialize_rule_key_values, serialize_rule_key_values, \
     extract_rule_data_template
 from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
@@ -165,23 +162,80 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         runtime_info = QueueRuntimeProperties._from_internal_entity(queue_name, entry.content.queue_description)
         return runtime_info
 
-    def create_queue(self, queue, **kwargs):
-        # type: (Union[str, QueueProperties], Any) -> QueueProperties
+    def create_queue(self, name, **kwargs):
+        # type: (str, Any) -> QueueProperties
         """Create a queue.
 
-        :param queue: The queue name or a `QueueProperties` instance. When it's a str, it will be the name
-         of the created queue. Other properties of the created queue will have default values as defined by the
-         service. Use a `QueueProperties` if you want to set queue properties other than the queue name.
-        :type queue: Union[str, ~azure.servicebus.management.QueueProperties]
+        :param name: Name of the queue.
+        :type name: str
+        :keyword authorization_rules: Authorization rules for resource.
+        :type authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
+        :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
+         automatically deleted. The minimum duration is 5 minutes.
+        :type auto_delete_on_idle: ~datetime.timedelta
+        :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
+         letter support when a message expires.
+        :type dead_lettering_on_message_expiration: bool
+        :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+         the duration after which the message expires, starting from when the message is sent to Service
+         Bus. This is the default value used when TimeToLive is not set on a message itself.
+        :type default_message_time_to_live: ~datetime.timedelta
+        :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
+         duration of the duplicate detection history. The default value is 10 minutes.
+        :type duplicate_detection_history_time_window: ~datetime.timedelta
+        :keyword entity_availability_status: Availibility status of the entity. Possible values include:
+         "Available", "Limited", "Renaming", "Restoring", "Unknown".
+        :type entity_availability_status: str or
+         ~azure.servicebus.management.EntityAvailabilityStatus
+        :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+         are enabled.
+        :type enable_batched_operations: bool
+        :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
+         queue holds a message in memory temporarily before writing it to persistent storage.
+        :type enable_express: bool
+        :keyword enable_partitioning: A value that indicates whether the queue is to be partitioned
+         across multiple message brokers.
+        :type enable_partitioning: bool
+        :keyword is_anonymous_accessible: A value indicating if the resource can be accessed without
+         authorization.
+        :type is_anonymous_accessible: bool
+        :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
+         that the message is locked for other receivers. The maximum value for LockDuration is 5
+         minutes; the default value is 1 minute.
+        :type lock_duration: ~datetime.timedelta
+        :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
+         after this number of deliveries. Default value is 10.
+        :type max_delivery_count: int
+        :keyword max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
+         memory allocated for the queue.
+        :type max_size_in_megabytes: int
+        :keyword requires_duplicate_detection: A value indicating if this queue requires duplicate
+         detection.
+        :type requires_duplicate_detection: bool
+        :keyword requires_session: A value that indicates whether the queue supports the concept of
+         sessions.
+        :type requires_session: bool
+        :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+         "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
+        :type status: str or ~azure.servicebus.management.EntityStatus
+        :keyword forward_to: The name of the recipient entity to which all the messages sent to the queue
+         are forwarded to.
+        :type forward_to: str
+        :keyword user_metadata: Custom metdata that user can associate with the description. Max length
+         is 1024 chars.
+        :type user_metadata: str
+        :keyword support_ordering: A value that indicates whether the queue supports ordering.
+        :type support_ordering: bool
+        :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
+         dead-lettered messages of this subscription are forwarded to.
+        :type forward_dead_lettered_messages_to: str
+
         :rtype: ~azure.servicebus.management.QueueProperties
         """
-        try:
-            queue_name = queue.name  # type: ignore
-            to_create = queue._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
-        except AttributeError:
-            queue_name = queue  # type: ignore
-            to_create = InternalQueueDescription()  # Use an empty queue description.
-
+        queue = QueueProperties(name, **kwargs)
+        for key in queue.keys():
+            kwargs.pop(key, None)
+        to_create = queue._to_internal_entity()
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
                 queue_description=to_create,  # type: ignore
@@ -192,12 +246,12 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             entry_ele = cast(
                 ElementTree,
                 self._impl.entity.put(
-                    queue_name,  # type: ignore
+                    name,  # type: ignore
                     request_body, api_version=constants.API_VERSION, **kwargs)
             )
 
         entry = QueueDescriptionEntry.deserialize(entry_ele)
-        result = QueueProperties._from_internal_entity(queue_name, entry.content.queue_description)
+        result = QueueProperties._from_internal_entity(name, entry.content.queue_description)
         return result
 
     def update_queue(self, queue, **kwargs):
@@ -322,22 +376,69 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         topic_description = TopicRuntimeProperties._from_internal_entity(topic_name, entry.content.topic_description)
         return topic_description
 
-    def create_topic(self, topic, **kwargs):
-        # type: (Union[str, TopicProperties], Any) -> TopicProperties
+    def create_topic(self, name, **kwargs):
+        # type: (str, Any) -> TopicProperties
         """Create a topic.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic name or a `TopicProperties`
-         instance. When it's a str, it will be the name of the created topic. Other properties of the created topic
-         will have default values as defined by the service.
-         Use a `TopicProperties` if you want to set queue properties other than the queue name.
+        :param name: Name of the topic.
+        :type name: str
+        :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+         the duration after which the message expires, starting from when the message is sent to Service
+         Bus. This is the default value used when TimeToLive is not set on a message itself.
+        :type default_message_time_to_live: ~datetime.timedelta
+        :keyword max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
+         memory allocated for the topic.
+        :type max_size_in_megabytes: long
+        :keyword requires_duplicate_detection: A value indicating if this topic requires duplicate
+         detection.
+        :type requires_duplicate_detection: bool
+        :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
+         duration of the duplicate detection history. The default value is 10 minutes.
+        :type duplicate_detection_history_time_window: ~datetime.timedelta
+        :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+         are enabled.
+        :type enable_batched_operations: bool
+        :keyword size_in_bytes: The size of the topic, in bytes.
+        :type size_in_bytes: int
+        :keyword filtering_messages_before_publishing: Filter messages before publishing.
+        :type filtering_messages_before_publishing: bool
+        :keyword is_anonymous_accessible: A value indicating if the resource can be accessed without
+         authorization.
+        :type is_anonymous_accessible: bool
+        :keyword authorization_rules: Authorization rules for resource.
+        :type authorization_rules:
+         list[~azure.servicebus.management.AuthorizationRule]
+        :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+         "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
+        :type status: str or ~azure.servicebus.management.models.EntityStatus
+        :keyword support_ordering: A value that indicates whether the topic supports ordering.
+        :type support_ordering: bool
+        :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
+         automatically deleted. The minimum duration is 5 minutes.
+        :type auto_delete_on_idle: ~datetime.timedelta
+        :keyword enable_partitioning: A value that indicates whether the topic is to be partitioned
+         across multiple message brokers.
+        :type enable_partitioning: bool
+        :keyword entity_availability_status: Availability status of the entity. Possible values include:
+         "Available", "Limited", "Renaming", "Restoring", "Unknown".
+        :type entity_availability_status: str or
+         ~azure.servicebus.management.models.EntityAvailabilityStatus
+        :keyword enable_subscription_partitioning: A value that indicates whether the topic's
+         subscription is to be partitioned.
+        :type enable_subscription_partitioning: bool
+        :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
+         queue holds a message in memory temporarily before writing it to persistent storage.
+        :type enable_express: bool
+        :keyword user_metadata: Metadata associated with the topic.
+        :type user_metadata: str
+
         :rtype: ~azure.servicebus.management.TopicProperties
         """
-        try:
-            topic_name = topic.name  # type: ignore
-            to_create = topic._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
-        except AttributeError:
-            topic_name = topic  # type: ignore
-            to_create = InternalTopicDescription()  # Use an empty topic description.
+
+        topic = TopicProperties(name, **kwargs)
+        for key in topic.keys():
+            kwargs.pop(key, None)
+        to_create = topic._to_internal_entity()
 
         create_entity_body = CreateTopicBody(
             content=CreateTopicBodyContent(
@@ -349,11 +450,11 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             entry_ele = cast(
                 ElementTree,
                 self._impl.entity.put(
-                    topic_name,  # type: ignore
+                    name,  # type: ignore
                     request_body, api_version=constants.API_VERSION, **kwargs)
             )
         entry = TopicDescriptionEntry.deserialize(entry_ele)
-        result = TopicProperties._from_internal_entity(topic_name, entry.content.topic_description)
+        result = TopicProperties._from_internal_entity(name, entry.content.topic_description)
         return result
 
     def update_topic(self, topic, **kwargs):
@@ -489,27 +590,66 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             entry.title, entry.content.subscription_description)
         return subscription
 
-    def create_subscription(self, topic, subscription, **kwargs):
-        # type: (Union[str, TopicProperties], Union[str, SubscriptionProperties], Any) -> SubscriptionProperties
+    def create_subscription(self, topic, name, **kwargs):
+        # type: (Union[str, TopicProperties], str, Any) -> SubscriptionProperties
         """Create a topic subscription.
 
         :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that will own the
          to-be-created subscription.
-        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription name or a
-        `SubscriptionProperties` instance. When it's a str, it will be the name of the created subscription.
-         Other properties of the created subscription will have default values as defined by the service.
+        :param name: Name of the subscription.
+        :type name: str
+        :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
+         that the message is locked for other receivers. The maximum value for LockDuration is 5
+         minutes; the default value is 1 minute.
+        :type lock_duration: ~datetime.timedelta
+        :keyword requires_session: A value that indicates whether the queue supports the concept of
+         sessions.
+        :type requires_session: bool
+        :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+         the duration after which the message expires, starting from when the message is sent to Service
+         Bus. This is the default value used when TimeToLive is not set on a message itself.
+        :type default_message_time_to_live: ~datetime.timedelta
+        :keyword dead_lettering_on_message_expiration: A value that indicates whether this subscription
+         has dead letter support when a message expires.
+        :type dead_lettering_on_message_expiration: bool
+        :keyword dead_lettering_on_filter_evaluation_exceptions: A value that indicates whether this
+         subscription has dead letter support when a message expires.
+        :type dead_lettering_on_filter_evaluation_exceptions: bool
+        :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
+         after this number of deliveries. Default value is 10.
+        :type max_delivery_count: int
+        :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+         are enabled.
+        :type enable_batched_operations: bool
+        :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+         "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
+        :type status: str or ~azure.servicebus.management.models.EntityStatus
+        :keyword forward_to: The name of the recipient entity to which all the messages sent to the
+         subscription are forwarded to.
+        :type forward_to: str
+        :keyword user_metadata: Metadata associated with the subscription. Maximum number of characters
+         is 1024.
+        :type user_metadata: str
+        :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
+         messages sent to the subscription are forwarded to.
+        :type forward_dead_lettered_messages_to: str
+        :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
+         automatically deleted. The minimum duration is 5 minutes.
+        :type auto_delete_on_idle: ~datetime.timedelta
+        :keyword entity_availability_status: Availability status of the entity. Possible values include:
+         "Available", "Limited", "Renaming", "Restoring", "Unknown".
+        :type entity_availability_status: str or
+         ~azure.servicebus.management.models.EntityAvailabilityStatus
         :rtype:  ~azure.servicebus.management.SubscriptionProperties
         """
         try:
             topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
-        try:
-            subscription_name = subscription.name  # type: ignore
-            to_create = subscription._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
-        except AttributeError:
-            subscription_name = subscription  # type: ignore
-            to_create = InternalSubscriptionDescription()  # Use an empty queue description.
+        subscription = SubscriptionProperties(name, **kwargs)
+        for key in subscription.keys():
+            kwargs.pop(key, None)
+        to_create = subscription._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
 
         create_entity_body = CreateSubscriptionBody(
             content=CreateSubscriptionBodyContent(
@@ -522,13 +662,13 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
                 ElementTree,
                 self._impl.subscription.put(
                     topic_name,
-                    subscription_name,  # type: ignore
+                    name,  # type: ignore
                     request_body, api_version=constants.API_VERSION, **kwargs)
             )
 
         entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
         result = SubscriptionProperties._from_internal_entity(
-            subscription_name, entry.content.subscription_description)
+            name, entry.content.subscription_description)
         return result
 
     def update_subscription(self, topic, subscription, **kwargs):
@@ -670,15 +810,20 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         deserialize_rule_key_values(entry_ele, rule_description)  # to remove after #3535 is released.
         return rule_description
 
-    def create_rule(self, topic, subscription, rule, **kwargs):
-        # type: (Union[str, TopicProperties], Union[str, SubscriptionProperties], RuleProperties, Any) -> RuleProperties  # pylint:disable=line-too-long
+    def create_rule(self, topic, subscription, name, **kwargs):
+        # type: (Union[str, TopicProperties], Union[str, SubscriptionProperties], str, Any) -> RuleProperties  # pylint:disable=line-too-long
         """Create a rule for a topic subscription.
 
-        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that will own the
-         to-be-created subscription rule.
-        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
-         will own the to-be-created rule.
-        :param azure.servicebus.management.RuleProperties rule: The rule to be created.
+        :param name: Name of the rule.
+        :type name: str
+        :keyword filter: The filter of the rule.
+        :type filter: Union[~azure.servicebus.management.models.CorrelationRuleFilter,
+         ~azure.servicebus.management.models.SqlRuleFilter]
+        :keyword action: The action of the rule.
+        :type action: Optional[~azure.servicebus.management.models.SqlRuleAction]
+        :keyword created_at: The exact time the rule was created.
+        :type created_at: ~datetime.datetime
+
         :rtype: ~azure.servicebus.management.RuleProperties
         """
         try:
@@ -689,7 +834,9 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             subscription_name = subscription.name  # type: ignore
         except AttributeError:
             subscription_name = subscription
-        rule_name = rule.name
+        rule = RuleProperties(name, **kwargs)
+        for key in rule.keys():
+            kwargs.pop(key, None)
         to_create = rule._to_internal_entity()
 
         create_entity_body = CreateRuleBody(
@@ -703,10 +850,10 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             entry_ele = self._impl.rule.put(
                 topic_name,
                 subscription_name,  # type: ignore
-                rule_name,
+                name,
                 request_body, api_version=constants.API_VERSION, **kwargs)
         entry = RuleDescriptionEntry.deserialize(entry_ele)
-        result = RuleProperties._from_internal_entity(rule_name, entry.content.rule_description)
+        result = RuleProperties._from_internal_entity(name, entry.content.rule_description)
         deserialize_rule_key_values(entry_ele, result)  # to remove after #3535 is released.
         return result
 

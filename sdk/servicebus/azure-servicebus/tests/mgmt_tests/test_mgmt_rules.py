@@ -60,7 +60,7 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
             mgmt_service.create_topic(topic_name)
             mgmt_service.create_subscription(topic_name, subscription_name)
 
-            mgmt_service.create_rule(topic_name, subscription_name, rule_1)
+            mgmt_service.create_rule(topic_name, subscription_name, **rule_1)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_1)
             rule_properties = rule_desc.filter.properties
             assert type(rule_desc.filter) == CorrelationRuleFilter
@@ -75,13 +75,13 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
             assert rule_properties["key_duration"] == timedelta(days=1, hours=2, minutes=3)
 
 
-            mgmt_service.create_rule(topic_name, subscription_name, rule_2)
+            mgmt_service.create_rule(topic_name, subscription_name, **rule_2)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_2)
             assert type(rule_desc.filter) == SqlRuleFilter
             assert rule_desc.filter.sql_expression == "Priority = @param1"
             assert rule_desc.filter.parameters["@param1"] == "str1"
 
-            mgmt_service.create_rule(topic_name, subscription_name, rule_3)
+            mgmt_service.create_rule(topic_name, subscription_name, **rule_3)
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name_3)
             assert type(rule_desc.filter) == TrueRuleFilter
 
@@ -121,9 +121,9 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
         try:
             mgmt_service.create_topic(topic_name)
             mgmt_service.create_subscription(topic_name, subscription_name)
-            mgmt_service.create_rule(topic_name, subscription_name, rule)
+            mgmt_service.create_rule(topic_name, subscription_name, **rule)
             with pytest.raises(ResourceExistsError):
-                mgmt_service.create_rule(topic_name, subscription_name, rule)
+                mgmt_service.create_rule(topic_name, subscription_name, **rule)
         finally:
             mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
             mgmt_service.delete_subscription(topic_name, subscription_name)
@@ -143,7 +143,7 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
         try:
             topic_description = mgmt_service.create_topic(topic_name)
             subscription_description = mgmt_service.create_subscription(topic_description, subscription_name)
-            mgmt_service.create_rule(topic_name, subscription_name, rule)
+            mgmt_service.create_rule(topic_name, subscription_name, **rule)
 
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name)
 
@@ -181,7 +181,7 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
         try:
             topic_description = mgmt_service.create_topic(topic_name)
             subscription_description = mgmt_service.create_subscription(topic_name, subscription_name)
-            mgmt_service.create_rule(topic_name, subscription_name, rule)
+            mgmt_service.create_rule(topic_name, subscription_name, **rule)
 
             rule_desc = mgmt_service.get_rule(topic_name, subscription_name, rule_name)
 
@@ -235,9 +235,9 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
             rules = list(mgmt_service.list_rules(topic_name, subscription_name))
             assert len(rules) == 1  # by default there is a True filter
 
-            mgmt_service.create_rule(topic_name, subscription_name, rule_1)
-            mgmt_service.create_rule(topic_name, subscription_name, rule_2)
-            mgmt_service.create_rule(topic_name, subscription_name, rule_3)
+            mgmt_service.create_rule(topic_name, subscription_name, **rule_1)
+            mgmt_service.create_rule(topic_name, subscription_name, **rule_2)
+            mgmt_service.create_rule(topic_name, subscription_name, **rule_3)
 
             rules = list(mgmt_service.list_rules(topic_name, subscription_name))
             assert len(rules) == 3 + 1

@@ -62,7 +62,7 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
             await mgmt_service.create_topic(topic_name)
             await mgmt_service.create_subscription(topic_name, subscription_name)
 
-            await mgmt_service.create_rule(topic_name, subscription_name, rule_1)
+            await mgmt_service.create_rule(topic_name, subscription_name, **rule_1)
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name_1)
             rule_properties = rule_desc.filter.properties
             assert type(rule_desc.filter) == CorrelationRuleFilter
@@ -76,13 +76,13 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
             assert rule_properties["key_datetime"] == datetime(2020, 7, 5, 11, 12, 13)
             assert rule_properties["key_duration"] == timedelta(days=1, hours=2, minutes=3)
 
-            await mgmt_service.create_rule(topic_name, subscription_name, rule_2)
+            await mgmt_service.create_rule(topic_name, subscription_name, **rule_2)
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name_2)
             assert type(rule_desc.filter) == SqlRuleFilter
             assert rule_desc.filter.sql_expression == "Priority = @param1"
             assert rule_desc.filter.parameters["@param1"] == "str1"
 
-            await mgmt_service.create_rule(topic_name, subscription_name, rule_3)
+            await mgmt_service.create_rule(topic_name, subscription_name, **rule_3)
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name_3)
             assert type(rule_desc.filter) == TrueRuleFilter
 
@@ -106,9 +106,9 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         try:
             await mgmt_service.create_topic(topic_name)
             await mgmt_service.create_subscription(topic_name, subscription_name)
-            await mgmt_service.create_rule(topic_name, subscription_name, rule)
+            await mgmt_service.create_rule(topic_name, subscription_name, **rule)
             with pytest.raises(ResourceExistsError):
-                await mgmt_service.create_rule(topic_name, subscription_name, rule)
+                await mgmt_service.create_rule(topic_name, subscription_name, **rule)
         finally:
             await mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
             await mgmt_service.delete_subscription(topic_name, subscription_name)
@@ -128,7 +128,7 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         try:
             topic_description = await mgmt_service.create_topic(topic_name)
             subscription_description = await mgmt_service.create_subscription(topic_description, subscription_name)
-            await mgmt_service.create_rule(topic_name, subscription_name, rule)
+            await mgmt_service.create_rule(topic_name, subscription_name, **rule)
 
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name)
 
@@ -166,7 +166,7 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         try:
             topic_description = await mgmt_service.create_topic(topic_name)
             subscription_description = await mgmt_service.create_subscription(topic_name, subscription_name)
-            await mgmt_service.create_rule(topic_name, subscription_name, rule)
+            await mgmt_service.create_rule(topic_name, subscription_name, **rule)
 
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name)
 
@@ -220,9 +220,9 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
             rules = await async_pageable_to_list(mgmt_service.list_rules(topic_name, subscription_name))
             assert len(rules) == 1  # by default there is a True filter
 
-            await mgmt_service.create_rule(topic_name, subscription_name, rule_1)
-            await mgmt_service.create_rule(topic_name, subscription_name, rule_2)
-            await mgmt_service.create_rule(topic_name, subscription_name, rule_3)
+            await mgmt_service.create_rule(topic_name, subscription_name, **rule_1)
+            await mgmt_service.create_rule(topic_name, subscription_name, **rule_2)
+            await mgmt_service.create_rule(topic_name, subscription_name, **rule_3)
 
             rules = await async_pageable_to_list(mgmt_service.list_rules(topic_name, subscription_name))
             assert len(rules) == 3 + 1
