@@ -69,9 +69,14 @@ def categorized_entity():
         text="Bill Gates",
         category="Person",
         subcategory="Age",
+        offset=0,
+        length=8,
         confidence_score=0.899
     )
-    model_repr = "CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, confidence_score=0.899)"
+    model_repr = (
+        "CategorizedEntity(text=Bill Gates, category=Person, subcategory=Age, "
+        "offset=0, length=8, confidence_score=0.899)"
+    )
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -82,9 +87,11 @@ def pii_entity():
         text="859-98-0987",
         category="SSN",
         subcategory=None,
+        offset=0,
+        length=11,
         confidence_score=0.899
     )
-    model_repr = "PiiEntity(text=859-98-0987, category=SSN, subcategory=None, confidence_score=0.899)"
+    model_repr = "PiiEntity(text=859-98-0987, category=SSN, subcategory=None, offset=0, length=11, confidence_score=0.899)"
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -93,9 +100,11 @@ def pii_entity():
 def linked_entity_match():
     model = _models.LinkedEntityMatch(
         confidence_score=0.999,
-        text="Bill Gates"
+        text="Bill Gates",
+        offset=0,
+        length=8
     )
-    model_repr = "LinkedEntityMatch(confidence_score=0.999, text=Bill Gates)"
+    model_repr = "LinkedEntityMatch(confidence_score=0.999, text=Bill Gates, offset=0, length=8)"
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -187,10 +196,15 @@ def sentence_sentiment(sentiment_confidence_scores, mined_opinion):
         text="This is a sentence.",
         sentiment="neutral",
         confidence_scores=sentiment_confidence_scores[0],
+        offset=0,
+        length=10,
         mined_opinions=[mined_opinion[0]]
     )
-    model_repr = "SentenceSentiment(text=This is a sentence., sentiment=neutral, confidence_scores={}, mined_opinions=[{}])".format(
-        sentiment_confidence_scores[1], mined_opinion[1]
+    model_repr = (
+        "SentenceSentiment(text=This is a sentence., sentiment=neutral, confidence_scores={}, "\
+        "offset=0, length=10, mined_opinions=[{}])".format(
+            sentiment_confidence_scores[1], mined_opinion[1]
+        )
     )
     assert repr(model) == model_repr
     return model, model_repr

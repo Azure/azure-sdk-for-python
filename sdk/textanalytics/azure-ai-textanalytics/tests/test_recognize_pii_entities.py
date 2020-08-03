@@ -53,6 +53,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
+                self.assertIsNotNone(entity.offset)
+                self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -77,12 +79,16 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
+                self.assertIsNotNone(entity.offset)
+                self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_length_with_emoji(self, client):
         result = client.recognize_pii_entities(["👩 SSN: 123-12-1234"])
+        self.assertEqual(result[0].entities[0].offset, 7)
+        self.assertEqual(result[0].entities[0].length, 11)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
