@@ -3,7 +3,7 @@ import logging
 import sys
 
 import azure.functions as func
-from azure.eventgrid._consumer import EventGridConsumer
+from azure.eventgrid import EventGridConsumer
 
 def main(event: func.EventGridEvent):
     logging.info(sys.version)

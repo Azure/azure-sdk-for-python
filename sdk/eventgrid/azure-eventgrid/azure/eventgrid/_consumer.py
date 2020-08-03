@@ -9,7 +9,6 @@
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
-from azure.servicebus import Message
 from msrest import Deserializer, Serializer
 import json
 
