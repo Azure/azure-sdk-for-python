@@ -12,8 +12,11 @@ FILE: sample_train_model_with_labels_async.py
 DESCRIPTION:
     This sample demonstrates how to train a model with labels. For this sample, you can use the training
     forms found in https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/training
+
     Upload the forms to your storage container and then generate a container SAS URL using these instructions:
     https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/python-labeled-data#train-a-model-using-labeled-data
+    More details on setting up a container and required file structure can be found here:
+    https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
 
     To see how to label your documents, you can use the service's labeling tool to label your documents:
     https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/label-tool. Follow the
