@@ -910,7 +910,7 @@ class SentimentConfidenceScores(DictMixin):
     def _from_generated(cls, score):
         return cls(
             positive=score.positive,
-            neutral=score.neutral if hasattr(score, "netural") else 0.0,
+            neutral=score.neutral if hasattr(score, "neutral") else 0.0,
             negative=score.negative
         )
 
