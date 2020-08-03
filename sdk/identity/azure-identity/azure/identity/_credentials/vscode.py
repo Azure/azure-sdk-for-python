@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class VSCodeCredential(object):
+class VisualStudioCodeCredential(object):
     """Authenticates as the Azure user signed in to Visual Studio Code.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
@@ -41,7 +41,7 @@ class VSCodeCredential(object):
             tenant_id = kwargs.pop("tenant_id", None) or "organizations"
             self._client = AadClient(tenant_id, AZURE_VSCODE_CLIENT_ID, **kwargs)
 
-    @log_get_token("VSCodeCredential")
+    @log_get_token("VisualStudioCodeCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
