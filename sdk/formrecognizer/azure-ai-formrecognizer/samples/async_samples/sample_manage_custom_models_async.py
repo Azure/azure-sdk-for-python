@@ -41,7 +41,7 @@ class ManageCustomModelsSampleAsync(object):
         ) as form_training_client:
             # First, we see how many custom models we have, and what our limit is
             account_properties = await form_training_client.get_account_properties()
-            print("Our account has {} custom models, and we can have at most {} custom models".format(
+            print("Our account has {} custom models, and we can have at most {} custom models\n".format(
                 account_properties.custom_model_count, account_properties.custom_model_limit
             ))
             # [END get_account_properties_async]
@@ -50,20 +50,19 @@ class ManageCustomModelsSampleAsync(object):
             # [START list_custom_models_async]
             custom_models = form_training_client.list_custom_models()
 
-            print("We have models with the following ids:")
+            print("We have models with the following IDs:")
 
             # Let's pull out the first model
-            first_model = None
+            first_model = await custom_models.__anext__()
+            print(first_model.model_id)
             async for model in custom_models:
                 print(model.model_id)
-                if not first_model:
-                    first_model = model
             # [END list_custom_models_async]
 
-            # Now we'll get the first custom model in the paged list
+            # Now we'll get information for the first custom model in the paged list
             # [START get_custom_model_async]
             custom_model = await form_training_client.get_custom_model(model_id=first_model.model_id)
-            print("Model ID: {}".format(custom_model.model_id))
+            print("\nModel ID: {}".format(custom_model.model_id))
             print("Status: {}".format(custom_model.status))
             print("Training started on: {}".format(custom_model.training_started_on))
             print("Training completed on: {}".format(custom_model.training_completed_on))

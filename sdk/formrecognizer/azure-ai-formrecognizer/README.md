@@ -3,7 +3,7 @@
 Azure Cognitive Services Form Recognizer is a cloud service that uses machine learning to recognize text and table data
 from form documents. It includes the following main functionalities:
 
-* Custom models - Recognize field values and table data from forms. These models are trained with your own data, so they're tailored to your forms. You can then take these custom models and recognize forms. You can also manage the custom models you've created and see how close you are to the limit of custom models your account can hold.
+* Custom models - Recognize field values and table data from forms. These models are trained with your own data, so they're tailored to your forms.
 * Content API - Recognize text and table structures, along with their bounding box coordinates, from documents. Corresponds to the REST service's Layout API.
 * Prebuilt receipt model - Recognize data from USA sales receipts using a prebuilt model.
 
@@ -66,7 +66,7 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 ```
 
 #### Types of credentials
-The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from [azure.core][azure_core],
+The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from [azure-core][azure_core],
 or as a credential type from Azure Active Directory.
 See the full details regarding [authentication][cognitive_authentication] of cognitive services.
 
@@ -102,7 +102,7 @@ See the full details regarding [authentication][cognitive_authentication] of cog
    can be used to authenticate the client:
 
    Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-   AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+   `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
 
    Use the returned token credential to authenticate the client:
     ```python
@@ -122,7 +122,7 @@ See the full details regarding [authentication][cognitive_authentication] of cog
 `FormRecognizerClient` provides operations for:
 
  - Recognizing form fields and content using custom models trained to recognize your custom forms. These values are returned in a collection of `RecognizedForm` objects.
- - Recognizing common fields from US receipts, using a pre-trained receipt model on the Form Recognizer service. These fields and meta-data are returned in a collection of `RecognizedForm` objects.
+ - Recognizing common fields from US receipts, using a pre-trained receipt model. These fields and metadata are returned in a collection of `RecognizedForm` objects.
  - Recognizing form content, including tables, lines and words, without the need to train a model. Form content is returned in a collection of `FormPage` objects.
 
 Sample code snippets are provided to illustrate using a FormRecognizerClient [here](#recognize-forms-using-a-custom-model "Recognize Forms Using a Custom Model").
@@ -130,8 +130,8 @@ Sample code snippets are provided to illustrate using a FormRecognizerClient [he
 ### FormTrainingClient
 `FormTrainingClient` provides operations for:
 
-- Training custom models to recognize all fields and values found in your custom forms. A `CustomFormModel` is returned indicating the form types the model will recognize, and the fields it will extract for each form type. See the [service's documents][fr-train-without-labels] for a more detailed explanation.
-- Training custom models to recognize specific fields and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service's documents][fr-train-with-labels] for a more detailed explanation.
+- Training custom models without labels to recognize all fields and values found in your custom forms. A `CustomFormModel` is returned indicating the form type's the model will recognize, and the fields it will extract for each form type. See the [service documentation][fr-train-without-labels] for a more detailed explanation.
+- Training custom models with labels to recognize specific fields and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
 - Managing models created in your account.
 - Copying a custom model from one Form Recognizer resource to another.
 
@@ -146,7 +146,7 @@ succeeded, to get the result.
 
 Methods that train models, recognize values from forms, or copy models are modeled as long-running operations. 
 The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait 
-for the operation to complete by calling `result()` on the operation returned from the `begin_<method-name>` method. 
+for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method. 
 Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
 
 
@@ -161,7 +161,8 @@ The following section provides several code snippets covering some of the most c
 * [Manage Your Models](#manage-your-models "Manage Your Models")
 
 ### Recognize Forms Using a Custom Model
-Recognize name/value pairs and table data from forms. These models are trained with your own data, so they're tailored to your forms. You should only recognize forms of the same form type that the custom model was trained on.
+Recognize name/value pairs and table data from forms. These models are trained with your own data, so they're tailored to your forms.
+For best results, you should only recognize forms of the same form type that the custom model was trained on.
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient
@@ -173,7 +174,6 @@ credential = AzureKeyCredential("<api_key>")
 form_recognizer_client = FormRecognizerClient(endpoint, credential)
 model_id = "<your custom model id>"
 
-# Make sure the form type is one of the types of forms your custom model can recognize
 with open("<path to your form>", "rb") as fd:
     form = fd.read()
 
@@ -181,16 +181,18 @@ poller = form_recognizer_client.begin_recognize_custom_forms(model_id=model_id, 
 result = poller.result()
 
 for recognized_form in result:
-    print("Form type ID: {}".format(recognized_form.form_type))
-    for label, field in recognized_form.fields.items():
-        print("Field '{}' has value '{}' with a confidence score of {}".format(
-            label, field.value, field.confidence
+    print("Form type: {}".format(recognized_form.form_type))
+    for name, field in recognized_form.fields.items():
+        print("Field '{}' has label '{}' with value '{}' and a confidence score of {}".format(
+            name,
+            field.label_data.text if field.label_data else name,
+            field.value,
+            field.confidence
         ))
 ```
 
-Alternatively, a form url can also be used to recognize custom forms using the `begin_recognize_custom_forms_from_url` method. The `_from_url` methods exist for
-all the recognize methods.
-
+Alternatively, a form URL can also be used to recognize custom forms using the `begin_recognize_custom_forms_from_url` method. 
+The `_from_url` methods exist for all the recognize methods.
 
 ```
 form_url = "<url_of_the_form>"
@@ -217,14 +219,15 @@ poller = form_recognizer_client.begin_recognize_content(form)
 page = poller.result()
 
 table = page[0].tables[0] # page 1, table 1
+print("Table found on page {}:".format(table.page_number))
 for cell in table.cells:
-    print(cell.text)
-    print(cell.bounding_box)
-    print(cell.confidence)
+    print("Cell text: {}".format(cell.text))
+    print("Location: {}".format(cell.bounding_box))
+    print("Confidence score: {}\n".format(cell.confidence))
 ```
 
 ### Recognize Receipts
-Recognize data from USA sales receipts using a prebuilt model. [Here][service_recognize_receipt] are the fields the service returns for a recognized receipt.
+Recognize data from USA sales receipts using a prebuilt model. Receipt fields recognized by the service can be found [here][service_recognize_receipt].
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient
@@ -254,8 +257,8 @@ for receipt in result:
 ```
 
 ### Train a model
-Train a machine-learned model on your own form type. The resulting model will be able to recognize values from the types of forms it was trained on.
-Provide a container SAS url to your Azure Storage Blob container where you're storing the training documents. 
+Train a custom model on your own form type. The resulting model can be used to recognize values from the types of forms it was trained on.
+Provide a container SAS URL to your Azure Storage Blob container where you're storing the training documents. 
 If training files are within a subfolder in the container, use the [prefix][prefix_ref_docs] keyword argument to specify under which folder to train.
 
 More details on setting up a container and required file structure can be found in the [service documentation][training_data].
@@ -270,7 +273,9 @@ credential = AzureKeyCredential("<api_key>")
 form_training_client = FormTrainingClient(endpoint, credential)
 
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
-poller = form_training_client.begin_training(container_sas_url, use_training_labels=False)
+poller = form_training_client.begin_training(
+    container_sas_url, use_training_labels=False
+)
 model = poller.result()
 
 # Custom model information
@@ -279,13 +284,19 @@ print("Status: {}".format(model.status))
 print("Training started on: {}".format(model.training_started_on))
 print("Training completed on: {}".format(model.training_completed_on))
 
-print("Recognized fields:")
-# looping through the submodels, which contains the fields they were trained on
+print("\nRecognized fields:")
 for submodel in model.submodels:
-    print("The submodel with form type '{}' has recognized the following fields: {}".format(
-        submodel.form_type,
-        ", ".join([label for label in submodel.fields])
-    ))
+    print(
+        "The submodel with form type '{}' has recognized the following fields: {}".format(
+            submodel.form_type,
+            ", ".join(
+                [
+                    field.label if field.label else name
+                    for name, field in submodel.fields.items()
+                ]
+            ),
+        )
+    )
 
 # Training result information
 for doc in model.training_documents:
@@ -319,8 +330,8 @@ print("We have models with the following ids: {}".format(
     ", ".join([m.model_id for m in custom_models])
 ))
 
-# Now we get the custom model from the "Train a model" sample
-model_id = "<model id from the Train a Model sample>"
+# Replace with the custom model ID from the "Train a model" sample
+model_id = "<model_id from the Train a Model sample>"
 
 custom_model = form_training_client.get_custom_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
@@ -339,11 +350,8 @@ except ResourceNotFoundError:
 
 ## Async APIs
 This library also includes a complete async API supported on Python 3.5+. To use it, you must
-first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
-See
-[azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#transport)
-for more information.
-
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
+are found under the `azure.ai.formrecognizer.aio` namespace.
 
 ## Optional Configuration
 

@@ -217,9 +217,11 @@ class FormField(object):
         'date', 'time', 'phoneNumber', 'float', 'integer', 'dictionary', or 'list'.
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and field elements for the field label.
+        Note that this is not returned for forms analyzed by models trained with labels.
     :ivar ~azure.ai.formrecognizer.FieldData value_data:
         Contains the text, bounding box, and field elements for the field value.
-    :ivar str name: The unique name of the field or label.
+    :ivar str name: The unique name of the field or the training-time label if
+        analyzed from a custom model that was trained with labels.
     :ivar value:
         The value for the recognized field. Its semantic data type is described by `value_type`.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
@@ -565,7 +567,7 @@ class CustomFormModel(object):
         which can recognize and extract fields from a different type of form.
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
         List of any training errors.
-    :ivar ~azure.ai.formrecognizer.TrainingDocumentInfo training_documents:
+    :ivar list[~azure.ai.formrecognizer.TrainingDocumentInfo] training_documents:
          Metadata about each of the documents used to train the model.
     """
 
