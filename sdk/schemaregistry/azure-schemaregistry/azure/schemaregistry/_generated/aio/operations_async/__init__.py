@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_schema_registry_rest_service_operations_async import AzureSchemaRegistryRestServiceOperationsMixin
+from ._schema_operations_async import SchemaOperations
 
 __all__ = [
-    'AzureSchemaRegistryRestServiceOperationsMixin',
+    'SchemaOperations',
 ]

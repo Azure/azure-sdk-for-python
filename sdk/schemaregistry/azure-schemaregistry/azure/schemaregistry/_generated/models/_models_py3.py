@@ -6,69 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
-from typing import Dict, Optional
+from typing import Optional
 
 import msrest.serialization
 
 
-class SchemaGroup(msrest.serialization.Model):
-    """SchemaGroup.
-
-    :param name:
-    :type name: str
-    :param created_time_utc:
-    :type created_time_utc: ~datetime.datetime
-    :param updated_time_utc:
-    :type updated_time_utc: ~datetime.datetime
-    :param schema_type:
-    :type schema_type: str
-    :param etag: Define an read-only identifier that uniquely describe an instance of the group.
-     This is returned from get call for update purposes. Setting this on create or update has no
-     effect.
-    :type etag: str
-    :param schema_compatibility: schema compatibility mode enum, defined by supported schema type.
-    :type schema_compatibility: int
-    :param group_properties: Dictionary of :code:`<string>`.
-    :type group_properties: dict[str, str]
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'created_time_utc': {'key': 'createdTimeUtc', 'type': 'iso-8601'},
-        'updated_time_utc': {'key': 'updatedTimeUtc', 'type': 'iso-8601'},
-        'schema_type': {'key': 'schemaType', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'schema_compatibility': {'key': 'schemaCompatibility', 'type': 'int'},
-        'group_properties': {'key': 'groupProperties', 'type': '{str}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        created_time_utc: Optional[datetime.datetime] = None,
-        updated_time_utc: Optional[datetime.datetime] = None,
-        schema_type: Optional[str] = None,
-        etag: Optional[str] = None,
-        schema_compatibility: Optional[int] = None,
-        group_properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(SchemaGroup, self).__init__(**kwargs)
-        self.name = name
-        self.created_time_utc = created_time_utc
-        self.updated_time_utc = updated_time_utc
-        self.schema_type = schema_type
-        self.etag = etag
-        self.schema_compatibility = schema_compatibility
-        self.group_properties = group_properties
-
-
 class SchemaId(msrest.serialization.Model):
-    """SchemaId.
+    """JSON Object received from the registry containing schema identifiers.
 
-    :param id:
+    :param id: Schema ID that uniquely identifies a schema in the registry namespace.
     :type id: str
     """
 

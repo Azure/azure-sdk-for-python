@@ -7,13 +7,10 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import SchemaGroup
     from ._models_py3 import SchemaId
 except (SyntaxError, ImportError):
-    from ._models import SchemaGroup  # type: ignore
     from ._models import SchemaId  # type: ignore
 
 __all__ = [
-    'SchemaGroup',
     'SchemaId',
 ]

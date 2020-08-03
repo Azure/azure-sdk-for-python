@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_schema_registry_rest_service import AzureSchemaRegistryRestService
+from ._azure_schema_registry import AzureSchemaRegistry
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['AzureSchemaRegistryRestService']
+__all__ = ['AzureSchemaRegistry']
 
 try:
     from ._patch import patch_sdk

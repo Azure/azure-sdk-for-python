@@ -14,20 +14,27 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 
-class AzureSchemaRegistryRestServiceConfiguration(Configuration):
-    """Configuration for AzureSchemaRegistryRestService.
+class AzureSchemaRegistryConfiguration(Configuration):
+    """Configuration for AzureSchemaRegistry.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
+
+    :param endpoint: The Schema Registry service endpoint, for example my-namespace.servicebus.windows.net.
+    :type endpoint: str
     """
 
     def __init__(
         self,
+        endpoint: str,
         **kwargs: Any
     ) -> None:
-        super(AzureSchemaRegistryRestServiceConfiguration, self).__init__(**kwargs)
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
+        super(AzureSchemaRegistryConfiguration, self).__init__(**kwargs)
 
-        kwargs.setdefault('sdk_moniker', 'azureschemaregistryrestservice/{}'.format(VERSION))
+        self.endpoint = endpoint
+        kwargs.setdefault('sdk_moniker', 'azureschemaregistry/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
