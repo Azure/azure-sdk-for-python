@@ -15,7 +15,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
-from ._request_handlers import _validate_batch_input
+from ._request_handlers import _validate_input
 from ._response_handlers import (
     process_batch_error,
     entities_result,
@@ -145,7 +145,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         country_hint_arg = kwargs.pop("country_hint", None)
         country_hint = country_hint_arg if country_hint_arg is not None else self._default_country_hint
-        docs = _validate_batch_input(documents, "country_hint", country_hint)
+        docs = _validate_input(documents, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -210,7 +210,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -275,7 +275,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -347,7 +347,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -413,7 +413,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -486,7 +486,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         show_opinion_mining = kwargs.pop("show_opinion_mining", None)
