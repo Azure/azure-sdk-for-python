@@ -24,7 +24,7 @@ import json
 # Each time a Container is created the account will be billed for 1 hour of usage based on
 # the provisioned throughput (RU/s) of that account.
 # ----------------------------------------------------------------------------------------------------------
-
+// <configureConnectivity>
 HOST = config.settings["host"]
 MASTER_KEY = config.settings["master_key"]
 
@@ -116,6 +116,8 @@ def token_client_query(container, username):
 
 def run_sample():
     client = cosmos_client.CosmosClient(HOST, {"masterKey": MASTER_KEY})
+    // </configureConnectivity>
+
 
     try:
         try:
