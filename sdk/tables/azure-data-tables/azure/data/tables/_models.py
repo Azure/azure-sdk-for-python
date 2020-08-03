@@ -9,7 +9,6 @@ from azure.core.paging import PageIterator
 from azure.data.tables._generated.models import TableServiceStats as GenTableServiceStats
 
 from ._deserialize import _convert_to_entity
-from ._shared.models import Services
 from ._deserialize import return_context_and_deserialized, process_table_error
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
@@ -457,6 +456,50 @@ def service_properties_deserialize(generated):
     }
 
 
+class Services(object):
+    """Specifies the services accessible with the account SAS.
+
+    :param bool blob:
+        Access for the `~azure.storage.blob.BlobServiceClient`
+    :param bool queue:
+        Access for the `~azure.data.tables.QueueServiceClient`
+    :param bool fileshare:
+        Access for the `~azure.storage.fileshare.ShareServiceClient`
+    """
+
+    def __init__(self, blob=False, queue=False, fileshare=False):
+        self.blob = blob
+        self.queue = queue
+        self.fileshare = fileshare
+        self._str = (('b' if self.blob else '') +
+                     ('q' if self.queue else '') +
+                     ('f' if self.fileshare else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, string):
+        """Create Services from a string.
+
+        To specify blob, queue, or file you need only to
+        include the first letter of the word in the string. E.g. for blob and queue
+        you would provide a string "bq".
+
+        :param str string: Specify blob, queue, or file in
+            in the string with the first letter of the word.
+        :return: A Services object
+        :rtype: ~azure.data.tables.Services
+        """
+        res_blob = 'b' in string
+        res_queue = 'q' in string
+        res_file = 'f' in string
+
+        parsed = cls(res_blob, res_queue, res_file)
+        parsed._str = string  # pylint: disable = protected-access
+        return parsed
+
+
 class TableServices(Services):
     def __str__(self):
         return 't'
@@ -510,3 +553,139 @@ class PartialBatchErrorException(HttpResponseError):
     def __init__(self, message, response, parts):
         self.parts = parts
         super(PartialBatchErrorException, self).__init__(message=message, response=response)
+
+
+
+class LocationMode(object):
+    """
+    Specifies the location the request should be sent to. This mode only applies
+    for RA-GRS accounts which allow secondary read access. All other account types
+    must use PRIMARY.
+    """
+
+    PRIMARY = 'primary'  #: Requests should be sent to the primary location.
+    SECONDARY = 'secondary'  #: Requests should be sent to the secondary location, if possible.
+
+
+class ResourceTypes(object):
+    """
+    Specifies the resource types that are accessible with the account SAS.
+
+    :param bool service:
+        Access to service-level APIs (e.g., Get/Set Service Properties,
+        Get Service Stats, List Containers/Queues/Shares)
+    :param bool object:
+        Access to object-level APIs for blobs, queue messages, and
+        files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
+    """
+
+    def __init__(self, service=False, object=False):  # pylint: disable=redefined-builtin
+        self.service = service
+        self.object = object
+        self._str = (('s' if self.service else '') +
+                     ('o' if self.object else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, string):
+        """Create a ResourceTypes from a string.
+
+        To specify service, container, or object you need only to
+        include the first letter of the word in the string. E.g. service and container,
+        you would provide a string "sc".
+
+        :param str string: Specify service, container, or object in
+            in the string with the first letter of the word.
+        :return: A ResourceTypes object
+        :rtype: ~azure.data.tables.ResourceTypes
+        """
+        res_service = 's' in string
+        res_object = 'o' in string
+
+        parsed = cls(res_service, res_object)
+        parsed._str = string  # pylint: disable = protected-access
+        return parsed
+
+
+class AccountSasPermissions(object):
+    """
+    :class:`~ResourceTypes` class to be used with generate_account_sas
+    function and for the AccessPolicies used with set_*_acl. There are two types of
+    SAS which may be used to grant resource access. One is to grant access to a
+    specific resource (resource-specific). Another is to grant access to the
+    entire service for a specific account and allow certain operations based on
+    perms found here.
+
+    :ivar bool read:
+        Valid for all signed resources types (Service, Container, and Object).
+        Permits read permissions to the specified resource type.
+    :ivar bool write:
+        Valid for all signed resources types (Service, Container, and Object).
+        Permits write permissions to the specified resource type.
+    :ivar bool delete:
+        Valid for Container and Object resource types, except for queue messages.
+    :ivar bool list:
+        Valid for Service and Container resource types only.
+    :ivar bool add:
+        Valid for the following Object resource types only: queue messages, and append blobs.
+    :ivar bool create:
+        Valid for the following Object resource types only: blobs and files.
+        Users can create new blobs or files, but may not overwrite existing
+        blobs or files.
+    :ivar bool update:
+        Valid for the following Object resource types only: queue messages.
+    :ivar bool process:
+        Valid for the following Object resource type only: queue messages.
+    """
+
+    def __init__(self, **kwargs):  # pylint: disable=redefined-builtin
+        self.read = kwargs.pop('read', None)
+        self.write = kwargs.pop('write', None)
+        self.delete = kwargs.pop('delete', None)
+        self.list = kwargs.pop('list', None)
+        self.add = kwargs.pop('add', None)
+        self.create = kwargs.pop('create', None)
+        self.update = kwargs.pop('update', None)
+        self.process = kwargs.pop('process', None)
+        self._str = (('r' if self.read else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else '') +
+                     ('a' if self.add else '') +
+                     ('c' if self.create else '') +
+                     ('u' if self.update else '') +
+                     ('p' if self.process else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission, **kwargs):  # pylint:disable=W0613
+        """Create AccountSasPermissions from a string.
+
+        To specify read, write, delete, etc. permissions you need only to
+        include the first letter of the word in the string. E.g. for read and write
+        permissions you would provide a string "rw".
+
+        :param str permission: Specify permissions in
+            the string with the first letter of the word.
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: A AccountSasPermissions object
+        :rtype: ~azure.data.tables.AccountSasPermissions
+        """
+        p_read = 'r' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+        p_add = 'a' in permission
+        p_create = 'c' in permission
+        p_update = 'u' in permission
+        p_process = 'p' in permission
+
+        parsed = cls(
+            **dict(kwargs, read=p_read, write=p_write, delete=p_delete, list=p_list, add=p_add, create=p_create,
+                   update=p_update, process=p_process))
+        parsed._str = permission  # pylint: disable = protected-access
+        return parsed

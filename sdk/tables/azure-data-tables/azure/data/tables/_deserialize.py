@@ -11,7 +11,7 @@ from typing import (  # pylint: disable=unused-import
 import logging
 import datetime
 from uuid import UUID
-# from azure.core.exceptions import ResourceExistsError
+from enum import Enum
 
 from azure.core.exceptions import (
     HttpResponseError,
@@ -28,8 +28,7 @@ from ._shared._common_conversion import _decode_base64_to_bytes
 from ._generated.models import TableProperties
 
 
-from ._shared.models import TableErrorCode, UserDelegationKey, get_enum_value
-
+# from ._models import UserDelegationKey#, get_enum_value
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -38,6 +37,15 @@ if TYPE_CHECKING:
 from ._shared._error import _to_utc_datetime
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def get_enum_value(value):
+    if value is None or value in ["None", ""]:
+        return None
+    try:
+        return value.value
+    except AttributeError:
+        return value
 
 
 def deserialize_metadata(response, _, headers):
@@ -284,3 +292,108 @@ def process_table_error(storage_error):
     error.error_code = error_code
     error.additional_info = additional_data
     raise error
+
+
+class TableErrorCode(str, Enum):
+    # Generic storage values
+    account_already_exists = "AccountAlreadyExists"
+    account_being_created = "AccountBeingCreated"
+    account_is_disabled = "AccountIsDisabled"
+    authentication_failed = "AuthenticationFailed"
+    authorization_failure = "AuthorizationFailure"
+    no_authentication_information = "NoAuthenticationInformation"
+    condition_headers_not_supported = "ConditionHeadersNotSupported"
+    condition_not_met = "ConditionNotMet"
+    empty_metadata_key = "EmptyMetadataKey"
+    insufficient_account_permissions = "InsufficientAccountPermissions"
+    internal_error = "InternalError"
+    invalid_authentication_info = "InvalidAuthenticationInfo"
+    invalid_header_value = "InvalidHeaderValue"
+    invalid_http_verb = "InvalidHttpVerb"
+    invalid_input = "InvalidInput"
+    invalid_md5 = "InvalidMd5"
+    invalid_metadata = "InvalidMetadata"
+    invalid_query_parameter_value = "InvalidQueryParameterValue"
+    invalid_range = "InvalidRange"
+    invalid_resource_name = "InvalidResourceName"
+    invalid_uri = "InvalidUri"
+    invalid_xml_document = "InvalidXmlDocument"
+    invalid_xml_node_value = "InvalidXmlNodeValue"
+    md5_mismatch = "Md5Mismatch"
+    metadata_too_large = "MetadataTooLarge"
+    missing_content_length_header = "MissingContentLengthHeader"
+    missing_required_query_parameter = "MissingRequiredQueryParameter"
+    missing_required_header = "MissingRequiredHeader"
+    missing_required_xml_node = "MissingRequiredXmlNode"
+    multiple_condition_headers_not_supported = "MultipleConditionHeadersNotSupported"
+    operation_timed_out = "OperationTimedOut"
+    out_of_range_input = "OutOfRangeInput"
+    out_of_range_query_parameter_value = "OutOfRangeQueryParameterValue"
+    request_body_too_large = "RequestBodyTooLarge"
+    resource_type_mismatch = "ResourceTypeMismatch"
+    request_url_failed_to_parse = "RequestUrlFailedToParse"
+    resource_already_exists = "ResourceAlreadyExists"
+    resource_not_found = "ResourceNotFound"
+    server_busy = "ServerBusy"
+    unsupported_header = "UnsupportedHeader"
+    unsupported_xml_node = "UnsupportedXmlNode"
+    unsupported_query_parameter = "UnsupportedQueryParameter"
+    unsupported_http_verb = "UnsupportedHttpVerb"
+
+    # table error codes
+    duplicate_properties_specified = "DuplicatePropertiesSpecified"
+    entity_not_found = "EntityNotFound"
+    entity_already_exists = "EntityAlreadyExists"
+    entity_too_large = "EntityTooLarge"
+    host_information_not_present = "HostInformationNotPresent"
+    invalid_duplicate_row = "InvalidDuplicateRow"
+    invalid_value_type = "InvalidValueType"
+    json_format_not_supported = "JsonFormatNotSupported"
+    method_not_allowed = "MethodNotAllowed"
+    not_implemented = "NotImplemented"
+    properties_need_value = "PropertiesNeedValue"
+    property_name_invalid = "PropertyNameInvalid"
+    property_name_too_long = "PropertyNameTooLong"
+    property_value_too_large = "PropertyValueTooLarge"
+    table_already_exists = "TableAlreadyExists"
+    table_being_deleted = "TableBeingDeleted"
+    table_not_found = "TableNotFound"
+    too_many_properties = "TooManyProperties"
+    update_condition_not_satisfied = "UpdateConditionNotSatisfied"
+    x_method_incorrect_count = "XMethodIncorrectCount"
+    x_method_incorrect_value = "XMethodIncorrectValue"
+    x_method_not_using_post = "XMethodNotUsingPost"
+
+
+class UserDelegationKey(object):
+    """
+    Represents a user delegation key, provided to the user by Azure Storage
+    based on their Azure Active Directory access token.
+
+    The fields are saved as simple strings since the user does not have to interact with this object;
+    to generate an identify SAS, the user can simply pass it to the right API.
+
+    :ivar str signed_oid:
+        Object ID of this token.
+    :ivar str signed_tid:
+        Tenant ID of the tenant that issued this token.
+    :ivar str signed_start:
+        The datetime this token becomes valid.
+    :ivar str signed_expiry:
+        The datetime this token expires.
+    :ivar str signed_service:
+        What service this key is valid for.
+    :ivar str signed_version:
+        The version identifier of the REST service that created this token.
+    :ivar str value:
+        The user delegation key.
+    """
+
+    def __init__(self):
+        self.signed_oid = None
+        self.signed_tid = None
+        self.signed_start = None
+        self.signed_expiry = None
+        self.signed_service = None
+        self.signed_version = None
+        self.value = None

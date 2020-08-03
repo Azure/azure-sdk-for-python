@@ -17,7 +17,7 @@ from datetime import (
 
 from azure.data.tables._models import TableSasPermissions, UpdateMode, AccessPolicy, TableAnalyticsLogging, Metrics, CorsRule, \
     RetentionPolicy
-from azure.data.tables._shared.models import ResourceTypes, AccountSasPermissions
+from azure.data.tables._models import ResourceTypes, AccountSasPermissions
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     HeadersPolicy,

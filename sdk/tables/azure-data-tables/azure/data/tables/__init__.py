@@ -16,15 +16,14 @@ from ._models import (
     Metrics,
     RetentionPolicy, TableAnalyticsLogging, TableSasPermissions, CorsRule, UpdateMode, SASProtocol, Table,
 )
-from ._shared.models import (
+from ._models import (
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
-    TableErrorCode
 )
 from ._policies import ExponentialRetry, LinearRetry
 from ._version import VERSION
-
+from ._deserialize import TableErrorCode
 __version__ = VERSION
 
 __all__ = [

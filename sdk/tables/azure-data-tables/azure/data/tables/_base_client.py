@@ -42,7 +42,7 @@ from azure.core.pipeline.policies import (
 
 from .shared_access_signature import QueryStringConstants
 from ._constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from ._shared.models import LocationMode
+from ._models import LocationMode
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
     StorageHeadersPolicy,
