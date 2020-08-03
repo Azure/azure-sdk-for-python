@@ -31,14 +31,12 @@ extends:
   parameters:
     ServiceDirectory: identity
     AdditionalTestMatrix:
-      ${{ if or(eq(variables['Build.Reason'],'Schedule'), eq(variables['Run.msaldevtest'], 'true')) }}:
-        # If the build is a nightly build also inject msal dev packages
-        Linux_Python35_msal:
-          OSVmImage: 'ubuntu-18.04'
-          PythonVersion: '3.5'
-          CoverageArg: ''
-          RunForPR: false
-          InjectedPackages: 'git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev'
+      Linux_Python35:
+        OSVmImage: 'ubuntu-18.04'
+        PythonVersion: '3.5'
+        CoverageArg: ''
+        RunForPR: false
+        InjectedPackages: 'git+https://github.com/AzureAD/microsoft-authentication-library-for-python@dev'
           
     Artifacts:
     - name: azure_identity
