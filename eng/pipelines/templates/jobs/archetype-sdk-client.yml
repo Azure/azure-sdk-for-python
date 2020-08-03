@@ -41,7 +41,6 @@ parameters:
       RunForPR: false
     AdditionalTestMatrix: []
 
-  
 jobs:
   - job: 'Build'
     variables:
@@ -85,8 +84,9 @@ jobs:
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
-      InjectedPackages: ${{ parameters.InjectedPackages }}
     - template: ../variables/globals.yml
+    - name: InjectedPackages
+      value: ${{ parameters.InjectedPackages }}
     
     dependsOn:
        - 'Build'
