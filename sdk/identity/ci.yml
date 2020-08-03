@@ -31,7 +31,7 @@ extends:
   parameters:
     ServiceDirectory: identity
     AdditionalTestMatrix:
-      ${{ if eq(variables['Build.Reason'],'Schedule') }}:
+      ${{ if or(eq(variables['Build.Reason'],'Schedule'), eq(variables['Run.msaldevtest'], 'true')) }}:
         # If the build is a nightly build also inject msal dev packages
         Linux_Python35_msal:
           OSVmImage: 'ubuntu-18.04'
