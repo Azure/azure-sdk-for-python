@@ -60,8 +60,6 @@ class WarmStoragePropertiesState(str, Enum):
 class LocalTimestampFormat(str, Enum):
 
     embedded = "Embedded"
-    iana = "Iana"
-    time_span = "TimeSpan"
 
 
 class ReferenceDataKeyPropertyType(str, Enum):
