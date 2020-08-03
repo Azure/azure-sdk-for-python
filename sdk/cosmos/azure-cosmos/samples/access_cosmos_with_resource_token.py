@@ -25,6 +25,7 @@ import json
 # the provisioned throughput (RU/s) of that account.
 # ----------------------------------------------------------------------------------------------------------
 // <configureConnectivity>
+// Adding region name to use the code sample in docs 
 HOST = config.settings["host"]
 MASTER_KEY = config.settings["master_key"]
 
