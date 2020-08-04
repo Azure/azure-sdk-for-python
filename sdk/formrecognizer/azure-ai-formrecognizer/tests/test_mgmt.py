@@ -164,7 +164,7 @@ class TestManagement(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     def test_api_version_form_training_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with self.assertRaises(ValueError):
-            ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), api_version="2.1")
+            ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), api_version="9.1")
 
         # these do not raise
         ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), api_version="2.0")
