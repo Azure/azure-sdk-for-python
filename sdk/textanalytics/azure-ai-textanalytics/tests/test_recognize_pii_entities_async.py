@@ -84,11 +84,10 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.confidence_score)
 
-    @pytest.mark.xfail(reason="https://github.com/Azure/azure-sdk-for-python/issues/12890")
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_length_with_emoji(self, client):
-        result = await client.recognize_pii_entities(["👩 SSN: 123-12-1234"])
+        result = await client.recognize_pii_entities(["👩 SSN: 859-98-0987"])
         self.assertEqual(result[0].entities[0].offset, 7)
         self.assertEqual(result[0].entities[0].length, 11)
 
