@@ -149,7 +149,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             await client.analyze_sentiment(docs)
         assert excinfo.value.status_code == 400
         assert excinfo.value.error.code == "InvalidDocumentBatch"
-        assert "(InvalidDocumentBatch) The number of documents in the request have exceeded the data limitations" in str(excinfo.value)
+        assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

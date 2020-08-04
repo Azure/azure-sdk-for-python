@@ -19,24 +19,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/keyPhrases?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]},{"id":"2","keyPhrases":[],"warnings":[]},{"id":"3","keyPhrases":[],"warnings":[]},{"id":"4","keyPhrases":[],"warnings":[]},{"id":"5","keyPhrases":[],"warnings":[]},{"id":"6","keyPhrases":[],"warnings":[]},{"id":"7","keyPhrases":[],"warnings":[]},{"id":"8","keyPhrases":[],"warnings":[]},{"id":"9","keyPhrases":[],"warnings":[]},{"id":"10","keyPhrases":[],"warnings":[]}],"errors":[{"id":"","error":{"code":"InvalidRequest","message":"The
-        request has exceeded the allowed document limits.","innererror":{"code":"InvalidDocumentBatch","message":"The
-        number of documents in the request have exceeded the data limitations. See
-        https://aka.ms/text-analytics-data-limits for additional information"}}}],"modelVersion":"2019-10-01"}'
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
+        request contains too many records. Max 10 records are permitted."}}}'
     headers:
       apim-request-id:
-      - 09ec440d-c44f-41bc-a697-dff470e9b026
+      - 09909bc1-25c2-4215-a2d8-c6114e761a7b
       content-type:
       - application/json; charset=utf-8
-      csp-billing-usage:
-      - CognitiveServices.TextAnalytics.BatchScoring=11
       date:
-      - Fri, 24 Jul 2020 16:32:49 GMT
+      - Tue, 04 Aug 2020 21:24:45 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -46,6 +42,6 @@ interactions:
       x-envoy-upstream-service-time:
       - '5'
     status:
-      code: 200
-      message: OK
+      code: 400
+      message: Bad Request
 version: 1
