@@ -353,7 +353,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
      list[~azure.servicebus.management.AuthorizationRule]
     :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.servicebus.management.models.EntityStatus
+    :type status: str or ~azure.servicebus.management.EntityStatus
     :keyword support_ordering: A value that indicates whether the topic supports ordering.
     :type support_ordering: bool
     :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
@@ -365,7 +365,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :keyword entity_availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
     :type entity_availability_status: str or
-     ~azure.servicebus.management.models.EntityAvailabilityStatus
+     ~azure.servicebus.management.EntityAvailabilityStatus
     :keyword enable_subscription_partitioning: A value that indicates whether the topic's
      subscription is to be partitioned.
     :type enable_subscription_partitioning: bool
@@ -564,7 +564,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
     :type enable_batched_operations: bool
     :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.servicebus.management.models.EntityStatus
+    :type status: str or ~azure.servicebus.management.EntityStatus
     :keyword forward_to: The name of the recipient entity to which all the messages sent to the
      subscription are forwarded to.
     :type forward_to: str
@@ -580,7 +580,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
     :keyword entity_availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
     :type entity_availability_status: str or
-     ~azure.servicebus.management.models.EntityAvailabilityStatus
+     ~azure.servicebus.management.EntityAvailabilityStatus
     """
     def __init__(self, name, **kwargs):
         # type: (str, Any) -> None
@@ -726,10 +726,10 @@ class RuleProperties(DictMixin):
     :param name: Name of the rule.
     :type name: str
     :keyword filter: The filter of the rule.
-    :type filter: Union[~azure.servicebus.management.models.CorrelationRuleFilter,
-     ~azure.servicebus.management.models.SqlRuleFilter]
+    :type filter: Union[~azure.servicebus.management.CorrelationRuleFilter,
+     ~azure.servicebus.management.SqlRuleFilter]
     :keyword action: The action of the rule.
-    :type action: Optional[~azure.servicebus.management.models.SqlRuleAction]
+    :type action: Optional[~azure.servicebus.management.SqlRuleAction]
     :keyword created_at: The exact time the rule was created.
     :type created_at: ~datetime.datetime
     """

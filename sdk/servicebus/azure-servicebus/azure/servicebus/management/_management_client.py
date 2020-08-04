@@ -225,6 +225,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.QueueProperties
         """
+        kwargs = dict(kwargs)
         queue = QueueProperties(name, **kwargs)
         for key in queue.keys():
             kwargs.pop(key, None)
@@ -420,7 +421,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.TopicProperties
         """
-
+        kwargs = dict(kwargs)
         topic = TopicProperties(name, **kwargs)
         for key in topic.keys():
             kwargs.pop(key, None)
@@ -625,6 +626,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
+        kwargs = dict(kwargs)
         subscription = SubscriptionProperties(name, **kwargs)
         for key in subscription.keys():
             kwargs.pop(key, None)
@@ -790,9 +792,13 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         return rule_description
 
     def create_rule(self, topic, subscription, name, **kwargs):
-        # type: (Union[str, TopicProperties], Union[str, SubscriptionProperties], str, Any) -> RuleProperties  # pylint:disable=line-too-long
+        # type: (Union[str, TopicProperties], Union[str, SubscriptionProperties], str, Any) -> RuleProperties
         """Create a rule for a topic subscription.
 
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that will own the
+         to-be-created subscription rule.
+        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
+         will own the to-be-created rule.
         :param name: Name of the rule.
         :type name: str
         :keyword filter: The filter of the rule.
@@ -805,6 +811,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.RuleProperties
         """
+
         try:
             topic_name = topic.name  # type: ignore
         except AttributeError:
@@ -813,6 +820,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             subscription_name = subscription.name  # type: ignore
         except AttributeError:
             subscription_name = subscription
+        kwargs = dict(kwargs)
         rule = RuleProperties(name, **kwargs)
         for key in rule.keys():
             kwargs.pop(key, None)

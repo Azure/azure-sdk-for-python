@@ -173,6 +173,8 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
     async def create_queue(self, name: str, **kwargs) -> QueueProperties:
         """Create a queue.
 
+        :param name: Name of the queue.
+        :type name: str
         :keyword authorization_rules: Authorization rules for resource.
         :type authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
@@ -230,6 +232,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.QueueProperties
         """
+        kwargs = dict(kwargs)
         queue = QueueProperties(name, **kwargs)
         for key in queue.keys():
             kwargs.pop(key, None)
@@ -369,6 +372,8 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
     async def create_topic(self, name: str, **kwargs) -> TopicProperties:
         """Create a topic.
 
+        :param name: Name of the topic.
+        :type name: str
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
@@ -415,6 +420,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :rtype: ~azure.servicebus.management.TopicProperties
         """
 
+        kwargs = dict(kwargs)
         topic = TopicProperties(name, **kwargs)
         for key in topic.keys():
             kwargs.pop(key, None)
@@ -568,6 +574,10 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
     ) -> SubscriptionProperties:
         """Create a topic subscription.
 
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that will own the
+         to-be-created subscription.
+        :param name: Name of the subscription.
+        :type name: str
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
@@ -609,6 +619,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
+        kwargs = dict(kwargs)
         subscription = SubscriptionProperties(name, **kwargs)
         for key in subscription.keys():
             kwargs.pop(key, None)
@@ -781,6 +792,12 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             name: str, **kwargs) -> RuleProperties:
         """Create a rule for a topic subscription.
 
+        :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that will own the
+         to-be-created subscription rule.
+        :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
+         will own the to-be-created rule.
+        :param name: Name of the rule.
+        :type name: str
         :keyword filter: The filter of the rule.
         :type filter: Union[~azure.servicebus.management.models.CorrelationRuleFilter,
          ~azure.servicebus.management.models.SqlRuleFilter]
@@ -799,6 +816,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             subscription_name = subscription.name  # type: ignore
         except AttributeError:
             subscription_name = subscription
+        kwargs = dict(kwargs)
         rule = RuleProperties(name, **kwargs)
         for key in rule.keys():
             kwargs.pop(key, None)
