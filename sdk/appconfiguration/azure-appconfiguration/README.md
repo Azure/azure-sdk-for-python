@@ -10,10 +10,6 @@ Use the client library for App Configuration to create and manage application co
 
 ## Getting started
 
-### Supported Python version
-
-Python 2.7 and 3.5+
-
 ### Install the package
 
 Install the Azure App Configuration client library for Python with pip:
