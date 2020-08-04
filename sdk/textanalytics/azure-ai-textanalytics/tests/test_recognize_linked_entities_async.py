@@ -67,6 +67,7 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
                 for match in entity.matches:
                     self.assertIsNotNone(match.offset)
                     self.assertIsNotNone(match.length)
+                    self.assertNotEqual(match.length, 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -90,6 +91,7 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
                 for match in entity.matches:
                     self.assertIsNotNone(match.offset)
                     self.assertIsNotNone(match.length)
+                    self.assertNotEqual(match.length, 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
