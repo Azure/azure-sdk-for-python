@@ -232,7 +232,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.QueueProperties
         """
-        kwargs = dict(kwargs)
         queue = QueueProperties(name, **kwargs)
         for key in queue.keys():
             kwargs.pop(key, None)
@@ -420,7 +419,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :rtype: ~azure.servicebus.management.TopicProperties
         """
 
-        kwargs = dict(kwargs)
         topic = TopicProperties(name, **kwargs)
         for key in topic.keys():
             kwargs.pop(key, None)
@@ -619,7 +617,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
-        kwargs = dict(kwargs)
         subscription = SubscriptionProperties(name, **kwargs)
         for key in subscription.keys():
             kwargs.pop(key, None)
@@ -799,10 +796,10 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         :param name: Name of the rule.
         :type name: str
         :keyword filter: The filter of the rule.
-        :type filter: Union[~azure.servicebus.management.models.CorrelationRuleFilter,
-         ~azure.servicebus.management.models.SqlRuleFilter]
+        :type filter: Union[~azure.servicebus.management.CorrelationRuleFilter,
+         ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
-        :type action: Optional[~azure.servicebus.management.models.SqlRuleAction]
+        :type action: Optional[~azure.servicebus.management.SqlRuleAction]
         :keyword created_at: The exact time the rule was created.
         :type created_at: ~datetime.datetime
 
@@ -816,7 +813,6 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             subscription_name = subscription.name  # type: ignore
         except AttributeError:
             subscription_name = subscription
-        kwargs = dict(kwargs)
         rule = RuleProperties(name, **kwargs)
         for key in rule.keys():
             kwargs.pop(key, None)
