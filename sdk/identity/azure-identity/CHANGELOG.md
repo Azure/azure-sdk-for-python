@@ -7,7 +7,8 @@
 
 ### Breaking Changes
 - Removed application authentication APIs added in 1.4.0 beta versions. These
-  will be reintroduced in 1.5.0b1.
+  will be reintroduced in 1.5.0b1. Passing the keyword arguments below
+  generally won't cause a runtime error, but the arguments have no effect.
   - Removed `authenticate` method from `DeviceCodeCredential`,
     `InteractiveBrowserCredential`, and `UsernamePasswordCredential`
   - Removed `allow_unencrypted_cache` and `enable_persistent_cache` keyword
