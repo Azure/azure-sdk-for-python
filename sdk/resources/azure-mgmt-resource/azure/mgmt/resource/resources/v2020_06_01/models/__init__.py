@@ -12,7 +12,9 @@
 try:
     from ._models_py3 import Alias
     from ._models_py3 import AliasPath
+    from ._models_py3 import AliasPathMetadata
     from ._models_py3 import AliasPattern
+    from ._models_py3 import ApiProfile
     from ._models_py3 import BasicDependency
     from ._models_py3 import DebugSetting
     from ._models_py3 import Dependency
@@ -74,7 +76,9 @@ try:
 except (SyntaxError, ImportError):
     from ._models import Alias
     from ._models import AliasPath
+    from ._models import AliasPathMetadata
     from ._models import AliasPattern
+    from ._models import ApiProfile
     from ._models import BasicDependency
     from ._models import DebugSetting
     from ._models import Dependency
@@ -144,6 +148,8 @@ from ._resource_management_client_enums import (
     DeploymentMode,
     OnErrorDeploymentType,
     WhatIfResultFormat,
+    AliasPathTokenType,
+    AliasPathAttributes,
     AliasPatternType,
     AliasType,
     ProvisioningState,
@@ -151,12 +157,15 @@ from ._resource_management_client_enums import (
     ProvisioningOperation,
     PropertyChangeType,
     ChangeType,
+    TagsPatchOperation,
 )
 
 __all__ = [
     'Alias',
     'AliasPath',
+    'AliasPathMetadata',
     'AliasPattern',
+    'ApiProfile',
     'BasicDependency',
     'DebugSetting',
     'Dependency',
@@ -225,6 +234,8 @@ __all__ = [
     'DeploymentMode',
     'OnErrorDeploymentType',
     'WhatIfResultFormat',
+    'AliasPathTokenType',
+    'AliasPathAttributes',
     'AliasPatternType',
     'AliasType',
     'ProvisioningState',
@@ -232,4 +243,5 @@ __all__ = [
     'ProvisioningOperation',
     'PropertyChangeType',
     'ChangeType',
+    'TagsPatchOperation',
 ]

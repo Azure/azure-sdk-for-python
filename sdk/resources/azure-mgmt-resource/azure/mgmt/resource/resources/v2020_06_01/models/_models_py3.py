@@ -16,6 +16,9 @@ from msrest.exceptions import HttpOperationError
 class Alias(Model):
     """The alias type. .
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param name: The alias name.
     :type name: str
     :param paths: The paths for an alias.
@@ -30,7 +33,15 @@ class Alias(Model):
     :param default_pattern: The default pattern for an alias.
     :type default_pattern:
      ~azure.mgmt.resource.resources.v2020_06_01.models.AliasPattern
+    :ivar default_metadata: The default alias path metadata. Applies to the
+     default path and to any alias path that doesn't have metadata
+    :vartype default_metadata:
+     ~azure.mgmt.resource.resources.v2020_06_01.models.AliasPathMetadata
     """
+
+    _validation = {
+        'default_metadata': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -38,6 +49,7 @@ class Alias(Model):
         'type': {'key': 'type', 'type': 'AliasType'},
         'default_path': {'key': 'defaultPath', 'type': 'str'},
         'default_pattern': {'key': 'defaultPattern', 'type': 'AliasPattern'},
+        'default_metadata': {'key': 'defaultMetadata', 'type': 'AliasPathMetadata'},
     }
 
     def __init__(self, *, name: str=None, paths=None, type=None, default_path: str=None, default_pattern=None, **kwargs) -> None:
@@ -47,10 +59,14 @@ class Alias(Model):
         self.type = type
         self.default_path = default_path
         self.default_pattern = default_pattern
+        self.default_metadata = None
 
 
 class AliasPath(Model):
     """The type of the paths for alias.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     :param path: The path of an alias.
     :type path: str
@@ -59,12 +75,21 @@ class AliasPath(Model):
     :param pattern: The pattern for an alias path.
     :type pattern:
      ~azure.mgmt.resource.resources.v2020_06_01.models.AliasPattern
+    :ivar metadata: The metadata of the alias path. If missing, fall back to
+     the default metadata of the alias.
+    :vartype metadata:
+     ~azure.mgmt.resource.resources.v2020_06_01.models.AliasPathMetadata
     """
+
+    _validation = {
+        'metadata': {'readonly': True},
+    }
 
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
         'pattern': {'key': 'pattern', 'type': 'AliasPattern'},
+        'metadata': {'key': 'metadata', 'type': 'AliasPathMetadata'},
     }
 
     def __init__(self, *, path: str=None, api_versions=None, pattern=None, **kwargs) -> None:
@@ -72,6 +97,40 @@ class AliasPath(Model):
         self.path = path
         self.api_versions = api_versions
         self.pattern = pattern
+        self.metadata = None
+
+
+class AliasPathMetadata(Model):
+    """AliasPathMetadata.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The type of the token that the alias path is referring to.
+     Possible values include: 'NotSpecified', 'Any', 'String', 'Object',
+     'Array', 'Integer', 'Number', 'Boolean'
+    :vartype type: str or
+     ~azure.mgmt.resource.resources.v2020_06_01.models.AliasPathTokenType
+    :ivar attributes: The attributes of the token that the alias path is
+     referring to. Possible values include: 'None', 'Modifiable'
+    :vartype attributes: str or
+     ~azure.mgmt.resource.resources.v2020_06_01.models.AliasPathAttributes
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'attributes': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'attributes': {'key': 'attributes', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(AliasPathMetadata, self).__init__(**kwargs)
+        self.type = None
+        self.attributes = None
 
 
 class AliasPattern(Model):
@@ -98,6 +157,34 @@ class AliasPattern(Model):
         self.phrase = phrase
         self.variable = variable
         self.type = type
+
+
+class ApiProfile(Model):
+    """ApiProfile.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar profile_version: The profile version.
+    :vartype profile_version: str
+    :ivar api_version: The API version.
+    :vartype api_version: str
+    """
+
+    _validation = {
+        'profile_version': {'readonly': True},
+        'api_version': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'profile_version': {'key': 'profileVersion', 'type': 'str'},
+        'api_version': {'key': 'apiVersion', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ApiProfile, self).__init__(**kwargs)
+        self.profile_version = None
+        self.api_version = None
 
 
 class BasicDependency(Model):
@@ -1349,6 +1436,9 @@ class Provider(Model):
 class ProviderResourceType(Model):
     """Resource type managed by the resource provider.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param resource_type: The resource type.
     :type resource_type: str
     :param locations: The collection of locations where this resource type can
@@ -1359,6 +1449,11 @@ class ProviderResourceType(Model):
      list[~azure.mgmt.resource.resources.v2020_06_01.models.Alias]
     :param api_versions: The API version.
     :type api_versions: list[str]
+    :ivar default_api_version: The default API version.
+    :vartype default_api_version: str
+    :ivar api_profiles: The API profiles for the resource provider.
+    :vartype api_profiles:
+     list[~azure.mgmt.resource.resources.v2020_06_01.models.ApiProfile]
     :param capabilities: The additional capabilities offered by this resource
      type.
     :type capabilities: str
@@ -1366,11 +1461,18 @@ class ProviderResourceType(Model):
     :type properties: dict[str, str]
     """
 
+    _validation = {
+        'default_api_version': {'readonly': True},
+        'api_profiles': {'readonly': True},
+    }
+
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'locations': {'key': 'locations', 'type': '[str]'},
         'aliases': {'key': 'aliases', 'type': '[Alias]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
+        'default_api_version': {'key': 'defaultApiVersion', 'type': 'str'},
+        'api_profiles': {'key': 'apiProfiles', 'type': '[ApiProfile]'},
         'capabilities': {'key': 'capabilities', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
@@ -1381,6 +1483,8 @@ class ProviderResourceType(Model):
         self.locations = locations
         self.aliases = aliases
         self.api_versions = api_versions
+        self.default_api_version = None
+        self.api_profiles = None
         self.capabilities = capabilities
         self.properties = properties
 
@@ -1823,7 +1927,7 @@ class TagsPatchResource(Model):
     :param operation: The operation type for the patch API. Possible values
      include: 'Replace', 'Merge', 'Delete'
     :type operation: str or
-     ~azure.mgmt.resource.resources.v2020_06_01.models.enum
+     ~azure.mgmt.resource.resources.v2020_06_01.models.TagsPatchOperation
     :param properties: The set of tags.
     :type properties: ~azure.mgmt.resource.resources.v2020_06_01.models.Tags
     """
