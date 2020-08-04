@@ -85,6 +85,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
+    @pytest.mark.xfail(reason="https://github.com/Azure/azure-sdk-for-python/issues/12890")
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_length_with_emoji(self, client):
