@@ -16,7 +16,7 @@ USAGE: python blob_samples_query.py
 """
 import os
 import sys
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobServiceClient, DelimitedJSON, DelimitedTextDialect
 
 
 def main():
@@ -36,25 +36,19 @@ def main():
         pass
     # [START query]
     errors = []
-
-    def progress_callback(error, bytes_processed, total_bytes):
-        if error:
-            errors.append(error)
-        if not bytes_processed:
-            print("All bytes have been processed")
-            print("Total Bytes processed should be {}".format(total_bytes))
-        else:
-            print(bytes_processed)
+    def on_error(error):
+        errors.append(error)
 
     # upload the csv file
     blob_client = blob_service_client.get_blob_client(container_name, "csvfile")
     with open("./sample-blobs/quick_query.csv", "rb") as stream:
-        blob_client.upload_blob(stream)
+        blob_client.upload_blob(stream, overwrite=True)
 
     # select the second column of the csv file
     query_expression = "SELECT _2 from BlobStorage"
-    output_seri = ';'
-    reader = blob_client.query(query_expression, progress_callback=progress_callback, output_serialization=output_seri)
+    input_format = DelimitedTextDialect(delimiter=',', quotechar='"', lineterminator='\n', escapechar="", has_header=False)
+    output_format = DelimitedJSON(delimiter='\n')
+    reader = blob_client.query_blob(query_expression, on_error=on_error, blob_format=input_format, output_format=output_format)
     content = reader.readall()
     # [END query]
     print(content)
