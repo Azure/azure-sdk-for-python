@@ -61,11 +61,6 @@ def order_results(response, combined):
 
 
 def prepare_result(func):
-    def _get_error_code_and_message(error):
-        if hasattr(error.error, 'innererror') and error.error.innererror:
-            return error.error.innererror.code, error.error.innererror.message
-        return error.error.code, error.error.message
-
     def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
         if obj.errors:
             combined = obj.documents + obj.errors
