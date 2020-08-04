@@ -21,8 +21,7 @@ pip install azure-appconfiguration
 ### Prerequisites
 
 * Python 2.7, or 3.5 or later is required to use this package.
-* You need an [Azure subscription][azure_sub] and a
-[Azure Cognitive Search service][search_resource] to use this package.
+* You need an [Azure subscription][azure_sub], and a [Configuration Store][configuration_store] to use this package.
 
 To create a Configuration Store, you can use the Azure Portal or [Azure CLI][azure_cli].
 
