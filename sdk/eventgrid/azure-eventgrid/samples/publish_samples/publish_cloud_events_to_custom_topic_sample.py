@@ -13,8 +13,8 @@ import msrest.serialization
 import datetime as dt
 from azure.core.credentials import AzureKeyCredential
 from azure.mgmt.eventgrid import EventGridManagementClient
-from azure.eventgrid._publisher_client import EventGridPublisherClient
-from azure.eventgrid._models import EventGridEvent, CloudEvent
+from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridEvent, CloudEvent
 from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError,
@@ -43,8 +43,6 @@ credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(topic_hostname, credential)
 
 team_members = ["Josh", "Kerri", "Kieran", "Laurent", "Lily", "Matt", "Soren", "Srikanta", "Swathi"]    # possible values for data field
-sample_members = sample(team_members, k=randint(1, 9))      # select random subset of team members
-data_dict = {"team": sample_members}
 
 custom_data_object = CustomSample("sample event")
 
@@ -53,10 +51,12 @@ while True:
     event_list = []     # list of events to publish
     # create events and append to list
     for j in range(randint(1, 1)):
+        sample_members = sample(team_members, k=randint(1, 9))      # select random subset of team members
+        data_dict = {"team": sample_members}
         event = CloudEvent(
-                type="Azure.Sdk.Sample",
+                type="Azure.Sdk.Samp",
                 source="https://egsample.dev/sampleevent",
-                data=1
+                data=0
                 )
         event_list.append(event)
 

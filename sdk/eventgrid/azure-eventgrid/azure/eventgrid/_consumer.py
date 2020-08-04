@@ -7,10 +7,11 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING
+from base64 import b64decode
+import json
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
-import json
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -22,25 +23,33 @@ from . import _constants as constants
 
 class EventGridConsumer(object):
     """
-    A consumer responsible for deserializing event handler messages into a list of event type objects
-    specified in the EventGridEvents/CloudEvents.
+    A consumer responsible for deserializing event handler messages, to allow for access to strongly typed Event objects.
     """
 
-    def deserialize_events(self, events, **kwargs):
-        # type: (Union[azure.eventhub.EventData, azure.servicebus.Message, azure.functions.HttpRequest, azure.storage.queue.QueueMessage, dict]) -> List[models.DeserializedEvent]
-        """A message of a list of events in CloudEvent/EventGridEvent format from an event handler will be parsed and returned as a list of
-        EventContainer objects.
-        :param events: The event handler message to be deserialized.
-        :type events: Union[azure.eventhub.EventData, azure.servicebus.Message, azure.functions.HttpRequest, azure.storage.queue.QueueMessage, dict]
-        :rtype: List[models.DeserializedEvent]
+    def deserialize_event(self, event, is_bytes=False, **kwargs):
+        # type: (Union[str, dict]) -> models.DeserializedEvent
+        """Single event in CloudEvent/EventGridEvent format will be parsed and returned as DeserializedEvent.
+        :param event: The event to be deserialized. If string is bytes string, is_bytes arg must be set to True.
+        :type event: Union[str, dict]
+        :param is_bytes: True/False value depending on whether event is bytes string. Set to False by default.
+        :type is_bytes: bool 
+        :rtype: models.DeserializedEvent
 
         :raise: :class:`ValueError`, when events are not of CloudEvent or EventGridEvent format.
         """
-        print(events)
-        #if isinstance(events, Message):
-        #    print('recieved sb queue message')
-        #    dict_event = json.loads(str(events))
-        #    print(dict_event)
-        return [DeserializedEvent(events)]
+        try:
+            if is_bytes:
+                dict_event = json.loads(b64decode(event))
+                deserialized_event = DeserializedEvent(dict_event)
+            elif isinstance(event, str):
+                dict_event = json.loads(event)
+                deserialized_event = DeserializedEvent(dict_event)
+            elif isinstance(event, dict):
+                deserialized_event = DeserializedEvent(event)
+        except ValueError as e:
+            print('deserialize_events(): Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent/EventGridEvent schema.')
+            print('If you are passing in a byte string, pass is_bytes=True into args.')
+            print('Your event: {}'.format(event))
+            print(e)
 
-        return None
+        return deserialized_event

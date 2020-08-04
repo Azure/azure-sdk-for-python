@@ -1,4 +1,4 @@
-# coding=utf-8
+#coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -25,7 +25,7 @@ class CloudEvent(msrest.serialization.Model):
     :type source: str
     :param data: Event data specific to the event type.
     :type data: object
-    :param data_base64: Event data specific to the event type.
+    :param data_base64: Event data specific to the event type, encoded as a base64 string.
     :type data_base64: bytearray
     :param type: Required. Type of event related to the originating occurrence.
     :type type: str

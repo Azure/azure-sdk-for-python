@@ -180,17 +180,21 @@ class DictMixin(object):
         return default
 
 
-class DeserializedEvent(DictMixin):
+class DeserializedEvent():
     """The container for the deserialized event model and mapping of event envelope properties.
-        :param dict args: dict
+        :param dict event: dict
     """
     # class variable
     _event_type_mappings = {'Microsoft.Storage.BlobCreated': StorageBlobCreatedEventData}
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, event):
         # type: (Any) -> None
-        self._update(*args, **kwargs)
+    #    self._update(*args, **kwargs)
         self._model = None
+        self._event_dict = event
+    
+    def to_json(self):
+        return self._event_dict
 
     def _update(self, *args, **kwargs):
         for k, v in dict(*args, **kwargs).items():
@@ -211,30 +215,32 @@ class DeserializedEvent(DictMixin):
         event_type = ""
         if not self._model:
             try:
-                if 'specversion' in self.keys():
-                    self._model = CloudEvent.deserialize(self)
+                if 'specversion' in self._event_dict.keys():
+                    self._model = CloudEvent.deserialize(self._event_dict)
                     event_type = self._model.type
                 else:
-                    self._model = EventGridEvent.deserialize(self)
+                    self._model = EventGridEvent.deserialize(self._event_dict)
                     event_type = self._model.event_type
             except ValueError:
                 print("Event is not correctly formatted CloudEvent or EventGridEvent.")
 
-            self._set_strongly_typed_data_object(event_type)
+            self._deserialize_data(event_type)
 
         return self._model
     
-    def _set_strongly_typed_data_object(self, event_type):
+    def _deserialize_data(self, event_type):
         """
         Sets self._model.data to strongly typed event object if event type exists in _event_type_mappings.
         Otherwise, sets self._model.data to None.
 
         :param str event_type: The event_type of the EventGridEvent object or the type of the CloudEvent object.
         """
+        # if system event type defined, set model.data to system event object
         if event_type in DeserializedEvent._event_type_mappings:
             self._model.data = (DeserializedEvent._event_type_mappings[event_type]).deserialize(self._model.data)
-        else:
+        elif isinstance(self._model.data, dict):    # else, if custom event, then model.data is dict and should be set to None
             self._model.data = None
+        # else model.data is str/int/etc. and should remain the same
     
 class CustomEvent(DictMixin):
     """The wrapper class for a CustomEvent, to be used when publishing events.
@@ -247,4 +253,6 @@ class CustomEvent(DictMixin):
 
     def _update(self, *args, **kwargs):
         for k, v in dict(*args, **kwargs).items():
+            print(k)
+            print(v)
             self[k] = v

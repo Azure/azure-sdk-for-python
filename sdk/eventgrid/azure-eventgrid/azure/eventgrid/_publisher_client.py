@@ -62,7 +62,7 @@ class EventGridPublisherClient(object):
             print(CloudEvent.serialize(events[0]))
             self._client.publish_cloud_event_events(self._topic_hostname, events)
         elif all(isinstance(e, EventGridEvent) for e in events):
-            self._client.publish_event_grid_events(self._topic_hostname, events)
+            self._client.publish_events(self._topic_hostname, events)
         else:
           raise Exception("Event schema is not correct. Please send as list of all CloudEvents, list of all EventGridEvents, or list of all CustomEvents.")
 
@@ -73,5 +73,5 @@ class EventGridPublisherClient(object):
         if isinstance(self._credential, AzureKeyCredential):
             authentication_policy = AzureKeyCredentialPolicy(credential=self._credential, name=constants.EVENTGRID_KEY_HEADER)
         if isinstance(self._credential, EventGridSharedAccessSignatureCredential):
-            authentication_policy = EventGridSharedAccessSignatureCredentialPolicy(credential=credential, name=constants.EVENTGRID_TOKEN_HEADER)
+            authentication_policy = EventGridSharedAccessSignatureCredentialPolicy(credential=self._credential, name=constants.EVENTGRID_TOKEN_HEADER)
         return authentication_policy

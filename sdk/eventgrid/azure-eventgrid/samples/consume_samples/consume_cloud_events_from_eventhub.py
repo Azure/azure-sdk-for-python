@@ -21,13 +21,19 @@ EVENTHUB_NAME = "cloudeventhub"
 def on_event(partition_context, event):
 
     dict_event = event.body_as_json()[0]
-    deserialized_events = eg_consumer.deserialize_events(dict_event)
-    for deserialized_event in deserialized_events:
-        if deserialized_event.model.__class__ == CloudEvent:
-            print("model: {}\n".format(deserialized_event.model))
-            print("model.data: {}\n".format(deserialized_event.model.data))
-            print("model.data.__class__: {}\n".format(deserialized_event.model.data.__class__))
-            print("model.time: {}\n".format(deserialized_event.model.time))
+    deserialized_event = eg_consumer.deserialize_event(dict_event)
+    if deserialized_event.model.__class__ == CloudEvent:
+        dict_event = deserialized_event.to_json()
+        print("event.type: {}\n".format(dict_event["type"]))
+        print("event.to_json(): {}\n".format(dict_event))
+        print("model: {}\n".format(deserialized_event.model))
+        print("model.data: {}\n".format(deserialized_event.model.data))
+    else:
+        dict_event = deserialized_event.to_json()
+        print("event.eventType: {}\n".format(dict_event["eventType"]))
+        print("event.to_json(): {}\n".format(dict_event))
+        print("model: {}\n".format(deserialized_event.model))
+        print("model.data: {}\n".format(deserialized_event.model.data))
 
     #print("Received event from partition: {}.".format(partition_context.partition_id))
 
@@ -39,7 +45,7 @@ consumer_client = EventHubConsumerClient.from_connection_string(
 )
 
 with consumer_client:
-    events = consumer_client.receive(
+    event_list = consumer_client.receive(
         on_event=on_event,
         starting_position="-1",  # "-1" is from the beginning of the partition.
         prefetch=5

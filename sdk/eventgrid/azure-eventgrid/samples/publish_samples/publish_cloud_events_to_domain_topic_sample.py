@@ -1,22 +1,16 @@
 import sys
 import os
-import datetime as dt
 import json
 from random import randint, sample
 import time
-import uuid
-from datetime import timezone
-from dateutil.tz import tzlocal
-import datetime as dt
 
 PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from azure.core.credentials import AzureKeyCredential
-from azure.mgmt.eventgrid import EventGridManagementClient
-from azure.eventgrid._publisher_client import EventGridPublisherClient
-from azure.eventgrid._models import EventGridEvent, CloudEvent
+from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridEvent, CloudEvent
 from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError,
@@ -38,14 +32,10 @@ while True:
 
     # create events and append to list
     for j in range(randint(1, 3)):
-        event_uuid = uuid.uuid4()      # generate random unique id
         sample_members = sample(team_members, k=randint(1, 9))      # select random subset of team members
         event = CloudEvent(
-                specversion="1.0",
-                id=event_uuid,
                 type="Azure.Sdk.Demo",
                 source="t-swpill-domain",
-                time=dt.datetime.now(tzlocal()).isoformat(),
                 data={"team": sample_members}
                 )
         event_list.append(event)

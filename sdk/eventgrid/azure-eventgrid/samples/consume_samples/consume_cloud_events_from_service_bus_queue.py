@@ -16,26 +16,31 @@ from azure.core.exceptions import (
     ClientAuthenticationError
 )
 
-from azure.eventgrid import EventGridConsumer, CloudEvent, EventGridEvent
+from azure.eventgrid import EventGridConsumer, CloudEvent
 from azure.servicebus import ServiceBusClient, Message
-
-def get_deserialized_events(dict_events):
-    events = consumer.deserialize_events(dict_events)
-    for event in events:
-        if event.model.__class__ == CloudEvent:
-            print("model: {}".format(event.model))
 
 connection_str = os.environ['SB_CONN_STR']
 
 sb_client = ServiceBusClient.from_connection_string(connection_str)
 consumer = EventGridConsumer()
 with sb_client:
-    receiver = sb_client.get_queue_receiver("cloudeventqueue", prefetch=1)
+    receiver = sb_client.get_queue_receiver("cloudeventqueue", prefetch=10)
     with receiver:
-        msgs = receiver.receive(max_batch_size=1, max_wait_time=5)
+        msgs = receiver.receive(max_batch_size=10, max_wait_time=1)
         print("number of messages: {}".format(len(msgs)))
         for msg in msgs:
             # receive single dict message
-            dict_events = json.loads(str(msg))
-            get_deserialized_events(dict_events)
+            deserialized_event = consumer.deserialize_event(str(msg))
+            if deserialized_event.model.__class__ == CloudEvent:
+                dict_event = deserialized_event.to_json()
+                print("event.type: {}\n".format(dict_event["type"]))
+                print("event.to_json(): {}\n".format(dict_event))
+                print("model: {}\n".format(deserialized_event.model))
+                print("model.data: {}\n".format(deserialized_event.model.data))
+            else:
+                dict_event = deserialized_event.to_json()
+                print("event.eventType: {}\n".format(dict_event["eventType"]))
+                print("event.to_json(): {}\n".format(dict_event))
+                print("model: {}\n".format(deserialized_event.model))
+                print("model.data: {}\n".format(deserialized_event.model.data))
             msg.complete()

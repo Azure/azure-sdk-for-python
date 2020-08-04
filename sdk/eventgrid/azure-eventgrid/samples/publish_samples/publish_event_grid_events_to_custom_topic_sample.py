@@ -11,8 +11,8 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from azure.core.credentials import AzureKeyCredential
 from azure.mgmt.eventgrid import EventGridManagementClient
-from azure.eventgrid._publisher_client import EventGridPublisherClient
-from azure.eventgrid._models import EventGridEvent, CloudEvent
+from azure.eventgrid import EventGridPublisherClient
+from azure.eventgrid import EventGridEvent, CloudEvent
 from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError,
