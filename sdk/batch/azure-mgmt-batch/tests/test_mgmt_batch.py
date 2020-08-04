@@ -36,8 +36,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
         self.mgmt_batch_client = self.create_mgmt_client(
             azure.mgmt.batch.BatchManagementClient)
         if self.is_live:
-        self.mgmt_network = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient)
+            self.mgmt_network = self.create_mgmt_client(
+                azure.mgmt.network.NetworkManagementClient)
 
     def _get_account_name(self):
         return self.get_resource_name('batch')[-24:]
@@ -425,34 +425,34 @@ class MgmtBatchTest(AzureMgmtTestCase):
             parameters=batch_account).result()
         if self.is_live:
             self.mgmt_network.virtual_networks.begin_create_or_update(
-            resource_group_name=resource_group.name,
-            virtual_network_name=vnet_name,
-            parameters=self.mgmt_network.models().VirtualNetwork(
-                address_space=self.mgmt_network.models().AddressSpace(
-                    address_prefixes=['10.0.0.0/16']),
-                location=location,
-                subnets=[
-                    self.mgmt_network.models().Subnet(
-                        address_prefix='10.0.0.0/24',
-                        name=subnet_name,
-                        private_endpoint_network_policies='Disabled')])
-        ).result()
+                resource_group_name=resource_group.name,
+                virtual_network_name=vnet_name,
+                parameters=self.mgmt_network.models().VirtualNetwork(
+                    address_space=self.mgmt_network.models().AddressSpace(
+                        address_prefixes=['10.0.0.0/16']),
+                    location=location,
+                    subnets=[
+                        self.mgmt_network.models().Subnet(
+                            address_prefix='10.0.0.0/24',
+                            name=subnet_name,
+                            private_endpoint_network_policies='Disabled')])
+            ).result()
             self.mgmt_network.private_endpoints.begin_create_or_update(
-            resource_group_name=resource_group.name,
-            private_endpoint_name=private_endpoint_name,
-            parameters=self.mgmt_network.models().PrivateEndpoint(
-                location=location,
-                subnet=self.mgmt_network.models().Subnet(
-                    id=subnet_id
-                ),
-                manual_private_link_service_connections=[
-                    self.mgmt_network.models().PrivateLinkServiceConnection(
-                        private_link_service_id=private_link_service_id,
-                        group_ids=['batchAccount'],
-                        name=private_connection_name
-                    )]
-            )
-        ).result()
+                resource_group_name=resource_group.name,
+                private_endpoint_name=private_endpoint_name,
+                parameters=self.mgmt_network.models().PrivateEndpoint(
+                    location=location,
+                    subnet=self.mgmt_network.models().Subnet(
+                        id=subnet_id
+                    ),
+                    manual_private_link_service_connections=[
+                        self.mgmt_network.models().PrivateLinkServiceConnection(
+                            private_link_service_id=private_link_service_id,
+                            group_ids=['batchAccount'],
+                            name=private_connection_name
+                        )]
+                )
+            ).result()
         private_links = self.mgmt_batch_client.private_link_resource.list_by_batch_account(
             resource_group_name=resource_group.name,
             account_name=batch_account_name)

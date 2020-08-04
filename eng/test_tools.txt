@@ -23,8 +23,9 @@ wheel==0.34.2
 Jinja2==2.11.2
 
 # Locking pylint and required packages
+pylint==2.3.1; python_version >= '3.4'
 pylint==1.8.4; python_version < '3.4'
-pylint==2.5.2; python_version >= '3.4'
+astroid==2.3.3; python_version >= '3.4'
 
 ../../../tools/azure-devtools
 ../../../tools/azure-sdk-tools
