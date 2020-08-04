@@ -206,8 +206,8 @@ class CategorizedEntity(DictMixin):
     :vartype category: str
     :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
     :vartype subcategory: str
-    :param int offset: The entity text offset from the start of the sentence.
-    :param int length: The length of the entity text.
+    :ivar int offset: The entity text offset from the start of the document.
+    :ivar int length: The length of the entity text.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
@@ -252,8 +252,8 @@ class PiiEntity(DictMixin):
         Identification/Social Security Number/Phone Number, etc.
     :ivar str subcategory: Entity subcategory, such as Credit Card/EU
         Phone number/ABA Routing Numbers, etc.
-    :param int offset: The PII entity text offset from the start of the sentence.
-    :param int length: The length of the PII entity text.
+    :ivar int offset: The PII entity text offset from the start of the document.
+    :ivar int length: The length of the PII entity text.
     :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     """
@@ -635,8 +635,8 @@ class LinkedEntityMatch(DictMixin):
         returned.
     :vartype confidence_score: float
     :ivar text: Entity text as appears in the request.
-    :param int offset: The entity match text offset from the start of the sentence.
-    :param int length: The length of the entity match text.
+    :ivar int offset: The linked entity match text offset from the start of the document.
+    :ivar int length: The length of the linked entity match text.
     :vartype text: str
     """
 
@@ -738,7 +738,7 @@ class SentenceSentiment(DictMixin):
         and 1 for the sentence for all labels.
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int offset: The sentence offset from the start of the sentence.
+    :ivar int offset: The sentence offset from the start of the document.
     :ivar int length: The length of the sentence.
     :ivar mined_opinions: The list of opinions mined from this sentence.
         For example in "The food is good, but the service is bad", we would
@@ -847,7 +847,7 @@ class AspectSentiment(DictMixin):
         for 'neutral' will always be 0
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int offset: The aspect offset from the start of the sentence.
+    :ivar int offset: The aspect offset from the start of the document.
     :ivar int length: The length of the aspect.
     """
 
@@ -892,7 +892,7 @@ class OpinionSentiment(DictMixin):
         for 'neutral' will always be 0
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int offset: The opinion offset from the start of the sentence.
+    :ivar int offset: The opinion offset from the start of the document.
     :ivar int length: The length of the opinion.
     :ivar bool is_negated: Whether the opinion is negated. For example, in
         "The food is not good", the opinion "good" is negated.
