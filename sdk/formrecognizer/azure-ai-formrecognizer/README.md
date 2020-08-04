@@ -55,11 +55,11 @@ az cognitiveservices account create \
 
 ### Authenticate the client
 In order to interact with the Form Recognizer service, you will need to create an instance of a client. 
-An **endpoint** and **credential** are necessary in order to instantiate the client object.
+An **endpoint** and **credential** are necessary to instantiate the client object.
 
 
 #### Looking up the endpoint
-You can find the endpoint for your form recognizer resource using the
+You can find the endpoint for your Form Recognizer resource using the
 [Azure Portal][azure_portal_get_endpoint]
 or [Azure CLI][azure_cli_endpoint_lookup]:
 
