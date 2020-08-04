@@ -8,8 +8,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from azure.data.tables._generated.models import TableServiceStats as GenTableServiceStats
 
-from ._deserialize import _convert_to_entity
-from ._deserialize import return_context_and_deserialized, process_table_error
+from ._deserialize import _convert_to_entity, return_context_and_deserialized, process_table_error
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
@@ -689,3 +688,37 @@ class AccountSasPermissions(object):
                    update=p_update, process=p_process))
         parsed._str = permission  # pylint: disable = protected-access
         return parsed
+
+
+class UserDelegationKey(object):
+    """
+    Represents a user delegation key, provided to the user by Azure Storage
+    based on their Azure Active Directory access token.
+
+    The fields are saved as simple strings since the user does not have to interact with this object;
+    to generate an identify SAS, the user can simply pass it to the right API.
+
+    :ivar str signed_oid:
+        Object ID of this token.
+    :ivar str signed_tid:
+        Tenant ID of the tenant that issued this token.
+    :ivar str signed_start:
+        The datetime this token becomes valid.
+    :ivar str signed_expiry:
+        The datetime this token expires.
+    :ivar str signed_service:
+        What service this key is valid for.
+    :ivar str signed_version:
+        The version identifier of the REST service that created this token.
+    :ivar str value:
+        The user delegation key.
+    """
+
+    def __init__(self):
+        self.signed_oid = None
+        self.signed_tid = None
+        self.signed_start = None
+        self.signed_expiry = None
+        self.signed_service = None
+        self.signed_version = None
+        self.value = None

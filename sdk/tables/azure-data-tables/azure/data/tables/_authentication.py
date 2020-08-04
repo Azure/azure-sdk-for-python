@@ -15,7 +15,7 @@ except ImportError:
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
-from azure.data.tables._constants import (
+from ._constants import (
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_SECONDARY_NAME
 )
@@ -110,13 +110,3 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             if name == 'comp':
                 return '?comp=' + value
         return ''
-
-    # def _get_canonicalized_resource_query(self, request):
-    #     sorted_queries = [(name, value) for name, value in request.query.items()]
-    #     sorted_queries.sort()
-    #
-    #     string_to_sign = ''
-    #     for name, value in sorted_queries:
-    #         if value is not None:
-    #             string_to_sign += '\n' + name.lower() + ':' + value
-    #     return string_to_sign

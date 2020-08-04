@@ -10,7 +10,7 @@ from ._models import TableServices
 from ._common_conversion import _sign_string
 from ._error import _validate_not_none
 from ._constants import X_MS_VERSION
-from .shared_access_signature import _SharedAccessHelper,\
+from ._shared_access_signature import _SharedAccessHelper,\
     SharedAccessSignature, QueryStringConstants
 
 

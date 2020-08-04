@@ -15,9 +15,18 @@ from datetime import (
     timedelta,
 )
 
-from azure.data.tables._models import TableSasPermissions, UpdateMode, AccessPolicy, TableAnalyticsLogging, Metrics, CorsRule, \
-    RetentionPolicy
-from azure.data.tables._models import ResourceTypes, AccountSasPermissions
+    
+from azure.data.tables import (
+    ResourceTypes, 
+    AccountSasPermissions, 
+    TableSasPermissions, 
+    CorsRule, 
+    RetentionPolicy, 
+    UpdateMode, 
+    AccessPolicy, 
+    TableAnalyticsLogging, 
+    Metrics
+)
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     HeadersPolicy,
@@ -33,7 +42,7 @@ from azure.core.exceptions import (
     ResourceExistsError)
 
 # ------------------------------------------------------------------------------
-from azure.data.tables.table_shared_access_signature import generate_account_sas
+from azure.data.tables._table_shared_access_signature import generate_account_sas
 
 TEST_TABLE_PREFIX = 'pytablesync'
 

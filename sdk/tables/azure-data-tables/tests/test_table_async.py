@@ -10,7 +10,7 @@ from _shared.testcase import GlobalStorageAccountPreparer
 from azure.data.tables import AccessPolicy, TableSasPermissions, ResourceTypes, AccountSasPermissions
 from azure.data.tables.aio import TableServiceClient
 from azure.data.tables._generated.models import QueryOptions
-from azure.data.tables.table_shared_access_signature import generate_account_sas
+from azure.data.tables._table_shared_access_signature import generate_account_sas
 
 TEST_TABLE_PREFIX = 'pytableasync'
 

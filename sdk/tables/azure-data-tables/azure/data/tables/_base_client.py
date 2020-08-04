@@ -40,7 +40,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy
 )
 
-from .shared_access_signature import QueryStringConstants
+from ._shared_access_signature import QueryStringConstants
 from ._constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from ._models import LocationMode
 from ._authentication import SharedKeyCredentialPolicy
