@@ -8,15 +8,20 @@
 
 import pytest
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
-from azure.storage.blob import (
-    BlobServiceClient,
+from azure.storage.filedatalake import (
     DelimitedTextDialect,
     DelimitedJSON,
-    BlobQueryError
+    DataLakeFileQueryError
 )
 
+from testcase import (
+    StorageTestCase,
+    record,
+    TestMode
+)
 # ------------------------------------------------------------------------------
+from azure.storage.filedatalake import DataLakeServiceClient
+
 CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
            b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
            b'\r\nEvent Hubs - Azure Storage CheckpointStore,' \
@@ -78,20 +83,23 @@ CONVERTED_CSV_DATA = b"Service;Package;Version;RepoPath;MissingDocs.App Configur
 
 
 class StorageQuickQueryTest(StorageTestCase):
-    def _setup(self, bsc):
-        self.config = bsc._config
-        self.container_name = self.get_resource_name('utqqcontainer')
+    def setUp(self):
+        super(StorageQuickQueryTest, self).setUp()
+        url = self._get_account_url()
+        self.dsc = DataLakeServiceClient(url, credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY, logging_enable=True)
+        self.config = self.dsc._config
+        self.filesystem_name = self.get_resource_name('utqqcontainer')
 
-        if self.is_live:
+        if not self.is_playback():
             try:
-                bsc.create_container(self.container_name)
+                self.dsc.create_file_system(self.filesystem_name)
             except:
                 pass
 
-    def _teardown(self, bsc):
-        if self.is_live:
+    def tearDown(self):
+        if not self.is_playback():
             try:
-                bsc.delete_container(self.container_name)
+                self.dsc.delete_file_system(self.filesystem_name)
             except:
                 pass
 
@@ -99,52 +107,41 @@ class StorageQuickQueryTest(StorageTestCase):
 
     # --Helpers-----------------------------------------------------------------
 
-    def _get_blob_reference(self):
+    def _get_file_reference(self):
         return self.get_resource_name("csvfile")
 
     # -- Test cases for APIs supporting CPK ----------------------------------------------
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_readall(self, resource_group, location, storage_account, storage_account_key):
+    @record
+    def test_quick_query_readall(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(CSV_DATA, overwrite=True)
 
         errors = []
 
         def on_error(error):
             errors.append(error)
 
-        reader = blob_client.query_blob("SELECT * from BlobStorage", on_error=on_error)
+        reader = file_client.query_file("SELECT * from BlobStorage", on_error=on_error)
         data = reader.readall()
 
         self.assertEqual(len(errors), 0)
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader._size, reader._bytes_processed)
+        self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'\n'))
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records(self, resource_group, location, storage_account, storage_account_key):
+    @record
+    def test_quick_query_iter_records(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(CSV_DATA, overwrite=True)
 
-        reader = blob_client.query_blob("SELECT * from BlobStorage")
+        reader = file_client.query_file("SELECT * from BlobStorage")
         read_records = reader.records()
 
         # Assert first line has header
@@ -155,75 +152,57 @@ class StorageQuickQueryTest(StorageTestCase):
             data += record
 
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader._size, reader._bytes_processed)
+        self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b''))
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_readall_with_encoding(self, resource_group, location, storage_account, storage_account_key):
+    @record
+    def test_quick_query_readall_with_encoding(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(CSV_DATA, overwrite=True)
 
         errors = []
 
         def on_error(error):
             errors.append(error)
 
-        reader = blob_client.query_blob("SELECT * from BlobStorage", on_error=on_error, encoding='utf-8')
+        reader = file_client.query_file("SELECT * from BlobStorage", on_error=on_error, encoding='utf-8')
         data = reader.readall()
 
         self.assertEqual(len(errors), 0)
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader._size, reader._bytes_processed)
+        self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'\n').decode('utf-8'))
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records_with_encoding(self, resource_group, location, storage_account, storage_account_key):
+    @record
+    def test_quick_query_iter_records_with_encoding(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(CSV_DATA, overwrite=True)
 
-        reader = blob_client.query_blob("SELECT * from BlobStorage", encoding='utf-8')
+        reader = file_client.query_file("SELECT * from BlobStorage", encoding='utf-8')
         data = ''
         for record in reader.records():
             data += record
 
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader._size, reader._bytes_processed)
+        self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'').decode('utf-8'))
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records_with_headers(self, resource_group, location, storage_account, storage_account_key):
+    @record
+    def test_quick_query_iter_records_with_headers(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(CSV_DATA, overwrite=True)
 
         input_format = DelimitedTextDialect(has_header=True)
-        reader = blob_client.query_blob("SELECT * from BlobStorage", blob_format=input_format)
+        reader = file_client.query_file("SELECT * from BlobStorage", file_format=input_format)
         read_records = reader.records()
 
         # Assert first line does not include header
@@ -234,24 +213,18 @@ class StorageQuickQueryTest(StorageTestCase):
             data += record
 
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader._size, reader._bytes_processed)
+        self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'')[44:])
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records_with_progress(self, resource_group, location, storage_account, storage_account_key):
+    @record
+    def test_quick_query_iter_records_with_progress(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(CSV_DATA, overwrite=True)
 
-        reader = blob_client.query_blob("SELECT * from BlobStorage")
+        reader = file_client.query_file("SELECT * from BlobStorage")
         data = b''
         progress = 0
         for record in reader.records():
@@ -259,24 +232,17 @@ class StorageQuickQueryTest(StorageTestCase):
                 data += record
                 progress += len(record) + 2
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader._size, reader._bytes_processed)
+        self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b''))
-        self.assertEqual(progress, reader._size)
-        self._teardown(bsc)
+        self.assertEqual(progress, len(reader))
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_readall_with_serialization_setting(self, resource_group, location, storage_account,
-                                                    storage_account_key):
+    @record
+    def test_quick_query_readall_with_serialization_setting(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(CSV_DATA, overwrite=True)
 
         errors = []
 
@@ -296,30 +262,24 @@ class StorageQuickQueryTest(StorageTestCase):
             lineterminator='.',
             escapechar='\\'
         )
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT * from BlobStorage",
             on_error=on_error,
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
         query_result = resp.readall()
 
         self.assertEqual(len(errors), 0)
-        self.assertEqual(resp._size, len(CSV_DATA))
+        self.assertEqual(len(resp), len(CSV_DATA))
         self.assertEqual(query_result, CONVERTED_CSV_DATA)
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records_with_serialization_setting(self, resource_group, location, storage_account, storage_account_key):
+    @record
+    def test_quick_query_iter_records_with_serialization_setting(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(CSV_DATA, overwrite=True)
 
         input_format = DelimitedTextDialect(
             delimiter=',',
@@ -335,9 +295,9 @@ class StorageQuickQueryTest(StorageTestCase):
             escapechar='\\'
         )
 
-        reader = blob_client.query_blob(
+        reader = file_client.query_file(
             "SELECT * from BlobStorage",
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
         data = []
         for record in reader.records():
@@ -345,19 +305,12 @@ class StorageQuickQueryTest(StorageTestCase):
                 data.append(record)
 
         self.assertEqual(len(reader), len(CSV_DATA))
-        self.assertEqual(reader._size, reader._bytes_processed)
+        self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(len(data), 33)
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_readall_with_fatal_error_handler(self, resource_group, location, storage_account,
-                                                          storage_account_key):
+    @record
+    def test_quick_query_readall_with_fatal_error_handler(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
         data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
@@ -368,9 +321,9 @@ class StorageQuickQueryTest(StorageTestCase):
         data = data1 + b'\n' + data2 + b'\n' + data1
 
         # upload the json file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(data, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(data, overwrite=True)
 
         errors = []
 
@@ -384,26 +337,20 @@ class StorageQuickQueryTest(StorageTestCase):
             lineterminator='.',
             escapechar='\\'
         )
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT * from BlobStorage",
             on_error=on_error,
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
         query_result = resp.readall()
 
         self.assertEqual(len(errors), 1)
-        self.assertEqual(resp._size, 43)
+        self.assertEqual(len(resp), 43)
         self.assertEqual(query_result, b'')
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records_with_fatal_error_handler(self, resource_group, location, storage_account, storage_account_key):
+    @record
+    def test_quick_query_iter_records_with_fatal_error_handler(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
         data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
@@ -414,9 +361,9 @@ class StorageQuickQueryTest(StorageTestCase):
         data = data1 + b'\n' + data2 + b'\n' + data1
 
         # upload the json file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(data, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(data, overwrite=True)
 
         errors = []
 
@@ -430,29 +377,22 @@ class StorageQuickQueryTest(StorageTestCase):
             lineterminator='.',
             escapechar='\\'
         )
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT * from BlobStorage",
             on_error=on_error,
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
         data = []
         for record in resp.records():
             data.append(record)
         
         self.assertEqual(len(errors), 1)
-        self.assertEqual(resp._size, 43)
+        self.assertEqual(len(resp), 43)
         self.assertEqual(data, [b''])
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_readall_with_fatal_error_handler_raise(self, resource_group, location, storage_account,
-                                                          storage_account_key):
+    @record
+    def test_quick_query_readall_with_fatal_error_handler_raise(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
         data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
@@ -463,9 +403,9 @@ class StorageQuickQueryTest(StorageTestCase):
         data = data1 + b'\n' + data2 + b'\n' + data1
 
         # upload the json file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(data, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(data, overwrite=True)
 
         errors = []
 
@@ -479,23 +419,17 @@ class StorageQuickQueryTest(StorageTestCase):
             lineterminator='.',
             escapechar='\\'
         )
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT * from BlobStorage",
             on_error=on_error,
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
         with pytest.raises(Exception):
             query_result = resp.readall()
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records_with_fatal_error_handler_raise(self, resource_group, location, storage_account, storage_account_key):
+    @record
+    def test_quick_query_iter_records_with_fatal_error_handler_raise(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
         data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
@@ -506,9 +440,9 @@ class StorageQuickQueryTest(StorageTestCase):
         data = data1 + b'\n' + data2 + b'\n' + data1
 
         # upload the json file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(data, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(data, overwrite=True)
 
         errors = []
 
@@ -522,34 +456,27 @@ class StorageQuickQueryTest(StorageTestCase):
             lineterminator='.',
             escapechar='\\'
         )
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT * from BlobStorage",
             on_error=on_error,
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
 
         with pytest.raises(Exception):
             for record in resp.records():
                 print(record)
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_readall_with_fatal_error_ignore(self, resource_group, location, storage_account,
-                                                         storage_account_key):
+    @record
+    def test_quick_query_readall_with_fatal_error_ignore(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
         data = data1 + b'\n' + data2 + b'\n' + data1
 
         # upload the json file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(data, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(data, overwrite=True)
 
         input_format = DelimitedJSON()
         output_format = DelimitedTextDialect(
@@ -558,22 +485,15 @@ class StorageQuickQueryTest(StorageTestCase):
             lineterminator='.',
             escapechar='\\'
         )
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT * from BlobStorage",
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
         query_result = resp.readall()
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records_with_fatal_error_ignore(self, resource_group, location, storage_account,
-                                                         storage_account_key):
+    @record
+    def test_quick_query_iter_records_with_fatal_error_ignore(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         data1 = b'{name: owner}'
         data2 = b'{name2: owner2}'
         data3 = b'{version:0,begin:1601-01-01T00:00:00.000Z,intervalSecs:3600,status:Finalized,config:' \
@@ -584,9 +504,9 @@ class StorageQuickQueryTest(StorageTestCase):
         data = data1 + b'\n' + data2 + b'\n' + data1
 
         # upload the json file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(data, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(data, overwrite=True)
 
         input_format = DelimitedJSON()
         output_format = DelimitedTextDialect(
@@ -595,28 +515,21 @@ class StorageQuickQueryTest(StorageTestCase):
             lineterminator='.',
             escapechar='\\'
         )
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT * from BlobStorage",
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
 
         for record in resp.records():
             print(record)
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_readall_with_nonfatal_error_handler(self, resource_group, location, storage_account,
-                                                                 storage_account_key):
+    @record
+    def test_quick_query_readall_with_nonfatal_error_handler(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(CSV_DATA, overwrite=True)
 
         errors = []
         def on_error(error):
@@ -635,32 +548,25 @@ class StorageQuickQueryTest(StorageTestCase):
             lineterminator='.',
             escapechar='\\',
         )
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT RepoPath from BlobStorage",
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format,
             on_error=on_error)
         query_result = resp.readall()
 
         # the error is because that line only has one column
         self.assertEqual(len(errors), 1)
-        self.assertEqual(resp._size, len(CSV_DATA))
+        self.assertEqual(len(resp), len(CSV_DATA))
         self.assertTrue(len(query_result) > 0)
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records_with_nonfatal_error_handler(self, resource_group, location, storage_account,
-                                                                 storage_account_key):
+    @record
+    def test_quick_query_iter_records_with_nonfatal_error_handler(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(CSV_DATA, overwrite=True)
 
         errors = []
         def on_error(error):
@@ -679,32 +585,25 @@ class StorageQuickQueryTest(StorageTestCase):
             lineterminator='%',
             escapechar='\\',
         )
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT RepoPath from BlobStorage",
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format,
             on_error=on_error)
         data = list(resp.records())
 
         # the error is because that line only has one column
         self.assertEqual(len(errors), 1)
-        self.assertEqual(resp._size, len(CSV_DATA))
+        self.assertEqual(len(resp), len(CSV_DATA))
         self.assertEqual(len(data), 32)
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_readall_with_nonfatal_error_ignore(self, resource_group, location, storage_account,
-                                                                 storage_account_key):
+    @record
+    def test_quick_query_readall_with_nonfatal_error_ignore(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(CSV_DATA, overwrite=True)
 
         input_format = DelimitedTextDialect(
             delimiter=',',
@@ -719,28 +618,21 @@ class StorageQuickQueryTest(StorageTestCase):
             lineterminator='.',
             escapechar='\\',
         )
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT RepoPath from BlobStorage",
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
         query_result = resp.readall()
-        self.assertEqual(resp._size, len(CSV_DATA))
+        self.assertEqual(len(resp), len(CSV_DATA))
         self.assertTrue(len(query_result) > 0)
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records_with_nonfatal_error_ignore(self, resource_group, location, storage_account,
-                                                                 storage_account_key):
+    @record
+    def test_quick_query_iter_records_with_nonfatal_error_ignore(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         # upload the csv file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(CSV_DATA, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(CSV_DATA, overwrite=True)
 
         input_format = DelimitedTextDialect(
             delimiter=',',
@@ -755,32 +647,25 @@ class StorageQuickQueryTest(StorageTestCase):
             lineterminator='$',
             escapechar='\\',
         )
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT RepoPath from BlobStorage",
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
         data = list(resp.records())
-        self.assertEqual(resp._size, len(CSV_DATA))
+        self.assertEqual(len(resp), len(CSV_DATA))
         self.assertEqual(len(data), 32)
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_readall_with_json_serialization_setting(self, resource_group, location, storage_account,
-                                                         storage_account_key):
+    @record
+    def test_quick_query_readall_with_json_serialization_setting(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         data1 = b'{\"name\": \"owner\", \"id\": 1}'
         data2 = b'{\"name2\": \"owner2\"}'
         data = data1 + b'\n' + data2 + b'\n' + data1
 
         # upload the json file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(data, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(data, overwrite=True)
 
         errors = []
         def on_error(error):
@@ -789,35 +674,28 @@ class StorageQuickQueryTest(StorageTestCase):
         input_format = DelimitedJSON(delimiter='\n')
         output_format = DelimitedJSON(delimiter=';')
 
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT name from BlobStorage",
             on_error=on_error,
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
         query_result = resp.readall()
 
         self.assertEqual(len(errors), 0)
-        self.assertEqual(resp._size, len(data))
+        self.assertEqual(len(resp), len(data))
         self.assertEqual(query_result, b'{"name":"owner"};{};{"name":"owner"};')
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_iter_records_with_json_serialization_setting(self, resource_group, location, storage_account,
-                                                                      storage_account_key):
+    @record
+    def test_quick_query_iter_records_with_json_serialization_setting(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         data1 = b'{\"name\": \"owner\", \"id\": 1}'
         data2 = b'{\"name2\": \"owner2\"}'
         data = data1 + b'\n' + data2 + b'\n' + data1
 
         # upload the json file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(data, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(data, overwrite=True)
 
         errors = []
         def on_error(error):
@@ -826,35 +704,28 @@ class StorageQuickQueryTest(StorageTestCase):
         input_format = DelimitedJSON(delimiter='\n')
         output_format = DelimitedJSON(delimiter=';')
 
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT name from BlobStorage",
             on_error=on_error,
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
         listdata = list(resp.records())
 
         self.assertEqual(len(errors), 0)
-        self.assertEqual(resp._size, len(data))
+        self.assertEqual(len(resp), len(data))
         self.assertEqual(listdata, [b'{"name":"owner"}',b'{}',b'{"name":"owner"}', b''])
-        self._teardown(bsc)
 
-    @GlobalStorageAccountPreparer()
-    def test_quick_query_with_only_input_json_serialization_setting(self, resource_group, location, storage_account,
-                                                                    storage_account_key):
+    @record
+    def test_quick_query_with_only_input_json_serialization_setting(self):
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=storage_account_key)
-        self._setup(bsc)
-
         data1 = b'{\"name\": \"owner\", \"id\": 1}'
         data2 = b'{\"name2\": \"owner2\"}'
         data = data1 + data2 + data1
 
         # upload the json file
-        blob_name = self._get_blob_reference()
-        blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        blob_client.upload_blob(data, overwrite=True)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(data, overwrite=True)
 
         errors = []
         def on_error(error):
@@ -863,16 +734,15 @@ class StorageQuickQueryTest(StorageTestCase):
         input_format = DelimitedJSON(delimiter='\n')
         output_format = None
 
-        resp = blob_client.query_blob(
+        resp = file_client.query_file(
             "SELECT name from BlobStorage",
             on_error=on_error,
-            blob_format=input_format,
+            file_format=input_format,
             output_format=output_format)
         query_result = resp.readall()
 
         self.assertEqual(len(errors), 0)
-        self.assertEqual(resp._size, len(data))
+        self.assertEqual(len(resp), len(data))
         self.assertEqual(query_result, b'{"name":"owner"}\n{}\n{"name":"owner"}\n')
-        self._teardown(bsc)
 
 # ------------------------------------------------------------------------------
