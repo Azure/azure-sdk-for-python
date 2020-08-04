@@ -183,6 +183,9 @@ if ($TestApplicationId -and !$TestApplicationOid) {
     }
 }
 
+# Determine the Azure context that the script is running in.
+$context = Get-AzContext;
+
 # If the ServiceDirectory is an absolute path use the last directory name
 # (e.g. D:\foo\bar\ -> bar)
 $serviceName = if (Split-Path -IsAbsolute  $ServiceDirectory) {
@@ -260,6 +263,11 @@ if ($AdditionalParameters) {
     $templateParameters += $AdditionalParameters
 }
 
+# Include environment-specific parameters only if not already provided as part of the "AdditionalParameters"
+if (($context.Environment.StorageEndpointSuffix) -and (-not ($templateParameters.ContainsKey('storageEndpointSuffix')))) {
+    $templateParameters.Add('storageEndpointSuffix', $context.Environment.StorageEndpointSuffix)
+}
+
 # Try to detect the shell based on the parent process name (e.g. launch via shebang).
 $shell, $shellExportFormat = if (($parentProcessName = (Get-Process -Id $PID).Parent.ProcessName) -and $parentProcessName -eq 'cmd') {
     'cmd', 'set {0}={1}'
@@ -269,6 +277,7 @@ $shell, $shellExportFormat = if (($parentProcessName = (Get-Process -Id $PID).Pa
     'PowerShell', '$env:{0} = ''{1}'''
 }
 
+# Deploy the templates
 foreach ($templateFile in $templateFiles) {
     # Deployment fails if we pass in more parameters than are defined.
     Write-Verbose "Removing unnecessary parameters from template '$templateFile'"
@@ -301,8 +310,6 @@ foreach ($templateFile in $templateFiles) {
 
     $serviceDirectoryPrefix = $serviceName.ToUpperInvariant() + "_"
 
-    $context = Get-AzContext;
-
     # Add default values
     $deploymentOutputs = @{
         "$($serviceDirectoryPrefix)CLIENT_ID" = $TestApplicationId;
@@ -315,6 +322,7 @@ foreach ($templateFile in $templateFiles) {
         "$($serviceDirectoryPrefix)AZURE_AUTHORITY_HOST" = $context.Environment.ActiveDirectoryAuthority;
         "$($serviceDirectoryPrefix)RESOURCE_MANAGER_URL" = $context.Environment.ResourceManagerUrl;
         "$($serviceDirectoryPrefix)SERVICE_MANAGEMENT_URL" = $context.Environment.ServiceManagementUrl;
+        "$($serviceDirectoryPrefix)STORAGE_ENDPOINT_SUFFIX" = $context.Environment.StorageEndpointSuffix;
     }
 
     foreach ($key in $deployment.Outputs.Keys) {
