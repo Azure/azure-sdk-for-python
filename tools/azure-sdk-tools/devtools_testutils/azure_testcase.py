@@ -65,6 +65,10 @@ def is_live():
     return is_live._cache
 
 
+def get_region_override(default='westus'):
+    return os.environ.get('RESOURCE_REGION', default) or 'westus'
+
+
 def _is_autorest_v3(client_class):
     """ IS this client a autorestv3/track2 one?.
     Could be refined later if necessary.

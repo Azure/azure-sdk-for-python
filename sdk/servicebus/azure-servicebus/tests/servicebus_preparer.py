@@ -9,7 +9,7 @@ from azure.mgmt.servicebus.models import SBQueue, SBSubscription, AccessRights
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 from devtools_testutils import (
-    ResourceGroupPreparer, AzureMgmtPreparer, FakeResource
+    ResourceGroupPreparer, AzureMgmtPreparer, FakeResource, get_region_override
 )
 
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
@@ -27,7 +27,7 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
     def __init__(self,
                  name_prefix='',
                  use_cache=False,
-                 sku='Standard', location='westus',
+                 sku='Standard', location=get_region_override('westus'),
                  parameter_name=SERVICEBUS_NAMESPACE_PARAM,
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  disable_recording=True, playback_fake_resource=None,

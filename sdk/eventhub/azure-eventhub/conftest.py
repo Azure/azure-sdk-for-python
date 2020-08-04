@@ -18,6 +18,7 @@ from azure.eventhub import EventHubProducerClient
 from uamqp import ReceiveClient
 from uamqp.authentication import SASTokenAuth
 
+from devtools_testutils import get_region_override
 
 # Ignore async tests for Python < 3.5
 collect_ignore = []
@@ -32,7 +33,7 @@ RES_GROUP_PREFIX = "eh-res-group"
 NAMESPACE_PREFIX = "eh-ns"
 EVENTHUB_PREFIX = "eh"
 EVENTHUB_DEFAULT_AUTH_RULE_NAME = 'RootManageSharedAccessKey'
-LOCATION = "westus"
+LOCATION = get_region_override("westus")
 
 
 def pytest_addoption(parser):
