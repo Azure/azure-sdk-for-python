@@ -12,6 +12,8 @@
 
 - `FormField` now has attribute `value_type` which contains the semantic data type of the field value. The options for
 `value_type` are described in the enum `FieldValueType`
+- Client-level, keyword argument `api_version` can be used to specify the service API version to use. Currently only v2.0
+is supported. See the enum `FormRecognizerApiVersion` for supported API versions.
 
 **Fixes and improvements**
 
