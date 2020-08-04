@@ -1,1 +1,6 @@
+-e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
+-e ../../compute/azure-mgmt-compute
+-e ../../keyvault/azure-mgmt-keyvault
+../../keyvault/azure-keyvault-keys
+azure-identity
