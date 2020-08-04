@@ -274,7 +274,7 @@ Several App Configuration client library samples are available to you in this Gi
 - [Read revision history](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/appconfiguration/azure-appconfiguration/samples/list_revision_sample.py) / [Async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/appconfiguration/azure-appconfiguration/samples/list_revision_async_sample.py)
 - [Get a setting if changed](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/appconfiguration/azure-appconfiguration/samples/conditional_operation_sample.py) / [Async version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/appconfiguration/azure-appconfiguration/samples/conditional_operation_async_sample.py)
 
- For more details see the [samples README][https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/appconfiguration/azure-appconfiguration/samples/README.md].
+ For more details see the [samples README](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/appconfiguration/azure-appconfiguration/samples/README.md).
 
 ## Contributing
 
