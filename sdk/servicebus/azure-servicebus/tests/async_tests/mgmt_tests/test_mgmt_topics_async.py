@@ -238,11 +238,7 @@ class ServiceBusManagementClientTopicAsyncTests(AzureMgmtTestCase):
         assert info.accessed_at is not None
         assert info.updated_at is not None
         assert info.subscription_count is 0
-
-        assert info.active_message_count == 0
-        assert info.dead_letter_message_count == 0
-        assert info.transfer_dead_letter_message_count == 0
-        assert info.transfer_message_count == 0
+        assert info.size_in_bytes == 0
         assert info.scheduled_message_count == 0
 
         await mgmt_service.delete_topic("test_topic")
@@ -264,10 +260,7 @@ class ServiceBusManagementClientTopicAsyncTests(AzureMgmtTestCase):
             assert topic_runtime_info.accessed_at is not None
             assert topic_runtime_info.updated_at is not None
             assert topic_runtime_info.subscription_count is 0
-            assert topic_runtime_info.active_message_count == 0
-            assert topic_runtime_info.dead_letter_message_count == 0
-            assert topic_runtime_info.transfer_dead_letter_message_count == 0
-            assert topic_runtime_info.transfer_message_count == 0
+            assert topic_runtime_info.size_in_bytes == 0
             assert topic_runtime_info.scheduled_message_count == 0
         finally:
             await mgmt_service.delete_topic("test_topic")

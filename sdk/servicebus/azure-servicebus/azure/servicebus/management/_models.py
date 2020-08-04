@@ -235,31 +235,6 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
 
 class QueueRuntimeProperties(object):
     """Service Bus queue runtime properties.
-
-    :ivar name: Name of the queue.
-    :type name: str
-    :ivar accessed_at: Last time a message was sent, or the last time there was a receive request
-     to this queue.
-    :type accessed_at: ~datetime.datetime
-    :ivar created_at: The exact time the queue was created.
-    :type created_at: ~datetime.datetime
-    :ivar updated_at: The exact time a message was updated in the queue.
-    :type updated_at: ~datetime.datetime
-    :ivar size_in_bytes: The size of the queue, in bytes.
-    :type size_in_bytes: int
-    :ivar total_message_count: Total number of messages.
-    :type total_message_count: int
-    :ivar active_message_count: Number of active messages in the queue, topic, or subscription.
-    :type active_message_count: int
-    :ivar dead_letter_message_count: Number of messages that are dead lettered.
-    :type dead_letter_message_count: int
-    :ivar scheduled_message_count: Number of scheduled messages.
-    :type scheduled_message_count: int
-    :ivar transfer_dead_letter_message_count: Number of messages transferred into dead letters.
-    :type transfer_dead_letter_message_count: int
-    :ivar transfer_message_count: Number of messages transferred to another queue, topic, or
-     subscription.
-    :type transfer_message_count: int
     """
     def __init__(
         self,
@@ -277,46 +252,90 @@ class QueueRuntimeProperties(object):
 
     @property
     def name(self):
+        """Name of the queue.
+
+        :rtype: str
+        """
         return self._name
 
     @property
     def accessed_at(self):
+        """Last time a message was sent, or the last time there was a receive request to this queue.
+
+        :rtype:  ~datetime.datetime
+        """
         return self._internal_qr.accessed_at
 
     @property
     def created_at(self):
+        """The exact time the queue was created.
+
+        :rtype: ~datetime.datetime
+        """
         return self._internal_qr.created_at
 
     @property
     def updated_at(self):
+        """The exact the entity was updated.
+
+        :rtype: ~datetime.datetime
+        """
         return self._internal_qr.updated_at
 
     @property
     def size_in_bytes(self):
+        """The size of the queue, in bytes.
+
+        :rtype: int
+        """
         return self._internal_qr.size_in_bytes
 
     @property
     def total_message_count(self):
+        """Total number of messages.
+
+        :rtype: int
+        """
         return self._internal_qr.message_count
 
     @property
     def active_message_count(self):
+        """Number of active messages in the queue, topic, or subscription.
+
+        :rtype: int
+        """
         return self._internal_qr.message_count_details.active_message_count
 
     @property
     def dead_letter_message_count(self):
+        """Number of messages that are dead lettered.
+
+        :rtype: int
+        """
         return self._internal_qr.message_count_details.dead_letter_message_count
 
     @property
     def scheduled_message_count(self):
+        """Number of scheduled messages.
+
+        :rtype: int
+        """
         return self._internal_qr.message_count_details.scheduled_message_count
 
     @property
     def transfer_dead_letter_message_count(self):
+        """Number of messages transferred into dead letters.
+
+        :rtype: int
+        """
         return self._internal_qr.message_count_details.transfer_dead_letter_message_count
 
     @property
     def transfer_message_count(self):
+        """Number of messages transferred to another queue, topic, or subscription.
+
+        :rtype: int
+        """
         return self._internal_qr.message_count_details.transfer_message_count
 
 
@@ -452,28 +471,6 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
 
 class TopicRuntimeProperties(object):
     """Runtime properties of a Service Bus topic resource.
-
-    :ivar str name:
-    :ivar created_at: The exact time the queue was created.
-    :type created_at: ~datetime.datetime
-    :ivar updated_at: The exact time a message was updated in the queue.
-    :type updated_at: ~datetime.datetime
-    :ivar accessed_at: Last time a message was sent, or the last time there was a receive request
-     to this queue.
-    :type accessed_at: ~datetime.datetime
-    :ivar subscription_count: The number of subscriptions in the topic.
-    :type subscription_count: int
-    :ivar active_message_count: Number of active messages in the queue, topic, or subscription.
-    :type active_message_count: int
-    :ivar dead_letter_message_count: Number of messages that are dead lettered.
-    :type dead_letter_message_count: int
-    :ivar scheduled_message_count: Number of scheduled messages.
-    :type scheduled_message_count: int
-    :ivar transfer_dead_letter_message_count: Number of messages transferred into dead letters.
-    :type transfer_dead_letter_message_count: int
-    :ivar transfer_message_count: Number of messages transferred to another queue, topic, or
-     subscription.
-    :type transfer_message_count: int
     """
     def __init__(
         self,
@@ -491,47 +488,59 @@ class TopicRuntimeProperties(object):
 
     @property
     def name(self):
+        """The name of the topic.
+
+        :rtype: str
+        """
         return self._name
 
     @property
     def accessed_at(self):
+        """Last time a message was sent, or the last time there was a receive request
+
+        :rtype: ~datetime.datetime
+        """
         return self._internal_td.accessed_at
 
     @property
     def created_at(self):
+        """The exact time the queue was created.
+
+        :rtype: ~datetime.datetime
+        """
         return self._internal_td.created_at
 
     @property
     def updated_at(self):
+        """The exact time the entity was updated.
+
+        :rtype: ~datetime.datetime
+        """
         return self._internal_td.updated_at
 
     @property
     def size_in_bytes(self):
+        """The current size of the entity in bytes.
+
+        :rtype: int
+        """
         return self._internal_td.size_in_bytes
 
     @property
     def subscription_count(self):
+        """The number of subscriptions in the topic.
+
+        :rtype: int
+        """
         return self._internal_td.subscription_count
 
     @property
-    def active_message_count(self):
-        return self._internal_td.message_count_details.active_message_count
-
-    @property
-    def dead_letter_message_count(self):
-        return self._internal_td.message_count_details.dead_letter_message_count
-
-    @property
     def scheduled_message_count(self):
+        """Number of scheduled messages.
+
+        :rtype: int
+        """
         return self._internal_td.message_count_details.scheduled_message_count
-
-    @property
-    def transfer_dead_letter_message_count(self):
-        return self._internal_td.message_count_details.transfer_dead_letter_message_count
-
-    @property
-    def transfer_message_count(self):
-        return self._internal_td.message_count_details.transfer_message_count
 
 
 class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
@@ -649,26 +658,6 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
 class SubscriptionRuntimeProperties(object):
     """Runtime properties of a Service Bus topic subscription resource.
 
-    :ivar str name:
-    :ivar created_at: The exact time the subscription was created.
-    :type created_at: ~datetime.datetime
-    :ivar updated_at: The exact time a message was updated in the queue.
-    :type updated_at: ~datetime.datetime
-    :ivar accessed_at: Last time a message was sent, or the last time there was a receive request
-     to this queue.
-    :type accessed_at: ~datetime.datetime
-    :ivar total_message_count: The number of messages in the subscription.
-    :type total_message_count: int
-    :ivar active_message_count: Number of active messages in the subscription.
-    :type active_message_count: int
-    :ivar dead_letter_message_count: Number of messages that are dead lettered.
-    :type dead_letter_message_count: int
-    :ivar transfer_dead_letter_message_count: Number of messages transferred into dead letters.
-    :type transfer_dead_letter_message_count: int
-    :ivar transfer_message_count: Number of messages transferred to another queue, topic, or
-     subscription.
-    :type transfer_message_count: int
-
     """
     def __init__(self):
         self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
@@ -685,38 +674,74 @@ class SubscriptionRuntimeProperties(object):
 
     @property
     def name(self):
+        """Name of subscription
+
+        :rtype: str
+        """
         return self._name
 
     @property
     def accessed_at(self):
+        """Last time a message was sent, or the last time there was a receive request
+
+        :rtype: ~datetime.datetime
+        """
         return self._internal_sd.accessed_at
 
     @property
     def created_at(self):
+        """The exact time the subscription was created.
+
+        :rtype: ~datetime.datetime
+        """
         return self._internal_sd.created_at
 
     @property
     def updated_at(self):
+        """The exact time the entity is updated.
+
+        :rtype: ~datetime.datetime
+        """
         return self._internal_sd.updated_at
 
     @property
     def total_message_count(self):
+        """The number of messages in the subscription.
+
+        :rtype: int
+        """
         return self._internal_sd.message_count
 
     @property
     def active_message_count(self):
+        """Number of active messages in the subscription.
+
+        :rtype: int
+        """
         return self._internal_sd.message_count_details.active_message_count
 
     @property
     def dead_letter_message_count(self):
+        """Number of messages that are dead lettered.
+
+        :rtype: int
+        """
         return self._internal_sd.message_count_details.dead_letter_message_count
 
     @property
     def transfer_dead_letter_message_count(self):
+        """Number of messages transferred into dead letters.
+
+        :rtype: int
+        """
         return self._internal_sd.message_count_details.transfer_dead_letter_message_count
 
     @property
     def transfer_message_count(self):
+        """Number of messages transferred to another queue, topic, or subscription.
+
+        :rtype: int
+        """
         return self._internal_sd.message_count_details.transfer_message_count
 
 
