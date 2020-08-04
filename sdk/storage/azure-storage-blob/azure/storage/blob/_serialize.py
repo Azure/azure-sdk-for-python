@@ -70,7 +70,8 @@ def get_modify_conditions(kwargs):
         if_modified_since=kwargs.pop('if_modified_since', None),
         if_unmodified_since=kwargs.pop('if_unmodified_since', None),
         if_match=if_match or kwargs.pop('if_match', None),
-        if_none_match=if_none_match or kwargs.pop('if_none_match', None)
+        if_none_match=if_none_match or kwargs.pop('if_none_match', None),
+        if_tags=kwargs.pop('if_tags', None)
     )
 
 
@@ -81,7 +82,8 @@ def get_source_conditions(kwargs):
         source_if_modified_since=kwargs.pop('source_if_modified_since', None),
         source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
         source_if_match=if_match or kwargs.pop('source_if_match', None),
-        source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None)
+        source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None),
+        if_tags=kwargs.pop('source_if_tags', None)
     )
 
 
