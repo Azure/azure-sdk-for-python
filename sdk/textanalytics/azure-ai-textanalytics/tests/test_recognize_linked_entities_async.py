@@ -59,11 +59,15 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
             self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.name)
-                self.assertIsNotNone(entity.matches)
                 self.assertIsNotNone(entity.language)
                 self.assertIsNotNone(entity.data_source_entity_id)
                 self.assertIsNotNone(entity.url)
                 self.assertIsNotNone(entity.data_source)
+                self.assertIsNotNone(entity.matches)
+                for match in entity.matches:
+                    self.assertIsNotNone(match.offset)
+                    self.assertIsNotNone(match.length)
+                    self.assertNotEqual(match.length, 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -79,11 +83,15 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
             self.assertEqual(len(doc.entities), 3)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.name)
-                self.assertIsNotNone(entity.matches)
                 self.assertIsNotNone(entity.language)
                 self.assertIsNotNone(entity.data_source_entity_id)
                 self.assertIsNotNone(entity.url)
                 self.assertIsNotNone(entity.data_source)
+                self.assertIsNotNone(entity.matches)
+                for match in entity.matches:
+                    self.assertIsNotNone(match.offset)
+                    self.assertIsNotNone(match.length)
+                    self.assertNotEqual(match.length, 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
