@@ -6,12 +6,15 @@
 from sys import version_info
 from re import match
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
-# from azure.data.tables._shared.parser import _str
 
-from .._constants import (
-    _ENCRYPTION_PROTOCOL_V1,
-)
+if version_info < (3,):
+    def _str(value):
+        if isinstance(value, unicode):  # pylint: disable=undefined-variable
+            return value.encode('utf-8')
+
+        return str(value)
+else:
+    _str = str
 
 
 def _to_utc_datetime(value):
@@ -100,111 +103,11 @@ _ERROR_DATA_NOT_ENCRYPTED = 'Encryption required, but received data does not con
                             'Data was either not encrypted or metadata has been lost.'
 
 
-def _dont_fail_on_exist(error):
-    """ don't throw exception if the resource exists.
-    This is called by create_* APIs with fail_on_exist=False"""
-    if isinstance(error, ResourceExistsError):  # pylint: disable=R1705
-        return False
-    else:
-        raise error
-
-
-def _dont_fail_not_exist(error):
-    """ don't throw exception if the resource doesn't exist.
-    This is called by create_* APIs with fail_on_exist=False"""
-    if isinstance(error, ResourceNotFoundError):  # pylint: disable=R1705
-        return False
-    else:
-        raise error
-
-
-def _http_error_handler(http_error):
-    """ Simple error handler for azure."""
-    message = str(http_error)
-    error_code = None
-
-    if 'x-ms-error-code' in http_error.respheader:
-        error_code = http_error.respheader['x-ms-error-code']
-        message += ' ErrorCode: ' + error_code
-
-    if http_error.respbody is not None:
-        message += '\n' + http_error.respbody.decode('utf-8-sig')
-
-    ex = HttpResponseError(message, http_error.status)
-    ex.error_code = error_code
-
-    raise ex
-
-
-def _validate_type_bytes(param_name, param):
-    if not isinstance(param, bytes):
-        raise TypeError(_ERROR_VALUE_SHOULD_BE_BYTES.format(param_name))
-
-
-def _validate_type_bytes_or_stream(param_name, param):
-    if not (isinstance(param, bytes) or hasattr(param, 'read')):
-        raise TypeError(_ERROR_VALUE_SHOULD_BE_BYTES_OR_STREAM.format(param_name))
-
-
 def _validate_not_none(param_name, param):
     if param is None:
         raise ValueError(_ERROR_VALUE_NONE.format(param_name))
 
 
-def _validate_content_match(server_md5, computed_md5):
-    if server_md5 != computed_md5:
-        raise Exception(_ERROR_MD5_MISMATCH.format(server_md5, computed_md5))
-
-
-def _validate_access_policies(identifiers):
-    if identifiers and len(identifiers) > 5:
-        raise Exception(_ERROR_TOO_MANY_ACCESS_POLICIES)
-
-
-def _validate_key_encryption_key_wrap(kek):
-    # Note that None is not callable and so will fail the second clause of each check.
-    if not hasattr(kek, 'wrap_key') or not callable(kek.wrap_key):
-        raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'wrap_key'))
-    if not hasattr(kek, 'get_kid') or not callable(kek.get_kid):
-        raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_kid'))
-    if not hasattr(kek, 'get_key_wrap_algorithm') or not callable(kek.get_key_wrap_algorithm):
-        raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm'))
-
-
-def _validate_key_encryption_key_unwrap(kek):
-    if not hasattr(kek, 'get_kid') or not callable(kek.get_kid):
-        raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_kid'))
-    if not hasattr(kek, 'unwrap_key') or not callable(kek.unwrap_key):
-        raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'unwrap_key'))
-
-
-def _validate_encryption_required(require_encryption, kek):
-    if require_encryption and (kek is None):
-        raise ValueError(_ERROR_ENCRYPTION_REQUIRED)
-
-
-def _validate_decryption_required(require_encryption, kek, resolver):
-    if (require_encryption and (kek is None) and
-            (resolver is None)):
-        raise ValueError(_ERROR_DECRYPTION_REQUIRED)
-
-
-def _validate_encryption_protocol_version(encryption_protocol):
-    if not _ENCRYPTION_PROTOCOL_V1 == encryption_protocol:
-        raise ValueError(_ERROR_UNSUPPORTED_ENCRYPTION_VERSION)
-
-
-def _validate_kek_id(kid, resolved_id):
-    if not kid == resolved_id:
-        raise ValueError(_ERROR_INVALID_KID)
-
-
-def _validate_encryption_unsupported(require_encryption, key_encryption_key):
-    if require_encryption or (key_encryption_key is not None):
-        raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
-
-# wraps a given exception with the desired exception type
 def _wrap_exception(ex, desired_type):
     msg = ""
     if len(ex.args) > 0:  # pylint: disable=C1801
@@ -225,11 +128,3 @@ def _validate_table_name(table_name):
         raise ValueError(
             "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."
         )
-
-
-class AzureSigningError(Exception):
-    """
-    Represents a fatal error when attempting to sign a request.
-    In general, the cause of this exception is user error. For example, the given account key is not valid.
-    Please visit https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account for more info.
-    """

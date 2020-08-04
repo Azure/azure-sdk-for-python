@@ -5,10 +5,10 @@
 # --------------------------------------------------------------------------
 from datetime import date
 
-from ._shared import url_quote
+from ._deserialize import url_quote
 
 
-from ._shared._common_conversion import (
+from ._common_conversion import (
     _sign_string,
     _to_str, _to_utc_datetime,
 )

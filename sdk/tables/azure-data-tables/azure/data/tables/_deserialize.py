@@ -8,10 +8,10 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
     TYPE_CHECKING
 )
-import logging
-import datetime
 from uuid import UUID
 from enum import Enum
+import logging
+import datetime
 
 from azure.core.exceptions import (
     HttpResponseError,
@@ -22,21 +22,26 @@ from azure.core.exceptions import (
     DecodeError)
 from azure.core.pipeline.policies import ContentDecodePolicy
 
-from ._shared import url_quote
 from ._entity import EntityProperty, EdmType, TableEntity
-from ._shared._common_conversion import _decode_base64_to_bytes
+from ._common_conversion import _decode_base64_to_bytes
 from ._generated.models import TableProperties
-
-
-# from ._models import UserDelegationKey#, get_enum_value
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.exceptions import AzureError
 
-from ._shared._error import _to_utc_datetime
 
 _LOGGER = logging.getLogger(__name__)
+
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib2 import quote # type: ignore
+
+
+
+def url_quote(url):
+    return quote(url)
 
 
 def get_enum_value(value):
@@ -215,11 +220,6 @@ def normalize_headers(headers):
             key = key[5:]
         normalized[key.lower().replace('-', '_')] = get_enum_value(value)
     return normalized
-
-
-def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
-    raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
-    return {k[10:]: v for k, v in raw_metadata.items()}
 
 
 def return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument

@@ -16,7 +16,7 @@
 # from azure.data.tables import TableServiceClient
 # from azure.data.tables._entity import EntityProperty, EdmType, Entity
 # from azure.data.tables._models import TablePayloadFormat, AccessPolicy, TableSasPermissions, TableServices
-# from azure.data.tables._shared._common_conversion import _encode_base64
+# from azure.data.tables._common_conversion import _encode_base64
 # from azure.data.tables._shared.encryption import _dict_to_encryption_data, _generate_AES_CBC_cipher
 # from dateutil.tz import tzutc
 # from os import urandom
@@ -52,10 +52,10 @@
 # #     TablePayloadFormat,
 # #     TablePermissions,
 # # )
-# from azure.data.tables._shared._error import (
+# from azure.data.tables._error import (
 #     _ERROR_UNSUPPORTED_TYPE_FOR_ENCRYPTION,
 # )
-# from azure.data.tables._shared._error import (
+# from azure.data.tables._error import (
 #     _ERROR_OBJECT_INVALID,
 #     _ERROR_DECRYPTION_FAILURE,
 # )

@@ -9,7 +9,7 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-from ._shared._error import _validate_table_name
+from ._error import _validate_table_name
 from ._base_client import parse_query
 from ._base_client import StorageAccountHostsMixin
 

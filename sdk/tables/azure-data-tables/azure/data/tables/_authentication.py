@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 import logging
-import sys
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -21,11 +20,11 @@ from azure.data.tables._constants import (
     DEV_ACCOUNT_SECONDARY_NAME
 )
 
-from ._shared._common_conversion import (
+from ._common_conversion import (
     _sign_string,
 )
 
-from ._shared._error import (
+from ._error import (
     _wrap_exception,
 )
 
