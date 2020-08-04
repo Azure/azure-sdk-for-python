@@ -64,18 +64,13 @@ class _DocumentProducer(object):
 
         self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn)
 
-    def get_target_range(self):
-        """Returns the target partition key range.
-            :return:
-                Target partition key range.
-            :rtype: dict
-        """
-        return self._partition_key_target_range
+    def __lt__(self, other):
+        return self._doc_producer_comp.compare(self, other) < 0
 
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         """
         :return: The next result item.
         :rtype: dict
@@ -89,9 +84,13 @@ class _DocumentProducer(object):
 
         return next(self._ex_context)
 
-    def __next__(self):
-        # supports python 3 iterator
-        return self.next()
+    def get_target_range(self):
+        """Returns the target partition key range.
+            :return:
+                Target partition key range.
+            :rtype: dict
+        """
+        return self._partition_key_target_range
 
     def peek(self):
         """
@@ -106,8 +105,7 @@ class _DocumentProducer(object):
 
         return self._cur_item
 
-    def __lt__(self, other):
-        return self._doc_producer_comp.compare(self, other) < 0
+    next = __next__  # Python 2 compatibility.
 
 
 def _compare_helper(a, b):
