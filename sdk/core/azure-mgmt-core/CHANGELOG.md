@@ -1,7 +1,7 @@
 
 # Release History
 
-## 1.2.0 (Unreleased)
+## 1.2.0 (2020-07-06)
 
 ### Bug Fixes
 

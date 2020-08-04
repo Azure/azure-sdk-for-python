@@ -44,10 +44,10 @@ def form_line(bounding_box, form_word):
 def form_table_cell(bounding_box, form_word):
     model = _models.FormTableCell(
         text="Cell", row_index=3, column_index=4, row_span=2, column_span=3, bounding_box=bounding_box[0],
-        confidence=0.7, is_header=True, is_footer=False, page_number=3, text_content=[form_word[0]]
+        confidence=0.7, is_header=True, is_footer=False, page_number=3, field_elements=[form_word[0]]
     )
     model_repr = "FormTableCell(text=Cell, row_index=3, column_index=4, row_span=2, column_span=3, bounding_box={}, confidence=0.7, " \
-        "is_header=True, is_footer=False, page_number=3, text_content=[{}])".format(bounding_box[1], form_word[1])[:1024]
+        "is_header=True, is_footer=False, page_number=3, field_elements=[{}])".format(bounding_box[1], form_word[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -59,23 +59,23 @@ def form_table(form_table_cell):
     return model, model_repr
 
 @pytest.fixture
-def field_text(bounding_box, form_word, form_line):
-    model = _models.FieldText(page_number=1, text="This is text.", bounding_box=bounding_box[0], text_content=[form_word[0], form_line[0]])
-    model_repr = "FieldText(page_number=1, text=This is text., bounding_box={}, text_content=[{}, {}])".format(bounding_box[1], form_word[1], form_line[1])[:1024]
+def field_data(bounding_box, form_word, form_line):
+    model = _models.FieldData(page_number=1, text="This is text.", bounding_box=bounding_box[0], field_elements=[form_word[0], form_line[0]])
+    model_repr = "FieldData(page_number=1, text=This is text., bounding_box={}, field_elements=[{}, {}])".format(bounding_box[1], form_word[1], form_line[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
-def form_field_two(field_text):
-    model = _models.FormField(label_data=field_text[0], value_data=field_text[0], name="form_field_two", value="value", confidence=0)
-    model_repr = "FormField(label_data={}, value_data={}, name=form_field_two, value='value', confidence=0)".format(field_text[1], field_text[1])[:1024]
+def form_field_two(field_data):
+    model = _models.FormField(value_type="string", label_data=field_data[0], value_data=field_data[0], name="form_field_two", value="value", confidence=0)
+    model_repr = "FormField(value_type=string, label_data={}, value_data={}, name=form_field_two, value='value', confidence=0)".format(field_data[1], field_data[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
 @pytest.fixture
-def form_field_one(field_text, form_field_two):
-    model = _models.FormField(label_data=field_text[0], value_data=field_text[0], name="form_field_one", value=form_field_two[0], confidence=1.0)
-    model_repr = "FormField(label_data={}, value_data={}, name=form_field_one, value={}, confidence=1.0)".format(field_text[1], field_text[1], form_field_two[1])[:1024]
+def form_field_one(field_data, form_field_two):
+    model = _models.FormField(value_type="string", label_data=field_data[0], value_data=field_data[0], name="form_field_one", value=form_field_two[0], confidence=1.0)
+    model_repr = "FormField(value_type=string, label_data={}, value_data={}, name=form_field_one, value={}, confidence=1.0)".format(field_data[1], field_data[1], form_field_two[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -88,7 +88,7 @@ def page_range():
 
 @pytest.fixture
 def form_page(form_table, form_line):
-    model = _models.FormPage(page_number=1, text_angle=180, width=5, height=5.5, unit=_models.LengthUnit.pixel, tables=[form_table[0]], lines=[form_line[0]])
+    model = _models.FormPage(page_number=1, text_angle=180, width=5, height=5.5, unit=_models.LengthUnit.PIXEL, tables=[form_table[0]], lines=[form_line[0]])
     model_repr = "FormPage(page_number=1, text_angle=180, width=5, height=5.5, unit=pixel, tables=[{}], lines=[{}])".format(
             form_table[1], form_line[1]
         )[:1024]
@@ -118,8 +118,8 @@ def form_recognizer_error():
 
 @pytest.fixture
 def training_document_info(form_recognizer_error):
-    model = _models.TrainingDocumentInfo(document_name="document_name", status=_models.TrainingStatus.partially_succeeded, page_count=5, errors=[form_recognizer_error[0]])
-    model_repr = "TrainingDocumentInfo(document_name=document_name, status=partiallySucceeded, page_count=5, errors=[{}])".format(form_recognizer_error[1])[:1024]
+    model = _models.TrainingDocumentInfo(name="name", status=_models.TrainingStatus.PARTIALLY_SUCCEEDED, page_count=5, errors=[form_recognizer_error[0]])
+    model_repr = "TrainingDocumentInfo(name=name, status=partiallySucceeded, page_count=5, errors=[{}])".format(form_recognizer_error[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -137,7 +137,7 @@ class TestRepr():
     def test_custom_form_model(self, custom_form_sub_model, form_recognizer_error, training_document_info):
         model = _models.CustomFormModel(
             model_id=1,
-            status=_models.CustomFormModelStatus.creating,
+            status=_models.CustomFormModelStatus.CREATING,
             training_started_on=datetime.datetime(1, 1, 1),
             training_completed_on=datetime.datetime(1, 1, 1),
             submodels=[custom_form_sub_model[0], custom_form_sub_model[0]],
@@ -154,7 +154,7 @@ class TestRepr():
 
     def test_custom_form_model_info(self):
         model = _models.CustomFormModelInfo(
-            model_id=1, status=_models.CustomFormModelStatus.ready, training_started_on=datetime.datetime(1, 1, 1), training_completed_on=datetime.datetime(1, 1, 1)
+            model_id=1, status=_models.CustomFormModelStatus.READY, training_started_on=datetime.datetime(1, 1, 1), training_completed_on=datetime.datetime(1, 1, 1)
         )
         model_repr = "CustomFormModelInfo(model_id=1, status=ready, training_started_on=0001-01-01 00:00:00, training_completed_on=0001-01-01 00:00:00)"[:1024]
         assert repr(model) == model_repr

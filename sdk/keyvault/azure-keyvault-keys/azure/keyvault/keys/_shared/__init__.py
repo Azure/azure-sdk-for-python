@@ -15,7 +15,6 @@ from .client_base import KeyVaultClientBase
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache as HttpChallengeCache
 
-VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])
 
 __all__ = [
     "ChallengeAuthPolicy",
@@ -23,10 +22,9 @@ __all__ = [
     "HttpChallenge",
     "HttpChallengeCache",
     "KeyVaultClientBase",
-    "VaultId"
 ]
 
-
+_VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])
 
 
 def parse_vault_id(url):
@@ -42,7 +40,7 @@ def parse_vault_id(url):
     if len(path) < 2 or len(path) > 3:
         raise ValueError("'{}' is not not a valid vault url".format(url))
 
-    return VaultId(
+    return _VaultId(
         vault_url="{}://{}".format(parsed_uri.scheme, parsed_uri.hostname),
         collection=path[0],
         name=path[1],

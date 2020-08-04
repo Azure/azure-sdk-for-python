@@ -6,7 +6,6 @@ import logging
 import time
 import threading
 import uuid
-import base64
 from typing import TYPE_CHECKING
 
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
@@ -33,7 +32,7 @@ class KeyVaultOperationPoller(LROPoller):
 
     # pylint: disable=arguments-differ
     def __init__(self, polling_method):
-        # type: (DeleteRecoverPollingMethod) -> None
+        # type: (PollingMethod) -> None
         super(KeyVaultOperationPoller, self).__init__(None, None, None, NoPolling())
         self._polling_method = polling_method
 
@@ -75,11 +74,6 @@ class KeyVaultOperationPoller(LROPoller):
             raise self._exception  # type: ignore
         except TypeError:  # Was None
             pass
-
-    @classmethod
-    def from_continuation_token(cls, polling_method, **kwargs):
-        # type: (DeleteRecoverPollingMethod, Any) -> KeyVaultOperationPoller
-        return cls(polling_method)
 
 
 class DeleteRecoverPollingMethod(PollingMethod):
@@ -139,8 +133,3 @@ class DeleteRecoverPollingMethod(PollingMethod):
     def status(self):
         # type: () -> str
         return "finished" if self._finished else "polling"
-
-    def get_continuation_token(self):
-        # type() -> str
-        import pickle
-        return base64.b64encode(pickle.dumps(self._resource)).decode('ascii')

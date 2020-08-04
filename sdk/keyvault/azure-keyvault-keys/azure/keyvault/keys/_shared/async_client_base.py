@@ -20,7 +20,7 @@ if TYPE_CHECKING:
         # AsyncTokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
 
-DEFAULT_VERSION = ApiVersion.V7_1_preview
+DEFAULT_VERSION = ApiVersion.V7_1
 
 class AsyncKeyVaultClientBase(object):
     def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
@@ -52,7 +52,7 @@ class AsyncKeyVaultClientBase(object):
             }
         )
 
-        if not transport:
+        if not transport and not pipeline:
             from azure.core.pipeline.transport import AioHttpTransport
             transport = AioHttpTransport(**kwargs)
 

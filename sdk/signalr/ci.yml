@@ -31,5 +31,3 @@ extends:
     Artifacts:
     - name: azure_mgmt_signalr
       safeName: azuremgmtsignalr
-    - name: azure_signalr
-      safeName: azuresignalr

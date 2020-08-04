@@ -43,7 +43,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
         ) as sb_client:
             async with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
                 message = Message(b"Sample topic message")
-                await sender.send(message)
+                await sender.send_messages(message)
 
             async with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
@@ -75,7 +75,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
 
             async with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
                 message = Message(b"Sample topic message")
-                await sender.send(message)
+                await sender.send_messages(message)
 
             async with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
@@ -112,16 +112,16 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                     for i in range(10):
                         message = Message("Dead lettered message no. {}".format(i))
-                        await sender.send(message)
+                        await sender.send_messages(message)
 
                 count = 0
-                messages = await receiver.receive()
+                messages = await receiver.receive_messages()
                 while messages:
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
                         await message.dead_letter(reason="Testing reason", description="Testing description")
-                    messages = await receiver.receive()
+                    messages = await receiver.receive_messages()
 
                 assert count == 10
 
@@ -148,6 +148,8 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 async for message in dl_receiver:
                     await message.complete()
                     count += 1
-                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.dead_letter_reason == 'Testing reason'
+                    assert message.dead_letter_error_description == 'Testing description'
+                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10

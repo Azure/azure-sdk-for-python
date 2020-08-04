@@ -428,3 +428,12 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         assert passed_in_allowed_headers.issubset(
             client._client._config.http_logging_policy.allowed_header_names
         )
+
+    class _CustomHookPolicy(object):
+        pass
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer(client_kwargs={"custom_hook_policy": _CustomHookPolicy()})
+    async def test_custom_hook_policy(self, client, **kwargs):
+        assert isinstance(client._client._config.custom_hook_policy, KeyVaultKeyTest._CustomHookPolicy)

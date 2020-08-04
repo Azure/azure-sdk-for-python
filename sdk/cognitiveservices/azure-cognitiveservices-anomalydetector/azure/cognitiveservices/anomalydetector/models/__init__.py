@@ -10,26 +10,32 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .api_error_py3 import APIError, APIErrorException
-    from .point_py3 import Point
-    from .request_py3 import Request
-    from .entire_detect_response_py3 import EntireDetectResponse
-    from .last_detect_response_py3 import LastDetectResponse
+    from ._models_py3 import APIError, APIErrorException
+    from ._models_py3 import ChangePointDetectRequest
+    from ._models_py3 import ChangePointDetectResponse
+    from ._models_py3 import EntireDetectResponse
+    from ._models_py3 import LastDetectResponse
+    from ._models_py3 import Point
+    from ._models_py3 import Request
 except (SyntaxError, ImportError):
-    from .api_error import APIError, APIErrorException
-    from .point import Point
-    from .request import Request
-    from .entire_detect_response import EntireDetectResponse
-    from .last_detect_response import LastDetectResponse
-from .anomaly_detector_client_enums import (
+    from ._models import APIError, APIErrorException
+    from ._models import ChangePointDetectRequest
+    from ._models import ChangePointDetectResponse
+    from ._models import EntireDetectResponse
+    from ._models import LastDetectResponse
+    from ._models import Point
+    from ._models import Request
+from ._anomaly_detector_client_enums import (
     Granularity,
 )
 
 __all__ = [
     'APIError', 'APIErrorException',
-    'Point',
-    'Request',
+    'ChangePointDetectRequest',
+    'ChangePointDetectResponse',
     'EntireDetectResponse',
     'LastDetectResponse',
+    'Point',
+    'Request',
     'Granularity',
 ]

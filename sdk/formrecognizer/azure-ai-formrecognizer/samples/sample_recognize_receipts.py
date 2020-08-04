@@ -15,7 +15,7 @@ DESCRIPTION:
     from receipts, see sample_strongly_typed_recognized_form.py.
 
     See fields found on a receipt here:
-    https://aka.ms/azsdk/python/formrecognizer/receiptfields
+    https://aka.ms/formrecognizer/receiptfields
 
 USAGE:
     python sample_recognize_receipts.py
@@ -31,7 +31,8 @@ import os
 class RecognizeReceiptsSample(object):
 
     def recognize_receipts(self):
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
+                                                            "..", "./sample_forms/receipt/contoso-allinone.jpg"))
         # [START recognize_receipts]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient

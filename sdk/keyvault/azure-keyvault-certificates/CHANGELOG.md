@@ -1,7 +1,13 @@
 # Release History
 
 ## 4.2.0b2 (Unreleased)
+- Fixed an `AttributeError` during `get_certificate_version`
+- Values of `x-ms-keyvault-region` and `x-ms-keyvault-service-version` headers
+  are no longer redacted in logging output.
 - Updated minimum `azure-core` version to 1.4.0
+- `import_certificate` no longer raises `AttributeError` when the `policy` keyword argument isn't passed
+- Users can pass in CustomHookPolicy through the kwarg `custom_hook_policy` when initializing the client
+- RequestIdPolicy is now always set for all requests. This policy sets the id of the request in the header.
 
 ## 4.2.0b1 (2020-03-10)
 - Support for Key Vault API version 7.1-preview
@@ -95,8 +101,8 @@ and a `CertificateOperation` if not.
 - `Certificate` now has attribute `properties`, which holds certain properties of the
 certificate, such as `version`. This changes the shape of the `Certificate` type,
 as certain properties of `Certificate` (such as `version`) have to be accessed
-through the `properties` property. See the updated [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.certificates.html)
-for details.
+through the `properties` property.
+
 - `update_certificate` has been renamed to `update_certificate_properties`
 - The `vault_url` parameter of `CertificateClient` has been renamed to `vault_endpoint`
 - The property `vault_url` has been renamed to `vault_endpoint` in all models
