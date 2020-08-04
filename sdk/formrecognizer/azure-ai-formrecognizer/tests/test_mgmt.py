@@ -8,7 +8,7 @@ import functools
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.pipeline.transport import RequestsTransport
-from azure.ai.formrecognizer import FormTrainingClient
+from azure.ai.formrecognizer import FormTrainingClient, FormRecognizerApiVersion
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 from testcase import GlobalClientPreparer as _GlobalClientPreparer
 
@@ -165,5 +165,7 @@ class TestManagement(FormRecognizerTest):
     def test_api_version_form_training_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         with self.assertRaises(ValueError):
             ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), api_version="2.1")
-        
+
+        # these do not raise
         ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), api_version="2.0")
+        ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), api_version=FormRecognizerApiVersion.V2_0)
