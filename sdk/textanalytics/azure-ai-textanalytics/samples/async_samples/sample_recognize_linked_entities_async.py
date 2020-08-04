@@ -52,11 +52,14 @@ class RecognizeLinkedEntitiesSampleAsync(object):
             print("Document text: {}\n".format(documents[idx]))
             for entity in doc.entities:
                 print("Entity: {}".format(entity.name))
-                print("Url: {}".format(entity.url))
-                print("Data Source: {}".format(entity.data_source))
+                print("...URL: {}".format(entity.url))
+                print("...Data Source: {}".format(entity.data_source))
+                print("...Entity matches:")
                 for match in entity.matches:
-                    print("Confidence Score: {}".format(match.confidence_score))
-                    print("Entity as appears in request: {}".format(match.text))
+                    print("......Entity match text: {}".format(match.text))
+                    print("......Confidence Score: {}".format(match.confidence_score))
+                    print("......Offset: {}".format(match.offset))
+                    print("......Length: {}".format(match.length))
             print("------------------------------------------")
         # [END recognize_linked_entities_async]
 
