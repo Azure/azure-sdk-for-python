@@ -27,11 +27,11 @@ error_map = {
 
 
 def get_element_type(element_pointer):
-    word_ref = re.compile(r'/readResults/\d*/lines/\d*/words/\d*')
+    word_ref = re.compile(r'/readResults/\d+/lines/\d+/words/\d+')
     if re.search(word_ref, element_pointer):
         return "word"
 
-    line_ref = re.compile(r'/readResults/\d*/lines/\d*')
+    line_ref = re.compile(r'/readResults/\d+/lines/\d+')
     if re.search(line_ref, element_pointer):
         return "line"
 
