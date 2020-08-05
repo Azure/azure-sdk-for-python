@@ -20,8 +20,8 @@ from .. import VERSION, LocationMode
 from .._generated.aio._azure_table_async import AzureTable
 from .._generated.models import TableServiceProperties, TableProperties, QueryOptions
 from .._models import service_stats_deserialize, service_properties_deserialize
-from .._deserialize import process_table_error
 from .._error import _validate_table_name
+from .._deserialize import _process_table_error
 from .._table_service_client_base import TableServiceClientBase
 from .._models import Table
 from ._policies_async import ExponentialRetry
@@ -104,7 +104,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace_async
     async def get_service_properties(self, **kwargs):
@@ -122,7 +122,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace_async
     async def set_service_properties(
@@ -158,7 +158,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         try:
             return await self._client.service.set_properties(props, **kwargs)  # type: ignore
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace_async
     async def create_table(

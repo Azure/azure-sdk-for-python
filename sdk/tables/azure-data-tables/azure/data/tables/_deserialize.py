@@ -53,12 +53,12 @@ def get_enum_value(value):
         return value
 
 
-def deserialize_metadata(response, _, headers):
+def _deserialize_metadata(response, _, headers):
     return {k[10:]: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
 
 
-def deserialize_table_properties(response, obj, headers):
-    metadata = deserialize_metadata(response, obj, headers)
+def _deserialize_table_properties(response, obj, headers):
+    metadata = _deserialize_metadata(response, obj, headers)
     table_properties = TableProperties(
         metadata=metadata,
         **headers
@@ -66,7 +66,7 @@ def deserialize_table_properties(response, obj, headers):
     return table_properties
 
 
-def deserialize_table_creation(response, _, headers):
+def _deserialize_table_creation(response, _, headers):
     if response.status_code == 204:
         error_code = TableErrorCode.table_already_exists
         error = ResourceExistsError(
@@ -213,7 +213,7 @@ def _extract_etag(response):
     return None
 
 
-def normalize_headers(headers):
+def _normalize_headers(headers):
     normalized = {}
     for key, value in headers.items():
         if key.startswith('x-ms-'):
@@ -222,15 +222,15 @@ def normalize_headers(headers):
     return normalized
 
 
-def return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
-    return normalize_headers(response_headers), deserialized
+def _return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+    return _normalize_headers(response_headers), deserialized
 
 
-def return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+def _return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return response.http_response.location_mode, deserialized, response_headers
 
 
-def process_table_error(storage_error):
+def _process_table_error(storage_error):
     raise_error = HttpResponseError
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
@@ -281,7 +281,6 @@ def process_table_error(storage_error):
         pass
 
     try:
-
         error_message += "\nErrorCode:{}".format(error_code.value)
     except AttributeError:
         error_message += "\nErrorCode:{}".format(error_code)

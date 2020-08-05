@@ -53,7 +53,7 @@ from ._policies import (
     StorageHosts, ExponentialRetry,
 )
 from ._version import VERSION
-from ._deserialize import process_table_error
+from ._deserialize import _process_table_error
 from ._models import PartialBatchErrorException
 
 
@@ -297,7 +297,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 return iter(parts)
             return parts
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created

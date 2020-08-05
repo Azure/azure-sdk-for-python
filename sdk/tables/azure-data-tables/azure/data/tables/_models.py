@@ -8,12 +8,16 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from azure.data.tables._generated.models import TableServiceStats as GenTableServiceStats
 
-from ._deserialize import _convert_to_entity, return_context_and_deserialized, process_table_error
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
+from ._deserialize import (
+    _convert_to_entity, 
+    _return_context_and_deserialized, 
+    _process_table_error
+)
 
 
 class TableServiceStats(GenTableServiceStats):
@@ -287,11 +291,11 @@ class TablePropertiesPaged(PageIterator):
         try:
             return self._command(
                 next_table_name=continuation_token or None,
-                cls=return_context_and_deserialized,
+                cls=_return_context_and_deserialized,
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
@@ -345,11 +349,11 @@ class TableEntityPropertiesPaged(PageIterator):
                 next_row_key=row_key or None,
                 next_partition_key=partition_key or None,
                 table=self.table,
-                cls=return_context_and_deserialized,
+                cls=_return_context_and_deserialized,
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return

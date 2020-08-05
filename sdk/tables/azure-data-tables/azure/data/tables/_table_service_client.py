@@ -17,7 +17,7 @@ from ._generated.models import TableProperties, TableServiceProperties, QueryOpt
 from ._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
 from ._base_client import parse_connection_str, TransportWrapper
 from ._models import LocationMode
-from ._deserialize import process_table_error
+from ._deserialize import _process_table_error
 from ._version import VERSION
 
 from ._table_client import TableClient
@@ -85,7 +85,7 @@ class TableServiceClient(TableServiceClientBase):
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
@@ -102,7 +102,7 @@ class TableServiceClient(TableServiceClientBase):
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def set_service_properties(
@@ -138,7 +138,7 @@ class TableServiceClient(TableServiceClientBase):
         try:
             return self._client.service.set_properties(props, **kwargs)  # type: ignore
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     @distributed_trace
     def create_table(

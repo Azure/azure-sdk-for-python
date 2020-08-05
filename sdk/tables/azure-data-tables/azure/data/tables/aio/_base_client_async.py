@@ -31,8 +31,7 @@ from .._policies import (
     StorageHeadersPolicy
 )
 from ._policies_async import AsyncStorageResponseHook
-
-from .._deserialize import process_table_error
+from .._deserialize import _process_table_error
 from .._models import PartialBatchErrorException
 
 if TYPE_CHECKING:
@@ -148,7 +147,7 @@ class AsyncStorageAccountHostsMixin(object):
                 return AsyncList(parts_list)
             return parts
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):
