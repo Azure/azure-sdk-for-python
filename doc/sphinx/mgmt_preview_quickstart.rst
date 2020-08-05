@@ -13,6 +13,10 @@ authenticate to Azure using the preview libraries and start interacting with
 Azure resources. There are several possible approaches to
 authentication. This document illustrates the most common scenario
 
+Migration Guide
+---------------
+If you are an existing user of the older version of Azure management library for Python and you are looking for a migration guide to the new beta version of the SDK, please refer to this migration guide here
+
 Prerequisites
 -------------
 
@@ -90,8 +94,8 @@ a management client, simply do the following:
     resource_client = azure.mgmt.resource.ResourceManagementClient(credential=credential, subscription_id=subscription_id)
     network_client = azure.mgmt.network.NetworkManagementClient(credential=credential, subscription_id=subscription_id)
 
-More information and different authentication approaches using Azure Identity can be found in
-`this document <https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python>`__
+More detailed information and different authentication approaches using Azure Identity can be found in
+`this document <https://docs.microsoft.com/python/azure/python-sdk-azure-authenticate>`__
 
 Managing Resources
 ------------------
