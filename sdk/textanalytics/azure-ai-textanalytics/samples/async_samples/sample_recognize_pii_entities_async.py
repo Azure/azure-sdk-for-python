@@ -30,7 +30,6 @@ class RecognizePiiEntitiesSampleAsync(object):
     async def recognize_pii_entities_async(self):
         # [START recognize_pii_entities_async]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import ApiVersion
         from azure.ai.textanalytics.aio import TextAnalyticsClient
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]

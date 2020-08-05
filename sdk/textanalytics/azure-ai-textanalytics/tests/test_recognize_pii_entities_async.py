@@ -17,7 +17,6 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
-    ApiVersion
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
