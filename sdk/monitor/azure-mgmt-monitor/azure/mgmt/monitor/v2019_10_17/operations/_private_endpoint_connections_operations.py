@@ -91,7 +91,6 @@ class PrivateEndpointConnectionsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -116,8 +115,8 @@ class PrivateEndpointConnectionsOperations(object):
         parameters,  # type: "models.PrivateEndpointConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateEndpointConnection"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        # type: (...) -> Optional["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.PrivateEndpointConnection"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-10-17-preview"
@@ -142,7 +141,6 @@ class PrivateEndpointConnectionsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'PrivateEndpointConnection')
         body_content_kwargs['content'] = body_content
@@ -173,7 +171,7 @@ class PrivateEndpointConnectionsOperations(object):
         parameters,  # type: "models.PrivateEndpointConnection"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.PrivateEndpointConnection"]
         """Approve or reject a private endpoint connection with a given name.
 
         :param resource_group_name: The name of the resource group.
@@ -265,7 +263,6 @@ class PrivateEndpointConnectionsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -286,7 +283,7 @@ class PrivateEndpointConnectionsOperations(object):
         private_endpoint_connection_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """Deletes a private endpoint connection with a given name.
 
         :param resource_group_name: The name of the resource group.
@@ -366,6 +363,10 @@ class PrivateEndpointConnectionsOperations(object):
         api_version = "2019-10-17-preview"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_private_link_scope.metadata['url']  # type: ignore
@@ -379,15 +380,11 @@ class PrivateEndpointConnectionsOperations(object):
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
