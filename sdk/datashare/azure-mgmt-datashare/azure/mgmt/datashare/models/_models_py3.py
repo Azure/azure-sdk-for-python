@@ -172,10 +172,10 @@ class DataSet(ProxyDto):
     """A DataSet data transfer object.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: BlobDataSet, BlobFolderDataSet, BlobContainerDataSet,
-    ADLSGen2FileDataSet, ADLSGen2FolderDataSet, ADLSGen2FileSystemDataSet,
-    ADLSGen1FolderDataSet, ADLSGen1FileDataSet, KustoClusterDataSet,
-    KustoDatabaseDataSet, SqlDWTableDataSet, SqlDBTableDataSet
+    sub-classes are: ADLSGen1FileDataSet, ADLSGen1FolderDataSet,
+    ADLSGen2FileDataSet, ADLSGen2FileSystemDataSet, ADLSGen2FolderDataSet,
+    BlobContainerDataSet, BlobDataSet, BlobFolderDataSet, KustoClusterDataSet,
+    KustoDatabaseDataSet, SqlDBTableDataSet, SqlDWTableDataSet
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -207,7 +207,7 @@ class DataSet(ProxyDto):
     }
 
     _subtype_map = {
-        'kind': {'Blob': 'BlobDataSet', 'BlobFolder': 'BlobFolderDataSet', 'Container': 'BlobContainerDataSet', 'AdlsGen2File': 'ADLSGen2FileDataSet', 'AdlsGen2Folder': 'ADLSGen2FolderDataSet', 'AdlsGen2FileSystem': 'ADLSGen2FileSystemDataSet', 'AdlsGen1Folder': 'ADLSGen1FolderDataSet', 'AdlsGen1File': 'ADLSGen1FileDataSet', 'KustoCluster': 'KustoClusterDataSet', 'KustoDatabase': 'KustoDatabaseDataSet', 'SqlDWTable': 'SqlDWTableDataSet', 'SqlDBTable': 'SqlDBTableDataSet'}
+        'kind': {'AdlsGen1File': 'ADLSGen1FileDataSet', 'AdlsGen1Folder': 'ADLSGen1FolderDataSet', 'AdlsGen2File': 'ADLSGen2FileDataSet', 'AdlsGen2FileSystem': 'ADLSGen2FileSystemDataSet', 'AdlsGen2Folder': 'ADLSGen2FolderDataSet', 'Container': 'BlobContainerDataSet', 'Blob': 'BlobDataSet', 'BlobFolder': 'BlobFolderDataSet', 'KustoCluster': 'KustoClusterDataSet', 'KustoDatabase': 'KustoDatabaseDataSet', 'SqlDBTable': 'SqlDBTableDataSet', 'SqlDWTable': 'SqlDWTableDataSet'}
     }
 
     def __init__(self, **kwargs) -> None:
@@ -417,11 +417,11 @@ class DataSetMapping(ProxyDto):
     """A data set mapping data transfer object.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: BlobDataSetMapping, BlobFolderDataSetMapping,
-    BlobContainerDataSetMapping, ADLSGen2FileDataSetMapping,
-    ADLSGen2FolderDataSetMapping, ADLSGen2FileSystemDataSetMapping,
+    sub-classes are: ADLSGen2FileDataSetMapping,
+    ADLSGen2FileSystemDataSetMapping, ADLSGen2FolderDataSetMapping,
+    BlobContainerDataSetMapping, BlobDataSetMapping, BlobFolderDataSetMapping,
     KustoClusterDataSetMapping, KustoDatabaseDataSetMapping,
-    SqlDWTableDataSetMapping, SqlDBTableDataSetMapping
+    SqlDBTableDataSetMapping, SqlDWTableDataSetMapping
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -453,7 +453,7 @@ class DataSetMapping(ProxyDto):
     }
 
     _subtype_map = {
-        'kind': {'Blob': 'BlobDataSetMapping', 'BlobFolder': 'BlobFolderDataSetMapping', 'Container': 'BlobContainerDataSetMapping', 'AdlsGen2File': 'ADLSGen2FileDataSetMapping', 'AdlsGen2Folder': 'ADLSGen2FolderDataSetMapping', 'AdlsGen2FileSystem': 'ADLSGen2FileSystemDataSetMapping', 'KustoCluster': 'KustoClusterDataSetMapping', 'KustoDatabase': 'KustoDatabaseDataSetMapping', 'SqlDWTable': 'SqlDWTableDataSetMapping', 'SqlDBTable': 'SqlDBTableDataSetMapping'}
+        'kind': {'AdlsGen2File': 'ADLSGen2FileDataSetMapping', 'AdlsGen2FileSystem': 'ADLSGen2FileSystemDataSetMapping', 'AdlsGen2Folder': 'ADLSGen2FolderDataSetMapping', 'Container': 'BlobContainerDataSetMapping', 'Blob': 'BlobDataSetMapping', 'BlobFolder': 'BlobFolderDataSetMapping', 'KustoCluster': 'KustoClusterDataSetMapping', 'KustoDatabase': 'KustoDatabaseDataSetMapping', 'SqlDBTable': 'SqlDBTableDataSetMapping', 'SqlDWTable': 'SqlDWTableDataSetMapping'}
     }
 
     def __init__(self, **kwargs) -> None:
