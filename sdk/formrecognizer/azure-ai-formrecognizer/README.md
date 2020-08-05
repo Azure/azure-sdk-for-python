@@ -389,6 +389,12 @@ even when it isn't enabled for the client:
 poller = form_recognizer_client.begin_recognize_receipts(receipt, logging_enable=True)
 ```
 
+### Optional Configuration
+
+Optional keyword arguments can be passed in at the client and per-operation level.
+The azure-core [reference documentation][azure_core_ref_docs]
+describes available configurations for retries, logging, transport protocols, and more.
+
 ## Next steps
 
 The following section provides several code snippets illustrating common patterns used in the Form Recognizer Python API.
@@ -413,12 +419,6 @@ with Form Recognizer and require Python 3.5 or later.
 This library also includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
 are found under the `azure.ai.formrecognizer.aio` namespace.
-
-### Optional Configuration
-
-Optional keyword arguments can be passed in at the client and per-operation level.
-The azure-core [reference documentation][azure_core_ref_docs]
-describes available configurations for retries, logging, transport protocols, and more.
 
 ### Additional documentation
 
