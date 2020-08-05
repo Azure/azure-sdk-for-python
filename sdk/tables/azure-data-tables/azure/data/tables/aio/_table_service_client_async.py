@@ -23,8 +23,8 @@ from azure.data.tables._shared.base_client_async import AsyncStorageAccountHosts
 from azure.data.tables._shared.policies_async import ExponentialRetry
 from azure.data.tables._shared.response_handlers import process_table_error
 from azure.data.tables.aio._table_client_async import TableClient
+from .._shared.base_client import parse_connection_str
 from ._models import TablePropertiesPaged
-from .._shared._error import _validate_table_name
 from .._shared._table_service_client_base import TableServiceClientBase
 from .._models import Table
 
@@ -85,6 +85,25 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         self._client = AzureTable(url=self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
         self._loop = loop
+
+    @classmethod
+    async def from_connection_string(
+            cls, conn_str, # type: any
+            **kwargs # type: Any
+    ): # type: (...) -> TableServiceClient
+        """Create TableServiceClient from a Connection String.
+
+        :param conn_str:
+            A connection string to an Azure Storage or Cosmos account.
+        :type conn_str: str
+        :returns: A Table service client.
+        :rtype: ~azure.data.tables.TableServiceClient
+        """
+        account_url, secondary, credential = parse_connection_str(
+            conn_str=conn_str, credential=None, service='table')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_service_stats(self, **kwargs):
@@ -175,11 +194,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :rtype: ~azure.data.tables.TableClient or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        _validate_table_name(table_name)
-
-        table_properties = TableProperties(table_name=table_name, **kwargs)
-        await self._client.table.create(table_properties=table_properties, **kwargs)
-        table = self.get_table_client(table=table_name)
+        table = self.get_table_client(table_name=table_name)
+        await table.create_table(**kwargs)
         return table
 
     @distributed_trace_async
@@ -196,9 +212,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :return: None
         :rtype: ~None
          """
-        _validate_table_name(table_name)
-
-        await self._client.table.delete(table=table_name, **kwargs)
+        table = self.get_table_client(table_name=table_name)
+        await table.delete_table(**kwargs)
 
     @distributed_trace
     def list_tables(
@@ -231,8 +246,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
     @distributed_trace
     def query_tables(
-            self,
-            filter,  # pylint: disable=W0622
+            self, filter,  # type: str    pylint: disable=W0622
             **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[Table]
@@ -262,8 +276,11 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             page_iterator_class=TablePropertiesPaged
         )
 
-    def get_table_client(self, table, **kwargs):
-        # type: (Union[TableProperties, str], Optional[Any]) -> TableClient
+    def get_table_client(
+            self, table_name, # type: Union[TableProperties, str]
+            **kwargs # type: Optional[Any]
+    ):
+        # type: (...) -> TableClient
         """Get a client to interact with the specified table.
 
                The table need not already exist.
@@ -276,10 +293,6 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
                :rtype: ~azure.data.tables.TableClient
 
                """
-        try:
-            table_name = table.name
-        except AttributeError:
-            table_name = table
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access

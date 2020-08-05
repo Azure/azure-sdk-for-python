@@ -9,6 +9,12 @@ from typing import (
     Any,
 )
 
+try:
+    from urllib.parse import urlparse, unquote
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+    from urllib2 import unquote  # type: ignore
+
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
@@ -28,6 +34,7 @@ from ._models import TableEntityPropertiesPaged
 from .._deserialize import _convert_to_entity
 from .._serialize import _add_entity_properties, _get_match_headers
 from .._shared._table_client_base import TableClientBase
+from .._shared.base_client import parse_connection_str
 
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
@@ -65,6 +72,68 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         self._client = AzureTable(self.url, pipeline=self._pipeline, loop=loop)
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable = W0212
         self._loop = loop
+
+    @classmethod
+    async def from_connection_string(
+            cls, conn_str,  # type: str
+            table_name,  # type: str
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> TableClient
+        """Create TableClient from a Connection String.
+
+        :param conn_str:
+            A connection string to an Azure Storage or Cosmos account.
+        :type conn_str: str
+        :param table_name: The table name.
+        :type table_name: str
+        :returns: A table client.
+        :rtype: ~azure.data.tables.TableClient
+        """
+        account_url, secondary, credential = parse_connection_str(
+            conn_str=conn_str, credential=None, service='table')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(account_url, table_name=table_name, credential=credential, **kwargs)  # type: ignore
+
+    @classmethod
+    async def from_table_url(cls, table_url, credential=None, **kwargs):
+        # type: (str, Optional[Any], Any) -> TableClient
+        """A client to interact with a specific Table.
+
+        :param table_url: The full URI to the table, including SAS token if used.
+        :type table_url: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string, an account
+            shared access key.
+        :type credential: str
+        :returns: A table client.
+        :rtype: ~azure.data.tables.TableClient
+        """
+        try:
+            if not table_url.lower().startswith('http'):
+                table_url = "https://" + table_url
+        except AttributeError:
+            raise ValueError("Table URL must be a string.")
+        parsed_url = urlparse(table_url.rstrip('/'))
+
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(table_url))
+
+        table_path = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(table_path) > 1:
+            account_path = "/" + "/".join(table_path[:-1])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+        table_name = unquote(table_path[-1])
+        if not table_name:
+            raise ValueError("Invalid URL. Please provide a URL with a valid table name")
+        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_table_access_policy(

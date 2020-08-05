@@ -316,7 +316,7 @@ class TableTestAsync(AsyncTableTestCase):
             pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, storage_account_key)
         table = await self._create_table(ts)
-        client = ts.get_table_client(table=table.table_name)
+        client = ts.get_table_client(table_name=table.table_name)
 
         # Act
         identifiers = dict()
