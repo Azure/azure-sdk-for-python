@@ -221,14 +221,10 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         with pytest.raises(msrest.exceptions.ValidationError):
             mgmt_service.create_queue(Exception())
 
-        with pytest.raises(msrest.exceptions.ValidationError):
-            mgmt_service.create_queue(**QueueProperties(name=Exception()))
 
         with pytest.raises(msrest.exceptions.ValidationError):
             mgmt_service.create_queue('')
 
-        with pytest.raises(msrest.exceptions.ValidationError):
-            mgmt_service.create_queue(**QueueProperties(name=''))
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -240,22 +236,23 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
 
         #TODO: Why don't we have an input model (queueOptions? as superclass of QueueProperties?) and output model to not show these params?
         #TODO: This fails with the following: E           msrest.exceptions.DeserializationError: Find several XML 'prefix:DeadLetteringOnMessageExpiration' where it was not expected .tox\whl\lib\site-packages\msrest\serialization.py:1262: DeserializationError
-        mgmt_service.create_queue(**QueueProperties(name=queue_name,
-                                                    auto_delete_on_idle=datetime.timedelta(minutes=10),
-                                                    dead_lettering_on_message_expiration=True,
-                                                    default_message_time_to_live=datetime.timedelta(minutes=11),
-                                                    duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
-                                                    enable_batched_operations=True,
-                                                    enable_express=True,
-                                                    enable_partitioning=True,
-                                                    is_anonymous_accessible=True,
-                                                    lock_duration=datetime.timedelta(seconds=13),
-                                                    max_delivery_count=14,
-                                                    max_size_in_megabytes=3072,
-                                                    #requires_duplicate_detection=True,
-                                                    requires_session=True,
-                                                    support_ordering=True
-                                                    ))
+        mgmt_service.create_queue(
+            queue_name,
+            auto_delete_on_idle=datetime.timedelta(minutes=10),
+            dead_lettering_on_message_expiration=True,
+            default_message_time_to_live=datetime.timedelta(minutes=11),
+            duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
+            enable_batched_operations=True,
+            enable_express=True,
+            enable_partitioning=True,
+            is_anonymous_accessible=True,
+            lock_duration=datetime.timedelta(seconds=13),
+            max_delivery_count=14,
+            max_size_in_megabytes=3072,
+            #requires_duplicate_detection=True,
+            requires_session=True,
+            support_ordering=True
+        )
         try:
             queue = mgmt_service.get_queue(queue_name)
             assert queue.name == queue_name

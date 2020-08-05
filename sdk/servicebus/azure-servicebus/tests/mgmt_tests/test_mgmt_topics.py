@@ -48,18 +48,16 @@ class ServiceBusManagementClientTopicTests(AzureMgmtTestCase):
         topic_name = "iweidk"
         try:
             mgmt_service.create_topic(
-                **TopicProperties(
-                    name=topic_name,
-                    auto_delete_on_idle=datetime.timedelta(minutes=10),
-                    default_message_time_to_live=datetime.timedelta(minutes=11),
-                    duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
-                    enable_batched_operations=True,
-                    enable_express=True,
-                    enable_partitioning=True,
-                    enable_subscription_partitioning=True,
-                    is_anonymous_accessible=True,
-                    max_size_in_megabytes=3072
-                )
+                name=topic_name,
+                auto_delete_on_idle=datetime.timedelta(minutes=10),
+                default_message_time_to_live=datetime.timedelta(minutes=11),
+                duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
+                enable_batched_operations=True,
+                enable_express=True,
+                enable_partitioning=True,
+                enable_subscription_partitioning=True,
+                is_anonymous_accessible=True,
+                max_size_in_megabytes=3072
             )
             topic = mgmt_service.get_topic(topic_name)
             assert topic.name == topic_name

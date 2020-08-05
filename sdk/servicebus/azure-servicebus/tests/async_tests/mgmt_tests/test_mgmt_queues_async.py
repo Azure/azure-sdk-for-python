@@ -214,13 +214,8 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
             await mgmt_service.create_queue(Exception())
 
         with pytest.raises(msrest.exceptions.ValidationError):
-            await mgmt_service.create_queue(**QueueProperties(name=Exception()))
-
-        with pytest.raises(msrest.exceptions.ValidationError):
             await mgmt_service.create_queue('')
 
-        with pytest.raises(msrest.exceptions.ValidationError):
-            await mgmt_service.create_queue(**QueueProperties(name=''))
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -228,7 +223,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_queues(mgmt_service)
         queue_name = "dkldf"
-        await mgmt_service.create_queue(**QueueProperties(name=queue_name,
+        await mgmt_service.create_queue(queue_name,
                                                     auto_delete_on_idle=datetime.timedelta(minutes=10),
                                                     dead_lettering_on_message_expiration=True, 
                                                     default_message_time_to_live=datetime.timedelta(minutes=11),
@@ -243,7 +238,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
                                                     #requires_duplicate_detection=True, 
                                                     requires_session=True,
                                                     support_ordering=True
-                                                    ))
+                                                    )
         try:
             queue = await mgmt_service.get_queue(queue_name)
             assert queue.name == queue_name

@@ -19,7 +19,8 @@ from ._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
     QueueDescriptionEntry, SubscriptionDescriptionFeed, SubscriptionDescriptionEntry, RuleDescriptionEntry, \
     RuleDescriptionFeed, NamespacePropertiesEntry, CreateTopicBody, CreateTopicBodyContent, \
     TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, \
-    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, NamespaceProperties
+    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, NamespaceProperties, \
+    QueueDescription, TopicDescription, SubscriptionDescription, RuleDescription
 from ._utils import extract_data_template, get_next_template, deserialize_rule_key_values, serialize_rule_key_values, \
     extract_rule_data_template
 from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
@@ -225,9 +226,29 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.QueueProperties
         """
-        queue = QueueProperties(name, **kwargs)
-        for key in queue.keys():
-            kwargs.pop(key, None)
+        queue = QueueProperties(
+            name,
+            authorization_rules=kwargs.pop("authorization_rules", None),
+            auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
+            dead_lettering_on_message_expiration=kwargs.pop("dead_lettering_on_message_expiration", None),
+            default_message_time_to_live=kwargs.pop("default_message_time_to_live", None),
+            duplicate_detection_history_time_window=kwargs.pop("duplicate_detection_history_time_window", None),
+            entity_availability_status=kwargs.pop("entity_availability_status", None),
+            enable_batched_operations=kwargs.pop("enable_batched_operations", None),
+            enable_express=kwargs.pop("enable_express", None),
+            enable_partitioning=kwargs.pop("enable_partitioning", None),
+            is_anonymous_accessible=kwargs.pop("is_anonymous_accessible", None),
+            lock_duration=kwargs.pop("lock_duration", None),
+            max_delivery_count=kwargs.pop("max_delivery_count", None),
+            max_size_in_megabytes=kwargs.pop("max_size_in_megabytes", None),
+            requires_duplicate_detection=kwargs.pop("requires_duplicate_detection", None),
+            requires_session=kwargs.pop("requires_session", None),
+            status=kwargs.pop("status", None),
+            support_ordering=kwargs.pop("support_ordering", None),
+            forward_to=kwargs.pop("forward_to", None),
+            forward_dead_lettered_messages_to=kwargs.pop("forward_dead_lettered_messages_to", None),
+            user_metadata=kwargs.pop("user_metadata", None)
+        )
         to_create = queue._to_internal_entity()
         create_entity_body = CreateQueueBody(
             content=CreateQueueBodyContent(
@@ -421,9 +442,25 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.TopicProperties
         """
-        topic = TopicProperties(name, **kwargs)
-        for key in topic.keys():
-            kwargs.pop(key, None)
+        topic = TopicProperties(
+            name,
+            default_message_time_to_live=kwargs.pop("default_message_time_to_live", None),
+            max_size_in_megabytes=kwargs.pop("max_size_in_megabytes", None),
+            requires_duplicate_detection=kwargs.pop("requires_duplicate_detection", None),
+            duplicate_detection_history_time_window=kwargs.pop("duplicate_detection_history_time_window", None),
+            enable_batched_operations=kwargs.pop("enable_batched_operations", None),
+            size_in_bytes=kwargs.pop("size_in_bytes", None),
+            is_anonymous_accessible=kwargs.pop("is_anonymous_accessible", None),
+            authorization_rules=kwargs.pop("authorization_rules", None),
+            status=kwargs.pop("status", None),
+            support_ordering=kwargs.pop("support_ordering", None),
+            auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
+            enable_partitioning=kwargs.pop("enable_partitioning", None),
+            entity_availability_status=kwargs.pop("entity_availability_status", None),
+            enable_subscription_partitioning=kwargs.pop("enable_subscription_partitioning", None),
+            enable_express=kwargs.pop("enable_express", None),
+            user_metadata=kwargs.pop("user_metadata", None)
+        )
         to_create = topic._to_internal_entity()
 
         create_entity_body = CreateTopicBody(
@@ -626,9 +663,23 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             topic_name = topic.name  # type: ignore
         except AttributeError:
             topic_name = topic
-        subscription = SubscriptionProperties(name, **kwargs)
-        for key in subscription.keys():
-            kwargs.pop(key, None)
+        subscription = SubscriptionProperties(
+            name,
+            lock_duration=kwargs.pop("lock_duration", None),
+            requires_session=kwargs.pop("requires_session", None),
+            default_message_time_to_live=kwargs.pop("default_message_time_to_live", None),
+            dead_lettering_on_message_expiration=kwargs.pop("dead_lettering_on_message_expiration", None),
+            dead_lettering_on_filter_evaluation_exceptions=
+            kwargs.pop("dead_lettering_on_filter_evaluation_exceptions", None),
+            max_delivery_count=kwargs.pop("max_delivery_count", None),
+            enable_batched_operations=kwargs.pop("enable_batched_operations", None),
+            status=kwargs.pop("status", None),
+            forward_to=kwargs.pop("forward_to", None),
+            user_metadata=kwargs.pop("user_metadata", None),
+            forward_dead_lettered_messages_to=kwargs.pop("forward_dead_lettered_messages_to", None),
+            auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
+            entity_availability_status=kwargs.pop("entity_availability_status", None),
+        )
         to_create = subscription._to_internal_entity()  # type: ignore  # pylint:disable=protected-access
 
         create_entity_body = CreateSubscriptionBody(
@@ -805,8 +856,6 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
          ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
         :type action: Optional[~azure.servicebus.management.SqlRuleAction]
-        :keyword created_at: The exact time the rule was created.
-        :type created_at: ~datetime.datetime
 
         :rtype: ~azure.servicebus.management.RuleProperties
         """
@@ -819,9 +868,12 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             subscription_name = subscription.name  # type: ignore
         except AttributeError:
             subscription_name = subscription
-        rule = RuleProperties(name, **kwargs)
-        for key in rule.keys():
-            kwargs.pop(key, None)
+        rule = RuleProperties(
+            name,
+            filter=kwargs.pop("filter", None),
+            action=kwargs.pop("action", None),
+            created_at=None
+        )
         to_create = rule._to_internal_entity()
 
         create_entity_body = CreateRuleBody(

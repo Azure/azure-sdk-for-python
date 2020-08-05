@@ -79,67 +79,67 @@ class DictMixin(object):
 class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     """Properties of a Service Bus queue resource.
 
-    :param name: Name of the queue.
+    :ivar name: Name of the queue.
     :type name: str
-    :keyword authorization_rules: Authorization rules for resource.
+    :ivar authorization_rules: Authorization rules for resource.
     :type authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
-    :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
+    :ivar auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
      automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: ~datetime.timedelta
-    :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
+    :ivar dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
      letter support when a message expires.
     :type dead_lettering_on_message_expiration: bool
-    :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+    :ivar default_message_time_to_live: ISO 8601 default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
      Bus. This is the default value used when TimeToLive is not set on a message itself.
     :type default_message_time_to_live: ~datetime.timedelta
-    :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
+    :ivar duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
      duration of the duplicate detection history. The default value is 10 minutes.
     :type duplicate_detection_history_time_window: ~datetime.timedelta
-    :keyword entity_availability_status: Availibility status of the entity. Possible values include:
+    :ivar entity_availability_status: Availibility status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
     :type entity_availability_status: str or
      ~azure.servicebus.management.EntityAvailabilityStatus
-    :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+    :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
     :type enable_batched_operations: bool
-    :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
+    :ivar enable_express: A value that indicates whether Express Entities are enabled. An express
      queue holds a message in memory temporarily before writing it to persistent storage.
     :type enable_express: bool
-    :keyword enable_partitioning: A value that indicates whether the queue is to be partitioned
+    :ivar enable_partitioning: A value that indicates whether the queue is to be partitioned
      across multiple message brokers.
     :type enable_partitioning: bool
-    :keyword is_anonymous_accessible: A value indicating if the resource can be accessed without
+    :ivar is_anonymous_accessible: A value indicating if the resource can be accessed without
      authorization.
     :type is_anonymous_accessible: bool
-    :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
+    :ivar lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
     :type lock_duration: ~datetime.timedelta
-    :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
+    :ivar max_delivery_count: The maximum delivery count. A message is automatically deadlettered
      after this number of deliveries. Default value is 10.
     :type max_delivery_count: int
-    :keyword max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
+    :ivar max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
      memory allocated for the queue.
     :type max_size_in_megabytes: int
-    :keyword requires_duplicate_detection: A value indicating if this queue requires duplicate
+    :ivar requires_duplicate_detection: A value indicating if this queue requires duplicate
      detection.
     :type requires_duplicate_detection: bool
-    :keyword requires_session: A value that indicates whether the queue supports the concept of
+    :ivar requires_session: A value that indicates whether the queue supports the concept of
      sessions.
     :type requires_session: bool
-    :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+    :ivar status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
     :type status: str or ~azure.servicebus.management.EntityStatus
-    :keyword forward_to: The name of the recipient entity to which all the messages sent to the queue
+    :ivar forward_to: The name of the recipient entity to which all the messages sent to the queue
      are forwarded to.
     :type forward_to: str
-    :keyword user_metadata: Custom metdata that user can associate with the description. Max length
+    :ivar user_metadata: Custom metdata that user can associate with the description. Max length
      is 1024 chars.
     :type user_metadata: str
-    :keyword support_ordering: A value that indicates whether the queue supports ordering.
+    :ivar support_ordering: A value that indicates whether the queue supports ordering.
     :type support_ordering: bool
-    :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
+    :ivar forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      dead-lettered messages of this subscription are forwarded to.
     :type forward_dead_lettered_messages_to: str
     """
@@ -153,55 +153,55 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self.name = name
         self._internal_qd = None  # type: Optional[InternalQueueDescription]
 
-        self.authorization_rules = kwargs.get('authorization_rules', None)
-        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
-        self.dead_lettering_on_message_expiration = kwargs.get('dead_lettering_on_message_expiration', None)
-        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
-        self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
-        self.entity_availability_status = kwargs.get('entity_availability_status', None)
-        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
-        self.enable_express = kwargs.get('enable_express', None)
-        self.enable_partitioning = kwargs.get('enable_partitioning', None)
-        self.is_anonymous_accessible = kwargs.get('is_anonymous_accessible', None)
-        self.lock_duration = kwargs.get('lock_duration', None)
-        self.max_delivery_count = kwargs.get('max_delivery_count', None)
-        self.max_size_in_megabytes = kwargs.get('max_size_in_megabytes', None)
-        self.requires_duplicate_detection = kwargs.get('requires_duplicate_detection', None)
-        self.requires_session = kwargs.get('requires_session', None)
-        self.status = kwargs.get('status', None)
-        self.support_ordering = kwargs.get('support_ordering', None)
-        self.forward_to = kwargs.get('forward_to', None)
-        self.user_metadata = kwargs.get('user_metadata', None)
-        self.forward_dead_lettered_messages_to = kwargs.get('forward_dead_lettered_messages_to', None)
+        self.authorization_rules = kwargs['authorization_rules']
+        self.auto_delete_on_idle = kwargs['auto_delete_on_idle']
+        self.dead_lettering_on_message_expiration = kwargs['dead_lettering_on_message_expiration']
+        self.default_message_time_to_live = kwargs['default_message_time_to_live']
+        self.duplicate_detection_history_time_window = kwargs['duplicate_detection_history_time_window']
+        self.entity_availability_status = kwargs['entity_availability_status']
+        self.enable_batched_operations = kwargs['enable_batched_operations']
+        self.enable_express = kwargs['enable_express']
+        self.enable_partitioning = kwargs['enable_partitioning']
+        self.is_anonymous_accessible = kwargs['is_anonymous_accessible']
+        self.lock_duration = kwargs['lock_duration']
+        self.max_delivery_count = kwargs['max_delivery_count']
+        self.max_size_in_megabytes = kwargs['max_size_in_megabytes']
+        self.requires_duplicate_detection = kwargs['requires_duplicate_detection']
+        self.requires_session = kwargs['requires_session']
+        self.status = kwargs['status']
+        self.support_ordering = kwargs['support_ordering']
+        self.forward_to = kwargs['forward_to']
+        self.user_metadata = kwargs['user_metadata']
+        self.forward_dead_lettered_messages_to = kwargs['forward_dead_lettered_messages_to']
 
 
     @classmethod
     def _from_internal_entity(cls, name, internal_qd):
         # type: (str, InternalQueueDescription) -> QueueProperties
-        qd = cls(name)
+        qd = cls(
+            name,
+            authorization_rules=internal_qd.authorization_rules,
+            auto_delete_on_idle=internal_qd.auto_delete_on_idle,
+            dead_lettering_on_message_expiration=internal_qd.dead_lettering_on_message_expiration,
+            default_message_time_to_live=internal_qd.default_message_time_to_live,
+            duplicate_detection_history_time_window=internal_qd.duplicate_detection_history_time_window,
+            entity_availability_status=internal_qd.entity_availability_status,
+            enable_batched_operations=internal_qd.enable_batched_operations,
+            enable_express=internal_qd.enable_express,
+            enable_partitioning=internal_qd.enable_partitioning,
+            is_anonymous_accessible=internal_qd.is_anonymous_accessible,
+            lock_duration=internal_qd.lock_duration,
+            max_delivery_count=internal_qd.max_delivery_count,
+            max_size_in_megabytes=internal_qd.max_size_in_megabytes,
+            requires_duplicate_detection=internal_qd.requires_duplicate_detection,
+            requires_session=internal_qd.requires_session,
+            status=internal_qd.status,
+            support_ordering=internal_qd.support_ordering,
+            forward_to=internal_qd.forward_to,
+            forward_dead_lettered_messages_to=internal_qd.forward_dead_lettered_messages_to,
+            user_metadata=internal_qd.user_metadata
+        )
         qd._internal_qd = deepcopy(internal_qd)  # pylint:disable=protected-access
-
-        qd.authorization_rules = internal_qd.authorization_rules
-        qd.auto_delete_on_idle = internal_qd.auto_delete_on_idle
-        qd.dead_lettering_on_message_expiration = internal_qd.dead_lettering_on_message_expiration
-        qd.default_message_time_to_live = internal_qd.default_message_time_to_live
-        qd.duplicate_detection_history_time_window = internal_qd.duplicate_detection_history_time_window
-        qd.entity_availability_status = internal_qd.entity_availability_status
-        qd.enable_batched_operations = internal_qd.enable_batched_operations
-        qd.enable_express = internal_qd.enable_express
-        qd.enable_partitioning = internal_qd.enable_partitioning
-        qd.is_anonymous_accessible = internal_qd.is_anonymous_accessible
-        qd.lock_duration = internal_qd.lock_duration
-        qd.max_delivery_count = internal_qd.max_delivery_count
-        qd.max_size_in_megabytes = internal_qd.max_size_in_megabytes
-        qd.requires_duplicate_detection = internal_qd.requires_duplicate_detection
-        qd.requires_session = internal_qd.requires_session
-        qd.status = internal_qd.status
-        qd.support_ordering = internal_qd.support_ordering
-        qd.forward_to = internal_qd.forward_to
-        qd.forward_dead_lettered_messages_to = internal_qd.forward_dead_lettered_messages_to
-        qd.user_metadata = internal_qd.user_metadata
-
         return qd
 
     def _to_internal_entity(self):
@@ -342,56 +342,56 @@ class QueueRuntimeProperties(object):
 class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     """Properties of a Service Bus topic resource.
 
-    :param name: Name of the topic.
+    :ivar name: Name of the topic.
     :type name: str
-    :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+    :ivar default_message_time_to_live: ISO 8601 default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
      Bus. This is the default value used when TimeToLive is not set on a message itself.
     :type default_message_time_to_live: ~datetime.timedelta
-    :keyword max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
+    :ivar max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
      memory allocated for the topic.
     :type max_size_in_megabytes: long
-    :keyword requires_duplicate_detection: A value indicating if this topic requires duplicate
+    :ivar requires_duplicate_detection: A value indicating if this topic requires duplicate
      detection.
     :type requires_duplicate_detection: bool
-    :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
+    :ivar duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
      duration of the duplicate detection history. The default value is 10 minutes.
     :type duplicate_detection_history_time_window: ~datetime.timedelta
-    :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+    :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
     :type enable_batched_operations: bool
-    :keyword size_in_bytes: The size of the topic, in bytes.
+    :ivar size_in_bytes: The size of the topic, in bytes.
     :type size_in_bytes: int
-    :keyword filtering_messages_before_publishing: Filter messages before publishing.
+    :ivar filtering_messages_before_publishing: Filter messages before publishing.
     :type filtering_messages_before_publishing: bool
-    :keyword is_anonymous_accessible: A value indicating if the resource can be accessed without
+    :ivar is_anonymous_accessible: A value indicating if the resource can be accessed without
      authorization.
     :type is_anonymous_accessible: bool
-    :keyword authorization_rules: Authorization rules for resource.
+    :ivar authorization_rules: Authorization rules for resource.
     :type authorization_rules:
      list[~azure.servicebus.management.AuthorizationRule]
-    :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+    :ivar status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
     :type status: str or ~azure.servicebus.management.EntityStatus
-    :keyword support_ordering: A value that indicates whether the topic supports ordering.
+    :ivar support_ordering: A value that indicates whether the topic supports ordering.
     :type support_ordering: bool
-    :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
+    :ivar auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
      automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: ~datetime.timedelta
-    :keyword enable_partitioning: A value that indicates whether the topic is to be partitioned
+    :ivar enable_partitioning: A value that indicates whether the topic is to be partitioned
      across multiple message brokers.
     :type enable_partitioning: bool
-    :keyword entity_availability_status: Availability status of the entity. Possible values include:
+    :ivar entity_availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
     :type entity_availability_status: str or
      ~azure.servicebus.management.EntityAvailabilityStatus
-    :keyword enable_subscription_partitioning: A value that indicates whether the topic's
+    :ivar enable_subscription_partitioning: A value that indicates whether the topic's
      subscription is to be partitioned.
     :type enable_subscription_partitioning: bool
-    :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
+    :ivar enable_express: A value that indicates whether Express Entities are enabled. An express
      queue holds a message in memory temporarily before writing it to persistent storage.
     :type enable_express: bool
-    :keyword user_metadata: Metadata associated with the topic.
+    :ivar user_metadata: Metadata associated with the topic.
     :type user_metadata: str
     """
     def __init__(
@@ -403,47 +403,47 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self.name = name
         self._internal_td = None  # type: Optional[InternalTopicDescription]
 
-        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
-        self.max_size_in_megabytes = kwargs.get('max_size_in_megabytes', None)
-        self.requires_duplicate_detection = kwargs.get('requires_duplicate_detection', None)
-        self.duplicate_detection_history_time_window = kwargs.get('duplicate_detection_history_time_window', None)
-        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
-        self.size_in_bytes = kwargs.get('size_in_bytes', None)
-        self.is_anonymous_accessible = kwargs.get('is_anonymous_accessible', None)
-        self.authorization_rules = kwargs.get('authorization_rules', None)
-        self.status = kwargs.get('status', None)
-        self.support_ordering = kwargs.get('support_ordering', None)
-        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
-        self.enable_partitioning = kwargs.get('enable_partitioning', None)
-        self.entity_availability_status = kwargs.get('entity_availability_status', None)
-        self.enable_subscription_partitioning = kwargs.get('enable_subscription_partitioning', None)
-        self.enable_express = kwargs.get('enable_express', None)
-        self.user_metadata = kwargs.get('user_metadata', None)
+        self.default_message_time_to_live = kwargs['default_message_time_to_live']
+        self.max_size_in_megabytes = kwargs['max_size_in_megabytes']
+        self.requires_duplicate_detection = kwargs['requires_duplicate_detection']
+        self.duplicate_detection_history_time_window = kwargs['duplicate_detection_history_time_window']
+        self.enable_batched_operations = kwargs['enable_batched_operations']
+        self.size_in_bytes = kwargs['size_in_bytes']
+        self.is_anonymous_accessible = kwargs['is_anonymous_accessible']
+        self.authorization_rules = kwargs['authorization_rules']
+        self.status = kwargs['status']
+        self.support_ordering = kwargs['support_ordering']
+        self.auto_delete_on_idle = kwargs['auto_delete_on_idle']
+        self.enable_partitioning = kwargs['enable_partitioning']
+        self.entity_availability_status = kwargs['entity_availability_status']
+        self.enable_subscription_partitioning = kwargs['enable_subscription_partitioning']
+        self.enable_express = kwargs['enable_express']
+        self.user_metadata = kwargs['user_metadata']
 
     @classmethod
     def _from_internal_entity(cls, name, internal_td):
         # type: (str, InternalTopicDescription) -> TopicProperties
-        qd = cls(name)
-        qd._internal_td = deepcopy(internal_td)
-
-        qd.default_message_time_to_live = internal_td.default_message_time_to_live
-        qd.max_size_in_megabytes = internal_td.max_size_in_megabytes
-        qd.requires_duplicate_detection = internal_td.requires_duplicate_detection
-        qd.duplicate_detection_history_time_window = internal_td.duplicate_detection_history_time_window
-        qd.enable_batched_operations = internal_td.enable_batched_operations
-        qd.size_in_bytes = internal_td.size_in_bytes
-        qd.is_anonymous_accessible = internal_td.is_anonymous_accessible
-        qd.authorization_rules = internal_td.authorization_rules
-        qd.status = internal_td.status
-        qd.support_ordering = internal_td.support_ordering
-        qd.auto_delete_on_idle = internal_td.auto_delete_on_idle
-        qd.enable_partitioning = internal_td.enable_partitioning
-        qd.entity_availability_status = internal_td.entity_availability_status
-        qd.enable_subscription_partitioning = internal_td.enable_subscription_partitioning
-        qd.enable_express = internal_td.enable_express
-        qd.user_metadata = internal_td.user_metadata
-
-        return qd
+        td = cls(
+            name,
+            default_message_time_to_live=internal_td.default_message_time_to_live,
+            max_size_in_megabytes=internal_td.max_size_in_megabytes,
+            requires_duplicate_detection=internal_td.requires_duplicate_detection,
+            duplicate_detection_history_time_window=internal_td.duplicate_detection_history_time_window,
+            enable_batched_operations=internal_td.enable_batched_operations,
+            size_in_bytes=internal_td.size_in_bytes,
+            is_anonymous_accessible=internal_td.is_anonymous_accessible,
+            authorization_rules=internal_td.authorization_rules,
+            status=internal_td.status,
+            support_ordering=internal_td.support_ordering,
+            auto_delete_on_idle=internal_td.auto_delete_on_idle,
+            enable_partitioning=internal_td.enable_partitioning,
+            entity_availability_status=internal_td.entity_availability_status,
+            enable_subscription_partitioning=internal_td.enable_subscription_partitioning,
+            enable_express=internal_td.enable_express,
+            user_metadata=internal_td.user_metadata
+        )
+        td._internal_td = deepcopy(internal_td)
+        return td
 
     def _to_internal_entity(self):
         # type: () -> InternalTopicDescription
@@ -546,47 +546,47 @@ class TopicRuntimeProperties(object):
 class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     """Properties of a Service Bus topic subscription resource.
 
-    :param name: Name of the subscription.
+    :ivar name: Name of the subscription.
     :type name: str
-    :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
+    :ivar lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
     :type lock_duration: ~datetime.timedelta
-    :keyword requires_session: A value that indicates whether the queue supports the concept of
+    :ivar requires_session: A value that indicates whether the queue supports the concept of
      sessions.
     :type requires_session: bool
-    :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
+    :ivar default_message_time_to_live: ISO 8601 default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
      Bus. This is the default value used when TimeToLive is not set on a message itself.
     :type default_message_time_to_live: ~datetime.timedelta
-    :keyword dead_lettering_on_message_expiration: A value that indicates whether this subscription
+    :ivar dead_lettering_on_message_expiration: A value that indicates whether this subscription
      has dead letter support when a message expires.
     :type dead_lettering_on_message_expiration: bool
-    :keyword dead_lettering_on_filter_evaluation_exceptions: A value that indicates whether this
+    :ivar dead_lettering_on_filter_evaluation_exceptions: A value that indicates whether this
      subscription has dead letter support when a message expires.
     :type dead_lettering_on_filter_evaluation_exceptions: bool
-    :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
+    :ivar max_delivery_count: The maximum delivery count. A message is automatically deadlettered
      after this number of deliveries. Default value is 10.
     :type max_delivery_count: int
-    :keyword enable_batched_operations: Value that indicates whether server-side batched operations
+    :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
     :type enable_batched_operations: bool
-    :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
+    :ivar status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
     :type status: str or ~azure.servicebus.management.EntityStatus
-    :keyword forward_to: The name of the recipient entity to which all the messages sent to the
+    :ivar forward_to: The name of the recipient entity to which all the messages sent to the
      subscription are forwarded to.
     :type forward_to: str
-    :keyword user_metadata: Metadata associated with the subscription. Maximum number of characters
+    :ivar user_metadata: Metadata associated with the subscription. Maximum number of characters
      is 1024.
     :type user_metadata: str
-    :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
+    :ivar forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      messages sent to the subscription are forwarded to.
     :type forward_dead_lettered_messages_to: str
-    :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
+    :ivar auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
      automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: ~datetime.timedelta
-    :keyword entity_availability_status: Availability status of the entity. Possible values include:
+    :ivar entity_availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
     :type entity_availability_status: str or
      ~azure.servicebus.management.EntityAvailabilityStatus
@@ -596,41 +596,42 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         self.name = name
         self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
 
-        self.lock_duration = kwargs.get('lock_duration', None)
-        self.requires_session = kwargs.get('requires_session', None)
-        self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
-        self.dead_lettering_on_message_expiration = kwargs.get('dead_lettering_on_message_expiration', None)
-        self.dead_lettering_on_filter_evaluation_exceptions = kwargs.get(
-            'dead_lettering_on_filter_evaluation_exceptions', None)
-        self.max_delivery_count = kwargs.get('max_delivery_count', None)
-        self.enable_batched_operations = kwargs.get('enable_batched_operations', None)
-        self.status = kwargs.get('status', None)
-        self.forward_to = kwargs.get('forward_to', None)
-        self.user_metadata = kwargs.get('user_metadata', None)
-        self.forward_dead_lettered_messages_to = kwargs.get('forward_dead_lettered_messages_to', None)
-        self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
-        self.entity_availability_status = kwargs.get('entity_availability_status', None)
+        self.lock_duration = kwargs['lock_duration']
+        self.requires_session = kwargs['requires_session']
+        self.default_message_time_to_live = kwargs['default_message_time_to_live']
+        self.dead_lettering_on_message_expiration = kwargs['dead_lettering_on_message_expiration']
+        self.dead_lettering_on_filter_evaluation_exceptions = kwargs[
+            'dead_lettering_on_filter_evaluation_exceptions']
+        self.max_delivery_count = kwargs['max_delivery_count']
+        self.enable_batched_operations = kwargs['enable_batched_operations']
+        self.status = kwargs['status']
+        self.forward_to = kwargs['forward_to']
+        self.user_metadata = kwargs['user_metadata']
+        self.forward_dead_lettered_messages_to = kwargs['forward_dead_lettered_messages_to']
+        self.auto_delete_on_idle = kwargs['auto_delete_on_idle']
+        self.entity_availability_status = kwargs['entity_availability_status']
 
     @classmethod
     def _from_internal_entity(cls, name, internal_subscription):
         # type: (str, InternalSubscriptionDescription) -> SubscriptionProperties
-        subscription = cls(name)
+        subscription = cls(
+            name,
+            lock_duration=internal_subscription.lock_duration,
+            requires_session=internal_subscription.requires_session,
+            default_message_time_to_live=internal_subscription.default_message_time_to_live,
+            dead_lettering_on_message_expiration=internal_subscription.dead_lettering_on_message_expiration,
+            dead_lettering_on_filter_evaluation_exceptions=
+            internal_subscription.dead_lettering_on_filter_evaluation_exceptions,
+            max_delivery_count=internal_subscription.max_delivery_count,
+            enable_batched_operations=internal_subscription.enable_batched_operations,
+            status=internal_subscription.status,
+            forward_to=internal_subscription.forward_to,
+            user_metadata=internal_subscription.user_metadata,
+            forward_dead_lettered_messages_to=internal_subscription.forward_dead_lettered_messages_to,
+            auto_delete_on_idle=internal_subscription.auto_delete_on_idle,
+            entity_availability_status=internal_subscription.entity_availability_status
+        )
         subscription._internal_sd = deepcopy(internal_subscription)
-        subscription.lock_duration = internal_subscription.lock_duration
-        subscription.requires_session = internal_subscription.requires_session
-        subscription.default_message_time_to_live = internal_subscription.default_message_time_to_live
-        subscription.dead_lettering_on_message_expiration = internal_subscription.dead_lettering_on_message_expiration
-        subscription.dead_lettering_on_filter_evaluation_exceptions = \
-            internal_subscription.dead_lettering_on_filter_evaluation_exceptions
-        subscription.max_delivery_count = internal_subscription.max_delivery_count
-        subscription.enable_batched_operations = internal_subscription.enable_batched_operations
-        subscription.status = internal_subscription.status
-        subscription.forward_to = internal_subscription.forward_to
-        subscription.user_metadata = internal_subscription.user_metadata
-        subscription.forward_dead_lettered_messages_to = internal_subscription.forward_dead_lettered_messages_to
-        subscription.auto_delete_on_idle = internal_subscription.auto_delete_on_idle
-        subscription.entity_availability_status = internal_subscription.entity_availability_status
-
         return subscription
 
     def _to_internal_entity(self):
@@ -750,20 +751,20 @@ class RuleProperties(DictMixin):
 
     :param name: Name of the rule.
     :type name: str
-    :keyword filter: The filter of the rule.
+    :ivar filter: The filter of the rule.
     :type filter: Union[~azure.servicebus.management.CorrelationRuleFilter,
      ~azure.servicebus.management.SqlRuleFilter]
-    :keyword action: The action of the rule.
+    :ivar action: The action of the rule.
     :type action: Optional[~azure.servicebus.management.SqlRuleAction]
-    :keyword created_at: The exact time the rule was created.
+    :ivar created_at: The exact time the rule was created.
     :type created_at: ~datetime.datetime
     """
 
     def __init__(self, name, **kwargs):
         # type: (str, Any) -> None
-        self.filter = kwargs.get('filter', None)
-        self.action = kwargs.get('action', None)
-        self.created_at = kwargs.get('created_at', None)
+        self.filter = kwargs['filter']
+        self.action = kwargs['action']
+        self.created_at = kwargs['created_at']
         self.name = name
 
         self._internal_rule = None  # type: Optional[InternalRuleDescription]
@@ -771,15 +772,15 @@ class RuleProperties(DictMixin):
     @classmethod
     def _from_internal_entity(cls, name, internal_rule):
         # type: (str, InternalRuleDescription) -> RuleProperties
-        rule = cls(name)
+        rule = cls(
+            name,
+            filter=RULE_CLASS_MAPPING[type(internal_rule.filter)]._from_internal_entity(internal_rule.filter)
+            if internal_rule.filter and isinstance(internal_rule.filter, tuple(RULE_CLASS_MAPPING.keys())) else None,
+            action=RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity(internal_rule.action)
+            if internal_rule.action and isinstance(internal_rule.action, tuple(RULE_CLASS_MAPPING.keys())) else None,
+            created_at=internal_rule.created_at
+        )
         rule._internal_rule = deepcopy(internal_rule)
-
-        rule.filter = RULE_CLASS_MAPPING[type(internal_rule.filter)]._from_internal_entity(internal_rule.filter) \
-            if internal_rule.filter and isinstance(internal_rule.filter, tuple(RULE_CLASS_MAPPING.keys())) else None
-        rule.action = RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity(internal_rule.action) \
-            if internal_rule.action and isinstance(internal_rule.action, tuple(RULE_CLASS_MAPPING.keys())) else None
-        rule.created_at = internal_rule.created_at
-
         return rule
 
     def _to_internal_entity(self):

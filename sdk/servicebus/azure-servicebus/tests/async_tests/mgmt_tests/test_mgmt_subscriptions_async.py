@@ -55,16 +55,14 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
             await mgmt_service.create_topic(topic_name)
             await mgmt_service.create_subscription(
                 topic_name,
-                **SubscriptionProperties(
-                    name=subscription_name,
-                    auto_delete_on_idle=datetime.timedelta(minutes=10),
-                    dead_lettering_on_message_expiration=True,
-                    default_message_time_to_live=datetime.timedelta(minutes=11),
-                    enable_batched_operations=True,
-                    lock_duration=datetime.timedelta(seconds=13),
-                    max_delivery_count=14,
-                    requires_session=True
-                )
+                name=subscription_name,
+                auto_delete_on_idle=datetime.timedelta(minutes=10),
+                dead_lettering_on_message_expiration=True,
+                default_message_time_to_live=datetime.timedelta(minutes=11),
+                enable_batched_operations=True,
+                lock_duration=datetime.timedelta(seconds=13),
+                max_delivery_count=14,
+                requires_session=True
             )
             subscription = await mgmt_service.get_subscription(topic_name, subscription_name)
             assert subscription.name == subscription_name

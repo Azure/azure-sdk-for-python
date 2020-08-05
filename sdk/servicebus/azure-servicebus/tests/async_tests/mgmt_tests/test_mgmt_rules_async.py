@@ -48,21 +48,18 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         sql_rule_action = SqlRuleAction(sql_expression="SET Priority = @param", parameters={
             "@param": datetime(2020, 7, 5, 11, 12, 13),
         })
-        rule_1 = RuleProperties(name=rule_name_1, filter=correlation_fitler, action=sql_rule_action)
 
         sql_filter = SqlRuleFilter("Priority = @param1", parameters={
             "@param1": "str1",
         })
-        rule_2 = RuleProperties(name=rule_name_2, filter=sql_filter)
 
         bool_filter = TrueRuleFilter()
-        rule_3 = RuleProperties(name=rule_name_3, filter=bool_filter)
 
         try:
             await mgmt_service.create_topic(topic_name)
             await mgmt_service.create_subscription(topic_name, subscription_name)
 
-            await mgmt_service.create_rule(topic_name, subscription_name, **rule_1)
+            await mgmt_service.create_rule(topic_name, subscription_name, rule_name_1, filter=correlation_fitler, action=sql_rule_action)
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name_1)
             rule_properties = rule_desc.filter.properties
             assert type(rule_desc.filter) == CorrelationRuleFilter
@@ -76,13 +73,13 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
             assert rule_properties["key_datetime"] == datetime(2020, 7, 5, 11, 12, 13)
             assert rule_properties["key_duration"] == timedelta(days=1, hours=2, minutes=3)
 
-            await mgmt_service.create_rule(topic_name, subscription_name, **rule_2)
+            await mgmt_service.create_rule(topic_name, subscription_name, rule_name_2, filter=sql_filter)
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name_2)
             assert type(rule_desc.filter) == SqlRuleFilter
             assert rule_desc.filter.sql_expression == "Priority = @param1"
             assert rule_desc.filter.parameters["@param1"] == "str1"
 
-            await mgmt_service.create_rule(topic_name, subscription_name, **rule_3)
+            await mgmt_service.create_rule(topic_name, subscription_name, rule_name_3, filter=bool_filter)
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name_3)
             assert type(rule_desc.filter) == TrueRuleFilter
 
@@ -102,13 +99,12 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         subscription_name = 'kkaqo'
         rule_name = 'rule'
         sql_filter = SqlRuleFilter("Priority = 'low'")
-        rule = RuleProperties(name=rule_name, filter=sql_filter)
         try:
             await mgmt_service.create_topic(topic_name)
             await mgmt_service.create_subscription(topic_name, subscription_name)
-            await mgmt_service.create_rule(topic_name, subscription_name, **rule)
+            await mgmt_service.create_rule(topic_name, subscription_name, rule_name, filter=sql_filter)
             with pytest.raises(ResourceExistsError):
-                await mgmt_service.create_rule(topic_name, subscription_name, **rule)
+                await mgmt_service.create_rule(topic_name, subscription_name, rule_name, filter=sql_filter)
         finally:
             await mgmt_service.delete_rule(topic_name, subscription_name, rule_name)
             await mgmt_service.delete_subscription(topic_name, subscription_name)
@@ -123,12 +119,11 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         subscription_name = "eqkovc"
         rule_name = 'rule'
         sql_filter = SqlRuleFilter("Priority = 'low'")
-        rule = RuleProperties(name=rule_name, filter=sql_filter)
 
         try:
             topic_description = await mgmt_service.create_topic(topic_name)
             subscription_description = await mgmt_service.create_subscription(topic_description, subscription_name)
-            await mgmt_service.create_rule(topic_name, subscription_name, **rule)
+            await mgmt_service.create_rule(topic_name, subscription_name, rule_name, filter=sql_filter)
 
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name)
 
@@ -161,12 +156,11 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         subscription_name = "eqkovc"
         rule_name = 'rule'
         sql_filter = SqlRuleFilter("Priority = 'low'")
-        rule = RuleProperties(name=rule_name, filter=sql_filter)
 
         try:
             topic_description = await mgmt_service.create_topic(topic_name)
             subscription_description = await mgmt_service.create_subscription(topic_name, subscription_name)
-            await mgmt_service.create_rule(topic_name, subscription_name, **rule)
+            await mgmt_service.create_rule(topic_name, subscription_name, rule_name, filter=sql_filter)
 
             rule_desc = await mgmt_service.get_rule(topic_name, subscription_name, rule_name)
 
@@ -209,9 +203,6 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
         sql_filter_1 = SqlRuleFilter("Priority = 'low'")
         sql_filter_2 = SqlRuleFilter("Priority = 'middle'")
         sql_filter_3 = SqlRuleFilter("Priority = 'high'")
-        rule_1 = RuleProperties(name=rule_name_1, filter=sql_filter_1)
-        rule_2 = RuleProperties(name=rule_name_2, filter=sql_filter_2)
-        rule_3 = RuleProperties(name=rule_name_3, filter=sql_filter_3)
 
         try:
             await mgmt_service.create_topic(topic_name)
@@ -220,9 +211,9 @@ class ServiceBusManagementClientRuleAsyncTests(AzureMgmtTestCase):
             rules = await async_pageable_to_list(mgmt_service.list_rules(topic_name, subscription_name))
             assert len(rules) == 1  # by default there is a True filter
 
-            await mgmt_service.create_rule(topic_name, subscription_name, **rule_1)
-            await mgmt_service.create_rule(topic_name, subscription_name, **rule_2)
-            await mgmt_service.create_rule(topic_name, subscription_name, **rule_3)
+            await mgmt_service.create_rule(topic_name, subscription_name, rule_name_1, filter=sql_filter_1)
+            await mgmt_service.create_rule(topic_name, subscription_name, rule_name_2, filter=sql_filter_2)
+            await mgmt_service.create_rule(topic_name, subscription_name, rule_name_3, filter=sql_filter_3)
 
             rules = await async_pageable_to_list(mgmt_service.list_rules(topic_name, subscription_name))
             assert len(rules) == 3 + 1
