@@ -40,6 +40,7 @@ if TYPE_CHECKING:
     from ._lease import BlobLeaseClient
     from ._models import (
         ContainerProperties,
+        BlobProperties,
         PublicAccess,
         BlobAnalyticsLogging,
         Metrics,
@@ -47,7 +48,6 @@ if TYPE_CHECKING:
         RetentionPolicy,
         StaticWebsite,
     )
-    from azure.storage.blob import BlobProperties
 
 
 class BlobServiceClient(StorageAccountHostsMixin):
