@@ -17,7 +17,7 @@ from azure.ai.textanalytics import (
     VERSION,
     DetectLanguageInput,
     TextDocumentInput,
-    ApiVersion
+    TextAnalyticsApiVersion
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -675,7 +675,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         assert not document.sentences[0].mined_opinions
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": ApiVersion.V3_0})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     async def test_opinion_mining_v3(self, client):
         with pytest.raises(NotImplementedError) as excinfo:
             await client.analyze_sentiment(["will fail"], show_opinion_mining=True)
