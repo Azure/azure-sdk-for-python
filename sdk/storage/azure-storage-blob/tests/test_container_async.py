@@ -35,7 +35,7 @@ from azure.storage.blob import (
     PartialBatchErrorException,
     generate_account_sas, ResourceTypes, AccountSasPermissions)
 
-from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer
+from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from _shared.asynctestcase import AsyncStorageTestCase
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -1134,7 +1134,8 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blobs_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1160,13 +1161,13 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
                 'blob1',
                 'blob2',
                 'blob3',
-                if_tags="\"tag1\"='firsttag WRONG'"
+                if_tags_match_condition="\"tag1\"='firsttag WRONG'"
             )
         blob_list = await container.delete_blobs(
             'blob1',
             'blob2',
             'blob3',
-            if_tags="\"tag1\"='firsttag'"
+            if_tags_match_condition="\"tag1\"='firsttag'"
         )
 
         response = list()
@@ -1341,7 +1342,8 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
                     'blob3',
                 )
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_standard_blob_tier_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
@@ -1366,7 +1368,7 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
                 'blob1',
                 'blob2',
                 'blob3',
-                if_tags="\"tag1\"='firsttag WRONG'"
+                if_tags_match_condition="\"tag1\"='firsttag WRONG'"
             )
 
         parts_list = await container.set_standard_blob_tier_blobs(
@@ -1374,7 +1376,7 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
             'blob1',
             'blob2',
             'blob3',
-            if_tags="\"tag1\"='firsttag'"
+            if_tags_match_condition="\"tag1\"='firsttag'"
         )
 
         parts = list()

@@ -1088,13 +1088,13 @@ class StorageContainerTest(StorageTestCase):
                 'blob1',
                 'blob2',
                 'blob3',
-                if_tags="\"tag1\"='firsttag WRONG'"
+                if_tags_match_condition="\"tag1\"='firsttag WRONG'"
             )
         response = container.delete_blobs(
             'blob1',
             'blob2',
             'blob3',
-            if_tags="\"tag1\"='firsttag'"
+            if_tags_match_condition="\"tag1\"='firsttag'"
         )
         response = list(response)
         assert len(response) == 3
@@ -1294,7 +1294,7 @@ class StorageContainerTest(StorageTestCase):
                 'blob1',
                 'blob2',
                 'blob3',
-                if_tags="\"tag1\"='firsttag WRONG'"
+                if_tags_match_condition="\"tag1\"='firsttag WRONG'"
             )
 
         parts = container.set_standard_blob_tier_blobs(
@@ -1302,7 +1302,7 @@ class StorageContainerTest(StorageTestCase):
             'blob1',
             'blob2',
             'blob3',
-            if_tags="\"tag1\"='firsttag'"
+            if_tags_match_condition="\"tag1\"='firsttag'"
         )
 
         parts = list(parts)

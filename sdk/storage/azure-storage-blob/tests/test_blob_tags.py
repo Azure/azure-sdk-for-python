@@ -223,8 +223,8 @@ class StorageBlobTagsTest(StorageTestCase):
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
         with self.assertRaises(ResourceModifiedError):
-            blob_client.commit_block_list(block_list, tags=tags, if_tags="\"condition tag\"='wrong tag'")
-        blob_client.commit_block_list(block_list, tags=tags, if_tags="\"condition tag\"='test tag'")
+            blob_client.commit_block_list(block_list, tags=tags, if_tags_match_condition="\"condition tag\"='wrong tag'")
+        blob_client.commit_block_list(block_list, tags=tags, if_tags_match_condition="\"condition tag\"='test tag'")
 
         resp = blob_client.get_blob_tags()
 

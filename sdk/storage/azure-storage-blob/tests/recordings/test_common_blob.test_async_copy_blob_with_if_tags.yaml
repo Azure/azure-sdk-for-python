@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:01 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -21,14 +21,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:ef532f78-d01e-0077-7524-6a9834000000\nTime:2020-08-04T06:00:11.7029884Z</Message></Error>"
+        specified container already exists.\nRequestId:d07912fe-b01e-0003-787f-6bacc4000000\nTime:2020-08-05T23:25:01.4346714Z</Message></Error>"
     headers:
       content-length:
       - '230'
       content-type:
       - application/xml
       date:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:00 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -56,7 +56,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:01 GMT
       x-ms-tags:
       - source=source%20tag
       x-ms-version:
@@ -72,11 +72,11 @@ interactions:
       content-md5:
       - yaNM/IXZgmmMasifdgcavQ==
       date:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:01 GMT
       etag:
-      - '"0x8D8383BA657A2E7"'
+      - '"0x8D83996C6C5F966"'
       last-modified:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:01 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -86,7 +86,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
       x-ms-version-id:
-      - '2020-08-04T06:00:11.7932298Z'
+      - '2020-08-05T23:25:01.5676022Z'
     status:
       code: 201
       message: Created
@@ -108,7 +108,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:01 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -122,11 +122,11 @@ interactions:
       content-md5:
       - kAFQmDzST7DWlj99KOF/cg==
       date:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:01 GMT
       etag:
-      - '"0x8D8383BA665881A"'
+      - '"0x8D83996C6D71380"'
       last-modified:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:01 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -136,7 +136,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
       x-ms-version-id:
-      - '2020-08-04T06:00:11.8842945Z'
+      - '2020-08-05T23:25:01.6806828Z'
     status:
       code: 201
       message: Created
@@ -158,7 +158,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:01 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -168,7 +168,7 @@ interactions:
       string: ''
     headers:
       date:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:01 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -194,7 +194,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:02 GMT
       x-ms-if-tags:
       - '"tag1"=''first tag'''
       x-ms-version:
@@ -204,14 +204,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ConditionNotMet</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:ef532fb5-d01e-0077-2624-6a9834000000\nTime:2020-08-04T06:00:12.1673176Z</Message></Error>"
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:d079134d-b01e-0003-367f-6bacc4000000\nTime:2020-08-05T23:25:02.2682588Z</Message></Error>"
     headers:
       content-length:
       - '253'
       content-type:
       - application/xml
       date:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:01 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -239,7 +239,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:02 GMT
       x-ms-if-tags:
       - '"tag1 name"=''my tag'' AND "tag2"=''secondtag'''
       x-ms-version:
@@ -251,7 +251,7 @@ interactions:
       string: ''
     headers:
       date:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:01 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -271,7 +271,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:02 GMT
       x-ms-if-tags:
       - '"tag1"=''first taga'''
       x-ms-version:
@@ -281,14 +281,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ConditionNotMet</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:ef532fd3-d01e-0077-4124-6a9834000000\nTime:2020-08-04T06:00:12.3644570Z</Message></Error>"
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:d079137f-b01e-0003-637f-6bacc4000000\nTime:2020-08-05T23:25:02.6345165Z</Message></Error>"
     headers:
       content-length:
       - '253'
       content-type:
       - application/xml
       date:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:02 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -310,7 +310,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:02 GMT
       x-ms-if-tags:
       - '"tag1"=''first tag'''
       x-ms-version:
@@ -327,7 +327,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:02 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -351,11 +351,11 @@ interactions:
       x-ms-copy-source:
       - https://emilyeuap.blob.core.windows.net/utcontainerb981481/blobb981481
       x-ms-date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
-      x-ms-if-tags:
-      - '"tag1"=''abc'''
+      - Wed, 05 Aug 2020 23:25:03 GMT
+      x-ms-source-if-tags:
+      - '"source"=''sourcetag'''
       x-ms-tags:
-      - tag1=abc
+      - tag1=first%20tag&tag2=secondtag&tag3=thirdtag
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -363,14 +363,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:ef532ff0-d01e-0077-5e24-6a9834000000\nTime:2020-08-04T06:00:12.5565936Z</Message></Error>"
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:d07913be-b01e-0003-157f-6bacc4000000\nTime:2020-08-05T23:25:02.9847637Z</Message></Error>"
     headers:
       content-length:
       - '252'
       content-type:
       - application/xml
       date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:02 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -396,7 +396,102 @@ interactions:
       x-ms-copy-source:
       - https://emilyeuap.blob.core.windows.net/utcontainerb981481/blobb981481
       x-ms-date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:03 GMT
+      x-ms-source-if-tags:
+      - '"source"=''source tag'''
+      x-ms-tags:
+      - tag1=first%20tag&tag2=secondtag&tag3=thirdtag
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerb981481/blob1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 05 Aug 2020 23:25:02 GMT
+      etag:
+      - '"0x8D83996C7AF2462"'
+      last-modified:
+      - Wed, 05 Aug 2020 23:25:03 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-copy-id:
+      - 7fcc9ce3-95ae-48b3-a729-f1fee93f4e72
+      x-ms-copy-status:
+      - success
+      x-ms-version:
+      - '2019-12-12'
+      x-ms-version-id:
+      - '2020-08-05T23:25:03.0956914Z'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-copy-source:
+      - https://emilyeuap.blob.core.windows.net/utcontainerb981481/blobb981481
+      x-ms-date:
+      - Wed, 05 Aug 2020 23:25:03 GMT
+      x-ms-if-tags:
+      - '"tag1"=''abc'''
+      x-ms-tags:
+      - tag1=abc
+      x-ms-version:
+      - '2019-12-12'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerb981481/blob1copy
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:d07913e0-b01e-0003-297f-6bacc4000000\nTime:2020-08-05T23:25:03.2179280Z</Message></Error>"
+    headers:
+      content-length:
+      - '252'
+      content-type:
+      - application/xml
+      date:
+      - Wed, 05 Aug 2020 23:25:02 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ConditionNotMet
+      x-ms-version:
+      - '2019-12-12'
+    status:
+      code: 412
+      message: The condition specified using HTTP conditional header(s) is not met.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      x-ms-copy-source:
+      - https://emilyeuap.blob.core.windows.net/utcontainerb981481/blobb981481
+      x-ms-date:
+      - Wed, 05 Aug 2020 23:25:03 GMT
       x-ms-if-tags:
       - '"tag1"=''first tag'''
       x-ms-tags:
@@ -412,21 +507,21 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:02 GMT
       etag:
-      - '"0x8D8383BA6DAF48B"'
+      - '"0x8D83996C7D43F66"'
       last-modified:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:03 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-copy-id:
-      - 3f914baf-9725-40a3-a97c-4cceba40e86d
+      - 5ac13330-ea89-4686-bd8b-24771fd733ea
       x-ms-copy-status:
       - success
       x-ms-version:
       - '2019-12-12'
       x-ms-version-id:
-      - '2020-08-04T06:00:12.6528411Z'
+      - '2020-08-05T23:25:03.3388662Z'
     status:
       code: 202
       message: Accepted
@@ -442,7 +537,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:03 GMT
       x-ms-if-tags:
       - '"tag1"=''abc1'''
       x-ms-range:
@@ -454,14 +549,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:ef533022-d01e-0077-0b24-6a9834000000\nTime:2020-08-04T06:00:12.7477291Z</Message></Error>"
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:d07913f5-b01e-0003-367f-6bacc4000000\nTime:2020-08-05T23:25:03.4580968Z</Message></Error>"
     headers:
       content-length:
       - '252'
       content-type:
       - application/xml
       date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:02 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -483,7 +578,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.4.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:03 GMT
       x-ms-if-tags:
       - '"tag1"=''abc'''
       x-ms-range:
@@ -505,11 +600,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:03 GMT
       etag:
-      - '"0x8D8383BA6DAF48B"'
+      - '"0x8D83996C7D43F66"'
       last-modified:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:03 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
@@ -517,9 +612,9 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-completion-time:
-      - Tue, 04 Aug 2020 06:00:12 GMT
+      - Wed, 05 Aug 2020 23:25:03 GMT
       x-ms-copy-id:
-      - 3f914baf-9725-40a3-a97c-4cceba40e86d
+      - 5ac13330-ea89-4686-bd8b-24771fd733ea
       x-ms-copy-progress:
       - 1024/1024
       x-ms-copy-source:
@@ -527,7 +622,7 @@ interactions:
       x-ms-copy-status:
       - success
       x-ms-creation-time:
-      - Tue, 04 Aug 2020 06:00:11 GMT
+      - Wed, 05 Aug 2020 23:25:01 GMT
       x-ms-is-current-version:
       - 'true'
       x-ms-lease-state:
@@ -541,7 +636,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
       x-ms-version-id:
-      - '2020-08-04T06:00:12.6528411Z'
+      - '2020-08-05T23:25:03.3388662Z'
     status:
       code: 206
       message: Partial Content

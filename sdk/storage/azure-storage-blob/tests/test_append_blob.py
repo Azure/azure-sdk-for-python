@@ -26,7 +26,8 @@ from azure.storage.blob import (
     BlobSasPermissions)
 from azure.storage.blob._shared.policies import StorageContentValidation
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, StorageAccountPreparer, \
+    GlobalResourceGroupPreparer
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -194,7 +195,8 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertIsNotNone(resp['etag'])
         self.assertIsNotNone(resp['last_modified'])
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     def test_append_block_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key,
                                 max_block_size=4 * 1024)
@@ -202,8 +204,8 @@ class StorageAppendBlobTest(StorageTestCase):
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob = self._create_blob(bsc, tags=tags)
         with self.assertRaises(ResourceModifiedError):
-            blob.append_block(u'啊齄丂狛狜', encoding='utf-16', if_tags="\"tag1\"='first tag'")
-        resp = blob.append_block(u'啊齄丂狛狜', encoding='utf-16', if_tags="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            blob.append_block(u'啊齄丂狛狜', encoding='utf-16', if_tags_match_condition="\"tag1\"='first tag'")
+        resp = blob.append_block(u'啊齄丂狛狜', encoding='utf-16', if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
         self.assertEqual(int(resp['blob_append_offset']), 0)
         self.assertEqual(resp['blob_committed_block_count'], 1)
@@ -225,7 +227,8 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     def test_append_block_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
@@ -259,11 +262,11 @@ class StorageAppendBlobTest(StorageTestCase):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_offset=split,
                                                           source_length=LARGE_BLOB_SIZE - split,
-                                                          if_tags="\"tag1\"='first tag'")
+                                                          if_tags_match_condition="\"tag1\"='first tag'")
         resp = destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                              source_offset=split,
                                                              source_length=LARGE_BLOB_SIZE - split,
-                                                             if_tags="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+                                                             if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
         self.assertEqual(resp.get('blob_append_offset'), str(4 * 1024))
         self.assertEqual(resp.get('blob_committed_block_count'), 2)
         self.assertIsNotNone(resp.get('etag'))

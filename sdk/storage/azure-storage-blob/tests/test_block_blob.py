@@ -22,7 +22,7 @@ from azure.storage.blob import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -202,7 +202,8 @@ class StorageBlockBlobTest(StorageTestCase):
         blob_properties = blob_client.get_blob_properties()
         self.assertEqual(blob_properties.blob_tier, blob_tier)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     def test_get_block_list_no_blocks(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -210,8 +211,8 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError):
-            blob.get_block_list('all', if_tags="\"condition tag\"='wrong tag'")
-        block_list = blob.get_block_list('all', if_tags="\"tag1\"='firsttag'")
+            blob.get_block_list('all', if_tags_match_condition="\"condition tag\"='wrong tag'")
+        block_list = blob.get_block_list('all', if_tags_match_condition="\"tag1\"='firsttag'")
 
         # Assert
         self.assertIsNotNone(block_list)

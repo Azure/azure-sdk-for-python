@@ -783,7 +783,7 @@ class ContainerClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags:
+        :keyword str if_tags_match_condition
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
@@ -899,7 +899,7 @@ class ContainerClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags:
+        :keyword str if_tags_match_condition
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
@@ -964,7 +964,7 @@ class ContainerClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags:
+        :keyword str if_tags_match_condition
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
@@ -1062,7 +1062,7 @@ class ContainerClient(StorageAccountHostsMixin):
         delete_snapshots = kwargs.pop('delete_snapshots', None)
         if_modified_since = kwargs.pop('if_modified_since', None)
         if_unmodified_since = kwargs.pop('if_unmodified_since', None)
-        if_tags = kwargs.pop('if_tags', None)
+        if_tags = kwargs.pop('if_tags_match_condition', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
                        'timeout': '&timeout=' + str(timeout) if timeout else ""
@@ -1081,7 +1081,7 @@ class ContainerClient(StorageAccountHostsMixin):
                     if_modified_since=if_modified_since or blob.get('if_modified_since'),
                     if_unmodified_since=if_unmodified_since or blob.get('if_unmodified_since'),
                     etag=blob.get('etag'),
-                    if_tags=if_tags or blob.get('if_tags'),
+                    if_tags=if_tags or blob.get('if_tags_match_condition'),
                     match_condition=blob.get('match_condition') or MatchConditions.IfNotModified if blob.get('etag')
                     else None,
                     timeout=blob.get('timeout'),
@@ -1141,7 +1141,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 match the etag or not:
                     key: 'match_condition', value type: MatchConditions
                 tags match condition:
-                    key: 'if_tags', value type: str
+                    key: 'if_tags_match_condition', value type: str
                 lease:
                     key: 'lease_id', value type: Union[str, LeaseClient]
                 timeout for subrequest:
@@ -1164,7 +1164,7 @@ class ContainerClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_tags:
+        :keyword str if_tags_match_condition
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
@@ -1235,7 +1235,7 @@ class ContainerClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         rehydrate_priority = kwargs.pop('rehydrate_priority', None)
-        if_tags = kwargs.pop('if_tags', None)
+        if_tags = kwargs.pop('if_tags_match_condition', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
                        'timeout': '&timeout=' + str(timeout) if timeout else ""
@@ -1252,7 +1252,7 @@ class ContainerClient(StorageAccountHostsMixin):
                     tier=tier,
                     rehydrate_priority=rehydrate_priority or blob.get('rehydrate_priority'),
                     lease_access_conditions=blob.get('lease_id'),
-                    if_tags=if_tags or blob.get('if_tags'),
+                    if_tags=if_tags or blob.get('if_tags_match_condition'),
                     timeout=timeout or blob.get('timeout')
                 )
             except AttributeError:
@@ -1311,14 +1311,14 @@ class ContainerClient(StorageAccountHostsMixin):
                 lease:
                     key: 'lease_id', value type: Union[str, LeaseClient]
                 tags match condition:
-                    key: 'if_tags', value type: str
+                    key: 'if_tags_match_condition', value type: str
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
         :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
-        :keyword str if_tags:
+        :keyword str if_tags_match_condition
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 

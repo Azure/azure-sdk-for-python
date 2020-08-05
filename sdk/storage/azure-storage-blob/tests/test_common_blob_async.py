@@ -51,7 +51,7 @@ from azure.storage.blob import (
     StandardBlobTier)
 
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from _shared.asynctestcase import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
@@ -179,7 +179,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertTrue(exists)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_blob_exists_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -191,8 +192,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         with self.assertRaises(ResourceModifiedError):
-            await blob.get_blob_properties(if_tags="\"tag1\"='first tag'")
-        await blob.get_blob_properties(if_tags="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            await blob.get_blob_properties(if_tags_match_condition="\"tag1\"='first tag'")
+        await blob.get_blob_properties(if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -518,7 +519,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(props.content_settings.content_language, 'spanish')
         self.assertEqual(props.content_settings.content_disposition, 'inline')
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_properties_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -531,12 +533,12 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await blob.set_http_headers(content_settings=ContentSettings(
                 content_language='spanish',
                 content_disposition='inline'),
-                if_tags="\"tag1\"='first tag'")
+                if_tags_match_condition="\"tag1\"='first tag'")
         await blob.set_http_headers(
             content_settings=ContentSettings(
                 content_language='spanish',
                 content_disposition='inline'),
-            if_tags="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
         )
 
         # Assert
@@ -772,7 +774,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertFalse('up' in md)
 
     @pytest.mark.live_test_only
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         # bug in devtools...converts upper case header to lowercase
@@ -785,8 +788,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         with self.assertRaises(ResourceModifiedError):
-            await blob.set_blob_metadata(metadata, if_tags="\"tag1\"='first tag'")
-        await blob.set_blob_metadata(metadata, if_tags="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            await blob.set_blob_metadata(metadata, if_tags_match_condition="\"tag1\"='first tag'")
+        await blob.set_blob_metadata(metadata, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
         # Assert
         md = (await blob.get_blob_properties()).metadata
@@ -835,7 +838,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertIsNone(resp)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -848,8 +852,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         prop = await blob.get_blob_properties()
 
         with self.assertRaises(ResourceModifiedError):
-            await blob.delete_blob(if_tags="\"tag1\"='first tag'")
-        resp = await blob.delete_blob(etag=prop.etag, match_condition=MatchConditions.IfNotModified, if_tags="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            await blob.delete_blob(if_tags_match_condition="\"tag1\"='first tag'")
+        resp = await blob.delete_blob(etag=prop.etag, match_condition=MatchConditions.IfNotModified, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
         # Assert
         self.assertIsNone(resp)
@@ -1273,7 +1277,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         finally:
             await self._disable_soft_delete()
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_async_copy_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -1292,23 +1297,22 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
         tags = {"tag1": "first tag", "tag2": "secondtag", "tag3": "thirdtag"}
         with self.assertRaises(ResourceModifiedError):
-            await copyblob.set_blob_tags(tags, if_tags="\"tag1\"='first tag'")
-        await copyblob.set_blob_tags(tags, if_tags="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            await copyblob.set_blob_tags(tags, if_tags_match_condition="\"tag1\"='first tag'")
+        await copyblob.set_blob_tags(tags, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
         with self.assertRaises(ResourceModifiedError):
-            await copyblob.get_blob_tags(if_tags="\"tag1\"='first taga'")
-        dest_tags = await copyblob.get_blob_tags(if_tags="\"tag1\"='first tag'")
+            await copyblob.get_blob_tags(if_tags_match_condition="\"tag1\"='first taga'")
+        dest_tags = await copyblob.get_blob_tags(if_tags_match_condition="\"tag1\"='first tag'")
 
         self.assertEqual(len(dest_tags), len(tags))
 
-        # TODO: copy blob async with source if tags doesn't work
-        # with self.assertRaises(ResourceModifiedError):
-        #     copyblob.start_copy_from_url(sourceblob, source_if_tags="\"source\"='sourcetag'")
-        # copyblob.start_copy_from_url(sourceblob, source_if_tags="\"source\"='source tag'")
+        with self.assertRaises(ResourceModifiedError):
+            await copyblob.start_copy_from_url(sourceblob, tags=tags, source_if_tags_match_condition="\"source\"='sourcetag'")
+        await copyblob.start_copy_from_url(sourceblob, tags=tags, source_if_tags_match_condition="\"source\"='source tag'")
 
         with self.assertRaises(ResourceModifiedError):
-            await copyblob.start_copy_from_url(sourceblob, tags={"tag1": "abc"}, if_tags="\"tag1\"='abc'")
-        copy = await copyblob.start_copy_from_url(sourceblob, tags={"tag1": "abc"}, if_tags="\"tag1\"='first tag'")
+            await copyblob.start_copy_from_url(sourceblob, tags={"tag1": "abc"}, if_tags_match_condition="\"tag1\"='abc'")
+        copy = await copyblob.start_copy_from_url(sourceblob, tags={"tag1": "abc"}, if_tags_match_condition="\"tag1\"='first tag'")
 
         # Assert
         self.assertIsNotNone(copy)
@@ -1317,8 +1321,8 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNotNone(copy['copy_id'])
 
         with self.assertRaises(ResourceModifiedError):
-            await (await copyblob.download_blob(if_tags="\"tag1\"='abc1'")).readall()
-        copy_content = await (await copyblob.download_blob(if_tags="\"tag1\"='abc'")).readall()
+            await (await copyblob.download_blob(if_tags_match_condition="\"tag1\"='abc1'")).readall()
+        copy_content = await (await copyblob.download_blob(if_tags_match_condition="\"tag1\"='abc'")).readall()
         self.assertEqual(copy_content, self.byte_data)
 
     @pytest.mark.playback_test_only

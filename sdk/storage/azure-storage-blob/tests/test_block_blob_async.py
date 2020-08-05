@@ -15,7 +15,7 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError, Resour
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from _shared.asynctestcase import AsyncStorageTestCase
 
 from azure.storage.blob import (
@@ -237,7 +237,8 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_properties = await blob_client.get_blob_properties()
         self.assertEqual(blob_properties.blob_tier, blob_tier)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_block_list_no_blocks(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -247,8 +248,8 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
 
         # Act
         with self.assertRaises(ResourceModifiedError):
-            await blob.get_block_list('all', if_tags="\"condition tag\"='wrong tag'")
-        block_list = await blob.get_block_list('all', if_tags="\"tag1\"='firsttag'")
+            await blob.get_block_list('all', if_tags_match_condition="\"condition tag\"='wrong tag'")
+        block_list = await blob.get_block_list('all', if_tags_match_condition="\"tag1\"='firsttag'")
 
         # Assert
         self.assertIsNotNone(block_list)

@@ -658,7 +658,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags:
+        :keyword str if_tags_match_condition
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
@@ -774,7 +774,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags:
+        :keyword str if_tags_match_condition
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
@@ -839,7 +839,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags:
+        :keyword str if_tags_match_condition
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
@@ -905,7 +905,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 match the etag or not:
                     key: 'match_condition', value type: MatchConditions
                 tags match condition:
-                    key: 'if_tags', value type: str
+                    key: 'if_tags_match_condition', value type: str
                 lease:
                     key: 'lease_id', value type: Union[str, LeaseClient]
                 timeout for subrequest:
@@ -928,7 +928,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_tags:
+        :keyword str if_tags_match_condition
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
@@ -996,14 +996,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 lease:
                     key: 'lease_id', value type: Union[str, LeaseClient]
                 tags match condition:
-                    key: 'if_tags', value type: str
+                    key: 'if_tags_match_condition', value type: str
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
         :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
-        :keyword str if_tags:
+        :keyword str if_tags_match_condition
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 

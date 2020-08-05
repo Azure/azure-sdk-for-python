@@ -177,21 +177,22 @@ class StoragePageBlobTest(StorageTestCase):
         content = blob.download_blob(lease=lease)
         self.assertEqual(content.readall(), data)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     def test_put_page_with_lease_id_and_if_tags(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
         self._setup(bsc)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob = self._create_blob(bsc, tags=tags)
         with self.assertRaises(ResourceModifiedError):
-            blob.acquire_lease(if_tags="\"tag1\"='first tag'")
-        lease = blob.acquire_lease(if_tags="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            blob.acquire_lease(if_tags_match_condition="\"tag1\"='first tag'")
+        lease = blob.acquire_lease(if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
         # Act
         data = self.get_random_bytes(512)
         with self.assertRaises(ResourceModifiedError):
-            blob.upload_page(data, offset=0, length=512, lease=lease, if_tags="\"tag1\"='first tag'")
-        blob.upload_page(data, offset=0, length=512, lease=lease, if_tags="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1\"='first tag'")
+        blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
         page_ranges, cleared = blob.get_page_ranges()
 
@@ -1750,8 +1751,8 @@ class StoragePageBlobTest(StorageTestCase):
     #         self.assertIsNotNone(blobs[0])
     #         self.assertNamedItemInContainer(blobs, blob.blob_name)
     #         with self.assertRaises(ResourceModifiedError):
-    #             pblob.set_premium_page_blob_tier(PremiumPageBlobTier.P50, if_tags="\"tag1\"='firsttag WRONG'")
-    #         pblob.set_premium_page_blob_tier(PremiumPageBlobTier.P50, if_tags="\"tag1\"='firsttag'")
+    #             pblob.set_premium_page_blob_tier(PremiumPageBlobTier.P50, if_tags_match_condition="\"tag1\"='firsttag WRONG'")
+    #         pblob.set_premium_page_blob_tier(PremiumPageBlobTier.P50, if_tags_match_condition="\"tag1\"='firsttag'")
     #
     #         blob_ref2 = pblob.get_blob_properties()
     #         self.assertEqual(PremiumPageBlobTier.P50, blob_ref2.blob_tier)

@@ -207,7 +207,8 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
         actual = await content.readall()
         self.assertEqual(actual, data)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_page_with_lease_id_and_if_tags(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
@@ -215,14 +216,14 @@ class StoragePageBlobAsyncTest(AsyncStorageTestCase):
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob = await self._create_blob(bsc, tags=tags)
         with self.assertRaises(ResourceModifiedError):
-            await blob.acquire_lease(if_tags="\"tag1\"='first tag'")
-        lease = await blob.acquire_lease(if_tags="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            await blob.acquire_lease(if_tags_match_condition="\"tag1\"='first tag'")
+        lease = await blob.acquire_lease(if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
         # Act
         data = self.get_random_bytes(512)
         with self.assertRaises(ResourceModifiedError):
-            await blob.upload_page(data, offset=0, length=512, lease=lease, if_tags="\"tag1\"='first tag'")
-        await blob.upload_page(data, offset=0, length=512, lease=lease, if_tags="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            await blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1\"='first tag'")
+        await blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
         page_ranges, cleared = await blob.get_page_ranges()
 
