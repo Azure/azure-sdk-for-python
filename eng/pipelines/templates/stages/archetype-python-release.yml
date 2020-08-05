@@ -142,7 +142,7 @@ stages:
               displayName: "Docs.MS Release"
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
               environment: githubio
-#              dependsOn: PublishPackage
+              dependsOn: PublishPackage
 
               pool:
                 vmImage: ubuntu-18.04
