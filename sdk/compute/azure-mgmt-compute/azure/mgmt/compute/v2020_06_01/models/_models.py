@@ -419,6 +419,77 @@ class AvailabilitySetUpdate(UpdateResource):
         self.sku = kwargs.get('sku', None)
 
 
+class AvailablePatchSummary(Model):
+    """Describes the properties of an virtual machine instance view for available
+    patch summary.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar status: The overall success or failure status of the operation. It
+     remains "InProgress" until the operation completes. At that point it will
+     become "Failed", "Succeeded", or "CompletedWithWarnings.". Possible values
+     include: 'InProgress', 'Failed', 'Succeeded', 'CompletedWithWarnings'
+    :vartype status: str or
+     ~azure.mgmt.compute.v2020_06_01.models.PatchOperationStatus
+    :ivar assessment_activity_id: The activity ID of the operation that
+     produced this result. It is used to correlate across CRP and extension
+     logs.
+    :vartype assessment_activity_id: str
+    :ivar reboot_pending: The overall reboot status of the VM. It will be true
+     when partially installed patches require a reboot to complete installation
+     but the reboot has not yet occurred.
+    :vartype reboot_pending: bool
+    :ivar critical_and_security_patch_count: The number of critical or
+     security patches that have been detected as available and not yet
+     installed.
+    :vartype critical_and_security_patch_count: int
+    :ivar other_patch_count: The number of all available patches excluding
+     critical and security.
+    :vartype other_patch_count: int
+    :ivar start_time: The UTC timestamp when the operation began.
+    :vartype start_time: datetime
+    :ivar last_modified_time: The UTC timestamp when the operation began.
+    :vartype last_modified_time: datetime
+    :ivar error: The errors that were encountered during execution of the
+     operation. The details array contains the list of them.
+    :vartype error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+        'assessment_activity_id': {'readonly': True},
+        'reboot_pending': {'readonly': True},
+        'critical_and_security_patch_count': {'readonly': True},
+        'other_patch_count': {'readonly': True},
+        'start_time': {'readonly': True},
+        'last_modified_time': {'readonly': True},
+        'error': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'assessment_activity_id': {'key': 'assessmentActivityId', 'type': 'str'},
+        'reboot_pending': {'key': 'rebootPending', 'type': 'bool'},
+        'critical_and_security_patch_count': {'key': 'criticalAndSecurityPatchCount', 'type': 'int'},
+        'other_patch_count': {'key': 'otherPatchCount', 'type': 'int'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
+        'error': {'key': 'error', 'type': 'ApiError'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AvailablePatchSummary, self).__init__(**kwargs)
+        self.status = None
+        self.assessment_activity_id = None
+        self.reboot_pending = None
+        self.critical_and_security_patch_count = None
+        self.other_patch_count = None
+        self.start_time = None
+        self.last_modified_time = None
+        self.error = None
+
+
 class BillingProfile(Model):
     """Specifies the billing related details of a Azure Spot VM or VMSS.
     <br><br>Minimum api-version: 2019-03-01.
@@ -1875,6 +1946,110 @@ class KeyVaultSecretReference(Model):
         self.source_vault = kwargs.get('source_vault', None)
 
 
+class LastPatchInstallationSummary(Model):
+    """Describes the properties of the last installed patch summary.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar status: The overall success or failure status of the operation. It
+     remains "InProgress" until the operation completes. At that point it will
+     become "Failed", "Succeeded", or "CompletedWithWarnings.". Possible values
+     include: 'InProgress', 'Failed', 'Succeeded', 'CompletedWithWarnings'
+    :vartype status: str or
+     ~azure.mgmt.compute.v2020_06_01.models.PatchOperationStatus
+    :ivar installation_activity_id: The activity ID of the operation that
+     produced this result. It is used to correlate across CRP and extension
+     logs.
+    :vartype installation_activity_id: str
+    :ivar maintenance_window_exceeded: Describes whether the operation ran out
+     of time before it completed all its intended actions
+    :vartype maintenance_window_exceeded: bool
+    :ivar reboot_status: The reboot status of the machine after the patch
+     operation. It will be in "NotNeeded" status if reboot is not needed after
+     the patch operation. "Required" will be the status once the patch is
+     applied and machine is required to reboot. "Started" will be the reboot
+     status when the machine has started to reboot. "Failed" will be the status
+     if the machine is failed to reboot. "Completed" will be the status once
+     the machine is rebooted successfully. Possible values include:
+     'NotNeeded', 'Required', 'Started', 'Failed', 'Completed'
+    :vartype reboot_status: str or
+     ~azure.mgmt.compute.v2020_06_01.models.RebootStatus
+    :ivar not_selected_patch_count: The number of all available patches but
+     not going to be installed because it didn't match a classification or
+     inclusion list entry.
+    :vartype not_selected_patch_count: int
+    :ivar excluded_patch_count: The number of all available patches but
+     excluded explicitly by a customer-specified exclusion list match.
+    :vartype excluded_patch_count: int
+    :ivar pending_patch_count: The number of all available patches expected to
+     be installed over the course of the patch installation operation.
+    :vartype pending_patch_count: int
+    :ivar installed_patch_count: The count of patches that successfully
+     installed.
+    :vartype installed_patch_count: int
+    :ivar failed_patch_count: The count of patches that failed installation.
+    :vartype failed_patch_count: int
+    :ivar start_time: The UTC timestamp when the operation began.
+    :vartype start_time: datetime
+    :ivar last_modified_time: The UTC timestamp when the operation began.
+    :vartype last_modified_time: datetime
+    :ivar started_by: The person or system account that started the operation
+    :vartype started_by: str
+    :ivar error: The errors that were encountered during execution of the
+     operation. The details array contains the list of them.
+    :vartype error: ~azure.mgmt.compute.v2020_06_01.models.ApiError
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+        'installation_activity_id': {'readonly': True},
+        'maintenance_window_exceeded': {'readonly': True},
+        'reboot_status': {'readonly': True},
+        'not_selected_patch_count': {'readonly': True},
+        'excluded_patch_count': {'readonly': True},
+        'pending_patch_count': {'readonly': True},
+        'installed_patch_count': {'readonly': True},
+        'failed_patch_count': {'readonly': True},
+        'start_time': {'readonly': True},
+        'last_modified_time': {'readonly': True},
+        'started_by': {'readonly': True},
+        'error': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'installation_activity_id': {'key': 'installationActivityId', 'type': 'str'},
+        'maintenance_window_exceeded': {'key': 'maintenanceWindowExceeded', 'type': 'bool'},
+        'reboot_status': {'key': 'rebootStatus', 'type': 'str'},
+        'not_selected_patch_count': {'key': 'notSelectedPatchCount', 'type': 'int'},
+        'excluded_patch_count': {'key': 'excludedPatchCount', 'type': 'int'},
+        'pending_patch_count': {'key': 'pendingPatchCount', 'type': 'int'},
+        'installed_patch_count': {'key': 'installedPatchCount', 'type': 'int'},
+        'failed_patch_count': {'key': 'failedPatchCount', 'type': 'int'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
+        'started_by': {'key': 'startedBy', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ApiError'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LastPatchInstallationSummary, self).__init__(**kwargs)
+        self.status = None
+        self.installation_activity_id = None
+        self.maintenance_window_exceeded = None
+        self.reboot_status = None
+        self.not_selected_patch_count = None
+        self.excluded_patch_count = None
+        self.pending_patch_count = None
+        self.installed_patch_count = None
+        self.failed_patch_count = None
+        self.start_time = None
+        self.last_modified_time = None
+        self.started_by = None
+        self.error = None
+
+
 class LinuxConfiguration(Model):
     """Specifies the Linux operating system settings on the virtual machine.
     <br><br>For a list of supported Linux distributions, see [Linux on
@@ -2419,7 +2594,7 @@ class PatchSettings(Model):
      automatically be updated by the OS. The property
      WindowsConfiguration.enableAutomaticUpdates must be true. <br /><br /> **
      AutomaticByPlatform** - the virtual machine will automatically updated by
-     the OS. The properties provisionVMAgent and
+     the platform. The properties provisionVMAgent and
      WindowsConfiguration.enableAutomaticUpdates must be true. Possible values
      include: 'Manual', 'AutomaticByOS', 'AutomaticByPlatform'
     :type patch_mode: str or
@@ -4254,6 +4429,10 @@ class VirtualMachineExtension(Resource):
      deployed, however, the extension will not upgrade minor versions unless
      redeployed, even with this property set to true.
     :type auto_upgrade_minor_version: bool
+    :param enable_automatic_upgrade: Indicates whether the extension should be
+     automatically upgraded by the platform if there is a newer version of the
+     extension available.
+    :type enable_automatic_upgrade: bool
     :param settings: Json formatted public settings for the extension.
     :type settings: object
     :param protected_settings: The extension can contain either
@@ -4287,6 +4466,7 @@ class VirtualMachineExtension(Resource):
         'virtual_machine_extension_type': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
+        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -4300,6 +4480,7 @@ class VirtualMachineExtension(Resource):
         self.virtual_machine_extension_type = kwargs.get('virtual_machine_extension_type', None)
         self.type_handler_version = kwargs.get('type_handler_version', None)
         self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
+        self.enable_automatic_upgrade = kwargs.get('enable_automatic_upgrade', None)
         self.settings = kwargs.get('settings', None)
         self.protected_settings = kwargs.get('protected_settings', None)
         self.provisioning_state = None
@@ -4472,6 +4653,10 @@ class VirtualMachineExtensionUpdate(UpdateResource):
      deployed, however, the extension will not upgrade minor versions unless
      redeployed, even with this property set to true.
     :type auto_upgrade_minor_version: bool
+    :param enable_automatic_upgrade: Indicates whether the extension should be
+     automatically upgraded by the platform if there is a newer version of the
+     extension available.
+    :type enable_automatic_upgrade: bool
     :param settings: Json formatted public settings for the extension.
     :type settings: object
     :param protected_settings: The extension can contain either
@@ -4487,6 +4672,7 @@ class VirtualMachineExtensionUpdate(UpdateResource):
         'type': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
+        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
     }
@@ -4498,6 +4684,7 @@ class VirtualMachineExtensionUpdate(UpdateResource):
         self.type = kwargs.get('type', None)
         self.type_handler_version = kwargs.get('type_handler_version', None)
         self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
+        self.enable_automatic_upgrade = kwargs.get('enable_automatic_upgrade', None)
         self.settings = kwargs.get('settings', None)
         self.protected_settings = kwargs.get('protected_settings', None)
 
@@ -4737,6 +4924,9 @@ class VirtualMachineInstanceView(Model):
     :param extensions: The extensions information.
     :type extensions:
      list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionInstanceView]
+    :ivar vm_health: The health status for the VM.
+    :vartype vm_health:
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineHealthStatus
     :param boot_diagnostics: Boot Diagnostics is a debugging feature which
      allows you to view Console Output and Screenshot to diagnose VM status.
      <br><br> You can easily view the output of your console log. <br><br>
@@ -4751,9 +4941,13 @@ class VirtualMachineInstanceView(Model):
     :param statuses: The resource status information.
     :type statuses:
      list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    :param patch_status: The status of virtual machine patch operations.
+    :type patch_status:
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachinePatchStatus
     """
 
     _validation = {
+        'vm_health': {'readonly': True},
         'assigned_host': {'readonly': True},
     }
 
@@ -4769,9 +4963,11 @@ class VirtualMachineInstanceView(Model):
         'maintenance_redeploy_status': {'key': 'maintenanceRedeployStatus', 'type': 'MaintenanceRedeployStatus'},
         'disks': {'key': 'disks', 'type': '[DiskInstanceView]'},
         'extensions': {'key': 'extensions', 'type': '[VirtualMachineExtensionInstanceView]'},
+        'vm_health': {'key': 'vmHealth', 'type': 'VirtualMachineHealthStatus'},
         'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnosticsInstanceView'},
         'assigned_host': {'key': 'assignedHost', 'type': 'str'},
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        'patch_status': {'key': 'patchStatus', 'type': 'VirtualMachinePatchStatus'},
     }
 
     def __init__(self, **kwargs):
@@ -4787,9 +4983,35 @@ class VirtualMachineInstanceView(Model):
         self.maintenance_redeploy_status = kwargs.get('maintenance_redeploy_status', None)
         self.disks = kwargs.get('disks', None)
         self.extensions = kwargs.get('extensions', None)
+        self.vm_health = None
         self.boot_diagnostics = kwargs.get('boot_diagnostics', None)
         self.assigned_host = None
         self.statuses = kwargs.get('statuses', None)
+        self.patch_status = kwargs.get('patch_status', None)
+
+
+class VirtualMachinePatchStatus(Model):
+    """The status of virtual machine patch operations.
+
+    :param available_patch_summary: The available patch summary of the latest
+     assessment operation for the virtual machine.
+    :type available_patch_summary:
+     ~azure.mgmt.compute.v2020_06_01.models.AvailablePatchSummary
+    :param last_patch_installation_summary: The installation summary of the
+     latest installation operation for the virtual machine.
+    :type last_patch_installation_summary:
+     ~azure.mgmt.compute.v2020_06_01.models.LastPatchInstallationSummary
+    """
+
+    _attribute_map = {
+        'available_patch_summary': {'key': 'availablePatchSummary', 'type': 'AvailablePatchSummary'},
+        'last_patch_installation_summary': {'key': 'lastPatchInstallationSummary', 'type': 'LastPatchInstallationSummary'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VirtualMachinePatchStatus, self).__init__(**kwargs)
+        self.available_patch_summary = kwargs.get('available_patch_summary', None)
+        self.last_patch_installation_summary = kwargs.get('last_patch_installation_summary', None)
 
 
 class VirtualMachineReimageParameters(Model):
@@ -5057,6 +5279,10 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
      deployed, however, the extension will not upgrade minor versions unless
      redeployed, even with this property set to true.
     :type auto_upgrade_minor_version: bool
+    :param enable_automatic_upgrade: Indicates whether the extension should be
+     automatically upgraded by the platform if there is a newer version of the
+     extension available.
+    :type enable_automatic_upgrade: bool
     :param settings: Json formatted public settings for the extension.
     :type settings: object
     :param protected_settings: The extension can contain either
@@ -5086,6 +5312,7 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         'type1': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
+        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -5101,6 +5328,7 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         self.type1 = kwargs.get('type1', None)
         self.type_handler_version = kwargs.get('type_handler_version', None)
         self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
+        self.enable_automatic_upgrade = kwargs.get('enable_automatic_upgrade', None)
         self.settings = kwargs.get('settings', None)
         self.protected_settings = kwargs.get('protected_settings', None)
         self.provisioning_state = None
@@ -5161,6 +5389,10 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
      deployed, however, the extension will not upgrade minor versions unless
      redeployed, even with this property set to true.
     :type auto_upgrade_minor_version: bool
+    :param enable_automatic_upgrade: Indicates whether the extension should be
+     automatically upgraded by the platform if there is a newer version of the
+     extension available.
+    :type enable_automatic_upgrade: bool
     :param settings: Json formatted public settings for the extension.
     :type settings: object
     :param protected_settings: The extension can contain either
@@ -5191,6 +5423,7 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         'type1': {'key': 'properties.type', 'type': 'str'},
         'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
         'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
+        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
         'settings': {'key': 'properties.settings', 'type': 'object'},
         'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -5206,6 +5439,7 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         self.type1 = kwargs.get('type1', None)
         self.type_handler_version = kwargs.get('type_handler_version', None)
         self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
+        self.enable_automatic_upgrade = kwargs.get('enable_automatic_upgrade', None)
         self.settings = kwargs.get('settings', None)
         self.protected_settings = kwargs.get('protected_settings', None)
         self.provisioning_state = None

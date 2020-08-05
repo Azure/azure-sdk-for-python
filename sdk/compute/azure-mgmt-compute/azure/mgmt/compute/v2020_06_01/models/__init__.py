@@ -20,6 +20,7 @@ try:
     from ._models_py3 import AutomaticRepairsPolicy
     from ._models_py3 import AvailabilitySet
     from ._models_py3 import AvailabilitySetUpdate
+    from ._models_py3 import AvailablePatchSummary
     from ._models_py3 import BillingProfile
     from ._models_py3 import BootDiagnostics
     from ._models_py3 import BootDiagnosticsInstanceView
@@ -53,6 +54,7 @@ try:
     from ._models_py3 import InstanceViewStatus
     from ._models_py3 import KeyVaultKeyReference
     from ._models_py3 import KeyVaultSecretReference
+    from ._models_py3 import LastPatchInstallationSummary
     from ._models_py3 import LinuxConfiguration
     from ._models_py3 import LogAnalyticsInputBase
     from ._models_py3 import LogAnalyticsOperationResult
@@ -128,6 +130,7 @@ try:
     from ._models_py3 import VirtualMachineImage
     from ._models_py3 import VirtualMachineImageResource
     from ._models_py3 import VirtualMachineInstanceView
+    from ._models_py3 import VirtualMachinePatchStatus
     from ._models_py3 import VirtualMachineReimageParameters
     from ._models_py3 import VirtualMachineScaleSet
     from ._models_py3 import VirtualMachineScaleSetDataDisk
@@ -189,6 +192,7 @@ except (SyntaxError, ImportError):
     from ._models import AutomaticRepairsPolicy
     from ._models import AvailabilitySet
     from ._models import AvailabilitySetUpdate
+    from ._models import AvailablePatchSummary
     from ._models import BillingProfile
     from ._models import BootDiagnostics
     from ._models import BootDiagnosticsInstanceView
@@ -222,6 +226,7 @@ except (SyntaxError, ImportError):
     from ._models import InstanceViewStatus
     from ._models import KeyVaultKeyReference
     from ._models import KeyVaultSecretReference
+    from ._models import LastPatchInstallationSummary
     from ._models import LinuxConfiguration
     from ._models import LogAnalyticsInputBase
     from ._models import LogAnalyticsOperationResult
@@ -297,6 +302,7 @@ except (SyntaxError, ImportError):
     from ._models import VirtualMachineImage
     from ._models import VirtualMachineImageResource
     from ._models import VirtualMachineInstanceView
+    from ._models import VirtualMachinePatchStatus
     from ._models import VirtualMachineReimageParameters
     from ._models import VirtualMachineScaleSet
     from ._models import VirtualMachineScaleSetDataDisk
@@ -390,6 +396,7 @@ from ._compute_management_client_enums import (
     ResourceIdentityType,
     MaintenanceOperationResultCodeTypes,
     HyperVGenerationType,
+    RebootStatus,
     UpgradeMode,
     VirtualMachineScaleSetScaleInRules,
     OperatingSystemStateTypes,
@@ -417,6 +424,7 @@ __all__ = [
     'AutomaticRepairsPolicy',
     'AvailabilitySet',
     'AvailabilitySetUpdate',
+    'AvailablePatchSummary',
     'BillingProfile',
     'BootDiagnostics',
     'BootDiagnosticsInstanceView',
@@ -450,6 +458,7 @@ __all__ = [
     'InstanceViewStatus',
     'KeyVaultKeyReference',
     'KeyVaultSecretReference',
+    'LastPatchInstallationSummary',
     'LinuxConfiguration',
     'LogAnalyticsInputBase',
     'LogAnalyticsOperationResult',
@@ -525,6 +534,7 @@ __all__ = [
     'VirtualMachineImage',
     'VirtualMachineImageResource',
     'VirtualMachineInstanceView',
+    'VirtualMachinePatchStatus',
     'VirtualMachineReimageParameters',
     'VirtualMachineScaleSet',
     'VirtualMachineScaleSetDataDisk',
@@ -617,6 +627,7 @@ __all__ = [
     'ResourceIdentityType',
     'MaintenanceOperationResultCodeTypes',
     'HyperVGenerationType',
+    'RebootStatus',
     'UpgradeMode',
     'VirtualMachineScaleSetScaleInRules',
     'OperatingSystemStateTypes',
