@@ -208,7 +208,7 @@ class KeyClient(KeyVaultClientBase):
             polling_interval = 2
 
         if continuation_token:
-            deleted_key = pickle.loads(base64.b64decode(continuation_token))
+            deleted_key = pickle.loads(base64.b64decode(continuation_token))  # nosec
         else:
             deleted_key = DeletedKey._from_deleted_key_bundle(
                 self._client.delete_key(self.vault_url, name, error_map=_error_map, **kwargs)
@@ -412,7 +412,7 @@ class KeyClient(KeyVaultClientBase):
             polling_interval = 2
 
         if continuation_token:
-            recovered_key = pickle.loads(base64.b64decode(continuation_token))
+            recovered_key = pickle.loads(base64.b64decode(continuation_token))  # nosec
         else:
             recovered_key = KeyVaultKey._from_key_bundle(
                 self._client.recover_deleted_key(
