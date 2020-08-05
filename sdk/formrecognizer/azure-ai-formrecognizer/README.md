@@ -54,9 +54,12 @@ az cognitiveservices account create \
 ```
 
 ### Authenticate the client
+In order to interact with the Form Recognizer service, you will need to create an instance of a client. 
+An **endpoint** and **credential** are necessary to instantiate the client object.
+
 
 #### Looking up the endpoint
-You can find the endpoint for your form recognizer resource using the
+You can find the endpoint for your Form Recognizer resource using the
 [Azure Portal][azure_portal_get_endpoint]
 or [Azure CLI][azure_cli_endpoint_lookup]:
 
@@ -65,56 +68,54 @@ or [Azure CLI][azure_cli_endpoint_lookup]:
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "endpoint"
 ```
 
-#### Types of credentials
-The `credential` parameter may be provided as a [AzureKeyCredential][azure-key-credential] from [azure-core][azure_core],
-or as a credential type from Azure Active Directory.
-See the full details regarding [authentication][cognitive_authentication] of cognitive services.
+#### Get the API key
 
-1.  To use an [API key][cognitive_authentication_api_key],
-    pass the key as a string into an instance of `AzureKeyCredential("<api_key>")`.
-    The API key can be found in the Azure Portal or by running the following Azure CLI command:
+The API key can be found in the Azure Portal or by running the following Azure CLI command:
 
-    ```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
+```az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"```
 
-    Use the key as the credential parameter to authenticate the client:
-    ```python
-    from azure.ai.formrecognizer import FormRecognizerClient
-    from azure.core.credentials import AzureKeyCredential
+#### Create the client with AzureKeyCredential
 
-    endpoint = "https://<region>.api.cognitive.microsoft.com/"
-    credential = AzureKeyCredential("<api_key>")
-    form_recognizer_client = FormRecognizerClient(endpoint, credential)
-    ```
+To use an [API key][cognitive_authentication_api_key] as the `credential` parameter,
+pass the key as a string into an instance of [AzureKeyCredential][azure-key-credential].
 
-2. To use an [Azure Active Directory (AAD) token credential][cognitive_authentication_aad],
-   provide an instance of the desired credential type obtained from the
-   [azure-identity][azure_identity_credentials] library.
-   Note that regional endpoints do not support AAD authentication. Create a [custom subdomain][custom_subdomain]
-   name for your resource in order to use this type of authentication.
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.formrecognizer import FormRecognizerClient
 
-   Authentication with AAD requires some initial setup:
-   * [Install azure-identity][install_azure_identity]
-   * [Register a new AAD application][register_aad_app]
-   * [Grant access][grant_role_access] to Form Recognizer by assigning the `"Cognitive Services User"` role to your service principal.
+endpoint = "https://<region>.api.cognitive.microsoft.com/"
+credential = AzureKeyCredential("<api_key>")
+form_recognizer_client = FormRecognizerClient(endpoint, credential)
+```
 
-   After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
-   As an example, [DefaultAzureCredential][default_azure_credential]
-   can be used to authenticate the client:
+#### Create the client with an Azure Active Directory credential
 
-   Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-   `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
+`AzureKeyCredential` authentication is used in the examples in this getting started guide, but you can also 
+authenticate with Azure Active Directory using the [azure-identity][azure_identity] library.
+Note that regional endpoints do not support AAD authentication. Create a [custom subdomain][custom_subdomain]
+name for your resource in order to use this type of authentication.
 
-   Use the returned token credential to authenticate the client:
-    ```python
-    from azure.identity import DefaultAzureCredential
-    from azure.ai.formrecognizer import FormRecognizerClient
-    token_credential = DefaultAzureCredential()
+To use the [DefaultAzureCredential][default_azure_credential] type shown below, or other credential types provided 
+with the Azure SDK, please install the `azure-identity` package:
 
-    form_recognizer_client = FormRecognizerClient(
-        endpoint="https://<my-custom-subdomain>.cognitiveservices.azure.com/",
-        credential=token_credential
-    )
-    ```
+```pip install azure-identity```
+
+You will also need to [register a new AAD application][register_aad_app] and [grant access][grant_role_access] to 
+Form Recognizer by assigning the `"Cognitive Services User"` role to your service principal.
+
+Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
+`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.ai.formrecognizer import FormRecognizerClient
+credential = DefaultAzureCredential()
+
+form_recognizer_client = FormRecognizerClient(
+    endpoint="https://<my-custom-subdomain>.cognitiveservices.azure.com/",
+    credential=credential
+)
+```
 
 ## Key concepts
 
@@ -348,17 +349,6 @@ except ResourceNotFoundError:
     print("Successfully deleted model with id {}".format(custom_model.model_id))
 ```
 
-## Async APIs
-This library also includes a complete async API supported on Python 3.5+. To use it, you must
-first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
-are found under the `azure.ai.formrecognizer.aio` namespace.
-
-## Optional Configuration
-
-Optional keyword arguments can be passed in at the client and per-operation level.
-The azure-core [reference documentation][azure_core_ref_docs]
-describes available configurations for retries, logging, transport protocols, and more.
-
 ## Troubleshooting
 
 ### General
@@ -399,6 +389,12 @@ even when it isn't enabled for the client:
 poller = form_recognizer_client.begin_recognize_receipts(receipt, logging_enable=True)
 ```
 
+### Optional Configuration
+
+Optional keyword arguments can be passed in at the client and per-operation level.
+The azure-core [reference documentation][azure_core_ref_docs]
+describes available configurations for retries, logging, transport protocols, and more.
+
 ## Next steps
 
 The following section provides several code snippets illustrating common patterns used in the Form Recognizer Python API.
@@ -409,15 +405,31 @@ These code samples show common scenario operations with the Azure Form Recognize
 The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations
 with Form Recognizer and require Python 3.5 or later.
 
-* Client authentication: [sample_authentication.py][sample_authentication] ([async_version][sample_authentication_async])
-* Recognize receipts: [sample_recognize_receipts.py][sample_recognize_receipts] ([async version][sample_recognize_receipts_async])
-* Recognize receipts from a URL: [sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url] ([async version][sample_recognize_receipts_from_url_async])
-* Recognize content: [sample_recognize_content.py][sample_recognize_content] ([async version][sample_recognize_content_async])
-* Recognize custom forms: [sample_recognize_custom_forms.py][sample_recognize_custom_forms] ([async version][sample_recognize_custom_forms_async])
-* Train a model without labels: [sample_train_model_without_labels.py][sample_train_model_without_labels] ([async version][sample_train_model_without_labels_async])
-* Train a model with labels: [sample_train_model_with_labels.py][sample_train_model_with_labels] ([async version][sample_train_model_with_labels_async])
-* Manage custom models: [sample_manage_custom_models.py][sample_manage_custom_models] ([async_version][sample_manage_custom_models_async])
-* Copy a model between Form Recognizer resources: [sample_copy_model.py][sample_copy_model] ([async_version][sample_copy_model_async])
+* Client authentication: [sample_authentication.py][sample_authentication]
+* Recognize receipts: [sample_recognize_receipts.py][sample_recognize_receipts]
+* Recognize receipts from a URL: [sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url]
+* Recognize content: [sample_recognize_content.py][sample_recognize_content]
+* Recognize custom forms: [sample_recognize_custom_forms.py][sample_recognize_custom_forms]
+* Train a model without labels: [sample_train_model_without_labels.py][sample_train_model_without_labels]
+* Train a model with labels: [sample_train_model_with_labels.py][sample_train_model_with_labels]
+* Manage custom models: [sample_manage_custom_models.py][sample_manage_custom_models]
+* Copy a model between Form Recognizer resources: [sample_copy_model.py][sample_copy_model]
+
+### Async APIs
+This library also includes a complete async API supported on Python 3.5+. To use it, you must
+first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
+are found under the `azure.ai.formrecognizer.aio` namespace.
+
+* Client authentication: [sample_authentication_async.py][sample_authentication_async]
+* Recognize receipts: [sample_recognize_receipts_async.py][sample_recognize_receipts_async]
+* Recognize receipts from a URL: [sample_recognize_receipts_from_url_async.py][sample_recognize_receipts_from_url_async]
+* Recognize content: [sample_recognize_content_async.py][sample_recognize_content_async]
+* Recognize custom forms: [sample_recognize_custom_forms_async.py][sample_recognize_custom_forms_async]
+* Train a model without labels: [sample_train_model_without_labels_async.py][sample_train_model_without_labels_async]
+* Train a model with labels: [sample_train_model_with_labels_async.py][sample_train_model_with_labels_async]
+* Manage custom models: [sample_manage_custom_models_async.py][sample_manage_custom_models_async]
+* Copy a model between Form Recognizer resources: [sample_copy_model_async.py][sample_copy_model_async]
+
 
 ### Additional documentation
 
@@ -452,22 +464,17 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [fr-train-with-labels]: https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview#train-with-labels
 [prefix_ref_docs]: https://aka.ms/azsdk/python/formrecognizer/docs#azure.ai.formrecognizer.FormTrainingClient.begin_training
 
-[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [python_logging]: https://docs.python.org/3/library/logging.html
 [multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
 [azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
-[cognitive_authentication]: https://docs.microsoft.com/azure/cognitive-services/authentication
 [cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
-[install_azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#install-the-package
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [grant_role_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
-[cognitive_custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-custom-subdomains
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
-[cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
-[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#credentials
+[azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
 [service_recognize_receipt]: https://westus2.dev.cognitive.microsoft.com/docs/services/form-recognizer-api-v2-preview/operations/GetAnalyzeReceiptResult
 
