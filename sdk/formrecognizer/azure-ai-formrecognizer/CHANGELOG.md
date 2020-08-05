@@ -1,6 +1,8 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 3.0.0 (Unreleased)
+
+First stable release of the azure-ai-formrecognizer package. Targets the service's v2.0 API.
 
 **Breaking Changes**
 

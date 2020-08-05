@@ -23,7 +23,7 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer
 ```
 
-> Note: This version of the client library supports the v2.0-preview version of the Form Recognizer service
+> Note: This version of the client library supports the v2.0 version of the Form Recognizer service
 
 #### Create a Form Recognizer resource
 Form Recognizer supports both [multi-service and single-service access][multi_and_single_service].
@@ -476,7 +476,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
-[service_recognize_receipt]: https://westus2.dev.cognitive.microsoft.com/docs/services/form-recognizer-api-v2-preview/operations/GetAnalyzeReceiptResult
+[service_recognize_receipt]: https://aka.ms/formrecognizer/receiptfields
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
