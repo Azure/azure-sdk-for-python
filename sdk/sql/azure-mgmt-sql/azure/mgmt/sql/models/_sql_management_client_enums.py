@@ -563,30 +563,6 @@ class InstancePoolLicenseType(str, Enum):
     base_price = "BasePrice"
 
 
-class IdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-
-
-class ManagedServerCreateMode(str, Enum):
-
-    default = "Default"
-    point_in_time_restore = "PointInTimeRestore"
-
-
-class ManagedInstanceLicenseType(str, Enum):
-
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
-
-
-class ManagedInstanceProxyOverride(str, Enum):
-
-    proxy = "Proxy"
-    redirect = "Redirect"
-    default = "Default"
-
-
 class PrivateLinkServiceConnectionStateStatus(str, Enum):
 
     approved = "Approved"
@@ -607,6 +583,11 @@ class PrivateEndpointProvisioningState(str, Enum):
     dropping = "Dropping"
     failed = "Failed"
     rejecting = "Rejecting"
+
+
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
 
 
 class ServerPublicNetworkAccess(str, Enum):
@@ -727,6 +708,25 @@ class ManagedDatabaseCreateMode(str, Enum):
     point_in_time_restore = "PointInTimeRestore"
     recovery = "Recovery"
     restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
+
+
+class ManagedServerCreateMode(str, Enum):
+
+    default = "Default"
+    point_in_time_restore = "PointInTimeRestore"
+
+
+class ManagedInstanceLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
+
+
+class ManagedInstanceProxyOverride(str, Enum):
+
+    proxy = "Proxy"
+    redirect = "Redirect"
+    default = "Default"
 
 
 class LongTermRetentionDatabaseState(str, Enum):

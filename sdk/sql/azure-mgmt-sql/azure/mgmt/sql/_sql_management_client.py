@@ -89,7 +89,6 @@ from .operations import ServerVulnerabilityAssessmentsOperations
 from .operations import ManagedDatabaseSensitivityLabelsOperations
 from .operations import InstancePoolsOperations
 from .operations import UsagesOperations
-from .operations import ManagedInstancesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import ServersOperations
@@ -98,12 +97,14 @@ from .operations import LongTermRetentionManagedInstanceBackupsOperations
 from .operations import ManagedInstanceLongTermRetentionPoliciesOperations
 from .operations import WorkloadGroupsOperations
 from .operations import WorkloadClassifiersOperations
-from .operations import ServerAzureADAdministratorsOperations
 from .operations import ManagedInstanceOperations
+from .operations import ServerAzureADAdministratorsOperations
 from .operations import SyncGroupsOperations
 from .operations import SyncMembersOperations
+from .operations import ManagedInstancesOperations
 from .operations import ManagedDatabaseRestoreDetailsOperations
 from .operations import ManagedDatabasesOperations
+from .operations import ServerAzureADOnlyAuthenticationsOperations
 from . import models
 
 
@@ -265,8 +266,6 @@ class SqlManagementClient(SDKClient):
     :vartype instance_pools: azure.mgmt.sql.operations.InstancePoolsOperations
     :ivar usages: Usages operations
     :vartype usages: azure.mgmt.sql.operations.UsagesOperations
-    :ivar managed_instances: ManagedInstances operations
-    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
     :vartype private_endpoint_connections: azure.mgmt.sql.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
@@ -283,18 +282,22 @@ class SqlManagementClient(SDKClient):
     :vartype workload_groups: azure.mgmt.sql.operations.WorkloadGroupsOperations
     :ivar workload_classifiers: WorkloadClassifiers operations
     :vartype workload_classifiers: azure.mgmt.sql.operations.WorkloadClassifiersOperations
-    :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
-    :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
     :ivar managed_instance_operations: ManagedInstanceOperations operations
     :vartype managed_instance_operations: azure.mgmt.sql.operations.ManagedInstanceOperations
+    :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
+    :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
     :ivar sync_groups: SyncGroups operations
     :vartype sync_groups: azure.mgmt.sql.operations.SyncGroupsOperations
     :ivar sync_members: SyncMembers operations
     :vartype sync_members: azure.mgmt.sql.operations.SyncMembersOperations
+    :ivar managed_instances: ManagedInstances operations
+    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
     :ivar managed_database_restore_details: ManagedDatabaseRestoreDetails operations
     :vartype managed_database_restore_details: azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
     :ivar managed_databases: ManagedDatabases operations
     :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
+    :ivar server_azure_ad_only_authentications: ServerAzureADOnlyAuthentications operations
+    :vartype server_azure_ad_only_authentications: azure.mgmt.sql.operations.ServerAzureADOnlyAuthenticationsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -467,8 +470,6 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.managed_instances = ManagedInstancesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
@@ -485,15 +486,19 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.workload_classifiers = WorkloadClassifiersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.managed_instance_operations = ManagedInstanceOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sync_groups = SyncGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sync_members = SyncMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.managed_instances = ManagedInstancesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_databases = ManagedDatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_azure_ad_only_authentications = ServerAzureADOnlyAuthenticationsOperations(
             self._client, self.config, self._serialize, self._deserialize)

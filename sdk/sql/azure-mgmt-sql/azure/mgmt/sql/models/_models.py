@@ -5110,6 +5110,9 @@ class ManagedInstance(TrackedResource):
     :param sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4,
      GP_Gen5, BC_Gen4, BC_Gen5
     :type sku: ~azure.mgmt.sql.models.Sku
+    :ivar provisioning_state: Possible values include: 'Creating', 'Deleting',
+     'Updating', 'Unknown', 'Succeeded', 'Failed'
+    :vartype provisioning_state: str or ~azure.mgmt.sql.models.enum
     :param managed_instance_create_mode: Specifies the mode of database
      creation.
      Default: Regular instance creation.
@@ -5193,6 +5196,7 @@ class ManagedInstance(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'provisioning_state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
         'state': {'readonly': True},
         'dns_zone': {'readonly': True},
@@ -5206,6 +5210,7 @@ class ManagedInstance(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
@@ -5232,6 +5237,7 @@ class ManagedInstance(TrackedResource):
         super(ManagedInstance, self).__init__(**kwargs)
         self.identity = kwargs.get('identity', None)
         self.sku = kwargs.get('sku', None)
+        self.provisioning_state = None
         self.managed_instance_create_mode = kwargs.get('managed_instance_create_mode', None)
         self.fully_qualified_domain_name = None
         self.administrator_login = kwargs.get('administrator_login', None)
@@ -5824,6 +5830,42 @@ class ManagedInstancePairInfo(Model):
         self.partner_managed_instance_id = kwargs.get('partner_managed_instance_id', None)
 
 
+class ManagedInstancePrivateLinkServiceConnectionStateProperty(Model):
+    """ManagedInstancePrivateLinkServiceConnectionStateProperty.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. The private link service connection status.
+    :type status: str
+    :param description: Required. The private link service connection
+     description.
+    :type description: str
+    :ivar actions_required: The private link service connection description.
+    :vartype actions_required: str
+    """
+
+    _validation = {
+        'status': {'required': True},
+        'description': {'required': True},
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedInstancePrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.description = kwargs.get('description', None)
+        self.actions_required = None
+
+
 class ManagedInstanceUpdate(Model):
     """An update request for an Azure SQL Database managed instance.
 
@@ -5832,6 +5874,9 @@ class ManagedInstanceUpdate(Model):
 
     :param sku: Managed instance sku
     :type sku: ~azure.mgmt.sql.models.Sku
+    :ivar provisioning_state: Possible values include: 'Creating', 'Deleting',
+     'Updating', 'Unknown', 'Succeeded', 'Failed'
+    :vartype provisioning_state: str or ~azure.mgmt.sql.models.enum
     :param managed_instance_create_mode: Specifies the mode of database
      creation.
      Default: Regular instance creation.
@@ -5913,6 +5958,7 @@ class ManagedInstanceUpdate(Model):
     """
 
     _validation = {
+        'provisioning_state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
         'state': {'readonly': True},
         'dns_zone': {'readonly': True},
@@ -5920,6 +5966,7 @@ class ManagedInstanceUpdate(Model):
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
@@ -5946,6 +5993,7 @@ class ManagedInstanceUpdate(Model):
     def __init__(self, **kwargs):
         super(ManagedInstanceUpdate, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
+        self.provisioning_state = None
         self.managed_instance_create_mode = kwargs.get('managed_instance_create_mode', None)
         self.fully_qualified_domain_name = None
         self.administrator_login = kwargs.get('administrator_login', None)
@@ -7861,9 +7909,9 @@ class ServerAzureADAdministrator(ProxyResource):
     :type sid: str
     :param tenant_id: Tenant ID of the administrator.
     :type tenant_id: str
-    :param azure_ad_only_authentication: Azure Active Directory only
+    :ivar azure_ad_only_authentication: Azure Active Directory only
      Authentication enabled.
-    :type azure_ad_only_authentication: bool
+    :vartype azure_ad_only_authentication: bool
     """
 
     _validation = {
@@ -7873,6 +7921,7 @@ class ServerAzureADAdministrator(ProxyResource):
         'administrator_type': {'required': True, 'constant': True},
         'login': {'required': True},
         'sid': {'required': True},
+        'azure_ad_only_authentication': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7893,6 +7942,44 @@ class ServerAzureADAdministrator(ProxyResource):
         self.login = kwargs.get('login', None)
         self.sid = kwargs.get('sid', None)
         self.tenant_id = kwargs.get('tenant_id', None)
+        self.azure_ad_only_authentication = None
+
+
+class ServerAzureADOnlyAuthentication(ProxyResource):
+    """Azure Active Directory only authentication.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param azure_ad_only_authentication: Required. Azure Active Directory only
+     Authentication enabled.
+    :type azure_ad_only_authentication: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'azure_ad_only_authentication': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'azure_ad_only_authentication': {'key': 'properties.azureADOnlyAuthentication', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerAzureADOnlyAuthentication, self).__init__(**kwargs)
         self.azure_ad_only_authentication = kwargs.get('azure_ad_only_authentication', None)
 
 
