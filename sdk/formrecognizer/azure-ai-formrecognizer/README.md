@@ -405,20 +405,31 @@ These code samples show common scenario operations with the Azure Form Recognize
 The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations
 with Form Recognizer and require Python 3.5 or later.
 
-* Client authentication: [sample_authentication.py][sample_authentication] ([async_version][sample_authentication_async])
-* Recognize receipts: [sample_recognize_receipts.py][sample_recognize_receipts] ([async version][sample_recognize_receipts_async])
-* Recognize receipts from a URL: [sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url] ([async version][sample_recognize_receipts_from_url_async])
-* Recognize content: [sample_recognize_content.py][sample_recognize_content] ([async version][sample_recognize_content_async])
-* Recognize custom forms: [sample_recognize_custom_forms.py][sample_recognize_custom_forms] ([async version][sample_recognize_custom_forms_async])
-* Train a model without labels: [sample_train_model_without_labels.py][sample_train_model_without_labels] ([async version][sample_train_model_without_labels_async])
-* Train a model with labels: [sample_train_model_with_labels.py][sample_train_model_with_labels] ([async version][sample_train_model_with_labels_async])
-* Manage custom models: [sample_manage_custom_models.py][sample_manage_custom_models] ([async_version][sample_manage_custom_models_async])
-* Copy a model between Form Recognizer resources: [sample_copy_model.py][sample_copy_model] ([async_version][sample_copy_model_async])
+* Client authentication: [sample_authentication.py][sample_authentication]
+* Recognize receipts: [sample_recognize_receipts.py][sample_recognize_receipts]
+* Recognize receipts from a URL: [sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url]
+* Recognize content: [sample_recognize_content.py][sample_recognize_content]
+* Recognize custom forms: [sample_recognize_custom_forms.py][sample_recognize_custom_forms]
+* Train a model without labels: [sample_train_model_without_labels.py][sample_train_model_without_labels]
+* Train a model with labels: [sample_train_model_with_labels.py][sample_train_model_with_labels]
+* Manage custom models: [sample_manage_custom_models.py][sample_manage_custom_models]
+* Copy a model between Form Recognizer resources: [sample_copy_model.py][sample_copy_model]
 
 ### Async APIs
 This library also includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
 are found under the `azure.ai.formrecognizer.aio` namespace.
+
+* Client authentication: [sample_authentication_async.py][sample_authentication_async]
+* Recognize receipts: [sample_recognize_receipts_async.py][sample_recognize_receipts_async]
+* Recognize receipts from a URL: [sample_recognize_receipts_from_url_async.py][sample_recognize_receipts_from_url_async]
+* Recognize content: [sample_recognize_content_async.py][sample_recognize_content_async]
+* Recognize custom forms: [sample_recognize_custom_forms_async.py][sample_recognize_custom_forms_async]
+* Train a model without labels: [sample_train_model_without_labels_async.py][sample_train_model_without_labels_async]
+* Train a model with labels: [sample_train_model_with_labels_async.py][sample_train_model_with_labels_async]
+* Manage custom models: [sample_manage_custom_models_async.py][sample_manage_custom_models_async]
+* Copy a model between Form Recognizer resources: [sample_copy_model_async.py][sample_copy_model_async]
+
 
 ### Additional documentation
 
