@@ -35,11 +35,11 @@ def get_elements(field, read_result):
         if len(nums) == 3:
             word = nums[2]
             ocr_word = read_result[read].lines[line].words[word]
-            extracted_word = FormWord._from_generated(ocr_word, page=read+1)  # pylint: disable=protected-access
+            extracted_word = FormWord._from_generated(ocr_word, page=read+1)
             text_elements.append(extracted_word)
             continue
         ocr_line = read_result[read].lines[line]
-        extracted_line = FormLine._from_generated(ocr_line, page=read+1)  # pylint: disable=protected-access
+        extracted_line = FormLine._from_generated(ocr_line, page=read+1)
         text_elements.append(extracted_line)
     return text_elements
 
@@ -61,12 +61,12 @@ def get_field_value(field, value, read_result):  # pylint: disable=too-many-retu
         return value.value_time
     if value.type == "array":
         return [
-            FormField._from_generated(field, value, read_result)  # pylint: disable=protected-access
+            FormField._from_generated(field, value, read_result)
             for value in value.value_array
         ]
     if value.type == "object":
         return {
-            key: FormField._from_generated(key, value, read_result)  # pylint: disable=protected-access
+            key: FormField._from_generated(key, value, read_result)
             for key, value in value.value_object.items()
         }
     return None
