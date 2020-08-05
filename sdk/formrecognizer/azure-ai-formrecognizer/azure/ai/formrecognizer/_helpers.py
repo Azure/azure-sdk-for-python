@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import re
 import six
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
@@ -23,6 +24,36 @@ error_map = {
     409: ResourceExistsError,
     401: ClientAuthenticationError
 }
+
+
+def get_element_type(element_pointer):
+    word_ref = re.compile(r'/readResults/\d*/lines/\d*/words/\d*')
+    if re.search(word_ref, element_pointer):
+        return "word"
+
+    line_ref = re.compile(r'/readResults/\d*/lines/\d*')
+    if re.search(line_ref, element_pointer):
+        return "line"
+
+    return None
+
+
+def get_element(element_pointer, read_result):
+    indices = [int(s) for s in re.findall(r"\d+", element_pointer)]
+    read = indices[0]
+
+    if get_element_type(element_pointer) == "word":
+        line = indices[1]
+        word = indices[2]
+        ocr_word = read_result[read].lines[line].words[word]
+        return "word", ocr_word, read+1
+
+    if get_element_type(element_pointer) == "line":
+        line = indices[1]
+        ocr_line = read_result[read].lines[line]
+        return "line", ocr_line, read+1
+
+    return None, None, None
 
 
 def adjust_value_type(value_type):

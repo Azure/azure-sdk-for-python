@@ -6,13 +6,13 @@
 
 # pylint: disable=protected-access
 
-import re
 from enum import Enum
 from collections import namedtuple
 from ._helpers import (
     adjust_value_type,
     adjust_text_angle,
-    adjust_confidence
+    adjust_confidence,
+    get_element
 )
 
 
@@ -25,23 +25,14 @@ def get_bounding_box(field):
     ] if field.bounding_box else None
 
 
-def get_elements(field, read_result):
-    text_elements = []
+def resolve_element(element, read_result):
+    element_type, element, page = get_element(element, read_result)
+    if element_type == "word":
+        return FormWord._from_generated(element, page=page)
+    if element_type == "line":
+        return FormLine._from_generated(element, page=page)
 
-    for item in field.elements:
-        nums = [int(s) for s in re.findall(r"\d+", item)]
-        read = nums[0]
-        line = nums[1]
-        if len(nums) == 3:
-            word = nums[2]
-            ocr_word = read_result[read].lines[line].words[word]
-            extracted_word = FormWord._from_generated(ocr_word, page=read+1)
-            text_elements.append(extracted_word)
-            continue
-        ocr_line = read_result[read].lines[line]
-        extracted_line = FormLine._from_generated(ocr_line, page=read+1)
-        text_elements.append(extracted_line)
-    return text_elements
+    raise ValueError("Failed to parse element reference.")
 
 
 def get_field_value(field, value, read_result):  # pylint: disable=too-many-return-statements
@@ -295,7 +286,8 @@ class FieldData(FormElement):
             page_number=field.page,
             text=field.text,
             bounding_box=get_bounding_box(field),
-            field_elements=get_elements(field, read_result) if field.elements else None
+            field_elements=[resolve_element(element, read_result) for element in field.elements]
+            if field.elements else None
         )
 
     @classmethod
@@ -304,7 +296,8 @@ class FieldData(FormElement):
             page_number=page,
             text=field.text,
             bounding_box=get_bounding_box(field),
-            field_elements=get_elements(field, read_result) if field.elements else None
+            field_elements=[resolve_element(element, read_result) for element in field.elements]
+            if field.elements else None
         )
 
     def __repr__(self):
@@ -537,7 +530,7 @@ class FormTableCell(FormElement):
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
             page_number=page,
-            field_elements=get_elements(cell, read_result)
+            field_elements=[resolve_element(element, read_result) for element in cell.elements]
             if cell.elements else None
         )
 
