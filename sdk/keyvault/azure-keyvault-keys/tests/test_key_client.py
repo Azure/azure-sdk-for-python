@@ -421,3 +421,29 @@ class KeyClientTests(KeyVaultTestCase):
     @KeyVaultClientPreparer(client_kwargs={"custom_hook_policy": _CustomHookPolicy()})
     def test_custom_hook_policy(self, client, **kwargs):
         assert isinstance(client._client._config.custom_hook_policy, KeyClientTests._CustomHookPolicy)
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    def test_continuation_token(self, client, **kwargs):
+        # create key
+        key = client.create_ec_key("ec-key")
+
+        # delete key
+        initial_poller = client.begin_delete_key(key.name)
+        continuation_token = initial_poller.continuation_token()
+        poller = client.begin_delete_key(key.name, continuation_token=continuation_token)
+        deleted_key = poller.result()
+        self.assertIsNotNone(deleted_key)
+        poller.wait()
+
+        # recover deleted key
+        initial_poller = client.begin_recover_deleted_key(key.name)
+        continuation_token = initial_poller.continuation_token()
+        poller = client.begin_recover_deleted_key(key.name, continuation_token=continuation_token)
+        recovered_key = poller.result()
+        self.assertIsNotNone(recovered_key)
+        poller.wait()
+
+        retrieved_key = client.get_key(key.name)
+        self.assertEqual(retrieved_key.name, recovered_key.name)
