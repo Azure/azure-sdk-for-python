@@ -149,12 +149,11 @@ To show an example (creating virtual machine):
 Additional Samples
 ------------------
 
-More samples can be found at : - `Quickstart for new version of
-SDK <http://aka.ms/azure-sdk-python-mgmt>`__ - `Code Samples for
-Resource Management
-Libraries <https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing>`__
-- `Authentication
-Documentation <https://docs.microsoft.com/azure/developer/python/azure-sdk-authenticate?view=azure-python&tabs=cmd>`__
+More samples can be found at : 
+
+- `Quickstart for new version of SDK <http://aka.ms/azure-sdk-python-mgmt>`__ 
+- `Code Samples for Resource Management Libraries <https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing>`__
+- `Authentication Documentation <https://docs.microsoft.com/azure/developer/python/azure-sdk-authenticate?view=azure-python&tabs=cmd>`__
 
 Need help?
 ----------
