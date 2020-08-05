@@ -258,11 +258,12 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
     async def update_queue(self, queue: QueueProperties, **kwargs) -> None:
         """Update a queue.
 
-        Before calling this method, you should use `get_queue` to get a `QueueProperties` instance, then update
-        the properties you want to update. Only a portion of properties can be updated.
-        Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
+        Before calling this method, you should use `get_queue`, `create_queue` or `list_queues` to get a
+        `QueueProperties` instance, then update the properties. Only a portion of properties can
+        be updated. Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
 
-        :param queue: The queue that is returned from `get_queue` and has the updated properties.
+        :param queue: The queue that is returned from `get_queue`, `create_queue` or `list_queues` and
+         has the updated properties.
         :type queue: ~azure.servicebus.management.QueueProperties
         :rtype: None
         """
@@ -444,11 +445,12 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
     async def update_topic(self, topic: TopicProperties, **kwargs) -> None:
         """Update a topic.
 
-        Before calling this method, you should use `get_topic` to get a `TopicProperties` instance, then
-        update the properties you want to update. Only a portion of properties can be updated.
+        Before calling this method, you should use `get_topic`, `create_topic` or `list_topics` to get a
+        `TopicProperties` instance, then update the properties. Only a portion of properties can be updated.
         Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-topic.
 
-        :param topic: The topic that is returned from `get_topic` and has the updated properties.
+        :param topic: The topic that is returned from `get_topic`, `create_topic`, or `list_topics`
+         and has the updated properties.
         :type topic: ~azure.servicebus.management.TopicProperties
         :rtype: None
         """
@@ -647,12 +649,12 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
     ) -> None:
         """Update a subscription.
 
-        Before calling this method, you should use `get_subscription` to get a `SubscriptionProperties` instance,
-        then update the properties you want to update.
+        Before calling this method, you should use `get_subscription`, `update_subscription` or `list_subscription`
+        to get a `SubscriptionProperties` instance, then update the properties.
 
         :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
         :param ~azure.servicebus.management.SubscriptionProperties subscription: The subscription that is returned
-         from `get_subscription` and has the updated properties.
+         from `get_subscription`, `update_subscription` or `list_subscription` and has the updated properties.
         :rtype: None
         """
         try:
@@ -841,14 +843,14 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             rule: RuleProperties, **kwargs) -> None:
         """Update a rule.
 
-        Before calling this method, you should use `get_rule` to get a `RuleProperties` instance,
-        then update the properties you want to update.
+        Before calling this method, you should use `get_rule`, `create_rule` or `list_rules` to get a `RuleProperties`
+        instance, then update the properties.
 
         :param Union[str, ~azure.servicebus.management.TopicProperties] topic: The topic that owns the subscription.
         :param Union[str, ~azure.servicebus.management.SubscriptionProperties] subscription: The subscription that
          owns this rule.
-        :param ~azure.servicebus.management.RuleProperties rule: The rule that is returned
-         from `get_rule` and has the updated properties.
+        :param ~azure.servicebus.management.RuleProperties rule: The rule that is returned from `get_rule`,
+        `create_rule`, or `list_rules` and has the updated properties.
         :rtype: None
         """
 
