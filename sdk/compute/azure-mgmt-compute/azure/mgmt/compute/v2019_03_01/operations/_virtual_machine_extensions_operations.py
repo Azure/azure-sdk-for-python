@@ -80,7 +80,6 @@ class VirtualMachineExtensionsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(extension_parameters, 'VirtualMachineExtension')
         body_content_kwargs['content'] = body_content
@@ -93,7 +92,6 @@ class VirtualMachineExtensionsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VirtualMachineExtension', pipeline_response)
 
@@ -114,7 +112,7 @@ class VirtualMachineExtensionsOperations(object):
         extension_parameters,  # type: "models.VirtualMachineExtension"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VirtualMachineExtension"]
         """The operation to create or update the extension.
 
         :param resource_group_name: The name of the resource group.
@@ -212,7 +210,6 @@ class VirtualMachineExtensionsOperations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(extension_parameters, 'VirtualMachineExtensionUpdate')
         body_content_kwargs['content'] = body_content
@@ -241,7 +238,7 @@ class VirtualMachineExtensionsOperations(object):
         extension_parameters,  # type: "models.VirtualMachineExtensionUpdate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller["models.VirtualMachineExtension"]
         """The operation to update the extension.
 
         :param resource_group_name: The name of the resource group.
@@ -334,7 +331,6 @@ class VirtualMachineExtensionsOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -355,7 +351,7 @@ class VirtualMachineExtensionsOperations(object):
         vm_extension_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[None]
         """The operation to delete the extension.
 
         :param resource_group_name: The name of the resource group.
@@ -460,7 +456,6 @@ class VirtualMachineExtensionsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -522,7 +517,6 @@ class VirtualMachineExtensionsOperations(object):
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response

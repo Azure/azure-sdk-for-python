@@ -47,8 +47,8 @@ class LogAnalyticsOperations:
         location: str,
         parameters: "models.RequestRateByIntervalInput",
         **kwargs
-    ) -> "models.LogAnalyticsOperationResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogAnalyticsOperationResult"]
+    ) -> Optional["models.LogAnalyticsOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LogAnalyticsOperationResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
@@ -71,7 +71,6 @@ class LogAnalyticsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'RequestRateByIntervalInput')
         body_content_kwargs['content'] = body_content
@@ -99,7 +98,7 @@ class LogAnalyticsOperations:
         location: str,
         parameters: "models.RequestRateByIntervalInput",
         **kwargs
-    ) -> "models.LogAnalyticsOperationResult":
+    ) -> AsyncLROPoller["models.LogAnalyticsOperationResult"]:
         """Export logs that show Api requests made by this subscription in the given time window to show
     throttling activities.
 
@@ -113,8 +112,8 @@ class LogAnalyticsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: LogAnalyticsOperationResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2019_03_01.models.LogAnalyticsOperationResult
+        :return: An instance of AsyncLROPoller that returns either LogAnalyticsOperationResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2019_03_01.models.LogAnalyticsOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -161,8 +160,8 @@ class LogAnalyticsOperations:
         location: str,
         parameters: "models.LogAnalyticsInputBase",
         **kwargs
-    ) -> "models.LogAnalyticsOperationResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogAnalyticsOperationResult"]
+    ) -> Optional["models.LogAnalyticsOperationResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LogAnalyticsOperationResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-03-01"
@@ -185,7 +184,6 @@ class LogAnalyticsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'LogAnalyticsInputBase')
         body_content_kwargs['content'] = body_content
@@ -213,7 +211,7 @@ class LogAnalyticsOperations:
         location: str,
         parameters: "models.LogAnalyticsInputBase",
         **kwargs
-    ) -> "models.LogAnalyticsOperationResult":
+    ) -> AsyncLROPoller["models.LogAnalyticsOperationResult"]:
         """Export logs that show total throttled Api requests for this subscription in the given time
     window.
 
@@ -227,8 +225,8 @@ class LogAnalyticsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: LogAnalyticsOperationResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.v2019_03_01.models.LogAnalyticsOperationResult
+        :return: An instance of AsyncLROPoller that returns either LogAnalyticsOperationResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.compute.v2019_03_01.models.LogAnalyticsOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]

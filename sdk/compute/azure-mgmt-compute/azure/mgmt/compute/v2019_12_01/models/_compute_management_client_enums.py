@@ -187,6 +187,13 @@ class OperatingSystemTypes(str, Enum):
     windows = "Windows"
     linux = "Linux"
 
+class OrchestrationServiceNames(str, Enum):
+    """The name of the service.
+    """
+
+    automatic_repairs = "AutomaticRepairs"
+    dummy_orchestration_service_name = "DummyOrchestrationServiceName"
+
 class OrchestrationServiceState(str, Enum):
     """The current state of the service.
     """

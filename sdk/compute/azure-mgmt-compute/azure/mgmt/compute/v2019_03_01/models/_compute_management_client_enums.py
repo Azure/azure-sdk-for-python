@@ -206,9 +206,7 @@ class OperatingSystemStateTypes(str, Enum):
     specialized = "Specialized"  #: Specialized image. Contains already provisioned OS Disk.
 
 class OperatingSystemTypes(str, Enum):
-    """This property allows you to specify the supported type of the OS that application is built for.
-    :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Windows**
-    :code:`<br>`:code:`<br>` **Linux**
+    """The operating system of the osDiskImage.
     """
 
     windows = "Windows"
