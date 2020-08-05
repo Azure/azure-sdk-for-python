@@ -6,6 +6,7 @@
 
 # pylint: disable=protected-access
 
+from ._helpers import adjust_text_angle
 from ._models import (
     FormField,
     FormPage,
@@ -13,8 +14,7 @@ from ._models import (
     FormTable,
     FormTableCell,
     FormPageRange,
-    RecognizedForm,
-    adjust_text_angle
+    RecognizedForm
 )
 
 
