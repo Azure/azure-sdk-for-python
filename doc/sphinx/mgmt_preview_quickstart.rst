@@ -253,7 +253,7 @@ Note that asyncio in Windows is underpowered and please take caution when using 
     
 Code Samples
 -------------------------
-For more code samples, please see `here <https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing>`__
+Code samples are provided to demonstrate how to use our SDK to interact with Azure services. To see the code samples, please visit `here <https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing>`__
 
 Need help?
 ----------
