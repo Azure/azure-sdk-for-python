@@ -1366,3 +1366,48 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     for message in receiver.receive_forever():
                         messages.append(message)
                 assert len(messages) == 2
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_queue_receiver_respects_max_wait_time_overrides(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string,
+                logging_enable=False) as sb_client:
+
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                message = Message("0")
+                sender.send_messages(message)
+
+                messages = []
+                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+
+                    time_1 = utc_now()
+                    for message in receiver.receive_forever(max_wait_time=10):
+                        messages.append(message)
+                        time_2 = utc_now()
+                        for message in receiver.receive_forever(max_wait_time=1):
+                            messages.append(message)
+                        time_3 = utc_now()
+                        assert timedelta(seconds=1) < (time_3 - time_2) < timedelta(seconds=2)
+                    time_4 = utc_now()
+                    assert timedelta(seconds=9) < (time_4 - time_3) < timedelta(seconds=11)
+
+                    for message in receiver.receive_forever(max_wait_time=3):
+                        messages.append(message)
+                    time_5 = utc_now()
+                    assert timedelta(seconds=2) < (time_5 - time_4) < timedelta(seconds=4)
+
+                    for message in receiver:
+                        messages.append(message)
+                    time_6 = utc_now()
+                    assert timedelta(seconds=4) < (time_6 - time_5) < timedelta(seconds=6)
+
+                    for message in receiver.receive_forever():
+                        messages.append(message)
+                    time_7 = utc_now()
+                    assert timedelta(seconds=4) < (time_7 - time_6) < timedelta(seconds=6)
+                    assert len(messages) == 1

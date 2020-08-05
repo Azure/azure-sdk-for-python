@@ -149,7 +149,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 return await self.receiver.__anext__()
             finally:
                 if original_timeout:
-                    self._handler._timeout = original_timeout
+                    self.receiver._handler._timeout = original_timeout
 
     def __aiter__(self):
         return self._IterContextualWrapper(self)
@@ -204,6 +204,13 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         except:
             await self.close()
             raise
+
+
+    async def close(self):
+        # type: () -> None
+        await super(ServiceBusReceiver, self).close()
+        self._message_iter = None # pylint: disable=attribute-defined-outside-init
+
 
     async def _receive(self, max_batch_size=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]

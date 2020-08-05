@@ -205,6 +205,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             self.close()
             raise
 
+    def close(self):
+        # type: () -> None
+        super(ServiceBusReceiver, self).close()
+        self._message_iter = None # pylint: disable=attribute-defined-outside-init
+
     def _receive(self, max_batch_size=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
         # pylint: disable=protected-access
