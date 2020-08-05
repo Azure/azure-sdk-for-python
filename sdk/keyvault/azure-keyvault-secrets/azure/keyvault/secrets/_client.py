@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import pickle
+import base64
 from functools import partial
 from azure.core.tracing.decorator import distributed_trace
 
@@ -301,6 +303,7 @@ class SecretClient(KeyVaultClientBase):
         with soft-delete enabled. This method therefore returns a poller enabling you to wait for deletion to complete.
 
         :param str name: Name of the secret to delete.
+        :keyword str continuation_token: A continuation token to restart the poller from a saved state.
         :returns: A poller for the delete operation. The poller's `result` method returns the
          :class:`~azure.keyvault.secrets.DeletedSecret` without waiting for deletion to complete. If the vault has
          soft-delete enabled and you want to permanently delete the secret with :func:`purge_deleted_secret`, call the
@@ -321,11 +324,16 @@ class SecretClient(KeyVaultClientBase):
 
         """
         polling_interval = kwargs.pop("_polling_interval", None)
+        continuation_token = kwargs.pop("continuation_token", None)
         if polling_interval is None:
             polling_interval = 2
-        deleted_secret = DeletedSecret._from_deleted_secret_bundle(
-            self._client.delete_secret(self.vault_url, name, error_map=_error_map, **kwargs)
-        )
+
+        if continuation_token:
+            deleted_secret = pickle.loads(base64.b64decode(continuation_token))
+        else:
+            deleted_secret = DeletedSecret._from_deleted_secret_bundle(
+                self._client.delete_secret(self.vault_url, name, error_map=_error_map, **kwargs)
+            )
 
         command = partial(self.get_deleted_secret, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
@@ -335,6 +343,8 @@ class SecretClient(KeyVaultClientBase):
             final_resource=deleted_secret,
             interval=polling_interval,
         )
+        if continuation_token:
+            return KeyVaultOperationPoller.from_continuation_token(polling_method)
         return KeyVaultOperationPoller(polling_method)
 
     @distributed_trace
@@ -429,6 +439,7 @@ class SecretClient(KeyVaultClientBase):
         Requires the secrets/recover permission.
 
         :param str name: Name of the deleted secret to recover
+        :keyword str continuation_token: A continuation token to restart the poller from a saved state.
         :returns: A poller for the recovery operation. The poller's `result` method returns the recovered
          :class:`~azure.keyvault.secrets.Secret` without waiting for recovery to complete. If you want to use the
          recovered secret immediately, call the poller's `wait` method, which blocks until the secret is ready to use.
@@ -446,14 +457,21 @@ class SecretClient(KeyVaultClientBase):
 
         """
         polling_interval = kwargs.pop("_polling_interval", None)
+        continuation_token = kwargs.pop("continuation_token", None)
         if polling_interval is None:
             polling_interval = 2
-        recovered_secret = SecretProperties._from_secret_bundle(
-            self._client.recover_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
-        )
+
+        if continuation_token:
+            recovered_secret = pickle.loads(base64.b64decode(continuation_token))
+        else:
+            recovered_secret = SecretProperties._from_secret_bundle(
+                self._client.recover_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
+            )
 
         command = partial(self.get_secret, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
             finished=False, command=command, final_resource=recovered_secret, interval=polling_interval,
         )
+        if continuation_token:
+            return KeyVaultOperationPoller.from_continuation_token(polling_method)
         return KeyVaultOperationPoller(polling_method)
