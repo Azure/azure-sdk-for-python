@@ -11,13 +11,13 @@ Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON 
 
 [SDK source code][source_code] | [Package (PyPI)][cosmos_pypi] | [API reference documentation][ref_cosmos_sdk] | [Product documentation][cosmos_docs] | [Samples][cosmos_samples]
 
-
 ## Getting started
+
 ### Prerequisites
+
 * Azure subscription - [Create a free account][azure_sub]
 * Azure [Cosmos DB account][cosmos_account] - SQL API
 * [Python 2.7 or 3.5.3+][python]
-
 
 If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI][azure_cli] command:
 
@@ -39,6 +39,7 @@ Although not required, you can keep your your base system and Azure SDK environm
 python3 -m venv azure-cosmosdb-sdk-environment
 source azure-cosmosdb-sdk-environment/bin/activate
 ```
+
 ### Authenticate the client
 
 Interaction with Cosmos DB starts with an instance of the [CosmosClient][ref_cosmosclient] class. You need an **account**, its **URI**, and one of its **account keys** to instantiate the client object.
@@ -52,6 +53,7 @@ ACCT_NAME=<cosmos-db-account-name>
 export ACCOUNT_URI=$(az cosmosdb show --resource-group $RES_GROUP --name $ACCT_NAME --query documentEndpoint --output tsv)
 export ACCOUNT_KEY=$(az cosmosdb list-keys --resource-group $RES_GROUP --name $ACCT_NAME --query primaryMasterKey --output tsv)
 ```
+
 ### Create the client
 
 Once you've populated the `ACCOUNT_URI` and `ACCOUNT_KEY` environment variables, you can create the [CosmosClient][ref_cosmosclient].
@@ -314,7 +316,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
 
-# Contributing
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us

@@ -1,29 +1,30 @@
+# Azure Cosmos DB Python SDK Releases
+
 ## 4.0.1 (Unreleased)
 
 - Added deprecation warning for "lazy" indexing mode. The backend no longer allows creating containers with this mode and will set them to consistent instead.
 
-**New features**
+### New features
+
 - Added  the ability to set the analytical storage TTL when creating a new container.
 
-**Bug fixes**
+### Bug fixes
+
 - Fixed support for dicts as inputs for get_client APIs.
 - Fixed Python 2/3 compatibility in query iterators.
 - Fixed type hint error. Issue #12570 - Thanks @sl-sandy.
 - Fixed bug where options headers were not added to upsert_item function. Issue #11791 - thank you @aalapatirvbd.
 - Fixed error raised when a non string ID is used in an item. It now raises TypeError rather than AttributeError. Issue #11793 - thank you @Rabbit994.
 
-
 ## 4.0.0 (2020-05-20)
 
 - Stable release.
 - Added HttpLoggingPolicy to pipeline to enable passing in a custom logger for request and response headers.
 
-
 ## 4.0.0b6
 
 - Fixed bug in synchronized_request for media APIs.
 - Removed MediaReadMode and MediaRequestTimeout from ConnectionPolicy as media requests are not supported.
-
 
 ## 4.0.0b5
 
@@ -32,14 +33,13 @@
 - Fixed bug in routing map provider.
 - Added query Distinct, Offset and Limit support.
 - Default document query execution context now used for
-    - ChangeFeed queries
-    - single partition queries (partitionkey, partitionKeyRangeId is present in options)
-    - Non document queries
+  - ChangeFeed queries
+  - single partition queries (partitionkey, partitionKeyRangeId is present in options)
+  - Non document queries
 - Errors out for aggregates on multiple partitions, with enable cross partition query set to true, but no "value" keyword present
 - Hits query plan endpoint for other scenarios to fetch query plan
 - Added `__repr__` support for Cosmos entity objects.
 - Updated documentation.
-
 
 ## 4.0.0b4
 
@@ -47,14 +47,14 @@
   within which the operation must be completed. If the timeout value is exceeded, a `azure.cosmos.errors.CosmosClientTimeoutError` will be raised.
 - Added a new `ConnectionRetryPolicy` to manage retry behaviour during HTTP connection errors.
 - Added new constructor and per-operation configuration keyword arguments:
-    - `retry_total` - Maximum retry attempts.
-    - `retry_backoff_max` - Maximum retry wait time in seconds.
-    - `retry_fixed_interval` - Fixed retry interval in milliseconds.
-    - `retry_read` - Maximum number of socket read retry attempts.
-    - `retry_connect` - Maximum number of connection error retry attempts.
-    - `retry_status` - Maximum number of retry attempts on error status codes.
-    - `retry_on_status_codes` - A list of specific status codes to retry on.
-    - `retry_backoff_factor` - Factor to calculate wait time between retry attempts.
+  - `retry_total` - Maximum retry attempts.
+  - `retry_backoff_max` - Maximum retry wait time in seconds.
+  - `retry_fixed_interval` - Fixed retry interval in milliseconds.
+  - `retry_read` - Maximum number of socket read retry attempts.
+  - `retry_connect` - Maximum number of connection error retry attempts.
+  - `retry_status` - Maximum number of retry attempts on error status codes.
+  - `retry_on_status_codes` - A list of specific status codes to retry on.
+  - `retry_backoff_factor` - Factor to calculate wait time between retry attempts.
 
 ## 4.0.0b3
 
@@ -64,40 +64,40 @@
 
 Version 4.0.0b2 is the second iteration in our efforts to build a more Pythonic client library.
 
-**Breaking changes**
+### Breaking changes
 
 - The client connection has been adapted to consume the HTTP pipeline defined in `azure.core.pipeline`.
 - Interactive objects have now been renamed as proxies. This includes:
-    - `Database` -> `DatabaseProxy`
-    - `User` -> `UserProxy`
-    - `Container` -> `ContainerProxy`
-    - `Scripts` -> `ScriptsProxy`
+  - `Database` -> `DatabaseProxy`
+  - `User` -> `UserProxy`
+  - `Container` -> `ContainerProxy`
+  - `Scripts` -> `ScriptsProxy`
 - The constructor of `CosmosClient` has been updated:
-    - The `auth` parameter has been renamed to `credential` and will now take an authentication type directly. This means the master key value, a dictionary of resource tokens, or a list of permissions can be passed in. However the old dictionary format is still supported.
-    - The `connection_policy` parameter has been made a keyword only parameter, and while it is still supported, each of the individual attributes of the policy can now be passed in as explicit keyword arguments:
-        - `request_timeout`
-        - `media_request_timeout`
-        - `connection_mode`
-        - `media_read_mode`
-        - `proxy_config`
-        - `enable_endpoint_discovery`
-        - `preferred_locations`
-        - `multiple_write_locations`
+  - The `auth` parameter has been renamed to `credential` and will now take an authentication type directly. This means the master key value, a dictionary of resource tokens, or a list of permissions can be passed in. However the old dictionary format is still supported.
+  - The `connection_policy` parameter has been made a keyword only parameter, and while it is still supported, each of the individual attributes of the policy can now be passed in as explicit keyword arguments:
+    - `request_timeout`
+    - `media_request_timeout`
+    - `connection_mode`
+    - `media_read_mode`
+    - `proxy_config`
+    - `enable_endpoint_discovery`
+    - `preferred_locations`
+    - `multiple_write_locations`
 - A new classmethod constructor has been added to `CosmosClient` to enable creation via a connection string retrieved from the Azure portal.
 - Some `read_all` operations have been renamed to `list` operations:
-    - `CosmosClient.read_all_databases` -> `CosmosClient.list_databases`
-    - `Container.read_all_conflicts` -> `ContainerProxy.list_conflicts`
-    - `Database.read_all_containers` -> `DatabaseProxy.list_containers`
-    - `Database.read_all_users` -> `DatabaseProxy.list_users`
-    - `User.read_all_permissions` -> `UserProxy.list_permissions`
+  - `CosmosClient.read_all_databases` -> `CosmosClient.list_databases`
+  - `Container.read_all_conflicts` -> `ContainerProxy.list_conflicts`
+  - `Database.read_all_containers` -> `DatabaseProxy.list_containers`
+  - `Database.read_all_users` -> `DatabaseProxy.list_users`
+  - `User.read_all_permissions` -> `UserProxy.list_permissions`
 - All operations that take `request_options` or `feed_options` parameters, these have been moved to keyword only parameters. In addition, while these options dictionaries are still supported, each of the individual options within the dictionary are now supported as explicit keyword arguments.
 - The error heirarchy is now inherited from `azure.core.AzureError` instead of `CosmosError` which has been removed.
-    - `HTTPFailure` has been renamed to `CosmosHttpResponseError`
-    - `JSONParseFailure` has been removed and replaced by `azure.core.DecodeError`
-    - Added additional errors for specific response codes:
-        - `CosmosResourceNotFoundError` for status 404
-        - `CosmosResourceExistsError` for status 409
-        - `CosmosAccessConditionFailedError` for status 412
+  - `HTTPFailure` has been renamed to `CosmosHttpResponseError`
+  - `JSONParseFailure` has been removed and replaced by `azure.core.DecodeError`
+  - Added additional errors for specific response codes:
+    - `CosmosResourceNotFoundError` for status 404
+    - `CosmosResourceExistsError` for status 409
+    - `CosmosAccessConditionFailedError` for status 412
 - `CosmosClient` can now be run in a context manager to handle closing the client connection.
 - Iterable responses (e.g. query responses and list responses) are now of type `azure.core.paging.ItemPaged`. The method `fetch_next_block` has been replaced by a secondary iterator, accessed by the `by_page` method.
 
@@ -105,14 +105,14 @@ Version 4.0.0b2 is the second iteration in our efforts to build a more Pythonic 
 
 Version 4.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Cosmos. For more information about this, and preview releases of other Azure SDK libraries, please visit https://aka.ms/azure-sdk-preview1-python.
 
-**Breaking changes: New API design**
+### Breaking changes: New API design
 
 - Operations are now scoped to a particular client:
-    - `CosmosClient`: This client handles account-level operations. This includes managing service properties and listing the databases within an account.
-    - `Database`: This client handles database-level operations. This includes creating and deleting containers, users and stored procedurs. It can be accessed from a `CosmosClient` instance by name.
-    - `Container`: This client handles operations for a particular container. This includes querying and inserting items and managing properties.
-    - `User`: This client handles operations for a particular user. This includes adding and deleting permissions and managing user properties.
-    
+  - `CosmosClient`: This client handles account-level operations. This includes managing service properties and listing the databases within an account.
+  - `Database`: This client handles database-level operations. This includes creating and deleting containers, users and stored procedurs. It can be accessed from a `CosmosClient` instance by name.
+  - `Container`: This client handles operations for a particular container. This includes querying and inserting items and managing properties.
+  - `User`: This client handles operations for a particular user. This includes adding and deleting permissions and managing user properties.
+
     These clients can be accessed by navigating down the client hierarchy using the `get_<child>_client` method. For full details on the new API, please see the [reference documentation](https://aka.ms/azsdk-python-cosmos-ref).
 - Clients are accessed by name rather than by Id. No need to concatenate strings to create links.
 - No more need to import types and methods from individual modules. The public API surface area is available directly in the `azure.cosmos` package.
@@ -249,4 +249,3 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
 ## 1.0.1
 
 - Supports proxy connection
-
