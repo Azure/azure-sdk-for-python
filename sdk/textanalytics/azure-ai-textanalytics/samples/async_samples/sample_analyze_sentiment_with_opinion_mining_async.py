@@ -34,7 +34,6 @@ class AnalyzeSentimentWithOpinionMiningSampleAsync(object):
     async def analyze_sentiment_with_opinion_mining(self):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.ai.textanalytics import ApiVersion
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]

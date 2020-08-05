@@ -304,7 +304,7 @@ Social Security Numbers, bank account information, credit card numbers, and more
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient, ApiVersion
+from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
 endpoint="https://<region>.api.cognitive.microsoft.com/"

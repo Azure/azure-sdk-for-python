@@ -16,7 +16,7 @@ from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
     VERSION,
-    ApiVersion
+    TextAnalyticsApiVersion
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -659,7 +659,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert not document.sentences[0].mined_opinions
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": ApiVersion.V3_0})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     def test_opinion_mining_v3(self, client):
         with pytest.raises(NotImplementedError) as excinfo:
             client.analyze_sentiment(["will fail"], show_opinion_mining=True)
