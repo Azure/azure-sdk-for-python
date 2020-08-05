@@ -16,7 +16,7 @@ def main(event: func.EventGridEvent):
         'event_type': event.event_type
     })
     logging.info(result)
-    consumer = EventGridConsumer()
-    deserialized_event = consumer.deserialize_events(result)
-    # can only be EventGridEvent
-    print("model: {}".format(event.model))
+    #consumer = EventGridConsumer()
+    #deserialized_event = consumer.deserialize_events(result)
+    ## can only be EventGridEvent
+    #print("model: {}".format(event.model))

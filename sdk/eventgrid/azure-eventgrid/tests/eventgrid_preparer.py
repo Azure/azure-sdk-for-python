@@ -4,7 +4,7 @@ import os
 from collections import namedtuple
 
 from azure.mgmt.eventgrid import EventGridManagementClient
-from azure.mgmt.eventgrid.models import Topic
+from azure.mgmt.eventgrid.models import Topic, InputSchema
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 from devtools_testutils import (
@@ -15,6 +15,7 @@ from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
 EVENTGRID_TOPIC_PARAM = 'eventgrid_topic'
 EVENTGRID_TOPIC_LOCATION = 'westus'
+CLOUD_EVENT_SCHEMA = InputSchema.cloud_event_schema_v1_0
 
 # Shared base class for event grid sub-resources that require a RG to exist.
 class _EventGridChildResourcePreparer(AzureMgmtPreparer):
@@ -33,7 +34,7 @@ class _EventGridChildResourcePreparer(AzureMgmtPreparer):
 class EventGridTopicPreparer(_EventGridChildResourcePreparer):
     def __init__(self,
                  name_prefix='',
-                 use_cache=True,
+                 use_cache=False,
                  parameter_name=EVENTGRID_TOPIC_PARAM,
                  parameter_location=EVENTGRID_TOPIC_LOCATION,
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
@@ -47,6 +48,7 @@ class EventGridTopicPreparer(_EventGridChildResourcePreparer):
                                                      client_kwargs=client_kwargs)
         self.parameter_name = parameter_name
         self.parameter_location = parameter_location
+        self.name_prefix = name_prefix
         if random_name_enabled:
             self.resource_moniker = self.name_prefix + "egtopic"
 
@@ -54,7 +56,12 @@ class EventGridTopicPreparer(_EventGridChildResourcePreparer):
         if self.is_live:
             self.client = self.create_mgmt_client(EventGridManagementClient)
             group = self._get_resource_group(**kwargs)
-            topic = Topic(location=self.parameter_location)
+
+            if self.name_prefix[:5] == "cloud":
+                # Create a new topic and verify that it is created successfully
+                topic = Topic(location=self.parameter_location, tags=None, input_schema=CLOUD_EVENT_SCHEMA, input_schema_mapping=None)
+            else:
+                topic = Topic(location=self.parameter_location)
             topic_operation = self.client.topics.create_or_update(
                 group.name,
                 name,

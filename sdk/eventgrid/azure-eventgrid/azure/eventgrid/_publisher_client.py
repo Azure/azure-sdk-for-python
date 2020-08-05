@@ -38,6 +38,14 @@ class EventGridPublisherClient(object):
         **kwargs  # type: Any
     ):
         # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
+
+        if topic_hostname[:7] == 'http://':
+            raise ValueError("Topic_hostname must either begin without the http:// or with an https://")
+        if topic_hostname[:8] == 'https://':
+            topic_hostname = topic_hostname.replace("https://", "")
+        if topic_hostname[-11:] == "/api/events":
+            topic_hostname = topic_hostname.replace("/api/events", "")
+
         self._credential = credential
         self._topic_hostname = topic_hostname
         auth_policy = self._get_authentication_policy()
@@ -57,9 +65,6 @@ class EventGridPublisherClient(object):
          """
 
         if all(isinstance(e, CloudEvent) for e in events):
-            print("sending")
-            print(events[0])
-            print(CloudEvent.serialize(events[0]))
             self._client.publish_cloud_event_events(self._topic_hostname, events)
         elif all(isinstance(e, EventGridEvent) for e in events):
             self._client.publish_events(self._topic_hostname, events)

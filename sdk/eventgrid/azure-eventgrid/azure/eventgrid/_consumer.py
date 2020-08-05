@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING
-from base64 import b64decode
 import json
+import six
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
@@ -18,28 +18,24 @@ if TYPE_CHECKING:
     from typing import Any
 
 from ._models import DeserializedEvent
-from ._helpers import generate_shared_access_signature
-from . import _constants as constants
 
 class EventGridConsumer(object):
     """
     A consumer responsible for deserializing event handler messages, to allow for access to strongly typed Event objects.
     """
 
-    def deserialize_event(self, event, is_bytes=False, **kwargs):
-        # type: (Union[str, dict]) -> models.DeserializedEvent
+    def deserialize_event(self, event, **kwargs):
+        # type: (Union[str, dict, bytes]) -> models.DeserializedEvent
         """Single event in CloudEvent/EventGridEvent format will be parsed and returned as DeserializedEvent.
-        :param event: The event to be deserialized. If string is bytes string, is_bytes arg must be set to True.
-        :type event: Union[str, dict]
-        :param is_bytes: True/False value depending on whether event is bytes string. Set to False by default.
-        :type is_bytes: bool 
+        :param event: The event to be deserialized.
+        :type event: Union[str, dict, bytes]
         :rtype: models.DeserializedEvent
 
         :raise: :class:`ValueError`, when events are not of CloudEvent or EventGridEvent format.
         """
         try:
-            if is_bytes:
-                dict_event = json.loads(b64decode(event))
+            if isinstance(event, six.binary_type):
+                dict_event = json.loads(event.decode('ascii'))
                 deserialized_event = DeserializedEvent(dict_event)
             elif isinstance(event, str):
                 dict_event = json.loads(event)
@@ -47,8 +43,7 @@ class EventGridConsumer(object):
             elif isinstance(event, dict):
                 deserialized_event = DeserializedEvent(event)
         except ValueError as e:
-            print('deserialize_events(): Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent/EventGridEvent schema.')
-            print('If you are passing in a byte string, pass is_bytes=True into args.')
+            print('Error: cannot deserialize event. Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent/EventGridEvent schema.')
             print('Your event: {}'.format(event))
             print(e)
 

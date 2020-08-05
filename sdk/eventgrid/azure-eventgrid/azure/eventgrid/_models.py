@@ -238,9 +238,8 @@ class DeserializedEvent():
         # if system event type defined, set model.data to system event object
         if event_type in DeserializedEvent._event_type_mappings:
             self._model.data = (DeserializedEvent._event_type_mappings[event_type]).deserialize(self._model.data)
-        elif isinstance(self._model.data, dict):    # else, if custom event, then model.data is dict and should be set to None
+        else:    # else, if custom event, then model.data is dict and should be set to None
             self._model.data = None
-        # else model.data is str/int/etc. and should remain the same
     
 class CustomEvent(DictMixin):
     """The wrapper class for a CustomEvent, to be used when publishing events.
