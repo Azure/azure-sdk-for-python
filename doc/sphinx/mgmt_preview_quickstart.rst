@@ -15,7 +15,7 @@ authentication. This document illustrates the most common scenario
 
 Migration Guide
 ---------------
-If you are an existing user of the older version of Azure management library for Python and you are looking for a migration guide to the new beta version of the SDK, please refer to this migration guide here
+If you are an existing user of the older version of Azure management library for Python and you are looking for a migration guide to the new beta version of the SDK, please refer to `this migration guide here <https://github.com/Azure/azure-sdk-for-python/blob/master/doc/sphinx/python_mgmt_migration_guide.rst>`__
 
 Prerequisites
 -------------
