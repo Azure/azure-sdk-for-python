@@ -39,7 +39,6 @@ if TYPE_CHECKING:
     from ._shared.models import UserDelegationKey
     from ._lease import BlobLeaseClient
     from ._models import (
-        BlobProperties,
         ContainerProperties,
         PublicAccess,
         BlobAnalyticsLogging,
@@ -48,6 +47,7 @@ if TYPE_CHECKING:
         RetentionPolicy,
         StaticWebsite,
     )
+    from azure.storage.blob import BlobProperties
 
 
 class BlobServiceClient(StorageAccountHostsMixin):

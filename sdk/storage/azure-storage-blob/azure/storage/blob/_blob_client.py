@@ -46,7 +46,7 @@ from ._serialize import (
     serialize_blob_tags,
     serialize_query_format
 )
-from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
+from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream, parse_tags
 from ._quick_query_helper import BlobQueryReader
 from ._upload_helpers import (
     upload_block_blob,
@@ -2299,7 +2299,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._get_blob_tags_options(**kwargs)
         try:
             _, tags = self._client.blob.get_tags(**options)
-            return BlobProperties._parse_tags(tags) # pylint: disable=protected-access
+            return parse_tags(tags) # pylint: disable=protected-access
         except StorageErrorException as error:
             process_storage_error(error)
 

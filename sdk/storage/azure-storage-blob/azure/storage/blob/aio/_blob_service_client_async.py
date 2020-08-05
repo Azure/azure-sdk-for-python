@@ -39,7 +39,6 @@ if TYPE_CHECKING:
     from .._shared.models import AccountSasPermissions, ResourceTypes, UserDelegationKey
     from ._lease_async import BlobLeaseClient
     from .._models import (
-        BlobProperties,
         PublicAccess,
         BlobAnalyticsLogging,
         Metrics,
@@ -47,6 +46,7 @@ if TYPE_CHECKING:
         RetentionPolicy,
         StaticWebsite,
     )
+    from azure.storage.blob import BlobProperties
 
 
 class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):

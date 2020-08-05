@@ -40,9 +40,8 @@ from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get
 from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
-    BlobPropertiesPaged,
-    BlobType,
-    BlobPrefix)
+    BlobType)
+from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged
 from ._lease import BlobLeaseClient, get_access_conditions
 from ._blob_client import BlobClient
 

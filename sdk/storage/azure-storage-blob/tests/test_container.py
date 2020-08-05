@@ -826,7 +826,6 @@ class StorageContainerTest(StorageTestCase):
 
         self.assertEqual(blobs, ['blob1', 'blob2'])
 
-
     @GlobalStorageAccountPreparer()
     def test_list_blobs(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
@@ -848,6 +847,31 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[1].content_settings.content_type,
                          'application/octet-stream')
         self.assertIsNotNone(blobs[0].creation_time)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_with_object_replication_policy(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+        b_c = container.get_blob_client('blob1')
+        b_c.upload_blob(data, overwrite=True)
+        metadata = {'hello': 'world', 'number': '42'}
+        b_c.set_blob_metadata(metadata)
+
+        prop = b_c.get_blob_properties()
+
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+
+        # Act
+        blobs_list = container.list_blobs()
+        number_of_blobs_with_policy = 0
+        for blob in blobs_list:
+            if blob.object_replication_source_properties != None:
+                number_of_blobs_with_policy += 1
+
+        # Assert
+        self.assertIsNot(number_of_blobs_with_policy, 0)
 
     @GlobalStorageAccountPreparer()
     def test_list_blobs_leased_blob(self, resource_group, location, storage_account, storage_account_key):
