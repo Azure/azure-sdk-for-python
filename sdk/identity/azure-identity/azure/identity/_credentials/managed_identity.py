@@ -44,10 +44,6 @@ class ManagedIdentityCredential(object):
     the keyword arguments.
 
     :keyword str client_id: a user-assigned identity's client ID. This is supported in all hosting environments.
-    :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
-      or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
-      learn what values it expects.
-    :paramtype identity_config: Mapping[str, str]
     """
 
     def __init__(self, **kwargs):
@@ -80,7 +76,7 @@ class ManagedIdentityCredential(object):
 class _ManagedIdentityBase(object):
     def __init__(self, endpoint, client_cls, config=None, client_id=None, **kwargs):
         # type: (str, Type, Optional[Configuration], Optional[str], **Any) -> None
-        self._identity_config = kwargs.pop("identity_config", None) or {}
+        self._identity_config = kwargs.pop("_identity_config", None) or {}
         if client_id:
             if os.environ.get(EnvironmentVariables.MSI_ENDPOINT) and os.environ.get(EnvironmentVariables.MSI_SECRET):
                 # App Service: version 2017-09-1 accepts client ID as parameter "clientid"
