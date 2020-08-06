@@ -213,7 +213,7 @@ https://aka.ms/azure-sdk-preview1-python.
     - `LeaseClient`: Handles all lease operations for both containers and blobs.
 
     These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account, container or blob).
-    For full details on the new API, please see the [reference documentation](http://azure.github.io/azure-sdk-for-python/ref/azure.storage.blob.html).
+    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/ref/Storage.html#azure-storage-blob).
 - Copy blob operations now return a polling object that can be used to check the status of the operation, as well as abort the operation.
 - New module level operations for simple upload and download using a blob URL.
 - Download operations now return a streaming object that can download data in multiple ways:

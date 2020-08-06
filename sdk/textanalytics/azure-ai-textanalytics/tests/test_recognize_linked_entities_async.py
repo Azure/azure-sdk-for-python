@@ -59,11 +59,15 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
             self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.name)
-                self.assertIsNotNone(entity.matches)
                 self.assertIsNotNone(entity.language)
                 self.assertIsNotNone(entity.data_source_entity_id)
                 self.assertIsNotNone(entity.url)
                 self.assertIsNotNone(entity.data_source)
+                self.assertIsNotNone(entity.matches)
+                for match in entity.matches:
+                    self.assertIsNotNone(match.offset)
+                    self.assertIsNotNone(match.length)
+                    self.assertNotEqual(match.length, 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -79,11 +83,15 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
             self.assertEqual(len(doc.entities), 3)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.name)
-                self.assertIsNotNone(entity.matches)
                 self.assertIsNotNone(entity.language)
                 self.assertIsNotNone(entity.data_source_entity_id)
                 self.assertIsNotNone(entity.url)
                 self.assertIsNotNone(entity.data_source)
+                self.assertIsNotNone(entity.matches)
+                for match in entity.matches:
+                    self.assertIsNotNone(match.offset)
+                    self.assertIsNotNone(match.length)
+                    self.assertNotEqual(match.length, 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -131,7 +139,7 @@ class TestRecognizeLinkedEntities(AsyncTextAnalyticsTest):
             await client.recognize_linked_entities(docs)
         assert excinfo.value.status_code == 400
         assert excinfo.value.error.code == "InvalidDocumentBatch"
-        assert "(InvalidDocumentBatch) The number of documents in the request have exceeded the data limitations" in str(excinfo.value)
+        assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

@@ -470,7 +470,7 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
 
         def on_error(error):
-            raise error
+            raise Exception(error.description)
 
         input_format = DelimitedJSON()
         output_format = DelimitedTextDialect(
@@ -484,7 +484,7 @@ class StorageQuickQueryTest(StorageTestCase):
             on_error=on_error,
             blob_format=input_format,
             output_format=output_format)
-        with pytest.raises(BlobQueryError):
+        with pytest.raises(Exception):
             query_result = resp.readall()
         self._teardown(bsc)
 
@@ -513,7 +513,7 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
 
         def on_error(error):
-            raise error
+            raise Exception(error.description)
 
         input_format = DelimitedJSON()
         output_format = DelimitedTextDialect(
@@ -528,7 +528,7 @@ class StorageQuickQueryTest(StorageTestCase):
             blob_format=input_format,
             output_format=output_format)
 
-        with pytest.raises(BlobQueryError):
+        with pytest.raises(Exception):
             for record in resp.records():
                 print(record)
         self._teardown(bsc)

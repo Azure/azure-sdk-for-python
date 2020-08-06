@@ -53,18 +53,22 @@ class StressTestRunner:
                  receive_type = ReceiveType.push,
                  send_batch_size = None,
                  message_size = 10,
-                 idle_timeout = 10,
+                 max_wait_time = 10,
                  send_delay = .01,
-                 receive_delay = 0):
+                 receive_delay = 0,
+                 should_complete_messages = True,
+                 max_batch_size = 1):
         self.senders = senders
         self.receivers = receivers
         self.duration=duration
         self.receive_type = receive_type
         self.message_size = message_size
         self.send_batch_size = send_batch_size
-        self.idle_timeout = idle_timeout
+        self.max_wait_time = max_wait_time
         self.send_delay = send_delay
         self.receive_delay = receive_delay
+        self.should_complete_messages = should_complete_messages
+        self.max_batch_size = max_batch_size
 
         # Because of pickle we need to create a state object and not just pass around ourselves.
         # If we ever require multiple runs of this one after another, just make Run() reset this.
@@ -138,14 +142,15 @@ class StressTestRunner:
             while end_time > datetime.utcnow():
                 print("PRIMARY STRESS TEST LOOP================= " + str(datetime.utcnow()))
                 if self.receive_type == ReceiveType.pull:
-                    batch = receiver.receive_messages()
+                    batch = receiver.receive_messages(max_batch_size=self.max_batch_size)
                 elif self.receive_type == ReceiveType.push:
                     batch = receiver
 
                 for message in batch:
                     self.OnReceive(self._state, message)
                     try:
-                        message.complete()
+                        if self.should_complete_messages:
+                            message.complete()
                     except MessageAlreadySettled: # It may have been settled in the plugin callback.
                         pass
                     self._state.total_received += 1

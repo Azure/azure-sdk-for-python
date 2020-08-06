@@ -194,7 +194,7 @@ class AzureAppConfigurationClient:
                 pass  # do something
 
             filtered_listed = async_client.list_configuration_settings(
-                label_filter="*Labe*", key_filter="*Ke*", accept_datetime=accept_datetime
+                label_filter="Labe*", key_filter="Ke*", accept_datetime=accept_datetime
             )
             async for item in filtered_listed:
                 pass  # do something
@@ -491,7 +491,7 @@ class AzureAppConfigurationClient:
                 pass  # do something
 
             filtered_revisions = async_client.list_revisions(
-                label_filter="*Labe*", key_filter="*Ke*", accept_datetime=accept_datetime
+                label_filter="Labe*", key_filter="Ke*", accept_datetime=accept_datetime
             )
             async for item in filtered_revisions:
                 pass  # do something

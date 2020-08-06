@@ -33,6 +33,7 @@ from azure.servicebus.exceptions import (
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer, ServiceBusQueuePreparer
 from utilities import get_logger, print_message, sleep_until_expired
+from mocks_async import MockReceivedMessage
 
 _logger = get_logger(logging.DEBUG)
 
@@ -51,7 +52,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
                     message = Message("Handler message no. {}".format(i))
-                    message.enqueue_sequence_number = i
                     await sender.send_messages(message)
 
             with pytest.raises(ServiceBusConnectionError):
@@ -129,7 +129,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     _logger.debug(message)
                     _logger.debug(message.sequence_number)
                     _logger.debug(message.enqueued_time_utc)
-                    _logger.debug(message.expired)
+                    _logger.debug(message._lock_expired)
                     await message.complete()
                     await asyncio.sleep(40)
 
@@ -146,11 +146,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
                     message = Message("Handler message no. {}".format(i))
-                    message.enqueue_sequence_number = i
                     await sender.send_messages(message)
 
             messages = []
-            async with sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete, max_wait_time=5) as receiver:
+            async with sb_client.get_queue_receiver(servicebus_queue.name, mode=ReceiveSettleMode.ReceiveAndDelete, max_wait_time=8) as receiver:
                 async for message in receiver:
                     messages.append(message)
                     with pytest.raises(MessageAlreadySettled):
@@ -252,11 +251,11 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
-                    if not message.header.delivery_count:
+                    if not message.delivery_count:
                         count += 1
                         await message.abandon()
                     else:
-                        assert message.header.delivery_count == 1
+                        assert message.delivery_count == 1
                         await message.complete()
 
             assert count == 10
@@ -407,8 +406,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async for message in receiver:
                     count += 1
                     print_message(_logger, message)
-                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.dead_letter_reason == 'Testing reason'
+                    assert message.dead_letter_error_description == 'Testing description'
+                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await message.complete()
             assert count == 10
 
@@ -521,8 +522,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async for message in dl_receiver:
                     await message.complete()
                     count += 1
-                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.dead_letter_reason == 'Testing reason'
+                    assert message.dead_letter_error_description == 'Testing description'
+                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10
 
     @pytest.mark.liveTest
@@ -560,8 +563,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
-                    assert message.user_properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.user_properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.dead_letter_reason == 'Testing reason'
+                    assert message.dead_letter_error_description == 'Testing description'
+                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await message.complete()
                     count += 1
             assert count == 10
@@ -665,7 +670,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
                 try:
                     with pytest.raises(AttributeError):
-                        assert not message.expired
+                        assert not message._lock_expired
                     for m in messages:
                         time.sleep(5)
                         initial_expiry = m.locked_until_utc
@@ -698,33 +703,33 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async for message in receiver:
                     if not messages:
                         messages.append(message)
-                        assert not message.expired
+                        assert not message._lock_expired
                         renewer.register(message, timeout=60)
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
                         await asyncio.sleep(60)
                         print("Finished first sleep", message.locked_until_utc)
-                        assert not message.expired
+                        assert not message._lock_expired
                         await asyncio.sleep(15) #generate autolockrenewtimeout error by going one iteration past.
                         sleep_until_expired(message)
                         print("Finished second sleep", message.locked_until_utc, utc_now())
-                        assert message.expired
+                        assert message._lock_expired
                         try:
                             await message.complete()
                             raise AssertionError("Didn't raise MessageLockExpired")
                         except MessageLockExpired as e:
                             assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                     else:
-                        if message.expired:
+                        if message._lock_expired:
                             print("Remaining messages", message.locked_until_utc, utc_now())
-                            assert message.expired
+                            assert message._lock_expired
                             with pytest.raises(MessageLockExpired):
                                 await message.complete()
                         else:
-                            assert message.header.delivery_count >= 1
+                            assert message.delivery_count >= 1
                             print("Remaining messages", message.locked_until_utc, utc_now())
                             messages.append(message)
                             await message.complete()
-            await renewer.shutdown()
+            await renewer.close()
             assert len(messages) == 11
 
     @pytest.mark.liveTest
@@ -789,14 +794,14 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(5):
                     message = Message(str(i))
-                    message.properties.message_id = message_id
+                    message.message_id = message_id
                     await sender.send_messages(message)
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
-                    assert message.properties.message_id == message_id
+                    assert message.message_id == message_id
                     await message.complete()
                     count += 1
                 assert count == 1
@@ -840,7 +845,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 messages = await receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
                 time.sleep(60)
-                assert messages[0].expired
+                assert messages[0]._lock_expired
                 with pytest.raises(MessageLockExpired):
                     await messages[0].complete()
                 with pytest.raises(MessageLockExpired):
@@ -850,7 +855,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 messages = await receiver.receive_messages(max_wait_time=30)
                 assert len(messages) == 1
                 print_message(_logger, messages[0])
-                assert messages[0].header.delivery_count > 0
+                assert messages[0].delivery_count > 0
                 await messages[0].complete()
 
     @pytest.mark.liveTest
@@ -875,7 +880,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 time.sleep(15)
                 await messages[0].renew_lock()
                 time.sleep(15)
-                assert not messages[0].expired
+                assert not messages[0]._lock_expired
                 await messages[0].complete()
             
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
@@ -960,7 +965,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     content = str(uuid.uuid4())
                     message_id = uuid.uuid4()
                     message = Message(content)
-                    message.properties.message_id = message_id
+                    message.message_id = message_id
                     message.scheduled_enqueue_time_utc = enqueue_time
                     await sender.send_messages(message)
 
@@ -969,7 +974,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     try:
                         data = str(messages[0])
                         assert data == content
-                        assert messages[0].properties.message_id == message_id
+                        assert messages[0].message_id == message_id
                         assert messages[0].scheduled_enqueue_time_utc == enqueue_time
                         assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                         assert len(messages) == 1
@@ -989,27 +994,34 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
             enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             messages = []
-            async with sb_client.get_queue_receiver(servicebus_queue.name, prefetch=20) as receiver:
-                async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                    content = str(uuid.uuid4())
-                    message_id_a = uuid.uuid4()
-                    message_a = Message(content)
-                    message_a.properties.message_id = message_id_a
-                    message_id_b = uuid.uuid4()
-                    message_b = Message(content)
-                    message_b.properties.message_id = message_id_b
-                    tokens = await sender.schedule_messages([message_a, message_b], enqueue_time)
-                    assert len(tokens) == 2
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, prefetch=20)
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            async with sender, receiver:
+                content = str(uuid.uuid4())
+                message_id_a = uuid.uuid4()
+                message_a = Message(content)
+                message_a.message_id = message_id_a
+                message_id_b = uuid.uuid4()
+                message_b = Message(content)
+                message_b.message_id = message_id_b
 
-                recv = await receiver.receive_messages(max_wait_time=120)
-                messages.extend(recv)
+                await sender.send_messages([message_a, message_b])
+
+                received_messages = await receiver.receive_messages(max_batch_size=2, max_wait_time=5)
+                for message in received_messages:
+                    await message.complete()
+
+                tokens = await sender.schedule_messages(received_messages, enqueue_time)
+                assert len(tokens) == 2
+
+                messages = await receiver.receive_messages(max_wait_time=120)
                 recv = await receiver.receive_messages(max_wait_time=5)
                 messages.extend(recv)
                 if messages:
                     try:
                         data = str(messages[0])
                         assert data == content
-                        assert messages[0].properties.message_id in (message_id_a, message_id_b)
+                        assert messages[0].message_id in (message_id_a, message_id_b)
                         assert messages[0].scheduled_enqueue_time_utc == enqueue_time
                         assert messages[0].scheduled_enqueue_time_utc == messages[0].enqueued_time_utc.replace(microsecond=0)
                         assert len(messages) == 2
@@ -1103,20 +1115,91 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 assert len(messages) == 1
                 await messages[0].complete()
 
-    @pytest.mark.asyncio
-    async def test_async_queue_mock_no_reusing_auto_lock_renew(self):
-        class MockReceivedMessage:
-            def __init__(self):
-                self.received_timestamp_utc = utc_now()
-                self.locked_until_utc = self.received_timestamp_utc + timedelta(seconds=10)
 
-            async def renew_lock(self):
-                self.locked_until_utc = self.locked_until_utc + timedelta(seconds=10)
+    @pytest.mark.asyncio
+    async def test_async_queue_mock_auto_lock_renew_callback(self):
+        results = []
+        errors = []
+        async def callback_mock(renewable, error):
+            results.append(renewable)
+            if error:
+                errors.append(error)
 
         auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1 # So we can run the test fast.
+        async with auto_lock_renew: # Check that it is called when the object expires for any reason (silent renew failure)
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            await asyncio.sleep(3)
+            assert len(results) == 1 and results[-1]._lock_expired == True
+            assert not errors
+
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
+        async with auto_lock_renew: # Check that in normal operation it does not get called
+            auto_lock_renew.register(renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
+            await asyncio.sleep(3)
+            assert not results
+            assert not errors
+
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
+        async with auto_lock_renew: # Check that when a message is settled, it will not get called even after expiry
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            message._settled = True
+            await asyncio.sleep(3)
+            assert not results
+            assert not errors
+
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
+        async with auto_lock_renew: # Check that it is called when there is an overt renew failure
+            message = MockReceivedMessage(exception_on_renew_lock=True)
+            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            await asyncio.sleep(3)
+            assert len(results) == 1 and results[-1]._lock_expired == True
+            assert errors[-1]
+
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
+        async with auto_lock_renew: # Check that it is not called when the renewer is shutdown
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            await auto_lock_renew.close()
+            await asyncio.sleep(3)
+            assert not results
+            assert not errors
+
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
+        async with auto_lock_renew: # Check that it is not called when the receiver is shutdown
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            message._receiver._running = False
+            await asyncio.sleep(3)
+            assert not results
+            assert not errors
+
+
+    @pytest.mark.asyncio
+    async def test_async_queue_mock_no_reusing_auto_lock_renew(self):
+        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
+
         async with auto_lock_renew:
             auto_lock_renew.register(renewable=MockReceivedMessage())
-            await asyncio.sleep(12)
+            await asyncio.sleep(3)
 
         with pytest.raises(ServiceBusError):
             async with auto_lock_renew:
@@ -1126,11 +1209,12 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             auto_lock_renew.register(renewable=MockReceivedMessage())
 
         auto_lock_renew = AutoLockRenew()
+        auto_lock_renew._renew_period = 1
 
         auto_lock_renew.register(renewable=MockReceivedMessage())
-        time.sleep(12)
+        time.sleep(3)
 
-        await auto_lock_renew.shutdown()
+        await auto_lock_renew.close()
 
         with pytest.raises(ServiceBusError):
             async with auto_lock_renew:
@@ -1150,28 +1234,40 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             def message_content():
                 for i in range(20):
-                    yield Message("Message no. {}".format(i))
+                    yield Message(
+                        body="Message no. {}".format(i),
+                        label='1st'
+                    )
 
-            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+
+            async with sender, receiver:
                 message = BatchMessage()
                 for each in message_content():
                     message.add(each)
                 await sender.send_messages(message)
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 receive_counter = 0
-                message_received_cnt = 0
-                while message_received_cnt < 20:
+                message_1st_received_cnt = 0
+                message_2nd_received_cnt = 0
+                while message_1st_received_cnt < 20 or message_2nd_received_cnt < 20:
                     messages = await receiver.receive_messages(max_batch_size=20, max_wait_time=5)
                     if not messages:
                         break
                     receive_counter += 1
-                    message_received_cnt += len(messages)
-                    for m in messages:
-                        print_message(_logger, m)
-                        await m.complete()
+                    for message in messages:
+                        print_message(_logger, message)
+                        if message.label == '1st':
+                            message_1st_received_cnt += 1
+                            await message.complete()
+                            message.label = '2nd'
+                            await sender.send_messages(message)  # resending received message
+                        elif message.label == '2nd':
+                            message_2nd_received_cnt += 1
+                            await message.complete()
 
-                assert message_received_cnt == 20
+                assert message_1st_received_cnt == 20 and message_2nd_received_cnt == 20
                 # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
                 assert receive_counter < 10  # Dynamic link credit issuing come info effect
 

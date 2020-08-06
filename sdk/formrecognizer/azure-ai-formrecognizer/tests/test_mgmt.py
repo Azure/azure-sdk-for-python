@@ -91,7 +91,7 @@ class TestManagement(FormRecognizerTest):
         self.assertEqual(labeled_model_from_train.training_completed_on, labeled_model_from_get.training_completed_on)
         self.assertEqual(labeled_model_from_train.errors, labeled_model_from_get.errors)
         for a, b in zip(labeled_model_from_train.training_documents, labeled_model_from_get.training_documents):
-            self.assertEqual(a.document_name, b.document_name)
+            self.assertEqual(a.name, b.name)
             self.assertEqual(a.errors, b.errors)
             self.assertEqual(a.page_count, b.page_count)
             self.assertEqual(a.status, b.status)
@@ -127,7 +127,7 @@ class TestManagement(FormRecognizerTest):
         self.assertEqual(unlabeled_model_from_train.training_completed_on, unlabeled_model_from_get.training_completed_on)
         self.assertEqual(unlabeled_model_from_train.errors, unlabeled_model_from_get.errors)
         for a, b in zip(unlabeled_model_from_train.training_documents, unlabeled_model_from_get.training_documents):
-            self.assertEqual(a.document_name, b.document_name)
+            self.assertEqual(a.name, b.name)
             self.assertEqual(a.errors, b.errors)
             self.assertEqual(a.page_count, b.page_count)
             self.assertEqual(a.status, b.status)
@@ -163,8 +163,7 @@ class TestManagement(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     def test_api_version_form_training_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
-        transport = RequestsTransport()
         with self.assertRaises(ValueError):
-            ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport, api_version="2.1")
+            ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), api_version="2.1")
         
-        ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport, api_version="2.0")
+        ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), api_version="2.0")

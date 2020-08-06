@@ -90,7 +90,7 @@ class SessionReceiverMixin(ReceiverMixin):
             self._session._session_id = self._session_id
 
     def _check_live(self):
-        if self._session and self._session.expired:
+        if self._session and self._session._lock_expired:  # pylint: disable=protected-access
             raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
 
     def _populate_session_attributes(self, **kwargs):

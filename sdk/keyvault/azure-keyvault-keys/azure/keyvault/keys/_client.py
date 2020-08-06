@@ -87,13 +87,19 @@ class KeyClient(KeyVaultClientBase):
         else:
             attributes = None
 
-        bundle = self._client.create_key(
-            vault_base_url=self.vault_url,
-            key_name=name,
+        parameters = self._models.KeyCreateParameters(
             kty=key_type,
             key_size=kwargs.pop("size", None),
             key_attributes=attributes,
             key_ops=kwargs.pop("key_operations", None),
+            tags=kwargs.pop("tags", None),
+            curve=kwargs.pop("curve", None)
+        )
+
+        bundle = self._client.create_key(
+            vault_base_url=self.vault_url,
+            key_name=name,
+            parameters=parameters,
             error_map=_error_map,
             **kwargs
         )
@@ -439,12 +445,18 @@ class KeyClient(KeyVaultClientBase):
             attributes = self._models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
+
+        parameters = self._models.KeyUpdateParameters(
+            key_ops=kwargs.pop("key_operations", None),
+            key_attributes=attributes,
+            tags=kwargs.pop("tags", None)
+        )
+
         bundle = self._client.update_key(
             self.vault_url,
             name,
             key_version=version or "",
-            key_ops=kwargs.pop("key_operations", None),
-            key_attributes=attributes,
+            parameters=parameters,
             error_map=_error_map,
             **kwargs
         )
@@ -500,7 +512,12 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Restore a key backup
                 :dedent: 8
         """
-        bundle = self._client.restore_key(self.vault_url, backup, error_map=_error_map, **kwargs)
+        bundle = self._client.restore_key(
+            self.vault_url,
+            parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup),
+            error_map=_error_map,
+            **kwargs
+        )
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -530,12 +547,18 @@ class KeyClient(KeyVaultClientBase):
             attributes = self._models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
             attributes = None
-        bundle = self._client.import_key(
-            self.vault_url,
-            name,
+
+        parameters = self._models.KeyImportParameters(
             key=key._to_generated_model(),
             key_attributes=attributes,
             hsm=kwargs.pop("hardware_protected", None),
+            tags=kwargs.pop("tags", None)
+        )
+
+        bundle = self._client.import_key(
+            self.vault_url,
+            name,
+            parameters=parameters,
             error_map=_error_map,
             **kwargs
         )

@@ -12,7 +12,7 @@ For the older Azure Service Management (ASM) libraries, see
 library.
 
 For a more complete set of Azure libraries, see the
-[azure](https://pypi.python.org/pypi/azure) bundle package.
+[azure sdk python release](https://aka.ms/azsdk/python/all).
 
 ## Compatibility
 
