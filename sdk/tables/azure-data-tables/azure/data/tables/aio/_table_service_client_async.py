@@ -20,8 +20,7 @@ from .. import VERSION, LocationMode
 from .._generated.aio._azure_table_async import AzureTable
 from .._generated.models import TableServiceProperties, TableProperties, QueryOptions
 from .._models import service_stats_deserialize, service_properties_deserialize
-from .._error import _validate_table_name
-from .._deserialize import _process_table_error
+from .._error import _validate_table_name, _process_table_error
 from .._table_service_client_base import TableServiceClientBase
 from .._models import Table
 from ._policies_async import ExponentialRetry

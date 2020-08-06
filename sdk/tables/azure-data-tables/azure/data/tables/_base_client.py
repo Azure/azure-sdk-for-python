@@ -53,7 +53,7 @@ from ._policies import (
     StorageHosts, ExponentialRetry,
 )
 from ._version import VERSION
-from ._deserialize import _process_table_error
+from ._error import _process_table_error
 from ._models import PartialBatchErrorException
 
 

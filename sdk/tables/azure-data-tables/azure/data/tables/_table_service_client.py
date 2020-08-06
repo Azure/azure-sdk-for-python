@@ -17,9 +17,8 @@ from ._generated.models import TableProperties, TableServiceProperties, QueryOpt
 from ._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
 from ._base_client import parse_connection_str, TransportWrapper
 from ._models import LocationMode
-from ._deserialize import _process_table_error
+from ._error import _process_table_error
 from ._version import VERSION
-
 from ._table_client import TableClient
 from ._table_service_client_base import TableServiceClientBase
 

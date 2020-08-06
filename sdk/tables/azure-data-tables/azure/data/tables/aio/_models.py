@@ -7,11 +7,11 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncPageIterator
 
 from .._deserialize import (
-    _process_table_error, 
     _return_context_and_deserialized,
     _convert_to_entity
 )
 from .._models import Table
+from .._error import _process_table_error
 
 class TablePropertiesPaged(AsyncPageIterator):
     """An iterable of Table properties.
@@ -77,7 +77,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
         self.table = table
         self.location_mode = None
 
-    async def _get_next_cb(self, continuation_token):
+    async def _get_next_cb(self, continuation_token, **kwargs):
         row_key = ""
         partition_key = ""
         for key, value in continuation_token.items():
@@ -91,7 +91,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
                 next_row_key=row_key or None,
                 next_partition_key=partition_key or None,
                 table=self.table,
-                cls=_return_context_and_deserialized,
+                cls=kwargs.pop("cls", _return_context_and_deserialized),
                 use_location=self.location_mode
             )
         except HttpResponseError as error:

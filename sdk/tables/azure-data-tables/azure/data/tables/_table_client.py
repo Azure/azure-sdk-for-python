@@ -25,7 +25,8 @@ from ._serialize import _get_match_headers, _add_entity_properties
 from ._base_client import parse_connection_str
 from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
-from ._deserialize import _return_headers_and_deserialized, _process_table_error
+from ._deserialize import _return_headers_and_deserialized
+from ._error import _process_table_error
 from ._version import VERSION
 from ._models import TableEntityPropertiesPaged, UpdateMode, Table
 
@@ -140,7 +141,7 @@ class TableClient(TableClientBase):
             _, identifiers = self._client.table.get_access_policy(
                 table=self.table_name,
                 timeout=timeout,
-                cls=_return_headers_and_deserialized,
+                cls=kwargs.pop('cls', _return_headers_and_deserialized),
                 **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)

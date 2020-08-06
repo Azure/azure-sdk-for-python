@@ -5,8 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import Union
 
-from ._models import AccountSasPermissions
-from ._models import TableServices
+from ._models import AccountSasPermissions, TableServices
 from ._common_conversion import _sign_string
 from ._error import _validate_not_none
 from ._constants import X_MS_VERSION

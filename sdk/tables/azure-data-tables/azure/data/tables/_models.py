@@ -15,10 +15,9 @@ from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._deserialize import (
     _convert_to_entity, 
-    _return_context_and_deserialized, 
-    _process_table_error
+    _return_context_and_deserialized    
 )
-
+from ._error import _process_table_error
 
 class TableServiceStats(GenTableServiceStats):
     """Stats for the service
@@ -287,11 +286,11 @@ class TablePropertiesPaged(PageIterator):
         self._headers = None
         self.location_mode = None
 
-    def _get_next_cb(self, continuation_token):
+    def _get_next_cb(self, continuation_token, **kwargs):
         try:
             return self._command(
                 next_table_name=continuation_token or None,
-                cls=_return_context_and_deserialized,
+                cls=kwargs.pop('cls', _return_context_and_deserialized),
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
@@ -335,7 +334,7 @@ class TableEntityPropertiesPaged(PageIterator):
         self.table = table
         self.location_mode = None
 
-    def _get_next_cb(self, continuation_token):
+    def _get_next_cb(self, continuation_token, **kwargs):
         row_key = ""
         partition_key = ""
         for key, value in continuation_token.items():
@@ -349,7 +348,7 @@ class TableEntityPropertiesPaged(PageIterator):
                 next_row_key=row_key or None,
                 next_partition_key=partition_key or None,
                 table=self.table,
-                cls=_return_context_and_deserialized,
+                cls=kwargs.pop('cls', _return_context_and_deserialized),
                 use_location=self.location_mode
             )
         except HttpResponseError as error:

@@ -20,7 +20,8 @@ from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
 from .._models import AccessPolicy, Table
 from .._serialize import serialize_iso
-from .._deserialize import _return_headers_and_deserialized, _process_table_error
+from .._deserialize import _return_headers_and_deserialized
+from .._error import _process_table_error
 from .._models import UpdateMode
 from .._deserialize import _convert_to_entity
 from .._serialize import _add_entity_properties, _get_match_headers
@@ -84,7 +85,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             _, identifiers = await self._client.table.get_access_policy(
                 table=self.table_name,
                 timeout=timeout,
-                cls=_return_headers_and_deserialized,
+                cls=kwargs.pop('cls', _return_headers_and_deserialized),
                 **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
