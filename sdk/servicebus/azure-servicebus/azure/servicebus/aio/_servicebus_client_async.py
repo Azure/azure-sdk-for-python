@@ -42,6 +42,7 @@ class ServiceBusClient(object):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
 
     .. admonition:: Example:
 
@@ -107,6 +108,7 @@ class ServiceBusClient(object):
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
         :rtype: ~azure.servicebus.aio.ServiceBusClient
 
         .. admonition:: Example:
@@ -165,6 +167,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -211,6 +214,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -271,6 +275,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             is_dead_letter_receiver=True,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -304,6 +309,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -357,6 +363,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -419,6 +426,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             is_dead_letter_receiver=True,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -476,6 +484,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             session_id=session_id,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -526,5 +535,6 @@ class ServiceBusClient(object):
             session_id=session_id,
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
+            user_agent=self._config.user_agent,
             **kwargs
         )

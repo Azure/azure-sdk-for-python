@@ -1297,7 +1297,7 @@ class ObjectReplicationRule(DictMixin):
         self.status = kwargs.pop('status', None)
 
 
-class BlobQueryError(Exception):
+class BlobQueryError(object):
     """The error happened during quick query operation.
 
     :ivar str error:
@@ -1316,7 +1316,3 @@ class BlobQueryError(Exception):
         self.is_fatal = is_fatal
         self.description = description
         self.position = position
-        message = self.error
-        if self.description:
-            message += ": {}".format(self.description)
-        super(BlobQueryError, self).__init__(message)

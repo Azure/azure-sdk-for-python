@@ -2253,7 +2253,7 @@ class BlobOperations:
             return cls(response, None, response_headers)
     start_copy_from_url.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def copy_from_url(self, copy_source, timeout=None, metadata=None, tier=None, request_id=None, source_content_md5=None, blob_tags_string=None, seal_blob=None, source_modified_access_conditions=None, modified_access_conditions=None, lease_access_conditions=None, *, cls=None, **kwargs):
+    async def copy_from_url(self, copy_source, timeout=None, metadata=None, tier=None, request_id=None, source_content_md5=None, blob_tags_string=None, source_modified_access_conditions=None, modified_access_conditions=None, lease_access_conditions=None, *, cls=None, **kwargs):
         """The Copy From URL operation copies a blob or an internet resource to a
         new blob. It will not return a response until the copy is complete.
 
@@ -2292,9 +2292,6 @@ class BlobOperations:
         :param blob_tags_string: Optional.  Used to set blob tags in various
          blob operations.
         :type blob_tags_string: str
-        :param seal_blob: Overrides the sealed state of the destination blob.
-         Service version 2019-12-12 and newer.
-        :type seal_blob: bool
         :param source_modified_access_conditions: Additional parameters for
          the operation
         :type source_modified_access_conditions:
@@ -2372,8 +2369,6 @@ class BlobOperations:
             header_parameters['x-ms-source-content-md5'] = self._serialize.header("source_content_md5", source_content_md5, 'bytearray')
         if blob_tags_string is not None:
             header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
-        if seal_blob is not None:
-            header_parameters['x-ms-seal-blob'] = self._serialize.header("seal_blob", seal_blob, 'bool')
         header_parameters['x-ms-requires-sync'] = self._serialize.header("self.x_ms_requires_sync", self.x_ms_requires_sync, 'str')
         if source_if_modified_since is not None:
             header_parameters['x-ms-source-if-modified-since'] = self._serialize.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')

@@ -409,7 +409,7 @@ class BlobPropertiesInternal(Model):
         'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123', 'xml': {'name': 'AccessTierChangeTime'}},
         'tag_count': {'key': 'TagCount', 'type': 'int', 'xml': {'name': 'TagCount'}},
         'expires_on': {'key': 'Expiry-Time', 'type': 'rfc-1123', 'xml': {'name': 'Expiry-Time'}},
-        'is_sealed': {'key': 'IsSealed', 'type': 'bool', 'xml': {'name': 'IsSealed'}},
+        'is_sealed': {'key': 'Sealed', 'type': 'bool', 'xml': {'name': 'Sealed'}},
         'rehydrate_priority': {'key': 'RehydratePriority', 'type': 'str', 'xml': {'name': 'RehydratePriority'}},
     }
     _xml_map = {

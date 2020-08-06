@@ -71,6 +71,7 @@ omit_build = lambda x: x # Dummy lambda to match omit type
 lambda_filter_azure_pkg = lambda x: x.startswith("azure") and "-nspkg" not in x
 omit_mgmt = lambda x: "mgmt" not in x or os.path.basename(x) in MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS
 
+
 # dict of filter type and filter function
 omit_funct_dict = {
     "Build": omit_build,

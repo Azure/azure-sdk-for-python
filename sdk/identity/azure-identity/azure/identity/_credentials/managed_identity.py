@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 import os
 
 import six
@@ -21,6 +22,7 @@ from azure.core.pipeline.policies import (
 from .. import CredentialUnavailableError
 from .._authn_client import AuthnClient
 from .._constants import Endpoints, EnvironmentVariables
+from .._internal.decorators import log_get_token
 from .._internal.user_agent import USER_AGENT
 
 try:
@@ -32,6 +34,8 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Optional, Type
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class ManagedIdentityCredential(object):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
@@ -40,20 +44,19 @@ class ManagedIdentityCredential(object):
     the keyword arguments.
 
     :keyword str client_id: a user-assigned identity's client ID. This is supported in all hosting environments.
-    :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
-      or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
-      learn what values it expects.
-    :paramtype identity_config: Mapping[str, str]
     """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
         self._credential = None
         if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            _LOGGER.info("%s will use MSI", self.__class__.__name__)
             self._credential = MsiCredential(**kwargs)
         else:
+            _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
 
+    @log_get_token("ManagedIdentityCredential")
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
@@ -73,7 +76,7 @@ class ManagedIdentityCredential(object):
 class _ManagedIdentityBase(object):
     def __init__(self, endpoint, client_cls, config=None, client_id=None, **kwargs):
         # type: (str, Type, Optional[Configuration], Optional[str], **Any) -> None
-        self._identity_config = kwargs.pop("identity_config", None) or {}
+        self._identity_config = kwargs.pop("_identity_config", None) or {}
         if client_id:
             if os.environ.get(EnvironmentVariables.MSI_ENDPOINT) and os.environ.get(EnvironmentVariables.MSI_SECRET):
                 # App Service: version 2017-09-1 accepts client ID as parameter "clientid"
@@ -160,6 +163,7 @@ class ImdsCredential(_ManagedIdentityBase):
             except Exception:  # pylint:disable=broad-except
                 # if anything else was raised, assume the endpoint is unavailable
                 self._endpoint_available = False
+                _LOGGER.info("No response from the IMDS endpoint.")
 
         if not self._endpoint_available:
             message = "ManagedIdentityCredential authentication unavailable, no managed identity endpoint found."

@@ -5,7 +5,8 @@
 # pylint:disable=protected-access
 from collections import OrderedDict
 from copy import deepcopy
-from typing import Type, Dict
+from datetime import datetime, timedelta
+from typing import Type, Dict, Any, Union, Optional
 from msrest.serialization import Model
 
 from ._generated.models import QueueDescription as InternalQueueDescription, \
@@ -19,6 +20,7 @@ from ._generated.models import QueueDescription as InternalQueueDescription, \
     KeyValue
 
 from ._model_workaround import adjust_attribute_map
+from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 
 adjust_attribute_map()
 
@@ -96,8 +98,9 @@ class QueueDescription(object):  # pylint:disable=too-many-instance-attributes
         name,
         **kwargs
     ):
+        # type: (str, Any) -> None
         self.name = name
-        self._internal_qd = None
+        self._internal_qd = None  # type: Optional[InternalQueueDescription]
 
         self.authorization_rules = kwargs.get('authorization_rules', None)
         self.auto_delete_on_idle = kwargs.get('auto_delete_on_idle', None)
@@ -204,8 +207,9 @@ class QueueRuntimeInfo(object):
         name,
         **kwargs
     ):
+        # type: (str, Any) -> None
         self.name = name
-        self._internal_qr = None
+        self._internal_qr = None  # type: Optional[InternalQueueDescription]
 
         self.accessed_at = kwargs.get('accessed_at', None)
         self.created_at = kwargs.get('created_at', None)
@@ -290,8 +294,9 @@ class TopicDescription(object):  # pylint:disable=too-many-instance-attributes
         name,
         **kwargs
     ):
+        # type: (str, Any) -> None
         self.name = name
-        self._internal_td = None
+        self._internal_td = None  # type: Optional[InternalTopicDescription]
 
         self.default_message_time_to_live = kwargs.get('default_message_time_to_live', None)
         self.max_size_in_megabytes = kwargs.get('max_size_in_megabytes', None)
@@ -380,8 +385,9 @@ class TopicRuntimeInfo(object):
         name,
         **kwargs
     ):
+        # type: (str, Any) -> None
         self.name = name
-        self._internal_td = None
+        self._internal_td = None  # type: Optional[InternalTopicDescription]
         self.created_at = kwargs.get('created_at', None)
         self.updated_at = kwargs.get('updated_at', None)
         self.accessed_at = kwargs.get('accessed_at', None)
@@ -452,8 +458,9 @@ class SubscriptionDescription(object):  # pylint:disable=too-many-instance-attri
      ~azure.servicebus.management._generated.models.EntityAvailabilityStatus
     """
     def __init__(self, name, **kwargs):
+        # type: (str, Any) -> None
         self.name = name
-        self._internal_sd = None
+        self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
 
         self.lock_duration = kwargs.get('lock_duration', None)
         self.requires_session = kwargs.get('requires_session', None)
@@ -532,7 +539,8 @@ class SubscriptionRuntimeInfo(object):
 
     """
     def __init__(self, name, **kwargs):
-        self._internal_sd = None
+        # type: (str, Any) -> None
+        self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
         self.name = name
 
         self.message_count = kwargs.get('message_count', None)
@@ -570,12 +578,13 @@ class RuleDescription(object):
     """
 
     def __init__(self, name, **kwargs):
+        # type: (str, Any) -> None
         self.filter = kwargs.get('filter', None)
         self.action = kwargs.get('action', None)
         self.created_at = kwargs.get('created_at', None)
         self.name = name
 
-        self._internal_rule = None
+        self._internal_rule = None  # type: Optional[InternalRuleDescription]
 
     @classmethod
     def _from_internal_entity(cls, name, internal_rule):
@@ -588,7 +597,6 @@ class RuleDescription(object):
         rule.action = RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity(internal_rule.action) \
             if internal_rule.action and isinstance(internal_rule.action, tuple(RULE_CLASS_MAPPING.keys())) else None
         rule.created_at = internal_rule.created_at
-        rule.name = internal_rule.name
 
         return rule
 
@@ -596,7 +604,7 @@ class RuleDescription(object):
         # type: () -> InternalRuleDescription
         if not self._internal_rule:
             self._internal_rule = InternalRuleDescription()
-        self._internal_rule.filter = self.filter._to_internal_entity() if self.filter else TRUE_FILTER
+        self._internal_rule.filter = self.filter._to_internal_entity() if self.filter else TRUE_FILTER  # type: ignore
         self._internal_rule.action = self.action._to_internal_entity() if self.action else EMPTY_RULE_ACTION
         self._internal_rule.created_at = self.created_at
         self._internal_rule.name = self.name
@@ -605,7 +613,29 @@ class RuleDescription(object):
 
 
 class CorrelationRuleFilter(object):
+    """Represents the correlation filter expression.
+
+    :param correlation_id: Identifier of the correlation.
+    :type correlation_id: str
+    :param message_id: Identifier of the message.
+    :type message_id: str
+    :param to: Address to send to.
+    :type to: str
+    :param reply_to: Address of the queue to reply to.
+    :type reply_to: str
+    :param label: Application specific label.
+    :type label: str
+    :param session_id: Session identifier.
+    :type session_id: str
+    :param reply_to_session_id: Session identifier to reply to.
+    :type reply_to_session_id: str
+    :param content_type: Content type of the message.
+    :type content_type: str
+    :param properties: dictionary object for custom filters
+    :type properties: dict[str, Union[str, int, float, bool, datetime, timedelta]]
+    """
     def __init__(self, **kwargs):
+        # type: (Any) -> None
         self.correlation_id = kwargs.get('correlation_id', None)
         self.message_id = kwargs.get('message_id', None)
         self.to = kwargs.get('to', None)
@@ -635,6 +665,7 @@ class CorrelationRuleFilter(object):
         return correlation_filter
 
     def _to_internal_entity(self):
+        # type: () -> InternalCorrelationFilter
         internal_entity = InternalCorrelationFilter()
         internal_entity.correlation_id = self.correlation_id
 
@@ -652,49 +683,106 @@ class CorrelationRuleFilter(object):
 
 
 class SqlRuleFilter(object):
-    def __init__(self, sql_expression=None):
+    """Represents a filter which is a composition of an expression and an action
+    that is executed in the pub/sub pipeline.
+
+    :param sql_expression: The SQL expression. e.g. MyProperty='ABC'
+    :type sql_expression: str
+    :param parameters: Sets the value of the sql expression parameters if any.
+    :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
+    :param requires_preprocessing: Value that indicates whether the rule
+     filter requires preprocessing. Default value: True .
+    :type requires_preprocessing: bool
+    """
+    def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=True):
+        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]], bool) -> None
         self.sql_expression = sql_expression
+        self.parameters = parameters
+        self.requires_preprocessing = requires_preprocessing
 
     @classmethod
     def _from_internal_entity(cls, internal_sql_rule_filter):
         sql_rule_filter = cls()
         sql_rule_filter.sql_expression = internal_sql_rule_filter.sql_expression
+        sql_rule_filter.parameters = OrderedDict((kv.key, kv.value) for kv in internal_sql_rule_filter.parameters) \
+            if internal_sql_rule_filter.parameters else OrderedDict()
+        sql_rule_filter.requires_preprocessing = internal_sql_rule_filter.requires_preprocessing
         return sql_rule_filter
 
     def _to_internal_entity(self):
+        # type: () -> InternalSqlFilter
         internal_entity = InternalSqlFilter(sql_expression=self.sql_expression)
+        internal_entity.parameters = [
+            KeyValue(key=key, value=value) for key, value in self.parameters.items()  # type: ignore
+        ] if self.parameters else None
+        internal_entity.compatibility_level = RULE_SQL_COMPATIBILITY_LEVEL
+        internal_entity.requires_preprocessing = self.requires_preprocessing
         return internal_entity
 
 
 class TrueRuleFilter(SqlRuleFilter):
+    """A sql filter with a sql expression that is always True
+    """
     def __init__(self):
-        super(TrueRuleFilter, self).__init__("1=1")
+        super(TrueRuleFilter, self).__init__("1=1", None, True)
 
     def _to_internal_entity(self):
         internal_entity = InternalTrueFilter()
+        internal_entity.sql_expression = self.sql_expression
+        internal_entity.requires_preprocessing = True
+        internal_entity.compatibility_level = RULE_SQL_COMPATIBILITY_LEVEL
+
         return internal_entity
 
 
 class FalseRuleFilter(SqlRuleFilter):
+    """A sql filter with a sql expression that is always True
+    """
     def __init__(self):
-        super(FalseRuleFilter, self).__init__("1>1")
+        super(FalseRuleFilter, self).__init__("1>1", None, True)
 
     def _to_internal_entity(self):
         internal_entity = InternalFalseFilter()
+        internal_entity.sql_expression = self.sql_expression
+        internal_entity.requires_preprocessing = True
+        internal_entity.compatibility_level = RULE_SQL_COMPATIBILITY_LEVEL
         return internal_entity
 
 
 class SqlRuleAction(object):
-    def __init__(self, sql_expression=None):
+    """Represents set of actions written in SQL language-based syntax that is
+    performed against a ServiceBus.Messaging.BrokeredMessage .
+
+    :param sql_expression: SQL expression. e.g. MyProperty='ABC'
+    :type sql_expression: str
+    :param parameters: Sets the value of the sql expression parameters if any.
+    :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
+    :param requires_preprocessing: Value that indicates whether the rule
+     action requires preprocessing. Default value: True .
+    :type requires_preprocessing: bool
+    """
+    def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=True):
+        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]], bool) -> None
         self.sql_expression = sql_expression
+        self.parameters = parameters
+        self.requires_preprocessing = requires_preprocessing
 
     @classmethod
     def _from_internal_entity(cls, internal_sql_rule_action):
-        sql_rule_filter = cls(internal_sql_rule_action.sql_expression)
-        return sql_rule_filter
+        sql_rule_action = cls()
+        sql_rule_action.sql_expression = internal_sql_rule_action.sql_expression
+        sql_rule_action.parameters = OrderedDict((kv.key, kv.value) for kv in internal_sql_rule_action.parameters) \
+            if internal_sql_rule_action.parameters else OrderedDict()
+        sql_rule_action.requires_preprocessing = internal_sql_rule_action.requires_preprocessing
+        return sql_rule_action
 
     def _to_internal_entity(self):
-        return InternalSqlRuleAction(sql_expression=self.sql_expression)
+        internal_entity = InternalSqlRuleAction(sql_expression=self.sql_expression)
+        internal_entity.parameters = [KeyValue(key=key, value=value) for key, value in self.parameters.items()] \
+            if self.parameters else None
+        internal_entity.compatibility_level = RULE_SQL_COMPATIBILITY_LEVEL
+        internal_entity.requires_preprocessing = self.requires_preprocessing
+        return internal_entity
 
 
 RULE_CLASS_MAPPING = {

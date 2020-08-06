@@ -4,6 +4,7 @@
 # ------------------------------------
 import os
 import json
+import logging
 import ctypes as ct
 from .._constants import VSCODE_CREDENTIALS_SECTION
 
@@ -12,6 +13,7 @@ try:
 except (IOError, ValueError):
     pass
 
+_LOGGER = logging.getLogger(__name__)
 
 SUPPORTED_CREDKEYS = set(("Type", "TargetName", "Persist", "UserName", "Comment", "CredentialBlob"))
 
@@ -49,8 +51,7 @@ def _read_credential(service_name, account_name):
     if _advapi.CredReadW(target, 1, 0, ct.byref(cred_ptr)):
         cred_blob = cred_ptr.contents.CredentialBlob
         cred_blob_size = cred_ptr.contents.CredentialBlobSize
-        password_as_list = [int.from_bytes(cred_blob[pos : pos + 1], "little") for pos in range(0, cred_blob_size)]
-        cred = "".join(map(chr, password_as_list))
+        cred = "".join(map(chr, cred_blob[:cred_blob_size]))
         _advapi.CredFree(cred_ptr)
         return cred
     return None
@@ -81,5 +82,8 @@ def get_credentials():
         environment_name = _get_user_settings()
         credentials = _get_refresh_token(VSCODE_CREDENTIALS_SECTION, environment_name)
         return credentials
-    except Exception:  # pylint: disable=broad-except
+    except Exception as ex:  # pylint: disable=broad-except
+        _LOGGER.debug(
+            'Exception retrieving VS Code credentials: "%s"', ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG)
+        )
         return None

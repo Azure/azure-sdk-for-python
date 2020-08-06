@@ -109,18 +109,19 @@ class FormTrainingClient(object):
     ) -> AsyncLROPoller[CustomFormModel]:
         """Create and train a custom model. The request must include a `training_files_url` parameter that is an
         externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
-        a container URI is accepted only when the container is public.
+        a container URI (without SAS) is accepted only when the container is public.
         Models are trained using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff'. Other type of content in the container is ignored.
 
-        :param str training_files_url: An Azure Storage blob container's SAS URI. A container URI can be used if the
-            container is public.
+        :param str training_files_url: An Azure Storage blob container's SAS URI. A container URI (without SAS)
+            can be used if the container is public. For more information on setting up a training data set, see:
+            https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
         :param bool use_training_labels: Whether to train with labels or not. Corresponding labeled files must
-            exist in the blob container.
+            exist in the blob container if set to `True`.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
             training. For example, when using a Azure storage blob URI, use the prefix to restrict sub
             folders for training.
-        :keyword bool include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
+        :keyword bool include_subfolders: A flag to indicate if subfolders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed. Not supported if
             training with labels.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -140,7 +141,7 @@ class FormTrainingClient(object):
                 :end-before: [END training_async]
                 :language: python
                 :dedent: 8
-                :caption: Training a model with your custom forms.
+                :caption:  Training a model (without labels) with your custom forms.
         """
 
         def callback(raw_response):
@@ -170,7 +171,7 @@ class FormTrainingClient(object):
                 use_label_file=use_training_labels,
                 source_filter=TrainSourceFilter(
                     prefix=kwargs.pop("prefix", ""),
-                    include_sub_folders=kwargs.pop("include_sub_folders", False)
+                    include_sub_folders=kwargs.pop("include_subfolders", False)
                 )
             ),
             cls=lambda pipeline_response, _, response_headers: pipeline_response,

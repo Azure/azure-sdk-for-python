@@ -207,12 +207,17 @@ class CryptographyClient(KeyVaultClientBase):
                 raise AzureError("This client doesn't have 'keys/encrypt' permission")
             result = local_key.encrypt(plaintext, algorithm=algorithm.value)
         else:
+
+            parameters = self._models.KeyOperationsParameters(
+                algorithm=algorithm,
+                value=plaintext
+            )
+
             result = self._client.encrypt(
                 vault_base_url=self._key_id.vault_url,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
-                algorithm=algorithm,
-                value=plaintext,
+                parameters=parameters,
                 **kwargs
             ).result
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result)
@@ -239,12 +244,16 @@ class CryptographyClient(KeyVaultClientBase):
             print(result.plaintext)
 
         """
+
+        parameters = self._models.KeyOperationsParameters(
+            algorithm=algorithm,
+            value=ciphertext
+        )
         result = self._client.decrypt(
             vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
-            algorithm=algorithm,
-            value=ciphertext,
+            parameters=parameters,
             **kwargs
         )
         return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=result.result)
@@ -280,13 +289,15 @@ class CryptographyClient(KeyVaultClientBase):
                 raise AzureError("This client doesn't have 'keys/wrapKey' permission")
             result = local_key.wrap_key(key, algorithm=algorithm.value)
         else:
+            parameters = self._models.KeyOperationsParameters(
+                algorithm=algorithm,
+                value=key,
+            )
             result = self._client.wrap_key(
                 self._key_id.vault_url,
                 self._key_id.name,
                 self._key_id.version,
-                algorithm=algorithm,
-                value=key,
-                **kwargs
+                parameters=parameters
             ).result
 
         return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result)
@@ -317,12 +328,17 @@ class CryptographyClient(KeyVaultClientBase):
                 raise AzureError("This client doesn't have 'keys/unwrapKey' permission")
             result = local_key.unwrap_key(encrypted_key, **kwargs)
         else:
+
+            parameters = self._models.KeyOperationsParameters(
+                algorithm=algorithm,
+                value=encrypted_key
+            )
+
             result = self._client.unwrap_key(
                 vault_base_url=self._key_id.vault_url,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
-                algorithm=algorithm,
-                value=encrypted_key,
+                parameters=parameters,
                 **kwargs
             ).result
         return UnwrapResult(key_id=self._key_id, algorithm=algorithm, key=result)
@@ -356,12 +372,16 @@ class CryptographyClient(KeyVaultClientBase):
 
         """
 
+        parameters = self._models.KeySignParameters(
+            algorithm=algorithm,
+            value=digest
+        )
+
         result = self._client.sign(
             vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
-            algorithm=algorithm,
-            value=digest,
+            parameters=parameters,
             **kwargs
         )
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=result.result)
@@ -394,13 +414,17 @@ class CryptographyClient(KeyVaultClientBase):
                 raise AzureError("This client doesn't have 'keys/verify' permission")
             result = local_key.verify(digest, signature, algorithm=algorithm.value)
         else:
+            parameters = self._models.KeyVerifyParameters(
+                algorithm=algorithm,
+                digest=digest,
+                signature=signature
+            )
+
             result = self._client.verify(
                 vault_base_url=self._key_id.vault_url,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
-                algorithm=algorithm,
-                digest=digest,
-                signature=signature,
+                parameters=parameters,
                 **kwargs
             ).value
         return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=result)

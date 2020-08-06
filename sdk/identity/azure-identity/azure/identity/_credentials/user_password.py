@@ -29,14 +29,10 @@ class UsernamePasswordCredential(InteractiveCredential):
     :param str password: the user's password
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
     :keyword str tenant_id: tenant ID or a domain associated with a tenant. If not provided, defaults to the
           'organizations' tenant, which supports only Azure Active Directory work or school accounts.
-    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache shared by
-         other user credentials. Defaults to False.
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache on platforms
-          where encryption is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
     def __init__(self, client_id, username, password, **kwargs):
@@ -46,7 +42,7 @@ class UsernamePasswordCredential(InteractiveCredential):
         # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we
         # discard it here.
-        kwargs.pop("authentication_record", None)
+        kwargs.pop("_authentication_record", None)
         super(UsernamePasswordCredential, self).__init__(client_id=client_id, **kwargs)
         self._username = username
         self._password = password

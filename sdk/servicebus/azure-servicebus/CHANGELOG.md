@@ -6,9 +6,9 @@
 
 * Added new properties to Message, PeekMessage and ReceivedMessage: `content_type`, `correlation_id`, `label`,
 `message_id`, `reply_to`, `reply_to_session_id` and `to`. Please refer to the docstring for further information.
-
-* Add new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
+* Added new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
 `dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`. Please refer to the docstring for further information.
+* Added support for sending received messages via `ServiceBusSender.send_messages`.
 
 **Breaking Changes**
 
@@ -20,11 +20,18 @@
   - Removed instance variable `header`.
 
 * Removed several properties and instance variables on PeekMessage and ReceivedMessage.
-  - Removed proeprty `partition_id` on both type.
+  - Removed property `partition_id` on both type.
+  - Removed property `settled` on both type.
   - Removed instance variable `received_timestamp_utc` on both type.
   - Removed property `settled` on `PeekMessage`.
   - Removed property `expired` on `ReceivedMessage`.
 
+* Add `on_lock_renew_failure` as a parameter to `AutoLockRenew.register`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion)
+
+**Breaking Changes**
+
+* `AutoLockRenew.sleep_time` and `AutoLockRenew.renew_period` have been made internal as `_sleep_time` and `_renew_period` respectively, as it is not expected a user will have to interact with them.
+* `AutoLockRenew.shutdown` is now `AutoLockRenew.close` to normalize with other equivelent behaviors.
 
 ## 7.0.0b4 (2020-07-06)
 
@@ -35,8 +42,8 @@
 
 **BugFixes**
 
-* Fixed bug where sync AutoLockRenew does not shutdown itself timely.
-* Fixed bug where async AutoLockRenew does not support context manager.
+* Fixed bug where sync `AutoLockRenew` does not shutdown itself timely.
+* Fixed bug where async `AutoLockRenew` does not support context manager.
 
 **Breaking Changes**
 
@@ -164,7 +171,7 @@ Version 7.0.0b1 is a preview of our efforts to create a client library that is u
 
 * Introduces new AMQP-based API.
 * Original HTTP-based API still available under new namespace: azure.servicebus.control_client
-* For full API changes, please see updated [reference documentation](https://docs.microsoft.com/python/api/overview/azure/servicebus/client?view=azure-python).
+* For full API changes, please see updated [reference documentation](https://docs.microsoft.com/python/api/azure-servicebus/azure.servicebus?view=azure-python).
 
 Within the new namespace, the original HTTP-based API from version 0.21.1 remains unchanged (i.e. no additional features or bugfixes)
 so for those intending to only use HTTP operations - there is no additional benefit in updating at this time.

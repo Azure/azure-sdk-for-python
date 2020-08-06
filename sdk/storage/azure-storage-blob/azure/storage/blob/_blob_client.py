@@ -52,7 +52,7 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from ._models import BlobType, BlobBlock, BlobProperties
+from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient, get_access_conditions
 
@@ -750,6 +750,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
         """
         errors = kwargs.pop("on_error", None)
+        error_cls = kwargs.pop("error_cls", BlobQueryError)
         encoding = kwargs.pop("encoding", None)
         options, delimiter = self._quick_query_options(query_expression, **kwargs)
         try:
@@ -763,7 +764,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             record_delimiter=delimiter,
             encoding=encoding,
             headers=headers,
-            response=raw_response_body)
+            response=raw_response_body,
+            error_cls=error_cls)
 
     @staticmethod
     def _generic_delete_blob_options(delete_snapshots=False, **kwargs):

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from .base import AsyncCredentialBase
 from .._internal import AadClient
+from .._internal.decorators import log_get_token_async
 from ..._internal import ClientSecretCredentialBase
 
 if TYPE_CHECKING:
@@ -21,12 +22,8 @@ class ClientSecretCredential(AsyncCredentialBase, ClientSecretCredentialBase):
     :param str client_secret: one of the service principal's client secrets
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
-    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache. Defaults to
-          False.
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
-          is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
     async def __aenter__(self):
@@ -38,6 +35,7 @@ class ClientSecretCredential(AsyncCredentialBase, ClientSecretCredentialBase):
 
         await self._client.__aexit__()
 
+    @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 

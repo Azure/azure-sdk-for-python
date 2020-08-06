@@ -8,6 +8,7 @@ import os
 
 from azure.core.exceptions import ClientAuthenticationError
 from .._credentials.base import AsyncCredentialBase
+from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._credentials.azure_cli import (
     AzureCliCredential as _SyncAzureCliCredential,
@@ -27,6 +28,7 @@ class AzureCliCredential(AsyncCredentialBase):
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
     """
 
+    @log_get_token_async
     async def get_token(self, *scopes, **kwargs):
         """Request an access token for `scopes`.
 

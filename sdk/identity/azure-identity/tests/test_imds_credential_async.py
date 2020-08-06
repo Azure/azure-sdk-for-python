@@ -198,7 +198,7 @@ async def test_identity_config():
         ],
     )
 
-    credential = ImdsCredential(client_id=client_id, identity_config={param_name: param_value}, transport=transport)
+    credential = ImdsCredential(client_id=client_id, _identity_config={param_name: param_value}, transport=transport)
     token = await credential.get_token(scope)
 
     assert token == expected_token

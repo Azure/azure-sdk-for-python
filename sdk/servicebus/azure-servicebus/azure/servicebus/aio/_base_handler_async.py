@@ -67,7 +67,7 @@ class BaseHandler:
         self._running = False
         self._handler = None  # type: uamqp.AMQPClient
         self._auth_uri = None
-        self._properties = create_properties()
+        self._properties = create_properties(self._config.user_agent)
 
     async def __aenter__(self):
         await self._open_with_retry()

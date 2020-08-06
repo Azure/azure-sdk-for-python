@@ -26,7 +26,7 @@ import os
 class ExtractKeyPhrasesSample(object):
 
     def extract_key_phrases(self):
-        # [START batch_extract_key_phrases]
+        # [START extract_key_phrases]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -46,7 +46,7 @@ class ExtractKeyPhrasesSample(object):
                 print(doc.key_phrases)
             if doc.is_error:
                 print(doc.id, doc.error)
-        # [END batch_extract_key_phrases]
+        # [END extract_key_phrases]
 
 
 if __name__ == '__main__':
