@@ -66,7 +66,10 @@ def is_live():
 
 
 def get_region_override(default='westus'):
-    return os.environ.get('RESOURCE_REGION', default) or 'westus'
+    region = os.environ.get('RESOURCE_REGION', None) or default
+    if not region:
+        raise ValueError('Region should not be None; set a non-empty-string region to either the RESOURCE_REGION environment variable or the default parameter to this function.')
+    return region
 
 
 def _is_autorest_v3(client_class):
