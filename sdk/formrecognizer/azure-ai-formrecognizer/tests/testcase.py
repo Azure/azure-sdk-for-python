@@ -13,7 +13,7 @@ import pytest
 import re
 import logging
 from azure.core.credentials import AzureKeyCredential, AccessToken
-from azure.ai.formrecognizer._models import adjust_value_type
+from azure.ai.formrecognizer._helpers import adjust_value_type
 from devtools_testutils import (
     AzureTestCase,
     AzureMgmtPreparer,
