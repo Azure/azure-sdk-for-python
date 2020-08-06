@@ -253,3 +253,7 @@ class ServiceBusManagementClientRuleTests(AzureMgmtTestCase):
         finally:
             mgmt_service.delete_subscription(topic_name, subscription_name)
             mgmt_service.delete_topic(topic_name)
+
+    def test_rule_properties_constructor(self):
+        with pytest.raises(TypeError):
+            RuleProperties("randomname")

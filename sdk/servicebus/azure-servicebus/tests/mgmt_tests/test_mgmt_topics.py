@@ -261,3 +261,7 @@ class ServiceBusManagementClientTopicTests(AzureMgmtTestCase):
         assert topic_runtime_info.subscription_count is 0
         assert topic_runtime_info.scheduled_message_count == 0
         mgmt_service.delete_topic("test_topic")
+
+    def test_topic_properties_constructor(self):
+        with pytest.raises(TypeError):
+            TopicProperties("randomname")

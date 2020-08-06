@@ -470,3 +470,6 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         with pytest.raises(ResourceNotFoundError):
             mgmt_service.get_queue_runtime_info("non_existing_queue")
 
+    def test_queue_properties_constructor(self):
+        with pytest.raises(TypeError):
+            QueueProperties("randomname")

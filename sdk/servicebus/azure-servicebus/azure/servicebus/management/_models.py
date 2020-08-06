@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
+import functools
 from collections import OrderedDict
 from copy import deepcopy
 from datetime import datetime, timedelta
-from typing import Type, Dict, Any, Union, Optional
+from typing import Type, Dict, Any, Union, Optional, List
 from msrest.serialization import Model
 
 from ._generated.models import QueueDescription as InternalQueueDescription, \
@@ -23,6 +24,23 @@ from ._model_workaround import adjust_attribute_map
 from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 
 adjust_attribute_map()
+
+
+def extract_kwarg_template(self, kwargs, extraction_missing_args, name):
+    if getattr(self, '_require_all_args', False):
+        try:
+            return kwargs[name]
+        except KeyError:
+            extraction_missing_args.append(name)
+    else:
+        return kwargs.get(name, None)
+
+
+def validate_extraction_missing_args(extraction_missing_args):
+    if extraction_missing_args:
+        raise TypeError('__init__() missing {} required keyword arguments: {}'.format(
+            len(extraction_missing_args),
+            ' and '.join(["'" + e + "'" for e in extraction_missing_args])))
 
 
 class DictMixin(object):
@@ -152,27 +170,33 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         # type: (str, Any) -> None
         self.name = name
         self._internal_qd = None  # type: Optional[InternalQueueDescription]
+        self._require_all_args = True
 
-        self.authorization_rules = kwargs['authorization_rules']
-        self.auto_delete_on_idle = kwargs['auto_delete_on_idle']
-        self.dead_lettering_on_message_expiration = kwargs['dead_lettering_on_message_expiration']
-        self.default_message_time_to_live = kwargs['default_message_time_to_live']
-        self.duplicate_detection_history_time_window = kwargs['duplicate_detection_history_time_window']
-        self.entity_availability_status = kwargs['entity_availability_status']
-        self.enable_batched_operations = kwargs['enable_batched_operations']
-        self.enable_express = kwargs['enable_express']
-        self.enable_partitioning = kwargs['enable_partitioning']
-        self.is_anonymous_accessible = kwargs['is_anonymous_accessible']
-        self.lock_duration = kwargs['lock_duration']
-        self.max_delivery_count = kwargs['max_delivery_count']
-        self.max_size_in_megabytes = kwargs['max_size_in_megabytes']
-        self.requires_duplicate_detection = kwargs['requires_duplicate_detection']
-        self.requires_session = kwargs['requires_session']
-        self.status = kwargs['status']
-        self.support_ordering = kwargs['support_ordering']
-        self.forward_to = kwargs['forward_to']
-        self.user_metadata = kwargs['user_metadata']
-        self.forward_dead_lettered_messages_to = kwargs['forward_dead_lettered_messages_to']
+        extraction_missing_args = []  # type: List[str]
+        extract_kwarg = functools.partial(extract_kwarg_template, self, kwargs, extraction_missing_args)
+
+        self.authorization_rules = extract_kwarg('authorization_rules')
+        self.auto_delete_on_idle = extract_kwarg('auto_delete_on_idle')
+        self.dead_lettering_on_message_expiration = extract_kwarg('dead_lettering_on_message_expiration')
+        self.default_message_time_to_live = extract_kwarg('default_message_time_to_live')
+        self.duplicate_detection_history_time_window = extract_kwarg('duplicate_detection_history_time_window')
+        self.entity_availability_status = extract_kwarg('entity_availability_status')
+        self.enable_batched_operations = extract_kwarg('enable_batched_operations')
+        self.enable_express = extract_kwarg('enable_express')
+        self.enable_partitioning = extract_kwarg('enable_partitioning')
+        self.is_anonymous_accessible = extract_kwarg('is_anonymous_accessible')
+        self.lock_duration = extract_kwarg('lock_duration')
+        self.max_delivery_count = extract_kwarg('max_delivery_count')
+        self.max_size_in_megabytes = extract_kwarg('max_size_in_megabytes')
+        self.requires_duplicate_detection = extract_kwarg('requires_duplicate_detection')
+        self.requires_session = extract_kwarg('requires_session')
+        self.status = extract_kwarg('status')
+        self.support_ordering = extract_kwarg('support_ordering')
+        self.forward_to = extract_kwarg('forward_to')
+        self.user_metadata = extract_kwarg('user_metadata')
+        self.forward_dead_lettered_messages_to = extract_kwarg('forward_dead_lettered_messages_to')
+
+        validate_extraction_missing_args(extraction_missing_args)
 
 
     @classmethod
@@ -402,23 +426,29 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         # type: (str, Any) -> None
         self.name = name
         self._internal_td = None  # type: Optional[InternalTopicDescription]
+        self._require_all_args = True
 
-        self.default_message_time_to_live = kwargs['default_message_time_to_live']
-        self.max_size_in_megabytes = kwargs['max_size_in_megabytes']
-        self.requires_duplicate_detection = kwargs['requires_duplicate_detection']
-        self.duplicate_detection_history_time_window = kwargs['duplicate_detection_history_time_window']
-        self.enable_batched_operations = kwargs['enable_batched_operations']
-        self.size_in_bytes = kwargs['size_in_bytes']
-        self.is_anonymous_accessible = kwargs['is_anonymous_accessible']
-        self.authorization_rules = kwargs['authorization_rules']
-        self.status = kwargs['status']
-        self.support_ordering = kwargs['support_ordering']
-        self.auto_delete_on_idle = kwargs['auto_delete_on_idle']
-        self.enable_partitioning = kwargs['enable_partitioning']
-        self.entity_availability_status = kwargs['entity_availability_status']
-        self.enable_subscription_partitioning = kwargs['enable_subscription_partitioning']
-        self.enable_express = kwargs['enable_express']
-        self.user_metadata = kwargs['user_metadata']
+        extraction_missing_args = []  # type: List[str]
+        extract_kwarg = functools.partial(extract_kwarg_template, self, kwargs, extraction_missing_args)
+
+        self.default_message_time_to_live = extract_kwarg('default_message_time_to_live')
+        self.max_size_in_megabytes = extract_kwarg('max_size_in_megabytes')
+        self.requires_duplicate_detection = extract_kwarg('requires_duplicate_detection')
+        self.duplicate_detection_history_time_window = extract_kwarg('duplicate_detection_history_time_window')
+        self.enable_batched_operations = extract_kwarg('enable_batched_operations')
+        self.size_in_bytes = extract_kwarg('size_in_bytes')
+        self.is_anonymous_accessible = extract_kwarg('is_anonymous_accessible')
+        self.authorization_rules = extract_kwarg('authorization_rules')
+        self.status = extract_kwarg('status')
+        self.support_ordering = extract_kwarg('support_ordering')
+        self.auto_delete_on_idle = extract_kwarg('auto_delete_on_idle')
+        self.enable_partitioning = extract_kwarg('enable_partitioning')
+        self.entity_availability_status = extract_kwarg('entity_availability_status')
+        self.enable_subscription_partitioning = extract_kwarg('enable_subscription_partitioning')
+        self.enable_express = extract_kwarg('enable_express')
+        self.user_metadata = extract_kwarg('user_metadata')
+
+        validate_extraction_missing_args(extraction_missing_args)
 
     @classmethod
     def _from_internal_entity(cls, name, internal_td):
@@ -595,21 +625,27 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         # type: (str, Any) -> None
         self.name = name
         self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
+        self._require_all_args = True
 
-        self.lock_duration = kwargs['lock_duration']
-        self.requires_session = kwargs['requires_session']
-        self.default_message_time_to_live = kwargs['default_message_time_to_live']
-        self.dead_lettering_on_message_expiration = kwargs['dead_lettering_on_message_expiration']
-        self.dead_lettering_on_filter_evaluation_exceptions = kwargs[
-            'dead_lettering_on_filter_evaluation_exceptions']
-        self.max_delivery_count = kwargs['max_delivery_count']
-        self.enable_batched_operations = kwargs['enable_batched_operations']
-        self.status = kwargs['status']
-        self.forward_to = kwargs['forward_to']
-        self.user_metadata = kwargs['user_metadata']
-        self.forward_dead_lettered_messages_to = kwargs['forward_dead_lettered_messages_to']
-        self.auto_delete_on_idle = kwargs['auto_delete_on_idle']
-        self.entity_availability_status = kwargs['entity_availability_status']
+        extraction_missing_args = []  # type: List[str]
+        extract_kwarg = functools.partial(extract_kwarg_template, self, kwargs, extraction_missing_args)
+
+        self.lock_duration = extract_kwarg('lock_duration')
+        self.requires_session = extract_kwarg('requires_session')
+        self.default_message_time_to_live = extract_kwarg('default_message_time_to_live')
+        self.dead_lettering_on_message_expiration = extract_kwarg('dead_lettering_on_message_expiration')
+        self.dead_lettering_on_filter_evaluation_exceptions = extract_kwarg(
+            'dead_lettering_on_filter_evaluation_exceptions')
+        self.max_delivery_count = extract_kwarg('max_delivery_count')
+        self.enable_batched_operations = extract_kwarg('enable_batched_operations')
+        self.status = extract_kwarg('status')
+        self.forward_to = extract_kwarg('forward_to')
+        self.user_metadata = extract_kwarg('user_metadata')
+        self.forward_dead_lettered_messages_to = extract_kwarg('forward_dead_lettered_messages_to')
+        self.auto_delete_on_idle = extract_kwarg('auto_delete_on_idle')
+        self.entity_availability_status = extract_kwarg('entity_availability_status')
+
+        validate_extraction_missing_args(extraction_missing_args)
 
     @classmethod
     def _from_internal_entity(cls, name, internal_subscription):
@@ -762,12 +798,19 @@ class RuleProperties(DictMixin):
 
     def __init__(self, name, **kwargs):
         # type: (str, Any) -> None
-        self.filter = kwargs['filter']
-        self.action = kwargs['action']
-        self.created_at = kwargs['created_at']
-        self.name = name
 
+        self.name = name
         self._internal_rule = None  # type: Optional[InternalRuleDescription]
+        self._require_all_args = True
+
+        extraction_missing_args = []  # type: List[str]
+        extract_kwarg = functools.partial(extract_kwarg_template, self, kwargs, extraction_missing_args)
+
+        self.filter = extract_kwarg('filter')
+        self.action = extract_kwarg('action')
+        self.created_at = extract_kwarg('created_at')
+
+        validate_extraction_missing_args(extraction_missing_args)
 
     @classmethod
     def _from_internal_entity(cls, name, internal_rule):

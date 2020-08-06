@@ -291,3 +291,7 @@ class ServiceBusManagementClientSubscriptionTests(AzureMgmtTestCase):
 
         mgmt_service.delete_subscription(topic_name, subscription_name)
         mgmt_service.delete_topic(topic_name)
+
+    def test_subscription_properties_constructor(self):
+        with pytest.raises(TypeError):
+            SubscriptionProperties("randomname")
