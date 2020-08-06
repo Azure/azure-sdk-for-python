@@ -1,7 +1,8 @@
 Migration Guide - Resource Management
--------------------------------------
+=====================================
+
 Guide for migrating to the next generation of Azure Python SDK for Management Libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------------------------------------------------------
 
 This document is intended for users that are familiar with an older
 version of the Python SDK for managment libraries and wish to migrate
@@ -63,7 +64,7 @@ experience.
 The important breaking changes are listed in the following sections:
 
 Authentication
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 In old version, ``ServicePrincipalCredentials`` in ``azure.common`` is
 used for authenticating to Azure and creating a service client
@@ -116,7 +117,7 @@ Most of the API has stayed the same to provide an easier migration
 experience. There is a minor change regarding the async operations
 
 Async Operations Change
-~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^
 
 To differentiate between asynchronous and synchronous API operations in
 the new version, an explicit ``begin_`` prefix is added for all the
