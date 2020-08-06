@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._anomaly_detector_client_operations import AnomalyDetectorClientOperationsMixin
+from ._anomaly_detector_client_operations_async import AnomalyDetectorClientOperationsMixin
 
 __all__ = [
     'AnomalyDetectorClientOperationsMixin',
