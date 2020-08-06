@@ -1,6 +1,6 @@
 # Release History
 
-## 7.0.0b5 (Unreleased)
+## 7.0.0b5 (2020-08-10)
 
 **New Features**
 
@@ -9,9 +9,9 @@
 * Added new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
 `dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`. Please refer to the docstring for further information.
 * Added support for sending received messages via `ServiceBusSender.send_messages`.
-* Added `on_lock_renew_failure` as a parameter to `AutoLockRenew.register`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion)
+* Added `on_lock_renew_failure` as a parameter to `AutoLockRenew.register`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion).
 * Added new supported value types int, float, datetime and timedelta for `CorrelationFilter.properties`.
-* Added new property `parameters` to `SqlRuleFilter` and `SqlRuleAction`
+* Added new properties `parameters` and `requires_preprocessing` to `SqlRuleFilter` and `SqlRuleAction`.
 
 **Breaking Changes**
 
@@ -33,7 +33,7 @@
 * `AutoLockRenew.shutdown` is now `AutoLockRenew.close` to normalize with other equivelent behaviors.
 
 * Renamed `QueueDescription`, `TopicDescription`, `SubscriptionDescription` and `RuleDescription` to `QueueProperties`, `TopicProperties`, `SubscriptionProperties`, and `RuleProperties`.
-* Renamed `QueueRuntimeInfo`, `TopicRuntimeInfo`, and `SubscriptionRuntimeInfo` to `QueueRuntimeProperties`, `TopicRuntimeProperties`, and `SubscriptionRuntimeProperties`
+* Renamed `QueueRuntimeInfo`, `TopicRuntimeInfo`, and `SubscriptionRuntimeInfo` to `QueueRuntimeProperties`, `TopicRuntimeProperties`, and `SubscriptionRuntimeProperties`.
 * Removed param `queue` from `create_queue`, `topic` from `create_topic`, `subscription` from `create_subscription` and `rule` from `create_rule`
  of `ServiceBusManagementClient`. Added param `name` to them and keyword arguments for queue properties and topic properties.
 * Removed model class attributes related keyword arguments from `update_queue` and `update_topic` of `ServiceBusManagementClient`. This is to encourage utilizing the model class instance instead as returned from a create_*, update_*, or list_* or get_* operation to ensure it is properly populated.  Properties may still be modified.
