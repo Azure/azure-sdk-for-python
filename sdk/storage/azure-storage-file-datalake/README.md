@@ -26,16 +26,19 @@ pip install azure-storage-file-datalake --pre
 ### Create a storage account
 If you wish to create a new storage account, you can use the
 [Azure Portal](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-the-azure-portal),
-[Azure PowerShell](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-powershell),
-or [Azure CLI](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-quickstart-create-account#create-an-account-using-azure-cli):
+[Azure PowerShell](https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-powershell),
+or [Azure CLI](https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-cli):
 
 ```bash
 # Create a new resource group to hold the storage account -
 # if using an existing resource group, skip this step
 az group create --name my-resource-group --location westus2
 
+# Install the extension 'Storage-Preview'
+az extension add --name storage-preview
+
 # Create the storage account
-az storage account create -n my-storage-account-name -g my-resource-group --hierarchical-namespace true
+az storage account create --name my-storage-account-name --resource-group my-resource-group --sku Standard_LRS --kind StorageV2 --hierarchical-namespace true
 ```
 
 ### Authenticate the client
