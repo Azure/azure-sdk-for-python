@@ -1,6 +1,12 @@
 # Release History
 
-## 11.0.1 (Unreleased)
+## 11.1.0b1 (2020-08-11)
+
+**Features**
+
+- new SearchIndexDocumentBatchingClient
+
+SearchIndexDocumentBatchingClient supports handling document indexing actions in an automatic way. It can trigger the flush method automatically based on pending tasks and idle time.
 
 
 ## 11.0.0 (2020-07-07)
