@@ -303,7 +303,8 @@ class SecretClient(KeyVaultClientBase):
         with soft-delete enabled. This method therefore returns a poller enabling you to wait for deletion to complete.
 
         :param str name: Name of the secret to delete.
-        :keyword str continuation_token: A continuation token to restart the poller from a saved state.
+        :keyword str continuation_token: A continuation token to restart the poller from a saved state. To get the
+         continuation token from your poller, call `continuation_token()` on the poller.
         :returns: A poller for the delete operation. The poller's `result` method returns the
          :class:`~azure.keyvault.secrets.DeletedSecret` without waiting for deletion to complete. If the vault has
          soft-delete enabled and you want to permanently delete the secret with :func:`purge_deleted_secret`, call the
@@ -439,7 +440,8 @@ class SecretClient(KeyVaultClientBase):
         Requires the secrets/recover permission.
 
         :param str name: Name of the deleted secret to recover
-        :keyword str continuation_token: A continuation token to restart the poller from a saved state.
+        :keyword str continuation_token: A continuation token to restart the poller from a saved state. To get the
+         continuation token from your poller, call `continuation_token()` on the poller.
         :returns: A poller for the recovery operation. The poller's `result` method returns the recovered
          :class:`~azure.keyvault.secrets.Secret` without waiting for recovery to complete. If you want to use the
          recovered secret immediately, call the poller's `wait` method, which blocks until the secret is ready to use.
