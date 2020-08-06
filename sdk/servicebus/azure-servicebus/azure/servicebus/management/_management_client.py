@@ -19,8 +19,7 @@ from ._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
     QueueDescriptionEntry, SubscriptionDescriptionFeed, SubscriptionDescriptionEntry, RuleDescriptionEntry, \
     RuleDescriptionFeed, NamespacePropertiesEntry, CreateTopicBody, CreateTopicBodyContent, \
     TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, \
-    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, NamespaceProperties, \
-    QueueDescription, TopicDescription, SubscriptionDescription, RuleDescription
+    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, NamespaceProperties
 from ._utils import extract_data_template, get_next_template, deserialize_rule_key_values, serialize_rule_key_values, \
     extract_rule_data_template
 from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy

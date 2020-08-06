@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
 # pylint:disable=specify-parameter-names-in-call
+# pylint:disable=too-many-lines
 import functools
 from typing import TYPE_CHECKING, Any, Union, cast
 from xml.etree.ElementTree import ElementTree
@@ -20,8 +21,6 @@ from ...management._generated.models import QueueDescriptionFeed, TopicDescripti
     RuleDescriptionFeed, NamespacePropertiesEntry, CreateTopicBody, CreateTopicBodyContent, \
     TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, \
     CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, \
-    QueueDescription as InternalQueueDescription, TopicDescription as InternalTopicDescription, \
-    SubscriptionDescription as InternalSubscriptionDescription, \
     NamespaceProperties
 
 from ..._common.utils import parse_conn_str
