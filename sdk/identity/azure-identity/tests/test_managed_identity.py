@@ -106,7 +106,7 @@ def test_app_service():
             Request(
                 base_url=endpoint,
                 method="GET",
-                required_headers={"Metadata": "true", "secret": secret, "User-Agent": USER_AGENT},
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
                 required_params={"api-version": "2017-09-01", "resource": scope},
             )
         ],
@@ -144,7 +144,7 @@ def test_app_service_2017_09_01():
             Request(
                 url,
                 method="GET",
-                required_headers={"Metadata": "true", "secret": secret, "User-Agent": USER_AGENT},
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
                 required_params={"api-version": "2017-09-01", "resource": scope},
             )
         ]
@@ -198,7 +198,7 @@ def test_app_service_user_assigned_identity():
             Request(
                 base_url=endpoint,
                 method="GET",
-                required_headers={"Metadata": "true", "secret": secret, "User-Agent": USER_AGENT},
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
                 required_params={"api-version": "2017-09-01", "clientid": client_id, "resource": scope},
             )
         ],
