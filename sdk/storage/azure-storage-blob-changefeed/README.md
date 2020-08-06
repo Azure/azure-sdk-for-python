@@ -33,7 +33,7 @@ az group create --name my-resource-group --location westus2
 
 # Create the storage account
 az storage account create -n my-storage-account-name -g my-resource-group
-``````
+```
 
 To enable changefeed you can use:
 [Azure Portal](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-change-feed?tabs=azure-portal#enable-and-disable-the-change-feed)
