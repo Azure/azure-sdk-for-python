@@ -27,7 +27,7 @@ from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 adjust_attribute_map()
 
 
-def extract_kwarg_template(self, kwargs, extraction_missing_args, name):
+def extract_kwarg_template(kwargs, extraction_missing_args, name):
     try:
         return kwargs[name]
     except KeyError:
@@ -170,7 +170,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self._internal_qd = None  # type: Optional[InternalQueueDescription]
 
         extraction_missing_args = []  # type: List[str]
-        extract_kwarg = functools.partial(extract_kwarg_template, self, kwargs, extraction_missing_args)
+        extract_kwarg = functools.partial(extract_kwarg_template, kwargs, extraction_missing_args)
 
         self.authorization_rules = extract_kwarg('authorization_rules')
         self.auto_delete_on_idle = extract_kwarg('auto_delete_on_idle')
@@ -425,7 +425,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self._internal_td = None  # type: Optional[InternalTopicDescription]
 
         extraction_missing_args = []  # type: List[str]
-        extract_kwarg = functools.partial(extract_kwarg_template, self, kwargs, extraction_missing_args)
+        extract_kwarg = functools.partial(extract_kwarg_template, kwargs, extraction_missing_args)
 
         self.default_message_time_to_live = extract_kwarg('default_message_time_to_live')
         self.max_size_in_megabytes = extract_kwarg('max_size_in_megabytes')
@@ -623,7 +623,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
 
         extraction_missing_args = []  # type: List[str]
-        extract_kwarg = functools.partial(extract_kwarg_template, self, kwargs, extraction_missing_args)
+        extract_kwarg = functools.partial(extract_kwarg_template, kwargs, extraction_missing_args)
 
         self.lock_duration = extract_kwarg('lock_duration')
         self.requires_session = extract_kwarg('requires_session')
@@ -798,7 +798,7 @@ class RuleProperties(DictMixin):
         self._internal_rule = None  # type: Optional[InternalRuleDescription]
 
         extraction_missing_args = []  # type: List[str]
-        extract_kwarg = functools.partial(extract_kwarg_template, self, kwargs, extraction_missing_args)
+        extract_kwarg = functools.partial(extract_kwarg_template, kwargs, extraction_missing_args)
 
         self.filter = extract_kwarg('filter')
         self.action = extract_kwarg('action')
