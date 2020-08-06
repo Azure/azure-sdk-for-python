@@ -46,7 +46,7 @@ class RecognizeReceiptsFromURLSample(object):
         receipts = poller.result()
 
         for idx, receipt in enumerate(receipts):
-            print("--------Recognizing receipt #{}--------".format(idx))
+            print("--------Recognizing receipt #{}--------".format(idx+1))
             receipt_type = receipt.fields.get("ReceiptType")
             if receipt_type:
                 print("Receipt Type: {} has confidence: {}".format(receipt_type.value, receipt_type.confidence))
