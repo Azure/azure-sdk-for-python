@@ -12,7 +12,7 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-cognitiveservices-anomalydetector"
+PACKAGE_NAME = "azure-ai-anomalydetector"
 PACKAGE_PPRINT_NAME = "Cognitive Services Anomaly Detector"
 
 # a-b-c => a/b/c
