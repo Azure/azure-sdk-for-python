@@ -9,7 +9,6 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 from uuid import UUID
-from enum import Enum
 import logging
 import datetime
 

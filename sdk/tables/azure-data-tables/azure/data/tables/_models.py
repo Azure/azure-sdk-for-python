@@ -14,8 +14,8 @@ from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._deserialize import (
-    _convert_to_entity, 
-    _return_context_and_deserialized    
+    _convert_to_entity,
+    _return_context_and_deserialized
 )
 from ._error import _process_table_error
 

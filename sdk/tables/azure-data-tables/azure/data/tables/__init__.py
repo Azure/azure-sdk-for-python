@@ -13,7 +13,7 @@ from ._table_service_client import TableServiceClient
 from ._models import (
     AccessPolicy,
     Metrics,
-    RetentionPolicy, 
+    RetentionPolicy,
     TableAnalyticsLogging,
     TableSasPermissions,
     CorsRule,
