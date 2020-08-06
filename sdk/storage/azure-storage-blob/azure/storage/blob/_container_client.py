@@ -1049,7 +1049,7 @@ class ContainerClient(StorageAccountHostsMixin):
             header_parameters['If-None-Match'] = self._client._serialize.header(  # pylint: disable=protected-access
                 "if_none_match", if_none_match, 'str')
         if if_tags is not None:
-            header_parameters['x-ms-if-tags'] = self._client._serialize.header("if_tags", if_tags, 'str')
+            header_parameters['x-ms-if-tags'] = self._client._serialize.header("if_tags", if_tags, 'str')  # pylint: disable=protected-access
 
         return query_parameters, header_parameters
 
@@ -1223,7 +1223,7 @@ class ContainerClient(StorageAccountHostsMixin):
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._client._serialize.header("lease_id", lease_id, 'str')  # pylint: disable=protected-access
         if if_tags is not None:
-            header_parameters['x-ms-if-tags'] = self._client._serialize.header("if_tags", if_tags, 'str')
+            header_parameters['x-ms-if-tags'] = self._client._serialize.header("if_tags", if_tags, 'str')  # pylint: disable=protected-access
 
         return query_parameters, header_parameters
 
