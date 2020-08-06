@@ -145,6 +145,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert not message.reply_to_session_id
                 count += 1
                 message.complete()
+            receiver.close()
 
             assert count == 10
 

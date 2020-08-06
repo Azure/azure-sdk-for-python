@@ -67,6 +67,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 count += 1
                 await message.complete()
 
+            session.close()
+
             assert count == 3
 
 
@@ -93,6 +95,9 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 assert session_id == message.session_id
                 with pytest.raises(MessageAlreadySettled):
                     await message.complete()
+
+            assert session._running
+            session.close()
 
             assert not session._running
             assert len(messages) == 10
@@ -320,6 +325,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 print_message(_logger, message)
                 count += 1
                 await message.defer()
+            session.close()
 
             assert count == 10
 

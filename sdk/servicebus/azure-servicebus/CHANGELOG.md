@@ -29,6 +29,7 @@
 * `idle_timeout` in `get_<queue/subscription>_receiver()` has been renamed to `max_wait_time` to normalize with naming elsewhere.
 * `AutoLockRenew.sleep_time` and `AutoLockRenew.renew_period` have been made internal as `_sleep_time` and `_renew_period` respectively, as it is not expected a user will have to interact with them.
 * `AutoLockRenew.shutdown` is now `AutoLockRenew.close` to normalize with other equivelent behaviors.
+* Updated uAMQP dependency to 1.2.10 such that the receiver does not shut down when generator times out, and can be received from again.
 
 ## 7.0.0b4 (2020-07-06)
 
