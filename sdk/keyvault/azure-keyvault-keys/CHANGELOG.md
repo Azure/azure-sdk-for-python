@@ -1,7 +1,7 @@
 # Release History
 
 ## 4.2.0b3 (Unreleased)
-- All long running operation methods now accept a `continuation_token` keyword argument
+- All sync long running operation methods now accept a `continuation_token` keyword argument
 to restart the poller from a saved state
 
 ## 4.2.0b2 (Unreleased)

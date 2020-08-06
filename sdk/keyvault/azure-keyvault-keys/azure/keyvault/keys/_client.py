@@ -183,7 +183,8 @@ class KeyClient(KeyVaultClientBase):
         with soft-delete enabled. This method therefore returns a poller enabling you to wait for deletion to complete.
 
         :param str name: The name of the key to delete.
-        :keyword str continuation_token: A continuation token to restart the poller from a saved state.
+        :keyword str continuation_token: A continuation token to restart the poller from a saved state. To get the
+         continuation token from your poller, call `continuation_token()` on the poller.
         :returns: A poller for the delete key operation. The poller's `result` method returns the
          :class:`~azure.keyvault.keys.DeletedKey` without waiting for deletion to complete. If the vault has
          soft-delete enabled and you want to permanently delete the key with :func:`purge_deleted_key`, call the
@@ -390,7 +391,8 @@ class KeyClient(KeyVaultClientBase):
         you want to use the recovered key in another operation immediately.
 
         :param str name: The name of the deleted key to recover
-        :keyword str continuation_token: A continuation token to restart the poller from a saved state.
+        :keyword str continuation_token: A continuation token to restart the poller from a saved state. To get the
+         continuation token from your poller, call `continuation_token()` on the poller.
         :returns: A poller for the recovery operation. The poller's `result` method returns the recovered
          :class:`~azure.keyvault.keys.KeyVaultKey` without waiting for recovery to complete. If you want to use the
          recovered key immediately, call the poller's `wait` method, which blocks until the key is ready to use. The
