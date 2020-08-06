@@ -44,6 +44,12 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(k1.tags, k2.tags)
         self.assertEqual(k1.recovery_level, k2.recovery_level)
 
+    def _assert_deleted_keys_equal(self, k1, k2):
+        self.assertEqual(k1.deleted_date, k2.deleted_date)
+        self.assertEqual(k1.recovery_id, k2.recovery_id)
+        self.assertEqual(k1.scheduled_purge_date, k2.scheduled_purge_date)
+        self._assert_key_attributes_equal(k1.properties, k2.properties)
+
     def _create_rsa_key(self, client, key_name, hsm=False):
         # create key with optional arguments
         key_size = 2048
@@ -433,8 +439,7 @@ class KeyClientTests(KeyVaultTestCase):
         initial_poller = client.begin_delete_key(key.name)
         continuation_token = initial_poller.continuation_token()
         poller = client.begin_delete_key(key.name, continuation_token=continuation_token)
-        deleted_key = poller.result()
-        self.assertIsNotNone(deleted_key)
+        self._assert_deleted_keys_equal(initial_poller.result(), poller.result())
         poller.wait()
 
         # recover deleted key
@@ -442,8 +447,8 @@ class KeyClientTests(KeyVaultTestCase):
         continuation_token = initial_poller.continuation_token()
         poller = client.begin_recover_deleted_key(key.name, continuation_token=continuation_token)
         recovered_key = poller.result()
-        self.assertIsNotNone(recovered_key)
+        self._assert_key_attributes_equal((initial_poller.result()).properties, recovered_key.properties)
         poller.wait()
 
         retrieved_key = client.get_key(key.name)
-        self.assertEqual(retrieved_key.name, recovered_key.name)
+        self._assert_key_attributes_equal(retrieved_key.properties, recovered_key.properties)
