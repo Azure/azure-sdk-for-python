@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
 # pylint:disable=specify-parameter-names-in-call
+# pylint:disable=too-many-lines
 import functools
 from typing import TYPE_CHECKING, Dict, Any, Union, cast
 from xml.etree.ElementTree import ElementTree
