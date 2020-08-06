@@ -1343,6 +1343,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     time_1 = utc_now()
                     async for message in receiver.get_streaming_message_iter(max_wait_time=10):
                         messages.append(message)
+                        await message.complete()
+
                         time_2 = utc_now()
                         async for message in receiver.get_streaming_message_iter(max_wait_time=1):
                             messages.append(message)

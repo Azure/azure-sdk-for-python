@@ -1749,6 +1749,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     time_1 = utc_now()
                     for message in receiver.get_streaming_message_iter(max_wait_time=10):
                         messages.append(message)
+                        message.complete()
+
                         time_2 = utc_now()
                         for message in receiver.get_streaming_message_iter(max_wait_time=1):
                             messages.append(message)

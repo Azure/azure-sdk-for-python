@@ -250,7 +250,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 for message in session:
                     messages.append(message)
 
-                assert not session._running
+                assert session._running
                 assert len(messages) == 0
 
     @pytest.mark.liveTest
