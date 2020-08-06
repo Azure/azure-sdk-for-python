@@ -43,6 +43,12 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertEqual(s1.recovery_level, s2.recovery_level)
         self.assertEqual(s1.key_id, s2.key_id)
 
+    def _assert_deleted_secrets_equal(self, s1, s2):
+        self.assertEqual(s1.deleted_date, s2.deleted_date)
+        self.assertEqual(s1.recovery_id, s2.recovery_id)
+        self.assertEqual(s1.scheduled_purge_date, s2.scheduled_purge_date)
+        self._assert_secret_attributes_equal(s1.properties, s2.properties)
+
     def _validate_secret_bundle(self, secret_attributes, vault, secret_name, secret_value):
         prefix = "/".join(s.strip("/") for s in [vault, "secrets", secret_name])
         id = secret_attributes.id
@@ -355,7 +361,7 @@ class SecretClientTests(KeyVaultTestCase):
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_continuation_token(self, client, **kwargs):
-        secret_name = "crud-secret"
+        secret_name = self.create_random_name("crud-secret")
         secret_value = self.get_resource_name("crud_secret_value")
 
         # create secret
@@ -365,8 +371,7 @@ class SecretClientTests(KeyVaultTestCase):
         initial_poller = client.begin_delete_secret(secret.name)
         continuation_token = initial_poller.continuation_token()
         poller = client.begin_delete_secret(secret.name, continuation_token=continuation_token)
-        deleted_secret = poller.result()
-        self.assertIsNotNone(deleted_secret)
+        self._assert_deleted_secrets_equal(initial_poller.result(), poller.result())
         poller.wait()
 
         # recover deleted secret
@@ -374,4 +379,8 @@ class SecretClientTests(KeyVaultTestCase):
         continuation_token = initial_poller.continuation_token()
         poller = client.begin_recover_deleted_secret(secret.name, continuation_token=continuation_token)
         recovered_secret = poller.result()
-        self.assertIsNotNone(recovered_secret)
+        self._assert_secret_attributes_equal(initial_poller.result(), recovered_secret)
+        poller.wait()
+
+        retrieved_secret = client.get_secret(secret.name)
+        self._assert_secret_attributes_equal(retrieved_secret.properties, recovered_secret)
