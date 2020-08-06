@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
+# pylint:disable=too-many-lines
 import functools
 from collections import OrderedDict
 from copy import deepcopy
