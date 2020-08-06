@@ -28,13 +28,10 @@ adjust_attribute_map()
 
 
 def extract_kwarg_template(self, kwargs, extraction_missing_args, name):
-    if getattr(self, '_require_all_args', False):
-        try:
-            return kwargs[name]
-        except KeyError:
-            extraction_missing_args.append(name)
-    else:
-        return kwargs.get(name, None)
+    try:
+        return kwargs[name]
+    except KeyError:
+        extraction_missing_args.append(name)
 
 
 def validate_extraction_missing_args(extraction_missing_args):
@@ -171,7 +168,6 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         # type: (str, Any) -> None
         self.name = name
         self._internal_qd = None  # type: Optional[InternalQueueDescription]
-        self._require_all_args = True
 
         extraction_missing_args = []  # type: List[str]
         extract_kwarg = functools.partial(extract_kwarg_template, self, kwargs, extraction_missing_args)
@@ -427,7 +423,6 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         # type: (str, Any) -> None
         self.name = name
         self._internal_td = None  # type: Optional[InternalTopicDescription]
-        self._require_all_args = True
 
         extraction_missing_args = []  # type: List[str]
         extract_kwarg = functools.partial(extract_kwarg_template, self, kwargs, extraction_missing_args)
@@ -626,7 +621,6 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         # type: (str, Any) -> None
         self.name = name
         self._internal_sd = None  # type: Optional[InternalSubscriptionDescription]
-        self._require_all_args = True
 
         extraction_missing_args = []  # type: List[str]
         extract_kwarg = functools.partial(extract_kwarg_template, self, kwargs, extraction_missing_args)
@@ -802,7 +796,6 @@ class RuleProperties(DictMixin):
 
         self.name = name
         self._internal_rule = None  # type: Optional[InternalRuleDescription]
-        self._require_all_args = True
 
         extraction_missing_args = []  # type: List[str]
         extract_kwarg = functools.partial(extract_kwarg_template, self, kwargs, extraction_missing_args)
