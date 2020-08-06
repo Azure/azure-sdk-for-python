@@ -35,6 +35,9 @@ def deserialize_blob_properties(response, obj, headers):
 
 
 def deserialize_ors_policies(policy_dictionary):
+
+    if policy_dictionary is None:
+        return None
     # For source blobs (blobs that have policy ids and rule ids applied to them),
     # the header will be formatted as "x-ms-or-<policy_id>_<rule_id>: {Complete, Failed}".
     # The value of this header is the status of the replication.
