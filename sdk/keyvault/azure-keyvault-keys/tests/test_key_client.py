@@ -433,7 +433,8 @@ class KeyClientTests(KeyVaultTestCase):
     @KeyVaultClientPreparer()
     def test_continuation_token(self, client, **kwargs):
         # create key
-        key = client.create_ec_key("ec-key")
+        key_name = self.create_random_name("ec-key")
+        key = client.create_ec_key(key_name)
 
         # delete key
         initial_poller = client.begin_delete_key(key.name)
