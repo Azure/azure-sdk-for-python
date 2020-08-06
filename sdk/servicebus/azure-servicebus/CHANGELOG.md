@@ -36,7 +36,7 @@
 * Renamed `QueueRuntimeInfo`, `TopicRuntimeInfo`, and `SubscriptionRuntimeInfo` to `QueueRuntimeProperties`, `TopicRuntimeProperties`, and `SubscriptionRuntimeProperties`
 * Removed param `queue` from `create_queue`, `topic` from `create_topic`, `subscription` from `create_subscription` and `rule` from `create_rule`
  of `ServiceBusManagementClient`. Added param `name` to them and keyword arguments for queue properties and topic properties.
-* Removed model class attributes related keyword arguments from `update_queue` and `update_topic` of `ServiceBusManagementClient`. Use the model class instance instead.
+* Removed model class attributes related keyword arguments from `update_queue` and `update_topic` of `ServiceBusManagementClient`. This is to encourage utilizing the model class instance instead as returned from a create_*, update_*, or list_* or get_* operation to ensure it is properly populated.  Properties may still be modified.
 * Added arguments validation when creating model class `QueueProperties`, `TopicProperties`, `SubscriptionProperties` and `RuleProperties`
 
 
