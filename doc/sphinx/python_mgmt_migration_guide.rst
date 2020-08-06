@@ -64,7 +64,7 @@ experience.
 The important breaking changes are listed in the following sections:
 
 Authentication
-^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~
 
 In old version, ``ServicePrincipalCredentials`` in ``azure.common`` is
 used for authenticating to Azure and creating a service client
@@ -117,7 +117,7 @@ Most of the API has stayed the same to provide an easier migration
 experience. There is a minor change regarding the async operations
 
 Async Operations Change
-^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~
 
 To differentiate between asynchronous and synchronous API operations in
 the new version, an explicit ``begin_`` prefix is added for all the
