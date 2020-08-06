@@ -140,7 +140,6 @@ class StressTestRunner:
         receiver._max_wait_time = self.max_wait_time
         with receiver:
             while end_time > datetime.utcnow():
-                print("PRIMARY STRESS TEST LOOP================= " + str(datetime.utcnow()))
                 if self.receive_type == ReceiveType.pull:
                     batch = receiver.receive_messages(max_batch_size=self.max_batch_size)
                 elif self.receive_type == ReceiveType.push:

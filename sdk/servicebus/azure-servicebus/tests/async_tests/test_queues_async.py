@@ -1290,11 +1290,11 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 messages = []
                 async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
                     
-                    async for message in receiver.receive_forever():
+                    async for message in receiver.get_streaming_message_iter():
                         messages.append(message)
                         break
 
-                    async for message in receiver.receive_forever():
+                    async for message in receiver.get_streaming_message_iter():
                         messages.append(message)
 
                     for m in messages:
@@ -1308,9 +1308,9 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message_3 = Message("3")
                     await sender.send_messages([message_2, message_3])
 
-                    async for message in receiver: #.receive_forever():
+                    async for message in receiver.get_streaming_message_iter():
                         messages.append(message)
-                        async for message in receiver: #.receive_forever():
+                        async for message in receiver.get_streaming_message_iter():
                             messages.append(message)
 
                     assert len(messages) == 4
@@ -1341,17 +1341,17 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
 
                     time_1 = utc_now()
-                    async for message in receiver.receive_forever(max_wait_time=10):
+                    async for message in receiver.get_streaming_message_iter(max_wait_time=10):
                         messages.append(message)
                         time_2 = utc_now()
-                        async for message in receiver.receive_forever(max_wait_time=1):
+                        async for message in receiver.get_streaming_message_iter(max_wait_time=1):
                             messages.append(message)
                         time_3 = utc_now()
                         assert timedelta(seconds=1) < (time_3 - time_2) < timedelta(seconds=2)
                     time_4 = utc_now()
                     assert timedelta(seconds=9) < (time_4 - time_3) < timedelta(seconds=11)
 
-                    async for message in receiver.receive_forever(max_wait_time=3):
+                    async for message in receiver.get_streaming_message_iter(max_wait_time=3):
                         messages.append(message)
                     time_5 = utc_now()
                     assert timedelta(seconds=2) < (time_5 - time_4) < timedelta(seconds=4)
@@ -1361,7 +1361,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     time_6 = utc_now()
                     assert timedelta(seconds=4) < (time_6 - time_5) < timedelta(seconds=6)
 
-                    async for message in receiver.receive_forever():
+                    async for message in receiver.get_streaming_message_iter():
                         messages.append(message)
                     time_7 = utc_now()
                     assert timedelta(seconds=4) < (time_7 - time_6) < timedelta(seconds=6)

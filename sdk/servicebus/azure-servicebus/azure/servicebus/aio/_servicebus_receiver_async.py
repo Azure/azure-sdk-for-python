@@ -6,7 +6,7 @@ import asyncio
 import collections
 import functools
 import logging
-from typing import Any, TYPE_CHECKING, List, Optional, Iterator
+from typing import Any, TYPE_CHECKING, List, Optional, AsyncIterator
 
 from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
@@ -280,7 +280,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             mgmt_handlers.lock_renew_op
         )
 
-    def receive_forever(self, max_wait_time: float = None) -> Iterator[ReceivedMessage]:
+    def get_streaming_message_iter(self, max_wait_time: float = None) -> AsyncIterator[ReceivedMessage]:
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
 
@@ -289,7 +289,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          until the connection is closed. If specified, and no messages arrive for the
          timeout period, the iterator will stop.
 
-         :rtype Iterator[ReceivedMessage]
+         :rtype AsyncIterator[ReceivedMessage]
         """
         return self._IterContextualWrapper(self, max_wait_time)
 

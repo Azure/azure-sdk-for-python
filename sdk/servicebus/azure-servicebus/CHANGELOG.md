@@ -10,7 +10,7 @@
 `dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`. Please refer to the docstring for further information.
 * Added support for sending received messages via `ServiceBusSender.send_messages`.
 * Add `on_lock_renew_failure` as a parameter to `AutoLockRenew.register`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion)
-* Added an explicit method to fetch the continuous receiving iterator, `receive_forever()` such that `max_wait_time` can be specified as an override.
+* Added an explicit method to fetch the continuous receiving iterator, `get_streaming_message_iter()` such that `max_wait_time` can be specified as an override.
 
 **Breaking Changes**
 
