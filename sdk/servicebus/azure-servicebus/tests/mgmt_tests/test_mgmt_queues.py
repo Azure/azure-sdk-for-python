@@ -11,7 +11,7 @@ import datetime
 import functools
 
 import msrest
-from azure.servicebus.management import ServiceBusManagementClient, QueueDescription
+from azure.servicebus.management import ServiceBusManagementClient, QueueProperties
 from azure.servicebus._common.utils import utc_now
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ResourceNotFoundError, ResourceExistsError
@@ -221,14 +221,10 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         with pytest.raises(msrest.exceptions.ValidationError):
             mgmt_service.create_queue(Exception())
 
-        with pytest.raises(msrest.exceptions.ValidationError):
-            mgmt_service.create_queue(QueueDescription(name=Exception()))
 
         with pytest.raises(msrest.exceptions.ValidationError):
             mgmt_service.create_queue('')
 
-        with pytest.raises(msrest.exceptions.ValidationError):
-            mgmt_service.create_queue(QueueDescription(name=''))
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -238,24 +234,25 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         clear_queues(mgmt_service)
         queue_name = "iweidk"
 
-        #TODO: Why don't we have an input model (queueOptions? as superclass of QueueDescription?) and output model to not show these params?
+        #TODO: Why don't we have an input model (queueOptions? as superclass of QueueProperties?) and output model to not show these params?
         #TODO: This fails with the following: E           msrest.exceptions.DeserializationError: Find several XML 'prefix:DeadLetteringOnMessageExpiration' where it was not expected .tox\whl\lib\site-packages\msrest\serialization.py:1262: DeserializationError
-        mgmt_service.create_queue(QueueDescription(name=queue_name,
-                                                    auto_delete_on_idle=datetime.timedelta(minutes=10),
-                                                    dead_lettering_on_message_expiration=True,
-                                                    default_message_time_to_live=datetime.timedelta(minutes=11),
-                                                    duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
-                                                    enable_batched_operations=True,
-                                                    enable_express=True,
-                                                    enable_partitioning=True,
-                                                    is_anonymous_accessible=True,
-                                                    lock_duration=datetime.timedelta(seconds=13),
-                                                    max_delivery_count=14,
-                                                    max_size_in_megabytes=3072,
-                                                    #requires_duplicate_detection=True,
-                                                    requires_session=True,
-                                                    support_ordering=True
-                                                    ))
+        mgmt_service.create_queue(
+            queue_name,
+            auto_delete_on_idle=datetime.timedelta(minutes=10),
+            dead_lettering_on_message_expiration=True,
+            default_message_time_to_live=datetime.timedelta(minutes=11),
+            duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
+            enable_batched_operations=True,
+            enable_express=True,
+            enable_partitioning=True,
+            is_anonymous_accessible=True,
+            lock_duration=datetime.timedelta(seconds=13),
+            max_delivery_count=14,
+            max_size_in_megabytes=3072,
+            #requires_duplicate_detection=True,
+            requires_session=True,
+            support_ordering=True
+        )
         try:
             queue = mgmt_service.get_queue(queue_name)
             assert queue.name == queue_name
@@ -412,14 +409,13 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         assert info.size_in_bytes == 0
         assert info.accessed_at is not None
         assert info.updated_at is not None
-        assert info.message_count == 0
+        assert info.total_message_count == 0
 
-        assert info.message_count_details
-        assert info.message_count_details.active_message_count == 0
-        assert info.message_count_details.dead_letter_message_count == 0
-        assert info.message_count_details.transfer_dead_letter_message_count == 0
-        assert info.message_count_details.transfer_message_count == 0
-        assert info.message_count_details.scheduled_message_count == 0
+        assert info.active_message_count == 0
+        assert info.dead_letter_message_count == 0
+        assert info.transfer_dead_letter_message_count == 0
+        assert info.transfer_message_count == 0
+        assert info.scheduled_message_count == 0
 
         mgmt_service.delete_queue("test_queue")
         queues_infos = list(mgmt_service.list_queues_runtime_info())
@@ -454,14 +450,13 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
             assert queue_runtime_info.created_at is not None
             assert queue_runtime_info.accessed_at is not None
             assert queue_runtime_info.updated_at is not None
-            assert queue_runtime_info.message_count == 0
+            assert queue_runtime_info.total_message_count == 0
 
-            assert queue_runtime_info.message_count_details
-            assert queue_runtime_info.message_count_details.active_message_count == 0
-            assert queue_runtime_info.message_count_details.dead_letter_message_count == 0
-            assert queue_runtime_info.message_count_details.transfer_dead_letter_message_count == 0
-            assert queue_runtime_info.message_count_details.transfer_message_count == 0
-            assert queue_runtime_info.message_count_details.scheduled_message_count == 0
+            assert queue_runtime_info.active_message_count == 0
+            assert queue_runtime_info.dead_letter_message_count == 0
+            assert queue_runtime_info.transfer_dead_letter_message_count == 0
+            assert queue_runtime_info.transfer_message_count == 0
+            assert queue_runtime_info.scheduled_message_count == 0
         finally:
             mgmt_service.delete_queue("test_queue")
 
@@ -478,3 +473,6 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
         with pytest.raises(ResourceNotFoundError):
             mgmt_service.get_queue_runtime_info("non_existing_queue")
 
+    def test_queue_properties_constructor(self):
+        with pytest.raises(TypeError):
+            QueueProperties("randomname")
