@@ -37,7 +37,7 @@
 * Removed param `queue` from `create_queue`, `topic` from `create_topic`, `subscription` from `create_subscription` and `rule` from `create_rule`
  of `ServiceBusManagementClient`. Added param `name` to them and keyword arguments for queue properties and topic properties.
 * Removed model class attributes related keyword arguments from `update_queue` and `update_topic` of `ServiceBusManagementClient`. This is to encourage utilizing the model class instance instead as returned from a create_*, update_*, or list_* or get_* operation to ensure it is properly populated.  Properties may still be modified.
-* Added arguments validation when creating model class `QueueProperties`, `TopicProperties`, `SubscriptionProperties` and `RuleProperties`
+* Model classes `QueueProperties`, `TopicProperties`, `SubscriptionProperties` and `RuleProperties` require all arguments to be present for creation.  This is to protect against lack of partial updates by requiring all properties to be specified.
 
 
 ## 7.0.0b4 (2020-07-06)
