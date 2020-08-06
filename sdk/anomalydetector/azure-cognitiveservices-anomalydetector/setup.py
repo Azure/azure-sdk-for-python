@@ -20,20 +20,6 @@ package_folder_path = PACKAGE_NAME.replace('-', '/')
 # a-b-c => a.b.c
 namespace_name = PACKAGE_NAME.replace('-', '.')
 
-# azure v0.x is not compatible with this package
-# azure v0.x used to have a __version__ attribute (newer versions don't)
-try:
-    import azure
-    try:
-        ver = azure.__version__
-        raise Exception(
-            'This package is incompatible with azure=={}. '.format(ver) +
-            'Uninstall it with "pip uninstall azure".'
-        )
-    except AttributeError:
-        pass
-except ImportError:
-    pass
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, 'version.py')
@@ -77,13 +63,14 @@ setup(
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
-        'azure.cognitiveservices',
+        'azure.ai',
     ]),
     install_requires=[
         'msrest>=0.5.0',
         'azure-common~=1.1',
+        'azure-core>=1.6.0,<2.0.0',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-cognitiveservices-nspkg'],
+        ":python_version<'3.0'": ['azure-ai-nspkg'],
     }
 )
