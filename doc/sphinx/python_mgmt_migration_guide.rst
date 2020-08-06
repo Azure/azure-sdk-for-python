@@ -139,7 +139,7 @@ To show an example (creating virtual machine):
 
 **Equivalent in new version**
 
-.. code:: java
+.. code:: python
 
     result = self.compute_client.virtual_machines.begin_create_or_update(
         group_name,
