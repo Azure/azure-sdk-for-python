@@ -13,7 +13,7 @@ interactions:
       api-key:
       - 1BBE70CA8604EF05ACBB2DE58FEBFA85
     method: GET
-    uri: https://search623710eb.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2019-05-06-Preview
+    uri: https://search623710eb.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
   response:
     body:
       string: ''

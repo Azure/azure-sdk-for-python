@@ -4,7 +4,7 @@
 # ------------------------------------
 import json
 
-from azure.identity import AuthenticationRecord
+from azure.identity._auth_record import AuthenticationRecord
 
 
 def test_serialization():

@@ -13,7 +13,7 @@ interactions:
       api-key:
       - 74E424E128C2B04981151C353961D673
     method: POST
-    uri: https://search42ca1023.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2019-05-06-Preview
+    uri: https://search42ca1023.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"text":"motel","queryPlusText":"motel"}]}'
@@ -34,5 +34,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search42ca1023.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2019-05-06-Preview
+    url: https://search42ca1023.search.windows.net/indexes('drgqefsg')/docs/search.post.autocomplete?api-version=2020-06-30
 version: 1

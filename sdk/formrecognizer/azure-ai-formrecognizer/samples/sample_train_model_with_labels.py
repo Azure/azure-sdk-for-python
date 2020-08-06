@@ -10,11 +10,19 @@
 FILE: sample_train_model_with_labels.py
 
 DESCRIPTION:
-    This sample demonstrates how to train a model with labels. To see how to label your documents, you can use the
-    service's labeling tool to label your documents:
+    This sample demonstrates how to train a model with labels. For this sample, you can use the training
+    forms found in https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/training
+
+    Upload the forms to your storage container and then generate a container SAS URL using these instructions:
+    https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/python-labeled-data#train-a-model-using-labeled-data
+    More details on setting up a container and required file structure can be found here:
+    https://docs.microsoft.com/azure/cognitive-services/form-recognizer/build-training-data-set
+
+    To see how to label your documents, you can use the service's labeling tool to label your documents:
     https://docs.microsoft.com/azure/cognitive-services/form-recognizer/quickstarts/label-tool. Follow the
     instructions to store these labeled files in your blob container with the other form files.
     See sample_recognize_custom_forms.py to recognize forms with your custom model.
+
 USAGE:
     python sample_train_model_with_labels.py
 
@@ -46,22 +54,24 @@ class TrainModelWithLabelsSample(object):
         # Custom model information
         print("Model ID: {}".format(model.model_id))
         print("Status: {}".format(model.status))
-        print("Requested on: {}".format(model.requested_on))
-        print("Completed on: {}".format(model.completed_on))
+        print("Training started on: {}".format(model.training_started_on))
+        print("Training completed on: {}".format(model.training_completed_on))
 
         print("Recognized fields:")
         # looping through the submodels, which contains the fields they were trained on
         # The labels are based on the ones you gave the training document.
         for submodel in model.submodels:
-            print("...The submodel with form type {} has accuracy '{}'".format(submodel.form_type, submodel.accuracy))
+            print("...The submodel with form type {} has an average accuracy '{}'".format(
+                submodel.form_type, submodel.accuracy
+            ))
             for name, field in submodel.fields.items():
-                print("...The model found field '{}' to have name '{}' with an accuracy of {}".format(
-                    name, field.name, field.accuracy
+                print("...The model found the field '{}' with an accuracy of {}".format(
+                    name, field.accuracy
                 ))
 
         # Training result information
         for doc in model.training_documents:
-            print("Document name: {}".format(doc.document_name))
+            print("Document name: {}".format(doc.name))
             print("Document status: {}".format(doc.status))
             print("Document page count: {}".format(doc.page_count))
             print("Document errors: {}".format(doc.errors))

@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=invalid-overridden-method
 try:
     from urllib.parse import quote, unquote
 except ImportError:
     from urllib2 import quote, unquote # type: ignore
-
 from ._data_lake_file_client_async import DataLakeFileClient
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
 from .._models import DirectoryProperties

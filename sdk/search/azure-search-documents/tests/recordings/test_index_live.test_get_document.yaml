@@ -13,7 +13,7 @@ interactions:
       api-key:
       - 52988C94E83C6EFD6D6B57723CC909C2
     method: GET
-    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2019-05-06-Preview
+    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('1')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"1","hotelName":"Fancy Stay","description":"Best hotel in
@@ -66,7 +66,7 @@ interactions:
       api-key:
       - 52988C94E83C6EFD6D6B57723CC909C2
     method: GET
-    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2019-05-06-Preview
+    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('2')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"2","hotelName":"Roach Motel","description":"Cheapest hotel
@@ -114,7 +114,7 @@ interactions:
       api-key:
       - 52988C94E83C6EFD6D6B57723CC909C2
     method: GET
-    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2019-05-06-Preview
+    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('3')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"3","hotelName":"EconoStay","description":"Very popular
@@ -161,7 +161,7 @@ interactions:
       api-key:
       - 52988C94E83C6EFD6D6B57723CC909C2
     method: GET
-    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2019-05-06-Preview
+    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"4","hotelName":"Express Rooms","description":"Pretty good
@@ -208,7 +208,7 @@ interactions:
       api-key:
       - 52988C94E83C6EFD6D6B57723CC909C2
     method: GET
-    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2019-05-06-Preview
+    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('5')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"5","hotelName":"Comfy Place","description":"Another good
@@ -255,7 +255,7 @@ interactions:
       api-key:
       - 52988C94E83C6EFD6D6B57723CC909C2
     method: GET
-    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2019-05-06-Preview
+    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('6')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"6","hotelName":null,"description":"Surprisingly expensive.
@@ -302,7 +302,7 @@ interactions:
       api-key:
       - 52988C94E83C6EFD6D6B57723CC909C2
     method: GET
-    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2019-05-06-Preview
+    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('7')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"7","hotelName":"Modern Stay","description":"Modern architecture,
@@ -350,7 +350,7 @@ interactions:
       api-key:
       - 52988C94E83C6EFD6D6B57723CC909C2
     method: GET
-    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2019-05-06-Preview
+    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('8')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"8","hotelName":null,"description":"Has some road noise
@@ -399,7 +399,7 @@ interactions:
       api-key:
       - 52988C94E83C6EFD6D6B57723CC909C2
     method: GET
-    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2019-05-06-Preview
+    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('9')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"9","hotelName":"Secret Point Motel","description":"The
@@ -462,7 +462,7 @@ interactions:
       api-key:
       - 52988C94E83C6EFD6D6B57723CC909C2
     method: GET
-    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2019-05-06-Preview
+    uri: https://searche6a60d92.search.windows.net/indexes('drgqefsg')/docs('10')?api-version=2020-06-30
   response:
     body:
       string: '{"hotelId":"10","hotelName":"Countryside Hotel","description":"Save

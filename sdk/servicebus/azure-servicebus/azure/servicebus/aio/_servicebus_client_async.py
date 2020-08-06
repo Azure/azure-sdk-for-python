@@ -42,6 +42,7 @@ class ServiceBusClient(object):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
 
     .. admonition:: Example:
 
@@ -107,6 +108,7 @@ class ServiceBusClient(object):
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
         :rtype: ~azure.servicebus.aio.ServiceBusClient
 
         .. admonition:: Example:
@@ -165,6 +167,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -179,14 +182,17 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-         The default value is 0, meaning messages will be received from the service and processed
-         one at a time. Increasing this value will improve message throughput performance but increase
-         the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         This setting is only for advanced performance tuning. Increasing this value will improve message throughput
+         performance but increase the chance that messages will expire while they are cached if they're not
+         processed fast enough.
+         The default value is 0, meaning messages will be received from the service and processed one at a time.
+         In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+         within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -208,6 +214,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -224,10 +231,6 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-         The default value is 0, meaning messages will be received from the service and processed
-         one at a time. Increasing this value will improve message throughput performance but increase
-         the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
@@ -238,6 +241,13 @@ class ServiceBusClient(object):
         :keyword bool transfer_deadletter: Whether to connect to the transfer dead-letter queue, or the standard
          dead-letter queue. The transfer dead letter queue holds messages that have failed to be transferred in
          ForwardTo or SendVia scenarios. Default is False, using the standard dead-letter endpoint.
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         This setting is only for advanced performance tuning. Increasing this value will improve message throughput
+         performance but increase the chance that messages will expire while they are cached if they're not
+         processed fast enough.
+         The default value is 0, meaning messages will be received from the service and processed one at a time.
+         In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+         within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -265,6 +275,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             is_dead_letter_receiver=True,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -298,6 +309,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -314,10 +326,6 @@ class ServiceBusClient(object):
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-         The default value is 0, meaning messages will be received from the service and processed
-         one at a time. Increasing this value will improve message throughput performance but increase
-         the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
@@ -325,6 +333,13 @@ class ServiceBusClient(object):
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
          Default value is 0.8.
         :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         This setting is only for advanced performance tuning. Increasing this value will improve message throughput
+         performance but increase the chance that messages will expire while they are cached if they're not
+         processed fast enough.
+         The default value is 0, meaning messages will be received from the service and processed one at a time.
+         In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+         within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -348,6 +363,7 @@ class ServiceBusClient(object):
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
             connection=self._connection,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -366,10 +382,6 @@ class ServiceBusClient(object):
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-         The default value is 0, meaning messages will be received from the service and processed
-         one at a time. Increasing this value will improve message throughput performance but increase
-         the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
@@ -380,6 +392,13 @@ class ServiceBusClient(object):
         :keyword bool transfer_deadletter: Whether to connect to the transfer dead-letter queue, or the standard
          dead-letter queue. The transfer dead letter queue holds messages that have failed to be transferred in
          ForwardTo or SendVia scenarios. Default is False, using the standard dead-letter endpoint.
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         This setting is only for advanced performance tuning. Increasing this value will improve message throughput
+         performance but increase the chance that messages will expire while they are cached if they're not
+         processed fast enough.
+         The default value is 0, meaning messages will be received from the service and processed one at a time.
+         In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+         within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -407,6 +426,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             is_dead_letter_receiver=True,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -426,10 +446,6 @@ class ServiceBusClient(object):
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-         The default value is 0, meaning messages will be received from the service and processed
-         one at a time. Increasing this value will improve message throughput performance but increase
-         the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
@@ -437,6 +453,13 @@ class ServiceBusClient(object):
         :keyword float retry_backoff_factor: Delta back-off internal in the unit of second between retries.
          Default value is 0.8.
         :keyword float retry_backoff_max: Maximum back-off interval in the unit of second. Default value is 120.
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         This setting is only for advanced performance tuning. Increasing this value will improve message throughput
+         performance but increase the chance that messages will expire while they are cached if they're not
+         processed fast enough.
+         The default value is 0, meaning messages will be received from the service and processed one at a time.
+         In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+         within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusSessionReceiver
 
         .. admonition:: Example:
@@ -461,6 +484,7 @@ class ServiceBusClient(object):
             http_proxy=self._config.http_proxy,
             connection=self._connection,
             session_id=session_id,
+            user_agent=self._config.user_agent,
             **kwargs
         )
 
@@ -478,14 +502,17 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default mode is PeekLock.
         :paramtype mode: ~azure.servicebus.ReceiveSettleMode
-        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
-         The default value is 0, meaning messages will be received from the service and processed
-         one at a time. Increasing this value will improve message throughput performance but increase
-         the change that messages will expire while they are cached if they're not processed fast enough.
         :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
          Default value is 3.
+        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+         This setting is only for advanced performance tuning. Increasing this value will improve message throughput
+         performance but increase the chance that messages will expire while they are cached if they're not
+         processed fast enough.
+         The default value is 0, meaning messages will be received from the service and processed one at a time.
+         In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+         within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusSessionReceiver
 
         .. admonition:: Example:
@@ -508,5 +535,6 @@ class ServiceBusClient(object):
             session_id=session_id,
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
+            user_agent=self._config.user_agent,
             **kwargs
         )

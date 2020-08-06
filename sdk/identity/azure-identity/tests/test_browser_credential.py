@@ -10,7 +10,8 @@ import time
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import AuthenticationRequiredError, CredentialUnavailableError, InteractiveBrowserCredential
+from azure.identity import CredentialUnavailableError, InteractiveBrowserCredential
+from azure.identity._exceptions import AuthenticationRequiredError
 from azure.identity._internal import AuthCodeRedirectServer
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
@@ -81,7 +82,7 @@ def test_authenticate():
                 tenant_id=tenant_id,
                 transport=transport,
             )
-            record = credential.authenticate(scopes=(scope,))
+            record = credential._authenticate(scopes=(scope,))
 
     assert record.authority == environment
     assert record.home_account_id == object_id + "." + home_tenant
@@ -100,7 +101,7 @@ def test_disable_automatic_authentication():
     empty_cache = TokenCache()  # empty cache makes silent auth impossible
     transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
     credential = InteractiveBrowserCredential(
-        disable_automatic_authentication=True, transport=transport, _cache=empty_cache
+        _disable_automatic_authentication=True, transport=transport, _cache=empty_cache
     )
 
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential shouldn't try interactive authentication"))):
@@ -284,8 +285,8 @@ def test_redirect_server():
     thread.start()
 
     # send a request, verify the server exposes the query
-    url = "http://127.0.0.1:{}/?{}={}".format(port, expected_param, expected_value) #nosec
-    response = urllib.request.urlopen(url)  #nosec
+    url = "http://127.0.0.1:{}/?{}={}".format(port, expected_param, expected_value) # nosec
+    response = urllib.request.urlopen(url)  # nosec
 
     assert response.code == 200
     assert server.query_params[expected_param] == [expected_value]

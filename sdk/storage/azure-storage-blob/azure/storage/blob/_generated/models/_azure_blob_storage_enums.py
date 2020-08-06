@@ -78,6 +78,12 @@ class BlobType(str, Enum):
     append_blob = "AppendBlob"
 
 
+class RehydratePriority(str, Enum):
+
+    high = "High"
+    standard = "Standard"
+
+
 class StorageErrorCode(str, Enum):
 
     account_already_exists = "AccountAlreadyExists"
@@ -200,6 +206,12 @@ class GeoReplicationStatusType(str, Enum):
     unavailable = "unavailable"
 
 
+class QueryFormatType(str, Enum):
+
+    delimited = "delimited"
+    json = "json"
+
+
 class AccessTierRequired(str, Enum):
 
     p4 = "P4"
@@ -251,10 +263,12 @@ class PremiumPageBlobAccessTier(str, Enum):
     p80 = "P80"
 
 
-class RehydratePriority(str, Enum):
+class BlobExpiryOptions(str, Enum):
 
-    high = "High"
-    standard = "Standard"
+    never_expire = "NeverExpire"
+    relative_to_creation = "RelativeToCreation"
+    relative_to_now = "RelativeToNow"
+    absolute = "Absolute"
 
 
 class BlockListType(str, Enum):
@@ -282,11 +296,14 @@ class ListBlobsIncludeItem(str, Enum):
     metadata = "metadata"
     snapshots = "snapshots"
     uncommittedblobs = "uncommittedblobs"
+    versions = "versions"
+    tags = "tags"
 
 
 class ListContainersIncludeType(str, Enum):
 
     metadata = "metadata"
+    deleted = "deleted"
 
 
 class PathRenameMode(str, Enum):
@@ -316,6 +333,8 @@ class AccountKind(str, Enum):
     storage = "Storage"
     blob_storage = "BlobStorage"
     storage_v2 = "StorageV2"
+    file_storage = "FileStorage"
+    block_blob_storage = "BlockBlobStorage"
 
 
 class SyncCopyStatusType(str, Enum):

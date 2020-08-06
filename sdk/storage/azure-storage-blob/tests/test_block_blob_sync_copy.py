@@ -144,3 +144,23 @@ class StorageBlockBlobTest(StorageTestCase):
         # Verify content
         content = dest_blob.download_blob().readall()
         self.assertEqual(self.source_blob_data, content)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_sync_copy_blob_returns_vid(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        dest_blob_name = self.get_resource_name('destblob')
+        dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
+
+        # Act
+        copy_props = dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True)
+
+        # Assert
+        self.assertIsNotNone(copy_props['version_id'])
+        self.assertIsNotNone(copy_props)
+        self.assertIsNotNone(copy_props['copy_id'])
+        self.assertEqual('success', copy_props['copy_status'])
+
+        # Verify content
+        content = dest_blob.download_blob().readall()
+        self.assertEqual(self.source_blob_data, content)

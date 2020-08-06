@@ -11,7 +11,9 @@ import os
 import time
 import pytest
 import re
+import logging
 from azure.core.credentials import AzureKeyCredential, AccessToken
+from azure.ai.formrecognizer._models import adjust_value_type
 from devtools_testutils import (
     AzureTestCase,
     AzureMgmtPreparer,
@@ -25,11 +27,16 @@ from azure_devtools.scenario_tests import (
 )
 from azure_devtools.scenario_tests.utilities import is_text_payload
 
+LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
+ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
+REGION = os.getenv('REGION', 'centraluseuap')
+
 
 class AccessTokenReplacer(RecordingProcessor):
     """Replace the access token in a request/response body."""
 
     def __init__(self, replacement='redacted'):
+
         self._replacement = replacement
 
     def process_request(self, request):
@@ -69,6 +76,7 @@ class FormRecognizerTest(AzureTestCase):
     def __init__(self, method_name):
         super(FormRecognizerTest, self).__init__(method_name)
         self.recording_processors.append(AccessTokenReplacer())
+        self.configure_logging()
 
         # URL samples
         self.receipt_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
@@ -106,14 +114,31 @@ class FormRecognizerTest(AzureTestCase):
     def generate_fake_token(self):
         return FakeTokenCredential()
 
+    def configure_logging(self):
+        self.enable_logging() if ENABLE_LOGGER == "True" else self.disable_logging()
+
+    def enable_logging(self):
+        self.logger = logging.getLogger('azure')
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
+        self.logger.handlers = [handler]
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.propagate = True
+        self.logger.disabled = False
+
+    def disable_logging(self):
+        self.logger.propagate = False
+        self.logger.disabled = True
+        self.logger.handlers = []
+
     def assertModelTransformCorrect(self, model, actual, unlabeled=False):
         self.assertEqual(model.model_id, actual.model_info.model_id)
-        self.assertEqual(model.requested_on, actual.model_info.created_date_time)
-        self.assertEqual(model.completed_on, actual.model_info.last_updated_date_time)
+        self.assertEqual(model.training_started_on, actual.model_info.created_date_time)
+        self.assertEqual(model.training_completed_on, actual.model_info.last_updated_date_time)
         self.assertEqual(model.status, actual.model_info.status)
         self.assertEqual(model.errors, actual.train_result.errors)
         for m, a in zip(model.training_documents, actual.train_result.training_documents):
-            self.assertEqual(m.document_name, a.document_name)
+            self.assertEqual(m.name, a.document_name)
             if m.errors and a.errors:
                 self.assertEqual(m.errors, a.errors)
             self.assertEqual(m.page_count, a.pages)
@@ -140,7 +165,10 @@ class FormRecognizerTest(AzureTestCase):
             if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
                 page = page.pages[0]
             self.assertEqual(page.page_number, actual_page.page)
-            self.assertEqual(page.text_angle, actual_page.angle)
+            if actual_page.angle <= 180:
+                self.assertEqual(page.text_angle, actual_page.angle)
+            if actual_page.angle > 180:
+                self.assertEqual(page.text_angle, actual_page.angle - 360)
             self.assertEqual(page.width, actual_page.width)
             self.assertEqual(page.height, actual_page.height)
             self.assertEqual(page.unit, actual_page.unit)
@@ -173,7 +201,7 @@ class FormRecognizerTest(AzureTestCase):
         self.assertEqual(box[3].x, actual[6])
         self.assertEqual(box[3].y, actual[7])
 
-    def assertTextContentTransformCorrect(self, field_elements, actual_elements, read_result):
+    def assertFieldElementsTransFormCorrect(self, field_elements, actual_elements, read_result):
         if field_elements is None and actual_elements is None:
             return
         for receipt, actual in zip(field_elements, actual_elements):
@@ -195,6 +223,7 @@ class FormRecognizerTest(AzureTestCase):
             self.assertBoundingBoxTransformCorrect(b[label].value_data.bounding_box, a.bounding_box)
             self.assertEqual(a.text, b[label].value_data.text)
             field_type = a.type
+            self.assertEqual(adjust_value_type(field_type), b[label].value_type)
             if field_type == "string":
                 self.assertEqual(b[label].value, a.value_string)
             if field_type == "number":
@@ -208,8 +237,8 @@ class FormRecognizerTest(AzureTestCase):
             if field_type == "time":
                 self.assertEqual(b[label].value, a.value_time)
             if read_results:
-                self.assertTextContentTransformCorrect(
-                    b[label].value_data.text_content,
+                self.assertFieldElementsTransFormCorrect(
+                    b[label].value_data.field_elements,
                     a.elements,
                     read_results
                 )
@@ -222,16 +251,16 @@ class FormRecognizerTest(AzureTestCase):
             self.assertEqual(a.key.text, form_fields["field-"+str(idx)].label_data.text)
             self.assertBoundingBoxTransformCorrect(form_fields["field-"+str(idx)].label_data.bounding_box, a.key.bounding_box)
             if read_results:
-                self.assertTextContentTransformCorrect(
-                    form_fields["field-"+str(idx)].label_data.text_content,
+                self.assertFieldElementsTransFormCorrect(
+                    form_fields["field-"+str(idx)].label_data.field_elements,
                     a.key.elements,
                     read_results
                 )
             self.assertEqual(a.value.text, form_fields["field-" + str(idx)].value_data.text)
             self.assertBoundingBoxTransformCorrect(form_fields["field-" + str(idx)].value_data.bounding_box, a.value.bounding_box)
             if read_results:
-                self.assertTextContentTransformCorrect(
-                    form_fields["field-"+str(idx)].value_data.text_content,
+                self.assertFieldElementsTransFormCorrect(
+                    form_fields["field-"+str(idx)].value_data.field_elements,
                     a.value.elements,
                     read_results
                 )
@@ -240,6 +269,7 @@ class FormRecognizerTest(AzureTestCase):
         if actual_field is None:
             return
         field_type = actual_field.type
+        self.assertEqual(adjust_value_type(field_type), receipt_field.value_type)
         if field_type == "string":
             self.assertEqual(receipt_field.value, actual_field.value_string)
         if field_type == "number":
@@ -257,8 +287,8 @@ class FormRecognizerTest(AzureTestCase):
         self.assertEqual(receipt_field.value_data.text, actual_field.text)
         self.assertEqual(receipt_field.confidence, actual_field.confidence if actual_field.confidence is not None else 1.0)
         if read_results:
-            self.assertTextContentTransformCorrect(
-                receipt_field.value_data.text_content,
+            self.assertFieldElementsTransFormCorrect(
+                receipt_field.value_data.field_elements,
                 actual_field.elements,
                 read_results
             )
@@ -287,28 +317,32 @@ class FormRecognizerTest(AzureTestCase):
                 self.assertEqual(cell.is_header, actual_cell.is_header if actual_cell.is_header is not None else False)
                 self.assertEqual(cell.is_footer, actual_cell.is_footer if actual_cell.is_footer is not None else False)
                 self.assertBoundingBoxTransformCorrect(cell.bounding_box, actual_cell.bounding_box)
-                self.assertTextContentTransformCorrect(cell.text_content, actual_cell.elements, read_results)
+                self.assertFieldElementsTransFormCorrect(cell.field_elements, actual_cell.elements, read_results)
 
-    def assertReceiptItemsHasValues(self, items, page_number, include_text_content):
+    def assertReceiptItemsHasValues(self, items, page_number, include_field_elements):
         for item in items:
+            self.assertEqual(item.value_type, "dictionary")
             self.assertBoundingBoxHasPoints(item.value.get("Name").value_data.bounding_box)
             self.assertIsNotNone(item.value.get("Name").confidence)
             self.assertIsNotNone(item.value.get("Name").value_data.text)
+            self.assertIsNotNone(item.value.get("Name").value_type)
             self.assertBoundingBoxHasPoints(item.value.get("Quantity").value_data.bounding_box)
             self.assertIsNotNone(item.value.get("Quantity").confidence)
             self.assertIsNotNone(item.value.get("Quantity").value_data.text)
+            self.assertIsNotNone(item.value.get("Quantity").value_type)
             self.assertBoundingBoxHasPoints(item.value.get("TotalPrice").value_data.bounding_box)
             self.assertIsNotNone(item.value.get("TotalPrice").confidence)
             self.assertIsNotNone(item.value.get("TotalPrice").value_data.text)
+            self.assertIsNotNone(item.value.get("TotalPrice").value_type)
 
-            if include_text_content:
-                self.assertTextContentHasValues(item.value.get("Name").value_data.text_content, page_number)
-                self.assertTextContentHasValues(item.value.get("Name").value_data.text_content, page_number)
-                self.assertTextContentHasValues(item.value.get("Name").value_data.text_content, page_number)
+            if include_field_elements:
+                self.assertFieldElementsHasValues(item.value.get("Name").value_data.field_elements, page_number)
+                self.assertFieldElementsHasValues(item.value.get("Quantity").value_data.field_elements, page_number)
+                self.assertFieldElementsHasValues(item.value.get("TotalPrice").value_data.field_elements, page_number)
             else:
-                self.assertIsNone(item.value.get("Name").value_data.text_content)
-                self.assertIsNone(item.value.get("Name").value_data.text_content)
-                self.assertIsNone(item.value.get("Name").value_data.text_content)
+                self.assertIsNone(item.value.get("Name").value_data.field_elements)
+                self.assertIsNone(item.value.get("Quantity").value_data.field_elements)
+                self.assertIsNone(item.value.get("TotalPrice").value_data.field_elements)
 
     def assertBoundingBoxHasPoints(self, box):
         if box is None:
@@ -349,7 +383,7 @@ class FormRecognizerTest(AzureTestCase):
                         self.assertIsNotNone(cell.row_span)
                         self.assertIsNotNone(cell.column_span)
                         self.assertBoundingBoxHasPoints(cell.bounding_box)
-                        self.assertTextContentHasValues(cell.text_content, page.page_number)
+                        self.assertFieldElementsHasValues(cell.field_elements, page.page_number)
 
     def assertFormWordHasValues(self, word, page_number):
         self.assertIsNotNone(word.confidence)
@@ -357,7 +391,7 @@ class FormRecognizerTest(AzureTestCase):
         self.assertBoundingBoxHasPoints(word.bounding_box)
         self.assertEqual(word.page_number, page_number)
 
-    def assertTextContentHasValues(self, elements, page_number):
+    def assertFieldElementsHasValues(self, elements, page_number):
         if elements is None:
             return
         for word in elements:
@@ -385,7 +419,7 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
             )
 
         return {
-            'location': 'centraluseuap',
+            'location': REGION,
             'resource_group': rg,
         }
 
@@ -400,21 +434,22 @@ class GlobalFormRecognizerAccountPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         form_recognizer_account = FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT
         return {
-            'location': 'centraluseuap',
+            'location': REGION,
             'resource_group': FormRecognizerTest._RESOURCE_GROUP,
             'form_recognizer_account': form_recognizer_account,
             'form_recognizer_account_key': FormRecognizerTest._FORM_RECOGNIZER_KEY
         }
 
 
-class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
+class GlobalClientPreparer(AzureMgmtPreparer):
     def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super(GlobalTrainingAccountPreparer, self).__init__(
+        super(GlobalClientPreparer, self).__init__(
             name_prefix='',
             random_name_length=42
         )
         self.client_kwargs = client_kwargs
         self.client_cls = client_cls
+        self.training = kwargs.get("training", False)
         self.multipage_test = kwargs.get("multipage", False)
         self.multipage_test_2 = kwargs.get("multipage2", False)
         self.need_blob_sas_url = kwargs.get("blob_sas_url", False)
@@ -444,50 +479,7 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
                 raise
         return key_value
 
-    def create_resource(self, name, **kwargs):
-        client, container_sas_url, blob_sas_url = self.create_form_client_and_container_sas_url(**kwargs)
-
-        if self.need_blob_sas_url:
-            return {"client": client,
-                    "container_sas_url": container_sas_url,
-                    "blob_sas_url": blob_sas_url}
-        if self.copy:
-            if self.is_live:
-                resource_group = kwargs.get("resource_group")
-                subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-                form_recognizer_name = FormRecognizerTest._FORM_RECOGNIZER_NAME
-
-                resource_id = "/subscriptions/" + subscription_id + "/resourceGroups/" + resource_group.name + \
-                              "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
-                resource_location = "centraluseuap"
-                self.test_class_instance.scrubber.register_name_pair(
-                    resource_id,
-                    "resource_id"
-                )
-            else:
-                resource_location = "centraluseuap"
-                resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname"
-
-            return {
-                "client": client,
-                "container_sas_url": container_sas_url,
-                "location": resource_location,
-                "resource_id": resource_id
-            }
-
-        else:
-            return {"client": client,
-                    "container_sas_url": container_sas_url}
-
-    def create_form_client_and_container_sas_url(self, **kwargs):
-        form_recognizer_account = self.client_kwargs.pop("form_recognizer_account", None)
-        if form_recognizer_account is None:
-            form_recognizer_account = kwargs.pop("form_recognizer_account")
-
-        form_recognizer_account_key = self.client_kwargs.pop("form_recognizer_account_key", None)
-        if form_recognizer_account_key is None:
-            form_recognizer_account_key = kwargs.pop("form_recognizer_account_key")
-
+    def get_training_parameters(self, client):
         if self.is_live:
             if self.multipage_test:
                 container_sas_url = self.get_settings_value("FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL")
@@ -519,22 +511,83 @@ class GlobalTrainingAccountPreparer(AzureMgmtPreparer):
             container_sas_url = "containersasurl"
             blob_sas_url = "blob_sas_url"
 
+        if self.need_blob_sas_url:
+            return {"client": client,
+                    "container_sas_url": container_sas_url,
+                    "blob_sas_url": blob_sas_url}
+        else:
+            return {"client": client,
+                    "container_sas_url": container_sas_url}
+
+    def get_copy_parameters(self, training_params, client, **kwargs):
+        if self.is_live:
+            resource_group = kwargs.get("resource_group")
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            form_recognizer_name = FormRecognizerTest._FORM_RECOGNIZER_NAME
+
+            resource_id = "/subscriptions/" + subscription_id + "/resourceGroups/" + resource_group.name + \
+                          "/providers/Microsoft.CognitiveServices/accounts/" + form_recognizer_name
+            resource_location = REGION
+            self.test_class_instance.scrubber.register_name_pair(
+                resource_id,
+                "resource_id"
+            )
+        else:
+            resource_location = REGION
+            resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname"
+
+        return {
+            "client": client,
+            "container_sas_url": training_params["container_sas_url"],
+            "location": resource_location,
+            "resource_id": resource_id
+        }
+
+    def create_resource(self, name, **kwargs):
+        client = self.create_form_client(**kwargs)
+
+        if not self.training:
+            return {"client": client}
+
+        training_params = self.get_training_parameters(client)
+
+        if self.copy:
+            return self.get_copy_parameters(training_params, client, **kwargs)
+
+        return training_params
+
+    def create_form_client(self, **kwargs):
+        form_recognizer_account = self.client_kwargs.pop("form_recognizer_account", None)
+        if form_recognizer_account is None:
+            form_recognizer_account = kwargs.pop("form_recognizer_account")
+
+        form_recognizer_account_key = self.client_kwargs.pop("form_recognizer_account_key", None)
+        if form_recognizer_account_key is None:
+            form_recognizer_account_key = kwargs.pop("form_recognizer_account_key")
+
+        if self.is_live:
+            polling_interval = 5
+        else:
+            polling_interval = 0
+
         return self.client_cls(
             form_recognizer_account,
             AzureKeyCredential(form_recognizer_account_key),
+            polling_interval=polling_interval,
+            logging_enable=True if ENABLE_LOGGER == "True" else False,
             **self.client_kwargs
-        ), container_sas_url, blob_sas_url
+        )
 
 
 @pytest.fixture(scope="session")
 def form_recognizer_account():
     test_case = AzureTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location="centraluseuap")
+    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location=REGION)
     form_recognizer_preparer = CognitiveServicesAccountPreparer(
         random_name_enabled=True,
         kind="formrecognizer",
         name_prefix='pycog',
-        location="centraluseuap"
+        location=REGION
     )
 
     try:

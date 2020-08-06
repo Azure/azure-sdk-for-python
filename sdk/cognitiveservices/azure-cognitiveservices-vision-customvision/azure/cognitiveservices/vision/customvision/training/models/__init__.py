@@ -21,6 +21,8 @@ try:
     from ._models_py3 import ImageFileCreateEntry
     from ._models_py3 import ImageIdCreateBatch
     from ._models_py3 import ImageIdCreateEntry
+    from ._models_py3 import ImageMetadataUpdateEntry
+    from ._models_py3 import ImageMetadataUpdateSummary
     from ._models_py3 import ImagePerformance
     from ._models_py3 import ImagePrediction
     from ._models_py3 import ImageProcessingSettings
@@ -69,6 +71,8 @@ except (SyntaxError, ImportError):
     from ._models import ImageFileCreateEntry
     from ._models import ImageIdCreateBatch
     from ._models import ImageIdCreateEntry
+    from ._models import ImageMetadataUpdateEntry
+    from ._models import ImageMetadataUpdateSummary
     from ._models import ImagePerformance
     from ._models import ImagePrediction
     from ._models import ImageProcessingSettings
@@ -113,6 +117,7 @@ from ._custom_vision_training_client_enums import (
     ExportPlatform,
     ExportStatus,
     ImageCreateStatus,
+    ImageMetadataUpdateStatus,
     OrderBy,
     ProjectStatus,
     SortBy,
@@ -132,6 +137,8 @@ __all__ = [
     'ImageFileCreateEntry',
     'ImageIdCreateBatch',
     'ImageIdCreateEntry',
+    'ImageMetadataUpdateEntry',
+    'ImageMetadataUpdateSummary',
     'ImagePerformance',
     'ImagePrediction',
     'ImageProcessingSettings',
@@ -174,10 +181,11 @@ __all__ = [
     'ExportStatus',
     'ExportFlavor',
     'ImageCreateStatus',
+    'ImageMetadataUpdateStatus',
+    'TagType',
     'Classifier',
     'TrainingType',
     'OrderBy',
     'ProjectStatus',
     'SortBy',
-    'TagType',
 ]

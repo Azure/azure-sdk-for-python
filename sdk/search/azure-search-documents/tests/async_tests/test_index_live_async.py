@@ -135,7 +135,7 @@ class SearchClientTestAsync(AzureMgmtTestCase):
         results = await client.search(search_text="hotel")
         assert await results.get_count() is None
 
-        results = await client.search(search_text="hotel", include_total_result_count=True)
+        results = await client.search(search_text="hotel", include_total_count=True)
         assert await results.get_count() == 7
 
     @ResourceGroupPreparer(random_name_enabled=True)

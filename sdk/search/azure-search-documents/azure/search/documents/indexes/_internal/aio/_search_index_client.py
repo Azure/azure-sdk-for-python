@@ -19,6 +19,7 @@ from .._utils import (
     get_access_conditions,
     normalize_endpoint,
 )
+from ...._api_versions import validate_api_version
 from ...._headers_mixin import HeadersMixin
 from ...._version import SDK_MONIKER
 
@@ -33,8 +34,11 @@ if TYPE_CHECKING:
 class SearchIndexClient(HeadersMixin):
     """A client to interact with Azure search service Indexes.
 
-    This class is not normally instantiated directly, instead use
-    `get_skillsets_client()` from a `SearchServiceClient`
+    :param endpoint: The URL endpoint of an Azure search service
+    :type endpoint: str
+    :param credential: A credential to authorize search client requests
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword str api_version: The Search API version to use for requests.
 
     """
 
@@ -43,6 +47,8 @@ class SearchIndexClient(HeadersMixin):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
 
+        api_version = kwargs.pop('api_version', None)
+        validate_api_version(api_version)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential  # type: AzureKeyCredential
         self._client = _SearchServiceClient(

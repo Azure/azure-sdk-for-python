@@ -133,7 +133,7 @@ class NoPolling(PollingMethod):
         except KeyError:
             raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
         import pickle
-        initial_response = pickle.loads(base64.b64decode(continuation_token))
+        initial_response = pickle.loads(base64.b64decode(continuation_token))   # nosec
         return None, initial_response, deserialization_callback
 
 

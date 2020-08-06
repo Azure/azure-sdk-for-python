@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=invalid-overridden-method
 
 try:
     from urllib.parse import quote, unquote
@@ -260,6 +261,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             The match condition to use upon the etag.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword int chunk_size:
+            The maximum chunk size for uploading a file in chunks.
+            Defaults to 100*1024*1024, or 100MB.
         :return: response dict (Etag and last modified).
         """
         options = self._upload_options(

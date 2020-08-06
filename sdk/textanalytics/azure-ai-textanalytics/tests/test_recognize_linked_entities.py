@@ -42,11 +42,15 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.name)
-                self.assertIsNotNone(entity.matches)
                 self.assertIsNotNone(entity.language)
                 self.assertIsNotNone(entity.data_source_entity_id)
                 self.assertIsNotNone(entity.url)
                 self.assertIsNotNone(entity.data_source)
+                self.assertIsNotNone(entity.matches)
+                for match in entity.matches:
+                    self.assertIsNotNone(match.offset)
+                    self.assertIsNotNone(match.length)
+                    self.assertNotEqual(match.length, 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -61,11 +65,15 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
             self.assertEqual(len(doc.entities), 3)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.name)
-                self.assertIsNotNone(entity.matches)
                 self.assertIsNotNone(entity.language)
                 self.assertIsNotNone(entity.data_source_entity_id)
                 self.assertIsNotNone(entity.url)
                 self.assertIsNotNone(entity.data_source)
+                self.assertIsNotNone(entity.matches)
+                for match in entity.matches:
+                    self.assertIsNotNone(match.offset)
+                    self.assertIsNotNone(match.length)
+                    self.assertNotEqual(match.length, 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -106,10 +114,11 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
     def test_too_many_documents(self, client):
         docs = ["One", "Two", "Three", "Four", "Five", "Six"]
 
-        try:
+        with pytest.raises(HttpResponseError) as excinfo:
             client.recognize_linked_entities(docs)
-        except HttpResponseError as e:
-            assert e.status_code == 400
+        assert excinfo.value.status_code == 400
+        assert excinfo.value.error.code == "InvalidDocumentBatch"
+        assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

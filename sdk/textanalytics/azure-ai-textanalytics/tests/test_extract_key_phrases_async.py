@@ -108,15 +108,14 @@ class TestExtractKeyPhrases(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    @pytest.mark.xfail
     async def test_too_many_documents(self, client):
-        # marking as xfail since the service hasn't added this error to this endpoint
-        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+        docs = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"]
 
-        try:
+        with pytest.raises(HttpResponseError) as excinfo:
             await client.extract_key_phrases(docs)
-        except HttpResponseError as e:
-            assert e.status_code == 400
+        assert excinfo.value.status_code == 400
+        assert excinfo.value.error.code == "InvalidDocumentBatch"
+        assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

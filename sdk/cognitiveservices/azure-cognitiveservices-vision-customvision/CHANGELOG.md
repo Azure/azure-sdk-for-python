@@ -1,5 +1,35 @@
 # Release History
 
+## 3.0.0 (2020-06-22)
+
+*Training 3.3*
+
+**Features**
+
+  - Model ImageUrlCreateBatch has a new parameter metadata
+  - Model ImageIdCreateBatch has a new parameter metadata
+  - Model Prediction has a new parameter tag_type
+  - Model ImageFileCreateBatch has a new parameter metadata
+  - Model Image has a new parameter metadata
+  - Added operation get_images
+  - Added operation update_image_metadata
+  - Added operation get_artifact
+  - Added operation get_image_count
+
+**Breaking changes**
+
+  - Operation import_project has a new signature
+  - Operation publish_iteration has a new signature
+  - Operation create_images_from_files has a new signature
+  - Operation create_images_from_urls has a new signature
+  - Operation create_images_from_predictions has a new signature
+
+*Prediction 3.1*
+
+**Features**
+
+  - Model Prediction has a new parameter tag_type
+
 ## 2.0.0 (2020-05-14)
 
 **Features**
@@ -21,7 +51,7 @@
 
 **Breaking changes**
 
-- Credentials are now longer a simple string, but a `msrest.authentication.ApiKeyCredentials` instance instead  
+- Credentials are now longer a simple string, but a `msrest.authentication.ApiKeyCredentials` instance instead
 
 **General Breaking changes**
 
@@ -31,10 +61,10 @@ were incorrectly visible/importable and have been renamed. This fixed
 several issues caused by usage of classes that were not supposed to be
 used in the first place.
 
-  - CustomVisionPredictionClient cannot be imported from `azure.cognitiveservices.vision.customvision.prediction`
-    anymore (import from `azure.cognitiveservices.vision.customvision` works like before)
+  - CustomVisionPredictionClient cannot be imported from `azure.cognitiveservices.vision.customvision.prediction.custom_vision_prediction_client`
+    anymore (import from `azure.cognitiveservices.vision.customvision.prediction` works like before)
   - CustomVisionPredictionClientConfiguration import has been moved from
-    `azure.cognitiveservices.vision.customvision.prediction` to `azure.cognitiveservices.vision.customvision.prediction`
+    `azure.cognitiveservices.vision.customvision.prediction.custom_vision_prediction_client` to `azure.cognitiveservices.vision.customvision.prediction`
   - A model `MyClass` from a "models" sub-module cannot be imported
     anymore using `azure.cognitiveservices.vision.customvision.prediction.models.my_class` (import from
     `azure.cognitiveservices.vision.customvision.prediction.models` works like before)
@@ -42,10 +72,10 @@ used in the first place.
     sub-module cannot be imported anymore using
     `azure.cognitiveservices.vision.customvision.operations.prediction.my_class_operations` (import
     from `azure.cognitiveservices.vision.customvision.prediction.operations` works like before)
-  - CustomVisionTrainingClient cannot be imported from `azure.cognitiveservices.vision.customvision.training`
-    anymore (import from `azure.cognitiveservices.vision.customvision` works like before)
+  - CustomVisionTrainingClient cannot be imported from `azure.cognitiveservices.vision.customvision.training.custom_vision_training_client`
+    anymore (import from `azure.cognitiveservices.vision.customvision.training` works like before)
   - CustomVisionTrainingClientConfiguration import has been moved from
-    `azure.cognitiveservices.vision.customvision.training` to `azure.cognitiveservices.vision.customvision.training`
+    `azure.cognitiveservices.vision.customvision.training.custom_vision_training_client` to `azure.cognitiveservices.vision.customvision.training`
   - A model `MyClass` from a "models" sub-module cannot be imported
     anymore using `azure.cognitiveservices.vision.customvision.training.models.my_class` (import from
     `azure.cognitiveservices.vision.customvision.training.models` works like before)
@@ -87,7 +117,7 @@ This is a stable release of the Cognitive Services Custom Vision SDK.
     AzureRegion property was dropped in favor of an Endpoint property.
     If you were previously specifying an AzureRegion value, you should
     now specify
-    Endpoint='[https://{AzureRegion}.api.cognitive.microsoft.com](https://%7BAzureRegion%7D.api.cognitive.microsoft.com)'
+    Endpoint=`https://{AzureRegion}.api.cognitive.microsoft.com`
     instead. This change ensures better global coverage.
   - Added ONNX 1.2 as an export option
   - Added negative tag support.
@@ -106,8 +136,7 @@ This is a stable release of the Cognitive Services Custom Vision SDK.
 **Breaking changes**
 
   - Expect many breaking changes. As a preview package, we don't detail,
-    but updated samples are available at:
-    <https://github.com/Azure-Samples/cognitive-services-python-sdk-samples>
+    but updated samples are available at:[cognitive-services-python-sdk-samples](https://github.com/Azure-Samples/cognitive-services-python-sdk-samples)
 
 **Features**
 

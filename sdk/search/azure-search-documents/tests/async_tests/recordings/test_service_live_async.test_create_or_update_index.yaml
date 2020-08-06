@@ -18,7 +18,7 @@ interactions:
       api-key:
       - 6CF9D38E0C02AE7CBFF09C124F5A46F5
     method: PUT
-    uri: https://search234a14f7.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+    uri: https://search234a14f7.search.windows.net/indexes('hotels')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search234a14f7.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7EC95562E8036\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
@@ -30,7 +30,7 @@ interactions:
       elapsed-time: '988'
       etag: W/"0x8D7EC95562E8036"
       expires: '-1'
-      location: https://search234a14f7.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+      location: https://search234a14f7.search.windows.net/indexes('hotels')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -39,7 +39,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://search234a14f7.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+    url: https://search234a14f7.search.windows.net/indexes('hotels')?api-version=2020-06-30
 - request:
     body: '{"name": "hotels", "fields": [{"name": "hotelId", "type": "Edm.String",
       "key": true, "searchable": false}, {"name": "baseRate", "type": "Edm.Double"}],
@@ -59,7 +59,7 @@ interactions:
       api-key:
       - 6CF9D38E0C02AE7CBFF09C124F5A46F5
     method: PUT
-    uri: https://search234a14f7.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+    uri: https://search234a14f7.search.windows.net/indexes('hotels')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search234a14f7.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7EC9556534D05\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
@@ -81,5 +81,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://search234a14f7.search.windows.net/indexes('hotels')?api-version=2019-05-06-Preview
+    url: https://search234a14f7.search.windows.net/indexes('hotels')?api-version=2020-06-30
 version: 1

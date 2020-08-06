@@ -15,6 +15,8 @@ from azure.storage.blob import UserDelegationKey as BlobUserDelegationKey
 from azure.storage.blob import ContentSettings as BlobContentSettings
 from azure.storage.blob import ContainerSasPermissions, BlobSasPermissions
 from azure.storage.blob import AccessPolicy as BlobAccessPolicy
+from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
+from azure.storage.blob import DelimitedJSON as BlobDelimitedJSON
 from azure.storage.blob._generated.models import StorageErrorException
 from azure.storage.blob._models import ContainerPropertiesPaged
 from ._deserialize import return_headers_and_deserialized_path_list
@@ -598,3 +600,49 @@ class LocationMode(object):
 
     PRIMARY = 'primary'  #: Requests should be sent to the primary location.
     SECONDARY = 'secondary'  #: Requests should be sent to the secondary location, if possible.
+
+
+class DelimitedJSON(BlobDelimitedJSON):
+    """Defines the input or output JSON serialization for a datalake query.
+
+    :keyword str delimiter: The line separator character, default value is '\n'
+    """
+
+
+class DelimitedTextDialect(BlobDelimitedTextDialect):
+    """Defines the input or output delimited (CSV) serialization for a datalake query request.
+
+    :keyword str delimiter:
+        Column separator, defaults to ','.
+    :keyword str quotechar:
+        Field quote, defaults to '"'.
+    :keyword str lineterminator:
+        Record separator, defaults to '\n'.
+    :keyword str escapechar:
+        Escape char, defaults to empty.
+    :keyword bool has_header:
+        Whether the blob data includes headers in the first line. The default value is False, meaning that the
+        data will be returned inclusive of the first line. If set to True, the data will be returned exclusive
+        of the first line.
+    """
+
+
+class DataLakeFileQueryError(object):
+    """The error happened during quick query operation.
+
+    :ivar str error:
+        The name of the error.
+    :ivar bool is_fatal:
+        If true, this error prevents further query processing. More result data may be returned,
+        but there is no guarantee that all of the original data will be processed.
+        If false, this error does not prevent further query processing.
+    :ivar str description:
+        A description of the error.
+    :ivar int position:
+        The blob offset at which the error occurred.
+    """
+    def __init__(self, error=None, is_fatal=False, description=None, position=None):
+        self.error = error
+        self.is_fatal = is_fatal
+        self.description = description
+        self.position = position

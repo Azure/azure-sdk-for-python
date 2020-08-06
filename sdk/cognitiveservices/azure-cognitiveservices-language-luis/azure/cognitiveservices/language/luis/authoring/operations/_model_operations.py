@@ -1389,7 +1389,7 @@ class ModelOperations(object):
     replace_intent_features.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/features'}
 
     def delete_intent_feature(
-            self, app_id, version_id, intent_id, model_name=None, feature_name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, intent_id, feature_relation_delete_object, custom_headers=None, raw=False, **operation_config):
         """Deletes a relation from the feature relations used by the intent in a
         version of the application.
 
@@ -1399,10 +1399,10 @@ class ModelOperations(object):
         :type version_id: str
         :param intent_id: The intent classifier ID.
         :type intent_id: str
-        :param model_name: The name of the model used.
-        :type model_name: str
-        :param feature_name: The name of the feature used.
-        :type feature_name: str
+        :param feature_relation_delete_object: A feature information object
+         containing the feature relation to delete.
+        :type feature_relation_delete_object:
+         ~azure.cognitiveservices.language.luis.authoring.models.ModelFeatureInformation
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1415,8 +1415,6 @@ class ModelOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
-        feature_relation_delete_object = models.ModelFeatureInformation(model_name=model_name, feature_name=feature_name)
-
         # Construct URL
         url = self.delete_intent_feature.metadata['url']
         path_format_arguments = {
@@ -1587,7 +1585,7 @@ class ModelOperations(object):
     replace_entity_features.metadata = {'url': '/apps/{appId}/versions/{versionId}/entities/{entityId}/features'}
 
     def delete_entity_feature(
-            self, app_id, version_id, entity_id, model_name=None, feature_name=None, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, feature_relation_delete_object, custom_headers=None, raw=False, **operation_config):
         """Deletes a relation from the feature relations used by the entity in a
         version of the application.
 
@@ -1597,10 +1595,10 @@ class ModelOperations(object):
         :type version_id: str
         :param entity_id: The entity extractor ID.
         :type entity_id: str
-        :param model_name: The name of the model used.
-        :type model_name: str
-        :param feature_name: The name of the feature used.
-        :type feature_name: str
+        :param feature_relation_delete_object: A feature information object
+         containing the feature relation to delete.
+        :type feature_relation_delete_object:
+         ~azure.cognitiveservices.language.luis.authoring.models.ModelFeatureInformation
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1613,8 +1611,6 @@ class ModelOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
-        feature_relation_delete_object = models.ModelFeatureInformation(model_name=model_name, feature_name=feature_name)
-
         # Construct URL
         url = self.delete_entity_feature.metadata['url']
         path_format_arguments = {
@@ -2544,7 +2540,7 @@ class ModelOperations(object):
     update_sub_list.metadata = {'url': '/apps/{appId}/versions/{versionId}/closedlists/{clEntityId}/sublists/{subListId}'}
 
     def list_intent_suggestions(
-            self, app_id, version_id, intent_id, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, intent_id, take=100, enable_nested_children=False, custom_headers=None, raw=False, **operation_config):
         """Suggests example utterances that would improve the accuracy of the
         intent model in a version of the application.
 
@@ -2557,6 +2553,8 @@ class ModelOperations(object):
         :param take: The number of entries to return. Maximum page size is
          500. Default is 100.
         :type take: int
+        :param enable_nested_children: Toggles nested/flat format
+        :type enable_nested_children: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2583,6 +2581,8 @@ class ModelOperations(object):
         query_parameters = {}
         if take is not None:
             query_parameters['take'] = self._serialize.query("take", take, 'int', maximum=500, minimum=0)
+        if enable_nested_children is not None:
+            query_parameters['enableNestedChildren'] = self._serialize.query("enable_nested_children", enable_nested_children, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -2609,7 +2609,7 @@ class ModelOperations(object):
     list_intent_suggestions.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/suggest'}
 
     def list_entity_suggestions(
-            self, app_id, version_id, entity_id, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, entity_id, take=100, enable_nested_children=False, custom_headers=None, raw=False, **operation_config):
         """Get suggested example utterances that would improve the accuracy of the
         entity model in a version of the application.
 
@@ -2622,6 +2622,8 @@ class ModelOperations(object):
         :param take: The number of entries to return. Maximum page size is
          500. Default is 100.
         :type take: int
+        :param enable_nested_children: Toggles nested/flat format
+        :type enable_nested_children: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2648,6 +2650,8 @@ class ModelOperations(object):
         query_parameters = {}
         if take is not None:
             query_parameters['take'] = self._serialize.query("take", take, 'int', maximum=500, minimum=0)
+        if enable_nested_children is not None:
+            query_parameters['enableNestedChildren'] = self._serialize.query("enable_nested_children", enable_nested_children, 'bool')
 
         # Construct headers
         header_parameters = {}

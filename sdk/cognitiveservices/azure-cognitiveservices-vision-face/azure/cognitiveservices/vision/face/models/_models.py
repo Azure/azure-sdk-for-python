@@ -153,7 +153,7 @@ class DetectedFace(Model):
     :param face_id:
     :type face_id: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param face_rectangle: Required.
@@ -527,7 +527,7 @@ class MetaDataContract(NameAndUserDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     """
@@ -558,7 +558,7 @@ class FaceList(MetaDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param face_list_id: Required. FaceListId of the target face list.
@@ -983,7 +983,7 @@ class LargeFaceList(MetaDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param large_face_list_id: Required. LargeFaceListId of the target large
@@ -1019,7 +1019,7 @@ class LargePersonGroup(MetaDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param large_person_group_id: Required. LargePersonGroupId of the target
@@ -1256,7 +1256,7 @@ class PersonGroup(MetaDataContract):
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
     :param recognition_model: Possible values include: 'recognition_01',
-     'recognition_02'. Default value: "recognition_01" .
+     'recognition_02', 'recognition_03'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param person_group_id: Required. PersonGroupId of the target person

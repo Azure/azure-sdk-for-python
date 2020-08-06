@@ -60,6 +60,9 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
+                self.assertIsNotNone(entity.offset)
+                self.assertIsNotNone(entity.length)
+                self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -77,6 +80,9 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
+                self.assertIsNotNone(entity.offset)
+                self.assertIsNotNone(entity.length)
+                self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -122,10 +128,11 @@ class TestRecognizeEntities(AsyncTextAnalyticsTest):
     async def test_too_many_documents(self, client):
         docs = ["One", "Two", "Three", "Four", "Five", "Six"]
 
-        try:
+        with pytest.raises(HttpResponseError) as excinfo:
             await client.recognize_entities(docs)
-        except HttpResponseError as e:
-            assert e.status_code == 400
+        assert excinfo.value.status_code == 400
+        assert excinfo.value.error.code == "InvalidDocumentBatch"
+        assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
