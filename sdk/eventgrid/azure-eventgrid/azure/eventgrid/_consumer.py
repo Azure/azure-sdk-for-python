@@ -45,4 +45,5 @@ class EventGridConsumer(object):
         except Exception as err:
             _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent/EventGridEvent schema.')
             _LOGGER.error('Your event: {}'.format(event))
+            raise ValueError('Error: cannot deserialize event. Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent/EventGridEvent schema.')
 

@@ -156,7 +156,6 @@ class DeserializedEvent():
 
         :rtype: Union[CloudEvent, EventGridEvent]
         """
-        event_type = ""
         if not self._model:
             try:
                 if 'specversion' in self._event_dict.keys():
@@ -165,8 +164,8 @@ class DeserializedEvent():
                 else:
                     self._model = EventGridEvent.deserialize(self._event_dict)
                     event_type = self._model.event_type
-            except ValueError:
-                print("Event is not correctly formatted CloudEvent or EventGridEvent.")
+            except:
+                raise ValueError("Event is not correctly formatted CloudEvent or EventGridEvent.")
 
             self._deserialize_data(event_type)
 

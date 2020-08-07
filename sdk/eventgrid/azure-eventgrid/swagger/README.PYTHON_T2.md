@@ -3,13 +3,13 @@
 > see https://aka.ms/autorest
 
 ### Configuration
-# generate code below using: autorest README.PYTHON_T2.MD --no-namespace-folders
 
 ```yaml
 title: EventGridPublisherClient
 description: EventGrid Python Publisher Client
 generated-metadata: false
 license-header: MICROSOFT_MIT_NO_VERSION
+no-namespace-folders: true
 output-folder: ../azure/eventgrid/_generated
 source-code-folder-path: ./azure/eventgrid/_generated
 input-file: 

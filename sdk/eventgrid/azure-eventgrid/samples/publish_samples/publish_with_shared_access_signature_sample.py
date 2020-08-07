@@ -1,8 +1,6 @@
 import sys
 import os
-import json
 from random import randint, sample
-from typing import Sequence
 import time
 
 PACKAGE_PARENT = '..'
@@ -10,17 +8,10 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from dateutil.tz import tzutc
-from datetime import timedelta, timezone
+from datetime import timedelta
 import datetime as dt
 
-from azure.eventgrid import EventGridSharedAccessSignatureCredential
-from azure.mgmt.eventgrid import EventGridManagementClient
-from azure.eventgrid import EventGridPublisherClient, EventGridEvent, CloudEvent, generate_shared_access_signature
-from azure.core.exceptions import (
-    ResourceNotFoundError,
-    ResourceExistsError,
-    ClientAuthenticationError
-)
+from azure.eventgrid import EventGridPublisherClient, CloudEvent, generate_shared_access_signature, EventGridSharedAccessSignatureCredential
 
 key = os.environ["CLOUD_ACCESS_KEY"]
 topic_hostname = os.environ["CLOUD_TOPIC_HOSTNAME"]

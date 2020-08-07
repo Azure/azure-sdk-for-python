@@ -1,6 +1,5 @@
 import sys
 import os
-import json
 from random import randint, sample
 import time
 
@@ -9,13 +8,7 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient
-from azure.eventgrid import EventGridEvent, CloudEvent
-from azure.core.exceptions import (
-    ResourceNotFoundError,
-    ResourceExistsError,
-    ClientAuthenticationError
-)
+from azure.eventgrid import EventGridPublisherClient, CloudEvent
 
 domain_key = os.environ["DOMAIN_ACCESS_KEY"]
 domain_topic_hostname = os.environ["DOMAIN_TOPIC_HOSTNAME"]

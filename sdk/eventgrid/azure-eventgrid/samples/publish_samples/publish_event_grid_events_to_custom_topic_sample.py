@@ -1,8 +1,6 @@
 import sys
 import os
-import json
 from random import randint, sample
-from typing import Sequence
 import time
 
 PACKAGE_PARENT = '..'
@@ -10,14 +8,7 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from azure.core.credentials import AzureKeyCredential
-from azure.mgmt.eventgrid import EventGridManagementClient
-from azure.eventgrid import EventGridPublisherClient
-from azure.eventgrid import EventGridEvent, CloudEvent
-from azure.core.exceptions import (
-    ResourceNotFoundError,
-    ResourceExistsError,
-    ClientAuthenticationError
-)
+from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
 key = os.environ["EG_ACCESS_KEY"]
 topic_hostname = os.environ["EG_TOPIC_HOSTNAME"]
