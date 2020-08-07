@@ -63,7 +63,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message.content_type = 'application/text'
                     message.correlation_id = 'cid'
                     message.message_id = str(i)
-                    message.partition_key = 'pk'
                     message.via_partition_key = 'via_pk'
                     message.to = 'to'
                     message.reply_to = 'reply_to'
@@ -83,7 +82,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     assert message.label == 'label'
                     assert message.content_type == 'application/text'
                     assert message.correlation_id == 'cid'
-                    assert message.partition_key == 'pk'
+                    assert message.partition_key == session_id
                     assert message.via_partition_key == 'via_pk'
                     assert message.to == 'to'
                     assert message.reply_to == 'reply_to'
