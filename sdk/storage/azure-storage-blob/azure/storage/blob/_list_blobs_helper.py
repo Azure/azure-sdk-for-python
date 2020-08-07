@@ -1,3 +1,10 @@
+# pylint: disable=too-many-lines
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from azure.core.paging import PageIterator, ItemPaged
 from azure.storage.blob._deserialize import get_blob_properties_from_generated_code
 from ._generated.models import StorageErrorException, BlobItemInternal, BlobPrefix as GenBlobPrefix
