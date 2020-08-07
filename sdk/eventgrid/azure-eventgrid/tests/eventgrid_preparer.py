@@ -72,7 +72,7 @@ class EventGridTopicPreparer(AzureMgmtPreparer):
             key = self.client.topics.list_shared_access_keys(group.name, name)
             self.primary_key = key.key1
         else:
-            self.resource = FakeResource(name=name, id=name, location=location)
+            self.resource = FakeResource(name=name, id=name, location=self.parameter_location)
             self.primary_access_key = "ZmFrZV9hY29jdW50X2tleQ=="    # test key copied from sb_preparer
         return {
             self.parameter_name: self.resource,
