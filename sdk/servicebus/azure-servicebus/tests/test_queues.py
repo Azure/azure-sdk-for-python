@@ -1646,3 +1646,31 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert message_1st_received_cnt == 20 and message_2nd_received_cnt == 20
                 # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
                 assert receive_counter < 10  # Dynamic link credit issuing come info effect
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5M')
+    def test_queue_receive_keep_conn_alive(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+
+            with sender, receiver:
+                sender.send_messages([Message("message1"), Message("message2")])
+
+                messages = receiver.receive_messages(max_batch_size=20, max_wait_time=5)
+                receiver_handler = receiver._handler
+                assert len(messages) == 2
+                time.sleep(4 * 60 + 5)  # 240s is the service defined connection idle timeout
+                messages[0].renew_lock()  # check mgmt link operation
+                messages[0].complete()
+                messages[1].complete()  # check receiver link operation
+
+                time.sleep(60)  # sleep another one minute to ensure we pass the lock_duration time
+                messages = receiver.receive_messages(max_batch_size=20, max_wait_time=5)
+                assert len(messages) == 0  # make sure messages are removed from the queue
+                assert receiver_handler == receiver._handler  # make sure no reconnection happened

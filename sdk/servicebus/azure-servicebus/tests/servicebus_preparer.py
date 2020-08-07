@@ -255,6 +255,7 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
                  requires_duplicate_detection=False,
                  dead_lettering_on_message_expiration=False,
                  requires_session=False,
+                 lock_duration='PT30S',
                  parameter_name=SERVICEBUS_QUEUE_PARAM,
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  servicebus_namespace_parameter_name=SERVICEBUS_NAMESPACE_PARAM,
@@ -274,6 +275,7 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
         self.requires_duplicate_detection=requires_duplicate_detection
         self.dead_lettering_on_message_expiration=dead_lettering_on_message_expiration
         self.requires_session=requires_session
+        self.lock_duration=lock_duration
         if random_name_enabled:
             self.resource_moniker = self.name_prefix + "sbqueue"
 
@@ -287,7 +289,7 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
                 namespace.name,
                 name,
                 SBQueue(
-                    lock_duration='PT30S',
+                    lock_duration=self.lock_duration,
                     requires_duplicate_detection = self.requires_duplicate_detection,
                     dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration,
                     requires_session = self.requires_session)
