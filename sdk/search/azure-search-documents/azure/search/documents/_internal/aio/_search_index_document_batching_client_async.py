@@ -183,6 +183,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         await self.flush(raise_error=False)
 
     def _reset_timer(self):
+        # pylint: disable=access-member-before-definition
         try:
             self._timer.cancel()
         except AttributeError:
