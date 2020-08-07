@@ -6,7 +6,7 @@ For more information, go to [https://www.gotcosmos.com/](https://www.gotcosmos.c
 
 Use the Azure Cosmos DB SQL API SDKs for application development and database management.
 
-## Content
+## Contents of this folder
 
 ### azure-cosmos
 
