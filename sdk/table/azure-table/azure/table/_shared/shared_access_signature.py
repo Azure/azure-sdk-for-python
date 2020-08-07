@@ -5,7 +5,11 @@
 # --------------------------------------------------------------------------
 from datetime import date
 
+<<<<<<< HEAD:sdk/table/azure-table/azure/table/_shared/shared_access_signature.py
 from azure.table._shared import url_quote
+=======
+from ._deserialize import url_quote
+>>>>>>> dbe33013bf9d1283969a9860f490361671ec5750:sdk/tables/azure-data-tables/azure/data/tables/_shared_access_signature.py
 
 
 from ._common_conversion import (

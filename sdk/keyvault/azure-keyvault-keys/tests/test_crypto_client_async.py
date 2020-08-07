@@ -273,6 +273,15 @@ class CryptoClientTests(KeyVaultTestCase):
             wrap_algorithms=[KeyWrapAlgorithm.aes_256],
         )
 
+    class _CustomHookPolicy(object):
+        pass
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @CryptoClientPreparer(client_kwargs={"custom_hook_policy": _CustomHookPolicy()})
+    async def test_custom_hook_policy(self, key_client, credential, **kwargs):
+        assert isinstance(key_client._client._config.custom_hook_policy, CryptoClientTests._CustomHookPolicy)
+
 
 @pytest.mark.asyncio
 async def test_symmetric_wrap_and_unwrap_local():

@@ -9,7 +9,7 @@ import datetime
 
 import msrest
 from azure.servicebus.aio.management import ServiceBusManagementClient
-from azure.servicebus.management import TopicDescription
+from azure.servicebus.management import TopicProperties
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
@@ -49,18 +49,16 @@ class ServiceBusManagementClientTopicAsyncTests(AzureMgmtTestCase):
         topic_name = "iweidk"
         try:
             await mgmt_service.create_topic(
-                TopicDescription(
-                    name=topic_name,
-                    auto_delete_on_idle=datetime.timedelta(minutes=10),
-                    default_message_time_to_live=datetime.timedelta(minutes=11),
-                    duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
-                    enable_batched_operations=True,
-                    enable_express=True,
-                    enable_partitioning=True,
-                    enable_subscription_partitioning=True,
-                    is_anonymous_accessible=True,
-                    max_size_in_megabytes=3072
-                )
+                name=topic_name,
+                auto_delete_on_idle=datetime.timedelta(minutes=10),
+                default_message_time_to_live=datetime.timedelta(minutes=11),
+                duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
+                enable_batched_operations=True,
+                enable_express=True,
+                enable_partitioning=True,
+                enable_subscription_partitioning=True,
+                is_anonymous_accessible=True,
+                max_size_in_megabytes=3072
             )
             topic = await mgmt_service.get_topic(topic_name)
             assert topic.name == topic_name
@@ -238,13 +236,8 @@ class ServiceBusManagementClientTopicAsyncTests(AzureMgmtTestCase):
         assert info.accessed_at is not None
         assert info.updated_at is not None
         assert info.subscription_count is 0
-
-        assert info.message_count_details
-        assert info.message_count_details.active_message_count == 0
-        assert info.message_count_details.dead_letter_message_count == 0
-        assert info.message_count_details.transfer_dead_letter_message_count == 0
-        assert info.message_count_details.transfer_message_count == 0
-        assert info.message_count_details.scheduled_message_count == 0
+        assert info.size_in_bytes == 0
+        assert info.scheduled_message_count == 0
 
         await mgmt_service.delete_topic("test_topic")
         topics_infos = await async_pageable_to_list(mgmt_service.list_topics_runtime_info())
@@ -265,12 +258,7 @@ class ServiceBusManagementClientTopicAsyncTests(AzureMgmtTestCase):
             assert topic_runtime_info.accessed_at is not None
             assert topic_runtime_info.updated_at is not None
             assert topic_runtime_info.subscription_count is 0
-
-            assert topic_runtime_info.message_count_details
-            assert topic_runtime_info.message_count_details.active_message_count == 0
-            assert topic_runtime_info.message_count_details.dead_letter_message_count == 0
-            assert topic_runtime_info.message_count_details.transfer_dead_letter_message_count == 0
-            assert topic_runtime_info.message_count_details.transfer_message_count == 0
-            assert topic_runtime_info.message_count_details.scheduled_message_count == 0
+            assert topic_runtime_info.size_in_bytes == 0
+            assert topic_runtime_info.scheduled_message_count == 0
         finally:
             await mgmt_service.delete_topic("test_topic")

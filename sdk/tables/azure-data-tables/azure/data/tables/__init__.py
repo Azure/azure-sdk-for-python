@@ -6,24 +6,27 @@
 from azure.data.tables._models import TableServiceStats
 
 from ._entity import TableEntity, EntityProperty, EdmType
-from .table_shared_access_signature import generate_table_sas, \
+from ._table_shared_access_signature import generate_table_sas, \
     generate_account_sas
 from ._table_client import TableClient
 from ._table_service_client import TableServiceClient
-
 from ._models import (
     AccessPolicy,
     Metrics,
-    RetentionPolicy, TableAnalyticsLogging, TableSasPermissions, CorsRule, UpdateMode, SASProtocol, Table,
-)
-from ._shared.models import (
+    RetentionPolicy,
+    TableAnalyticsLogging,
+    TableSasPermissions,
+    CorsRule,
+    UpdateMode,
+    SASProtocol,
+    Table,
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
-    TableErrorCode
 )
 from ._policies import ExponentialRetry, LinearRetry
 from ._version import VERSION
+from ._deserialize import TableErrorCode
 
 __version__ = VERSION
 

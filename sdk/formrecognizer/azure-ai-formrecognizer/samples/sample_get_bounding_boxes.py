@@ -25,16 +25,19 @@ import os
 
 
 def format_bounding_box(bounding_box):
+    """The points are listed in clockwise order: top-left, top-right, bottom-right, bottom-left.
+    """
     if not bounding_box:
         return "N/A"
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
+
 class GetBoundingBoxesSample(object):
 
     def get_bounding_boxes(self):
-        from azure.ai.formrecognizer import FormWord, FormLine
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
+        from azure.ai.formrecognizer import FormWord, FormLine
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -44,7 +47,8 @@ class GetBoundingBoxesSample(object):
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
 
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
+                                                            "..", "./sample_forms/forms/Form_1.jpg"))
         # Make sure your form's type is included in the list of form types the custom model can recognize
         with open(path_to_sample_forms, "rb") as f:
             poller = form_recognizer_client.begin_recognize_custom_forms(
@@ -53,30 +57,31 @@ class GetBoundingBoxesSample(object):
         forms = poller.result()
 
         for idx, form in enumerate(forms):
-            print("--------RECOGNIZING FORM #{}--------".format(idx))
-            print("Form has type {}".format(form.form_type))
+            print("--------RECOGNIZING FORM #{}--------".format(idx+1))
+            print("Form has type: {}".format(form.form_type))
             for name, field in form.fields.items():
                 # each field is of type FormField
-                # The value of the field can also be a FormField, or a list of FormFields
-                # In our sample, it is not.
-                print("...Field '{}' has value '{}' based on '{}' within bounding box '{}', with a confidence score of {}".format(
+                # The value of the field can also be a Dict[str, FormField], or a List[FormField] - in our sample, it is not.
+                print("...Field '{}' has label '{}' with value '{}' within bounding box '{}', with a confidence score of {}".format(
                     name,
+                    field.label_data.text if field.label_data else name,
                     field.value,
-                    field.value_data.text,
                     format_bounding_box(field.value_data.bounding_box),
                     field.confidence
                 ))
             for page in form.pages:
-                print("-------Recognizing Page #{} of Form #{}-------".format(page.page_number, idx))
-                print("Has width '{}' and height '{}' measure with unit: {}, and has text angle '{}'".format(
+                print("-------Recognizing Page #{} of Form #{}-------".format(page.page_number, idx+1))
+                print("Page has width '{}' and height '{}' measure with unit: {}, and has text angle '{}'".format(
                     page.width, page.height, page.unit, page.text_angle
                 ))
                 for table in page.tables:
+                    print("Table on page has the following cells:")
                     for cell in table.cells:
                         print("...Cell[{}][{}] has text '{}' with confidence {} based on the following words: ".format(
                             cell.row_index, cell.column_index, cell.text, cell.confidence
                         ))
-                        # field_elements is only populated if you set include_field_elements to True in your function call to recognize_custom_forms
+                        # field_elements is only populated if you set include_field_elements to True in your call
+                        # to begin_recognize_custom_forms
                         # It is a heterogeneous list of FormWord and FormLine.
                         for content in cell.field_elements:
                             if isinstance(content, FormWord):

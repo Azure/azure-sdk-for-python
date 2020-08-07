@@ -3,10 +3,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import re
+from ._generated.v3_0.models._models import (
+    LanguageInput,
+    MultiLanguageInput
+)
 
-from ._generated.v3_0.models._models import LanguageInput
-from ._generated.v3_0.models._models import MultiLanguageInput
-
+def _get_indices(relation):
+    return [int(s) for s in re.findall(r"\d+", relation)]
 
 class DictMixin(object):
 
@@ -202,6 +206,8 @@ class CategorizedEntity(DictMixin):
     :vartype category: str
     :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
     :vartype subcategory: str
+    :ivar int offset: The entity text offset from the start of the document.
+    :ivar int length: The length of the entity text.
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
@@ -211,6 +217,8 @@ class CategorizedEntity(DictMixin):
         self.text = kwargs.get('text', None)
         self.category = kwargs.get('category', None)
         self.subcategory = kwargs.get('subcategory', None)
+        self.offset = kwargs.get('offset', None)
+        self.length = kwargs.get('length', None)
         self.confidence_score = kwargs.get('confidence_score', None)
 
     @classmethod
@@ -219,12 +227,20 @@ class CategorizedEntity(DictMixin):
             text=entity.text,
             category=entity.category,
             subcategory=entity.subcategory,
+            offset=entity.offset,
+            length=entity.length,
             confidence_score=entity.confidence_score,
         )
 
     def __repr__(self):
-        return "CategorizedEntity(text={}, category={}, subcategory={}, confidence_score={})".format(
-            self.text, self.category, self.subcategory, self.confidence_score
+        return "CategorizedEntity(text={}, category={}, subcategory={}, "\
+            "offset={}, length={}, confidence_score={})".format(
+            self.text,
+            self.category,
+            self.subcategory,
+            self.offset,
+            self.length,
+            self.confidence_score
         )[:1024]
 
 class PiiEntity(DictMixin):
@@ -236,6 +252,8 @@ class PiiEntity(DictMixin):
         Identification/Social Security Number/Phone Number, etc.
     :ivar str subcategory: Entity subcategory, such as Credit Card/EU
         Phone number/ABA Routing Numbers, etc.
+    :ivar int offset: The PII entity text offset from the start of the document.
+    :ivar int length: The length of the PII entity text.
     :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     """
@@ -244,6 +262,8 @@ class PiiEntity(DictMixin):
         self.text = kwargs.get('text', None)
         self.category = kwargs.get('category', None)
         self.subcategory = kwargs.get('subcategory', None)
+        self.offset = kwargs.get('offset', None)
+        self.length = kwargs.get('length', None)
         self.confidence_score = kwargs.get('confidence_score', None)
 
     @classmethod
@@ -252,13 +272,23 @@ class PiiEntity(DictMixin):
             text=entity.text,
             category=entity.category,
             subcategory=entity.subcategory,
+            offset=entity.offset,
+            length=entity.length,
             confidence_score=entity.confidence_score,
         )
 
     def __repr__(self):
-        return "PiiEntity(text={}, category={}, subcategory={}, confidence_score={})".format(
-                   self.text, self.category, self.subcategory, self.confidence_score
-                )[:1024]
+        return (
+            "PiiEntity(text={}, category={}, subcategory={}, offset={}, length={}, "\
+            "confidence_score={})".format(
+                self.text,
+                self.category,
+                self.subcategory,
+                self.offset,
+                self.length,
+                self.confidence_score
+            )[:1024]
+        )
 
 
 class TextAnalyticsError(DictMixin):
@@ -605,23 +635,29 @@ class LinkedEntityMatch(DictMixin):
         returned.
     :vartype confidence_score: float
     :ivar text: Entity text as appears in the request.
+    :ivar int offset: The linked entity match text offset from the start of the document.
+    :ivar int length: The length of the linked entity match text.
     :vartype text: str
     """
 
     def __init__(self, **kwargs):
         self.confidence_score = kwargs.get("confidence_score", None)
         self.text = kwargs.get("text", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
 
     @classmethod
     def _from_generated(cls, match):
         return cls(
             confidence_score=match.confidence_score,
-            text=match.text
+            text=match.text,
+            offset=match.offset,
+            length=match.length
         )
 
     def __repr__(self):
-        return "LinkedEntityMatch(confidence_score={}, text={})".format(
-            self.confidence_score, self.text
+        return "LinkedEntityMatch(confidence_score={}, text={}, offset={}, length={})".format(
+            self.confidence_score, self.text, self.offset, self.length
         )[:1024]
 
 
@@ -702,27 +738,196 @@ class SentenceSentiment(DictMixin):
         and 1 for the sentence for all labels.
     :vartype confidence_scores:
         ~azure.ai.textanalytics.SentimentConfidenceScores
+    :ivar int offset: The sentence offset from the start of the document.
+    :ivar int length: The length of the sentence.
+    :ivar mined_opinions: The list of opinions mined from this sentence.
+        For example in "The food is good, but the service is bad", we would
+        mind these two opinions "food is good", "service is bad". Only returned
+        if `show_opinion_mining` is set to True in the call to `analyze_sentiment`.
+    :vartype mined_opinions:
+        list[~azure.ai.textanalytics.MinedOpinion]
     """
 
     def __init__(self, **kwargs):
         self.text = kwargs.get("text", None)
         self.sentiment = kwargs.get("sentiment", None)
         self.confidence_scores = kwargs.get("confidence_scores", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
+        self.mined_opinions = kwargs.get("mined_opinions", None)
 
     @classmethod
-    def _from_generated(cls, sentence):
+    def _from_generated(cls, sentence, results):
+        if hasattr(sentence, "aspects"):
+            mined_opinions = (
+                [MinedOpinion._from_generated(aspect, results) for aspect in sentence.aspects]  # pylint: disable=protected-access
+                if sentence.aspects else []
+            )
+        else:
+            mined_opinions = None
         return cls(
             text=sentence.text,
             sentiment=sentence.sentiment,
             confidence_scores=SentimentConfidenceScores._from_generated(sentence.confidence_scores),  # pylint: disable=protected-access
+            offset=sentence.offset,
+            length=sentence.length,
+            mined_opinions=mined_opinions
         )
 
     def __repr__(self):
-        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={})".format(
+        return "SentenceSentiment(text={}, sentiment={}, confidence_scores={}, "\
+            "offset={}, length={}, mined_opinions={})".format(
             self.text,
             self.sentiment,
-            repr(self.confidence_scores)
+            repr(self.confidence_scores),
+            self.offset,
+            self.length,
+            repr(self.mined_opinions)
         )[:1024]
+
+class MinedOpinion(DictMixin):
+    """A mined opinion object represents an opinion we've extracted from a sentence.
+    It consists of both an aspect that these opinions are about, and the actual
+    opinions themselves.
+
+    :ivar aspect: The aspect of a product/service that this opinion is about
+    :vartype aspect: ~azure.ai.textanalytics.AspectSentiment
+    :ivar opinions: The actual opinions of the aspect
+    :vartype opinions: list[~azure.ai.textanalytics.OpinionSentiment]
+    """
+
+    def __init__(self, **kwargs):
+        self.aspect = kwargs.get("aspect", None)
+        self.opinions = kwargs.get("opinions", None)
+
+    @staticmethod
+    def _get_opinions(relations, results):
+        if not relations:
+            return []
+        opinion_relations = [r.ref for r in relations if r.relation_type == "opinion"]
+        opinions = []
+        for opinion_relation in opinion_relations:
+            nums = _get_indices(opinion_relation)
+            document_index = nums[0]
+            sentence_index = nums[1]
+            opinion_index = nums[2]
+            opinions.append(
+                results[document_index].sentences[sentence_index].opinions[opinion_index]
+            )
+        return opinions
+
+    @classmethod
+    def _from_generated(cls, aspect, results):
+        return cls(
+            aspect=AspectSentiment._from_generated(aspect),  # pylint: disable=protected-access
+            opinions=[
+                OpinionSentiment._from_generated(opinion) for opinion in cls._get_opinions(aspect.relations, results)  # pylint: disable=protected-access
+            ],
+        )
+
+    def __repr__(self):
+        return "MinedOpinion(aspect={}, opinions={})".format(
+            repr(self.aspect),
+            repr(self.opinions)
+        )[:1024]
+
+
+class AspectSentiment(DictMixin):
+    """AspectSentiment contains the related opinions, predicted sentiment,
+    confidence scores and other information about an aspect of a product.
+    An aspect of a product/service is a key component of that product/service.
+    For example in "The food at Hotel Foo is good", "food" is an aspect of
+    "Hotel Foo".
+
+    :ivar str text: The aspect text.
+    :ivar str sentiment: The predicted Sentiment for the aspect. Possible values
+        include 'positive', 'mixed', and 'negative'.
+    :ivar confidence_scores: The sentiment confidence score between 0
+        and 1 for the aspect for 'positive' and 'negative' labels. It's score
+        for 'neutral' will always be 0
+    :vartype confidence_scores:
+        ~azure.ai.textanalytics.SentimentConfidenceScores
+    :ivar int offset: The aspect offset from the start of the document.
+    :ivar int length: The length of the aspect.
+    """
+
+    def __init__(self, **kwargs):
+        self.text = kwargs.get("text", None)
+        self.sentiment = kwargs.get("sentiment", None)
+        self.confidence_scores = kwargs.get("confidence_scores", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
+
+    @classmethod
+    def _from_generated(cls, aspect):
+        return cls(
+            text=aspect.text,
+            sentiment=aspect.sentiment,
+            confidence_scores=SentimentConfidenceScores._from_generated(aspect.confidence_scores),  # pylint: disable=protected-access
+            offset=aspect.offset,
+            length=aspect.length
+        )
+
+    def __repr__(self):
+        return "AspectSentiment(text={}, sentiment={}, confidence_scores={}, offset={}, length={})".format(
+            self.text,
+            self.sentiment,
+            repr(self.confidence_scores),
+            self.offset,
+            self.length
+        )[:1024]
+
+
+class OpinionSentiment(DictMixin):
+    """OpinionSentiment contains the predicted sentiment,
+    confidence scores and other information about an opinion of an aspect.
+    For example, in the sentence "The food is good", the opinion of the
+    aspect 'food' is 'good'.
+
+    :ivar str text: The opinion text.
+    :ivar str sentiment: The predicted Sentiment for the opinion. Possible values
+        include 'positive', 'mixed', and 'negative'.
+    :ivar confidence_scores: The sentiment confidence score between 0
+        and 1 for the opinion for 'positive' and 'negative' labels. It's score
+        for 'neutral' will always be 0
+    :vartype confidence_scores:
+        ~azure.ai.textanalytics.SentimentConfidenceScores
+    :ivar int offset: The opinion offset from the start of the document.
+    :ivar int length: The length of the opinion.
+    :ivar bool is_negated: Whether the opinion is negated. For example, in
+        "The food is not good", the opinion "good" is negated.
+    """
+
+    def __init__(self, **kwargs):
+        self.text = kwargs.get("text", None)
+        self.sentiment = kwargs.get("sentiment", None)
+        self.confidence_scores = kwargs.get("confidence_scores", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
+        self.is_negated = kwargs.get("is_negated", None)
+
+    @classmethod
+    def _from_generated(cls, opinion):
+        return cls(
+            text=opinion.text,
+            sentiment=opinion.sentiment,
+            confidence_scores=SentimentConfidenceScores._from_generated(opinion.confidence_scores),  # pylint: disable=protected-access
+            offset=opinion.offset,
+            length=opinion.length,
+            is_negated=opinion.is_negated
+        )
+
+    def __repr__(self):
+        return (
+            "OpinionSentiment(text={}, sentiment={}, confidence_scores={}, offset={}, length={}, is_negated={})".format(
+                self.text,
+                self.sentiment,
+                repr(self.confidence_scores),
+                self.offset,
+                self.length,
+                self.is_negated
+            )[:1024]
+        )
 
 
 class SentimentConfidenceScores(DictMixin):
@@ -738,15 +943,15 @@ class SentimentConfidenceScores(DictMixin):
     """
 
     def __init__(self, **kwargs):
-        self.positive = kwargs.get('positive', None)
-        self.neutral = kwargs.get('neutral', None)
-        self.negative = kwargs.get('negative', None)
+        self.positive = kwargs.get('positive', 0.0)
+        self.neutral = kwargs.get('neutral', 0.0)
+        self.negative = kwargs.get('negative', 0.0)
 
     @classmethod
     def _from_generated(cls, score):
         return cls(
             positive=score.positive,
-            neutral=score.neutral,
+            neutral=score.neutral if hasattr(score, "neutral") else 0.0,
             negative=score.negative
         )
 

@@ -15,9 +15,9 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from ._base_client_async import AsyncTextAnalyticsClientBase
-from .._request_handlers import _validate_batch_input
+from .._request_handlers import _validate_input
 from .._response_handlers import (
-    process_batch_error,
+    process_http_response_error,
     entities_result,
     linked_entities_result,
     key_phrases_result,
@@ -66,7 +66,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         Defaults to "en".
     :keyword api_version: The API version of the service to use for requests. It defaults to the
         latest service version. Setting to an older version may result in reduced feature compatibility.
-    :paramtype api_version: str or ~azure.ai.textanalytics.ApiVersion
+    :paramtype api_version: str or ~azure.ai.textanalytics.TextAnalyticsApiVersion
 
     .. admonition:: Example:
 
@@ -141,15 +141,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_detect_language_async.py
-                :start-after: [START batch_detect_language_async]
-                :end-before: [END batch_detect_language_async]
+                :start-after: [START detect_language_async]
+                :end-before: [END detect_language_async]
                 :language: python
                 :dedent: 8
                 :caption: Detecting language in a batch of documents.
         """
         country_hint_arg = kwargs.pop("country_hint", None)
         country_hint = country_hint_arg if country_hint_arg is not None else self._default_country_hint
-        docs = _validate_batch_input(documents, "country_hint", country_hint)
+        docs = _validate_input(documents, "country_hint", country_hint)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -161,7 +161,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def recognize_entities(  # type: ignore
@@ -205,15 +205,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_recognize_entities_async.py
-                :start-after: [START batch_recognize_entities_async]
-                :end-before: [END batch_recognize_entities_async]
+                :start-after: [START recognize_entities_async]
+                :end-before: [END recognize_entities_async]
                 :language: python
                 :dedent: 8
                 :caption: Recognize entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -225,7 +225,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def recognize_pii_entities(  # type: ignore
@@ -269,15 +269,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_recognize_pii_entities.py
-                :start-after: [START batch_recognize_pii_entities]
-                :end-before: [END batch_recognize_pii_entities]
+                :start-after: [START recognize_pii_entities]
+                :end-before: [END recognize_pii_entities]
                 :language: python
                 :dedent: 8
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -295,7 +295,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 )
             raise error
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def recognize_linked_entities(  # type: ignore
@@ -340,15 +340,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_recognize_linked_entities_async.py
-                :start-after: [START batch_recognize_linked_entities_async]
-                :end-before: [END batch_recognize_linked_entities_async]
+                :start-after: [START recognize_linked_entities_async]
+                :end-before: [END recognize_linked_entities_async]
                 :language: python
                 :dedent: 8
                 :caption: Recognize linked entities in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -360,7 +360,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def extract_key_phrases(  # type: ignore
@@ -405,15 +405,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_extract_key_phrases_async.py
-                :start-after: [START batch_extract_key_phrases_async]
-                :end-before: [END batch_extract_key_phrases_async]
+                :start-after: [START extract_key_phrases_async]
+                :end-before: [END extract_key_phrases_async]
                 :language: python
                 :dedent: 8
                 :caption: Extract the key phrases in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         try:
@@ -425,7 +425,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)
 
     @distributed_trace_async
     async def analyze_sentiment(  # type: ignore
@@ -450,6 +450,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
             list[dict[str, str]]
+        :keyword bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
+            granular analysis around the aspects of a product or service (also known as
+            aspect-based sentiment analysis). If set to true, the returned
+            :class:`~azure.ai.textanalytics.SentenceSentiment` objects
+            will have property `mined_opinions` containing the result of this analysis. Only available for
+            API version v3.1-preview.1.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -459,6 +465,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
+        .. versionadded:: v3.1-preview.1
+            The *show_opinion_mining* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -469,17 +477,22 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_analyze_sentiment_async.py
-                :start-after: [START batch_analyze_sentiment_async]
-                :end-before: [END batch_analyze_sentiment_async]
+                :start-after: [START analyze_sentiment_async]
+                :end-before: [END analyze_sentiment_async]
                 :language: python
                 :dedent: 8
                 :caption: Analyze sentiment in a batch of documents.
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_batch_input(documents, "language", language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
+        show_opinion_mining = kwargs.pop("show_opinion_mining", None)
+
+        if show_opinion_mining is not None:
+            kwargs.update({"opinion_mining": show_opinion_mining})
+
         try:
             return await self._client.sentiment(
                 documents=docs,
@@ -488,5 +501,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 cls=kwargs.pop("cls", sentiment_result),
                 **kwargs
             )
+        except TypeError as error:
+            if "opinion_mining" in str(error):
+                raise NotImplementedError(
+                    "'show_opinion_mining' is only available for API version v3.1-preview.1 and up"
+                )
+            raise error
         except HttpResponseError as error:
-            process_batch_error(error)
+            process_http_response_error(error)

@@ -6,6 +6,11 @@
 - We are now targeting the service's v3.1-preview.1 API as the default. If you would like to still use version v3.0 of the service,
 pass in `v3.0` to the kwarg `api_version` when creating your TextAnalyticsClient
 - We have added an API `recognize_pii_entities` which returns entities containing personal information for a batch of documents. Only available for API version v3.1-preview.1 and up.
+- Added `offset` and `length` properties for `CategorizedEntity`, `SentenceSentiment`, and `LinkedEntityMatch`.
+  - `length` is the number of characters in the text of these models
+  - `offset` is the offset of the text from the start of the document
+- We now have added support for opinion mining. To use this feature, you need to make sure you are using the service's
+v3.1-preview.1 API. To get this support pass `show_opinion_mining` as True when calling the `analyze_sentiment` endpoint
 
 ## 5.0.0 (2020-07-27)
 

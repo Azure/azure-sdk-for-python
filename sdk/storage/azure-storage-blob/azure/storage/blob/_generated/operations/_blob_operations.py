@@ -438,6 +438,7 @@ class BlobOperations(object):
                 'x-ms-tag-count': self._deserialize('long', response.headers.get('x-ms-tag-count')),
                 'x-ms-expiry-time': self._deserialize('rfc-1123', response.headers.get('x-ms-expiry-time')),
                 'x-ms-blob-sealed': self._deserialize('bool', response.headers.get('x-ms-blob-sealed')),
+                'x-ms-rehydrate-priority': self._deserialize('str', response.headers.get('x-ms-rehydrate-priority')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
@@ -2256,7 +2257,7 @@ class BlobOperations(object):
             return cls(response, None, response_headers)
     start_copy_from_url.metadata = {'url': '/{containerName}/{blob}'}
 
-    def copy_from_url(self, copy_source, timeout=None, metadata=None, tier=None, request_id=None, source_content_md5=None, blob_tags_string=None, seal_blob=None, source_modified_access_conditions=None, modified_access_conditions=None, lease_access_conditions=None, cls=None, **kwargs):
+    def copy_from_url(self, copy_source, timeout=None, metadata=None, tier=None, request_id=None, source_content_md5=None, blob_tags_string=None, source_modified_access_conditions=None, modified_access_conditions=None, lease_access_conditions=None, cls=None, **kwargs):
         """The Copy From URL operation copies a blob or an internet resource to a
         new blob. It will not return a response until the copy is complete.
 
@@ -2295,9 +2296,6 @@ class BlobOperations(object):
         :param blob_tags_string: Optional.  Used to set blob tags in various
          blob operations.
         :type blob_tags_string: str
-        :param seal_blob: Overrides the sealed state of the destination blob.
-         Service version 2019-12-12 and newer.
-        :type seal_blob: bool
         :param source_modified_access_conditions: Additional parameters for
          the operation
         :type source_modified_access_conditions:
@@ -2375,8 +2373,6 @@ class BlobOperations(object):
             header_parameters['x-ms-source-content-md5'] = self._serialize.header("source_content_md5", source_content_md5, 'bytearray')
         if blob_tags_string is not None:
             header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
-        if seal_blob is not None:
-            header_parameters['x-ms-seal-blob'] = self._serialize.header("seal_blob", seal_blob, 'bool')
         header_parameters['x-ms-requires-sync'] = self._serialize.header("self.x_ms_requires_sync", self.x_ms_requires_sync, 'str')
         if source_if_modified_since is not None:
             header_parameters['x-ms-source-if-modified-since'] = self._serialize.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
@@ -2504,7 +2500,7 @@ class BlobOperations(object):
             return cls(response, None, response_headers)
     abort_copy_from_url.metadata = {'url': '/{containerName}/{blob}'}
 
-    def set_tier(self, tier, snapshot=None, version_id=None, timeout=None, rehydrate_priority=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
+    def set_tier(self, tier, snapshot=None, version_id=None, timeout=None, rehydrate_priority=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Set Tier operation sets the tier on a blob. The operation is
         allowed on a page blob in a premium storage account and on a block blob
         in a blob storage account (locally redundant storage only). A premium
@@ -2544,6 +2540,10 @@ class BlobOperations(object):
          operation
         :type lease_access_conditions:
          ~azure.storage.blob.models.LeaseAccessConditions
+        :param modified_access_conditions: Additional parameters for the
+         operation
+        :type modified_access_conditions:
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -2555,6 +2555,9 @@ class BlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "tier"
 
@@ -2585,6 +2588,8 @@ class BlobOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -2719,6 +2724,9 @@ class BlobOperations(object):
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "query"
 
@@ -2760,6 +2768,8 @@ class BlobOperations(object):
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct body
         if query_request is not None:

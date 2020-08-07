@@ -223,6 +223,8 @@ class StaticWebsite(GeneratedStaticWebsite):
         The default name of the index page under each directory.
     :keyword str error_document404_path:
         The absolute path of the custom 404 page.
+    :keyword str default_index_document_path:
+        Absolute path of the default index page.
     """
 
     def __init__(self, **kwargs):
@@ -230,9 +232,11 @@ class StaticWebsite(GeneratedStaticWebsite):
         if self.enabled:
             self.index_document = kwargs.get('index_document')
             self.error_document404_path = kwargs.get('error_document404_path')
+            self.default_index_document_path = kwargs.get('default_index_document_path')
         else:
             self.index_document = None
             self.error_document404_path = None
+            self.default_index_document_path = None
 
     @classmethod
     def _from_generated(cls, generated):
@@ -242,6 +246,7 @@ class StaticWebsite(GeneratedStaticWebsite):
             enabled=generated.enabled,
             index_document=generated.index_document,
             error_document404_path=generated.error_document404_path,
+            default_index_document_path=generated.default_index_document_path
         )
 
 
@@ -1230,7 +1235,7 @@ class ContainerEncryptionScope(object):
         return None
 
 
-class DelimitedJSON(object):
+class DelimitedJsonDialect(object):
     """Defines the input or output JSON serialization for a blob data query.
 
     :keyword str delimiter: The line separator character, default value is '\n'
@@ -1293,7 +1298,7 @@ class ObjectReplicationRule(DictMixin):
         self.status = kwargs.pop('status', None)
 
 
-class BlobQueryError(Exception):
+class BlobQueryError(object):
     """The error happened during quick query operation.
 
     :ivar str error:
@@ -1312,7 +1317,3 @@ class BlobQueryError(Exception):
         self.is_fatal = is_fatal
         self.description = description
         self.position = position
-        message = self.error
-        if self.description:
-            message += ": {}".format(self.description)
-        super(BlobQueryError, self).__init__(message)

@@ -4,8 +4,7 @@
 # ------------------------------------
 """Credentials for Azure SDK clients."""
 
-from ._auth_record import AuthenticationRecord
-from ._exceptions import AuthenticationRequiredError, CredentialUnavailableError
+from ._exceptions import CredentialUnavailableError
 from ._constants import AzureAuthorityHosts, KnownAuthorities
 from ._credentials import (
     AzureCliCredential,
@@ -20,13 +19,11 @@ from ._credentials import (
     ManagedIdentityCredential,
     SharedTokenCacheCredential,
     UsernamePasswordCredential,
-    VSCodeCredential,
+    VisualStudioCodeCredential,
 )
 
 
 __all__ = [
-    "AuthenticationRecord",
-    "AuthenticationRequiredError",
     "AuthorizationCodeCredential",
     "AzureAuthorityHosts",
     "AzureCliCredential",
@@ -42,7 +39,7 @@ __all__ = [
     "ManagedIdentityCredential",
     "SharedTokenCacheCredential",
     "UsernamePasswordCredential",
-    "VSCodeCredential",
+    "VisualStudioCodeCredential",
 ]
 
 from ._version import VERSION

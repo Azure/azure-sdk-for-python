@@ -4,21 +4,20 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
-import sys
-import uuid
 from uuid import UUID
 from datetime import datetime
-
-from math import (
-    isnan,
-)
+from math import isnan
+import sys
+import uuid
+import isodate
 
 from azure.core import MatchConditions
+from azure.core.exceptions import raise_with_traceback
+
 from ._entity import EdmType, EntityProperty
 from ._models import TablePayloadFormat
-from ._shared._common_conversion import _to_str, _encode_base64, _to_utc_datetime
-from ._shared._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
-
+from ._common_conversion import _to_str, _encode_base64, _to_utc_datetime
+from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
 
 _SUPPORTED_API_VERSIONS = [
@@ -216,8 +215,10 @@ def _add_entity_properties(source):
     # generate the entity_body
     return properties
 
+
 def serialize_iso(attr):
     """Serialize Datetime object into ISO-8601 formatted string.
+
     :param Datetime attr: Object to be serialized.
     :rtype: str
     :raises: ValueError if format invalid.
