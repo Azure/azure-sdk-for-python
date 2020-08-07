@@ -238,10 +238,20 @@ class TestSearchClient(object):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
 
         batch = IndexDocumentsBatch()
-        batch.add_upload_actions("upload1")
-        batch.add_delete_actions("delete1", "delete2")
-        batch.add_merge_actions(["merge1", "merge2", "merge3"])
-        batch.add_merge_or_upload_actions("merge_or_upload1")
+        actions = batch.add_upload_actions("upload1")
+        assert len(actions) == 1
+        for x in actions:
+            assert x.action_type == "upload"
+        actions = batch.add_delete_actions("delete1", "delete2")
+        assert len(actions) == 2
+        for x in actions:
+            assert x.action_type == "delete"
+        actions = batch.add_merge_actions(["merge1", "merge2", "merge3"])
+        for x in actions:
+            assert x.action_type == "merge"
+        actions = batch.add_merge_or_upload_actions("merge_or_upload1")
+        for x in actions:
+            assert x.action_type == "mergeOrUpload"
 
         client.index_documents(batch, extra="foo")
         assert mock_index.called

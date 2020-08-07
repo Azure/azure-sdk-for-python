@@ -35,7 +35,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword int window: how many seconds if there is no changes that triggers auto flush.
         if window is less or equal than 0, it will disable auto flush
-    :keyword int batch_size: batch size. It only takes affect when auto_flush is on
+    :keyword int batch_size: batch size. Default to 1000. It only takes affect when auto_flush is on
     :keyword persistence: persistence hook. If it is set, the batch client will dump actions queue when it changes
     :keyword str api_version: The Search API version to use for requests.
     """
@@ -60,7 +60,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         self._client = SearchIndexClient(
             endpoint=endpoint, index_name=index_name, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: SearchIndexClient
-        self._timer = threading.Timer(self._window, self.flush)
+        self._reset_timer()
         if self._auto_flush:
             self._timer.start()
         self._persistence = kwargs.pop('persistence', None)
@@ -72,7 +72,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
 
     def __repr__(self):
         # type: () -> str
-        return "<SearchClient [endpoint={}, index={}]>".format(
+        return "<SearchIndexDocumentBatchingClient [endpoint={}, index={}]>".format(
             repr(self._endpoint), repr(self._index_name)
         )[:1024]
 
@@ -179,14 +179,20 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
             return
 
         # reset the timer
-        self._timer.cancel()
-        self._timer = threading.Timer(self._window, self.flush)
-        self._timer.start()
+        self._reset_timer()
 
         if len(self._index_documents_batch.actions) < self._batch_size:
             return
 
         self.flush(raise_error=False)
+
+    def _reset_timer(self):
+        try:
+            self._timer.cancel()
+        except AttributeError:
+            pass
+        self._timer = threading.Timer(self._window, self.flush)
+        self._timer.start()
 
     def upload_documents_actions(self, documents):
         # type: (List[dict]) -> None
