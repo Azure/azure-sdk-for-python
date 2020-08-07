@@ -6,6 +6,7 @@
 
 # pylint: disable=protected-access
 
+from ._helpers import adjust_text_angle
 from ._models import (
     FormField,
     FormPage,
@@ -13,8 +14,7 @@ from ._models import (
     FormTable,
     FormTableCell,
     FormPageRange,
-    RecognizedForm,
-    adjust_text_angle
+    RecognizedForm
 )
 
 
@@ -22,7 +22,7 @@ def prepare_receipt(response):
     receipts = []
     read_result = response.analyze_result.read_results
     document_result = response.analyze_result.document_results
-    form_page = FormPage._from_generated(read_result)
+    form_page = FormPage._from_generated_receipt(read_result)
 
     for page in document_result:
         receipt = RecognizedForm(
