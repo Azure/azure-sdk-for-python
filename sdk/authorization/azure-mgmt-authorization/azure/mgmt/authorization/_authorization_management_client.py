@@ -83,6 +83,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
            * 2018-01-01-preview: :mod:`v2018_01_01_preview.models<azure.mgmt.authorization.v2018_01_01_preview.models>`
            * 2018-07-01-preview: :mod:`v2018_07_01_preview.models<azure.mgmt.authorization.v2018_07_01_preview.models>`
            * 2018-09-01-preview: :mod:`v2018_09_01_preview.models<azure.mgmt.authorization.v2018_09_01_preview.models>`
+           * 2020-04-01-preview: :mod:`v2020_04_01_preview.models<azure.mgmt.authorization.v2020_04_01_preview.models>`
         """
         if api_version == '2015-06-01':
             from .v2015_06_01 import models
@@ -98,6 +99,9 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
             return models
         elif api_version == '2018-09-01-preview':
             from .v2018_09_01_preview import models
+            return models
+        elif api_version == '2020-04-01-preview':
+            from .v2020_04_01_preview import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
@@ -182,6 +186,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
            * 2015-07-01: :class:`RoleAssignmentsOperations<azure.mgmt.authorization.v2015_07_01.operations.RoleAssignmentsOperations>`
            * 2018-01-01-preview: :class:`RoleAssignmentsOperations<azure.mgmt.authorization.v2018_01_01_preview.operations.RoleAssignmentsOperations>`
            * 2018-09-01-preview: :class:`RoleAssignmentsOperations<azure.mgmt.authorization.v2018_09_01_preview.operations.RoleAssignmentsOperations>`
+           * 2020-04-01-preview: :class:`RoleAssignmentsOperations<azure.mgmt.authorization.v2020_04_01_preview.operations.RoleAssignmentsOperations>`
         """
         api_version = self._get_api_version('role_assignments')
         if api_version == '2015-07-01':
@@ -190,6 +195,8 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_01_01_preview.operations import RoleAssignmentsOperations as OperationClass
         elif api_version == '2018-09-01-preview':
             from .v2018_09_01_preview.operations import RoleAssignmentsOperations as OperationClass
+        elif api_version == '2020-04-01-preview':
+            from .v2020_04_01_preview.operations import RoleAssignmentsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
