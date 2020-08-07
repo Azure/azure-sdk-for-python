@@ -59,7 +59,7 @@ class GetBoundingBoxesSampleAsync(object):
 
             forms = await poller.result()
             for idx, form in enumerate(forms):
-                print("--------RECOGNIZING FORM #{}--------".format(idx))
+                print("--------RECOGNIZING FORM #{}--------".format(idx+1))
                 print("Form has type: {}".format(form.form_type))
                 for name, field in form.fields.items():
                     # each field is of type FormField
@@ -72,11 +72,12 @@ class GetBoundingBoxesSampleAsync(object):
                         field.confidence
                     ))
                 for page in form.pages:
-                    print("-------Recognizing Page #{} of Form #{}-------".format(page.page_number, idx))
-                    print("Has width '{}' and height '{}' measure with unit: {}, and has text angle '{}'".format(
+                    print("-------Recognizing Page #{} of Form #{}-------".format(page.page_number, idx+1))
+                    print("Page has width '{}' and height '{}' measure with unit: {}, and has text angle '{}'".format(
                         page.width, page.height, page.unit, page.text_angle
                     ))
                     for table in page.tables:
+                        print("Table on page has the following cells:")
                         for cell in table.cells:
                             print(
                                 "...Cell[{}][{}] has text '{}' with confidence {} based on the following words: ".format(

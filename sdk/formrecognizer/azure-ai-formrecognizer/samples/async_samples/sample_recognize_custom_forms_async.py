@@ -53,8 +53,8 @@ class RecognizeCustomFormsSampleAsync(object):
             forms = await poller.result()
 
             for idx, form in enumerate(forms):
-                print("--------Recognizing Form #{}--------".format(idx))
-                print("Form {} has type {}".format(idx, form.form_type))
+                print("--------Recognizing Form #{}--------".format(idx+1))
+                print("Form has type {}".format(form.form_type))
                 for name, field in form.fields.items():
                     # each field is of type FormField
                     # label_data is populated if you are using a model trained without labels,
