@@ -22,8 +22,8 @@ from azure.core.exceptions import (
     ClientAuthenticationError
 )
 
-key = os.environ.get("CUSTOM_ACCESS_KEY")
-topic_hostname = "eventgridcloudeventsub.eastus-1.eventgrid.azure.net"
+key = os.environ["CLOUD_ACCESS_KEY"]
+topic_hostname = os.environ["CLOUD_TOPIC_HOSTNAME"]
 expiration_date_utc = dt.datetime.now(tzutc()) + timedelta(hours=1)
 
 signature = generate_shared_access_signature(topic_hostname, key, expiration_date_utc)

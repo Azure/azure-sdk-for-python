@@ -21,30 +21,14 @@ from azure.core.exceptions import (
     ClientAuthenticationError
 )
 
-class CustomSample(msrest.serialization.Model):
-
-    _validation = {
-            'a': {'required': True},
-        }
-
-    _attribute_map = {
-        'a': {'key': 'a', 'type': 'str'},
-    }
-
-    def __init__(self, a):
-        self.a = a
-
-
-key = os.environ.get("CUSTOM_ACCESS_KEY")
-topic_hostname = "eventgridcloudeventsub.eastus-1.eventgrid.azure.net"
+key = os.environ.get("CLOUD_ACCESS_KEY")
+topic_hostname = os.environ["CLOUD_TOPIC_HOSTNAME"]
 
 # authenticate client
 credential = AzureKeyCredential(key)
 client = EventGridPublisherClient(topic_hostname, credential)
 
 team_members = ["Josh", "Kerri", "Kieran", "Laurent", "Lily", "Matt", "Soren", "Srikanta", "Swathi"]    # possible values for data field
-
-custom_data_object = CustomSample("sample event")
 
 # publish events
 while True:
@@ -54,9 +38,9 @@ while True:
         sample_members = sample(team_members, k=randint(1, 9))      # select random subset of team members
         data_dict = {"team": sample_members}
         event = CloudEvent(
-                type="Azure.Sdk.Samp",
+                type="Azure.Sdk.Sample",
                 source="https://egsample.dev/sampleevent",
-                data=0
+                data={"team": sample_members}
                 )
         event_list.append(event)
 

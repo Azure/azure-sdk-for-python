@@ -9,9 +9,10 @@ import datetime as dt
 import uuid
 import json
 
-from ._generated.models._models import StorageBlobCreatedEventData, \
+from ._generated.models import StorageBlobCreatedEventData, \
     EventGridEvent as InternalEventGridEvent, \
     CloudEvent as InternalCloudEvent
+from ._shared.mixins import DictMixin
 
 class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attributes
     """Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema.
@@ -36,7 +37,7 @@ class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attrib
     :type subject: str
     :param id: Optional. An identifier for the event. The combination of id and source must be
      unique for each distinct event.
-    :type id: str
+    :type id: Optional[str]
     """
 
     _validation = {
@@ -60,11 +61,11 @@ class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attrib
 
     def __init__(self, source, type, **kwargs):
         # type: (Any) -> None
-        kwargs["id"] = kwargs.get('id', uuid.uuid4())
-        kwargs["source"] = source
-        kwargs["type"] = type
-        kwargs["time"] = kwargs.get('time', dt.datetime.now(UTC()).isoformat())
-        kwargs["specversion"] = "1.0"
+        kwargs.setdefault('id', uuid.uuid4())
+        kwargs.setdefault("source", source)
+        kwargs.setdefault("type", type)
+        kwargs.setdefault("time", dt.datetime.now(UTC()).isoformat())
+        kwargs.setdefault("specversion", "1.0")
 
         super(CloudEvent, self).__init__(**kwargs)
 
@@ -76,8 +77,6 @@ class EventGridEvent(InternalEventGridEvent):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: An unique identifier for the event. If not provided, one will be generated for the event.
-    :type id: str
     :param topic: The resource path of the event source. If not provided, Event Grid will stamp onto the event.
     :type topic: str
     :param subject: Required. A resource path relative to the topic path.
@@ -86,13 +85,16 @@ class EventGridEvent(InternalEventGridEvent):
     :type data: object
     :param event_type: Required. The type of the event that occurred.
     :type event_type: str
-    :param event_time: The time (in UTC) of the event. If not provided, it will be the time (in UTC) the event was generated.
-    :type event_time: ~datetime.datetime
-    :ivar metadata_version: The schema version of the event metadata. If providedj, must match Event Grid Schema exactly.
+    :ivar metadata_version: The schema version of the event metadata. If provided, must match Event Grid Schema exactly.
         If not provided, EventGrid will stamp onto event.
     :vartype metadata_version: str
     :param data_version: The schema version of the data object. If not provided, will be stamped with an empty value.
     :type data_version: str
+    :param id: Optional. An identifier for the event. The combination of id and source must be
+     unique for each distinct event.
+    :type id: Optional[str]
+    :param event_time: Optional.The time (in UTC) of the event. If not provided, it will be the time (in UTC) the event was generated.
+    :type event_time: Optional[~datetime.datetime]
     """
 
     _validation = {
@@ -118,66 +120,13 @@ class EventGridEvent(InternalEventGridEvent):
 
     def __init__(self, subject, event_type, **kwargs):
         # type: (Any) -> None
-        kwargs["id"] = kwargs.get('id', uuid.uuid4())
-        kwargs["subject"] = subject
-        kwargs["event_type"] = event_type
-        kwargs["event_time"] = kwargs.get('event_time', dt.datetime.now(UTC()).isoformat())
-        kwargs["data"] = kwargs.get('data', None)
+        kwargs.setdefault('id', uuid.uuid4())
+        kwargs.setdefault('subject', subject)
+        kwargs.setdefault("event_type", event_type)
+        kwargs.setdefault('event_time', dt.datetime.now(UTC()).isoformat())
+        kwargs.setdefault('data', None)
 
         super(EventGridEvent, self).__init__(**kwargs)
-
-class DictMixin(object):
-
-    def __setitem__(self, key, item):
-        self.__dict__[key] = item
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
-    def __contains__(self, key):
-        return key in self.__dict__
-
-    def __repr__(self):
-        return str(self)
-
-    def __len__(self):
-        return len(self.keys())
-
-    def __delitem__(self, key):
-        self.__dict__[key] = None
-
-    def __eq__(self, other):
-        """Compare objects by comparing all attributes."""
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other):
-        """Compare objects by comparing all attributes."""
-        return not self.__eq__(other)
-
-    def __str__(self):
-        return str({k: v for k, v in self.__dict__.items() if not k.startswith('_')})
-
-    def has_key(self, k, **kwargs):
-        return k in self.__dict__
-
-    def update(self, *args, **kwargs):
-        return self.__dict__.update(*args, **kwargs)
-
-    def keys(self, **kwargs):
-        return [k for k in self.__dict__ if not k.startswith('_')]
-
-    def values(self, **kwargs):
-        return [v for k, v in self.__dict__.items() if not k.startswith('_')]
-
-    def items(self, **kwargs):
-        return [(k, v) for k, v in self.__dict__.items() if not k.startswith('_')]
-
-    def get(self, key, default=None, **kwargs):
-        if key in self.__dict__:
-            return self.__dict__[key]
-        return default
 
 
 class DeserializedEvent():
@@ -189,16 +138,11 @@ class DeserializedEvent():
 
     def __init__(self, event):
         # type: (Any) -> None
-    #    self._update(*args, **kwargs)
         self._model = None
         self._event_dict = event
     
     def to_json(self):
         return self._event_dict
-
-    def _update(self, *args, **kwargs):
-        for k, v in dict(*args, **kwargs).items():
-            self[k] = v
 
     @property
     def model(self):
@@ -252,6 +196,4 @@ class CustomEvent(DictMixin):
 
     def _update(self, *args, **kwargs):
         for k, v in dict(*args, **kwargs).items():
-            print(k)
-            print(v)
             self[k] = v

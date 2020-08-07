@@ -12,9 +12,10 @@ from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
 from .._models import CloudEvent, EventGridEvent
+from .._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
-from .._generated.event_grid_publisher_client.aio._event_grid_publisher_client_async import EventGridPublisherClient as EventGridPublisherClientAsync
+from .._generated.event_grid_publisher_client.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .. import _constants as constants
 
 
@@ -26,25 +27,14 @@ class EventGridPublisherClient(object):
     :type credential: Union[~azure.core.credentials.AzureKeyCredential, ~azure.core.credentials.TokenCredential]
     """
 
-    pass
-    def __init__(
-        self,
-        topic_hostname,  # type: str
-        credential,  # type: Union[azure.core.credential.AzureKeyCredential, azure.core.credential.TokenCredential]
-        **kwargs  # type: Any
-    ):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
-        auth_policy = EventGridPublisherClient._get_authentication_policy(credential)
+    def __init__(self, topic_hostname, credential, **kwargs):
+        # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
+        auth_policy = _get_authentication_policy(credential)
         self._client = EventGridPublisherClientAsync(authentication_policy=auth_policy)
-        self._credential = credential
         self._topic_hostname = topic_hostname
 
 
-    async def send(
-        self,
-        events,
-        **kwargs
-    ):
+    async def send(self, events, **kwargs):
         # type: (Union[List[CloudEvent], List[EventGridEvent], List[CustomEvent], dict], Any) -> None
         """Sends event data to topic hostname specified during client initialization.
 
@@ -53,18 +43,10 @@ class EventGridPublisherClient(object):
         :rtype: None
          """
 
-        if isinstance(events[0], CloudEvent):
-            self._client.publish_cloud_event_events(self._topic_hostname, events)
-        elif isinstance(events[0], EventGridEvent):
-            self._client.publish_event_grid_events(self._topic_hostname, events)
+        if all(isinstance(e, CloudEvent) for e in events):
+            await self._client.publish_cloud_event_events(self._topic_hostname, events, **kwargs)
+        elif all(isinstance(e, EventGridEvent) for e in events):
+            await self._client.publish_events(self._topic_hostname, events, **kwargs)
         else:
-            print("Event schema is not correct. Please send as list of CloudEvent or list of EventGridEvent.")
+            raise Exception("Event schema is not correct. Please send as list of all CloudEvents, list of all EventGridEvents, or list of all CustomEvents.")
     
-    @classmethod
-    def _get_authentication_policy(cls, credential):
-        authentication_policy = None
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
-        if isinstance(credential, AzureKeyCredential):
-            authentication_policy = AzureKeyCredentialPolicy(credential=credential, name=constants.EVENTGRID_KEY_HEADER)
-        return authentication_policy

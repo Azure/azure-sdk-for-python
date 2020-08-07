@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING, Sequence
+import json
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
@@ -14,13 +15,9 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from azure.core.credentials import AzureKeyCredential
-from .shared_access_signature_credential import EventGridSharedAccessSignatureCredential
-from ._signature_credential_policy import EventGridSharedAccessSignatureCredentialPolicy
-from ._models import CloudEvent, EventGridEvent
+from ._models import CloudEvent, EventGridEvent, CustomEvent
+from ._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy
 from ._generated._event_grid_publisher_client import EventGridPublisherClient as EventGridPublisherClientImpl
-from .shared_access_signature_credential import EventGridSharedAccessSignatureCredential
 from . import _constants as constants
 
 class EventGridPublisherClient(object):
@@ -39,16 +36,10 @@ class EventGridPublisherClient(object):
     ):
         # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
 
-        if topic_hostname[:7] == 'http://':
-            raise ValueError("Topic_hostname must either begin without the http:// or with an https://")
-        if topic_hostname[:8] == 'https://':
-            topic_hostname = topic_hostname.replace("https://", "")
-        if topic_hostname[-11:] == "/api/events":
-            topic_hostname = topic_hostname.replace("/api/events", "")
+        topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
 
-        self._credential = credential
         self._topic_hostname = topic_hostname
-        auth_policy = self._get_authentication_policy()
+        auth_policy = _get_authentication_policy(credential)
         self._client = EventGridPublisherClientImpl(authentication_policy=auth_policy, **kwargs)
 
     def send(
@@ -65,18 +56,12 @@ class EventGridPublisherClient(object):
          """
 
         if all(isinstance(e, CloudEvent) for e in events):
-            self._client.publish_cloud_event_events(self._topic_hostname, events)
+            self._client.publish_cloud_event_events(self._topic_hostname, events, **kwargs)
         elif all(isinstance(e, EventGridEvent) for e in events):
-            self._client.publish_events(self._topic_hostname, events)
+            self._client.publish_events(self._topic_hostname, events, **kwargs)
+        elif all(isinstance(e, CustomEvent) for e in events):
+            serialized_events = [dict(e) for e in events]
+            self._client.publish_custom_event_events(self._topic_hostname, serialized_events, **kwargs)
         else:
-          raise Exception("Event schema is not correct. Please send as list of all CloudEvents, list of all EventGridEvents, or list of all CustomEvents.")
+            raise Exception("Event schema is not correct. Please send as list of all CloudEvents, list of all EventGridEvents, or list of all CustomEvents.")
 
-    def _get_authentication_policy(self):
-        authentication_policy = None
-        if self._credential is None:
-            raise ValueError("Parameter 'self._credential' must not be None.")
-        if isinstance(self._credential, AzureKeyCredential):
-            authentication_policy = AzureKeyCredentialPolicy(credential=self._credential, name=constants.EVENTGRID_KEY_HEADER)
-        if isinstance(self._credential, EventGridSharedAccessSignatureCredential):
-            authentication_policy = EventGridSharedAccessSignatureCredentialPolicy(credential=self._credential, name=constants.EVENTGRID_TOKEN_HEADER)
-        return authentication_policy

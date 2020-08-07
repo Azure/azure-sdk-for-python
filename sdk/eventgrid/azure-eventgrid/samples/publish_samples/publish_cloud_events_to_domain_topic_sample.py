@@ -17,12 +17,13 @@ from azure.core.exceptions import (
     ClientAuthenticationError
 )
 
-key = os.environ.get("DOMAIN_ACCESS_KEY")
-topic_hostname = "t-swpill-domain.eastus-1.eventgrid.azure.net"
+domain_key = os.environ["DOMAIN_ACCESS_KEY"]
+domain_topic_hostname = os.environ["DOMAIN_TOPIC_HOSTNAME"]
+domain_name = os.environ["DOMAIN_NAME"]
 
 # authenticate client
-credential = AzureKeyCredential(key)
-client = EventGridPublisherClient(topic_hostname, credential)
+credential = AzureKeyCredential(domain_key)
+client = EventGridPublisherClient(domain_topic_hostname, credential)
 
 # publish events
 while True:
@@ -35,7 +36,7 @@ while True:
         sample_members = sample(team_members, k=randint(1, 9))      # select random subset of team members
         event = CloudEvent(
                 type="Azure.Sdk.Demo",
-                source="t-swpill-domain",
+                source=domain_name,
                 data={"team": sample_members}
                 )
         event_list.append(event)

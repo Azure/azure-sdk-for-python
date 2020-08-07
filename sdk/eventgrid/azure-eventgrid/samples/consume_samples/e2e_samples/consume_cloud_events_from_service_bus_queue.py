@@ -20,11 +20,12 @@ from azure.eventgrid import EventGridConsumer, CloudEvent
 from azure.servicebus import ServiceBusClient, Message
 
 connection_str = os.environ['SB_CONN_STR']
+queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 sb_client = ServiceBusClient.from_connection_string(connection_str)
 consumer = EventGridConsumer()
 with sb_client:
-    receiver = sb_client.get_queue_receiver("cloudeventqueue", prefetch=10)
+    receiver = sb_client.get_queue_receiver(queue_name, prefetch=10)
     with receiver:
         msgs = receiver.receive(max_batch_size=10, max_wait_time=1)
         print("number of messages: {}".format(len(msgs)))

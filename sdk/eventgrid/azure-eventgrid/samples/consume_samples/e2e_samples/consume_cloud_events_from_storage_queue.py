@@ -5,10 +5,10 @@ from azure.eventgrid import EventGridConsumer, CloudEvent, EventGridEvent
 from base64 import b64decode
 
 connection_str = os.environ["STORAGE_QUEUE_CONN_STR"]
+queue_name = os.environ["STORAGE_QUEUE_NAME"]
 queue_service = QueueServiceClient.from_connection_string(conn_str=connection_str)
 
-queue_client = queue_service.get_queue_client("egstoragequeue")
-#queue_client.encode_message = False
+queue_client = queue_service.get_queue_client(queue_name)
 consumer = EventGridConsumer()
 
 msgs = queue_client.receive_messages()

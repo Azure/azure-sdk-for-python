@@ -15,7 +15,7 @@ An example to show receiving events from an Event Hub.
 """
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = "cloudeventhub"
+EVENTHUB_NAME = os.environ["EVENTHUB_NAME"]
 
 
 def on_event(partition_context, event):

@@ -9,6 +9,7 @@
 from typing import TYPE_CHECKING
 import json
 import six
+import logging
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
@@ -16,6 +17,8 @@ from msrest import Deserializer, Serializer
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
+
+_LOGGER = logging.basicConfig(level=logging.ERROR)
 
 from ._models import DeserializedEvent
 
@@ -26,25 +29,20 @@ class EventGridConsumer(object):
 
     def deserialize_event(self, event, **kwargs):
         # type: (Union[str, dict, bytes]) -> models.DeserializedEvent
-        """Single event in CloudEvent/EventGridEvent format will be parsed and returned as DeserializedEvent.
+        """Single event following CloudEvent/EventGridEvent schema will be parsed and returned as DeserializedEvent.
         :param event: The event to be deserialized.
         :type event: Union[str, dict, bytes]
         :rtype: models.DeserializedEvent
 
-        :raise: :class:`ValueError`, when events are not of CloudEvent or EventGridEvent format.
+        :raise: :class:`ValueError`, when events do not follow CloudEvent or EventGridEvent schema.
         """
         try:
             if isinstance(event, six.binary_type):
-                dict_event = json.loads(event.decode('ascii'))
-                deserialized_event = DeserializedEvent(dict_event)
-            elif isinstance(event, str):
-                dict_event = json.loads(event)
-                deserialized_event = DeserializedEvent(dict_event)
-            elif isinstance(event, dict):
-                deserialized_event = DeserializedEvent(event)
-        except ValueError as e:
-            print('Error: cannot deserialize event. Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent/EventGridEvent schema.')
-            print('Your event: {}'.format(event))
-            print(e)
+                event = json.loads(event.decode('utf-8'))
+            elif isinstance(event, six.string_types):
+                event = json.loads(event)
+            return DeserializedEvent(event)
+        except Exception as err:
+            _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent/EventGridEvent schema.')
+            _LOGGER.error('Your event: {}'.format(event))
 
-        return deserialized_event
