@@ -1244,6 +1244,9 @@ class NetworkRuleSet(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :param trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
+     Enabled or not.
+    :type trusted_service_access_enabled: bool
     :param default_action: Default Action for Network Rule Set. Possible values include: "Allow",
      "Deny".
     :type default_action: str or ~azure.mgmt.eventhub.v2018_01_01_preview.models.DefaultAction
@@ -1264,6 +1267,7 @@ class NetworkRuleSet(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'trusted_service_access_enabled': {'key': 'properties.trustedServiceAccessEnabled', 'type': 'bool'},
         'default_action': {'key': 'properties.defaultAction', 'type': 'str'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[NWRuleSetVirtualNetworkRules]'},
         'ip_rules': {'key': 'properties.ipRules', 'type': '[NWRuleSetIpRules]'},
@@ -1274,6 +1278,7 @@ class NetworkRuleSet(Resource):
         **kwargs
     ):
         super(NetworkRuleSet, self).__init__(**kwargs)
+        self.trusted_service_access_enabled = kwargs.get('trusted_service_access_enabled', None)
         self.default_action = kwargs.get('default_action', None)
         self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
         self.ip_rules = kwargs.get('ip_rules', None)
