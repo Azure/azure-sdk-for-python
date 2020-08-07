@@ -12,6 +12,7 @@
 * Added `on_lock_renew_failure` as a parameter to `AutoLockRenew.register`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion).
 * Added new supported value types int, float, datetime and timedelta for `CorrelationFilter.properties`.
 * Added new properties `parameters` and `requires_preprocessing` to `SqlRuleFilter` and `SqlRuleAction`.
+* Added support for keeping connection alive.
 
 **Breaking Changes**
 
