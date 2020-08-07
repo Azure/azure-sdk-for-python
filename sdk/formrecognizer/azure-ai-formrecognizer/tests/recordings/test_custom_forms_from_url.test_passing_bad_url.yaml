@@ -15,18 +15,18 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/xx/analyze?includeTextDetails=false
+    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/custom/models/xx/analyze?includeTextDetails=false
   response:
     body:
       string: '{"error": {"code": "1001", "message": "Specified model not found or
         not ready, Model Id: xx"}}'
     headers:
       apim-request-id:
-      - 6f17d297-9f5c-48ef-9eb6-0f6b8946945b
+      - cb32a366-38d8-4a2d-b6d7-4841bacd56f7
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:48:35 GMT
+      - Fri, 07 Aug 2020 21:16:20 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

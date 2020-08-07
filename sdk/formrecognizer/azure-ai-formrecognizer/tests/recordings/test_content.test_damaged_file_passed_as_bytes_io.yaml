@@ -20,18 +20,18 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyze
+    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/layout/analyze
   response:
     body:
       string: '{"error": {"code": "InvalidImage", "message": "The input data is not
         a valid image or password protected."}}'
     headers:
       apim-request-id:
-      - b98a55a9-1c44-4f3d-8bbb-37e5671f833f
+      - b285ea0a-f405-4f70-b87f-75dd662ad63a
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:39:56 GMT
+      - Fri, 07 Aug 2020 20:52:10 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
