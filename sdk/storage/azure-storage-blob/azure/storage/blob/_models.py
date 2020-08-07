@@ -223,6 +223,8 @@ class StaticWebsite(GeneratedStaticWebsite):
         The default name of the index page under each directory.
     :keyword str error_document404_path:
         The absolute path of the custom 404 page.
+    :keyword str default_index_document_path:
+        Absolute path of the default index page.
     """
 
     def __init__(self, **kwargs):
@@ -230,9 +232,11 @@ class StaticWebsite(GeneratedStaticWebsite):
         if self.enabled:
             self.index_document = kwargs.get('index_document')
             self.error_document404_path = kwargs.get('error_document404_path')
+            self.default_index_document_path = kwargs.get('default_index_document_path')
         else:
             self.index_document = None
             self.error_document404_path = None
+            self.default_index_document_path = None
 
     @classmethod
     def _from_generated(cls, generated):
@@ -242,6 +246,7 @@ class StaticWebsite(GeneratedStaticWebsite):
             enabled=generated.enabled,
             index_document=generated.index_document,
             error_document404_path=generated.error_document404_path,
+            default_index_document_path=generated.default_index_document_path
         )
 
 
