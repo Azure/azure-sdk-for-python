@@ -142,6 +142,7 @@ class DeserializedEvent():
         self._event_dict = event
     
     def to_json(self):
+        # type: () -> dict
         return self._event_dict
 
     @property

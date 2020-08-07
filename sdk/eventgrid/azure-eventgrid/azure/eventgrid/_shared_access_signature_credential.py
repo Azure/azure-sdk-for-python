@@ -10,6 +10,7 @@ class EventGridSharedAccessSignatureCredential(object):
     """
 
     def __init__(self, signature):
+        # type: (str) -> None
         self._signature = signature
 
     @property

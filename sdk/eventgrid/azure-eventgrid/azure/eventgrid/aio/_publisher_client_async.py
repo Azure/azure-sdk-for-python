@@ -15,7 +15,7 @@ from .._models import CloudEvent, EventGridEvent
 from .._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
-from .._generated.event_grid_publisher_client.aio import EventGridPublisherClient as EventGridPublisherClientAsync
+from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .. import _constants as constants
 
 
