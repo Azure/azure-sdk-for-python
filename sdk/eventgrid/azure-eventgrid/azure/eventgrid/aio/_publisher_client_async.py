@@ -24,7 +24,7 @@ class EventGridPublisherClient(object):
 
     :param str topic_hostname: The topic endpoint to send the events to.
     :param credential: The credential object used for authentication which implements SAS key authentication or SAS token authentication.
-    :type credential: Union[~azure.core.credentials.AzureKeyCredential, ~azure.core.credentials.TokenCredential]
+    :type credential: Union[~azure.core.credentials.AzureKeyCredential, azure.eventgrid.EventGridSharedAccessSignatureCredential]
     """
 
     def __init__(self, topic_hostname, credential, **kwargs):
@@ -35,11 +35,11 @@ class EventGridPublisherClient(object):
 
 
     async def send(self, events, **kwargs):
-        # type: (Union[List[CloudEvent], List[EventGridEvent], List[CustomEvent], dict], Any) -> None
+        # type: (Union[List[CloudEvent], List[EventGridEvent], List[CustomEvent]], Any) -> None
         """Sends event data to topic hostname specified during client initialization.
 
-        :param  events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent. If a dict is sent, it will be interpreted as a CloudEvent.
-        :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent], dict]
+        :param  events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent.
+        :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent]]
         :rtype: None
          """
 
@@ -47,6 +47,9 @@ class EventGridPublisherClient(object):
             await self._client.publish_cloud_event_events(self._topic_hostname, events, **kwargs)
         elif all(isinstance(e, EventGridEvent) for e in events):
             await self._client.publish_events(self._topic_hostname, events, **kwargs)
+        elif all(isinstance(e, CustomEvent) for e in events):
+            serialized_events = [dict(e) for e in events]
+            await self._client.publish_custom_event_events(self._topic_hostname, serialized_events, **kwargs)
         else:
             raise Exception("Event schema is not correct. Please send as list of all CloudEvents, list of all EventGridEvents, or list of all CustomEvents.")
     

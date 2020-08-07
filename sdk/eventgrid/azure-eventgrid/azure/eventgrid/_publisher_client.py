@@ -28,12 +28,7 @@ class EventGridPublisherClient(object):
     :type credential: Union[~azure.core.credentials.AzureKeyCredential, azure.eventgrid.EventGridSharedAccessSignatureCredential]
     """
 
-    def __init__(
-        self,
-        topic_hostname,  # type: str
-        credential,  # type: Union[azure.core.credential.AzureKeyCredential, azure.eventgrid.EventGridSharedAccessSignatureCredential]
-        **kwargs  # type: Any
-    ):
+    def __init__(self, topic_hostname, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
 
         topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
@@ -42,15 +37,11 @@ class EventGridPublisherClient(object):
         auth_policy = _get_authentication_policy(credential)
         self._client = EventGridPublisherClientImpl(authentication_policy=auth_policy, **kwargs)
 
-    def send(
-        self,
-        events,
-        **kwargs
-    ):
+    def send(self, events, **kwargs):
         # type: (Union[List[CloudEvent], List[EventGridEvent], List[CustomEvent]], Any) -> None
         """Sends event data to topic hostname specified during client initialization.
 
-        :param events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent. If a dict is sent, it will be interpreted as a CloudEvent.
+        :param events: A list of CloudEvent/EventGridEvent/CustomEvent to be sent.
         :type events: Union[List[models.CloudEvent], List[models.EventGridEvent], List[models.CustomEvent]]
         :rtype: None
          """
