@@ -23,7 +23,7 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer
 ```
 
-> Note: This version of the client library supports the v2.0-preview version of the Form Recognizer service
+> Note: This version of the client library supports the v2.0 version of the Form Recognizer service
 
 #### Create a Form Recognizer resource
 Form Recognizer supports both [multi-service and single-service access][multi_and_single_service].
@@ -131,7 +131,7 @@ Sample code snippets are provided to illustrate using a FormRecognizerClient [he
 ### FormTrainingClient
 `FormTrainingClient` provides operations for:
 
-- Training custom models without labels to recognize all fields and values found in your custom forms. A `CustomFormModel` is returned indicating the form type's the model will recognize, and the fields it will extract for each form type. See the [service documentation][fr-train-without-labels] for a more detailed explanation.
+- Training custom models without labels to recognize all fields and values found in your custom forms. A `CustomFormModel` is returned indicating the form types the model will recognize, and the fields it will extract for each form type. See the [service documentation][fr-train-without-labels] for a more detailed explanation.
 - Training custom models with labels to recognize specific fields and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
 - Managing models created in your account.
 - Copying a custom model from one Form Recognizer resource to another.
@@ -250,7 +250,7 @@ for receipt in result:
         if name == "Items":
             print("Receipt Items:")
             for idx, items in enumerate(field.value):
-                print("...Item #{}".format(idx))
+                print("...Item #{}".format(idx+1))
                 for item_name, item in items.value.items():
                     print("......{}: {} has confidence {}".format(item_name, item.value, item.confidence))
         else:
@@ -476,7 +476,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#defaultazurecredential
-[service_recognize_receipt]: https://westus2.dev.cognitive.microsoft.com/docs/services/form-recognizer-api-v2-preview/operations/GetAnalyzeReceiptResult
+[service_recognize_receipt]: https://aka.ms/formrecognizer/receiptfields
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

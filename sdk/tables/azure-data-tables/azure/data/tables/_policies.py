@@ -40,7 +40,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
-from .models import LocationMode
+from ._models import LocationMode
 
 try:
     _unicode_type = unicode  # type: ignore

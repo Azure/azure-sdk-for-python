@@ -51,7 +51,7 @@ class RecognizeReceiptsSampleAsync(object):
             receipts = await poller.result()
 
             for idx, receipt in enumerate(receipts):
-                print("--------Recognizing receipt #{}--------".format(idx))
+                print("--------Recognizing receipt #{}--------".format(idx+1))
                 receipt_type = receipt.fields.get("ReceiptType")
                 if receipt_type:
                     print("Receipt Type: {} has confidence: {}".format(receipt_type.value, receipt_type.confidence))
@@ -63,7 +63,7 @@ class RecognizeReceiptsSampleAsync(object):
                     print("Transaction Date: {} has confidence: {}".format(transaction_date.value, transaction_date.confidence))
                 print("Receipt items:")
                 for idx, item in enumerate(receipt.fields.get("Items").value):
-                    print("...Item #{}".format(idx))
+                    print("...Item #{}".format(idx+1))
                     item_name = item.value.get("Name")
                     if item_name:
                         print("......Item Name: {} has confidence: {}".format(item_name.value, item_name.confidence))

@@ -9,38 +9,31 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-from azure.data.tables._shared._error import _validate_table_name
-from azure.data.tables._shared.base_client import parse_query
-from .base_client import StorageAccountHostsMixin
+from ._base_client import parse_query, StorageAccountHostsMixin
 
 
-class TableClientBase(StorageAccountHostsMixin):
-    """Create TableClientBase from a Credential.
+class TableServiceClientBase(StorageAccountHostsMixin):
+    """ :ivar str account_name: Name of the storage account (Cosmos or Azure)
+    Create TableServiceClientBase class for sync and async code.
 
     :param account_url:
-        A url to an Azure Storage account.
-    :type account_url: str
-    :param table_name: The table name.
-    :type table_name: str
+        A account_url url to an Azure Storage account.
+    :type service: str
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token, or the connection string already has shared
         access key values. The value can be a SAS token string, an account shared access
-        key.
-    :type credential: Union[str,TokenCredential]
-
+        key, or an instance of a TokenCredentials class from azure.identity.
+    :type credential: str
     :returns: None
     """
-
     def __init__(
-            self, account_url,  # type: str
-            table_name,  # type: str
+            self, account_url,  # type: Any
+            service, # type: str
             credential=None,  # type: str
             **kwargs  # type: Any
     ):
         # type: (...) -> None
-
-        _validate_table_name(table_name)
 
         try:
             if not account_url.lower().startswith('http'):
@@ -48,37 +41,20 @@ class TableClientBase(StorageAccountHostsMixin):
         except AttributeError:
             raise ValueError("Account URL must be a string.")
         parsed_url = urlparse(account_url.rstrip('/'))
-        if not table_name:
-            raise ValueError("Please specify a table name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(parsed_url))
+            raise ValueError("Invalid URL: {}".format(account_url))
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
-
-        self.table_name = table_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(TableClientBase, self).__init__(parsed_url, service='table', credential=credential, **kwargs)
+        super(TableServiceClientBase, self).__init__(parsed_url, service=service, credential=credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
         mode hostname.
         """
         return "{}://{}{}".format(self.scheme, hostname, self._query_str)
-
-    @classmethod
-    def _validate_signed_identifiers(cls, signed_identifiers):
-        # type: (...) -> None
-        """Validate the number of signed identifiers is less than five
-
-        :param signed_identifiers:
-        :type signed_identifiers: dict[str,AccessPolicy]
-        """
-        if len(signed_identifiers) > 5:
-            raise ValueError(
-                'Too many access policies provided. The server does not support setting '
-                'more than 5 access policies on a single resource.')
 
     def _parameter_filter_substitution(  # pylint: disable = R0201
             self,
