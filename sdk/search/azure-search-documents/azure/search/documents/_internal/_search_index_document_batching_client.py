@@ -63,8 +63,18 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         self._reset_timer()
         self._persistence = kwargs.pop('persistence', None)
 
-    def cleanup(self):
+    def cleanup(self, flush=True, raise_error=False):
         # type: () -> None
+        """Clean up the client.
+
+        :param bool flush: flush the actions queue before shutdown the client
+            Default to True.
+        :param bool raise_error: raise error if there are failures during flushing
+            Default to False which re-queue the failed tasks and retry on next flush.
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        if flush:
+            self.flush(raise_error=raise_error)
         if self._auto_flush:
             self._timer.cancel()
 
@@ -119,6 +129,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
 
         :param bool raise_error: raise error if there are failures during flushing
             Default to False which re-queue the failed tasks and retry on next flush.
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         # get actions
         actions = self._index_documents_batch.dequeue_actions()
