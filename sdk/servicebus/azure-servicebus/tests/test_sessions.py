@@ -19,6 +19,7 @@ from azure.servicebus._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
 from azure.servicebus._common.utils import utc_now
 from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
+    ServiceBusAuthenticationError,
     ServiceBusError,
     NoActiveSession,
     SessionLockExpired,
@@ -205,13 +206,13 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
     
             # First let's just try the naive failure cases.
             receiver = sb_client.get_queue_receiver("THIS_IS_WRONG_ON_PURPOSE")
-            with pytest.raises(ServiceBusConnectionError):
+            with pytest.raises(ServiceBusAuthenticationError):
                 receiver._open_with_retry()
             assert not receiver._running
             assert not receiver._handler
     
             sender = sb_client.get_queue_sender("THIS_IS_WRONG_ON_PURPOSE")
-            with pytest.raises(ServiceBusConnectionError):
+            with pytest.raises(ServiceBusAuthenticationError):
                 sender._open_with_retry()
             assert not receiver._running
             assert not receiver._handler
