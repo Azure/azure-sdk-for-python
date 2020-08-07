@@ -73,7 +73,7 @@ class EventGridTopicPreparer(AzureMgmtPreparer):
             self.primary_key = key.key1
         else:
             self.resource = FakeResource(name=name, id=name)
-            self.primary_access_key = "ZmFrZV9hY29jdW50X2tleQ=="    # test key copied from sb_preparer
+            self.primary_key = "ZmFrZV9hY29jdW50X2tleQ=="    # test key copied from sb_preparer
         return {
             self.parameter_name: self.resource,
             '{}_primary_key'.format(self.parameter_name): self.primary_key,
