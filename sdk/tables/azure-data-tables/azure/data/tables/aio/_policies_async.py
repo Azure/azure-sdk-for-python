@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.exceptions import AzureError
 
-from .policies import is_retry, StorageRetryPolicy
+from .._policies import is_retry, StorageRetryPolicy
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse

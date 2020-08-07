@@ -26,7 +26,6 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 import six
-from azure.data.tables._shared.shared_access_signature import QueryStringConstants
 from azure.core.configuration import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
@@ -41,10 +40,11 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy
 )
 
-from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from .models import LocationMode
-from .authentication import SharedKeyCredentialPolicy
-from .policies import (
+from ._shared_access_signature import QueryStringConstants
+from ._constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from ._models import LocationMode
+from ._authentication import SharedKeyCredentialPolicy
+from ._policies import (
     StorageHeadersPolicy,
     StorageContentValidation,
     StorageRequestHook,
@@ -52,8 +52,9 @@ from .policies import (
     StorageLoggingPolicy,
     StorageHosts, ExponentialRetry,
 )
-from .._version import VERSION
-from .response_handlers import process_table_error, PartialBatchErrorException
+from ._version import VERSION
+from ._error import _process_table_error
+from ._models import PartialBatchErrorException
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -296,7 +297,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 return iter(parts)
             return parts
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created

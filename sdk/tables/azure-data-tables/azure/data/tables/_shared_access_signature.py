@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from datetime import date
 
-from azure.data.tables._shared import url_quote
+from ._deserialize import url_quote
 
 
 from ._common_conversion import (

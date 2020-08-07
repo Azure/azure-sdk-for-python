@@ -4,32 +4,48 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=unused-argument
-import datetime
+from typing import (  # pylint: disable=unused-import
+    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
+    TYPE_CHECKING
+)
 from uuid import UUID
+import logging
+import datetime
+
 from azure.core.exceptions import ResourceExistsError
-from ._shared import url_quote
+
 from ._entity import EntityProperty, EdmType, TableEntity
-from ._shared._common_conversion import _decode_base64_to_bytes
+from ._common_conversion import _decode_base64_to_bytes
 from ._generated.models import TableProperties
+from ._error import TableErrorCode
+
+if TYPE_CHECKING:
+    from datetime import datetime
+    from azure.core.exceptions import AzureError
 
 
-from ._shared.models import TableErrorCode
+_LOGGER = logging.getLogger(__name__)
+
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib2 import quote # type: ignore
 
 
-def deserialize_metadata(response, _, headers):
-    return {k[10:]: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
+def url_quote(url):
+    return quote(url)
 
 
-def deserialize_table_properties(response, obj, headers):
-    metadata = deserialize_metadata(response, obj, headers)
-    table_properties = TableProperties(
-        metadata=metadata,
-        **headers
-    )
-    return table_properties
+def get_enum_value(value):
+    if value is None or value in ["None", ""]:
+        return None
+    try:
+        return value.value
+    except AttributeError:
+        return value
 
 
-def deserialize_table_creation(response, _, headers):
+def _deserialize_table_creation(response, _, headers):
     if response.status_code == 204:
         error_code = TableErrorCode.table_already_exists
         error = ResourceExistsError(
@@ -174,3 +190,20 @@ def _extract_etag(response):
         return response.headers.get('etag')
 
     return None
+
+
+def _normalize_headers(headers):
+    normalized = {}
+    for key, value in headers.items():
+        if key.startswith('x-ms-'):
+            key = key[5:]
+        normalized[key.lower().replace('-', '_')] = get_enum_value(value)
+    return normalized
+
+
+def _return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+    return _normalize_headers(response_headers), deserialized
+
+
+def _return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+    return response.http_response.location_mode, deserialized, response_headers
