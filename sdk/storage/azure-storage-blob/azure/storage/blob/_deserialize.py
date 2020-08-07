@@ -10,7 +10,7 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties
-from ._shared.models import DictMixin, get_enum_value
+from ._shared.models import get_enum_value
 
 from ._shared.response_handlers import deserialize_metadata
 from ._models import ContainerProperties, BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy, \
