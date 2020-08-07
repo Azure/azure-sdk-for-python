@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import cast, List, TYPE_CHECKING
-from typing_extensions import Protocol
 import threading
+from typing_extensions import Protocol
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
