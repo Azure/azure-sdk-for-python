@@ -105,6 +105,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         **kwargs
     ):
         # type: (str, TokenCredential, Any) -> None
+        self._message_iter = None # type: Optional[Iterator[ReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -136,6 +137,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return self._iter_contextual_wrapper()
 
     def _iter_contextual_wrapper(self, max_wait_time=None):
+        # pylint: disable=protected-access
         original_timeout = None
         while True:
             # This is not threadsafe, but gives us a way to handle if someone passes
@@ -165,7 +167,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     def _iter_next(self):
         self._open()
         if not self._message_iter:
-            self._message_iter = self._handler.receive_messages_iter()  # pylint: disable=attribute-defined-outside-init
+            self._message_iter = self._handler.receive_messages_iter()
         uamqp_message = next(self._message_iter)
         message = self._build_message(uamqp_message)
         return message
@@ -190,6 +192,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
 
     def _open(self):
+        # pylint: disable=protected-access
         if self._running:
             return
         if self._handler and not self._handler._shutdown:

@@ -104,6 +104,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         credential: "TokenCredential",
         **kwargs: Any
     ):
+        self._message_iter = None  # type: Optional[AsyncIterator[ReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -145,7 +146,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             # different max_wait_times to different iterators and uses them in concert.
             if self.max_wait_time and self.receiver and self.receiver._handler:
                 original_timeout = self.receiver._handler._timeout
-                self.receiver._handler._timeout = self.max_wait_time * 1000            
+                self.receiver._handler._timeout = self.max_wait_time * 1000
             try:
                 return await self.receiver.__anext__()
             finally:
@@ -167,7 +168,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     async def _iter_next(self):
         await self._open()
         if not self._message_iter:
-            self._message_iter = self._handler.receive_messages_iter_async()  # pylint: disable=attribute-defined-outside-init
+            self._message_iter = self._handler.receive_messages_iter_async()
         uamqp_message = await self._message_iter.__anext__()
         message = self._build_message(uamqp_message, ReceivedMessage)
         return message
@@ -191,6 +192,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         )
 
     async def _open(self):
+        # pylint: disable=protected-access
         if self._running:
             return
         if self._handler and not self._handler._shutdown:
@@ -210,7 +212,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     async def close(self):
         # type: () -> None
         await super(ServiceBusReceiver, self).close()
-        self._message_iter = None # pylint: disable=attribute-defined-outside-init
+        self._message_iter = None
 
 
     async def _receive(self, max_batch_size=None, timeout=None):
