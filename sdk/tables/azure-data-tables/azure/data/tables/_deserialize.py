@@ -45,10 +45,6 @@ def get_enum_value(value):
         return value
 
 
-def _deserialize_metadata(response, _, headers):
-    return {k[10:]: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
-
-
 def _deserialize_table_creation(response, _, headers):
     if response.status_code == 204:
         error_code = TableErrorCode.table_already_exists

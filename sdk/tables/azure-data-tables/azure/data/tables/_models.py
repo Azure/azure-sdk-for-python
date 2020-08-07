@@ -458,11 +458,6 @@ def service_properties_deserialize(generated):
     }
 
 
-class TableServices(object):
-    def __str__(self):
-        return 't'
-
-
 class Table(object):
     """
     Represents an Azure Table. Returned by list_tables.

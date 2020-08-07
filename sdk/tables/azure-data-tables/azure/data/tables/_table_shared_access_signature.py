@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import Union
 
-from ._models import AccountSasPermissions, TableServices
+from ._models import AccountSasPermissions
 from ._common_conversion import _sign_string
 from ._error import _validate_not_none
 from ._constants import X_MS_VERSION
@@ -70,7 +70,7 @@ def generate_account_sas(
     if permission is str:
         permission = AccountSasPermissions.from_string(permission=permission)
     sas = TableSharedAccessSignature(account_name, account_key)
-    return sas.generate_account(TableServices(), resource_types, permission,
+    return sas.generate_account("t", resource_types, permission,
                                 expiry, start=kwargs.pop('start', None),
                                 ip_address_or_range=kwargs.pop('ip_address_or_range', None),
                                 protocol=kwargs.pop('protocol', None))
