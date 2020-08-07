@@ -8,6 +8,8 @@ omitted_paths:
   - doc/*
   - sdk/**/samples/*
   - sdk/identity/azure-identity/tests/*
+  - ['sdk/cosmos/README.md', 'nspkg and common']
+
 language: python
 root_check_enabled: True
 required_readme_sections:
