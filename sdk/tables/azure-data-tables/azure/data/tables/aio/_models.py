@@ -39,7 +39,7 @@ class TablePropertiesPaged(AsyncPageIterator):
         try:
             return await self._command(
                 next_table_name=continuation_token or None,
-                cls=kwargs.pop('cls', _return_context_and_deserialized),
+                cls=kwargs.pop('cls', None) or _return_context_and_deserialized,
                 use_location=self.location_mode
             )
         except HttpResponseError as error:

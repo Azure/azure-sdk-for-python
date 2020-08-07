@@ -141,7 +141,7 @@ class TableClient(TableClientBase):
             _, identifiers = self._client.table.get_access_policy(
                 table=self.table_name,
                 timeout=timeout,
-                cls=kwargs.pop('cls', _return_headers_and_deserialized),
+                cls=kwargs.pop('cls', None) or _return_headers_and_deserialized,
                 **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)

@@ -49,15 +49,6 @@ def _deserialize_metadata(response, _, headers):
     return {k[10:]: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
 
 
-def _deserialize_table_properties(response, obj, headers):
-    metadata = _deserialize_metadata(response, obj, headers)
-    table_properties = TableProperties(
-        metadata=metadata,
-        **headers
-    )
-    return table_properties
-
-
 def _deserialize_table_creation(response, _, headers):
     if response.status_code == 204:
         error_code = TableErrorCode.table_already_exists

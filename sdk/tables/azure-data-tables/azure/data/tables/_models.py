@@ -290,7 +290,7 @@ class TablePropertiesPaged(PageIterator):
         try:
             return self._command(
                 next_table_name=continuation_token or None,
-                cls=kwargs.pop('cls', _return_context_and_deserialized),
+                cls=kwargs.pop('cls', None) or _return_context_and_deserialized,
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
@@ -348,7 +348,7 @@ class TableEntityPropertiesPaged(PageIterator):
                 next_row_key=row_key or None,
                 next_partition_key=partition_key or None,
                 table=self.table,
-                cls=kwargs.pop('cls', _return_context_and_deserialized),
+                cls=kwargs.pop('cls', None) or _return_context_and_deserialized,
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
@@ -458,51 +458,7 @@ def service_properties_deserialize(generated):
     }
 
 
-class Services(object):
-    """Specifies the services accessible with the account SAS.
-
-    :param bool blob:
-        Access for the `~azure.storage.blob.BlobServiceClient`
-    :param bool queue:
-        Access for the `~azure.data.tables.QueueServiceClient`
-    :param bool fileshare:
-        Access for the `~azure.storage.fileshare.ShareServiceClient`
-    """
-
-    def __init__(self, blob=False, queue=False, fileshare=False):
-        self.blob = blob
-        self.queue = queue
-        self.fileshare = fileshare
-        self._str = (('b' if self.blob else '') +
-                     ('q' if self.queue else '') +
-                     ('f' if self.fileshare else ''))
-
-    def __str__(self):
-        return self._str
-
-    @classmethod
-    def from_string(cls, string):
-        """Create Services from a string.
-
-        To specify blob, queue, or file you need only to
-        include the first letter of the word in the string. E.g. for blob and queue
-        you would provide a string "bq".
-
-        :param str string: Specify blob, queue, or file in
-            in the string with the first letter of the word.
-        :return: A Services object
-        :rtype: ~azure.data.tables.Services
-        """
-        res_blob = 'b' in string
-        res_queue = 'q' in string
-        res_file = 'f' in string
-
-        parsed = cls(res_blob, res_queue, res_file)
-        parsed._str = string  # pylint: disable = protected-access
-        return parsed
-
-
-class TableServices(Services):
+class TableServices(object):
     def __str__(self):
         return 't'
 
@@ -691,37 +647,3 @@ class AccountSasPermissions(object):
                    update=p_update, process=p_process))
         parsed._str = permission  # pylint: disable = protected-access
         return parsed
-
-
-class UserDelegationKey(object):
-    """
-    Represents a user delegation key, provided to the user by Azure Storage
-    based on their Azure Active Directory access token.
-
-    The fields are saved as simple strings since the user does not have to interact with this object;
-    to generate an identify SAS, the user can simply pass it to the right API.
-
-    :ivar str signed_oid:
-        Object ID of this token.
-    :ivar str signed_tid:
-        Tenant ID of the tenant that issued this token.
-    :ivar str signed_start:
-        The datetime this token becomes valid.
-    :ivar str signed_expiry:
-        The datetime this token expires.
-    :ivar str signed_service:
-        What service this key is valid for.
-    :ivar str signed_version:
-        The version identifier of the REST service that created this token.
-    :ivar str value:
-        The user delegation key.
-    """
-
-    def __init__(self):
-        self.signed_oid = None
-        self.signed_tid = None
-        self.signed_start = None
-        self.signed_expiry = None
-        self.signed_service = None
-        self.signed_version = None
-        self.value = None
