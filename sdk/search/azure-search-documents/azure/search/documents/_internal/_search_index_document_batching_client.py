@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import cast, List, TYPE_CHECKING
-
+import abc
 import threading
 
 from azure.core.tracing.decorator import distributed_trace
@@ -19,10 +19,36 @@ from ._index_documents_batch import IndexDocumentsBatch
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
+try:
+    ABC = abc.ABC
+except AttributeError:  # Python 2.7, abc exists, but not ABC
+    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
+
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Union
     from azure.core.credentials import AzureKeyCredential
+
+class PersistenceBase(ABC):
+    @abc.abstractmethod
+    def add_queued_actions(self, actions, **kwargs):
+        # type: (*str, List[IndexAction], dict) -> None
+        pass
+
+    @abc.abstractmethod
+    def add_succeeded_action(self, action, **kwargs):
+        # type: (*str, IndexAction, dict) -> None
+        pass
+
+    @abc.abstractmethod
+    def add_failed_action(self, action, **kwargs):
+        # type: (*str, IndexAction, dict) -> None
+        pass
+
+    @abc.abstractmethod
+    def remove_queued_action(self, action, **kwargs):
+        # type: (*str, IndexAction, dict) -> None
+        pass
 
 class SearchIndexDocumentBatchingClient(HeadersMixin):
     """A client to do index document batching.
@@ -37,6 +63,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         if window is less or equal than 0, it will disable auto flush
     :keyword int batch_size: batch size. Default to 1000. It only takes affect when auto_flush is on
     :keyword persistence: persistence hook. If it is set, the batch client will dump actions queue when it changes
+    :paramtype persistence: PersistenceBase
     :keyword str api_version: The Search API version to use for requests.
     """
     # pylint: disable=too-many-instance-attributes
@@ -159,13 +186,13 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
                     has_error = True
                 elif result.status_code in [200, 201]:
                     if self._persistence:
-                        self._persistence.remove_queued_actions(action)
-                        self._persistence.add_succeeded_actions(action)
+                        self._persistence.remove_queued_action(action)
+                        self._persistence.add_succeeded_action(action)
                     self._index_documents_batch.enqueue_succeeded_actions(action)
                 else:
                     if self._persistence:
-                        self._persistence.remove_queued_actions(action)
-                        self._persistence.add_failed_actions(action)
+                        self._persistence.remove_queued_action(action)
+                        self._persistence.add_failed_action(action)
                     self._index_documents_batch.enqueue_failed_actions(action)
                     has_error = True
 

@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any
     from azure.core.credentials import AzureKeyCredential
+    from .._search_index_document_batching_client import PersistenceBase
 
 
 class SearchIndexDocumentBatchingClient(HeadersMixin):
@@ -37,6 +38,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         if window is less or equal than 0, it will disable auto flush
     :keyword int batch_size: batch size. Default to 1000. It only takes affect when auto_flush is on
     :keyword persistence: persistence hook. If it is set, the batch client will dump actions queue when it changes
+    :paramtype persistence: PersistenceBase
     :keyword str api_version: The Search API version to use for requests.
     """
     # pylint: disable=too-many-instance-attributes
@@ -158,13 +160,13 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
                     has_error = True
                 elif result.status_code in [200, 201]:
                     if self._persistence:
-                        self._persistence.remove_queued_actions(action)
-                        self._persistence.add_succeeded_actions(action)
+                        self._persistence.remove_queued_action(action)
+                        self._persistence.add_succeeded_action(action)
                     self._index_documents_batch.enqueue_succeeded_actions(action)
                 else:
                     if self._persistence:
-                        self._persistence.remove_queued_actions(action)
-                        self._persistence.add_failed_actions(action)
+                        self._persistence.remove_queued_action(action)
+                        self._persistence.add_failed_action(action)
                     self._index_documents_batch.enqueue_failed_actions(action)
                     has_error = True
 
