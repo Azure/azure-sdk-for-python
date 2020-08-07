@@ -164,16 +164,16 @@
 #         entity.large = 933311100
 #         entity.Birthday = datetime(1973, 10, 4)
 #         entity.birthday = datetime(1970, 10, 4)
-#         entity.binary = EntityProperty(EdmType.BINARY, b'binary')
-#         entity.other = EntityProperty(EdmType.INT32, 20)
+#         entity.binary = EntityProperty(b'binary')
+#         entity.other = EntityProperty(20, EdmType.INT32)
 #         entity.clsid = EntityProperty(
-#             EdmType.GUID, 'c9da6455-213d-42c9-9a79-3e9149a57833')
+#             'c9da6455-213d-42c9-9a79-3e9149a57833')
 #         return entity
 #
 #     def _create_default_entity_for_encryption(self):
 #         entity = self._create_random_entity_class()
-#         entity['sex'] = EntityProperty(EdmType.STRING, entity['sex'], True)
-#         entity['name'] = EntityProperty(EdmType.STRING, entity['name'], True)
+#         entity['sex'] = EntityProperty(entity['sex'])
+#         entity['name'] = EntityProperty(entity['name'])
 #         return entity
 #
 #     def _create_default_entity_dict(self, pk=None, rk=None):
@@ -196,11 +196,9 @@
 #                 'large': 933311100,
 #                 'Birthday': datetime(1973, 10, 4),
 #                 'birthday': datetime(1970, 10, 4),
-#                 'binary': EntityProperty(EdmType.BINARY, b'binary'),
-#                 'other': EntityProperty(EdmType.INT32, 20),
-#                 'clsid': EntityProperty(
-#                     EdmType.GUID,
-#                     'c9da6455-213d-42c9-9a79-3e9149a57833')}
+#                 'binary': EntityProperty(b'binary'),
+#                 'other': EntityProperty(20, EdmType.INT32),
+#                 'clsid': EntityProperty('c9da6455-213d-42c9-9a79-3e9149a57833')}
 #
 #     def _assert_default_entity(self, entity):
 #         '''
@@ -265,7 +263,7 @@
 #         # Arrange
 #         self.ts.require_encryption = True
 #         entity = self._create_default_entity_dict()
-#         entity['sex'] = EntityProperty(EdmType.STRING, entity['sex'], True)
+#         entity['sex'] = EntityProperty(entity['sex'])
 #         self.ts.key_encryption_key = KeyWrapper('key1')
 #         self.table.create_entity(table_entity_properties=entity)
 #
@@ -547,7 +545,7 @@
 #         # Arrange
 #         entity = self._create_random_entity_class()
 #         self.ts.insert_entity(self.table_name, entity)
-#         entity['sex'] = EntityProperty(EdmType.STRING, 'female', True)
+#         entity['sex'] = EntityProperty('female')
 #         self.ts.key_encryption_key = KeyWrapper('key1')
 #
 #         # Act
@@ -764,22 +762,22 @@
 #         # Arrange
 #         self.ts.require_encryption = True
 #         entity_binary = self._create_random_entity_class()
-#         entity_binary['bytes'] = EntityProperty(EdmType.BINARY, urandom(10), True)
+#         entity_binary['bytes'] = EntityProperty(b'urandom(10)')
 #         entity_boolean = self._create_random_entity_class()
-#         entity_boolean['married'] = EntityProperty(EdmType.BOOLEAN, True, True)
+#         entity_boolean['married'] = EntityProperty(True)
 #         entity_date_time = self._create_random_entity_class()
-#         entity_date_time['birthday'] = EntityProperty(EdmType.DATETIME, entity_date_time['birthday'], True)
+#         entity_date_time['birthday'] = EntityProperty(ntity_date_time['birthday'])
 #         entity_double = self._create_random_entity_class()
-#         entity_double['ratio'] = EntityProperty(EdmType.DATETIME, entity_double['ratio'], True)
+#         entity_double['ratio'] = EntityProperty(entity_double['ratio'])
 #         entity_guid = self._create_random_entity_class()
 #         entity_guid['clsid'].encrypt = True
 #         entity_int32 = self._create_random_entity_class()
 #         entity_int32['other'].encrypt = True
 #         entity_int64 = self._create_random_entity_class()
-#         entity_int64['large'] = EntityProperty(EdmType.INT64, entity_int64['large'], True)
+#         entity_int64['large'] = EntityProperty(entity_int64['large'])
 #         self.ts.key_encryption_key = KeyWrapper('key1')
 #         entity_none_str = self._create_random_entity_class()
-#         entity_none_str['none_str'] = EntityProperty(EdmType.STRING, None, True)
+#         entity_none_str['none_str'] = EntityProperty(None)
 #
 #         # Act
 #

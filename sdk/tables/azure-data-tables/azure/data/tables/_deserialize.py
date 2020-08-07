@@ -46,11 +46,11 @@ def deserialize_table_creation(response, _, headers):
 
 
 def _from_entity_binary(value):
-    return EntityProperty(EdmType.BINARY, _decode_base64_to_bytes(value))
+    return EntityProperty(_decode_base64_to_bytes(value))
 
 
 def _from_entity_int32(value):
-    return EntityProperty(EdmType.INT32, int(value))
+    return EntityProperty(int(value))
 
 
 zero = datetime.timedelta(0)  # same as 00:00

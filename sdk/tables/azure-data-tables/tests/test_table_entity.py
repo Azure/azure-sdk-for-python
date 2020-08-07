@@ -115,7 +115,7 @@ class StorageTableEntityTest(TableTestCase):
             'Birthday': datetime(1973, 10, 4, tzinfo=tzutc()),
             'birthday': datetime(1970, 10, 4, tzinfo=tzutc()),
             'binary': b'binary',
-            'other': EntityProperty(type=EdmType.INT32, value=20),
+            'other': EntityProperty(value=20, type=EdmType.INT32),
             'clsid': uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
         }
         return TableEntity(**properties)
@@ -160,7 +160,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['binary'].value, b'binary')
         self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT32)
+        self.assertEqual(entity['other'].type, EdmType.INT64)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
         # self.assertTrue('metadata' in entity.odata)
@@ -188,7 +188,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['binary'].value, b'binary')
         self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT32)
+        self.assertEqual(entity['other'].type, EdmType.INT64)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
         # self.assertTrue('metadata' in entity.odata)
@@ -222,7 +222,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertTrue(entity['birthday'].endswith('00Z'))
         self.assertEqual(entity['binary'], b64encode(b'binary').decode('utf-8'))
         self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT32)
+        self.assertEqual(entity['other'].type, EdmType.INT64)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], 'c9da6455-213d-42c9-9a79-3e9149a57833')
         # self.assertIsNone(entity.odata)
@@ -273,7 +273,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(entity.Birthday, datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertIsInstance(entity.other, EntityProperty)
-        self.assertEqual(entity.other.type, EdmType.INT32)
+        self.assertEqual(entity.other.type, EdmType.INT64)
         self.assertEqual(entity.other.value, 20)
         self.assertIsInstance(entity.clsid, uuid.UUID)
         self.assertEqual(str(entity.clsid), 'c9da6455-213d-42c9-9a79-3e9149a57833')
@@ -417,13 +417,13 @@ class StorageTableEntityTest(TableTestCase):
         try:
             # Act
             dict32 = self._create_random_base_entity_dict()
-            dict32['large'] = EntityProperty(EdmType.INT32, 2 ** 31)
+            dict32['large'] = EntityProperty(2 ** 31, EdmType.INT32)
 
             # Assert
             with self.assertRaises(TypeError):
                 self.table.create_entity(entity=dict32)
 
-            dict32['large'] = EntityProperty(EdmType.INT32, -(2 ** 31 + 1))
+            dict32['large'] = EntityProperty(-(2 ** 31 + 1), EdmType.INT32)
             with self.assertRaises(TypeError):
                 self.table.create_entity(entity=dict32)
         finally:
@@ -438,13 +438,13 @@ class StorageTableEntityTest(TableTestCase):
         try:
             # Act
             dict64 = self._create_random_base_entity_dict()
-            dict64['large'] = EntityProperty(EdmType.INT64, 2 ** 63)
+            dict64['large'] = EntityProperty(2 ** 63)
 
             # Assert
             with self.assertRaises(TypeError):
                 self.table.create_entity(entity=dict64)
 
-            dict64['large'] = EntityProperty(EdmType.INT64, -(2 ** 63 + 1))
+            dict64['large'] = EntityProperty(-(2 ** 63 + 1))
             with self.assertRaises(TypeError):
                 self.table.create_entity(entity=dict64)
         finally:
@@ -1304,10 +1304,10 @@ class StorageTableEntityTest(TableTestCase):
                 entity = Entity()
                 entity.PartitionKey = 'large'
                 entity.RowKey = 'batch{0}-item{1}'.format(j, i)
-                entity.test = EntityProperty(EdmType.BOOLEAN, 'true')
+                entity.test = EntityProperty(True)
                 entity.test2 = 'hello world;' * 100
                 entity.test3 = 3
-                entity.test4 = EntityProperty(EdmType.INT64, '1234567890')
+                entity.test4 = EntityProperty(1234567890)
                 entity.test5 = datetime(2016, 12, 31, 11, 59, 59, 0)
                 batch.create_entity(entity)
             self.ts.commit_batch(table_name, batch)
