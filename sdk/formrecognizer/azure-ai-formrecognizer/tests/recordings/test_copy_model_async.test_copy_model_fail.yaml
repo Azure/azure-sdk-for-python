@@ -8,239 +8,40 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 0ef35015-e98c-4980-9b4f-bb9b64c05678
+      apim-request-id: cb8ada02-6f06-4e95-b870-7767facf92c4
       content-length: '0'
-      date: Thu, 14 May 2020 01:12:40 GMT
-      location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a
+      date: Fri, 10 Jul 2020 18:44:15 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '146'
+      x-envoy-upstream-service-time: '251'
     status:
       code: 201
       message: Created
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "aa33d092-934e-4af9-b835-122492610f5a", "status":
-        "creating", "createdDateTime": "2020-05-14T01:12:40Z", "lastUpdatedDateTime":
-        "2020-05-14T01:12:40Z"}, "accessToken": "redacted"}'
+      string: '{"modelInfo": {"modelId": "a1d4e626-ba18-45f7-8241-52627b90ab37", "status":
+        "creating", "createdDateTime": "2020-07-10T18:44:16Z", "lastUpdatedDateTime":
+        "2020-07-10T18:44:16Z"}}'
     headers:
-      apim-request-id: 8f251d26-3003-4f06-8974-a94cde8802ce
+      apim-request-id: d7006e41-56a0-439d-8f33-5a0fcd26d380
       content-type: application/json; charset=utf-8
-      date: Thu, 14 May 2020 01:12:45 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '194'
-    status:
-      code: 200
-      message: OK
-    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a?includeKeys=true
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a?includeKeys=true
-  response:
-    body:
-      string: '{"modelInfo": {"modelId": "aa33d092-934e-4af9-b835-122492610f5a", "status":
-        "ready", "createdDateTime": "2020-05-14T01:12:40Z", "lastUpdatedDateTime":
-        "2020-05-14T01:12:48Z"}, "keys": {"clusters": {"0": ["Additional Notes:",
-        "Address:", "Address:", "Company Name:", "Company Phone:", "Dated As:", "Email:",
-        "Hero Limited", "Name:", "Phone:", "Phone:", "Purchase Order", "Purchase Order",
-        "Purchase Order #:", "SUBTOTAL", "Seattle, WA 93849 Phone:", "Shipped From",
-        "Shipped To", "TAX", "TOTAL", "Vendor Name:", "Website:"]}}, "trainResult":
-        {"trainingDocuments": [{"documentName": "Form_1.jpg", "pages": 1, "errors":
-        [], "status": "succeeded"}, {"documentName": "Form_2.jpg", "pages": 1, "errors":
-        [], "status": "succeeded"}, {"documentName": "Form_3.jpg", "pages": 1, "errors":
-        [], "status": "succeeded"}, {"documentName": "Form_4.jpg", "pages": 1, "errors":
-        [], "status": "succeeded"}, {"documentName": "Form_5.jpg", "pages": 1, "errors":
-        [], "status": "succeeded"}], "errors": []}, "accessToken": "redacted"}'
-    headers:
-      apim-request-id: 6fe0f81a-aa4b-4922-b8e9-f4d29ead547c
-      content-type: application/json; charset=utf-8
-      date: Thu, 14 May 2020 01:12:50 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '150'
-    status:
-      code: 200
-      message: OK
-    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a?includeKeys=true
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/copyAuthorization
-  response:
-    body:
-      string: '{"modelId": "9c8a6245-d918-4507-b29e-6c0b53e6b22f", "accessToken":
-        "redacted", "expirationDateTimeTicks": 637251019711245795}'
-    headers:
-      apim-request-id: 4e64bee8-c932-4391-972c-a95e2aa0dd4f
-      content-type: application/json; charset=utf-8
-      date: Thu, 14 May 2020 01:12:50 GMT
-      location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/9c8a6245-d918-4507-b29e-6c0b53e6b22f
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '175'
-    status:
-      code: 201
-      message: Created
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/copyAuthorization
-- request:
-    body: 'b''b\''{"targetResourceId": "resource_id", "targetResourceRegion": "eastus",
-      "copyAuthorization": {"modelId": "9c8a6245-d918-4507-b29e-6c0b53e6b22f", "accessToken":
-      00000000-0000-0000-0000-000000000000, "expirationDateTimeTicks": 637251019711245795}}\'''''
-    headers:
-      Content-Length:
-      - '448'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a/copy
-  response:
-    body:
-      string: ''
-    headers:
-      apim-request-id: d9805313-ec0a-46e9-afab-750164b505c9
-      content-length: '0'
-      date: Thu, 14 May 2020 01:12:50 GMT
-      operation-location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a/copyresults/097d8fa2-25cf-4cef-9dea-8657edc95f3f
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '167'
-    status:
-      code: 202
-      message: Accepted
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a/copy
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a/copyresults/097d8fa2-25cf-4cef-9dea-8657edc95f3f
-  response:
-    body:
-      string: '{"status": "notStarted", "createdDateTime": "2020-05-14T01:12:51Z",
-        "lastUpdatedDateTime": "2020-05-14T01:12:51Z", "copyResult": {"modelId": "9c8a6245-d918-4507-b29e-6c0b53e6b22f"},
-        "accessToken": "redacted"}'
-    headers:
-      apim-request-id: 43f437fc-fcfb-40c1-b2ed-ab84436f79b3
-      content-type: application/json; charset=utf-8
-      date: Thu, 14 May 2020 01:12:55 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '173'
-    status:
-      code: 200
-      message: OK
-    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a/copyresults/097d8fa2-25cf-4cef-9dea-8657edc95f3f
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a/copyresults/097d8fa2-25cf-4cef-9dea-8657edc95f3f
-  response:
-    body:
-      string: '{"status": "notStarted", "createdDateTime": "2020-05-14T01:12:51Z",
-        "lastUpdatedDateTime": "2020-05-14T01:12:51Z", "copyResult": {"modelId": "9c8a6245-d918-4507-b29e-6c0b53e6b22f"},
-        "accessToken": "redacted"}'
-    headers:
-      apim-request-id: 26f78b70-03b0-4560-93db-91d4725c0611
-      content-type: application/json; charset=utf-8
-      date: Thu, 14 May 2020 01:13:00 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '45'
-    status:
-      code: 200
-      message: OK
-    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a/copyresults/097d8fa2-25cf-4cef-9dea-8657edc95f3f
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a/copyresults/097d8fa2-25cf-4cef-9dea-8657edc95f3f
-  response:
-    body:
-      string: '{"status": "notStarted", "createdDateTime": "2020-05-14T01:12:51Z",
-        "lastUpdatedDateTime": "2020-05-14T01:12:51Z", "copyResult": {"modelId": "9c8a6245-d918-4507-b29e-6c0b53e6b22f"},
-        "accessToken": "redacted"}'
-    headers:
-      apim-request-id: 08126cce-50a2-42a4-ab03-2c42b9835324
-      content-type: application/json; charset=utf-8
-      date: Thu, 14 May 2020 01:13:06 GMT
-      strict-transport-security: max-age=31536000; includeSubDomains; preload
-      transfer-encoding: chunked
-      x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '84'
-    status:
-      code: 200
-      message: OK
-    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a/copyresults/097d8fa2-25cf-4cef-9dea-8657edc95f3f
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a/copyresults/097d8fa2-25cf-4cef-9dea-8657edc95f3f
-  response:
-    body:
-      string: '{"status": "failed", "createdDateTime": "2020-05-14T01:13:07.0471807Z",
-        "lastUpdatedDateTime": "2020-05-14T01:13:07.047181Z", "copyResult": {"modelId":
-        "9c8a6245-d918-4507-b29e-6c0b53e6b22f", "errors": [{"code": "ResourceResolverError",
-        "message": "{\"ResourceReferenceProperty\":null,\"ClassName\":\"Microsoft.CloudAI.Containers.ResourceResolverServiceException\",\"Message\":\"One
-        or more errors occurred. (Could not fetch resource information. Ensure the
-        resource identifier ''resource_id'' is valid and exists in the specified region
-        eastus. Error: {\\\"error\\\":{\\\"code\\\":\\\"ResourceNotFound\\\",\\\"message\\\":\\\"The
-        resource with identifier ''resource_id'' is not found.\\\"}}).\",\"Data\":null,\"InnerException\":null,\"HelpURL\":null,\"StackTraceString\":null,\"RemoteStackTraceString\":null,\"RemoteStackIndex\":0,\"ExceptionMethod\":null,\"HResult\":-2146233088,\"Source\":null,\"WatsonBuckets\":null}"}]},
-        "accessToken": "redacted"}'
-    headers:
-      apim-request-id: 53b90555-e176-4745-88ef-9719ab61f13e
-      content-type: application/json; charset=utf-8
-      date: Thu, 14 May 2020 01:13:11 GMT
+      date: Fri, 10 Jul 2020 18:44:21 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -248,5 +49,167 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/aa33d092-934e-4af9-b835-122492610f5a/copyresults/097d8fa2-25cf-4cef-9dea-8657edc95f3f
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37?includeKeys=true
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo": {"modelId": "a1d4e626-ba18-45f7-8241-52627b90ab37", "status":
+        "creating", "createdDateTime": "2020-07-10T18:44:16Z", "lastUpdatedDateTime":
+        "2020-07-10T18:44:16Z"}}'
+    headers:
+      apim-request-id: 990f37fe-d385-4f8f-96a2-469bd229d88b
+      content-type: application/json; charset=utf-8
+      date: Fri, 10 Jul 2020 18:44:26 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '51'
+    status:
+      code: 200
+      message: OK
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37?includeKeys=true
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37?includeKeys=true
+  response:
+    body:
+      string: '{"modelInfo": {"modelId": "a1d4e626-ba18-45f7-8241-52627b90ab37", "status":
+        "ready", "createdDateTime": "2020-07-10T18:44:16Z", "lastUpdatedDateTime":
+        "2020-07-10T18:44:26Z"}, "keys": {"clusters": {"0": ["Additional Notes:",
+        "Address:", "Company Name:", "Company Phone:", "Dated As:", "Details", "Email:",
+        "Hero Limited", "Name:", "Phone:", "Purchase Order", "Purchase Order #:",
+        "Quantity", "SUBTOTAL", "Seattle, WA 93849 Phone:", "Shipped From", "Shipped
+        To", "TAX", "TOTAL", "Total", "Unit Price", "Vendor Name:", "Website:"]}},
+        "trainResult": {"trainingDocuments": [{"documentName": "Form_1.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}, {"documentName": "Form_2.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}, {"documentName": "Form_3.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}, {"documentName": "Form_4.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}, {"documentName": "Form_5.jpg", "pages":
+        1, "errors": [], "status": "succeeded"}], "errors": []}}'
+    headers:
+      apim-request-id: 033d7b54-f7d5-40e2-b64a-6a4a12745a2d
+      content-type: application/json; charset=utf-8
+      date: Fri, 10 Jul 2020 18:44:31 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '17'
+    status:
+      code: 200
+      message: OK
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37?includeKeys=true
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/copyAuthorization
+  response:
+    body:
+      string: '{"modelId": "368dc3e3-e790-4c35-8ed0-e930eb83c095", "accessToken":
+        "redacted", "expirationDateTimeTicks": 1594493071}'
+    headers:
+      apim-request-id: 68736396-eb8d-4008-9f0b-be2f406ac124
+      content-type: application/json; charset=utf-8
+      date: Fri, 10 Jul 2020 18:44:31 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/368dc3e3-e790-4c35-8ed0-e930eb83c095
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '29'
+    status:
+      code: 201
+      message: Created
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models/copyAuthorization
+- request:
+    body: 'b''b\''{"targetResourceId": "resource_id", "targetResourceRegion": "eastus",
+      "copyAuthorization": {"modelId": "368dc3e3-e790-4c35-8ed0-e930eb83c095", "accessToken":
+      00000000-0000-0000-0000-000000000000, "expirationDateTimeTicks": 1594493071}}\'''''
+    headers:
+      Content-Length:
+      - '440'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37/copy
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 436a5ef3-37fe-4d11-a106-3c2f580176fc
+      content-length: '0'
+      date: Fri, 10 Jul 2020 18:44:31 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37/copyresults/85bf159e-651f-4b13-8ec0-48e38d653c48
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '31'
+    status:
+      code: 202
+      message: Accepted
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37/copy
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37/copyresults/85bf159e-651f-4b13-8ec0-48e38d653c48
+  response:
+    body:
+      string: '{"status": "notStarted", "createdDateTime": "2020-07-10T18:44:32Z",
+        "lastUpdatedDateTime": "2020-07-10T18:44:32Z", "copyResult": {"modelId": "368dc3e3-e790-4c35-8ed0-e930eb83c095"}}'
+    headers:
+      apim-request-id: dc24be99-ebe4-4536-aedb-366d73badc31
+      content-type: application/json; charset=utf-8
+      date: Fri, 10 Jul 2020 18:44:37 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '10'
+    status:
+      code: 200
+      message: OK
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37/copyresults/85bf159e-651f-4b13-8ec0-48e38d653c48
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37/copyresults/85bf159e-651f-4b13-8ec0-48e38d653c48
+  response:
+    body:
+      string: '{"status": "failed", "createdDateTime": "2020-07-10T18:44:38.4604736Z",
+        "lastUpdatedDateTime": "2020-07-10T18:44:38.4604739Z", "copyResult": {"modelId":
+        "368dc3e3-e790-4c35-8ed0-e930eb83c095", "errors": [{"code": "AuthorizationError",
+        "message": "Could not retrieve authorization metadata. If this issue persists
+        use a different target model to copy into."}]}}'
+    headers:
+      apim-request-id: 37f59d0b-23cc-40c2-b0fe-99b4cee0e59e
+      content-type: application/json; charset=utf-8
+      date: Fri, 10 Jul 2020 18:44:42 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '11'
+      x-ms-cs-error-code: AuthorizationError
+    status:
+      code: 200
+      message: OK
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/a1d4e626-ba18-45f7-8241-52627b90ab37/copyresults/85bf159e-651f-4b13-8ec0-48e38d653c48
 version: 1

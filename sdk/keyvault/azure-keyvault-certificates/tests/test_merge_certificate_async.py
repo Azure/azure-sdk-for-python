@@ -22,7 +22,6 @@ class MergeCertificateTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer(CertificateClient)
-    @KeyVaultTestCase.await_prepared_test
     async def test_merge_certificate(self, client, **kwargs):
         cert_name = "mergeCertificate"
         cert_policy = CertificatePolicy(

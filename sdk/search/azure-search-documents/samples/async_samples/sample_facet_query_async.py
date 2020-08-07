@@ -32,14 +32,11 @@ async def filter_query():
     # [START facet_query_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.aio import SearchClient
-    from azure.search.documents.models import SearchQuery
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    query = SearchQuery(search_text="WiFi", facets=["Category"], top=0)
-
     async with search_client:
-        results = await search_client.search(query=query)
+        results = await search_client.search(search_text="WiFi", facets=["Category"], top=0)
 
         facets = await results.get_facets()
 

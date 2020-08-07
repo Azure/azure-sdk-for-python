@@ -3,12 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
-
-from azure.core.pipeline import AsyncPipeline
-
+from azure.core.pipeline.policies import HttpLoggingPolicy
 from . import AsyncChallengeAuthPolicy
-from .client_base import _get_policies
-from .multi_api import load_generated_api
+from .client_base import ApiVersion
+from .._sdk_moniker import SDK_MONIKER
+from .._generated.aio import KeyVaultClient as _KeyVaultClient
 
 if TYPE_CHECKING:
     try:
@@ -21,16 +20,7 @@ if TYPE_CHECKING:
         # AsyncTokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
 
-
-def _build_pipeline(config: "Configuration", transport: "AsyncHttpTransport" = None, **kwargs: "Any") -> AsyncPipeline:
-    policies = _get_policies(config, **kwargs)
-    if transport is None:
-        from azure.core.pipeline.transport import AioHttpTransport
-
-        transport = AioHttpTransport(**kwargs)
-
-    return AsyncPipeline(transport, policies=policies)
-
+DEFAULT_VERSION = ApiVersion.V7_1
 
 class AsyncKeyVaultClientBase(object):
     def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
@@ -49,18 +39,39 @@ class AsyncKeyVaultClientBase(object):
             self._client = client
             return
 
-        api_version = kwargs.pop("api_version", None)
-        generated = load_generated_api(api_version, aio=True)
+        api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
         pipeline = kwargs.pop("pipeline", None)
-        if not pipeline:
-            config = generated.config_cls(credential, **kwargs)
-            config.authentication_policy = AsyncChallengeAuthPolicy(credential)
-            pipeline = _build_pipeline(config, **kwargs)
+        transport = kwargs.pop("transport", None)
+        http_logging_policy = HttpLoggingPolicy(**kwargs)
+        http_logging_policy.allowed_header_names.update(
+            {
+                "x-ms-keyvault-network-info",
+                "x-ms-keyvault-region",
+                "x-ms-keyvault-service-version"
+            }
+        )
 
-        # generated clients don't use their credentials parameter
-        self._client = generated.client_cls(credentials="", pipeline=pipeline)
-        self._models = generated.models
+        if not transport and not pipeline:
+            from azure.core.pipeline.transport import AioHttpTransport
+            transport = AioHttpTransport(**kwargs)
+
+        try:
+            self._client = _KeyVaultClient(
+                api_version=api_version,
+                pipeline=pipeline,
+                transport=transport,
+                authentication_policy=AsyncChallengeAuthPolicy(credential),
+                sdk_moniker=SDK_MONIKER,
+                http_logging_policy=http_logging_policy,
+                **kwargs
+            )
+            self._models = _KeyVaultClient.models(api_version=api_version)
+        except NotImplementedError:
+            raise NotImplementedError(
+                "This package doesn't support API version '{}'. ".format(api_version)
+                + "Supported versions: {}".format(", ".join(v.value for v in ApiVersion))
+            )
 
     @property
     def vault_url(self) -> str:
@@ -78,4 +89,4 @@ class AsyncKeyVaultClientBase(object):
 
         Calling this method is unnecessary when using the client as a context manager.
         """
-        await self._client.__aexit__()
+        await self._client.close()

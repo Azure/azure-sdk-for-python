@@ -14,7 +14,7 @@ interactions:
       api-key:
       - 49925E98B4E6A6E7BB8023C66DCE85A0
     method: POST
-    uri: https://searchada412b6.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://searchada412b6.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchada412b6.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC959CF79C3E\"","name":"test-syn-map-1","format":"solr","synonyms":"USA,
@@ -27,7 +27,7 @@ interactions:
       elapsed-time: '35'
       etag: W/"0x8D7EC959CF79C3E"
       expires: '-1'
-      location: https://searchada412b6.search.windows.net/synonymmaps('test-syn-map-1')?api-version=2019-05-06-Preview
+      location: https://searchada412b6.search.windows.net/synonymmaps('test-syn-map-1')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -36,7 +36,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://searchada412b6.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    url: https://searchada412b6.search.windows.net/synonymmaps?api-version=2020-06-30
 - request:
     body: '{"name": "test-syn-map-2", "format": "solr", "synonyms": "Washington, Wash.
       => WA"}'
@@ -52,7 +52,7 @@ interactions:
       api-key:
       - 49925E98B4E6A6E7BB8023C66DCE85A0
     method: POST
-    uri: https://searchada412b6.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://searchada412b6.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchada412b6.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC959CFF17A5\"","name":"test-syn-map-2","format":"solr","synonyms":"Washington,
@@ -65,7 +65,7 @@ interactions:
       elapsed-time: '24'
       etag: W/"0x8D7EC959CFF17A5"
       expires: '-1'
-      location: https://searchada412b6.search.windows.net/synonymmaps('test-syn-map-2')?api-version=2019-05-06-Preview
+      location: https://searchada412b6.search.windows.net/synonymmaps('test-syn-map-2')?api-version=2020-06-30
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
@@ -74,7 +74,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://searchada412b6.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    url: https://searchada412b6.search.windows.net/synonymmaps?api-version=2020-06-30
 - request:
     body: null
     headers:
@@ -85,7 +85,7 @@ interactions:
       api-key:
       - 49925E98B4E6A6E7BB8023C66DCE85A0
     method: GET
-    uri: https://searchada412b6.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://searchada412b6.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://searchada412b6.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D7EC959CF79C3E\"","name":"test-syn-map-1","format":"solr","synonyms":"USA,
@@ -108,5 +108,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://searchada412b6.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    url: https://searchada412b6.search.windows.net/synonymmaps?api-version=2020-06-30
 version: 1

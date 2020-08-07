@@ -69,7 +69,7 @@ class AsyncPollingMethod(Generic[PollingReturnType]):
 class AsyncNoPolling(_NoPolling):
     """An empty async poller that returns the deserialized initial response.
     """
-    async def run(self):
+    async def run(self):  # pylint:disable=invalid-overridden-method
         """Empty run, no polling.
         Just override initial run to add "async"
         """
@@ -84,7 +84,7 @@ async def async_poller(client, initial_response, deserialization_callback, polli
     :param client: A pipeline service client.
     :type client: ~azure.core.PipelineClient
     :param initial_response: The initial call response
-    :type initial_response: ~azure.core.pipeline.transport.AsyncHttpResponse
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
     :param deserialization_callback: A callback that takes a Response and return a deserialized object.
                                      If a subclass of Model is given, this passes "deserialize" as callback.
     :type deserialization_callback: callable or msrest.serialization.Model
@@ -101,8 +101,7 @@ class AsyncLROPoller(Generic[PollingReturnType], Awaitable):
     :param client: A pipeline service client
     :type client: ~azure.core.PipelineClient
     :param initial_response: The initial call response
-    :type initial_response:
-     ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
     :param deserialization_callback: A callback that takes a Response and return a deserialized object.
                                      If a subclass of Model is given, this passes "deserialize" as callback.
     :type deserialization_callback: callable or msrest.serialization.Model

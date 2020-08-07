@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
 import time
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
@@ -12,10 +11,11 @@ from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import ClientSecretCredential
+from msal import TokenCache
+import pytest
+
 from helpers import build_aad_response, mock_response, Request
 from helpers_async import async_validating_transport, AsyncMockTransport, wrap_in_future
-
-import pytest
 
 
 @pytest.mark.asyncio
@@ -170,3 +170,93 @@ async def test_cache():
     token = await credential.get_token(scope)
     assert token == valid_token
     assert mock_send.call_count == 2
+
+
+def test_enable_persistent_cache():
+    """the credential should use the persistent cache only when given enable_persistent_cache=True"""
+
+    required_arguments = ("tenant-id", "client-id", "secret")
+    persistent_cache = "azure.identity._internal.persistent_cache"
+
+    # credential should default to an in memory cache
+    raise_when_called = Mock(side_effect=Exception("credential shouldn't attempt to load a persistent cache"))
+    with patch(persistent_cache + "._load_persistent_cache", raise_when_called):
+        ClientSecretCredential(*required_arguments)
+
+        # allowing an unencrypted cache doesn't count as opting in to the persistent cache
+        ClientSecretCredential(*required_arguments, _allow_unencrypted_cache=True)
+
+    # keyword argument opts in to persistent cache
+    with patch(persistent_cache + ".msal_extensions") as mock_extensions:
+        ClientSecretCredential(*required_arguments, _enable_persistent_cache=True)
+    assert mock_extensions.PersistedTokenCache.call_count == 1
+
+    # opting in on an unsupported platform raises an exception
+    with patch(persistent_cache + ".sys.platform", "commodore64"):
+        with pytest.raises(NotImplementedError):
+            ClientSecretCredential(*required_arguments, _enable_persistent_cache=True)
+        with pytest.raises(NotImplementedError):
+            ClientSecretCredential(*required_arguments, _enable_persistent_cache=True, _allow_unencrypted_cache=True)
+
+
+@patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
+@patch("azure.identity._internal.persistent_cache.msal_extensions")
+def test_persistent_cache_linux(mock_extensions):
+    """The credential should use an unencrypted cache when encryption is unavailable and the user explicitly opts in.
+
+    This test was written when Linux was the only platform on which encryption may not be available.
+    """
+
+    required_arguments = ("tenant-id", "client-id", "secret")
+
+    # the credential should prefer an encrypted cache even when the user allows an unencrypted one
+    ClientSecretCredential(*required_arguments, _enable_persistent_cache=True, _allow_unencrypted_cache=True)
+    assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
+    mock_extensions.PersistedTokenCache.reset_mock()
+
+    # (when LibsecretPersistence's dependencies aren't available, constructing it raises ImportError)
+    mock_extensions.LibsecretPersistence = Mock(side_effect=ImportError)
+
+    # encryption unavailable, no opt in to unencrypted cache -> credential should raise
+    with pytest.raises(ValueError):
+        ClientSecretCredential(*required_arguments, _enable_persistent_cache=True)
+
+    ClientSecretCredential(*required_arguments, _enable_persistent_cache=True, _allow_unencrypted_cache=True)
+    assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
+
+
+@pytest.mark.asyncio
+async def test_persistent_cache_multiple_clients():
+    """the credential shouldn't use tokens issued to other service principals"""
+
+    access_token_a = "token a"
+    access_token_b = "not " + access_token_a
+    transport_a = async_validating_transport(
+        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_a))]
+    )
+    transport_b = async_validating_transport(
+        requests=[Request()], responses=[mock_response(json_payload=build_aad_response(access_token=access_token_b))]
+    )
+
+    cache = TokenCache()
+    with patch("azure.identity._internal.persistent_cache._load_persistent_cache") as mock_cache_loader:
+        mock_cache_loader.return_value = Mock(wraps=cache)
+        credential_a = ClientSecretCredential(
+            "tenant-id", "client-a", "...", _enable_persistent_cache=True, transport=transport_a
+        )
+        assert mock_cache_loader.call_count == 1, "credential should load the persistent cache"
+        credential_b = ClientSecretCredential(
+            "tenant-id", "client-b", "...", _enable_persistent_cache=True, transport=transport_b
+        )
+        assert mock_cache_loader.call_count == 2, "credential should load the persistent cache"
+
+    # A caches a token
+    scope = "scope"
+    token_a = await credential_a.get_token(scope)
+    assert token_a.token == access_token_a
+    assert transport_a.send.call_count == 1
+
+    # B should get a different token for the same scope
+    token_b = await credential_b.get_token(scope)
+    assert token_b.token == access_token_b
+    assert transport_b.send.call_count == 1

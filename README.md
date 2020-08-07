@@ -19,7 +19,8 @@ The client libraries are supported on Python 2.7 and 3.5.3 or later.
 Each service might have a number of libraries available from each of the following categories:
 * [Client - New Releases](#Client-New-Releases)
 * [Client - Previous Versions](#Client-Previous-Versions)
-* [Management](#Management)
+* [Management - New Releases](#Management-New-Releases)
+* [Management - Previous Versions](#Management-Previous-Versions)
 
 ### Client: New Releases
 
@@ -33,14 +34,20 @@ You can find the [most up to date list of all of the new packages on our page](h
 
 Last stable versions of packages that have been provided for usage with Azure and are production-ready. These libraries provide you with similar functionalities to the Preview ones as they allow you to use and consume existing resources and interact with them, for example: upload a blob. They might not implement the [guidelines](https://azure.github.io/azure-sdk/python_introduction.html) or have the same feature set as the Novemeber releases. They do however offer wider coverage of services.
 
-### Management
+### Management: New Releases
+A new set of management libraries that follow the [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python/guidelines/) are now in Public Preview. These new libraries provide a number of core capabilities that are shared amongst all Azure SDKs, including the intuitive Azure Identity library, an HTTP Pipeline with custom policies, error-handling, distributed tracing, and much more. 
+You can find the list of new packages [on this page](https://azure.github.io/azure-sdk/releases/latest/mgmt/python.html). Documentation and for these new libraries can be found [here](https://aka.ms/azure-sdk-python-mgmt). Code samples can also be viewed [here](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing). In addition, a migration guide that shows how to transition from older versions of libraries is located [here](https://github.com/Azure/azure-sdk-for-python/blob/master/doc/sphinx/python_mgmt_migration_guide.rst). 
 
-Libraries which enable you to provision specific resources. They are responsible for directly mirroring and consuming Azure service's REST endpoints. The management libraries use the `azure-mgmt-<service name>` convention for their package names.
+> NOTE: If you need to ensure your code is ready for production use one of the stable, non-preview libraries.
+
+### Management: Previous Versions
+For a complete list of management libraries which enable you to provision and manage Azure resources, please check [here](https://azure.github.io/azure-sdk/releases/latest/all/python.html). They might not have the same feature set as the new releases but they do offer wider coverage of services.
+Management libraries can be identified by namespaces that start with `azure-mgmt-`, e.g. `azure-mgmt-compute`
 
 ## Need help?
 
 * For detailed documentation visit our [Azure SDK for Python documentation](https://aka.ms/python-docs)
-* File an issue via [Github Issues](../../issues)
+* File an issue via [Github Issues](https://github.com/Azure/azure-sdk-for-python/issues)
 * Check [previous questions](https://stackoverflow.com/questions/tagged/azure+python) or ask new ones on StackOverflow using `azure` and `python` tags.
 
 ### Community

@@ -1,53 +1,69 @@
 interactions:
 - request:
-    body: 'b''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
-      false}, "useLabelFile": true}'''
+    body: 'b''b\''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
+      false}, "useLabelFile": true}\'''''
     headers:
       Content-Length:
-      - '318'
+      - '300'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 7f79398c-1505-4c57-984d-bfad46072cd1
+      apim-request-id: db463be5-4574-460d-ac5f-f0c4fe6b1f30
       content-length: '0'
-      date: Thu, 23 Apr 2020 23:09:20 GMT
-      location: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/12c78c33-7f73-4903-9568-51977a6684cd
+      date: Fri, 10 Jul 2020 18:58:21 GMT
+      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/d7c639cf-2c24-4664-be20-d518f3fc5f81
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '248'
+      x-envoy-upstream-service-time: '73'
     status:
       code: 201
       message: Created
-    url: https://westus.api.cognitive.microsoft.com//formrecognizer/v2.0-preview/custom/models
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/12c78c33-7f73-4903-9568-51977a6684cd?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/d7c639cf-2c24-4664-be20-d518f3fc5f81?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"12c78c33-7f73-4903-9568-51977a6684cd","status":"ready","createdDateTime":"2020-04-23T23:09:20Z","lastUpdatedDateTime":"2020-04-23T23:09:21Z"},"trainResult":{"averageModelAccuracy":0.889,"trainingDocuments":[{"documentName":"multipage_invoice1.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice2.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice3.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice4.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice5.pdf","pages":3,"status":"succeeded"}],"fields":[{"fieldName":"Customer2","accuracy":1.0},{"fieldName":"CustomerAddress","accuracy":1.0},{"fieldName":"CustomerName","accuracy":1.0},{"fieldName":"CustomerPhoneNumber","accuracy":1.0},{"fieldName":"FirstItem","accuracy":1.0},{"fieldName":"FirstPrice","accuracy":1.0},{"fieldName":"FirstQuantity","accuracy":1.0},{"fieldName":"Merchant","accuracy":0.0},{"fieldName":"Merchant2","accuracy":0.0},{"fieldName":"MerchantAddress","accuracy":1.0},{"fieldName":"MerchantPhoneNumber","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Signature2","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Tip","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"Total2","accuracy":1.0}],"errors":[]}}'
+      string: '{"modelInfo": {"modelId": "d7c639cf-2c24-4664-be20-d518f3fc5f81", "status":
+        "ready", "createdDateTime": "2020-07-10T18:58:22Z", "lastUpdatedDateTime":
+        "2020-07-10T18:58:27Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
+        [{"documentName": "multipage_invoice1.pdf", "pages": 3, "status": "succeeded"},
+        {"documentName": "multipage_invoice2.pdf", "pages": 3, "status": "succeeded"},
+        {"documentName": "multipage_invoice3.pdf", "pages": 3, "status": "succeeded"},
+        {"documentName": "multipage_invoice4.pdf", "pages": 3, "status": "succeeded"},
+        {"documentName": "multipage_invoice5.pdf", "pages": 3, "status": "succeeded"}],
+        "fields": [{"fieldName": "Customer2", "accuracy": 1.0}, {"fieldName": "CustomerAddress",
+        "accuracy": 1.0}, {"fieldName": "CustomerName", "accuracy": 1.0}, {"fieldName":
+        "CustomerPhoneNumber", "accuracy": 1.0}, {"fieldName": "FirstItem", "accuracy":
+        1.0}, {"fieldName": "FirstPrice", "accuracy": 1.0}, {"fieldName": "FirstQuantity",
+        "accuracy": 1.0}, {"fieldName": "Merchant", "accuracy": 0.0}, {"fieldName":
+        "Merchant2", "accuracy": 0.0}, {"fieldName": "MerchantAddress", "accuracy":
+        1.0}, {"fieldName": "MerchantPhoneNumber", "accuracy": 1.0}, {"fieldName":
+        "Signature", "accuracy": 1.0}, {"fieldName": "Signature2", "accuracy": 1.0},
+        {"fieldName": "Subtotal", "accuracy": 1.0}, {"fieldName": "Tax", "accuracy":
+        1.0}, {"fieldName": "Tip", "accuracy": 1.0}, {"fieldName": "Total", "accuracy":
+        1.0}, {"fieldName": "Total2", "accuracy": 1.0}], "errors": []}}'
     headers:
-      apim-request-id: b94f76fb-c8a8-4ba5-8cb6-3488bae85b45
+      apim-request-id: 1a0cc889-4cff-4bc9-a157-d7ef863a3aac
       content-type: application/json; charset=utf-8
-      date: Thu, 23 Apr 2020 23:09:25 GMT
+      date: Fri, 10 Jul 2020 18:58:27 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '125'
+      x-envoy-upstream-service-time: '19'
     status:
       code: 200
       message: OK
-    url: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/12c78c33-7f73-4903-9568-51977a6684cd?includeKeys=true
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/d7c639cf-2c24-4664-be20-d518f3fc5f81?includeKeys=true
 version: 1

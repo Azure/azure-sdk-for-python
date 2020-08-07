@@ -171,7 +171,6 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_key_crud_operations(self, client, **kwargs):
         self.assertIsNotNone(client)
 
@@ -221,7 +220,6 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_key_list(self, client, **kwargs):
         self.assertIsNotNone(client)
 
@@ -245,7 +243,6 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_list_versions(self, client, **kwargs):
         self.assertIsNotNone(client)
         key_name = self.get_resource_name("testKey")
@@ -271,7 +268,6 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_list_deleted_keys(self, client, **kwargs):
         self.assertIsNotNone(client)
         key_name = self.get_resource_name("sec")
@@ -303,7 +299,6 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer(enable_soft_delete=False)
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_backup_restore(self, client, **kwargs):
         self.assertIsNotNone(client)
         key_name = self.get_resource_name("keybak")
@@ -328,7 +323,6 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_recover(self, client, **kwargs):
         self.assertIsNotNone(client)
         keys = {}
@@ -359,7 +353,6 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_purge(self, client, **kwargs):
         self.assertIsNotNone(client)
 
@@ -381,7 +374,6 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer(client_kwargs={"logging_enable": True})
-    @KeyVaultTestCase.await_prepared_test
     async def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
@@ -406,7 +398,6 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
     @KeyVaultClientPreparer()
-    @KeyVaultTestCase.await_prepared_test
     async def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
@@ -424,3 +415,25 @@ class KeyVaultKeyTest(KeyVaultTestCase):
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer()
+    async def test_allowed_headers_passed_to_http_logging_policy(self, client, **kwargs):
+        passed_in_allowed_headers = {
+            "x-ms-keyvault-network-info",
+            "x-ms-keyvault-region",
+            "x-ms-keyvault-service-version"
+        }
+        assert passed_in_allowed_headers.issubset(
+            client._client._config.http_logging_policy.allowed_header_names
+        )
+
+    class _CustomHookPolicy(object):
+        pass
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer(client_kwargs={"custom_hook_policy": _CustomHookPolicy()})
+    async def test_custom_hook_policy(self, client, **kwargs):
+        assert isinstance(client._client._config.custom_hook_policy, KeyVaultKeyTest._CustomHookPolicy)

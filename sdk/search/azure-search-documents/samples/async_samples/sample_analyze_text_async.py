@@ -30,11 +30,11 @@ async def simple_analyze_text():
     # [START simple_analyze_text_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes.aio import SearchIndexClient
-    from azure.search.documents.indexes.models import AnalyzeRequest
+    from azure.search.documents.indexes.models import AnalyzeTextOptions
 
     client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
-    analyze_request = AnalyzeRequest(text="One's <two/>", analyzer="standard.lucene")
+    analyze_request = AnalyzeTextOptions(text="One's <two/>", analyzer_name="standard.lucene")
 
     async with client:
         result = await client.analyze_text(index_name, analyze_request)

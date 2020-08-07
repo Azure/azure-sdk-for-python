@@ -5,6 +5,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from time import sleep
+
 import pytest
 import unittest
 import asyncio
@@ -30,10 +32,10 @@ from azure.storage.blob import (
     StandardBlobTier,
     PremiumPageBlobTier,
     generate_container_sas,
-    PartialBatchErrorException
-)
+    PartialBatchErrorException,
+    generate_account_sas, ResourceTypes, AccountSasPermissions)
 
-from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer
+from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from _shared.asynctestcase import AsyncStorageTestCase
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -780,6 +782,68 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await container.get_container_properties()
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_undelete_container(self, resource_group, location, storage_account, storage_account_key):
+        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+        pytest.skip('This will be added back along with STG74 features')
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container_client = await self._create_container(bsc)
+
+        # Act
+        await container_client.delete_container()
+        # to make sure the container deleted
+        with self.assertRaises(ResourceNotFoundError):
+            await container_client.get_container_properties()
+
+        container_list = list()
+        async for c in bsc.list_containers(include_deleted=True):
+            container_list.append(c)
+        self.assertTrue(len(container_list) >= 1)
+
+        restored_version = 0
+        for container in container_list:
+            # find the deleted container and restore it
+            if container.deleted and container.name == container_client.container_name:
+                restored_ctn_client = await bsc._undelete_container(container.name, container.version,
+                                                                    new_name="restoredctn" + str(restored_version))
+                restored_version += 1
+
+                # to make sure the deleted container is restored
+                props = await restored_ctn_client.get_container_properties()
+                self.assertIsNotNone(props)
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_restore_to_existing_container(self, resource_group, location, storage_account, storage_account_key):
+        pytest.skip('This will be added back along with STG74 features')
+        # container soft delete should enabled by SRP call or use armclient, so make this test as playback only.
+
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        # get an existing container
+        existing_container_client = await self._create_container(bsc, prefix="existing")
+        container_client = await self._create_container(bsc)
+
+        # Act
+        await container_client.delete_container()
+        # to make sure the container deleted
+        with self.assertRaises(ResourceNotFoundError):
+            await container_client.get_container_properties()
+
+        container_list = list()
+        async for c in bsc.list_containers(include_deleted=True):
+            container_list.append(c)
+        self.assertTrue(len(container_list) >= 1)
+
+        for container in container_list:
+            # find the deleted container and restore it
+            if container.deleted and container.name == container_client.container_name:
+                with self.assertRaises(HttpResponseError):
+                    await bsc._undelete_container(container.name, container.version,
+                                                  new_name=existing_container_client.container_name)
+
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_names(self, resource_group, location, storage_account, storage_account_key):
@@ -1070,6 +1134,105 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_blobs_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = await self._create_container(bsc)
+        data = b'hello world'
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+
+        try:
+            blob_client1 = container.get_blob_client('blob1')
+            await blob_client1.upload_blob(data, overwrite=True, tags=tags)
+            await container.get_blob_client('blob2').upload_blob(data, overwrite=True, tags=tags)
+            await container.get_blob_client('blob3').upload_blob(data,  overwrite=True, tags=tags)
+        except:
+            pass
+
+        if self.is_live:
+            sleep(10)
+
+        # Act
+        with self.assertRaises(PartialBatchErrorException):
+            await container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                if_tags_match_condition="\"tag1\"='firsttag WRONG'"
+            )
+        blob_list = await container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            if_tags_match_condition="\"tag1\"='firsttag'"
+        )
+
+        response = list()
+        async for sub_resp in blob_list:
+            response.append(sub_resp)
+
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_blobs_and_snapshot_using_sas(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        sas_token = generate_account_sas(
+            storage_account.name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(object=True, container=True),
+            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), sas_token)
+        container = await self._create_container(bsc)
+        data = b'hello world'
+
+        # blob with snapshot
+        blob_client1 = container.get_blob_client('bloba')
+        await blob_client1.upload_blob(data, overwrite=True)
+        snapshot = await blob_client1.create_snapshot()
+
+        blob_client2 = container.get_blob_client('blobb')
+        await blob_client2.upload_blob(data, overwrite=True)
+        blob_client3 = container.get_blob_client('blobc')
+        await blob_client3.upload_blob(data, overwrite=True)
+
+        # blob with lease
+        blob_client4 = container.get_blob_client('blobd')
+        await blob_client4.upload_blob(data, overwrite=True)
+        lease = await blob_client4.acquire_lease()
+
+        # Act
+        blob_props = await blob_client1.get_blob_properties()
+        blob_props.snapshot = snapshot['snapshot']
+
+        blob_props_d = dict()
+        blob_props_d['name'] = "blobd"
+        blob_props_d['delete_snapshots'] = "include"
+        blob_props_d['lease_id'] = lease.id
+
+        response = await self._to_list(await container.delete_blobs(
+            blob_props,
+            'blobb',
+            'blobc',
+            blob_props_d,
+            timeout=3
+        ))
+        response = list(response)
+        assert len(response) == 4
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+        assert response[3].status_code == 202
+
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blobs_simple_no_raise(self, resource_group, location, storage_account, storage_account_key):
@@ -1178,6 +1341,121 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
                     'blob2',
                     'blob3',
                 )
+
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_standard_blob_tier_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = await self._create_container(bsc)
+        tier = StandardBlobTier.Cool
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+
+        blob = container.get_blob_client('blob1')
+        data = b'hello world'
+        await blob.upload_blob(data, overwrite=True, tags=tags)
+        await container.get_blob_client('blob2').upload_blob(data, overwrite=True, tags=tags)
+        await container.get_blob_client('blob3').upload_blob(data, overwrite=True, tags=tags)
+
+        blob_ref = await blob.get_blob_properties()
+        assert blob_ref.blob_tier is not None
+        assert blob_ref.blob_tier_inferred
+        assert blob_ref.blob_tier_change_time is None
+
+        with self.assertRaises(PartialBatchErrorException):
+            await container.set_standard_blob_tier_blobs(
+                tier,
+                'blob1',
+                'blob2',
+                'blob3',
+                if_tags_match_condition="\"tag1\"='firsttag WRONG'"
+            )
+
+        parts_list = await container.set_standard_blob_tier_blobs(
+            tier,
+            'blob1',
+            'blob2',
+            'blob3',
+            if_tags_match_condition="\"tag1\"='firsttag'"
+        )
+
+        parts = list()
+        async for part in parts_list:
+            parts.append(part)
+        assert len(parts) == 3
+
+        assert parts[0].status_code in [200, 202]
+        assert parts[1].status_code in [200, 202]
+        assert parts[2].status_code in [200, 202]
+
+        blob_ref2 = await blob.get_blob_properties()
+        assert tier == blob_ref2.blob_tier
+        assert not blob_ref2.blob_tier_inferred
+        assert blob_ref2.blob_tier_change_time is not None
+
+        await container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        )
+
+    @pytest.mark.live_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_standard_blob_tier_set_tiers_with_sas(self, resource_group, location, storage_account,
+                                                   storage_account_key):
+        sas_token = generate_account_sas(
+            storage_account.name,
+            account_key=storage_account_key,
+            resource_types=ResourceTypes(object=True, container=True),
+            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), sas_token)
+        container = await self._create_container(bsc)
+        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
+
+        for tier in tiers:
+            response = await container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                raise_on_any_failure=False
+            )
+            blob = container.get_blob_client('blob1')
+            data = b'hello world'
+            await blob.upload_blob(data)
+            await container.get_blob_client('blob2').upload_blob(data)
+            await container.get_blob_client('blob3').upload_blob(data)
+
+            blob_ref = await blob.get_blob_properties()
+
+            parts = await self._to_list(await container.set_standard_blob_tier_blobs(
+                    tier,
+                    blob_ref,
+                    'blob2',
+                    'blob3',
+                ))
+
+            parts = list(parts)
+            assert len(parts) == 3
+
+            assert parts[0].status_code in [200, 202]
+            assert parts[1].status_code in [200, 202]
+            assert parts[2].status_code in [200, 202]
+
+            blob_ref2 = await blob.get_blob_properties()
+            assert tier == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+            assert blob_ref2.blob_tier_change_time is not None
+
+        response = await container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        )
 
     @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")
     @GlobalStorageAccountPreparer()

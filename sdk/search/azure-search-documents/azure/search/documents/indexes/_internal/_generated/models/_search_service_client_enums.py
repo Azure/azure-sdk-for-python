@@ -57,7 +57,7 @@ class EntityRecognitionSkillLanguage(str, Enum):
     ko = "ko"  #: Korean.
     no = "no"  #: Norwegian (Bokmaal).
     pl = "pl"  #: Polish.
-    pt = "pt-PT"  #: Portuguese (Portugal).
+    pt_pt = "pt-PT"  #: Portuguese (Portugal).
     pt_br = "pt-BR"  #: Portuguese (Brazil).
     ru = "ru"  #: Russian.
     es = "es"  #: Spanish.
@@ -113,7 +113,7 @@ class KeyPhraseExtractionSkillLanguage(str, Enum):
     ko = "ko"  #: Korean.
     no = "no"  #: Norwegian (Bokmaal).
     pl = "pl"  #: Polish.
-    pt = "pt-PT"  #: Portuguese (Portugal).
+    pt_pt = "pt-PT"  #: Portuguese (Portugal).
     pt_br = "pt-BR"  #: Portuguese (Brazil).
     ru = "ru"  #: Russian.
     es = "es"  #: Spanish.
@@ -185,8 +185,8 @@ class LexicalAnalyzerName(str, Enum):
     pl_lucene = "pl.lucene"  #: Lucene analyzer for Polish.
     pt_br_microsoft = "pt-BR.microsoft"  #: Microsoft analyzer for Portuguese (Brazil).
     pt_br_lucene = "pt-BR.lucene"  #: Lucene analyzer for Portuguese (Brazil).
-    pt_microsoft = "pt-PT.microsoft"  #: Microsoft analyzer for Portuguese (Portugal).
-    pt_lucene = "pt-PT.lucene"  #: Lucene analyzer for Portuguese (Portugal).
+    pt_pt_microsoft = "pt-PT.microsoft"  #: Microsoft analyzer for Portuguese (Portugal).
+    pt_pt_lucene = "pt-PT.lucene"  #: Lucene analyzer for Portuguese (Portugal).
     pa_microsoft = "pa.microsoft"  #: Microsoft analyzer for Punjabi.
     ro_microsoft = "ro.microsoft"  #: Microsoft analyzer for Romanian.
     ro_lucene = "ro.lucene"  #: Lucene analyzer for Romanian.
@@ -450,7 +450,7 @@ class SentimentSkillLanguage(str, Enum):
     it = "it"  #: Italian.
     no = "no"  #: Norwegian (Bokmaal).
     pl = "pl"  #: Polish.
-    pt = "pt-PT"  #: Portuguese (Portugal).
+    pt_pt = "pt-PT"  #: Portuguese (Portugal).
     ru = "ru"  #: Russian.
     es = "es"  #: Spanish.
     sv = "sv"  #: Swedish.
@@ -591,13 +591,6 @@ class StopwordsList(str, Enum):
     swedish = "swedish"  #: Selects the stopword list for Swedish.
     thai = "thai"  #: Selects the stopword list for Thai.
     turkish = "turkish"  #: Selects the stopword list for Turkish.
-
-class TextExtractionAlgorithm(str, Enum):
-    """A value indicating which algorithm to use. Default is printed.
-    """
-
-    printed = "printed"  #: An algorithm suitable for printed text.
-    handwritten = "handwritten"  #: An algorithm suitable for handwritten text.
 
 class TextSplitMode(str, Enum):
     """A value indicating which split mode to perform.

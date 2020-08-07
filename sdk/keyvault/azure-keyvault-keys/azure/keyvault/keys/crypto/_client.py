@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from datetime import datetime, timedelta, tzinfo
+
 import six
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
@@ -22,6 +24,43 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
     from ._internal import Key as _Key
+
+
+class _UTC_TZ(tzinfo):
+    """from https://docs.python.org/2/library/datetime.html#tzinfo-objects"""
+
+    ZERO = timedelta(0)
+
+    def utcoffset(self, dt):
+        return self.ZERO
+
+    def tzname(self, dt):
+        return "UTC"
+
+    def dst(self, dt):
+        return self.ZERO
+
+
+_UTC = _UTC_TZ()
+
+
+def _enforce_nbf_exp(key):
+    # type: (KeyVaultKey) -> None
+    try:
+        nbf = key.properties.not_before
+        exp = key.properties.expires_on
+    except AttributeError:
+        # we consider the key valid because a user must have deliberately created it
+        # (if it came from Key Vault, it would have those attributes)
+        return
+
+    now = datetime.now(_UTC)
+    if (nbf and exp) and not nbf <= now <= exp:
+        raise ValueError("This client's key is useable only between {} and {} (UTC)".format(nbf, exp))
+    if nbf and nbf >= now:
+        raise ValueError("This client's key is not useable until {} (UTC)".format(nbf))
+    if exp and exp <= now:
+        raise ValueError("This client's key expired at {} (UTC)".format(exp))
 
 
 class CryptographyClient(KeyVaultClientBase):
@@ -80,9 +119,7 @@ class CryptographyClient(KeyVaultClientBase):
 
         self._internal_key = None  # type: Optional[_Key]
 
-        super(CryptographyClient, self).__init__(
-            vault_url=self._key_id.vault_url, credential=credential, **kwargs
-        )
+        super(CryptographyClient, self).__init__(vault_url=self._key_id.vault_url, credential=credential, **kwargs)
 
     @property
     def key_id(self):
@@ -116,7 +153,7 @@ class CryptographyClient(KeyVaultClientBase):
         return self._key
 
     def _get_local_key(self, **kwargs):
-        # type: () -> Optional[_Key]
+        # type: (**Any) -> Optional[_Key]
         """Gets an object implementing local operations. Will be ``None``, if the client was instantiated with a key
         id and lacks keys/get permission."""
 
@@ -140,7 +177,6 @@ class CryptographyClient(KeyVaultClientBase):
     @distributed_trace
     def encrypt(self, algorithm, plaintext, **kwargs):
         # type: (EncryptionAlgorithm, bytes, **Any) -> EncryptResult
-        # pylint:disable=line-too-long
         """Encrypt bytes using the client's key. Requires the keys/encrypt permission.
 
         This method encrypts only a single block of data, whose size depends on the key and encryption algorithm.
@@ -166,16 +202,22 @@ class CryptographyClient(KeyVaultClientBase):
 
         local_key = self._get_local_key(**kwargs)
         if local_key:
+            _enforce_nbf_exp(self._key)
             if "encrypt" not in self._allowed_ops:
                 raise AzureError("This client doesn't have 'keys/encrypt' permission")
             result = local_key.encrypt(plaintext, algorithm=algorithm.value)
         else:
+
+            parameters = self._models.KeyOperationsParameters(
+                algorithm=algorithm,
+                value=plaintext
+            )
+
             result = self._client.encrypt(
                 vault_base_url=self._key_id.vault_url,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
-                algorithm=algorithm,
-                value=plaintext,
+                parameters=parameters,
                 **kwargs
             ).result
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result)
@@ -202,12 +244,16 @@ class CryptographyClient(KeyVaultClientBase):
             print(result.plaintext)
 
         """
+
+        parameters = self._models.KeyOperationsParameters(
+            algorithm=algorithm,
+            value=ciphertext
+        )
         result = self._client.decrypt(
             vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
-            algorithm=algorithm,
-            value=ciphertext,
+            parameters=parameters,
             **kwargs
         )
         return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=result.result)
@@ -238,17 +284,20 @@ class CryptographyClient(KeyVaultClientBase):
 
         local_key = self._get_local_key(**kwargs)
         if local_key:
+            _enforce_nbf_exp(self._key)
             if "wrapKey" not in self._allowed_ops:
                 raise AzureError("This client doesn't have 'keys/wrapKey' permission")
             result = local_key.wrap_key(key, algorithm=algorithm.value)
         else:
+            parameters = self._models.KeyOperationsParameters(
+                algorithm=algorithm,
+                value=key,
+            )
             result = self._client.wrap_key(
                 self._key_id.vault_url,
                 self._key_id.name,
                 self._key_id.version,
-                algorithm=algorithm,
-                value=key,
-                **kwargs
+                parameters=parameters
             ).result
 
         return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result)
@@ -279,12 +328,17 @@ class CryptographyClient(KeyVaultClientBase):
                 raise AzureError("This client doesn't have 'keys/unwrapKey' permission")
             result = local_key.unwrap_key(encrypted_key, **kwargs)
         else:
+
+            parameters = self._models.KeyOperationsParameters(
+                algorithm=algorithm,
+                value=encrypted_key
+            )
+
             result = self._client.unwrap_key(
                 vault_base_url=self._key_id.vault_url,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
-                algorithm=algorithm,
-                value=encrypted_key,
+                parameters=parameters,
                 **kwargs
             ).result
         return UnwrapResult(key_id=self._key_id, algorithm=algorithm, key=result)
@@ -318,12 +372,16 @@ class CryptographyClient(KeyVaultClientBase):
 
         """
 
+        parameters = self._models.KeySignParameters(
+            algorithm=algorithm,
+            value=digest
+        )
+
         result = self._client.sign(
             vault_base_url=self._key_id.vault_url,
             key_name=self._key_id.name,
             key_version=self._key_id.version,
-            algorithm=algorithm,
-            value=digest,
+            parameters=parameters,
             **kwargs
         )
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=result.result)
@@ -356,13 +414,17 @@ class CryptographyClient(KeyVaultClientBase):
                 raise AzureError("This client doesn't have 'keys/verify' permission")
             result = local_key.verify(digest, signature, algorithm=algorithm.value)
         else:
+            parameters = self._models.KeyVerifyParameters(
+                algorithm=algorithm,
+                digest=digest,
+                signature=signature
+            )
+
             result = self._client.verify(
                 vault_base_url=self._key_id.vault_url,
                 key_name=self._key_id.name,
                 key_version=self._key_id.version,
-                algorithm=algorithm,
-                digest=digest,
-                signature=signature,
+                parameters=parameters,
                 **kwargs
             ).value
         return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=result)

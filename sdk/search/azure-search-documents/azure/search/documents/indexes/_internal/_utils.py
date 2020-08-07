@@ -15,6 +15,7 @@ from azure.core.exceptions import (
 )
 from ._generated.models import (
     AzureActiveDirectoryApplicationCredentials,
+    CustomAnalyzer as _CustomAnalyzer,
     DataSourceCredentials,
     SearchIndexerDataSource as _SearchIndexerDataSource,
     SearchResourceEncryptionKey as _SearchResourceEncryptionKey,
@@ -25,6 +26,7 @@ from ._generated.models import (
     PatternTokenizer as _PatternTokenizer,
 )
 from ._models import (
+    CustomAnalyzer,
     PatternAnalyzer,
     PatternTokenizer,
     SynonymMap,
@@ -73,7 +75,29 @@ def prep_if_none_match(etag, match_condition):
     return None
 
 
-def delistize_flags_for_pattern_analyzer(pattern_analyzer):
+def pack_custom_analyzer(custom_analyzer):
+    # type: (CustomAnalyzer) -> _CustomAnalyzer
+    return _CustomAnalyzer(
+        name=custom_analyzer.name,
+        odata_type=custom_analyzer.odata_type,
+        tokenizer=custom_analyzer.tokenizer_name,
+        token_filters=custom_analyzer.token_filters,
+        char_filters=custom_analyzer.char_filters
+    )
+
+
+def unpack_custom_analyzer(custom_analyzer):
+    # type: (_CustomAnalyzer) -> CustomAnalyzer
+    return CustomAnalyzer(
+        name=custom_analyzer.name,
+        odata_type=custom_analyzer.odata_type,
+        tokenizer_name=custom_analyzer.tokenizer,
+        token_filters=custom_analyzer.token_filters,
+        char_filters=custom_analyzer.char_filters
+    )
+
+
+def pack_pattern_analyzer(pattern_analyzer):
     # type: (PatternAnalyzer) -> _PatternAnalyzer
     if not pattern_analyzer.flags:
         flags = None
@@ -88,8 +112,8 @@ def delistize_flags_for_pattern_analyzer(pattern_analyzer):
     )
 
 
-def listize_flags_for_pattern_analyzer(pattern_analyzer):
-    # type: (PatternAnalyzer) -> PatternAnalyzer
+def unpack_pattern_analyzer(pattern_analyzer):
+    # type: (_PatternAnalyzer) -> PatternAnalyzer
     if not pattern_analyzer.flags:
         flags = None
     else:
@@ -103,7 +127,27 @@ def listize_flags_for_pattern_analyzer(pattern_analyzer):
     )
 
 
-def delistize_flags_for_pattern_tokenizer(pattern_tokenizer):
+def pack_analyzer(analyzer):
+    if not analyzer:
+        return None
+    if isinstance(analyzer, PatternAnalyzer):
+        return pack_pattern_analyzer(analyzer)
+    if isinstance(analyzer, CustomAnalyzer):
+        return pack_custom_analyzer(analyzer)
+    return analyzer
+
+
+def unpack_analyzer(analyzer):
+    if not analyzer:
+        return None
+    if isinstance(analyzer, _PatternAnalyzer):
+        return unpack_pattern_analyzer(analyzer)
+    if isinstance(analyzer, _CustomAnalyzer):
+        return unpack_custom_analyzer(analyzer)
+    return analyzer
+
+
+def pack_pattern_tokenizer(pattern_tokenizer):
     # type: (PatternTokenizer) -> _PatternTokenizer
     if not pattern_tokenizer.flags:
         flags = None
@@ -117,7 +161,7 @@ def delistize_flags_for_pattern_tokenizer(pattern_tokenizer):
     )
 
 
-def listize_flags_for_pattern_tokenizer(pattern_tokenizer):
+def unpack_pattern_tokenizer(pattern_tokenizer):
     # type: (PatternTokenizer) -> PatternTokenizer
     if not pattern_tokenizer.flags:
         flags = None
@@ -137,16 +181,14 @@ def pack_search_index(search_index):
         return None
     if search_index.analyzers:
         analyzers = [
-            delistize_flags_for_pattern_analyzer(x)  # type: ignore
-            if isinstance(x, PatternAnalyzer)
-            else x
+            pack_analyzer(x)  # type: ignore
             for x in search_index.analyzers
         ]  # mypy: ignore
     else:
         analyzers = None
     if search_index.tokenizers:
         tokenizers = [
-            delistize_flags_for_pattern_tokenizer(x)  # type: ignore
+            pack_pattern_tokenizer(x)  # type: ignore
             if isinstance(x, PatternTokenizer)
             else x
             for x in search_index.tokenizers
@@ -180,16 +222,14 @@ def unpack_search_index(search_index):
         return None
     if search_index.analyzers:
         analyzers = [
-            listize_flags_for_pattern_analyzer(x)  # type: ignore
-            if isinstance(x, _PatternAnalyzer)
-            else x
+            unpack_analyzer(x)  # type: ignore
             for x in search_index.analyzers
         ]
     else:
         analyzers = None
     if search_index.tokenizers:
         tokenizers = [
-            listize_flags_for_pattern_tokenizer(x)  # type: ignore
+            unpack_pattern_tokenizer(x)  # type: ignore
             if isinstance(x, _PatternTokenizer)
             else x
             for x in search_index.tokenizers
@@ -217,7 +257,17 @@ def unpack_search_index(search_index):
     )
 
 
-def unpack_synonyms(synonym_map):
+def pack_synonym_map(synonym_map):
+    # type: (SynonymMap) -> _SynonymMap
+    return _SynonymMap(
+        name=synonym_map.name,
+        synonyms="\n".join(synonym_map.synonyms),
+        encryption_key=pack_search_resource_encryption_key(synonym_map.encryption_key),
+        e_tag=synonym_map.e_tag
+    )
+
+
+def unpack_synonym_map(synonym_map):
     # type: (_SynonymMap) -> SynonymMap
     return SynonymMap(
         name=synonym_map.name,
@@ -269,8 +319,12 @@ def pack_search_indexer_data_source(search_indexer_data_source):
     # type: (SearchIndexerDataSourceConnection) -> _SearchIndexerDataSource
     if not search_indexer_data_source:
         return None
+    if search_indexer_data_source.connection_string is None or search_indexer_data_source.connection_string == "":
+        connection_string = "<unchanged>"
+    else:
+        connection_string = search_indexer_data_source.connection_string
     credentials = DataSourceCredentials(
-        connection_string=search_indexer_data_source.connection_string
+        connection_string=connection_string
     )
     return _SearchIndexerDataSource(
         name=search_indexer_data_source.name,
@@ -347,7 +401,7 @@ def pack_search_field(search_field):
         name = search_field.get("name")
         field_type = search_field.get("type")
         key = search_field.get("key")
-        is_hidden = search_field.get("is_hidden")
+        hidden = search_field.get("hidden")
         searchable = search_field.get("searchable")
         filterable = search_field.get("filterable")
         sortable = search_field.get("sortable")
@@ -362,7 +416,7 @@ def pack_search_field(search_field):
             name=name,
             type=field_type,
             key=key,
-            retrievable=not is_hidden,
+            retrievable=not hidden,
             searchable=searchable,
             filterable=filterable,
             sortable=sortable,
@@ -375,11 +429,12 @@ def pack_search_field(search_field):
         )
     fields = [pack_search_field(x) for x in search_field.fields] \
         if search_field.fields else None
+    retrievable = not search_field.hidden if search_field.hidden is not None else None
     return _SearchField(
         name=search_field.name,
         type=search_field.type,
         key=search_field.key,
-        retrievable=not search_field.is_hidden,
+        retrievable=retrievable,
         searchable=search_field.searchable,
         filterable=search_field.filterable,
         sortable=search_field.sortable,
@@ -398,11 +453,12 @@ def unpack_search_field(search_field):
         return None
     fields = [unpack_search_field(x) for x in search_field.fields] \
         if search_field.fields else None
+    hidden = not search_field.retrievable if search_field.retrievable is not None else None
     return _SearchField(
         name=search_field.name,
         type=search_field.type,
         key=search_field.key,
-        is_hidden=search_field.retrievable,
+        hidden=hidden,
         searchable=search_field.searchable,
         filterable=search_field.filterable,
         sortable=search_field.sortable,

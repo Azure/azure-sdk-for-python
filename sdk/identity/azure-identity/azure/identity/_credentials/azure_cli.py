@@ -17,16 +17,16 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource
+from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from typing import Any
 
+
 CLI_NOT_FOUND = "Azure CLI not found on path"
 COMMAND_LINE = "az account get-access-token --output json --resource {}"
-
-# CLI's "expiresOn" is naive, so we use this naive datetime for the epoch to calculate expires_on in UTC
-EPOCH = datetime.fromtimestamp(0)
+NOT_LOGGED_IN = "Please run 'az login' to set up an account"
 
 
 class AzureCliCredential(object):
@@ -35,6 +35,7 @@ class AzureCliCredential(object):
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
     """
 
+    @log_get_token("AzureCliCredential")
     def get_token(self, *scopes, **kwargs):  # pylint:disable=no-self-use,unused-argument
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
@@ -73,8 +74,8 @@ def parse_token(output):
         token = json.loads(output)
         parsed_expires_on = datetime.strptime(token["expiresOn"], "%Y-%m-%d %H:%M:%S.%f")
 
-        # calculate seconds since the epoch; parsed_expires_on and EPOCH are naive
-        expires_on = (parsed_expires_on - EPOCH).total_seconds()
+        # calculate seconds since the epoch; parsed_expires_on is naive
+        expires_on = (parsed_expires_on - datetime.fromtimestamp(0)).total_seconds()
 
         return AccessToken(token["accessToken"], int(expires_on))
     except (KeyError, ValueError):
@@ -106,7 +107,12 @@ def _run_command(command):
     try:
         working_directory = get_safe_working_dir()
 
-        kwargs = {"stderr": subprocess.STDOUT, "cwd": working_directory, "universal_newlines": True}
+        kwargs = {
+            "stderr": subprocess.STDOUT,
+            "cwd": working_directory,
+            "universal_newlines": True,
+            "env": dict(os.environ, AZURE_CORE_NO_COLOR="true"),
+        }
         if platform.python_version() >= "3.3":
             kwargs["timeout"] = 10
 
@@ -116,6 +122,8 @@ def _run_command(command):
         # non-zero return from shell
         if ex.returncode == 127 or ex.output.startswith("'az' is not recognized"):
             error = CredentialUnavailableError(message=CLI_NOT_FOUND)
+        elif "az login" in ex.output or "az account set" in ex.output:
+            error = CredentialUnavailableError(message=NOT_LOGGED_IN)
         else:
             # return code is from the CLI -> propagate its output
             if ex.output:

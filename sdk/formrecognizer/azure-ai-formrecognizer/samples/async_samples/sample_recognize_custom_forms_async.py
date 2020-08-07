@@ -13,7 +13,8 @@ DESCRIPTION:
     This sample demonstrates how to analyze a form from a document with a custom
     trained model. The form must be of the same type as the forms the custom model
     was trained on. To learn how to train your own models, look at
-    sample_train_unlabeled_model_async.py and sample_train_labeled_model_async.py
+    sample_train_model_without_labels_async.py and sample_train_model_with_labels_async.py
+
 USAGE:
     python sample_recognize_custom_forms_async.py
 
@@ -25,13 +26,13 @@ USAGE:
 
 import os
 import asyncio
-from pathlib import Path
 
 
 class RecognizeCustomFormsSampleAsync(object):
 
     async def recognize_custom_forms(self):
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg"))
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
+                                                            "..", "..", "./sample_forms/forms/Form_1.jpg"))
         # [START recognize_custom_forms_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
@@ -46,28 +47,29 @@ class RecognizeCustomFormsSampleAsync(object):
 
             # Make sure your form's type is included in the list of form types the custom model can recognize
             with open(path_to_sample_forms, "rb") as f:
-                forms = await form_recognizer_client.recognize_custom_forms(
-                    model_id=model_id, form=f.read()
+                poller = await form_recognizer_client.begin_recognize_custom_forms(
+                    model_id=model_id, form=f
                 )
+            forms = await poller.result()
 
             for idx, form in enumerate(forms):
-                print("--------Recognizing Form #{}--------".format(idx))
-                print("Form {} has type {}".format(idx, form.form_type))
+                print("--------Recognizing Form #{}--------".format(idx+1))
+                print("Form has type {}".format(form.form_type))
                 for name, field in form.fields.items():
                     # each field is of type FormField
-                    # The value of the field can also be a FormField, or a list of FormFields
-                    # In our sample, it is just a FormField.
-                    print("...Field '{}' has value '{}' with a confidence score of {}".format(
-                        name, field.value, field.confidence
-                    ))
-                    # label data is populated if you are using a model trained with unlabeled data, since the service needs to make predictions for
-                    # labels if not explicitly given to it.
+                    # label_data is populated if you are using a model trained without labels,
+                    # since the service needs to make predictions for labels if not explicitly given to it.
                     if field.label_data:
                         print("...Field '{}' has label '{}' with a confidence score of {}".format(
                             name,
                             field.label_data.text,
                             field.confidence
                         ))
+                    # The value of the field can also be a Dict[str, FormField], or a List[FormField] - in our sample, it is not.
+                    print("...Label '{}' has value '{}' with a confidence score of {}".format(
+                        field.label_data.text if field.label_data else name, field.value, field.confidence
+                    ))
+
                 print("-----------------------------------")
         # [END recognize_custom_forms_async]
 

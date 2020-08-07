@@ -4,9 +4,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import re
 import six
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.pipeline.transport import HttpTransport
 from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceExistsError,
@@ -22,6 +24,62 @@ error_map = {
     409: ResourceExistsError,
     401: ClientAuthenticationError
 }
+
+
+def get_element_type(element_pointer):
+    word_ref = re.compile(r'/readResults/\d+/lines/\d+/words/\d+')
+    if re.search(word_ref, element_pointer):
+        return "word"
+
+    line_ref = re.compile(r'/readResults/\d+/lines/\d+')
+    if re.search(line_ref, element_pointer):
+        return "line"
+
+    return None
+
+
+def get_element(element_pointer, read_result):
+    indices = [int(s) for s in re.findall(r"\d+", element_pointer)]
+    read = indices[0]
+
+    if get_element_type(element_pointer) == "word":
+        line = indices[1]
+        word = indices[2]
+        ocr_word = read_result[read].lines[line].words[word]
+        return "word", ocr_word, read+1
+
+    if get_element_type(element_pointer) == "line":
+        line = indices[1]
+        ocr_line = read_result[read].lines[line]
+        return "line", ocr_line, read+1
+
+    return None, None, None
+
+
+def adjust_value_type(value_type):
+    if value_type == "array":
+        value_type = "list"
+    if value_type == "number":
+        value_type = "float"
+    if value_type == "object":
+        value_type = "dictionary"
+    return value_type
+
+
+def adjust_confidence(score):
+    """Adjust confidence when not returned.
+    """
+    if score is None:
+        return 1.0
+    return score
+
+
+def adjust_text_angle(text_angle):
+    """Adjust to (-180, 180]
+    """
+    if text_angle > 180:
+        text_angle -= 360
+    return text_angle
 
 
 def get_authentication_policy(credential):
@@ -69,3 +127,27 @@ def check_beginning_bytes(form):
         if form[:4] == b"\x4D\x4D\x00\x2A":  # big-endian
             return "image/tiff"
     raise ValueError("Content type could not be auto-detected. Please pass the content_type keyword argument.")
+
+
+class TransportWrapper(HttpTransport):
+    """Wrapper class that ensures that an inner client created
+    by a `get_client` method does not close the outer transport for the parent
+    when used in a context manager.
+    """
+    def __init__(self, transport):
+        self._transport = transport
+
+    def send(self, request, **kwargs):
+        return self._transport.send(request, **kwargs)
+
+    def open(self):
+        pass
+
+    def close(self):
+        pass
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, *args):  # pylint: disable=arguments-differ
+        pass

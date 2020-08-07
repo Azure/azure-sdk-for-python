@@ -36,7 +36,7 @@ class ExamplesOperations(object):
         self.config = config
 
     def add(
-            self, app_id, version_id, example_label_object, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, example_label_object, enable_nested_children=False, custom_headers=None, raw=False, **operation_config):
         """Adds a labeled example utterance in a version of the application.
 
         :param app_id: The application ID.
@@ -47,6 +47,8 @@ class ExamplesOperations(object):
          expected intent and entities.
         :type example_label_object:
          ~azure.cognitiveservices.language.luis.authoring.models.ExampleLabelObject
+        :param enable_nested_children: Toggles nested/flat format
+        :type enable_nested_children: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -70,6 +72,8 @@ class ExamplesOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if enable_nested_children is not None:
+            query_parameters['enableNestedChildren'] = self._serialize.query("enable_nested_children", enable_nested_children, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -100,7 +104,7 @@ class ExamplesOperations(object):
     add.metadata = {'url': '/apps/{appId}/versions/{versionId}/example'}
 
     def batch(
-            self, app_id, version_id, example_label_object_array, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, example_label_object_array, enable_nested_children=False, custom_headers=None, raw=False, **operation_config):
         """Adds a batch of labeled example utterances to a version of the
         application.
 
@@ -111,6 +115,8 @@ class ExamplesOperations(object):
         :param example_label_object_array: Array of example utterances.
         :type example_label_object_array:
          list[~azure.cognitiveservices.language.luis.authoring.models.ExampleLabelObject]
+        :param enable_nested_children: Toggles nested/flat format
+        :type enable_nested_children: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -134,6 +140,8 @@ class ExamplesOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if enable_nested_children is not None:
+            query_parameters['enableNestedChildren'] = self._serialize.query("enable_nested_children", enable_nested_children, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -166,7 +174,7 @@ class ExamplesOperations(object):
     batch.metadata = {'url': '/apps/{appId}/versions/{versionId}/examples'}
 
     def list(
-            self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
+            self, app_id, version_id, skip=0, take=100, enable_nested_children=False, custom_headers=None, raw=False, **operation_config):
         """Returns example utterances to be reviewed from a version of the
         application.
 
@@ -179,6 +187,8 @@ class ExamplesOperations(object):
         :param take: The number of entries to return. Maximum page size is
          500. Default is 100.
         :type take: int
+        :param enable_nested_children: Toggles nested/flat format
+        :type enable_nested_children: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -206,6 +216,8 @@ class ExamplesOperations(object):
             query_parameters['skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
         if take is not None:
             query_parameters['take'] = self._serialize.query("take", take, 'int', maximum=500, minimum=0)
+        if enable_nested_children is not None:
+            query_parameters['enableNestedChildren'] = self._serialize.query("enable_nested_children", enable_nested_children, 'bool')
 
         # Construct headers
         header_parameters = {}
