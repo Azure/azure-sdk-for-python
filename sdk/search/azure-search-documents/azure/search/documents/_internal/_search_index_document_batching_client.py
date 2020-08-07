@@ -61,8 +61,6 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
             endpoint=endpoint, index_name=index_name, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: SearchIndexClient
         self._reset_timer()
-        if self._auto_flush:
-            self._timer.start()
         self._persistence = kwargs.pop('persistence', None)
 
     def cleanup(self):
@@ -192,7 +190,8 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         except AttributeError:
             pass
         self._timer = threading.Timer(self._window, self.flush)
-        self._timer.start()
+        if self._auto_flush:
+            self._timer.start()
 
     def upload_documents_actions(self, documents):
         # type: (List[dict]) -> None
