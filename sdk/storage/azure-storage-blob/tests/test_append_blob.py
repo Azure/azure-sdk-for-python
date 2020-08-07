@@ -1244,5 +1244,81 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
 
+    @GlobalStorageAccountPreparer()
+    def test_seal_append_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
+        resp = blob.seal_append_blob()
+        self.assertTrue(resp['blob_sealed'])
 
+        with self.assertRaises(HttpResponseError):
+            blob.append_block("abc")
+
+        blob.set_blob_metadata({'isseal': 'yes'})
+        prop = blob.get_blob_properties()
+
+        self.assertEqual(prop.metadata['isseal'], 'yes')
+
+    @GlobalStorageAccountPreparer()
+    def test_seal_append_blob_with_append_condition(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
+        with self.assertRaises(HttpResponseError):
+            blob.seal_append_blob(appendpos_condition=1)
+
+        resp = blob.seal_append_blob(appendpos_condition=0)
+        self.assertTrue(resp['blob_sealed'])
+
+    @GlobalStorageAccountPreparer()
+    def test_copy_sealed_blob_will_get_a_sealed_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
+
+        # copy sealed blob will get a sealed blob
+        blob.seal_append_blob()
+        copied_blob = bsc.get_blob_client(self.container_name, "copiedblob")
+        copied_blob.start_copy_from_url(blob.url)
+        prop = copied_blob.get_blob_properties()
+
+        self.assertTrue(prop.is_append_blob_sealed)
+        with self.assertRaises(HttpResponseError):
+            copied_blob.append_block("abc")
+
+    @GlobalStorageAccountPreparer()
+    def test_copy_unsealed_blob_will_get_a_sealed_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
+
+        # copy unsealed blob with seal_destination_blob=True will get a sealed blob
+        copied_blob2 = bsc.get_blob_client(self.container_name, "copiedblob2")
+        copied_blob2.start_copy_from_url(blob.url, seal_destination_blob=True)
+        prop = copied_blob2.get_blob_properties()
+
+        self.assertTrue(prop.is_append_blob_sealed)
+        with self.assertRaises(HttpResponseError):
+            copied_blob2.append_block("abc")
+
+        blobs_gen = bsc.get_container_client(self.container_name).list_blobs()
+        for blob in blobs_gen:
+            if blob.name == "copiedblob2":
+                self.assertTrue(blob.is_append_blob_sealed)
+
+    @GlobalStorageAccountPreparer()
+    def test_copy_sealed_blob_with_seal_blob_will_get_a_sealed_blob(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
+
+        # copy sealed blob with seal_destination_blob=False will get a unsealed blob
+        blob.seal_append_blob()
+        copied_blob3 = bsc.get_blob_client(self.container_name, "copiedblob3")
+        copied_blob3.start_copy_from_url(blob.url, seal_destination_blob=False)
+        prop = copied_blob3.get_blob_properties()
+
+        self.assertIsNone(prop.is_append_blob_sealed)
+        copied_blob3.append_block("abc")
 # ------------------------------------------------------------------------------
