@@ -58,7 +58,7 @@ class RecognizeReceiptsFromURLSample(object):
                 print("Transaction Date: {} has confidence: {}".format(transaction_date.value, transaction_date.confidence))
             print("Receipt items:")
             for idx, item in enumerate(receipt.fields.get("Items").value):
-                print("...Item #{}".format(idx))
+                print("...Item #{}".format(idx+1))
                 item_name = item.value.get("Name")
                 if item_name:
                     print("......Item Name: {} has confidence: {}".format(item_name.value, item_name.confidence))
