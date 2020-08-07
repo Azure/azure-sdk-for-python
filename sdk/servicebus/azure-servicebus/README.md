@@ -360,9 +360,8 @@ There are various timeouts a user should be aware of within the library.
 - 10 minute service side link closure:  A link, once opened, will be closed after 10 minutes idle to protect the service against resource leakage.  This should largely
 be transparent to a user, but if you notice a reconnect occurring after such a duration, this is why.  Performing any operations, including management operations, on the
 link will extend this timeout.
-- max_wait_time: Provided on creation of a receiver, the time after which the underlying UAMQP link will be closed after no traffic.  This primarily dictates the length
+- max_wait_time: Provided on creation of a receiver or when calling `receive()` or `get_streaming_message_iter()`, the time after which receiving messages will halt after no traffic.  This applies both to the imperative `receive()` function as well as the length
 a generator-style receive will run for before exiting if there are no messages.  Passing None (default) will wait forever, up until the 10 minute threshold if no other action is taken.
-- max_wait_time: Provided when calling receive() to fetch a list of messages.  Dictates an upper bound for how long the receive() will wait for more messages before returning, similarly up to the aformentioned limits.  The "receive()" will return as soon as at least one message is received within the max_wait_time.
 
 > **NOTE:** If processing of a message or session is sufficiently long as to cause timeouts, as an alternative to calling `renew_lock()` manually, one can
 > leverage the `AutoLockRenew` functionality detailed below.

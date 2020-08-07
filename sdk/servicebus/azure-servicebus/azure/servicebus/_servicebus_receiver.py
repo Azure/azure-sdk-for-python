@@ -281,7 +281,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             mgmt_handlers.lock_renew_op
         )
 
-    def get_streaming_message_iter(self, max_wait_time = None):
+    def get_streaming_message_iter(self, max_wait_time=None):
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
 
