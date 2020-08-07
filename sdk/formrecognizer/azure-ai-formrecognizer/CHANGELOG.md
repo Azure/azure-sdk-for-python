@@ -1,6 +1,8 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 3.0.0b1 (Unreleased)
+
+The version of this package now targets the service's v2.0 API.
 
 **Breaking Changes**
 
