@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
-_LOGGER = logging.basicConfig(level=logging.ERROR)
+_LOGGER = logging.getLogger(__name__)
 
 from ._models import DeserializedEvent
 
@@ -45,5 +45,6 @@ class EventGridConsumer(object):
         except Exception as err:
             _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent/EventGridEvent schema.')
             _LOGGER.error('Your event: {}'.format(event))
+            _LOGGER.error(err)
             raise ValueError('Error: cannot deserialize event. Event does not have a valid format. Event must be a string, dict, or bytes following the CloudEvent/EventGridEvent schema.')
 
