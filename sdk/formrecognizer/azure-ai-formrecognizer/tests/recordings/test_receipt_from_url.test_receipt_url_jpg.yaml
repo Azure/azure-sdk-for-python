@@ -15,25 +15,25 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 7b004ef0-2dbb-4be5-ab4f-ad4f9d586dce
+      - e9d36490-5abe-4358-a773-241ec985186c
       content-length:
       - '0'
       date:
-      - Fri, 10 Jul 2020 18:53:30 GMT
+      - Fri, 07 Aug 2020 21:27:15 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/7b004ef0-2dbb-4be5-ab4f-ad4f9d586dce
+      - https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/e9d36490-5abe-4358-a773-241ec985186c
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '229'
+      - '192'
     status:
       code: 202
       message: Accepted
@@ -49,11 +49,11 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/7b004ef0-2dbb-4be5-ab4f-ad4f9d586dce
+    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/e9d36490-5abe-4358-a773-241ec985186c
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:53:29Z",
-        "lastUpdatedDateTime": "2020-07-10T18:53:31Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-08-07T21:27:15Z",
+        "lastUpdatedDateTime": "2020-08-07T21:27:17Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0.6893, "width": 1688, "height":
         3000, "unit": "pixel", "language": "en"}], "documentResults": [{"docType":
         "prebuilt:receipt", "pageRange": [1, 1], "fields": {"ReceiptType": {"type":
@@ -96,11 +96,11 @@ interactions:
         "page": 1, "confidence": 0.985}}}]}}'
     headers:
       apim-request-id:
-      - 0c52fdea-21c6-42f6-97d3-c52b81cc6607
+      - 32601cb4-0b6f-4a90-93ee-e0225b8c28f6
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:53:34 GMT
+      - Fri, 07 Aug 2020 21:27:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -108,7 +108,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '14'
+      - '30'
     status:
       code: 200
       message: OK

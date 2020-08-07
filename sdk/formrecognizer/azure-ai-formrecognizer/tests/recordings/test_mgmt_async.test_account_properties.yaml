@@ -7,20 +7,20 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models?op=summary
+    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/custom/models?op=summary
   response:
     body:
-      string: '{"summary": {"count": 17, "limit": 5000, "lastUpdatedDateTime": "2020-07-10T18:50:53Z"}}'
+      string: '{"summary": {"count": 70, "limit": 5000, "lastUpdatedDateTime": "2020-08-07T21:22:11Z"}}'
     headers:
-      apim-request-id: bb94077a-6c46-4402-8139-6b258beb1df6
+      apim-request-id: 6d3ae463-b963-4280-99f7-3ed32c9efecc
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 18:50:53 GMT
+      date: Fri, 07 Aug 2020 21:22:11 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '10'
+      x-envoy-upstream-service-time: '191'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models?op=summary
+    url: https://formrecognizeraccount.cognitiveservices.azure.com//formrecognizer/v2.0/custom/models?op=summary
 version: 1
