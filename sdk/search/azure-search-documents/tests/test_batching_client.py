@@ -28,10 +28,10 @@ class TestSearchBatchingClient(object):
         client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL)
 
         assert client._index_documents_batch
-        client.upload_documents_actions(["upload1"])
-        client.delete_documents_actions(["delete1", "delete2"])
-        client.merge_documents_actions(["merge1", "merge2", "merge3"])
-        client.merge_or_upload_documents_actions(["merge_or_upload1"])
+        client.add_upload_actions(["upload1"])
+        client.add_delete_actions(["delete1", "delete2"])
+        client.add_merge_actions(["merge1", "merge2", "merge3"])
+        client.add_merge_or_upload_actions(["merge_or_upload1"])
         assert len(client.actions) == 7
         actions = client._index_documents_batch.dequeue_actions()
         assert len(client.actions) == 0
@@ -43,10 +43,10 @@ class TestSearchBatchingClient(object):
         client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL)
 
         assert client._index_documents_batch
-        client.upload_documents_actions(["upload1"])
-        client.delete_documents_actions(["delete1", "delete2"])
-        client.merge_documents_actions(["merge1", "merge2", "merge3"])
-        client.merge_or_upload_documents_actions(["merge_or_upload1"])
+        client.add_upload_actions(["upload1"])
+        client.add_delete_actions(["delete1", "delete2"])
+        client.add_merge_actions(["merge1", "merge2", "merge3"])
+        client.add_merge_or_upload_actions(["merge_or_upload1"])
         actions = client._index_documents_batch.dequeue_actions()
         client._index_documents_batch.enqueue_succeeded_actions(actions)
         assert len(client.succeeded_actions) == 7
@@ -56,10 +56,10 @@ class TestSearchBatchingClient(object):
         client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL)
 
         assert client._index_documents_batch
-        client.upload_documents_actions(["upload1"])
-        client.delete_documents_actions(["delete1", "delete2"])
-        client.merge_documents_actions(["merge1", "merge2", "merge3"])
-        client.merge_or_upload_documents_actions(["merge_or_upload1"])
+        client.add_upload_actions(["upload1"])
+        client.add_delete_actions(["delete1", "delete2"])
+        client.add_merge_actions(["merge1", "merge2", "merge3"])
+        client.add_merge_or_upload_actions(["merge_or_upload1"])
         actions = client._index_documents_batch.dequeue_actions()
         client._index_documents_batch.enqueue_failed_actions(actions)
         assert len(client.failed_actions) == 7
@@ -71,8 +71,8 @@ class TestSearchBatchingClient(object):
     def test_flush_if_needed(self, mock_flush):
         client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL, window=1000, batch_size=2)
 
-        client.upload_documents_actions(["upload1"])
-        client.delete_documents_actions(["delete1", "delete2"])
+        client.add_upload_actions(["upload1"])
+        client.add_delete_actions(["delete1", "delete2"])
         assert mock_flush.called
         client.close()
 
@@ -82,6 +82,6 @@ class TestSearchBatchingClient(object):
     )
     def test_context_manager(self, mock_cleanup):
         with SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL) as client:
-            client.upload_documents_actions(["upload1"])
-            client.delete_documents_actions(["delete1", "delete2"])
+            client.add_upload_actions(["upload1"])
+            client.add_delete_actions(["delete1", "delete2"])
         assert mock_cleanup.called

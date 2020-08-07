@@ -205,7 +205,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         if self._auto_flush:
             self._timer = Timer(self._window, self.flush)
 
-    async def upload_documents_actions(self, documents):
+    async def add_upload_actions(self, documents):
         # type: (List[dict]) -> None
         """Queue upload documents actions.
         :param documents: A list of documents to upload.
@@ -216,7 +216,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
             self._persistence.add_queued_actions(actions)
         await self._flush_if_needed()
 
-    async def delete_documents_actions(self, documents):
+    async def add_delete_actions(self, documents):
         # type: (List[dict]) -> None
         """Queue delete documents actions
         :param documents: A list of documents to delete.
@@ -227,7 +227,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
             self._persistence.add_queued_actions(actions)
         await self._flush_if_needed()
 
-    async def merge_documents_actions(self, documents):
+    async def add_merge_actions(self, documents):
         # type: (List[dict]) -> None
         """Queue merge documents actions
         :param documents: A list of documents to merge.
@@ -238,7 +238,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
             self._persistence.add_queued_actions(actions)
         await self._flush_if_needed()
 
-    async def merge_or_upload_documents_actions(self, documents):
+    async def add_merge_or_upload_actions(self, documents):
         # type: (List[dict]) -> None
         """Queue merge documents or upload documents actions
         :param documents: A list of documents to merge or upload.

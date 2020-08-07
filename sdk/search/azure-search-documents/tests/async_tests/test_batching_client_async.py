@@ -28,10 +28,10 @@ class TestSearchBatchingClientAsync(object):
         client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL)
 
         assert client._index_documents_batch
-        await client.upload_documents_actions(["upload1"])
-        await client.delete_documents_actions(["delete1", "delete2"])
-        await client.merge_documents_actions(["merge1", "merge2", "merge3"])
-        await client.merge_or_upload_documents_actions(["merge_or_upload1"])
+        await client.add_upload_actions(["upload1"])
+        await client.add_delete_actions(["delete1", "delete2"])
+        await client.add_merge_actions(["merge1", "merge2", "merge3"])
+        await client.add_merge_or_upload_actions(["merge_or_upload1"])
         assert len(client.actions) == 7
         actions = await client._index_documents_batch.dequeue_actions()
         assert len(client.actions) == 0
@@ -43,10 +43,10 @@ class TestSearchBatchingClientAsync(object):
         client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL)
 
         assert client._index_documents_batch
-        await client.upload_documents_actions(["upload1"])
-        await client.delete_documents_actions(["delete1", "delete2"])
-        await client.merge_documents_actions(["merge1", "merge2", "merge3"])
-        await client.merge_or_upload_documents_actions(["merge_or_upload1"])
+        await client.add_upload_actions(["upload1"])
+        await client.add_delete_actions(["delete1", "delete2"])
+        await client.add_merge_actions(["merge1", "merge2", "merge3"])
+        await client.add_merge_or_upload_actions(["merge_or_upload1"])
         actions = await client._index_documents_batch.dequeue_actions()
         await client._index_documents_batch.enqueue_succeeded_actions(actions)
         assert len(client.succeeded_actions) == 7
@@ -56,10 +56,10 @@ class TestSearchBatchingClientAsync(object):
         client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL)
 
         assert client._index_documents_batch
-        await client.upload_documents_actions(["upload1"])
-        await client.delete_documents_actions(["delete1", "delete2"])
-        await client.merge_documents_actions(["merge1", "merge2", "merge3"])
-        await client.merge_or_upload_documents_actions(["merge_or_upload1"])
+        await client.add_upload_actions(["upload1"])
+        await client.add_delete_actions(["delete1", "delete2"])
+        await client.add_merge_actions(["merge1", "merge2", "merge3"])
+        await client.add_merge_or_upload_actions(["merge_or_upload1"])
         actions = await client._index_documents_batch.dequeue_actions()
         await client._index_documents_batch.enqueue_failed_actions(actions)
         assert len(client.failed_actions) == 7
@@ -71,8 +71,8 @@ class TestSearchBatchingClientAsync(object):
     async def test_flush_if_needed(self, mock_flush):
         client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL, window=1000, batch_size=2)
 
-        await client.upload_documents_actions(["upload1"])
-        await client.delete_documents_actions(["delete1", "delete2"])
+        await client.add_upload_actions(["upload1"])
+        await client.add_delete_actions(["delete1", "delete2"])
         assert mock_flush.called
         await client.close()
 
@@ -82,6 +82,6 @@ class TestSearchBatchingClientAsync(object):
     )
     async def test_flush_if_needed(self, mock_cleanup):
         async with SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL) as client:
-            await client.upload_documents_actions(["upload1"])
-            await client.delete_documents_actions(["delete1", "delete2"])
+            await client.add_upload_actions(["upload1"])
+            await client.add_delete_actions(["delete1", "delete2"])
         assert mock_cleanup.called

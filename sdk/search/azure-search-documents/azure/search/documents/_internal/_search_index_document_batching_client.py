@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import cast, List, TYPE_CHECKING
-import abc
+from typing_extensions import Protocol
 import threading
 
 from azure.core.tracing.decorator import distributed_trace
@@ -19,36 +19,27 @@ from ._index_documents_batch import IndexDocumentsBatch
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Union
     from azure.core.credentials import AzureKeyCredential
 
-class PersistenceBase(ABC):
-    @abc.abstractmethod
+class PersistenceBase(Protocol):
     def add_queued_actions(self, actions, **kwargs):
         # type: (*str, List[IndexAction], dict) -> None
-        raise NotImplementedError()
+        pass
 
-    @abc.abstractmethod
     def add_succeeded_action(self, action, **kwargs):
         # type: (*str, IndexAction, dict) -> None
-        raise NotImplementedError()
+        pass
 
-    @abc.abstractmethod
     def add_failed_action(self, action, **kwargs):
         # type: (*str, IndexAction, dict) -> None
-        raise NotImplementedError()
+        pass
 
-    @abc.abstractmethod
     def remove_queued_action(self, action, **kwargs):
         # type: (*str, IndexAction, dict) -> None
-        raise NotImplementedError()
+        pass
 
 class SearchIndexDocumentBatchingClient(HeadersMixin):
     """A client to do index document batching.
@@ -233,7 +224,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         if self._auto_flush:
             self._timer.start()
 
-    def upload_documents_actions(self, documents):
+    def add_upload_actions(self, documents):
         # type: (List[dict]) -> None
         """Queue upload documents actions.
 
@@ -245,7 +236,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
             self._persistence.add_queued_actions(actions)
         self._flush_if_needed()
 
-    def delete_documents_actions(self, documents):
+    def add_delete_actions(self, documents):
         # type: (List[dict]) -> None
         """Queue delete documents actions
 
@@ -257,7 +248,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
             self._persistence.add_queued_actions(actions)
         self._flush_if_needed()
 
-    def merge_documents_actions(self, documents):
+    def add_merge_actions(self, documents):
         # type: (List[dict]) -> None
         """Queue merge documents actions
 
@@ -269,7 +260,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
             self._persistence.add_queued_actions(actions)
         self._flush_if_needed()
 
-    def merge_or_upload_documents_actions(self, documents):
+    def add_merge_or_upload_actions(self, documents):
         # type: (List[dict]) -> None
         """Queue merge documents or upload documents actions
 

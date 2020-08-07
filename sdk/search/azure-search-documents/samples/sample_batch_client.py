@@ -28,15 +28,8 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchIndexDocumentBatchingClient
 
-batch_client = SearchIndexDocumentBatchingClient(
-    service_endpoint,
-    index_name,
-    AzureKeyCredential(key),
-    window=100,
-    batch_size=100
-)
 
-def upload_document():
+def sample_batching_client():
     DOCUMENT = {
         'Category': 'Hotel',
         'HotelId': '1000',
@@ -45,16 +38,18 @@ def upload_document():
         'HotelName': 'Azure Inn',
     }
 
-    batch_client.upload_documents_actions(documents=[DOCUMENT])
-
-def merge_document():
-    batch_client.merge_documents_actions(documents=[{"HotelId": "1000", "Rating": 4.5}])
-
-def delete_document():
-    batch_client.delete_documents_actions(documents=[{"HotelId": "1000"}])
+    with SearchIndexDocumentBatchingClient(
+            service_endpoint,
+            index_name,
+            AzureKeyCredential(key),
+            window=100,
+            batch_size=100) as batch_client:
+        # add upload actions
+        batch_client.add_upload_actions(documents=[DOCUMENT])
+        # add merge actions
+        batch_client.add_merge_actions(documents=[{"HotelId": "1000", "Rating": 4.5}])
+        # add delete actions
+        batch_client.add_delete_actions(documents=[{"HotelId": "1000"}])
 
 if __name__ == '__main__':
-    upload_document()
-    merge_document()
-    delete_document()
-    # flush() method will be auto-triggered if it is idle for 100s.
+    sample_batching_client()

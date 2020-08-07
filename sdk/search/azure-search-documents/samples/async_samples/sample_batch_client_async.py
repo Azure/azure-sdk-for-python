@@ -29,15 +29,8 @@ key = os.getenv("AZURE_SEARCH_API_KEY")
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchIndexDocumentBatchingClient
 
-batch_client = SearchIndexDocumentBatchingClient(
-    service_endpoint,
-    index_name,
-    AzureKeyCredential(key),
-    window=100,
-    batch_size=100
-)
 
-async def upload_document():
+async def sample_batching_client():
     DOCUMENT = {
         'Category': 'Hotel',
         'HotelId': '1000',
@@ -46,20 +39,21 @@ async def upload_document():
         'HotelName': 'Azure Inn',
     }
 
-    await batch_client.upload_documents_actions(documents=[DOCUMENT])
-
-async def merge_document():
-    await batch_client.merge_documents_actions(documents=[{"HotelId": "1000", "Rating": 4.5}])
-
-async def delete_document():
-    await batch_client.delete_documents_actions(documents=[{"HotelId": "1000"}])
+    async with SearchIndexDocumentBatchingClient(
+            service_endpoint,
+            index_name,
+            AzureKeyCredential(key),
+            window=100,
+            batch_size=100) as batch_client:
+        # add upload actions
+        await batch_client.add_upload_actions(documents=[DOCUMENT])
+        # add merge actions
+        await batch_client.add_merge_actions(documents=[{"HotelId": "1000", "Rating": 4.5}])
+        # add delete actions
+        await batch_client.add_delete_actions(documents=[{"HotelId": "1000"}])
 
 async def main():
-    await upload_document()
-    await merge_document()
-    await delete_document()
-    # flush() method will be auto-triggered if it is idle for 100s.
-    await batch_client.close()
+    await sample_batching_client()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
