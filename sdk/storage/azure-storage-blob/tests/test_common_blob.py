@@ -15,11 +15,12 @@ import os
 import sys
 from datetime import datetime, timedelta
 
+from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
-    ClientAuthenticationError)
+    ClientAuthenticationError, ResourceModifiedError)
 from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.blob import (
     upload_blob_to_url,
@@ -44,7 +45,7 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._generated.models import RehydratePriority
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -82,10 +83,16 @@ class StorageCommonBlobTest(StorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    def _create_block_blob(self):
+    def _create_block_blob(self, overwrite=False, tags=None):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(self.byte_data, length=len(self.byte_data))
+        blob.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=overwrite, tags=tags)
+        return blob_name
+
+    def _create_empty_block_blob(self, overwrite=False, tags=None):
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob("", length=0, overwrite=overwrite, tags=tags)
         return blob_name
 
     def _create_remote_container(self):
@@ -150,6 +157,20 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         self.assertTrue(exists)
 
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    def test_blob_exists_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
+
+        blob_name = self._create_block_blob(overwrite=True, tags=tags)
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        with self.assertRaises(ResourceModifiedError):
+            blob.get_blob_properties(if_tags_match_condition="\"tag1\"='first tag'")
+        resp = blob.get_blob_properties(if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
     @GlobalStorageAccountPreparer()
     def test_blob_not_exists(self, resource_group, location, storage_account, storage_account_key):
@@ -209,6 +230,25 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(blob_data)
+
+        # Assert
+        data = blob.download_blob(encoding='utf-8')
+        self.assertIsNotNone(data)
+        self.assertEqual(data.readall(), blob_data)
+
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    def test_create_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
+        blob_name = self._create_empty_block_blob(tags=tags, overwrite=True)
+        blob_data = u'???'
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        with self.assertRaises(ResourceModifiedError):
+            blob.upload_blob(blob_data, overwrite=True, if_tags_match_condition="\"tag1\"='first tag'")
+        blob.upload_blob(blob_data, overwrite=True, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
         # Assert
         data = blob.download_blob(encoding='utf-8')
@@ -417,6 +457,31 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(props.content_settings.content_language, 'spanish')
         self.assertEqual(props.content_settings.content_disposition, 'inline')
 
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    def test_set_blob_properties_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
+        blob_name = self._create_block_blob(tags=tags, overwrite=True)
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        with self.assertRaises(ResourceModifiedError):
+            blob.set_http_headers(content_settings=ContentSettings(
+                content_language='spanish',
+                content_disposition='inline'),
+                if_tags_match_condition="\"tag1\"='first tag'")
+        blob.set_http_headers(
+            content_settings=ContentSettings(
+                content_language='spanish',
+                content_disposition='inline'),
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
+        )
+
+        # Assert
+        props = blob.get_blob_properties()
+        self.assertEqual(props.content_settings.content_language, 'spanish')
+        self.assertEqual(props.content_settings.content_disposition, 'inline')
 
     @GlobalStorageAccountPreparer()
     def test_set_blob_properties_with_blob_settings_param(self, resource_group, location, storage_account, storage_account_key):
@@ -615,6 +680,31 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(md['UP'], 'UPval')
         self.assertFalse('up' in md)
 
+    @pytest.mark.live_test_only
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    def test_set_blob_metadata_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
+        # bug in devtools...converts upper case header to lowercase
+        # passes live.
+        self._setup(storage_account, storage_account_key)
+        tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
+        metadata = {'hello': ' world ', ' number ': '42', 'UP': 'UPval'}
+        blob_name = self._create_block_blob(tags=tags, overwrite=True)
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        with self.assertRaises(ResourceModifiedError):
+            blob.set_blob_metadata(metadata, if_tags_match_condition="\"tag1\"='first tag'")
+        blob.set_blob_metadata(metadata, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+
+        # Assert
+        md = blob.get_blob_properties().metadata
+        self.assertEqual(3, len(md))
+        self.assertEqual(md['hello'], 'world')
+        self.assertEqual(md['number'], '42')
+        self.assertEqual(md['UP'], 'UPval')
+        self.assertFalse('up' in md)
+
     @pytest.mark.playback_test_only
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
@@ -646,6 +736,25 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         resp = blob.delete_blob()
+
+        # Assert
+        self.assertIsNone(resp)
+
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    def test_delete_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
+
+        blob_name = self._create_block_blob(tags=tags)
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        prop = blob.get_blob_properties()
+
+        with self.assertRaises(ResourceModifiedError):
+            blob.delete_blob(if_tags_match_condition="\"tag1\"='first tag'")
+        resp = blob.delete_blob(etag=prop.etag, match_condition=MatchConditions.IfNotModified, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
         # Assert
         self.assertIsNone(resp)
@@ -1023,6 +1132,53 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNotNone(copy['copy_id'])
 
         copy_content = copyblob.download_blob().readall()
+        self.assertEqual(copy_content, self.byte_data)
+
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    def test_async_copy_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        source_tags = {"source": "source tag"}
+        blob_name = self._create_block_blob(overwrite=True, tags=source_tags)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        tags1 = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
+
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, blob_name)
+
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        copyblob.upload_blob("abc", overwrite=True)
+        copyblob.set_blob_tags(tags=tags1)
+
+        tags = {"tag1": "first tag", "tag2": "secondtag", "tag3": "thirdtag"}
+        with self.assertRaises(ResourceModifiedError):
+            copyblob.set_blob_tags(tags, if_tags_match_condition="\"tag1\"='first tag'")
+        copyblob.set_blob_tags(tags, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+
+        with self.assertRaises(ResourceModifiedError):
+            copyblob.get_blob_tags(if_tags_match_condition="\"tag1\"='first taga'")
+        dest_tags = copyblob.get_blob_tags(if_tags_match_condition="\"tag1\"='first tag'")
+
+        self.assertEqual(len(dest_tags), len(tags))
+
+        with self.assertRaises(ResourceModifiedError):
+            copyblob.start_copy_from_url(sourceblob, tags=tags, source_if_tags_match_condition="\"source\"='sourcetag'")
+        copyblob.start_copy_from_url(sourceblob, tags=tags, source_if_tags_match_condition="\"source\"='source tag'")
+
+        with self.assertRaises(ResourceModifiedError):
+            copyblob.start_copy_from_url(sourceblob, tags={"tag1": "abc"}, if_tags_match_condition="\"tag1\"='abc'")
+        copy = copyblob.start_copy_from_url(sourceblob, tags={"tag1": "abc"}, if_tags_match_condition="\"tag1\"='first tag'")
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertFalse(isinstance(copy['copy_status'], Enum))
+        self.assertIsNotNone(copy['copy_id'])
+
+        with self.assertRaises(ResourceModifiedError):
+            copyblob.download_blob(if_tags_match_condition="\"tag1\"='abc1'").readall()
+        copy_content = copyblob.download_blob(if_tags_match_condition="\"tag1\"='abc'").readall()
         self.assertEqual(copy_content, self.byte_data)
 
     @pytest.mark.playback_test_only

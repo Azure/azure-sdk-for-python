@@ -1235,7 +1235,7 @@ class ContainerEncryptionScope(object):
         return None
 
 
-class DelimitedJSON(object):
+class DelimitedJsonDialect(object):
     """Defines the input or output JSON serialization for a blob data query.
 
     :keyword str delimiter: The line separator character, default value is '\n'
