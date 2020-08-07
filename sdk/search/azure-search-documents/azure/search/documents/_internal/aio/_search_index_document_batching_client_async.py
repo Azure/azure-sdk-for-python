@@ -120,6 +120,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         """Close the :class:`~azure.search.aio.SearchClient` session.
 
         """
+        await self.cleanup()
         return await self._client.close()
 
     async def flush(self, raise_error=False):
@@ -282,10 +283,11 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
             return result_first_half.extend(result_second_half)
 
     async def __aenter__(self):
-        # type: () -> SearchClient
+        # type: () -> SearchIndexDocumentBatchingClient
         await self._client.__aenter__()  # pylint: disable=no-member
         return self
 
     async def __aexit__(self, *args):
         # type: (*Any) -> None
+        await self.close()
         await self._client.__aexit__(*args)  # pylint: disable=no-member
