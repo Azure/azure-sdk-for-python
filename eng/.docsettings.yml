@@ -8,7 +8,6 @@ omitted_paths:
   - doc/*
   - sdk/**/samples/*
   - sdk/identity/azure-identity/tests/*
-  - ['sdk/cosmos/README.md', 'nspkg and common']
 
 language: python
 root_check_enabled: True
@@ -122,6 +121,8 @@ known_content_issues:
   - ['sdk/textanalytics/azure-ai-nspkg/README.md', 'nspkg and common']
   - ['sdk/eventhub/azure-eventhub/samples/README.md', 'nspkg and common']
   - ['sdk/tables/azure-data-nspkg/README.md', 'nspkg and common']
+  - ['sdk/cosmos/README.md', 'nspkg and common']
+
 
 # HISTORY.rst
   - ['sdk/core/azure/HISTORY.rst','#4554']
