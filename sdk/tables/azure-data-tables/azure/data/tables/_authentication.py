@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 import logging
-import sys
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -16,7 +15,7 @@ except ImportError:
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
-from azure.data.tables._shared._constants import (
+from ._constants import (
     DEV_ACCOUNT_NAME,
     DEV_ACCOUNT_SECONDARY_NAME
 )
@@ -30,21 +29,6 @@ from ._error import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-# wraps a given exception with the desired exception type
-def _wrap_exception(ex, desired_type):
-    msg = ""
-    if ex.args:
-        msg = ex.args[0]
-    if sys.version_info >= (3,):
-        # Automatic chaining in Python 3 means we keep the trace
-        return desired_type(msg)
-    # There isn't a good solution in 2 for keeping the stack trace
-    # in general, or that will not result in an error in 3
-    # However, we can keep the previous error type and message
-    # TODO: In the future we will log the trace
-    return desired_type('{}: {}'.format(ex.__class__.__name__, msg))
 
 
 class AzureSigningError(ClientAuthenticationError):
@@ -126,13 +110,3 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             if name == 'comp':
                 return '?comp=' + value
         return ''
-
-    # def _get_canonicalized_resource_query(self, request):
-    #     sorted_queries = [(name, value) for name, value in request.query.items()]
-    #     sorted_queries.sort()
-    #
-    #     string_to_sign = ''
-    #     for name, value in sorted_queries:
-    #         if value is not None:
-    #             string_to_sign += '\n' + name.lower() + ':' + value
-    #     return string_to_sign

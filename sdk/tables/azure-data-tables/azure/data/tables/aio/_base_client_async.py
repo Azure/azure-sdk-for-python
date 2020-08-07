@@ -21,18 +21,18 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
-from .constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from .authentication import SharedKeyCredentialPolicy
-from .base_client import create_configuration
-from .policies import (
+from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from .._authentication import SharedKeyCredentialPolicy
+from .._base_client import create_configuration
+from .._policies import (
     StorageContentValidation,
     StorageRequestHook,
     StorageHosts,
     StorageHeadersPolicy
 )
-from .policies_async import AsyncStorageResponseHook
-
-from .response_handlers import process_table_error, PartialBatchErrorException
+from ._policies_async import AsyncStorageResponseHook
+from .._error import _process_table_error
+from .._models import PartialBatchErrorException
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
@@ -147,7 +147,7 @@ class AsyncStorageAccountHostsMixin(object):
                 return AsyncList(parts_list)
             return parts
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

@@ -3,48 +3,45 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import base64
 import hashlib
 import hmac
-
-try:
-    from urllib.parse import quote, unquote
-except ImportError:
-    from urllib2 import quote, unquote # type: ignore
-
+from sys import version_info
 import six
 
 
-def url_quote(url):
-    return quote(url)
+if version_info < (3,):
+    def _str(value):
+        if isinstance(value, unicode):  # pylint: disable=undefined-variable
+            return value.encode('utf-8')
+
+        return str(value)
+else:
+    _str = str
+
+def _to_str(value):
+    return _str(value) if value is not None else None
 
 
-def url_unquote(url):
-    return unquote(url)
+def _to_utc_datetime(value):
+    return value.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
-def encode_base64(data):
+def _encode_base64(data):
     if isinstance(data, six.text_type):
         data = data.encode('utf-8')
     encoded = base64.b64encode(data)
     return encoded.decode('utf-8')
 
 
-def decode_base64_to_bytes(data):
+def _decode_base64_to_bytes(data):
     if isinstance(data, six.text_type):
         data = data.encode('utf-8')
     return base64.b64decode(data)
 
-
-def decode_base64_to_text(data):
-    decoded_bytes = decode_base64_to_bytes(data)
-    return decoded_bytes.decode('utf-8')
-
-
-def sign_string(key, string_to_sign, key_is_base64=True):
+def _sign_string(key, string_to_sign, key_is_base64=True):
     if key_is_base64:
-        key = decode_base64_to_bytes(key)
+        key = _decode_base64_to_bytes(key)
     else:
         if isinstance(key, six.text_type):
             key = key.encode('utf-8')
@@ -52,5 +49,5 @@ def sign_string(key, string_to_sign, key_is_base64=True):
         string_to_sign = string_to_sign.encode('utf-8')
     signed_hmac_sha256 = hmac.HMAC(key, string_to_sign, hashlib.sha256)
     digest = signed_hmac_sha256.digest()
-    encoded_digest = encode_base64(digest)
+    encoded_digest = _encode_base64(digest)
     return encoded_digest

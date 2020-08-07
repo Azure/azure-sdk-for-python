@@ -5,12 +5,11 @@
 # --------------------------------------------------------------------------
 from typing import Union
 
-from azure.data.tables._shared.models import AccountSasPermissions
-from azure.data.tables._models import TableServices
-from azure.data.tables._shared._common_conversion import _sign_string
-from azure.data.tables._shared._error import _validate_not_none
-from azure.data.tables._shared.constants import X_MS_VERSION
-from azure.data.tables._shared.shared_access_signature import _SharedAccessHelper,\
+from ._models import AccountSasPermissions
+from ._common_conversion import _sign_string
+from ._error import _validate_not_none
+from ._constants import X_MS_VERSION
+from ._shared_access_signature import _SharedAccessHelper,\
     SharedAccessSignature, QueryStringConstants
 
 
@@ -71,7 +70,7 @@ def generate_account_sas(
     if permission is str:
         permission = AccountSasPermissions.from_string(permission=permission)
     sas = TableSharedAccessSignature(account_name, account_key)
-    return sas.generate_account(TableServices(), resource_types, permission,
+    return sas.generate_account("t", resource_types, permission,
                                 expiry, start=kwargs.pop('start', None),
                                 ip_address_or_range=kwargs.pop('ip_address_or_range', None),
                                 protocol=kwargs.pop('protocol', None))
