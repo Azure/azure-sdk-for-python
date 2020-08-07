@@ -13,7 +13,7 @@ from .._generated_serviceclient.aio import SearchServiceClient
 from .._generated.aio import SearchIndexClient
 from .._generated.models import IndexBatch, IndexingResult
 from .._search_documents_error import RequestEntityTooLargeError
-from .._index_documents_batch import IndexDocumentsBatch
+from ._index_documents_batch_async import IndexDocumentsBatch
 from ..._api_versions import validate_api_version
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
@@ -22,7 +22,6 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any
     from azure.core.credentials import AzureKeyCredential
-    from .._search_index_document_batching_client import PersistenceBase
 
 
 class SearchIndexDocumentBatchingClient(HeadersMixin):
@@ -65,7 +64,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         self._reset_timer()
         self._persistence = kwargs.pop('persistence', None)
 
-    async def cleanup(self, flush=True, raise_error=False):
+    async def _cleanup(self, flush=True, raise_error=False):
         # type: () -> None
         """Clean up the client.
 
@@ -122,7 +121,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         """Close the :class:`~azure.search.aio.SearchClient` session.
 
         """
-        await self.cleanup()
+        await self._cleanup(flush=True)
         return await self._client.close()
 
     async def flush(self, raise_error=False):
@@ -134,7 +133,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         # get actions
-        actions = self._index_documents_batch.dequeue_actions()
+        actions = await self._index_documents_batch.dequeue_actions()
         try:
             results = self._index_documents_actions(actions=actions)
             # re-queue 207:
@@ -156,18 +155,18 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
             for result in results:
                 action = [x for x in actions if x.get(self._index_key) == result.key]
                 if is_retryable_status_code(result.status_code):
-                    self._index_documents_batch.enqueue_actions(action)
+                    await self._index_documents_batch.enqueue_actions(action)
                     has_error = True
                 elif result.status_code in [200, 201]:
                     if self._persistence:
                         self._persistence.remove_queued_action(action)
                         self._persistence.add_succeeded_action(action)
-                    self._index_documents_batch.enqueue_succeeded_actions(action)
+                    await self._index_documents_batch.enqueue_succeeded_actions(action)
                 else:
                     if self._persistence:
                         self._persistence.remove_queued_action(action)
                         self._persistence.add_failed_action(action)
-                    self._index_documents_batch.enqueue_failed_actions(action)
+                    await self._index_documents_batch.enqueue_failed_actions(action)
                     has_error = True
 
             if has_error and raise_error:
@@ -175,7 +174,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
 
         except Exception:  # pylint: disable=broad-except
             # Do we want to re-queue these failures?
-            self._index_documents_batch.enqueue_actions(actions)
+            await self._index_documents_batch.enqueue_actions(actions)
             if raise_error:
                 raise
 
@@ -212,7 +211,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :param documents: A list of documents to upload.
         :type documents: List[dict]
         """
-        actions = self._index_documents_batch.add_upload_actions(documents)
+        actions = await self._index_documents_batch.add_upload_actions(documents)
         if self._persistence:
             self._persistence.add_queued_actions(actions)
         await self._flush_if_needed()
@@ -223,7 +222,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :param documents: A list of documents to delete.
         :type documents: List[dict]
         """
-        actions = self._index_documents_batch.add_delete_actions(documents)
+        actions = await self._index_documents_batch.add_delete_actions(documents)
         if self._persistence:
             self._persistence.add_queued_actions(actions)
         await self._flush_if_needed()
@@ -234,7 +233,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :param documents: A list of documents to merge.
         :type documents: List[dict]
         """
-        actions = self._index_documents_batch.add_merge_actions(documents)
+        actions = await self._index_documents_batch.add_merge_actions(documents)
         if self._persistence:
             self._persistence.add_queued_actions(actions)
         await self._flush_if_needed()
@@ -245,7 +244,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         :param documents: A list of documents to merge or upload.
         :type documents: List[dict]
         """
-        actions = self._index_documents_batch.add_merge_or_upload_actions(documents)
+        actions = await self._index_documents_batch.add_merge_or_upload_actions(documents)
         if self._persistence:
             self._persistence.add_queued_actions(actions)
         await self._flush_if_needed()

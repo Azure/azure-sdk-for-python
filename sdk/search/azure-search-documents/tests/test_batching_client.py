@@ -21,7 +21,7 @@ class TestSearchBatchingClient(object):
         assert client.batch_size == 100
         assert client._window == 100
         assert client._auto_flush
-        client.cleanup()
+        client.close()
 
 
     def test_batch_queue(self):
@@ -74,4 +74,14 @@ class TestSearchBatchingClient(object):
         client.upload_documents_actions(["upload1"])
         client.delete_documents_actions(["delete1", "delete2"])
         assert mock_flush.called
-        client.cleanup()
+        client.close()
+
+
+    @mock.patch(
+        "azure.search.documents._internal._search_index_document_batching_client.SearchIndexDocumentBatchingClient._cleanup"
+    )
+    def test_context_manager(self, mock_cleanup):
+        with SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL) as client:
+            client.upload_documents_actions(["upload1"])
+            client.delete_documents_actions(["delete1", "delete2"])
+        assert mock_cleanup.called

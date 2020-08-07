@@ -33,22 +33,22 @@ class PersistenceBase(ABC):
     @abc.abstractmethod
     def add_queued_actions(self, actions, **kwargs):
         # type: (*str, List[IndexAction], dict) -> None
-        pass
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def add_succeeded_action(self, action, **kwargs):
         # type: (*str, IndexAction, dict) -> None
-        pass
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def add_failed_action(self, action, **kwargs):
         # type: (*str, IndexAction, dict) -> None
-        pass
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def remove_queued_action(self, action, **kwargs):
         # type: (*str, IndexAction, dict) -> None
-        pass
+        raise NotImplementedError()
 
 class SearchIndexDocumentBatchingClient(HeadersMixin):
     """A client to do index document batching.
@@ -90,7 +90,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         self._reset_timer()
         self._persistence = kwargs.pop('persistence', None)
 
-    def cleanup(self, flush=True, raise_error=False):
+    def _cleanup(self, flush=True, raise_error=False):
         # type: () -> None
         """Clean up the client.
 
@@ -148,7 +148,7 @@ class SearchIndexDocumentBatchingClient(HeadersMixin):
         """Close the :class:`~azure.search.SearchClient` session.
 
         """
-        self.cleanup()
+        self._cleanup(flush=True)
         return self._client.close()
 
     def flush(self, raise_error=False):

@@ -21,7 +21,7 @@ class TestSearchBatchingClientAsync(object):
         assert client.batch_size == 100
         assert client._window == 100
         assert client._auto_flush
-        await client.cleanup()
+        await client.close()
 
 
     async def test_batch_queue(self):
@@ -33,9 +33,9 @@ class TestSearchBatchingClientAsync(object):
         await client.merge_documents_actions(["merge1", "merge2", "merge3"])
         await client.merge_or_upload_documents_actions(["merge_or_upload1"])
         assert len(client.actions) == 7
-        actions = client._index_documents_batch.dequeue_actions()
+        actions = await client._index_documents_batch.dequeue_actions()
         assert len(client.actions) == 0
-        client._index_documents_batch.enqueue_actions(actions)
+        await client._index_documents_batch.enqueue_actions(actions)
         assert len(client.actions) == 7
 
 
@@ -47,8 +47,8 @@ class TestSearchBatchingClientAsync(object):
         await client.delete_documents_actions(["delete1", "delete2"])
         await client.merge_documents_actions(["merge1", "merge2", "merge3"])
         await client.merge_or_upload_documents_actions(["merge_or_upload1"])
-        actions = client._index_documents_batch.dequeue_actions()
-        client._index_documents_batch.enqueue_succeeded_actions(actions)
+        actions = await client._index_documents_batch.dequeue_actions()
+        await client._index_documents_batch.enqueue_succeeded_actions(actions)
         assert len(client.succeeded_actions) == 7
 
 
@@ -60,8 +60,8 @@ class TestSearchBatchingClientAsync(object):
         await client.delete_documents_actions(["delete1", "delete2"])
         await client.merge_documents_actions(["merge1", "merge2", "merge3"])
         await client.merge_or_upload_documents_actions(["merge_or_upload1"])
-        actions = client._index_documents_batch.dequeue_actions()
-        client._index_documents_batch.enqueue_failed_actions(actions)
+        actions = await client._index_documents_batch.dequeue_actions()
+        await client._index_documents_batch.enqueue_failed_actions(actions)
         assert len(client.failed_actions) == 7
 
 
@@ -74,4 +74,14 @@ class TestSearchBatchingClientAsync(object):
         await client.upload_documents_actions(["upload1"])
         await client.delete_documents_actions(["delete1", "delete2"])
         assert mock_flush.called
-        await client.cleanup()
+        await client.close()
+
+
+    @mock.patch(
+        "azure.search.documents._internal._search_index_document_batching_client.SearchIndexDocumentBatchingClient._cleanup"
+    )
+    async def test_flush_if_needed(self, mock_cleanup):
+        async with SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL) as client:
+            await client.upload_documents_actions(["upload1"])
+            await client.delete_documents_actions(["delete1", "delete2"])
+        assert mock_cleanup.called
