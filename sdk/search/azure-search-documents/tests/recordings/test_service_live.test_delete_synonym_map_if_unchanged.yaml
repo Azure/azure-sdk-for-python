@@ -18,7 +18,7 @@ interactions:
       api-key:
       - 3C7456D14A4C1D58E3B5C8338B829E8D
     method: POST
-    uri: https://search654a1633.search.windows.net/synonymmaps?api-version=2019-05-06-Preview
+    uri: https://search654a1633.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search654a1633.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7ED715978F503\"","name":"test-syn-map","format":"solr","synonyms":"USA,
@@ -39,7 +39,7 @@ interactions:
       expires:
       - '-1'
       location:
-      - https://search654a1633.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+      - https://search654a1633.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
       odata-version:
       - '4.0'
       pragma:
@@ -74,7 +74,7 @@ interactions:
       api-key:
       - 3C7456D14A4C1D58E3B5C8338B829E8D
     method: PUT
-    uri: https://search654a1633.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+    uri: https://search654a1633.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search654a1633.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7ED71598DB954\"","name":"test-syn-map","format":"solr","synonyms":"Washington,
@@ -127,7 +127,7 @@ interactions:
       api-key:
       - 3C7456D14A4C1D58E3B5C8338B829E8D
     method: DELETE
-    uri: https://search654a1633.search.windows.net/synonymmaps('test-syn-map')?api-version=2019-05-06-Preview
+    uri: https://search654a1633.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the

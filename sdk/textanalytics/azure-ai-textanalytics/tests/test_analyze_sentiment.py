@@ -15,7 +15,8 @@ from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
-    VERSION
+    VERSION,
+    TextAnalyticsApiVersion
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -44,7 +45,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.confidence_scores)
+            self.validateConfidenceScores(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
 
         self.assertEqual(len(response[0].sentences), 1)
@@ -71,7 +72,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         self.assertEqual(response[2].sentiment, "positive")
 
         for doc in response:
-            self.assertIsNotNone(doc.confidence_scores)
+            self.validateConfidenceScores(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
 
         self.assertEqual(len(response[0].sentences), 1)
@@ -125,15 +126,14 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    @pytest.mark.xfail
     def test_too_many_documents(self, client):
-        # marking as xfail since the service hasn't added this error to this endpoint
-        docs = ["One", "Two", "Three", "Four", "Five", "Six"]
+        docs = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"]
 
-        try:
+        with pytest.raises(HttpResponseError) as excinfo:
             client.analyze_sentiment(docs)
-        except HttpResponseError as e:
-            assert e.status_code == 400
+        assert excinfo.value.status_code == 400
+        assert excinfo.value.error.code == "InvalidDocumentBatch"
+        assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -217,7 +217,8 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @TextAnalyticsClientPreparer()
     def test_show_stats_and_model_version(self, client):
         def callback(response):
-            self.assertIsNotNone(response.model_version)
+            self.assertIsNotNone(response)
+            self.assertIsNotNone(response.model_version, msg=response.raw_response)
             self.assertIsNotNone(response.raw_response)
             self.assertEqual(response.statistics.document_count, 5)
             self.assertEqual(response.statistics.transaction_count, 4)
@@ -573,3 +574,94 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             cls=callback
         )
         assert res == "cls result"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_opinion_mining(self, client):
+        documents = [
+            "It has a sleek premium aluminum design that makes it beautiful to look at."
+        ]
+
+        document = client.analyze_sentiment(documents=documents, show_opinion_mining=True)[0]
+
+        for sentence in document.sentences:
+            for mined_opinion in sentence.mined_opinions:
+                aspect = mined_opinion.aspect
+                self.assertEqual('design', aspect.text)
+                self.assertEqual('positive', aspect.sentiment)
+                self.assertEqual(0.0, aspect.confidence_scores.neutral)
+                self.validateConfidenceScores(aspect.confidence_scores)
+                self.assertEqual(32, aspect.offset)
+                self.assertEqual(6, aspect.length)
+
+                sleek_opinion = mined_opinion.opinions[0]
+                self.assertEqual('sleek', sleek_opinion.text)
+                self.assertEqual('positive', sleek_opinion.sentiment)
+                self.assertEqual(0.0, sleek_opinion.confidence_scores.neutral)
+                self.validateConfidenceScores(sleek_opinion.confidence_scores)
+                self.assertEqual(9, sleek_opinion.offset)
+                self.assertEqual(5, sleek_opinion.length)
+                self.assertFalse(sleek_opinion.is_negated)
+
+                premium_opinion = mined_opinion.opinions[1]
+                self.assertEqual('premium', premium_opinion.text)
+                self.assertEqual('positive', premium_opinion.sentiment)
+                self.assertEqual(0.0, premium_opinion.confidence_scores.neutral)
+                self.validateConfidenceScores(premium_opinion.confidence_scores)
+                self.assertEqual(15, premium_opinion.offset)
+                self.assertEqual(7, premium_opinion.length)
+                self.assertFalse(premium_opinion.is_negated)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_opinion_mining_with_negated_opinion(self, client):
+        documents = [
+            "The food and service is not good"
+        ]
+
+        document = client.analyze_sentiment(documents=documents, show_opinion_mining=True)[0]
+
+        for sentence in document.sentences:
+            food_aspect = sentence.mined_opinions[0].aspect
+            service_aspect = sentence.mined_opinions[1].aspect
+
+            self.assertEqual('food', food_aspect.text)
+            self.assertEqual('negative', food_aspect.sentiment)
+            self.assertEqual(0.0, food_aspect.confidence_scores.neutral)
+            self.validateConfidenceScores(food_aspect.confidence_scores)
+            self.assertEqual(4, food_aspect.offset)
+            self.assertEqual(4, food_aspect.length)
+
+            self.assertEqual('service', service_aspect.text)
+            self.assertEqual('negative', service_aspect.sentiment)
+            self.assertEqual(0.0, service_aspect.confidence_scores.neutral)
+            self.validateConfidenceScores(service_aspect.confidence_scores)
+            self.assertEqual(13, service_aspect.offset)
+            self.assertEqual(7, service_aspect.length)
+
+            food_opinion = sentence.mined_opinions[0].opinions[0]
+            service_opinion = sentence.mined_opinions[1].opinions[0]
+            self.assertOpinionsEqual(food_opinion, service_opinion)
+
+            self.assertEqual('good', food_opinion.text)
+            self.assertEqual('negative', food_opinion.sentiment)
+            self.assertEqual(0.0, food_opinion.confidence_scores.neutral)
+            self.validateConfidenceScores(food_opinion.confidence_scores)
+            self.assertEqual(28, food_opinion.offset)
+            self.assertEqual(4, food_opinion.length)
+            self.assertTrue(food_opinion.is_negated)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer()
+    def test_opinion_mining_no_mined_opinions(self, client):
+        document = client.analyze_sentiment(documents=["today is a hot day"], show_opinion_mining=True)[0]
+
+        assert not document.sentences[0].mined_opinions
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
+    def test_opinion_mining_v3(self, client):
+        with pytest.raises(NotImplementedError) as excinfo:
+            client.analyze_sentiment(["will fail"], show_opinion_mining=True)
+
+        assert "'show_opinion_mining' is only available for API version v3.1-preview.1 and up" in str(excinfo.value)

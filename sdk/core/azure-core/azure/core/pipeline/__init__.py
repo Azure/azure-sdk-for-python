@@ -63,6 +63,9 @@ class PipelineContext(dict):
     :param transport: The HTTP transport type.
     :param kwargs: Developer-defined keyword arguments.
     """
+    _PICKLE_CONTEXT = {
+        'deserialized_data'
+    }
 
     def __init__(self, transport, **kwargs):  # pylint: disable=super-init-not-called
         self.transport = transport
@@ -74,6 +77,21 @@ class PipelineContext(dict):
         # Remove the unpicklable entries.
         del state['transport']
         return state
+
+    def __reduce__(self):
+        reduced = super(PipelineContext, self).__reduce__()
+        saved_context = {}
+        for key, value in self.items():
+            if key in self._PICKLE_CONTEXT:
+                saved_context[key] = value
+        # 1 is for from __reduce__ spec of pickle (generic args for recreation)
+        # 2 is how dict is implementing __reduce__ (dict specific)
+        # tuple are read-only, we use a list in the meantime
+        reduced = list(reduced)
+        dict_reduced_result = list(reduced[1])
+        dict_reduced_result[2] = saved_context
+        reduced[1] = tuple(dict_reduced_result)
+        return tuple(reduced)
 
     def __setstate__(self, state):
         self.__dict__.update(state)

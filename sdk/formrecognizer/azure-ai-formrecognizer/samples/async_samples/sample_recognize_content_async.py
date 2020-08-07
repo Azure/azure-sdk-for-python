@@ -30,10 +30,12 @@ def format_bounding_box(bounding_box):
         return "N/A"
     return ", ".join(["[{}, {}]".format(p.x, p.y) for p in bounding_box])
 
+
 class RecognizeContentSampleAsync(object):
 
     async def recognize_content(self):
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Invoice_1.pdf"))
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
+                                                            "..", "..", "./sample_forms/forms/Invoice_1.pdf"))
         # [START recognize_content_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
@@ -46,11 +48,13 @@ class RecognizeContentSampleAsync(object):
         ) as form_recognizer_client:
 
             with open(path_to_sample_forms, "rb") as f:
-                contents = await form_recognizer_client.recognize_content(form=f.read())
+                poller = await form_recognizer_client.begin_recognize_content(form=f)
 
-            for idx, content in enumerate(contents):
-                print("----Recognizing content from page #{}----".format(idx))
-                print("Has width: {} and height: {}, measured with unit: {}".format(
+            form_pages = await poller.result()
+
+            for idx, content in enumerate(form_pages):
+                print("----Recognizing content from page #{}----".format(idx+1))
+                print("Page has width: {} and height: {}, measured with unit: {}".format(
                     content.width,
                     content.height,
                     content.unit

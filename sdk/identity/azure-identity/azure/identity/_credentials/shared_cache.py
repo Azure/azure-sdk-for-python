@@ -4,7 +4,8 @@
 # ------------------------------------
 from .. import CredentialUnavailableError
 from .._constants import AZURE_CLI_CLIENT_ID
-from .._internal import AadClient, wrap_exceptions
+from .._internal import AadClient
+from .._internal.decorators import log_get_token
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 
 try:
@@ -14,8 +15,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Mapping
-    from azure.core.credentials import AccessToken
+    from typing import Any
     from .._internal import AadClientBase
 
 
@@ -27,13 +27,13 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         contains tokens for multiple identities.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
     """
 
-    @wrap_exceptions
+    @log_get_token("SharedTokenCacheCredential")
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type (*str, **Any) -> AccessToken
         """Get an access token for `scopes` from the shared cache.
@@ -53,10 +53,17 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
+        if not self._initialized:
+            self._initialize()
+
         if not self._client:
             raise CredentialUnavailableError(message="Shared token cache unavailable")
 
         account = self._get_account(self._username, self._tenant_id)
+
+        token = self._get_cached_access_token(scopes, account)
+        if token:
+            return token
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account):
@@ -67,4 +74,4 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
     def _get_auth_client(self, **kwargs):
         # type: (**Any) -> AadClientBase
-        return AadClient(tenant_id="common", client_id=AZURE_CLI_CLIENT_ID, **kwargs)
+        return AadClient(client_id=AZURE_CLI_CLIENT_ID, **kwargs)

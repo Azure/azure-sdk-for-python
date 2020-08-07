@@ -8,7 +8,7 @@ from opentelemetry import trace
 from opentelemetry.trace import Span, Link, Tracer, SpanKind as OpenTelemetrySpanKind
 from opentelemetry.context import attach, detach, get_current
 from opentelemetry.propagators import extract, inject
-from opentelemetry.trace.propagation import get_span_from_context
+from opentelemetry.trace.propagation import get_current_span as get_span_from_context
 
 from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
 
@@ -213,7 +213,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         """
         Get the current span from the execution context. Return None otherwise.
         """
-        return cls.get_current_tracer().get_current_span()
+        return get_span_from_context()
 
     @classmethod
     def get_current_tracer(cls):

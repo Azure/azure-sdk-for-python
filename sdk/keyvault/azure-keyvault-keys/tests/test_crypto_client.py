@@ -6,12 +6,15 @@ import codecs
 import functools
 import hashlib
 import os
+from datetime import datetime
 
 from azure.core.credentials import AccessToken
 from azure.keyvault.keys import JsonWebKey, KeyClient, KeyCurveName, KeyVaultKey
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+from azure.keyvault.keys.crypto._client import _UTC
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
+import pytest
 
 from _shared.json_attribute_matcher import json_attribute_matcher
 from _shared.test_case import KeyVaultTestCase
@@ -82,7 +85,6 @@ class CryptoClientTests(KeyVaultTestCase):
     @KeyVaultPreparer(permissions=NO_GET)
     @CryptoClientPreparer()
     def test_encrypt_and_decrypt(self, key_client, credential, **kwargs):
-        # TODO: use iv, authentication_data
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name)
@@ -100,7 +102,6 @@ class CryptoClientTests(KeyVaultTestCase):
     @KeyVaultPreparer(permissions=NO_GET)
     @CryptoClientPreparer()
     def test_sign_and_verify(self, key_client, credential, **kwargs):
-
         key_name = self.get_resource_name("keysign")
 
         md = hashlib.sha256()
@@ -229,3 +230,68 @@ class CryptoClientTests(KeyVaultTestCase):
 
             result = crypto_client.verify(result.algorithm, digest, result.signature)
             self.assertTrue(result.is_valid)
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer(permissions=NO_GET)
+    @CryptoClientPreparer()
+    def test_local_validity_period_enforcement(self, key_client, credential, **kwargs):
+        """Local crypto operations should respect a key's nbf and exp properties"""
+
+        def test_operations(key, expected_error_substrings, encrypt_algorithms, wrap_algorithms):
+            crypto_client = CryptographyClient(key, credential)
+            for algorithm in encrypt_algorithms:
+                with pytest.raises(ValueError) as ex:
+                    crypto_client.encrypt(algorithm, self.plaintext)
+                for substring in expected_error_substrings:
+                    assert substring in str(ex.value)
+            for algorithm in wrap_algorithms:
+                with pytest.raises(ValueError) as ex:
+                    crypto_client.wrap_key(algorithm, self.plaintext)
+                for substring in expected_error_substrings:
+                    assert substring in str(ex.value)
+
+        # operations should not succeed with a key whose nbf is in the future
+        the_year_3000 = datetime(3000, 1, 1, tzinfo=_UTC)
+
+        rsa_wrap_algorithms = [algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")]
+        rsa_not_yet_valid = key_client.create_rsa_key("rsa-not-yet-valid", not_before=the_year_3000)
+        test_operations(rsa_not_yet_valid, [str(the_year_3000)], EncryptionAlgorithm, rsa_wrap_algorithms)
+
+        ec_not_yet_valid = key_client.create_ec_key("ec-not-yet-valid", not_before=the_year_3000)
+        test_operations(
+            ec_not_yet_valid, [str(the_year_3000)], encrypt_algorithms=[], wrap_algorithms=[KeyWrapAlgorithm.aes_256]
+        )
+
+        # nor should they succeed with a key whose exp has passed
+        the_year_2000 = datetime(2000, 1, 1, tzinfo=_UTC)
+
+        rsa_expired = key_client.create_rsa_key("rsa-expired", expires_on=the_year_2000)
+        test_operations(rsa_expired, [str(the_year_2000)], EncryptionAlgorithm, rsa_wrap_algorithms)
+
+        ec_expired = key_client.create_ec_key("ec-expired", expires_on=the_year_2000)
+        test_operations(
+            ec_expired, [str(the_year_2000)], encrypt_algorithms=[], wrap_algorithms=[KeyWrapAlgorithm.aes_256]
+        )
+
+        # when exp and nbf are set, error messages should contain both
+        the_year_3001 = datetime(3001, 1, 1, tzinfo=_UTC)
+
+        rsa_valid = key_client.create_rsa_key("rsa-valid", not_before=the_year_3000, expires_on=the_year_3001)
+        test_operations(rsa_valid, (str(the_year_3000), str(the_year_3001)), EncryptionAlgorithm, rsa_wrap_algorithms)
+
+        ec_valid = key_client.create_ec_key("ec-valid", not_before=the_year_3000, expires_on=the_year_3001)
+        test_operations(
+            ec_valid,
+            (str(the_year_3000), str(the_year_3001)),
+            encrypt_algorithms=[],
+            wrap_algorithms=[KeyWrapAlgorithm.aes_256],
+        )
+
+    class _CustomHookPolicy(object):
+        pass
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @CryptoClientPreparer(client_kwargs={"custom_hook_policy": _CustomHookPolicy()})
+    def test_custom_hook_policy(self, key_client, credential, **kwargs):
+        assert isinstance(key_client._client._config.custom_hook_policy, CryptoClientTests._CustomHookPolicy)

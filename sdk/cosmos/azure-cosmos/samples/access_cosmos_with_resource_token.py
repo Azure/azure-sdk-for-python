@@ -14,7 +14,7 @@ import json
 #    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
 #
 # 2. Microsoft Azure Cosmos
-#    pip install azure-cosmos==4.0.0
+#    pip install azure-cosmos>=4.0.0
 # ----------------------------------------------------------------------------------------------------------
 # Sample - how to get and use resource token that allows restricted access to data
 # ----------------------------------------------------------------------------------------------------------
@@ -24,7 +24,8 @@ import json
 # Each time a Container is created the account will be billed for 1 hour of usage based on
 # the provisioned throughput (RU/s) of that account.
 # ----------------------------------------------------------------------------------------------------------
-
+# Adding region name to use the code sample in docs 
+#<configureConnectivity>
 HOST = config.settings["host"]
 MASTER_KEY = config.settings["master_key"]
 
@@ -116,6 +117,8 @@ def token_client_query(container, username):
 
 def run_sample():
     client = cosmos_client.CosmosClient(HOST, {"masterKey": MASTER_KEY})
+#</configureConnectivity>
+
 
     try:
         try:

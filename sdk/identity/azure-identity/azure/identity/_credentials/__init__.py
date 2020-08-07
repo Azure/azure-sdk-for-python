@@ -14,10 +14,12 @@ from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
 from .device_code import DeviceCodeCredential
 from .user_password import UsernamePasswordCredential
+from .vscode import VisualStudioCodeCredential
 
 
 __all__ = [
     "AuthorizationCodeCredential",
+    "AzureCliCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
     "ClientSecretCredential",
@@ -29,4 +31,5 @@ __all__ = [
     "SharedTokenCacheCredential",
     "AzureCliCredential",
     "UsernamePasswordCredential",
+    "VisualStudioCodeCredential",
 ]

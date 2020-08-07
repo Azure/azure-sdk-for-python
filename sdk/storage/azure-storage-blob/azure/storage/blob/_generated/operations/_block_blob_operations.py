@@ -37,7 +37,7 @@ class BlockBlobOperations(object):
         self._config = config
         self.x_ms_blob_type = "BlockBlob"
 
-    def upload(self, body, content_length, timeout=None, transactional_content_md5=None, metadata=None, tier=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, cls=None, **kwargs):
+    def upload(self, body, content_length, timeout=None, transactional_content_md5=None, metadata=None, tier=None, request_id=None, blob_tags_string=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Upload Block Blob operation updates the content of an existing
         block blob. Updating an existing block blob overwrites any existing
         metadata on the blob. Partial updates are not supported with Put Blob;
@@ -75,6 +75,9 @@ class BlockBlobOperations(object):
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
         :type request_id: str
+        :param blob_tags_string: Optional.  Used to set blob tags in various
+         blob operations.
+        :type blob_tags_string: str
         :param blob_http_headers: Additional parameters for the operation
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Additional parameters for the
@@ -142,6 +145,9 @@ class BlockBlobOperations(object):
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         # Construct URL
         url = self.upload.metadata['url']
@@ -168,6 +174,8 @@ class BlockBlobOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        if blob_tags_string is not None:
+            header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
         header_parameters['x-ms-blob-type'] = self._serialize.header("self.x_ms_blob_type", self.x_ms_blob_type, 'str')
         if blob_content_type is not None:
             header_parameters['x-ms-blob-content-type'] = self._serialize.header("blob_content_type", blob_content_type, 'str')
@@ -199,6 +207,8 @@ class BlockBlobOperations(object):
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct body
 
@@ -219,6 +229,7 @@ class BlockBlobOperations(object):
                 'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'x-ms-version-id': self._deserialize('str', response.headers.get('x-ms-version-id')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
@@ -504,7 +515,7 @@ class BlockBlobOperations(object):
             return cls(response, None, response_headers)
     stage_block_from_url.metadata = {'url': '/{containerName}/{blob}'}
 
-    def commit_block_list(self, blocks, timeout=None, transactional_content_md5=None, transactional_content_crc64=None, metadata=None, tier=None, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, cls=None, **kwargs):
+    def commit_block_list(self, blocks, timeout=None, transactional_content_md5=None, transactional_content_crc64=None, metadata=None, tier=None, request_id=None, blob_tags_string=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Commit Block List operation writes a blob by specifying the list of
         block IDs that make up the blob. In order to be written as part of a
         blob, a block must have been successfully written to the server in a
@@ -546,6 +557,9 @@ class BlockBlobOperations(object):
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
         :type request_id: str
+        :param blob_tags_string: Optional.  Used to set blob tags in various
+         blob operations.
+        :type blob_tags_string: str
         :param blob_http_headers: Additional parameters for the operation
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Additional parameters for the
@@ -613,6 +627,9 @@ class BlockBlobOperations(object):
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "blocklist"
 
@@ -643,6 +660,8 @@ class BlockBlobOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        if blob_tags_string is not None:
+            header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
         if blob_cache_control is not None:
             header_parameters['x-ms-blob-cache-control'] = self._serialize.header("blob_cache_control", blob_cache_control, 'str')
         if blob_content_type is not None:
@@ -673,6 +692,8 @@ class BlockBlobOperations(object):
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct body
         body_content = self._serialize.body(blocks, 'BlockLookupList')
@@ -695,6 +716,7 @@ class BlockBlobOperations(object):
                 'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'x-ms-version-id': self._deserialize('str', response.headers.get('x-ms-version-id')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
@@ -704,7 +726,7 @@ class BlockBlobOperations(object):
             return cls(response, None, response_headers)
     commit_block_list.metadata = {'url': '/{containerName}/{blob}'}
 
-    def get_block_list(self, list_type="committed", snapshot=None, timeout=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
+    def get_block_list(self, list_type="committed", snapshot=None, timeout=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Get Block List operation retrieves the list of blocks that have
         been uploaded as part of a block blob.
 
@@ -731,6 +753,10 @@ class BlockBlobOperations(object):
          operation
         :type lease_access_conditions:
          ~azure.storage.blob.models.LeaseAccessConditions
+        :param modified_access_conditions: Additional parameters for the
+         operation
+        :type modified_access_conditions:
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: BlockList or the result of cls(response)
@@ -742,6 +768,9 @@ class BlockBlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "blocklist"
 
@@ -769,6 +798,8 @@ class BlockBlobOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)

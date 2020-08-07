@@ -155,7 +155,7 @@ The Azure Storage Blobs client library for Python allows you to interact with ea
 use of a dedicated client object.
 
 ### Clients
-Four different clients are provided to to interact with the various components of the Blob Service:
+Four different clients are provided to interact with the various components of the Blob Service:
 1. [BlobServiceClient](https://aka.ms/azsdk-python-storage-blob-blobserviceclient) -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the containers and blobs within. It provides operations to retrieve and configure the
@@ -188,6 +188,7 @@ Once you've initialized a Client, you can choose from the different types of blo
 ## Examples
 The following sections provide several code snippets covering some of the most common Storage Blob tasks, including:
 
+* [Create a container](#create-a-container "Create a container")
 * [Uploading a blob](#uploading-a-blob "Uploading a blob")
 * [Downloading a blob](#downloading-a-blob "Downloading a blob")
 * [Enumerating blobs](#enumerating-blobs "Enumerating blobs")

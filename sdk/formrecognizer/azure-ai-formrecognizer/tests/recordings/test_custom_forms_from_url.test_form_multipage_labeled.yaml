@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: 'b''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
-      false}, "useLabelFile": true}'''
+    body: 'b''b\''{"source": "containersasurl", "sourceFilter": {"prefix": "", "includeSubFolders":
+      false}, "useLabelFile": true}\'''''
     headers:
       Accept:
       - '*/*'
@@ -14,28 +14,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - f27aeba3-2db2-40a4-8082-e91cfed7df60
+      - 6749bb4f-cd16-4bb1-83b3-a01da7334aed
       content-length:
       - '0'
       date:
-      - Thu, 30 Apr 2020 20:10:42 GMT
+      - Fri, 10 Jul 2020 18:47:32 GMT
       location:
-      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/6a491bef-b049-49d8-8603-c7b0624060d9
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/b6c589d4-b4f6-4215-b834-42522860e0b2
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '120'
+      - '67'
     status:
       code: 201
       message: Created
@@ -49,20 +48,37 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/6a491bef-b049-49d8-8603-c7b0624060d9?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/b6c589d4-b4f6-4215-b834-42522860e0b2?includeKeys=true
   response:
     body:
-      string: '{"modelInfo":{"modelId":"6a491bef-b049-49d8-8603-c7b0624060d9","status":"ready","createdDateTime":"2020-04-30T20:10:42Z","lastUpdatedDateTime":"2020-04-30T20:10:44Z"},"trainResult":{"averageModelAccuracy":0.889,"trainingDocuments":[{"documentName":"multipage_invoice1.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice2.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice3.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice4.pdf","pages":3,"status":"succeeded"},{"documentName":"multipage_invoice5.pdf","pages":3,"status":"succeeded"}],"fields":[{"fieldName":"Customer2","accuracy":1.0},{"fieldName":"CustomerAddress","accuracy":1.0},{"fieldName":"CustomerName","accuracy":1.0},{"fieldName":"CustomerPhoneNumber","accuracy":1.0},{"fieldName":"FirstItem","accuracy":1.0},{"fieldName":"FirstPrice","accuracy":1.0},{"fieldName":"FirstQuantity","accuracy":1.0},{"fieldName":"Merchant","accuracy":0.0},{"fieldName":"Merchant2","accuracy":0.0},{"fieldName":"MerchantAddress","accuracy":1.0},{"fieldName":"MerchantPhoneNumber","accuracy":1.0},{"fieldName":"Signature","accuracy":1.0},{"fieldName":"Signature2","accuracy":1.0},{"fieldName":"Subtotal","accuracy":1.0},{"fieldName":"Tax","accuracy":1.0},{"fieldName":"Tip","accuracy":1.0},{"fieldName":"Total","accuracy":1.0},{"fieldName":"Total2","accuracy":1.0}],"errors":[]}}'
+      string: '{"modelInfo": {"modelId": "b6c589d4-b4f6-4215-b834-42522860e0b2", "status":
+        "ready", "createdDateTime": "2020-07-10T18:47:33Z", "lastUpdatedDateTime":
+        "2020-07-10T18:47:34Z"}, "trainResult": {"averageModelAccuracy": 0.889, "trainingDocuments":
+        [{"documentName": "multipage_invoice1.pdf", "pages": 3, "status": "succeeded"},
+        {"documentName": "multipage_invoice2.pdf", "pages": 3, "status": "succeeded"},
+        {"documentName": "multipage_invoice3.pdf", "pages": 3, "status": "succeeded"},
+        {"documentName": "multipage_invoice4.pdf", "pages": 3, "status": "succeeded"},
+        {"documentName": "multipage_invoice5.pdf", "pages": 3, "status": "succeeded"}],
+        "fields": [{"fieldName": "Customer2", "accuracy": 1.0}, {"fieldName": "CustomerAddress",
+        "accuracy": 1.0}, {"fieldName": "CustomerName", "accuracy": 1.0}, {"fieldName":
+        "CustomerPhoneNumber", "accuracy": 1.0}, {"fieldName": "FirstItem", "accuracy":
+        1.0}, {"fieldName": "FirstPrice", "accuracy": 1.0}, {"fieldName": "FirstQuantity",
+        "accuracy": 1.0}, {"fieldName": "Merchant", "accuracy": 0.0}, {"fieldName":
+        "Merchant2", "accuracy": 0.0}, {"fieldName": "MerchantAddress", "accuracy":
+        1.0}, {"fieldName": "MerchantPhoneNumber", "accuracy": 1.0}, {"fieldName":
+        "Signature", "accuracy": 1.0}, {"fieldName": "Signature2", "accuracy": 1.0},
+        {"fieldName": "Subtotal", "accuracy": 1.0}, {"fieldName": "Tax", "accuracy":
+        1.0}, {"fieldName": "Tip", "accuracy": 1.0}, {"fieldName": "Total", "accuracy":
+        1.0}, {"fieldName": "Total2", "accuracy": 1.0}], "errors": []}}'
     headers:
       apim-request-id:
-      - da3c5f19-8a4a-440a-9eba-761eb789798d
+      - e0b6e118-ca6d-49d5-962b-36d3b35c7331
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 30 Apr 2020 20:10:47 GMT
+      - Fri, 10 Jul 2020 18:47:38 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -70,12 +86,12 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '122'
+      - '21'
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''{"source": "blob_sas_url"}'''
+    body: 'b''b\''{"source": "blob_sas_url"}\'''''
     headers:
       Accept:
       - '*/*'
@@ -88,28 +104,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/6a491bef-b049-49d8-8603-c7b0624060d9/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/b6c589d4-b4f6-4215-b834-42522860e0b2/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - ad124c70-0016-492a-8213-dfb38bc4011d
+      - 51c18382-fe80-4ed5-bb56-6cf8db3fa8ab
       content-length:
       - '0'
       date:
-      - Thu, 30 Apr 2020 20:10:51 GMT
+      - Fri, 10 Jul 2020 18:47:38 GMT
       operation-location:
-      - https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/6a491bef-b049-49d8-8603-c7b0624060d9/analyzeresults/14e769a4-2bf3-4ee0-8dbe-6a1956499d12
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/b6c589d4-b4f6-4215-b834-42522860e0b2/analyzeresults/ac7e5933-4395-453e-a56e-464d6418019f
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '169'
+      - '50'
     status:
       code: 202
       message: Accepted
@@ -123,104 +138,162 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/6a491bef-b049-49d8-8603-c7b0624060d9/analyzeresults/14e769a4-2bf3-4ee0-8dbe-6a1956499d12
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/b6c589d4-b4f6-4215-b834-42522860e0b2/analyzeresults/ac7e5933-4395-453e-a56e-464d6418019f
   response:
     body:
-      string: '{"status":"notStarted","createdDateTime":"2020-04-30T20:10:51Z","lastUpdatedDateTime":"2020-04-30T20:10:51Z"}'
+      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:47:38Z",
+        "lastUpdatedDateTime": "2020-07-10T18:47:49Z", "analyzeResult": {"version":
+        "2.0.0", "readResults": [{"page": 1, "language": "en", "angle": 0, "width":
+        8.5, "height": 11, "unit": "inch"}, {"page": 2, "language": "en", "angle":
+        0, "width": 8.4967, "height": 10.9967, "unit": "inch"}, {"page": 3, "language":
+        "en", "angle": 0, "width": 8.5, "height": 11, "unit": "inch"}], "pageResults":
+        [{"page": 1, "tables": [{"rows": 8, "columns": 3, "cells": [{"rowIndex": 0,
+        "columnIndex": 0, "text": "Item", "boundingBox": [1.0037, 2.9443, 3.1681,
+        2.9443, 3.1681, 3.1543, 1.0037, 3.1543]}, {"rowIndex": 0, "columnIndex": 1,
+        "text": "Quantity", "boundingBox": [3.1681, 2.9443, 5.3353, 2.9443, 5.3353,
+        3.1543, 3.1681, 3.1543]}, {"rowIndex": 0, "columnIndex": 2, "text": "Price",
+        "boundingBox": [5.3353, 2.9443, 7.4997, 2.9443, 7.4997, 3.1543, 5.3353, 3.1543]},
+        {"rowIndex": 1, "columnIndex": 0, "text": "A", "boundingBox": [1.0037, 3.1543,
+        3.1681, 3.1543, 3.1681, 3.3643, 1.0037, 3.3643]}, {"rowIndex": 1, "columnIndex":
+        1, "text": "1", "boundingBox": [3.1681, 3.1543, 5.3353, 3.1543, 5.3353, 3.3643,
+        3.1681, 3.3643]}, {"rowIndex": 1, "columnIndex": 2, "text": "10.99", "boundingBox":
+        [5.3353, 3.1543, 7.4997, 3.1543, 7.4997, 3.3643, 5.3353, 3.3643]}, {"rowIndex":
+        2, "columnIndex": 0, "text": "B", "boundingBox": [1.0037, 3.3643, 3.1681,
+        3.3643, 3.1681, 3.5776, 1.0037, 3.5776]}, {"rowIndex": 2, "columnIndex": 1,
+        "text": "2", "boundingBox": [3.1681, 3.3643, 5.3353, 3.3643, 5.3353, 3.5776,
+        3.1681, 3.5776]}, {"rowIndex": 2, "columnIndex": 2, "text": "14.67", "boundingBox":
+        [5.3353, 3.3643, 7.4997, 3.3643, 7.4997, 3.5776, 5.3353, 3.5776]}, {"rowIndex":
+        3, "columnIndex": 0, "text": "C", "boundingBox": [1.0037, 3.5776, 3.1681,
+        3.5776, 3.1681, 3.7876, 1.0037, 3.7876]}, {"rowIndex": 3, "columnIndex": 1,
+        "text": "4", "boundingBox": [3.1681, 3.5776, 5.3353, 3.5776, 5.3353, 3.7876,
+        3.1681, 3.7876]}, {"rowIndex": 3, "columnIndex": 2, "text": "15.66", "boundingBox":
+        [5.3353, 3.5776, 7.4997, 3.5776, 7.4997, 3.7876, 5.3353, 3.7876]}, {"rowIndex":
+        4, "columnIndex": 0, "text": "D", "boundingBox": [1.0037, 3.7876, 3.1681,
+        3.7876, 3.1681, 3.9976, 1.0037, 3.9976]}, {"rowIndex": 4, "columnIndex": 1,
+        "text": "1", "boundingBox": [3.1681, 3.7876, 5.3353, 3.7876, 5.3353, 3.9976,
+        3.1681, 3.9976]}, {"rowIndex": 4, "columnIndex": 2, "text": "12.00", "boundingBox":
+        [5.3353, 3.7876, 7.4997, 3.7876, 7.4997, 3.9976, 5.3353, 3.9976]}, {"rowIndex":
+        5, "columnIndex": 0, "text": "E", "boundingBox": [1.0037, 3.9976, 3.1681,
+        3.9976, 3.1681, 4.2081, 1.0037, 4.2081]}, {"rowIndex": 5, "columnIndex": 1,
+        "text": "4", "boundingBox": [3.1681, 3.9976, 5.3353, 3.9976, 5.3353, 4.2081,
+        3.1681, 4.2081]}, {"rowIndex": 5, "columnIndex": 2, "text": "10.00", "boundingBox":
+        [5.3353, 3.9976, 7.4997, 3.9976, 7.4997, 4.2081, 5.3353, 4.2081]}, {"rowIndex":
+        6, "columnIndex": 0, "text": "F", "boundingBox": [1.0037, 4.2081, 3.1681,
+        4.2081, 3.1681, 4.4181, 1.0037, 4.4181]}, {"rowIndex": 6, "columnIndex": 1,
+        "text": "6", "boundingBox": [3.1681, 4.2081, 5.3353, 4.2081, 5.3353, 4.4181,
+        3.1681, 4.4181]}, {"rowIndex": 6, "columnIndex": 2, "text": "12.00", "boundingBox":
+        [5.3353, 4.2081, 7.4997, 4.2081, 7.4997, 4.4181, 5.3353, 4.4181]}, {"rowIndex":
+        7, "columnIndex": 0, "text": "G", "boundingBox": [1.0037, 4.4181, 3.1681,
+        4.4181, 3.1681, 4.6281, 1.0037, 4.6281]}, {"rowIndex": 7, "columnIndex": 1,
+        "text": "8", "boundingBox": [3.1681, 4.4181, 5.3353, 4.4181, 5.3353, 4.6281,
+        3.1681, 4.6281]}, {"rowIndex": 7, "columnIndex": 2, "text": "22.00", "boundingBox":
+        [5.3353, 4.4181, 7.4997, 4.4181, 7.4997, 4.6281, 5.3353, 4.6281]}]}]}, {"page":
+        2, "tables": []}, {"page": 3, "tables": [{"rows": 8, "columns": 3, "cells":
+        [{"rowIndex": 0, "columnIndex": 0, "text": "Item", "boundingBox": [1.0037,
+        2.9443, 3.1681, 2.9443, 3.1681, 3.1543, 1.0037, 3.1543]}, {"rowIndex": 0,
+        "columnIndex": 1, "text": "Quantity", "boundingBox": [3.1681, 2.9443, 5.3353,
+        2.9443, 5.3353, 3.1543, 3.1681, 3.1543]}, {"rowIndex": 0, "columnIndex": 2,
+        "text": "Price", "boundingBox": [5.3353, 2.9443, 7.4997, 2.9443, 7.4997, 3.1543,
+        5.3353, 3.1543]}, {"rowIndex": 1, "columnIndex": 0, "text": "A", "boundingBox":
+        [1.0037, 3.1543, 3.1681, 3.1543, 3.1681, 3.3643, 1.0037, 3.3643]}, {"rowIndex":
+        1, "columnIndex": 1, "text": "10", "boundingBox": [3.1681, 3.1543, 5.3353,
+        3.1543, 5.3353, 3.3643, 3.1681, 3.3643]}, {"rowIndex": 1, "columnIndex": 2,
+        "text": "100.99", "boundingBox": [5.3353, 3.1543, 7.4997, 3.1543, 7.4997,
+        3.3643, 5.3353, 3.3643]}, {"rowIndex": 2, "columnIndex": 0, "text": "B", "boundingBox":
+        [1.0037, 3.3643, 3.1681, 3.3643, 3.1681, 3.5776, 1.0037, 3.5776]}, {"rowIndex":
+        2, "columnIndex": 1, "text": "20", "boundingBox": [3.1681, 3.3643, 5.3353,
+        3.3643, 5.3353, 3.5776, 3.1681, 3.5776]}, {"rowIndex": 2, "columnIndex": 2,
+        "text": "140.67", "boundingBox": [5.3353, 3.3643, 7.4997, 3.3643, 7.4997,
+        3.5776, 5.3353, 3.5776]}, {"rowIndex": 3, "columnIndex": 0, "text": "C", "boundingBox":
+        [1.0037, 3.5776, 3.1681, 3.5776, 3.1681, 3.7876, 1.0037, 3.7876]}, {"rowIndex":
+        3, "columnIndex": 1, "text": "40", "boundingBox": [3.1681, 3.5776, 5.3353,
+        3.5776, 5.3353, 3.7876, 3.1681, 3.7876]}, {"rowIndex": 3, "columnIndex": 2,
+        "text": "150.66", "boundingBox": [5.3353, 3.5776, 7.4997, 3.5776, 7.4997,
+        3.7876, 5.3353, 3.7876]}, {"rowIndex": 4, "columnIndex": 0, "text": "D", "boundingBox":
+        [1.0037, 3.7876, 3.1681, 3.7876, 3.1681, 3.9976, 1.0037, 3.9976]}, {"rowIndex":
+        4, "columnIndex": 1, "text": "10", "boundingBox": [3.1681, 3.7876, 5.3353,
+        3.7876, 5.3353, 3.9976, 3.1681, 3.9976]}, {"rowIndex": 4, "columnIndex": 2,
+        "text": "120.00", "boundingBox": [5.3353, 3.7876, 7.4997, 3.7876, 7.4997,
+        3.9976, 5.3353, 3.9976]}, {"rowIndex": 5, "columnIndex": 0, "text": "E", "boundingBox":
+        [1.0037, 3.9976, 3.1681, 3.9976, 3.1681, 4.2081, 1.0037, 4.2081]}, {"rowIndex":
+        5, "columnIndex": 1, "text": "40", "boundingBox": [3.1681, 3.9976, 5.3353,
+        3.9976, 5.3353, 4.2081, 3.1681, 4.2081]}, {"rowIndex": 5, "columnIndex": 2,
+        "text": "100.00", "boundingBox": [5.3353, 3.9976, 7.4997, 3.9976, 7.4997,
+        4.2081, 5.3353, 4.2081]}, {"rowIndex": 6, "columnIndex": 0, "text": "F", "boundingBox":
+        [1.0037, 4.2081, 3.1681, 4.2081, 3.1681, 4.4181, 1.0037, 4.4181]}, {"rowIndex":
+        6, "columnIndex": 1, "text": "60", "boundingBox": [3.1681, 4.2081, 5.3353,
+        4.2081, 5.3353, 4.4181, 3.1681, 4.4181]}, {"rowIndex": 6, "columnIndex": 2,
+        "text": "120.00", "boundingBox": [5.3353, 4.2081, 7.4997, 4.2081, 7.4997,
+        4.4181, 5.3353, 4.4181]}, {"rowIndex": 7, "columnIndex": 0, "text": "G", "boundingBox":
+        [1.0037, 4.4181, 3.1681, 4.4181, 3.1681, 4.6281, 1.0037, 4.6281]}, {"rowIndex":
+        7, "columnIndex": 1, "text": "80", "boundingBox": [3.1681, 4.4181, 5.3353,
+        4.4181, 5.3353, 4.6281, 3.1681, 4.6281]}, {"rowIndex": 7, "columnIndex": 2,
+        "text": "220.00", "boundingBox": [5.3353, 4.4181, 7.4997, 4.4181, 7.4997,
+        4.6281, 5.3353, 4.6281]}]}]}], "documentResults": [{"docType": "custom:form",
+        "pageRange": [1, 3], "fields": {"Total2": {"type": "string", "valueString":
+        "4300.00", "text": "4300.00", "page": 3, "boundingBox": [5.94, 5.565, 6.48,
+        5.565, 6.48, 5.675, 5.94, 5.675], "confidence": 1.0}, "FirstItem": {"type":
+        "string", "valueString": "A", "text": "A", "page": 1, "boundingBox": [1.085,
+        3.21, 1.175, 3.21, 1.175, 3.3200000000000003, 1.085, 3.3200000000000003],
+        "confidence": 1.0}, "Total": {"type": "string", "valueString": "430.00", "text":
+        "430.00", "page": 1, "boundingBox": [5.94, 5.565, 6.4, 5.565, 6.4, 5.675,
+        5.94, 5.675], "confidence": 1.0}, "CustomerPhoneNumber": {"type": "string",
+        "valueString": "555-555-5555", "text": "555-555-5555", "page": 1, "boundingBox":
+        [6.01, 2.12, 6.9350000000000005, 2.12, 6.9350000000000005, 2.225, 6.01, 2.225],
+        "confidence": 1.0}, "Merchant2": {"type": "string", "valueString": "Company",
+        "text": "Company", "page": 1, "boundingBox": [0.885, 1.125, 1.62, 1.125, 1.62,
+        1.28, 0.885, 1.28], "confidence": 1.0}, "FirstQuantity": {"type": "string",
+        "valueString": "1", "text": "1", "page": 1, "boundingBox": [3.2600000000000002,
+        3.21, 3.3200000000000003, 3.21, 3.3200000000000003, 3.3200000000000003, 3.2600000000000002,
+        3.3200000000000003], "confidence": 1.0}, "MerchantPhoneNumber": {"type": "string",
+        "valueString": "555-555-5555", "text": "555-555-5555", "page": 1, "boundingBox":
+        [0.885, 2.29, 1.81, 2.29, 1.81, 2.395, 0.885, 2.395], "confidence": 1.0},
+        "CustomerName": {"type": "string", "valueString": "Bilbo Baggins", "text":
+        "Bilbo Baggins", "page": 1, "boundingBox": [6.015000000000001, 1.45, 6.8950000000000005,
+        1.45, 6.8950000000000005, 1.595, 6.015000000000001, 1.595], "confidence":
+        1.0}, "Subtotal": {"type": "string", "valueString": "300.00", "text": "300.00",
+        "page": 1, "boundingBox": [6.18, 4.905, 6.63, 4.905, 6.63, 5.015, 6.18, 5.015],
+        "confidence": 1.0}, "Signature2": {"type": "string", "valueString": "Frodo
+        Baggins", "text": "Frodo Baggins", "page": 3, "boundingBox": [2.07, 6.655,
+        3.09, 6.655, 3.09, 6.8, 2.07, 6.8], "confidence": 0.16}, "FirstPrice": {"type":
+        "string", "valueString": "10.99", "text": "10.99", "page": 1, "boundingBox":
+        [5.425, 3.21, 5.78, 3.21, 5.78, 3.3200000000000003, 5.425, 3.3200000000000003],
+        "confidence": 1.0}, "CustomerAddress": {"type": "string", "valueString": "123
+        Hobbit Lane Redmond, WA", "text": "123 Hobbit Lane Redmond, WA", "page": 1,
+        "boundingBox": [6.015000000000001, 1.67, 7.1000000000000005, 1.67, 7.1000000000000005,
+        2.0300000000000002, 6.015000000000001, 2.0300000000000002], "confidence":
+        1.0}, "Tip": {"type": "string", "valueString": "100.00", "text": "100.00",
+        "page": 1, "boundingBox": [5.8100000000000005, 5.345, 6.26, 5.345, 6.26, 5.455,
+        5.8100000000000005, 5.455], "confidence": 1.0}, "Merchant": {"type": "string",
+        "valueString": "A", "text": "A", "page": 1, "boundingBox": [1.67, 1.125, 1.7750000000000001,
+        1.125, 1.7750000000000001, 1.245, 1.67, 1.245], "confidence": 1.0}, "MerchantAddress":
+        {"type": "string", "valueString": "567 Main St. Redmond, WA", "text": "567
+        Main St. Redmond, WA", "page": 1, "boundingBox": [0.885, 1.845, 1.855, 1.845,
+        1.855, 2.2, 0.885, 2.2], "confidence": 1.0}, "Signature": {"type": "string",
+        "valueString": "Bilbo Baggins", "text": "Bilbo Baggins", "page": 1, "boundingBox":
+        [2.05, 6.655, 3.04, 6.655, 3.04, 6.8, 2.05, 6.8], "confidence": 1.0}, "Customer2":
+        {"type": "string", "valueString": "Frodo Baggins", "text": "Frodo Baggins",
+        "page": 3, "boundingBox": [6.015000000000001, 1.45, 6.95, 1.45, 6.95, 1.595,
+        6.015000000000001, 1.595], "confidence": 1.0}, "Tax": {"type": "string", "valueString":
+        "30.00", "text": "30.00", "page": 1, "boundingBox": [5.835, 5.125, 6.2, 5.125,
+        6.2, 5.235, 5.835, 5.235], "confidence": 1.0}}}], "errors": []}}'
     headers:
       apim-request-id:
-      - 26281812-fbd7-4e47-a759-da52832eee12
+      - 8bd04a76-d0d3-4b7b-9c36-4183b042c9a4
+      content-length:
+      - '9504'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 30 Apr 2020 20:10:56 GMT
+      - Fri, 10 Jul 2020 18:47:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '84'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/6a491bef-b049-49d8-8603-c7b0624060d9/analyzeresults/14e769a4-2bf3-4ee0-8dbe-6a1956499d12
-  response:
-    body:
-      string: '{"status":"notStarted","createdDateTime":"2020-04-30T20:10:51Z","lastUpdatedDateTime":"2020-04-30T20:10:51Z"}'
-    headers:
-      apim-request-id:
-      - cfb4de5f-95c5-4c72-919e-92a098091bd8
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 30 Apr 2020 20:11:01 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '161'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/1.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-        Python/3.7.3 (Windows-10-10.0.18362-SP0)
-    method: GET
-    uri: https://westus.api.cognitive.microsoft.com/formrecognizer/v2.0-preview/custom/models/6a491bef-b049-49d8-8603-c7b0624060d9/analyzeresults/14e769a4-2bf3-4ee0-8dbe-6a1956499d12
-  response:
-    body:
-      string: '{"status":"succeeded","createdDateTime":"2020-04-30T20:10:51Z","lastUpdatedDateTime":"2020-04-30T20:11:03Z","analyzeResult":{"version":"2.0.0","readResults":[{"page":1,"language":"en","angle":0,"width":8.5,"height":11,"unit":"inch"},{"page":2,"language":"en","angle":0,"width":8.4967,"height":10.9967,"unit":"inch"},{"page":3,"language":"en","angle":0,"width":8.5,"height":11,"unit":"inch"}],"pageResults":[{"page":1,"tables":[{"rows":8,"columns":3,"cells":[{"rowIndex":0,"columnIndex":0,"text":"Item","boundingBox":[1.0037,2.9443,3.1681,2.9443,3.1681,3.1543,1.0037,3.1543]},{"rowIndex":0,"columnIndex":1,"text":"Quantity","boundingBox":[3.1681,2.9443,5.3353,2.9443,5.3353,3.1543,3.1681,3.1543]},{"rowIndex":0,"columnIndex":2,"text":"Price","boundingBox":[5.3353,2.9443,7.4997,2.9443,7.4997,3.1543,5.3353,3.1543]},{"rowIndex":1,"columnIndex":0,"text":"A","boundingBox":[1.0037,3.1543,3.1681,3.1543,3.1681,3.3643,1.0037,3.3643]},{"rowIndex":1,"columnIndex":1,"text":"1","boundingBox":[3.1681,3.1543,5.3353,3.1543,5.3353,3.3643,3.1681,3.3643]},{"rowIndex":1,"columnIndex":2,"text":"10.99","boundingBox":[5.3353,3.1543,7.4997,3.1543,7.4997,3.3643,5.3353,3.3643]},{"rowIndex":2,"columnIndex":0,"text":"B","boundingBox":[1.0037,3.3643,3.1681,3.3643,3.1681,3.5776,1.0037,3.5776]},{"rowIndex":2,"columnIndex":1,"text":"2","boundingBox":[3.1681,3.3643,5.3353,3.3643,5.3353,3.5776,3.1681,3.5776]},{"rowIndex":2,"columnIndex":2,"text":"14.67","boundingBox":[5.3353,3.3643,7.4997,3.3643,7.4997,3.5776,5.3353,3.5776]},{"rowIndex":3,"columnIndex":0,"text":"C","boundingBox":[1.0037,3.5776,3.1681,3.5776,3.1681,3.7876,1.0037,3.7876]},{"rowIndex":3,"columnIndex":1,"text":"4","boundingBox":[3.1681,3.5776,5.3353,3.5776,5.3353,3.7876,3.1681,3.7876]},{"rowIndex":3,"columnIndex":2,"text":"15.66","boundingBox":[5.3353,3.5776,7.4997,3.5776,7.4997,3.7876,5.3353,3.7876]},{"rowIndex":4,"columnIndex":0,"text":"D","boundingBox":[1.0037,3.7876,3.1681,3.7876,3.1681,3.9976,1.0037,3.9976]},{"rowIndex":4,"columnIndex":1,"text":"1","boundingBox":[3.1681,3.7876,5.3353,3.7876,5.3353,3.9976,3.1681,3.9976]},{"rowIndex":4,"columnIndex":2,"text":"12.00","boundingBox":[5.3353,3.7876,7.4997,3.7876,7.4997,3.9976,5.3353,3.9976]},{"rowIndex":5,"columnIndex":0,"text":"E","boundingBox":[1.0037,3.9976,3.1681,3.9976,3.1681,4.2081,1.0037,4.2081]},{"rowIndex":5,"columnIndex":1,"text":"4","boundingBox":[3.1681,3.9976,5.3353,3.9976,5.3353,4.2081,3.1681,4.2081]},{"rowIndex":5,"columnIndex":2,"text":"10.00","boundingBox":[5.3353,3.9976,7.4997,3.9976,7.4997,4.2081,5.3353,4.2081]},{"rowIndex":6,"columnIndex":0,"text":"F","boundingBox":[1.0037,4.2081,3.1681,4.2081,3.1681,4.4181,1.0037,4.4181]},{"rowIndex":6,"columnIndex":1,"text":"6","boundingBox":[3.1681,4.2081,5.3353,4.2081,5.3353,4.4181,3.1681,4.4181]},{"rowIndex":6,"columnIndex":2,"text":"12.00","boundingBox":[5.3353,4.2081,7.4997,4.2081,7.4997,4.4181,5.3353,4.4181]},{"rowIndex":7,"columnIndex":0,"text":"G","boundingBox":[1.0037,4.4181,3.1681,4.4181,3.1681,4.6281,1.0037,4.6281]},{"rowIndex":7,"columnIndex":1,"text":"8","boundingBox":[3.1681,4.4181,5.3353,4.4181,5.3353,4.6281,3.1681,4.6281]},{"rowIndex":7,"columnIndex":2,"text":"22.00","boundingBox":[5.3353,4.4181,7.4997,4.4181,7.4997,4.6281,5.3353,4.6281]}]}]},{"page":2,"tables":[]},{"page":3,"tables":[{"rows":8,"columns":3,"cells":[{"rowIndex":0,"columnIndex":0,"text":"Item","boundingBox":[1.0037,2.9443,3.1681,2.9443,3.1681,3.1543,1.0037,3.1543]},{"rowIndex":0,"columnIndex":1,"text":"Quantity","boundingBox":[3.1681,2.9443,5.3353,2.9443,5.3353,3.1543,3.1681,3.1543]},{"rowIndex":0,"columnIndex":2,"text":"Price","boundingBox":[5.3353,2.9443,7.4997,2.9443,7.4997,3.1543,5.3353,3.1543]},{"rowIndex":1,"columnIndex":0,"text":"A","boundingBox":[1.0037,3.1543,3.1681,3.1543,3.1681,3.3643,1.0037,3.3643]},{"rowIndex":1,"columnIndex":1,"text":"10","boundingBox":[3.1681,3.1543,5.3353,3.1543,5.3353,3.3643,3.1681,3.3643]},{"rowIndex":1,"columnIndex":2,"text":"100.99","boundingBox":[5.3353,3.1543,7.4997,3.1543,7.4997,3.3643,5.3353,3.3643]},{"rowIndex":2,"columnIndex":0,"text":"B","boundingBox":[1.0037,3.3643,3.1681,3.3643,3.1681,3.5776,1.0037,3.5776]},{"rowIndex":2,"columnIndex":1,"text":"20","boundingBox":[3.1681,3.3643,5.3353,3.3643,5.3353,3.5776,3.1681,3.5776]},{"rowIndex":2,"columnIndex":2,"text":"140.67","boundingBox":[5.3353,3.3643,7.4997,3.3643,7.4997,3.5776,5.3353,3.5776]},{"rowIndex":3,"columnIndex":0,"text":"C","boundingBox":[1.0037,3.5776,3.1681,3.5776,3.1681,3.7876,1.0037,3.7876]},{"rowIndex":3,"columnIndex":1,"text":"40","boundingBox":[3.1681,3.5776,5.3353,3.5776,5.3353,3.7876,3.1681,3.7876]},{"rowIndex":3,"columnIndex":2,"text":"150.66","boundingBox":[5.3353,3.5776,7.4997,3.5776,7.4997,3.7876,5.3353,3.7876]},{"rowIndex":4,"columnIndex":0,"text":"D","boundingBox":[1.0037,3.7876,3.1681,3.7876,3.1681,3.9976,1.0037,3.9976]},{"rowIndex":4,"columnIndex":1,"text":"10","boundingBox":[3.1681,3.7876,5.3353,3.7876,5.3353,3.9976,3.1681,3.9976]},{"rowIndex":4,"columnIndex":2,"text":"120.00","boundingBox":[5.3353,3.7876,7.4997,3.7876,7.4997,3.9976,5.3353,3.9976]},{"rowIndex":5,"columnIndex":0,"text":"E","boundingBox":[1.0037,3.9976,3.1681,3.9976,3.1681,4.2081,1.0037,4.2081]},{"rowIndex":5,"columnIndex":1,"text":"40","boundingBox":[3.1681,3.9976,5.3353,3.9976,5.3353,4.2081,3.1681,4.2081]},{"rowIndex":5,"columnIndex":2,"text":"100.00","boundingBox":[5.3353,3.9976,7.4997,3.9976,7.4997,4.2081,5.3353,4.2081]},{"rowIndex":6,"columnIndex":0,"text":"F","boundingBox":[1.0037,4.2081,3.1681,4.2081,3.1681,4.4181,1.0037,4.4181]},{"rowIndex":6,"columnIndex":1,"text":"60","boundingBox":[3.1681,4.2081,5.3353,4.2081,5.3353,4.4181,3.1681,4.4181]},{"rowIndex":6,"columnIndex":2,"text":"120.00","boundingBox":[5.3353,4.2081,7.4997,4.2081,7.4997,4.4181,5.3353,4.4181]},{"rowIndex":7,"columnIndex":0,"text":"G","boundingBox":[1.0037,4.4181,3.1681,4.4181,3.1681,4.6281,1.0037,4.6281]},{"rowIndex":7,"columnIndex":1,"text":"80","boundingBox":[3.1681,4.4181,5.3353,4.4181,5.3353,4.6281,3.1681,4.6281]},{"rowIndex":7,"columnIndex":2,"text":"220.00","boundingBox":[5.3353,4.4181,7.4997,4.4181,7.4997,4.6281,5.3353,4.6281]}]}]}],"documentResults":[{"docType":"custom:form","pageRange":[1,3],"fields":{"FirstItem":{"type":"string","valueString":"A","text":"A","page":1,"boundingBox":[1.085,3.21,1.175,3.21,1.175,3.3200000000000003,1.085,3.3200000000000003],"confidence":1.0},"Total2":{"type":"string","valueString":"4300.00","text":"4300.00","page":3,"boundingBox":[5.94,5.565,6.48,5.565,6.48,5.675,5.94,5.675],"confidence":1.0},"CustomerName":{"type":"string","valueString":"Bilbo
-        Baggins","text":"Bilbo Baggins","page":1,"boundingBox":[6.0150000000000006,1.45,6.8950000000000005,1.45,6.8950000000000005,1.595,6.0150000000000006,1.595],"confidence":1.0},"MerchantPhoneNumber":{"type":"string","valueString":"555-555-5555","text":"555-555-5555","page":1,"boundingBox":[0.885,2.29,1.81,2.29,1.81,2.395,0.885,2.395],"confidence":1.0},"FirstPrice":{"type":"string","valueString":"10.99","text":"10.99","page":1,"boundingBox":[5.425,3.21,5.78,3.21,5.78,3.3200000000000003,5.425,3.3200000000000003],"confidence":1.0},"Merchant":{"type":"string","valueString":"A","text":"A","page":1,"boundingBox":[1.67,1.125,1.7750000000000001,1.125,1.7750000000000001,1.245,1.67,1.245],"confidence":1.0},"Subtotal":{"type":"string","valueString":"300.00","text":"300.00","page":1,"boundingBox":[6.18,4.905,6.63,4.905,6.63,5.015,6.18,5.015],"confidence":1.0},"Total":{"type":"string","valueString":"430.00","text":"430.00","page":1,"boundingBox":[5.94,5.565,6.4,5.565,6.4,5.675,5.94,5.675],"confidence":1.0},"Tip":{"type":"string","valueString":"100.00","text":"100.00","page":1,"boundingBox":[5.8100000000000005,5.345,6.26,5.345,6.26,5.455,5.8100000000000005,5.455],"confidence":1.0},"Customer2":{"type":"string","valueString":"Frodo
-        Baggins","text":"Frodo Baggins","page":3,"boundingBox":[6.0150000000000006,1.45,6.95,1.45,6.95,1.595,6.0150000000000006,1.595],"confidence":1.0},"Tax":{"type":"string","valueString":"30.00","text":"30.00","page":1,"boundingBox":[5.835,5.125,6.2,5.125,6.2,5.235,5.835,5.235],"confidence":1.0},"CustomerPhoneNumber":{"type":"string","valueString":"555-555-5555","text":"555-555-5555","page":1,"boundingBox":[6.01,2.12,6.9350000000000005,2.12,6.9350000000000005,2.225,6.01,2.225],"confidence":1.0},"MerchantAddress":{"type":"string","valueString":"567
-        Main St. Redmond, WA","text":"567 Main St. Redmond, WA","page":1,"boundingBox":[0.885,1.845,1.855,1.845,1.855,2.2,0.885,2.2],"confidence":1.0},"Signature2":{"type":"string","valueString":"Frodo
-        Baggins","text":"Frodo Baggins","page":3,"boundingBox":[2.09,6.655,3.09,6.655,3.09,6.8,2.09,6.8],"confidence":1.0},"Merchant2":{"type":"string","valueString":"Company","text":"Company","page":1,"boundingBox":[0.885,1.125,1.62,1.125,1.62,1.28,0.885,1.28],"confidence":1.0},"FirstQuantity":{"type":"string","valueString":"1","text":"1","page":1,"boundingBox":[3.2600000000000002,3.21,3.3200000000000003,3.21,3.3200000000000003,3.3200000000000003,3.2600000000000002,3.3200000000000003],"confidence":1.0},"CustomerAddress":{"type":"string","valueString":"123
-        Hobbit Lane Redmond, WA","text":"123 Hobbit Lane Redmond, WA","page":1,"boundingBox":[6.0150000000000006,1.67,7.1000000000000005,1.67,7.1000000000000005,2.0300000000000002,6.0150000000000006,2.0300000000000002],"confidence":1.0},"Signature":{"type":"string","valueString":"Bilbo
-        Baggins","text":"Bilbo Baggins","page":1,"boundingBox":[2.09,6.655,3.04,6.655,3.04,6.8,2.09,6.8],"confidence":1.0}}}],"errors":[]}}'
-    headers:
-      apim-request-id:
-      - a66b892d-b8f3-4563-995c-9b947924b1a2
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Thu, 30 Apr 2020 20:11:06 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '48'
+      - '5864'
     status:
       code: 200
       message: OK

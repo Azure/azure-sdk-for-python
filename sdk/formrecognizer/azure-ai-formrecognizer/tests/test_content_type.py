@@ -44,13 +44,17 @@ class TestContentType(FormRecognizerTest):
         content_type = get_content_type(myfile)
         self.assertEqual(content_type, "image/png")
 
-    def test_tiff(self):
+    def test_tiff_little_endian(self):
         with open(self.invoice_tiff, "rb") as fd:
             content_type = get_content_type(fd)
         self.assertEqual(content_type, "image/tiff")
 
-    def test_tiff_bytes(self):
+    def test_tiff_little_endian_bytes(self):
         with open(self.invoice_tiff, "rb") as fd:
             myfile = fd.read()
         content_type = get_content_type(myfile)
+        self.assertEqual(content_type, "image/tiff")
+
+    def test_tiff_big_endian(self):
+        content_type = get_content_type(b"\x4D\x4D\x00\x2A")
         self.assertEqual(content_type, "image/tiff")

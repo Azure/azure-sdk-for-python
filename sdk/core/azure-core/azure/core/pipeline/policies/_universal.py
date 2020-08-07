@@ -288,8 +288,17 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                 # We don't want to log the binary data of a file upload.
                 if isinstance(http_request.body, types.GeneratorType):
                     _LOGGER.debug("File upload")
-                else:
+                    return
+                try:
+                    if isinstance(http_request.body, types.AsyncGeneratorType):
+                        _LOGGER.debug("File upload")
+                        return
+                except AttributeError:
+                    pass
+                if http_request.body:
                     _LOGGER.debug(str(http_request.body))
+                    return
+                _LOGGER.debug("This request has no body")
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
@@ -371,7 +380,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             "azure.core.pipeline.policies.http_logging_policy"
         )
         self.allowed_query_params = set()
-        self.allowed_header_names = set(HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST)
+        self.allowed_header_names = set(self.__class__.DEFAULT_HEADERS_WHITELIST)
 
     def _redact_query_param(self, key, value):
         lower_case_allowed_query_params = [
@@ -415,6 +424,20 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             for header, value in http_request.headers.items():
                 value = self._redact_header(header, value)
                 logger.info("    %r: %r", header, value)
+            if isinstance(http_request.body, types.GeneratorType):
+                logger.info("File upload")
+                return
+            try:
+                if isinstance(http_request.body, types.AsyncGeneratorType):
+                    logger.info("File upload")
+                    return
+            except AttributeError:
+                pass
+            if http_request.body:
+                logger.info("A body is sent with the request")
+                return
+            logger.info("No body was attached to the request")
+            return
         except Exception as err:  # pylint: disable=broad-except
             logger.warning("Failed to log request: %s", repr(err))
 
@@ -501,7 +524,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                         data_as_str = cast(str, data_as_str.encode(encoding="utf-8"))
                 except NameError:
                     pass
-                return ET.fromstring(data_as_str)
+                return ET.fromstring(data_as_str)   # nosec
             except ET.ParseError:
                 # It might be because the server has an issue, and returned JSON with
                 # content-type XML....

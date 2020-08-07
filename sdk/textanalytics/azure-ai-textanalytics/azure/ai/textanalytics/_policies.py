@@ -23,8 +23,9 @@ class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
             statistics = data.get("statistics", None)
             model_version = data.get("modelVersion", None)
 
-            batch_statistics = TextDocumentBatchStatistics._from_generated(statistics)  # pylint: disable=protected-access
-            response.statistics = batch_statistics
-            response.model_version = model_version
-            response.raw_response = data
-            self._response_callback(response)
+            if statistics or model_version:
+                batch_statistics = TextDocumentBatchStatistics._from_generated(statistics)  # pylint: disable=protected-access
+                response.statistics = batch_statistics
+                response.model_version = model_version
+                response.raw_response = data
+                self._response_callback(response)

@@ -38,7 +38,7 @@ class ManageCustomModelsSample(object):
         form_training_client = FormTrainingClient(endpoint=endpoint, credential=AzureKeyCredential(key))
         # First, we see how many custom models we have, and what our limit is
         account_properties = form_training_client.get_account_properties()
-        print("Our account has {} custom models, and we can have at most {} custom models".format(
+        print("Our account has {} custom models, and we can have at most {} custom models\n".format(
             account_properties.custom_model_count, account_properties.custom_model_limit
         ))
         # [END get_account_properties]
@@ -47,7 +47,7 @@ class ManageCustomModelsSample(object):
         # [START list_custom_models]
         custom_models = form_training_client.list_custom_models()
 
-        print("We have models with the following ids:")
+        print("We have models with the following IDs:")
 
         # Let's pull out the first model
         first_model = next(custom_models)
@@ -56,13 +56,13 @@ class ManageCustomModelsSample(object):
             print(model.model_id)
         # [END list_custom_models]
 
-        # Now we'll get the first custom model in the paged list
+        # Now we'll get information for the first custom model in the paged list
         # [START get_custom_model]
         custom_model = form_training_client.get_custom_model(model_id=first_model.model_id)
-        print("Model ID: {}".format(custom_model.model_id))
+        print("\nModel ID: {}".format(custom_model.model_id))
         print("Status: {}".format(custom_model.status))
-        print("Requested on: {}".format(custom_model.requested_on))
-        print("Completed on: {}".format(custom_model.completed_on))
+        print("Training started on: {}".format(custom_model.training_started_on))
+        print("Training completed on: {}".format(custom_model.training_completed_on))
         # [END get_custom_model]
 
         # Finally, we will delete this model by ID
@@ -74,6 +74,7 @@ class ManageCustomModelsSample(object):
         except ResourceNotFoundError:
             print("Successfully deleted model with id {}".format(custom_model.model_id))
         # [END delete_model]
+
 
 if __name__ == '__main__':
     sample = ManageCustomModelsSample()

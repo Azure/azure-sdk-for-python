@@ -1,5 +1,9 @@
 [packaging]
 package_name = "azure-mgmt-keyvault"
-package_pprint_name = "Key Vault Management"
-package_doc_id = "key-vault"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "MyService Management"
+package_doc_id = "?view=azure-python-preview"
 is_stable = false
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true

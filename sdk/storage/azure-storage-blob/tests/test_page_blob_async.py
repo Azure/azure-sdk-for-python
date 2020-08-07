@@ -14,7 +14,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.blob._shared.policies import StorageContentValidation
@@ -57,7 +57,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StoragePageBlobTestAsync(AsyncStorageTestCase):
+class StoragePageBlobAsyncTest(AsyncStorageTestCase):
     #--Helpers-----------------------------------------------------------------
 
     async def _setup(self, bsc):
@@ -65,8 +65,11 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         self.container_name = self.get_resource_name('utcontainer')
         self.source_container_name = self.get_resource_name('utcontainersource')
         if self.is_live:
-            await bsc.create_container(self.container_name)
-            await bsc.create_container(self.source_container_name)
+            try:
+                await bsc.create_container(self.container_name)
+                await bsc.create_container(self.source_container_name)
+            except:
+                pass
 
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
@@ -80,9 +83,9 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
             self.container_name,
             self.get_resource_name(TEST_BLOB_PREFIX))
 
-    async def _create_blob(self, bsc, length=512, sequence_number=None):
+    async def _create_blob(self, bsc, length=512, sequence_number=None, tags=None):
         blob = self._get_blob_reference(bsc)
-        await blob.create_page_blob(size=length, sequence_number=sequence_number)
+        await blob.create_page_blob(size=length, sequence_number=sequence_number, tags=tags)
         return blob
 
     async def _create_source_blob(self, bs, data, offset, length):
@@ -154,6 +157,23 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         self.assertIsNotNone(resp.get('last_modified'))
         self.assertTrue(await blob.get_blob_properties())
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_page_blob_returns_vid(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        blob = self._get_blob_reference(bsc)
+
+        # Act
+        resp = await blob.create_page_blob(1024)
+
+        # Assert
+        self.assertIsNotNone(resp['version_id'])
+        self.assertIsNotNone(resp.get('etag'))
+        self.assertIsNotNone(resp.get('last_modified'))
+        self.assertTrue(await blob.get_blob_properties())
+
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_create_blob_with_metadata(self, resource_group, location, storage_account, storage_account_key):
@@ -186,6 +206,31 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         content = await blob.download_blob(lease=lease)
         actual = await content.readall()
         self.assertEqual(actual, data)
+
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_put_page_with_lease_id_and_if_tags(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, connection_data_block_size=4 * 1024, max_page_size=4 * 1024)
+        await self._setup(bsc)
+        tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
+        blob = await self._create_blob(bsc, tags=tags)
+        with self.assertRaises(ResourceModifiedError):
+            await blob.acquire_lease(if_tags_match_condition="\"tag1\"='first tag'")
+        lease = await blob.acquire_lease(if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+
+        # Act
+        data = self.get_random_bytes(512)
+        with self.assertRaises(ResourceModifiedError):
+            await blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1\"='first tag'")
+        await blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+
+        page_ranges, cleared = await blob.get_page_ranges()
+
+        # Assert
+        content = await (await blob.download_blob(lease=lease)).readall()
+        self.assertEqual(content, data)
+        self.assertEqual(1, len(page_ranges))
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1442,7 +1487,7 @@ class StoragePageBlobTestAsync(AsyncStorageTestCase):
         # Act
         blob_size = len(data)
         with open(FILE_PATH, 'rb') as stream:
-            non_seekable_file = StoragePageBlobTestAsync.NonSeekableFile(stream)
+            non_seekable_file = StoragePageBlobAsyncTest.NonSeekableFile(stream)
             await blob.upload_blob(
                 non_seekable_file,
                 length=blob_size,

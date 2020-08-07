@@ -5,8 +5,9 @@
 from typing import TYPE_CHECKING
 
 from .base import AsyncCredentialBase
-from .._authn_client import AsyncAuthnClient
-from ..._base import CertificateCredentialBase
+from .._internal import AadClient
+from .._internal.decorators import log_get_token_async
+from ..._internal import CertificateCredentialBase
 
 if TYPE_CHECKING:
     from typing import Any
@@ -21,7 +22,7 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
     :param str certificate_path: path to a PEM-encoded certificate file including the private key
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
           requires a different encoding, pass appropriately encoded bytes instead.
@@ -37,6 +38,7 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
 
         await self._client.__aexit__()
 
+    @log_get_token_async
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
 
@@ -51,11 +53,15 @@ class CertificateCredential(CertificateCredentialBase, AsyncCredentialBase):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
-        token = self._client.get_cached_token(scopes)
+        token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
         if not token:
-            data = self._get_request_data(*scopes)
-            token = await self._client.request_token(scopes, form_data=data)
-        return token  # type: ignore
+            token = await self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
+        elif self._client.should_refresh(token):
+            try:
+                await self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
+        return token
 
-    def _get_auth_client(self, tenant_id, **kwargs):
-        return AsyncAuthnClient(tenant=tenant_id, **kwargs)
+    def _get_auth_client(self, tenant_id, client_id, **kwargs):
+        return AadClient(tenant_id, client_id, **kwargs)

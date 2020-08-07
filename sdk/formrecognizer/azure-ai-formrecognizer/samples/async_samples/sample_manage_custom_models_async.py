@@ -11,8 +11,8 @@ FILE: sample_manage_custom_models_async.py
 
 DESCRIPTION:
     This sample demonstrates how to manage the custom models on your account. To learn
-    how to create and train a custom model, look at sample_train_unlabeled_model.py and
-    sample_train_labeled_model.py.
+    how to create and train a custom model, look at sample_train_model_without_labels.py and
+    sample_train_model_with_labels.py.
 USAGE:
     python sample_manage_custom_models_async.py
 
@@ -41,7 +41,7 @@ class ManageCustomModelsSampleAsync(object):
         ) as form_training_client:
             # First, we see how many custom models we have, and what our limit is
             account_properties = await form_training_client.get_account_properties()
-            print("Our account has {} custom models, and we can have at most {} custom models".format(
+            print("Our account has {} custom models, and we can have at most {} custom models\n".format(
                 account_properties.custom_model_count, account_properties.custom_model_limit
             ))
             # [END get_account_properties_async]
@@ -50,23 +50,22 @@ class ManageCustomModelsSampleAsync(object):
             # [START list_custom_models_async]
             custom_models = form_training_client.list_custom_models()
 
-            print("We have models with the following ids:")
+            print("We have models with the following IDs:")
 
             # Let's pull out the first model
-            first_model = None
+            first_model = await custom_models.__anext__()
+            print(first_model.model_id)
             async for model in custom_models:
                 print(model.model_id)
-                if not first_model:
-                    first_model = model
             # [END list_custom_models_async]
 
-            # Now we'll get the first custom model in the paged list
+            # Now we'll get information for the first custom model in the paged list
             # [START get_custom_model_async]
             custom_model = await form_training_client.get_custom_model(model_id=first_model.model_id)
-            print("Model ID: {}".format(custom_model.model_id))
+            print("\nModel ID: {}".format(custom_model.model_id))
             print("Status: {}".format(custom_model.status))
-            print("Requested on: {}".format(custom_model.requested_on))
-            print("Completed on: {}".format(custom_model.completed_on))
+            print("Training started on: {}".format(custom_model.training_started_on))
+            print("Training completed on: {}".format(custom_model.training_completed_on))
             # [END get_custom_model_async]
 
             # Finally, we will delete this model by ID
@@ -78,6 +77,7 @@ class ManageCustomModelsSampleAsync(object):
             except ResourceNotFoundError:
                 print("Successfully deleted model with id {}".format(custom_model.model_id))
             # [END delete_model_async]
+
 
 async def main():
     sample = ManageCustomModelsSampleAsync()

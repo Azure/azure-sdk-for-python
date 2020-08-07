@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from .._authn_client import AuthnClient
-from .._base import ClientSecretCredentialBase
+from .._internal import AadClient, ClientSecretCredentialBase
+from .._internal.decorators import log_get_token
 
 try:
     from typing import TYPE_CHECKING
@@ -24,16 +24,12 @@ class ClientSecretCredential(ClientSecretCredentialBase):
     :param str client_secret: one of the service principal's client secrets
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
     """
 
-    def __init__(self, tenant_id, client_id, client_secret, **kwargs):
-        # type: (str, str, str, **Any) -> None
-        super(ClientSecretCredential, self).__init__(tenant_id, client_id, client_secret, **kwargs)
-        self._client = AuthnClient(tenant=tenant_id, **kwargs)
-
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+    @log_get_token("ClientSecretCredential")
+    def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
@@ -48,8 +44,15 @@ class ClientSecretCredential(ClientSecretCredentialBase):
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
-        token = self._client.get_cached_token(scopes)
+        token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
         if not token:
-            data = dict(self._form_data, scope=" ".join(scopes))
-            token = self._client.request_token(scopes, form_data=data)
+            token = self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
+        elif self._client.should_refresh(token):
+            try:
+                self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
+            except Exception:  # pylint: disable=broad-except
+                pass
         return token
+
+    def _get_auth_client(self, tenant_id, client_id, **kwargs):
+        return AadClient(tenant_id, client_id, **kwargs)

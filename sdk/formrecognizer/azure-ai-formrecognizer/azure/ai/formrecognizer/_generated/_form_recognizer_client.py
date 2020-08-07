@@ -13,6 +13,8 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
+    from azure.core.credentials import TokenCredential
+
 from ._configuration import FormRecognizerClientConfiguration
 from .operations import FormRecognizerClientOperationsMixin
 from . import models
@@ -35,7 +37,7 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{endpoint}/formrecognizer/v2.0-preview'
+        base_url = '{endpoint}/formrecognizer/v2.0'
         self._config = FormRecognizerClientConfiguration(credential, endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 

@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from .aad_client import AadClient
-from .exception_wrapper import wrap_exceptions
-from .msal_transport_adapter import MsalTransportAdapter
+from .decorators import wrap_exceptions
 
-__all__ = ["AadClient", "MsalTransportAdapter", "wrap_exceptions"]
+__all__ = ["AadClient", "wrap_exceptions"]

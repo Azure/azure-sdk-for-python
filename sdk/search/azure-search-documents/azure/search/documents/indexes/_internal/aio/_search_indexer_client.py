@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 
 from azure.core import MatchConditions
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
 from .._generated.models import SearchIndexerSkillset
@@ -17,6 +16,7 @@ from .._utils import (
     pack_search_indexer_data_source,
     unpack_search_indexer_data_source,
 )
+from ...._api_versions import validate_api_version
 from ...._headers_mixin import HeadersMixin
 from ...._version import SDK_MONIKER
 
@@ -30,6 +30,12 @@ if TYPE_CHECKING:
 class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
     """A client to interact with Azure search service Indexers.
 
+    :param endpoint: The URL endpoint of an Azure search service
+    :type endpoint: str
+    :param credential: A credential to authorize search client requests
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword str api_version: The Search API version to use for requests.
+
     """
 
     _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
@@ -37,6 +43,8 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
 
+        api_version = kwargs.pop('api_version', None)
+        validate_api_version(api_version)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential  # type: AzureKeyCredential
         self._client = _SearchServiceClient(
@@ -54,7 +62,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
 
     async def close(self):
         # type: () -> None
-        """Close the :class:`~azure.search.documents.aio.SearchIndexerClient` session.
+        """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexerClient` session.
 
         """
         return await self._client.close()
@@ -65,7 +73,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """Creates a new SearchIndexer.
 
         :param indexer: The definition of the indexer to create.
-        :type indexer: ~azure.search.documents.SearchIndexer
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
         :return: The created SearchIndexer
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
 
@@ -83,14 +91,12 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         return result
 
     @distributed_trace_async
-    async def create_or_update_indexer(self, indexer, name=None, **kwargs):
-        # type: (SearchIndexer, Optional[str], **Any) -> SearchIndexer
+    async def create_or_update_indexer(self, indexer, **kwargs):
+        # type: (SearchIndexer, **Any) -> SearchIndexer
         """Creates a new indexer or updates a indexer if it already exists.
 
-        :param name: The name of the indexer to create or update.
-        :type name: str
         :param indexer: The definition of the indexer to create or update.
-        :type indexer: ~azure.search.documents.SearchIndexer
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
         :return: The created SearchIndexer
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         """
@@ -99,8 +105,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
             indexer, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        if not name:
-            name = indexer.name
+        name = indexer.name
         result = await self._client.indexers.create_or_update(
             indexer_name=name, indexer=indexer, error_map=error_map, **kwargs
         )
@@ -170,8 +175,8 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         must be provided instead of the name. It is enough to provide
         the name of the indexer to delete unconditionally.
 
-        :param name: The name of the indexer to delete.
-        :type name: str
+        :param name: The name or the indexer object to delete.
+        :type name: str or ~azure.search.documents.indexes.models.SearchIndexer
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
 
@@ -253,7 +258,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         :type name: str
 
         :return: SearchIndexerStatus
-        :rtype: SearchIndexerStatus
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerStatus
 
         .. admonition:: Example:
 
@@ -272,9 +277,9 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         # type: (SearchIndexerDataSourceConnection, **Any) -> SearchIndexerDataSourceConnection
         """Creates a new data source connection.
         :param data_source_connection: The definition of the data source connection to create.
-        :type data_source_connection: ~search.models.SearchIndexerDataSourceConnection
+        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :return: The created SearchIndexerDataSourceConnection
-        :rtype: ~search.models.SearchIndexerDataSourceConnection
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
 
         .. admonition:: Example:
 
@@ -291,25 +296,22 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         return unpack_search_indexer_data_source(result)
 
     @distributed_trace_async
-    async def create_or_update_data_source_connection(self, data_source_connection, name=None, **kwargs):
-        # type: (SearchIndexerDataSourceConnection, Optional[str], **Any) -> SearchIndexerDataSourceConnection
+    async def create_or_update_data_source_connection(self, data_source_connection, **kwargs):
+        # type: (SearchIndexerDataSourceConnection, **Any) -> SearchIndexerDataSourceConnection
         """Creates a new data source connection or updates a data source connection if it already exists.
-        :param name: The name of the data source connection to create or update.
-        :type name: str
         :param data_source_connection: The definition of the data source connection to create or update.
-        :type data_source_connection: ~search.models.SearchIndexerDataSourceConnection
+        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The created SearchIndexerDataSourceConnection
-        :rtype: ~search.models.SearchIndexerDataSourceConnection
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
             data_source_connection, kwargs.pop("match_condition", MatchConditions.Unconditionally)
         )
         kwargs.update(access_condition)
-        if not name:
-            name = data_source_connection.name
+        name = data_source_connection.name
         packed_data_source = pack_search_indexer_data_source(data_source_connection)
         result = await self._client.data_sources.create_or_update(
             data_source_name=name,
@@ -327,7 +329,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         It is enough to provide the name of the data source connection to delete unconditionally
 
         :param data_source_connection: The data source connection to delete.
-        :type data_source_connection: str or ~search.models.SearchIndexerDataSourceConnection
+        :type data_source_connection: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: None
@@ -363,7 +365,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         :param name: The name of the data source connection to retrieve.
         :type name: str
         :return: The SearchIndexerDataSourceConnection that is fetched.
-        :rtype: ~search.models.SearchIndexerDataSourceConnection
+        :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
 
             .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
                 :start-after: [START get_data_source_connection_async]
@@ -382,7 +384,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """Lists all data source connections available for a search service.
 
         :return: List of all the data source connections.
-        :rtype: `list[~search.models.SearchIndexerDataSourceConnection]`
+        :rtype: `list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]`
 
         .. admonition:: Example:
 
@@ -479,7 +481,7 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         the name of the skillset to delete unconditionally
 
         :param name: The SearchIndexerSkillset to delete
-        :type name: str or ~search.models.SearchIndexerSkillset
+        :type name: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
 
@@ -505,16 +507,12 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         await self._client.skillsets.delete(name, error_map=error_map, **kwargs)
 
     @distributed_trace_async
-    async def create_skillset(self, name, skills, description, **kwargs):
-        # type: (str, Sequence[SearchIndexerSkill], str, **Any) -> SearchIndexerSkillset
+    async def create_skillset(self, skillset, **kwargs):
+        # type: (SearchIndexerSkillset, **Any) -> SearchIndexerSkillset
         """Create a new SearchIndexerSkillset in an Azure Search service
 
-        :param name: The name of the SearchIndexerSkillset to create
-        :type name: str
-        :param skills: A list of Skill objects to include in the SearchIndexerSkillset
-        :type skills: List[SearchIndexerSkill]]
-        :param description: A description for the SearchIndexerSkillset
-        :type description: Optional[str]
+        :param skillset: The SearchIndexerSkillset object to create
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :return: The created SearchIndexerSkillset
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
 
@@ -530,60 +528,28 @@ class SearchIndexerClient(HeadersMixin):    # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
 
-        skillset = SearchIndexerSkillset(
-            name=name, skills=list(skills), description=description
-        )
-
         return await self._client.skillsets.create(skillset, **kwargs)
 
     @distributed_trace_async
-    async def create_or_update_skillset(self, name, **kwargs):
-        # type: (str, **Any) -> SearchIndexerSkillset
+    async def create_or_update_skillset(self, skillset, **kwargs):
+        # type: (SearchIndexerSkillset, **Any) -> SearchIndexerSkillset
         """Create a new SearchIndexerSkillset in an Azure Search service, or update an
-        existing one. The skillset param must be provided to perform the
-        operation with access conditions.
+        existing one.
 
-        :param name: The name of the SearchIndexerSkillset to create or update
-        :type name: str
-        :keyword skills: A list of Skill objects to include in the SearchIndexerSkillset
-        :type skills: List[SearchIndexerSkill]
-        :keyword description: A description for the SearchIndexerSkillset
-        :type description: Optional[str]
-        :keyword skillset: A SearchIndexerSkillset to create or update.
-        :type skillset: :class:`~azure.search.documents.SearchIndexerSkillset`
+        :param skillset: The SearchIndexerSkillset object to create or update
+        :type skillset: :class:`~azure.search.documents.indexes.models.SearchIndexerSkillset`
         :keyword match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
         :return: The created or updated SearchIndexerSkillset
-        :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
-
-        If a `skillset` is passed in, any optional `skills`, or
-        `description` parameter values will override it.
-
+        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndexerSkillset`
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
-        access_condition = None
-
-        if "skillset" in kwargs:
-            skillset = kwargs.pop("skillset")
-            error_map, access_condition = get_access_conditions(
-                skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-            )
-            kwargs.update(access_condition)
-            skillset = SearchIndexerSkillset.deserialize(skillset.serialize())
-            skillset.name = name
-            for param in ("description", "skills"):
-                if param in kwargs:
-                    setattr(skillset, param, kwargs.pop(param))
-        else:
-
-            skillset = SearchIndexerSkillset(
-                name=name,
-                description=kwargs.pop("description", None),
-                skills=kwargs.pop("skills", None),
-            )
+        error_map, access_condition = get_access_conditions(
+            skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
+        )
+        kwargs.update(access_condition)
 
         return await self._client.skillsets.create_or_update(
-            skillset_name=name, skillset=skillset, error_map=error_map, **kwargs
+            skillset_name=skillset.name, skillset=skillset, error_map=error_map, **kwargs
         )

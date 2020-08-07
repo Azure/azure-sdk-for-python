@@ -13,7 +13,7 @@ interactions:
       api-key:
       - 6FBCE200FF6D960D275576AD2F8FB6F7
     method: GET
-    uri: https://search86b411ce.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2019-05-06-Preview
+    uri: https://search86b411ce.search.windows.net/indexes('drgqefsg')/search.stats?api-version=2020-06-30
   response:
     body:
       string: '{"@odata.context":"https://search86b411ce.search.windows.net/$metadata#Microsoft.Azure.Search.V2019_05_06_Preview.IndexStatistics","documentCount":0,"storageSize":0}'

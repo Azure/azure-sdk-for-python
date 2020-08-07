@@ -38,7 +38,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes.models import (
     SearchIndexerDataContainer, SearchIndex, SearchIndexer, SimpleField, SearchFieldDataType,
     EntityRecognitionSkill, InputFieldMappingEntry, OutputFieldMappingEntry, SearchIndexerSkillset,
-    CorsOptions, IndexingSchedule, SearchableField, IndexingParameters
+    CorsOptions, IndexingSchedule, SearchableField, IndexingParameters, SearchIndexerDataSourceConnection
 )
 from azure.search.documents.indexes import SearchIndexerClient, SearchIndexClient
 
@@ -75,12 +75,13 @@ def _create_datasource():
     # "searchcontainer"
     ds_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
     container = SearchIndexerDataContainer(name='searchcontainer')
-    data_source = ds_client.create_datasource(
+    data_source_connection = SearchIndexerDataSourceConnection(
         name="hotel-datasource",
         type="azureblob",
         connection_string=connection_string,
         container=container
     )
+    data_source = ds_client.create_data_source_connection(data_source_connection)
     return data_source
 
 def _create_skillset():
@@ -89,7 +90,8 @@ def _create_skillset():
     output = OutputFieldMappingEntry(name="dateTimes", target_name="RenovatedDate")
     s = EntityRecognitionSkill(name="merge-skill", inputs=[inp], outputs=[output])
 
-    result = client.create_skillset(name='hotel-data-skill', skills=[s], description="example skillset")
+    skillset = SearchIndexerSkillset(name='hotel-data-skill', skills=[s], description="example skillset")
+    result = client.create_skillset(skillset)
     return result
 
 def sample_indexer_workflow():
