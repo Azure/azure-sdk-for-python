@@ -193,7 +193,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     async def _open(self):
         if self._running:
             return
-        if self._handler and self._handler._shutdown:
+        if self._handler and not self._handler._shutdown:
             await self._handler.close_async()
         auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
