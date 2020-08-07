@@ -48,7 +48,7 @@ class RecognizeContentSample(object):
 
         for idx, content in enumerate(form_pages):
             print("----Recognizing content from page #{}----".format(idx+1))
-            print("Has width: {} and height: {}, measured with unit: {}".format(
+            print("Page has width: {} and height: {}, measured with unit: {}".format(
                 content.width,
                 content.height,
                 content.unit

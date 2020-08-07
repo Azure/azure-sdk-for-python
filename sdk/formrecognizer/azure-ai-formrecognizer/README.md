@@ -250,7 +250,7 @@ for receipt in result:
         if name == "Items":
             print("Receipt Items:")
             for idx, items in enumerate(field.value):
-                print("...Item #{}".format(idx))
+                print("...Item #{}".format(idx+1))
                 for item_name, item in items.value.items():
                     print("......{}: {} has confidence {}".format(item_name, item.value, item.confidence))
         else:
