@@ -16,7 +16,7 @@ from azure.storage.blob import ContentSettings as BlobContentSettings
 from azure.storage.blob import ContainerSasPermissions, BlobSasPermissions
 from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
-from azure.storage.blob import DelimitedJSON as BlobDelimitedJSON
+from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
 from azure.storage.blob._generated.models import StorageErrorException
 from azure.storage.blob._models import ContainerPropertiesPaged
 from ._deserialize import return_headers_and_deserialized_path_list
@@ -602,7 +602,7 @@ class LocationMode(object):
     SECONDARY = 'secondary'  #: Requests should be sent to the secondary location, if possible.
 
 
-class DelimitedJSON(BlobDelimitedJSON):
+class DelimitedJsonDialect(BlobDelimitedJSON):
     """Defines the input or output JSON serialization for a datalake query.
 
     :keyword str delimiter: The line separator character, default value is '\n'

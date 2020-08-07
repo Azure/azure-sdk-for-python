@@ -10,7 +10,7 @@ import pytest
 
 from azure.storage.filedatalake import (
     DelimitedTextDialect,
-    DelimitedJSON,
+    DelimitedJsonDialect,
     DataLakeFileQueryError
 )
 
@@ -23,6 +23,38 @@ from testcase import (
 from azure.storage.filedatalake import DataLakeServiceClient
 
 CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
+           b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
+           b'\r\nEvent Hubs - Azure Storage CheckpointStore,' \
+           b'azure-messaging-eventhubs-checkpointstore-blob,1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,' \
+           b'1.1.0-beta.1,identity,FALSE\r\nKey Vault - Certificates,azure-security-keyvault-certificates,' \
+           b'4.0.0,keyvault,FALSE\r\nKey Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,' \
+           b'FALSE\r\nKey Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\n' \
+           b'Storage - Blobs,azure-storage-blob,12.4.0,storage,FALSE\r\nStorage - Blobs Batch,' \
+           b'azure-storage-blob-batch,12.4.0-beta.1,storage,FALSE\r\nStorage - Blobs Cryptography,' \
+           b'azure-storage-blob-cryptography,12.4.0,storage,FALSE\r\nStorage - File Shares,' \
+           b'azure-storage-file-share,12.2.0,storage,FALSE\r\nStorage - Queues,' \
+           b'azure-storage-queue,12.3.0,storage,FALSE\r\nText Analytics,' \
+           b'azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\nTracing,' \
+           b'azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\nService,Package,Version,RepoPath,' \
+           b'MissingDocs\r\nApp Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\n' \
+           b'Event Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n' \
+           b'Event Hubs - Azure Storage CheckpointStore,azure-messaging-eventhubs-checkpointstore-blob,' \
+           b'1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,1.1.0-beta.1,identity,FALSE\r\n' \
+           b'Key Vault - Certificates,azure-security-keyvault-certificates,4.0.0,keyvault,FALSE\r\n' \
+           b'Key Vault - Keys,azure-security-keyvault-keys,4.2.0-beta.1,keyvault,FALSE\r\n' \
+           b'Key Vault - Secrets,azure-security-keyvault-secrets,4.1.0,keyvault,FALSE\r\n' \
+           b'Storage - Blobs,azure-storage-blob,12.4.0,storage,FALSE\r\n' \
+           b'Storage - Blobs Batch,azure-storage-blob-batch,12.4.0-beta.1,storage,FALSE\r\n' \
+           b'Storage - Blobs Cryptography,azure-storage-blob-cryptography,12.4.0,storage,FALSE\r\n' \
+           b'Storage - File Shares,azure-storage-file-share,12.2.0,storage,FALSE\r\n' \
+           b'Storage - Queues,azure-storage-queue,12.3.0,storage,FALSE\r\n' \
+           b'Text Analytics,azure-ai-textanalytics,1.0.0-beta.2,textanalytics,FALSE\r\n' \
+           b'Tracing,azure-core-tracing-opentelemetry,1.0.0-beta.2,core,FALSE\r\n' \
+           b'Service,Package,Version,RepoPath,MissingDocs\r\n' \
+           b'App Configuration,azure-data-appconfiguration,1.0.1,appconfiguration,FALSE\r\n' \
+           b'Event Hubs,azure-messaging-eventhubs,5.0.1,eventhubs,FALSE\r\n'
+
+DATALAKE_CSV_DATA = b'DataLakeStorage,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
            b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
            b'\r\nEvent Hubs - Azure Storage CheckpointStore,' \
            b'azure-messaging-eventhubs-checkpointstore-blob,1.0.1,eventhubs,FALSE\r\nIdentity,azure-identity,' \
@@ -132,6 +164,28 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(len(reader), len(CSV_DATA))
         self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
         self.assertEqual(data, CSV_DATA.replace(b'\r\n', b'\n'))
+
+    @record
+    def test_quick_query_datalake_expression(self):
+        # Arrange
+        # upload the csv file
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
+        file_client.upload_data(DATALAKE_CSV_DATA, overwrite=True)
+
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+
+        input_format = DelimitedTextDialect(has_header=True)
+        reader = file_client.query_file("SELECT DataLakeStorage from DataLakeStorage", on_error=on_error,
+                                        file_format=input_format)
+        reader.readall()
+
+        self.assertEqual(len(errors), 0)
+        self.assertEqual(len(reader), len(DATALAKE_CSV_DATA))
+        self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
 
     @record
     def test_quick_query_iter_records(self):
@@ -330,7 +384,7 @@ class StorageQuickQueryTest(StorageTestCase):
         def on_error(error):
             errors.append(error)
 
-        input_format = DelimitedJSON()
+        input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
@@ -370,7 +424,7 @@ class StorageQuickQueryTest(StorageTestCase):
         def on_error(error):
             errors.append(error)
 
-        input_format = DelimitedJSON()
+        input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
@@ -412,7 +466,7 @@ class StorageQuickQueryTest(StorageTestCase):
         def on_error(error):
             raise Exception(error.description)
 
-        input_format = DelimitedJSON()
+        input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
@@ -449,7 +503,7 @@ class StorageQuickQueryTest(StorageTestCase):
         def on_error(error):
             raise Exception(error.description)
 
-        input_format = DelimitedJSON()
+        input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
@@ -478,7 +532,7 @@ class StorageQuickQueryTest(StorageTestCase):
         file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
         file_client.upload_data(data, overwrite=True)
 
-        input_format = DelimitedJSON()
+        input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
@@ -508,7 +562,7 @@ class StorageQuickQueryTest(StorageTestCase):
         file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
         file_client.upload_data(data, overwrite=True)
 
-        input_format = DelimitedJSON()
+        input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
@@ -671,8 +725,8 @@ class StorageQuickQueryTest(StorageTestCase):
         def on_error(error):
             errors.append(error)
 
-        input_format = DelimitedJSON(delimiter='\n')
-        output_format = DelimitedJSON(delimiter=';')
+        input_format = DelimitedJsonDialect(delimiter='\n')
+        output_format = DelimitedJsonDialect(delimiter=';')
 
         resp = file_client.query_file(
             "SELECT name from BlobStorage",
@@ -701,8 +755,8 @@ class StorageQuickQueryTest(StorageTestCase):
         def on_error(error):
             errors.append(error)
 
-        input_format = DelimitedJSON(delimiter='\n')
-        output_format = DelimitedJSON(delimiter=';')
+        input_format = DelimitedJsonDialect(delimiter='\n')
+        output_format = DelimitedJsonDialect(delimiter=';')
 
         resp = file_client.query_file(
             "SELECT name from BlobStorage",
@@ -731,7 +785,7 @@ class StorageQuickQueryTest(StorageTestCase):
         def on_error(error):
             errors.append(error)
 
-        input_format = DelimitedJSON(delimiter='\n')
+        input_format = DelimitedJsonDialect(delimiter='\n')
         output_format = None
 
         resp = file_client.query_file(
