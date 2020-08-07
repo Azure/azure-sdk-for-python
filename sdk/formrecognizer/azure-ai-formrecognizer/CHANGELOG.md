@@ -1,11 +1,11 @@
 # Release History
 
-## 3.0.0 (Unreleased)
+## 3.0.0b1 (Unreleased)
 
-First stable release of the azure-ai-formrecognizer package. Targets the service's v2.0 API.
+The version of this package now targets the service's v2.0 API.
 
 **Breaking Changes**
-
+-
 - Values are now capitalized for enums `FormContentType`, `LengthUnit`, `TrainingStatus`, and `CustomFormModelStatus`
 - `document_name` renamed to `name` on `TrainingDocumentInfo`
 - Keyword argument `include_sub_folders` renamed to `include_subfolders` on `begin_training` methods
