@@ -62,6 +62,7 @@ setup(
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
+        'samples',
         'azure',
     ]),
     install_requires=[
