@@ -267,6 +267,9 @@ class ServiceBusManagementClientQueueTests(AzureMgmtTestCase):
             assert queue.lock_duration == datetime.timedelta(seconds=13)
             assert queue.max_delivery_count == 14
             assert queue.max_size_in_megabytes % 3072 == 0  # TODO: In my local test, I don't see a multiple of the input number. To confirm
+            # This is disabled due to the following error:
+            # azure.core.exceptions.HttpResponseError: SubCode=40000. Both DelayedPersistence property and RequiresDuplicateDetection property cannot be enabled together. 
+            # To know more visit https://aka.ms/sbResourceMgrExceptions. 
             #assert queue.requires_duplicate_detection == True
             assert queue.requires_session == True
             assert queue.support_ordering == True
