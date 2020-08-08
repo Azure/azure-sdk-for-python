@@ -245,6 +245,7 @@ The container name must be unique within the database.""")
 
 ```
 ### Logging
+
 This library uses the standard
 [logging](https://docs.python.org/3.5/library/logging.html) library for logging.
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
@@ -314,7 +315,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
 
-# Contributing
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
