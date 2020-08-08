@@ -78,7 +78,8 @@ the following mechanisms in this order, stopping when one succeeds:
 ![DefaultAzureCredential authentication flow](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/images/DefaultAzureCredentialAuthenticationFlow.png)
 
 - Environment - `DefaultAzureCredential` will read account information specified
-  via [environment variables](#environment-variables) and use it to authenticate.
+  via [environment variables](#environment-variables "environment variables")
+  and use it to authenticate.
 - Managed Identity - if the application is deployed to an Azure host with
   Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
 - Visual Studio Code - if a user has signed in to the Visual Studio Code Azure
