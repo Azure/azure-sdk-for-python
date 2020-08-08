@@ -134,6 +134,15 @@ class IndexingMode(object):
 
         With lazy indexing, queries are eventually consistent. The index is
         updated when the collection is idle.
+         
+        In June 2020, we introduced a change that no longer allows new 
+        containers to be set to Lazy indexing mode. 
+        If your Azure Cosmos DB account already contains at least one 
+        container with lazy indexing, 
+        this account is automatically exempt from the change. 
+        For more information, go to 
+        https://docs.microsoft.com/en-us/azure/cosmos-db/index-policy
+        
     :ivar str NoIndex:
         No index is provided.
 
