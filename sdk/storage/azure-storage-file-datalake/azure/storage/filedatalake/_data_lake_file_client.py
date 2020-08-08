@@ -644,7 +644,7 @@ class DataLakeFileClient(PathClient):
         except IndexError:
             if not self._raw_credential and new_file_system != self.file_system_name:
                 raise ValueError("please provide the sas token for the new file")
-            elif not self._raw_credential and new_file_system == self.file_system_name:
+            if not self._raw_credential and new_file_system == self.file_system_name:
                 new_file_sas = self._query_str.strip('?')
 
         new_file_client = DataLakeFileClient(
