@@ -14,7 +14,6 @@ from azure.core.paging import ItemPaged
 from azure.core.credentials import AzureKeyCredential
 
 from azure.search.documents._internal._generated.models import (
-    IndexAction,
     IndexBatch,
     SearchDocumentsResult,
     SearchResult,
@@ -24,6 +23,7 @@ from azure.search.documents._internal._search_client import SearchPageIterator
 from azure.search.documents import (
     IndexDocumentsBatch,
     SearchClient,
+    SearchIndexDocumentBatchingClient,
 )
 from azure.search.documents.models import odata
 
@@ -238,17 +238,33 @@ class TestSearchClient(object):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
 
         batch = IndexDocumentsBatch()
-        batch.add_upload_actions("upload1")
-        batch.add_delete_actions("delete1", "delete2")
-        batch.add_merge_actions(["merge1", "merge2", "merge3"])
-        batch.add_merge_or_upload_actions("merge_or_upload1")
+        actions = batch.add_upload_actions("upload1")
+        assert len(actions) == 1
+        for x in actions:
+            assert x.action_type == "upload"
+        actions = batch.add_delete_actions("delete1", "delete2")
+        assert len(actions) == 2
+        for x in actions:
+            assert x.action_type == "delete"
+        actions = batch.add_merge_actions(["merge1", "merge2", "merge3"])
+        for x in actions:
+            assert x.action_type == "merge"
+        actions = batch.add_merge_or_upload_actions("merge_or_upload1")
+        for x in actions:
+            assert x.action_type == "mergeOrUpload"
 
         client.index_documents(batch, extra="foo")
         assert mock_index.called
         assert mock_index.call_args[0] == ()
-        assert len(mock_index.call_args[1]) == 3
+        assert len(mock_index.call_args[1]) == 4
         assert mock_index.call_args[1]["headers"] == client._headers
         assert mock_index.call_args[1]["extra"] == "foo"
         index_documents = mock_index.call_args[1]["batch"]
         assert isinstance(index_documents, IndexBatch)
         assert index_documents.actions == batch.actions
+
+    def test_get_batching_client(self):
+        client = SearchClient("endpoint", "index name", CREDENTIAL)
+        batching_client = client.get_index_document_batching_client()
+        assert batching_client.batch_size == 1000
+        assert batching_client._window == 0

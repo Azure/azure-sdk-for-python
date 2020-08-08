@@ -20,18 +20,18 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "3f99b361-d1a3-4b32-a99f-3e72f6c0855a"},
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "2ec2317d-d4e7-487d-a8de-e43b1b161915"},
         "message": "Bad or unrecognizable request JSON or binary file."}}'
     headers:
       apim-request-id:
-      - 3f99b361-d1a3-4b32-a99f-3e72f6c0855a
+      - 2ec2317d-d4e7-487d-a8de-e43b1b161915
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 10 Jul 2020 18:53:07 GMT
+      - Fri, 07 Aug 2020 21:23:39 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +39,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '4'
     status:
       code: 400
       message: Bad Request

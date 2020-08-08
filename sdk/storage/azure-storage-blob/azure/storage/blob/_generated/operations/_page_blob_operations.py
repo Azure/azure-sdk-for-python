@@ -489,6 +489,9 @@ class PageBlobOperations(object):
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "page"
         page_write = "clear"
@@ -539,6 +542,8 @@ class PageBlobOperations(object):
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1100,6 +1105,9 @@ class PageBlobOperations(object):
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "properties"
 
@@ -1140,6 +1148,8 @@ class PageBlobOperations(object):
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1218,6 +1228,9 @@ class PageBlobOperations(object):
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "properties"
 
@@ -1252,6 +1265,8 @@ class PageBlobOperations(object):
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1323,6 +1338,9 @@ class PageBlobOperations(object):
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "incrementalcopy"
 
@@ -1353,6 +1371,8 @@ class PageBlobOperations(object):
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)

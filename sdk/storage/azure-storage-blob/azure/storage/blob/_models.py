@@ -221,6 +221,8 @@ class StaticWebsite(GeneratedStaticWebsite):
         The default name of the index page under each directory.
     :keyword str error_document404_path:
         The absolute path of the custom 404 page.
+    :keyword str default_index_document_path:
+        Absolute path of the default index page.
     """
 
     def __init__(self, **kwargs):
@@ -228,9 +230,11 @@ class StaticWebsite(GeneratedStaticWebsite):
         if self.enabled:
             self.index_document = kwargs.get('index_document')
             self.error_document404_path = kwargs.get('error_document404_path')
+            self.default_index_document_path = kwargs.get('default_index_document_path')
         else:
             self.index_document = None
             self.error_document404_path = None
+            self.default_index_document_path = None
 
     @classmethod
     def _from_generated(cls, generated):
@@ -240,6 +244,7 @@ class StaticWebsite(GeneratedStaticWebsite):
             enabled=generated.enabled,
             index_document=generated.index_document,
             error_document404_path=generated.error_document404_path,
+            default_index_document_path=generated.default_index_document_path
         )
 
 
@@ -438,6 +443,11 @@ class BlobProperties(DictMixin):
         requested a subset of the blob.
     :ivar int append_blob_committed_block_count:
         (For Append Blobs) Number of committed blocks in the blob.
+    :ivar bool is_append_blob_sealed:
+        Indicate if the append blob is sealed or not.
+
+        .. versionadded:: 12.4.0
+
     :ivar int page_blob_sequence_number:
         (For Page Blobs) Sequence number for page blob used for coordinating
         concurrent writes.
@@ -482,12 +492,24 @@ class BlobProperties(DictMixin):
         Whether this blob is encrypted.
     :ivar list(~azure.storage.blob.ObjectReplicationPolicy) object_replication_source_properties:
         Only present for blobs that have policy ids and rule ids applied to them.
+
+        .. versionadded:: 12.4.0
+
     :ivar str object_replication_destination_policy:
         Represents the Object Replication Policy Id that created this blob.
+
+        .. versionadded:: 12.4.0
+
     :ivar int tag_count:
         Tags count on this blob.
+
+        .. versionadded:: 12.4.0
+
     :ivar dict(str, str) tags:
         Key value pair of tags on this blob.
+
+        .. versionadded:: 12.4.0
+
     """
 
     def __init__(self, **kwargs):
@@ -504,6 +526,7 @@ class BlobProperties(DictMixin):
         self.size = kwargs.get('Content-Length')
         self.content_range = kwargs.get('Content-Range')
         self.append_blob_committed_block_count = kwargs.get('x-ms-blob-committed-block-count')
+        self.is_append_blob_sealed = kwargs.get('x-ms-blob-sealed')
         self.page_blob_sequence_number = kwargs.get('x-ms-blob-sequence-number')
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.copy = CopyProperties(**kwargs)
@@ -1033,7 +1056,7 @@ class ContainerEncryptionScope(object):
         return None
 
 
-class DelimitedJSON(object):
+class DelimitedJsonDialect(object):
     """Defines the input or output JSON serialization for a blob data query.
 
     :keyword str delimiter: The line separator character, default value is '\n'

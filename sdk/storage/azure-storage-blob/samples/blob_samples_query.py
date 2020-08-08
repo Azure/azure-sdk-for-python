@@ -16,7 +16,7 @@ USAGE: python blob_samples_query.py
 """
 import os
 import sys
-from azure.storage.blob import BlobServiceClient, DelimitedJSON, DelimitedTextDialect
+from azure.storage.blob import BlobServiceClient, DelimitedJsonDialect, DelimitedTextDialect
 
 
 def main():
@@ -47,7 +47,7 @@ def main():
     # select the second column of the csv file
     query_expression = "SELECT _2 from BlobStorage"
     input_format = DelimitedTextDialect(delimiter=',', quotechar='"', lineterminator='\n', escapechar="", has_header=False)
-    output_format = DelimitedJSON(delimiter='\n')
+    output_format = DelimitedJsonDialect(delimiter='\n')
     reader = blob_client.query_blob(query_expression, on_error=on_error, blob_format=input_format, output_format=output_format)
     content = reader.readall()
     # [END query]

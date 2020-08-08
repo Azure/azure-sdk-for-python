@@ -29,7 +29,7 @@ class RecognizePiiEntitiesSample(object):
     def recognize_pii_entities(self):
         # [START recognize_pii_entities]
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics import TextAnalyticsClient, ApiVersion
+        from azure.ai.textanalytics import TextAnalyticsClient
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]

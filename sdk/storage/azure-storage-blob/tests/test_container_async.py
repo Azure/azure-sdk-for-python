@@ -5,6 +5,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from time import sleep
+
 import pytest
 import unittest
 import asyncio
@@ -33,7 +35,7 @@ from azure.storage.blob import (
     PartialBatchErrorException,
     generate_account_sas, ResourceTypes, AccountSasPermissions)
 
-from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer
+from _shared.testcase import LogCaptured, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from _shared.asynctestcase import AsyncStorageTestCase
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -1158,6 +1160,51 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_blobs_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = await self._create_container(bsc)
+        data = b'hello world'
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+
+        try:
+            blob_client1 = container.get_blob_client('blob1')
+            await blob_client1.upload_blob(data, overwrite=True, tags=tags)
+            await container.get_blob_client('blob2').upload_blob(data, overwrite=True, tags=tags)
+            await container.get_blob_client('blob3').upload_blob(data,  overwrite=True, tags=tags)
+        except:
+            pass
+
+        if self.is_live:
+            sleep(10)
+
+        # Act
+        with self.assertRaises(PartialBatchErrorException):
+            await container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                if_tags_match_condition="\"tag1\"='firsttag WRONG'"
+            )
+        blob_list = await container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            if_tags_match_condition="\"tag1\"='firsttag'"
+        )
+
+        response = list()
+        async for sub_resp in blob_list:
+            response.append(sub_resp)
+
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -1320,6 +1367,64 @@ class StorageContainerTestAsync(AsyncStorageTestCase):
                     'blob2',
                     'blob3',
                 )
+
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_standard_blob_tier_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = await self._create_container(bsc)
+        tier = StandardBlobTier.Cool
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+
+        blob = container.get_blob_client('blob1')
+        data = b'hello world'
+        await blob.upload_blob(data, overwrite=True, tags=tags)
+        await container.get_blob_client('blob2').upload_blob(data, overwrite=True, tags=tags)
+        await container.get_blob_client('blob3').upload_blob(data, overwrite=True, tags=tags)
+
+        blob_ref = await blob.get_blob_properties()
+        assert blob_ref.blob_tier is not None
+        assert blob_ref.blob_tier_inferred
+        assert blob_ref.blob_tier_change_time is None
+
+        with self.assertRaises(PartialBatchErrorException):
+            await container.set_standard_blob_tier_blobs(
+                tier,
+                'blob1',
+                'blob2',
+                'blob3',
+                if_tags_match_condition="\"tag1\"='firsttag WRONG'"
+            )
+
+        parts_list = await container.set_standard_blob_tier_blobs(
+            tier,
+            'blob1',
+            'blob2',
+            'blob3',
+            if_tags_match_condition="\"tag1\"='firsttag'"
+        )
+
+        parts = list()
+        async for part in parts_list:
+            parts.append(part)
+        assert len(parts) == 3
+
+        assert parts[0].status_code in [200, 202]
+        assert parts[1].status_code in [200, 202]
+        assert parts[2].status_code in [200, 202]
+
+        blob_ref2 = await blob.get_blob_properties()
+        assert tier == blob_ref2.blob_tier
+        assert not blob_ref2.blob_tier_inferred
+        assert blob_ref2.blob_tier_change_time is not None
+
+        await container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        )
 
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()

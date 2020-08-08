@@ -52,7 +52,7 @@ from ._models import (
     CustomerProvidedEncryptionKey,
     ContainerEncryptionScope,
     BlobQueryError,
-    DelimitedJSON,
+    DelimitedJsonDialect,
     DelimitedTextDialect,
     ObjectReplicationPolicy,
     ObjectReplicationRule
@@ -217,7 +217,7 @@ __all__ = [
     'PartialBatchErrorException',
     'ContainerEncryptionScope',
     'BlobQueryError',
-    'DelimitedJSON',
+    'DelimitedJsonDialect',
     'DelimitedTextDialect',
     'BlobQueryReader',
     'ObjectReplicationPolicy',
