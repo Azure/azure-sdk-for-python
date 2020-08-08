@@ -88,6 +88,5 @@ setup(
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg', 'futures'],
-        ":python_version>'3.0'": ['aiohttp>=3.0']
     }
 )
