@@ -28,6 +28,8 @@ from .operations import TriggersOperations
 from .operations import TriggerRunsOperations
 from .operations import DataFlowsOperations
 from .operations import DataFlowDebugSessionOperations
+from .operations import ManagedVirtualNetworksOperations
+from .operations import ManagedPrivateEndpointsOperations
 from . import models
 
 
@@ -67,6 +69,10 @@ class DataFactoryManagementClient(SDKClient):
     :vartype data_flows: azure.mgmt.datafactory.operations.DataFlowsOperations
     :ivar data_flow_debug_session: DataFlowDebugSession operations
     :vartype data_flow_debug_session: azure.mgmt.datafactory.operations.DataFlowDebugSessionOperations
+    :ivar managed_virtual_networks: ManagedVirtualNetworks operations
+    :vartype managed_virtual_networks: azure.mgmt.datafactory.operations.ManagedVirtualNetworksOperations
+    :ivar managed_private_endpoints: ManagedPrivateEndpoints operations
+    :vartype managed_private_endpoints: azure.mgmt.datafactory.operations.ManagedPrivateEndpointsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -116,4 +122,8 @@ class DataFactoryManagementClient(SDKClient):
         self.data_flows = DataFlowsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.data_flow_debug_session = DataFlowDebugSessionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_virtual_networks = ManagedVirtualNetworksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_private_endpoints = ManagedPrivateEndpointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
