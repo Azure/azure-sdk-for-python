@@ -130,7 +130,10 @@ class IndexingMode(object):
         The index is always kept up to date with the data.
     :ivar str Lazy:
         Index is updated asynchronously with respect to a create or update
-        operation. Not supported for new containers since June/2020.  
+        operation. Not supported for new containers since June/2020.
+
+        With lazy indexing, queries are eventually consistent. The index is
+        updated when the collection is idle.
     :ivar str NoIndex:
         No index is provided.
 
