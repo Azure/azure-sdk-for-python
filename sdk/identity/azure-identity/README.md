@@ -219,6 +219,37 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 |`AzureCliCredential`|authenticate as the user signed in to the Azure CLI
 |`VisualStudioCodeCredential`|authenticate as the user signed in to the Visual Studio Code Azure Account extension
 
+## Environment Variables
+
+[DefaultAzureCredential][default_cred_ref] and 
+[EnvironmentCredential][environment_cred_ref] can be configured with
+environment variables. Each type of authentication requires values for specific
+variables:
+
+#### Service principal with secret
+|variable name|value
+|-|-
+|`AZURE_CLIENT_ID`|id of an Azure Active Directory application
+|`AZURE_TENANT_ID`|id of the application's Azure Active Directory tenant
+|`AZURE_CLIENT_SECRET`|one of the application's client secrets
+
+#### Service principal with certificate
+|variable name|value
+|-|-
+|`AZURE_CLIENT_ID`|id of an Azure Active Directory application
+|`AZURE_TENANT_ID`|id of the application's Azure Active Directory tenant
+|`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PEM-encoded certificate file including private key (without password protection)
+
+#### Username and password
+|variable name|value
+|-|-
+|`AZURE_CLIENT_ID`|id of an Azure Active Directory application
+|`AZURE_USERNAME`|a username (usually an email address)
+|`AZURE_PASSWORD`|that user's password
+
+Configuration is attempted in the above order. For example, if values for a
+client secret and certificate are both present, the client secret will be used.
+
 ## Troubleshooting
 
 ### Error Handling
