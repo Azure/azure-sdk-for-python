@@ -1836,13 +1836,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
             .. versionadded:: 12.4.0
             This keyword argument was introduced in API version '2019-12-12'.
-            
         :keyword str if_tags_match_condition
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
             .. versionadded:: 12.4.0
-            
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword lease:
