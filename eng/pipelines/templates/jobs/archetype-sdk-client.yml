@@ -39,8 +39,8 @@ parameters:
       PythonVersion: 'pypy3'
       CoverageArg: '--disablecov'
       RunForPR: false
+    AdditionalTestMatrix: []
 
-  
 jobs:
   - job: 'Build'
     variables:
@@ -85,6 +85,8 @@ jobs:
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
+    - name: InjectedPackages
+      value: ${{ parameters.InjectedPackages }}
     
     dependsOn:
        - 'Build'
@@ -97,6 +99,12 @@ jobs:
             ${{ if ne(parameters.SkipPythonVersion, matrixEntry.value.PythonVersion) }}:
               ${{ matrixEntry.key }}:
                 ${{ insert }}: ${{ matrixEntry.value }}
+
+        ${{ each matrixEntry in parameters.AdditionalTestMatrix }}:
+          ${{ if or(eq(matrixEntry.value.RunForPR, 'true'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+            ${{ matrixEntry.key }}:
+              ${{ insert }}: ${{ matrixEntry.value }}
+
         
     pool:
       vmImage: '$(OSVmImage)'
@@ -125,7 +133,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-        InjectedPackages: ${{ parameters.InjectedPackages }}
+        InjectedPackages: $(InjectedPackages)
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
