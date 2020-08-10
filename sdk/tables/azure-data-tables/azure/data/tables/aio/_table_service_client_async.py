@@ -87,7 +87,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         self._loop = loop
 
     @classmethod
-    async def from_connection_string(
+    def from_connection_string(
             cls, conn_str, # type: any
             **kwargs # type: Any
     ): # type: (...) -> TableServiceClient
