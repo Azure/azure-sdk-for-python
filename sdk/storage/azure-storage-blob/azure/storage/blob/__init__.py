@@ -57,6 +57,7 @@ from ._models import (
     ObjectReplicationPolicy,
     ObjectReplicationRule
 )
+from ._list_blobs_helper import BlobPrefix
 
 __version__ = VERSION
 
@@ -195,6 +196,7 @@ __all__ = [
     'CorsRule',
     'ContainerProperties',
     'BlobProperties',
+    'BlobPrefix',
     'FilteredBlob',
     'LeaseProperties',
     'ContentSettings',
