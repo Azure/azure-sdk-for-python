@@ -86,7 +86,6 @@ class EventGridTopicPreparer(AzureMgmtPreparer):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
             self.client.topics.delete(group.name, name, polling=False)
-
     def _get_resource_group(self, **kwargs):
         try:
             return kwargs.get(self.resource_group_parameter_name)
