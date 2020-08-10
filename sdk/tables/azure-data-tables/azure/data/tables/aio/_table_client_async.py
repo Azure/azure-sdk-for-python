@@ -353,7 +353,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                                                                                         partition_key=partition_key,
                                                                                         row_key=row_key,
                                                                                         **kwargs)
-            
+
             properties = _convert_to_entity(entity)
             return properties
         except HttpResponseError as error:
