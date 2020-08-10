@@ -39,7 +39,7 @@ After installing the extension, sign in to Azure in Visual Studio Code by
 pressing `F1` to open the command palette and running the `Azure: Sign In`
 command.
 
-![Visual Studio Code Account Sign In](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/images/VsCodeLoginCommand.png)
+![Visual Studio Code Account Sign In](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/identity/azure-identity/images/VsCodeLoginCommand.png)
 
 #### Authenticating via the Azure CLI
 
@@ -48,12 +48,12 @@ signed in to the [Azure CLI][azure_cli]. To sign in to the Azure CLI, run
 `az login`. On a system with a default web browser, the Azure CLI will launch
 the browser to authenticate a user.
 
-![Azure CLI Account Sign In](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/images/AzureCliLogin.png)
+![Azure CLI Account Sign In](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/identity/azure-identity/images/AzureCliLogin.png)
 
 When no default browser is available, `az login` will use the device code
 authentication flow. This can also be selected manually by running `az login --use-device-code`.
 
-![Azure CLI Account Device Code Sign In](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/images/AzureCliLoginDeviceCode.png)
+![Azure CLI Account Device Code Sign In](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/identity/azure-identity/images/AzureCliLoginDeviceCode.png)
 
 ## Key concepts
 
@@ -75,7 +75,7 @@ the Azure Cloud because it combines common production credentials with
 development credentials. `DefaultAzureCredential` attempts to authenticate via
 the following mechanisms in this order, stopping when one succeeds:
 
-![DefaultAzureCredential authentication flow](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/images/DefaultAzureCredentialAuthenticationFlow.png)
+![DefaultAzureCredential authentication flow](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/identity/azure-identity/images/DefaultAzureCredentialAuthenticationFlow.png)
 
 - Environment - `DefaultAzureCredential` will read account information specified
   via [environment variables](#environment-variables "environment variables")
@@ -193,32 +193,32 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 
 |credential|usage
 |-|-
-|`DefaultAzureCredential`|simplified authentication to get started developing applications for the Azure cloud
-|`ChainedTokenCredential`|define custom authentication flows composing multiple credentials
-|`EnvironmentCredential`|authenticate a service principal or user configured by environment variables
-|`ManagedIdentityCredential`|authenticate the managed identity of an Azure resource
+|[DefaultAzureCredential][default_cred_ref]|simplified authentication to get started developing applications for the Azure cloud
+|[ChainedTokenCredential][chain_cred_ref]|define custom authentication flows composing multiple credentials
+|[EnvironmentCredential][environment_cred_ref]|authenticate a service principal or user configured by environment variables
+|[ManagedIdentityCredential][managed_id_cred_ref]|authenticate the managed identity of an Azure resource
 
 ### Authenticating Service Principals
 
 |credential|usage
 |-|-
-|`ClientSecretCredential`| authenticate a service principal using a secret
-|`CertificateCredential`| authenticate a service principal using a certificate
+|[ClientSecretCredential][client_secret_cred_ref]| authenticate a service principal using a secret
+|[CertificateCredential][cert_cred_ref]| authenticate a service principal using a certificate
 
 ### Authenticating Users
 
 |credential|usage
 |-|-
-|`InteractiveBrowserCredential`|interactively authenticate a user with the default web browser
-|`DeviceCodeCredential`| interactively authenticate a user on a device with limited UI
-|`UsernamePasswordCredential`| authenticate a user with a username and password
+|[InteractiveBrowserCredential][interactive_cred_ref]|interactively authenticate a user with the default web browser
+|[DeviceCodeCredential][device_code_cred_ref]| interactively authenticate a user on a device with limited UI
+|[UsernamePasswordCredential][userpass_cred_ref]| authenticate a user with a username and password
 
 ### Authenticating via Development Tools
 
 |credential|usage
 |-|-
-|`AzureCliCredential`|authenticate as the user signed in to the Azure CLI
-|`VisualStudioCodeCredential`|authenticate as the user signed in to the Visual Studio Code Azure Account extension
+|[AzureCliCredential][cli_cred_ref]|authenticate as the user signed in to the Azure CLI
+|[VisualStudioCodeCredential][vscode_cred_ref]|authenticate as the user signed in to the Visual Studio Code Azure Account extension
 
 ## Environment Variables
 
