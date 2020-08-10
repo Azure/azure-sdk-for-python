@@ -1,5 +1,18 @@
 # Release History
 
+## 0.21.0 (2020-08-10)
+
+**Features**
+
+  - Model ManagedInstance has a new parameter provisioning_state
+  - Model ManagedInstanceUpdate has a new parameter provisioning_state
+  - Added operation group ServerAzureADOnlyAuthenticationsOperations
+
+**Breaking changes**
+
+  - Removed operation ServerAzureADAdministratorsOperations.disable_azure_ad_only_authentication
+
+
 ## 0.20.0 (2020-06-22)
 
 **Features**
