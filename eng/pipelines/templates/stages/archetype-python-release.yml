@@ -28,6 +28,14 @@ stages:
                 deploy:
                   steps:
                     - checkout: self
+                    - script: |
+                        pip install -r eng/ci_tools.txt
+                      displayName: 'Setup Python Environment'
+                    - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
+                      parameters:
+                        PackageName: ${{artifact.name}}
+                        ServiceDirectory: ${{parameters.ServiceDirectory}}
+                        ForRelease: true
                     - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                       parameters:
                         SourceFolder: ${{parameters.ArtifactName}} 

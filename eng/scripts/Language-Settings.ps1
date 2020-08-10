@@ -4,15 +4,15 @@ $PackageRepository = "PyPI"
 $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
 
-function Extract-python-PkgProperties ($pkgPath, $serviceName, $pkgName)
+function Get-python-PackageInfoFromRepo ($pkgPath, $serviceName, $pkgName)
 {
   $pkgName = $pkgName.Replace('_', '-')
   if (Test-Path (Join-Path $pkgPath "setup.py"))
   {
-    $setupLocation = $pkgPath.Replace('\','/')
-    pushd $RepoRoot
+    $setupLocation = $pkgPath.Replace('\', '/')
+    Push-Location $RepoRoot
     $setupProps = (python -c "import sys; import os; sys.path.append(os.path.join('scripts', 'devops_tasks')); from common_tasks import parse_setup; obj=parse_setup('$setupLocation'); print('{0},{1}'.format(obj[0], obj[1]));") -split ","
-    popd
+    Pop-Location
     if (($setupProps -ne $null) -and ($setupProps[0] -eq $pkgName))
     {
       return [PackageProps]::new($setupProps[0], $setupProps[1], $pkgPath, $serviceName)
@@ -22,10 +22,11 @@ function Extract-python-PkgProperties ($pkgPath, $serviceName, $pkgName)
 }
 
 # Returns the pypi publish status of a package id and version.
-function IsPythonPackageVersionPublished($pkgId, $pkgVersion) {
+function IsPythonPackageVersionPublished($pkgId, $pkgVersion)
+{
   try 
   {
-    $existingVersion = (Invoke-RestMethod -MaximumRetryCount 3 -Method "Get" -uri "https://pypi.org/pypi/$pkgId/$pkgVersion/json").info.version
+    $existingVersion = (Invoke-RestMethod -MaximumRetryCount 3 -Method "Get" -Uri "https://pypi.org/pypi/$pkgId/$pkgVersion/json").info.version
     # if existingVersion exists, then it's already been published
     return $True
   }
@@ -47,7 +48,8 @@ function IsPythonPackageVersionPublished($pkgId, $pkgVersion) {
 }
 
 # Parse out package publishing information given a python sdist of ZIP format.
-function Parse-python-Package($pkg, $workingDirectory) {
+function Get-python-PackageInfoFromPackageFile($pkg, $workingDirectory)
+{
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
 
   $pkgId = $matches["package"]
@@ -62,29 +64,31 @@ function Parse-python-Package($pkg, $workingDirectory) {
   Expand-Archive -Path $pkg -DestinationPath $workFolder
 
   $changeLogLoc = @(Get-ChildItem -Path $workFolder -Recurse -Include "CHANGELOG.md")[0]
-  if ($changeLogLoc) {
+  if ($changeLogLoc)
+  {
     $releaseNotes = Get-ChangeLogEntryAsString -ChangeLogLocation $changeLogLoc -VersionString $pkgVersion
   }
 
   $readmeContentLoc = @(Get-ChildItem -Path $workFolder -Recurse -Include "README.md") | Select-Object -Last 1
 
-  if ($readmeContentLoc) {
+  if ($readmeContentLoc)
+  {
     $readmeContent = Get-Content -Raw $readmeContentLoc
   }
 
-  Remove-Item $workFolder -Force  -Recurse -ErrorAction SilentlyContinue
+  Remove-Item $workFolder -Force -Recurse -ErrorAction SilentlyContinue
 
   return New-Object PSObject -Property @{
-    PackageId      = $pkgId
+    PackageId = $pkgId
     PackageVersion = $pkgVersion
-    Deployable     = $forceCreate -or !(IsPythonPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
-    ReleaseNotes   = $releaseNotes
-    ReadmeContent  = $readmeContent
+    Deployable = $forceCreate -or !(IsPythonPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
+    ReleaseNotes = $releaseNotes
+    ReadmeContent = $readmeContent
   }
 }
 
 # Stage and Upload Docs to blob Storage
-function StageAndUpload-python-Docs()
+function Publish-python-GithubIODocs()
 {
   $PublishedDocs = Get-ChildItem "$DocLocation" | Where-Object -FilterScript {$_.Name.EndsWith(".zip")}
 
