@@ -8,53 +8,31 @@
 
 from enum import Enum
 from collections import namedtuple
-import re
-import six
+from ._helpers import (
+    adjust_value_type,
+    adjust_text_angle,
+    adjust_confidence,
+    get_element
+)
 
 
-def adjust_value_type(value_type):
-    if value_type == "array":
-        value_type = "list"
-    if value_type == "number":
-        value_type = "float"
-    if value_type == "object":
-        value_type = "dictionary"
-    return value_type
+def get_bounding_box(field):
+    return [
+        Point(x=field.bounding_box[0], y=field.bounding_box[1]),
+        Point(x=field.bounding_box[2], y=field.bounding_box[3]),
+        Point(x=field.bounding_box[4], y=field.bounding_box[5]),
+        Point(x=field.bounding_box[6], y=field.bounding_box[7])
+    ] if field.bounding_box else None
 
 
-def adjust_confidence(score):
-    """Adjust confidence when not returned.
-    """
-    if score is None:
-        return 1.0
-    return score
+def resolve_element(element, read_result):
+    element_type, element, page = get_element(element, read_result)
+    if element_type == "word":
+        return FormWord._from_generated(element, page=page)
+    if element_type == "line":
+        return FormLine._from_generated(element, page=page)
 
-
-def adjust_text_angle(text_angle):
-    """Adjust to (-180, 180]
-    """
-    if text_angle > 180:
-        text_angle -= 360
-    return text_angle
-
-
-def get_elements(field, read_result):
-    text_elements = []
-
-    for item in field.elements:
-        nums = [int(s) for s in re.findall(r"\d+", item)]
-        read = nums[0]
-        line = nums[1]
-        if len(nums) == 3:
-            word = nums[2]
-            ocr_word = read_result[read].lines[line].words[word]
-            extracted_word = FormWord._from_generated(ocr_word, page=read + 1)
-            text_elements.append(extracted_word)
-            continue
-        ocr_line = read_result[read].lines[line]
-        extracted_line = FormLine._from_generated(ocr_line, page=read + 1)
-        text_elements.append(extracted_line)
-    return text_elements
+    raise ValueError("Failed to parse element reference.")
 
 
 def get_field_value(field, value, read_result):  # pylint: disable=too-many-return-statements
@@ -127,13 +105,13 @@ class CustomFormModelStatus(str, Enum):
 
 
 class FormContentType(str, Enum):
-    """Content type for upload
+    """Content type for upload.
     """
 
-    APPLICATION_PDF = "application/pdf"  #: Content Type 'application/pdf'.
-    IMAGE_JPEG = "image/jpeg"  #: Content Type 'image/jpeg'.
-    IMAGE_PNG = "image/png"  #: Content Type 'image/png'.
-    IMAGE_TIFF = "image/tiff"  #: Content Type 'image/tiff'.
+    APPLICATION_PDF = "application/pdf"
+    IMAGE_JPEG = "image/jpeg"
+    IMAGE_PNG = "image/png"
+    IMAGE_TIFF = "image/tiff"
 
 
 class Point(namedtuple("Point", "x y")):
@@ -181,7 +159,7 @@ class FormElement(object):
 
 
 class RecognizedForm(object):
-    """Represents a form that has been recognized by a trained model.
+    """Represents a form that has been recognized by a trained or prebuilt model.
 
     :ivar str form_type:
         The type of form the model identified the submitted form to be.
@@ -204,9 +182,13 @@ class RecognizedForm(object):
         self.pages = kwargs.get("pages", None)
 
     def __repr__(self):
-        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={})".format(
-            self.form_type, repr(self.fields), repr(self.page_range), repr(self.pages)
-        )[:1024]
+        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={})" \
+            .format(
+                self.form_type,
+                repr(self.fields),
+                repr(self.page_range),
+                repr(self.pages)
+            )[:1024]
 
 
 class FormField(object):
@@ -217,9 +199,11 @@ class FormField(object):
         'date', 'time', 'phoneNumber', 'float', 'integer', 'dictionary', or 'list'.
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and field elements for the field label.
+        Note that this is not returned for forms analyzed by models trained with labels.
     :ivar ~azure.ai.formrecognizer.FieldData value_data:
         Contains the text, bounding box, and field elements for the field value.
-    :ivar str name: The unique name of the field or label.
+    :ivar str name: The unique name of the field or the training-time label if
+        analyzed from a custom model that was trained with labels.
     :ivar value:
         The value for the recognized field. Its semantic data type is described by `value_type`.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
@@ -240,7 +224,7 @@ class FormField(object):
     def _from_generated(cls, field, value, read_result):
         return cls(
             value_type=adjust_value_type(value.type) if value else None,
-            label_data=FieldData._from_generated(field, read_result),
+            label_data=None,  # not returned with receipt/supervised
             value_data=FieldData._from_generated(value, read_result),
             value=get_field_value(field, value, read_result),
             name=field,
@@ -259,14 +243,20 @@ class FormField(object):
         )
 
     def __repr__(self):
-        return "FormField(value_type={}, label_data={}, value_data={}, name={}, value={}, confidence={})".format(
-            self.value_type, repr(self.label_data), repr(self.value_data), self.name, repr(self.value), self.confidence
-        )[:1024]
+        return "FormField(value_type={}, label_data={}, value_data={}, name={}, value={}, confidence={})" \
+            .format(
+                self.value_type,
+                repr(self.label_data),
+                repr(self.value_data),
+                self.name,
+                repr(self.value),
+                self.confidence
+            )[:1024]
 
 
 class FieldData(FormElement):
-    """Represents the text that is part of a form field. This includes
-    the location of the text in the form and a collection of the
+    """Contains the data for the form field. This includes the text,
+    location of the text on the form, and a collection of the
     elements that make up the text.
 
     :ivar int page_number:
@@ -290,18 +280,14 @@ class FieldData(FormElement):
 
     @classmethod
     def _from_generated(cls, field, read_result):
-        if field is None or isinstance(field, six.string_types):
+        if field is None or all(field_data is None for field_data in [field.page, field.text, field.bounding_box]):
             return None
         return cls(
             page_number=field.page,
             text=field.text,
-            bounding_box=[
-                Point(x=field.bounding_box[0], y=field.bounding_box[1]),
-                Point(x=field.bounding_box[2], y=field.bounding_box[3]),
-                Point(x=field.bounding_box[4], y=field.bounding_box[5]),
-                Point(x=field.bounding_box[6], y=field.bounding_box[7])
-            ] if field.bounding_box else None,
-            field_elements=get_elements(field, read_result) if field.elements else None
+            bounding_box=get_bounding_box(field),
+            field_elements=[resolve_element(element, read_result) for element in field.elements]
+            if field.elements else None
         )
 
     @classmethod
@@ -309,19 +295,19 @@ class FieldData(FormElement):
         return cls(
             page_number=page,
             text=field.text,
-            bounding_box=[
-                Point(x=field.bounding_box[0], y=field.bounding_box[1]),
-                Point(x=field.bounding_box[2], y=field.bounding_box[3]),
-                Point(x=field.bounding_box[4], y=field.bounding_box[5]),
-                Point(x=field.bounding_box[6], y=field.bounding_box[7])
-            ] if field.bounding_box else None,
-            field_elements=get_elements(field, read_result) if field.elements else None
+            bounding_box=get_bounding_box(field),
+            field_elements=[resolve_element(element, read_result) for element in field.elements]
+            if field.elements else None
         )
 
     def __repr__(self):
-        return "FieldData(page_number={}, text={}, bounding_box={}, field_elements={})".format(
-            self.page_number, self.text, self.bounding_box, repr(self.field_elements)
-        )[:1024]
+        return "FieldData(page_number={}, text={}, bounding_box={}, field_elements={})" \
+            .format(
+                self.page_number,
+                self.text,
+                self.bounding_box,
+                repr(self.field_elements)
+            )[:1024]
 
 
 class FormPage(object):
@@ -362,20 +348,29 @@ class FormPage(object):
         self.lines = kwargs.get("lines", None)
 
     @classmethod
-    def _from_generated(cls, read_result):
+    def _from_generated_receipt(cls, read_result):
         return [cls(
             page_number=page.page,
             text_angle=adjust_text_angle(page.angle),
             width=page.width,
             height=page.height,
             unit=page.unit,
-            lines=[FormLine._from_generated(line, page=page.page) for line in page.lines] if page.lines else None
+            tables=None,  # receipt model does not return tables
+            lines=[FormLine._from_generated(line, page=page.page) for line in page.lines]
+            if page.lines else None
         ) for page in read_result]
 
     def __repr__(self):
-        return "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={})".format(
-            self.page_number, self.text_angle, self.width, self.height, self.unit, repr(self.tables), repr(self.lines)
-        )[:1024]
+        return "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={})" \
+            .format(
+                self.page_number,
+                self.text_angle,
+                self.width,
+                self.height,
+                self.unit,
+                repr(self.tables),
+                repr(self.lines)
+            )[:1024]
 
 
 class FormLine(FormElement):
@@ -395,26 +390,26 @@ class FormLine(FormElement):
 
     def __init__(self, **kwargs):
         super(FormLine, self).__init__(**kwargs)
-        self.words = kwargs.get("words", [])
+        self.words = kwargs.get("words", None)
 
     @classmethod
     def _from_generated(cls, line, page):
         return cls(
             text=line.text,
-            bounding_box=[
-                Point(x=line.bounding_box[0], y=line.bounding_box[1]),
-                Point(x=line.bounding_box[2], y=line.bounding_box[3]),
-                Point(x=line.bounding_box[4], y=line.bounding_box[5]),
-                Point(x=line.bounding_box[6], y=line.bounding_box[7])
-            ] if line.bounding_box else None,
+            bounding_box=get_bounding_box(line),
             page_number=page,
-            words=[FormWord._from_generated(word, page) for word in line.words] if line.words else None
+            words=[FormWord._from_generated(word, page) for word in line.words]
+            if line.words else None
         )
 
     def __repr__(self):
-        return "FormLine(text={}, bounding_box={}, words={}, page_number={})".format(
-            self.text, self.bounding_box, repr(self.words), self.page_number
-        )[:1024]
+        return "FormLine(text={}, bounding_box={}, words={}, page_number={})" \
+            .format(
+                self.text,
+                self.bounding_box,
+                repr(self.words),
+                self.page_number
+            )[:1024]
 
 
 class FormWord(FormElement):
@@ -440,20 +435,19 @@ class FormWord(FormElement):
     def _from_generated(cls, word, page):
         return cls(
             text=word.text,
-            bounding_box=[
-                Point(x=word.bounding_box[0], y=word.bounding_box[1]),
-                Point(x=word.bounding_box[2], y=word.bounding_box[3]),
-                Point(x=word.bounding_box[4], y=word.bounding_box[5]),
-                Point(x=word.bounding_box[6], y=word.bounding_box[7])
-            ] if word.bounding_box else None,
+            bounding_box=get_bounding_box(word),
             confidence=adjust_confidence(word.confidence),
             page_number=page
         )
 
     def __repr__(self):
-        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={})".format(
-            self.text, self.bounding_box, self.confidence, self.page_number
-        )[:1024]
+        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={})" \
+            .format(
+                self.text,
+                self.bounding_box,
+                self.confidence,
+                self.page_number
+            )[:1024]
 
 
 class FormTable(object):
@@ -471,14 +465,18 @@ class FormTable(object):
 
     def __init__(self, **kwargs):
         self.page_number = kwargs.get("page_number", None)
-        self.cells = kwargs.get("cells", [])
+        self.cells = kwargs.get("cells", None)
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
 
     def __repr__(self):
-        return "FormTable(page_number={}, cells={}, row_count={}, column_count={})".format(
-            self.page_number, repr(self.cells), self.row_count, self.column_count
-        )[:1024]
+        return "FormTable(page_number={}, cells={}, row_count={}, column_count={})" \
+            .format(
+                self.page_number,
+                repr(self.cells),
+                self.row_count,
+                self.column_count
+            )[:1024]
 
 
 class FormTableCell(FormElement):
@@ -527,25 +525,31 @@ class FormTableCell(FormElement):
             column_index=cell.column_index,
             row_span=cell.row_span or 1,
             column_span=cell.column_span or 1,
-            bounding_box=[
-                Point(x=cell.bounding_box[0], y=cell.bounding_box[1]),
-                Point(x=cell.bounding_box[2], y=cell.bounding_box[3]),
-                Point(x=cell.bounding_box[4], y=cell.bounding_box[5]),
-                Point(x=cell.bounding_box[6], y=cell.bounding_box[7])
-            ] if cell.bounding_box else None,
+            bounding_box=get_bounding_box(cell),
             confidence=adjust_confidence(cell.confidence),
             is_header=cell.is_header or False,
             is_footer=cell.is_footer or False,
             page_number=page,
-            field_elements=get_elements(cell, read_result) if cell.elements else None
+            field_elements=[resolve_element(element, read_result) for element in cell.elements]
+            if cell.elements else None
         )
 
     def __repr__(self):
         return "FormTableCell(text={}, row_index={}, column_index={}, row_span={}, column_span={}, " \
-                "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, field_elements={})".format(
-                    self.text, self.row_index, self.column_index, self.row_span, self.column_span, self.bounding_box,
-                    self.confidence, self.is_header, self.is_footer, self.page_number, repr(self.field_elements)
-                )[:1024]
+            "bounding_box={}, confidence={}, is_header={}, is_footer={}, page_number={}, field_elements={})" \
+            .format(
+                self.text,
+                self.row_index,
+                self.column_index,
+                self.row_span,
+                self.column_span,
+                self.bounding_box,
+                self.confidence,
+                self.is_header,
+                self.is_footer,
+                self.page_number,
+                repr(self.field_elements)
+            )[:1024]
 
 
 class CustomFormModel(object):
@@ -565,7 +569,7 @@ class CustomFormModel(object):
         which can recognize and extract fields from a different type of form.
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
         List of any training errors.
-    :ivar ~azure.ai.formrecognizer.TrainingDocumentInfo training_documents:
+    :ivar list[~azure.ai.formrecognizer.TrainingDocumentInfo] training_documents:
          Metadata about each of the documents used to train the model.
     """
 
@@ -576,7 +580,7 @@ class CustomFormModel(object):
         self.training_completed_on = kwargs.get("training_completed_on", None)
         self.submodels = kwargs.get("submodels", None)
         self.errors = kwargs.get("errors", None)
-        self.training_documents = kwargs.get("training_documents", [])
+        self.training_documents = kwargs.get("training_documents", None)
 
     @classmethod
     def _from_generated(cls, model):
@@ -587,16 +591,24 @@ class CustomFormModel(object):
             training_completed_on=model.model_info.last_updated_date_time,
             submodels=CustomFormSubmodel._from_generated_unlabeled(model)
             if model.keys else CustomFormSubmodel._from_generated_labeled(model),
-            errors=FormRecognizerError._from_generated(model.train_result.errors) if model.train_result else None,
+            errors=FormRecognizerError._from_generated(model.train_result.errors)
+            if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None
         )
 
     def __repr__(self):
         return "CustomFormModel(model_id={}, status={}, training_started_on={}, training_completed_on={}, " \
-               "submodels={}, errors={}, training_documents={})".format(
-                    self.model_id, self.status, self.training_started_on, self.training_completed_on,
-                    repr(self.submodels), repr(self.errors), repr(self.training_documents))[:1024]
+               "submodels={}, errors={}, training_documents={})" \
+                .format(
+                    self.model_id,
+                    self.status,
+                    self.training_started_on,
+                    self.training_completed_on,
+                    repr(self.submodels),
+                    repr(self.errors),
+                    repr(self.training_documents)
+                )[:1024]
 
 
 class CustomFormSubmodel(object):
@@ -618,25 +630,32 @@ class CustomFormSubmodel(object):
 
     @classmethod
     def _from_generated_unlabeled(cls, model):
-        return [cls(
-            accuracy=None,
-            fields=CustomFormModelField._from_generated_unlabeled(fields),
-            form_type="form-" + cluster_id
-        ) for cluster_id, fields in model.keys.clusters.items()]
+        return [
+            cls(
+                accuracy=None,
+                fields=CustomFormModelField._from_generated_unlabeled(fields),
+                form_type="form-" + cluster_id
+            ) for cluster_id, fields in model.keys.clusters.items()
+        ]
 
     @classmethod
     def _from_generated_labeled(cls, model):
-        return [cls(
-            accuracy=model.train_result.average_model_accuracy,
-            fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
-                    for field in model.train_result.fields} if model.train_result.fields else None,
-            form_type="form-" + model.model_info.model_id
-        )] if model.train_result else None
+        return [
+            cls(
+                accuracy=model.train_result.average_model_accuracy,
+                fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
+                        for field in model.train_result.fields} if model.train_result.fields else None,
+                form_type="form-" + model.model_info.model_id
+            )
+        ] if model.train_result else None
 
     def __repr__(self):
-        return "CustomFormSubmodel(accuracy={}, fields={}, form_type={})".format(
-            self.accuracy, repr(self.fields), self.form_type
-        )[:1024]
+        return "CustomFormSubmodel(accuracy={}, fields={}, form_type={})" \
+            .format(
+                self.accuracy,
+                repr(self.fields),
+                self.form_type
+            )[:1024]
 
 
 class CustomFormModelField(object):
@@ -668,9 +687,12 @@ class CustomFormModelField(object):
         }
 
     def __repr__(self):
-        return "CustomFormModelField(label={}, name={}, accuracy={})".format(
-            self.label, self.name, self.accuracy
-        )[:1024]
+        return "CustomFormModelField(label={}, name={}, accuracy={})" \
+            .format(
+                self.label,
+                self.name,
+                self.accuracy
+            )[:1024]
 
 
 class TrainingDocumentInfo(object):
@@ -693,21 +715,27 @@ class TrainingDocumentInfo(object):
         self.name = kwargs.get("name", None)
         self.status = kwargs.get("status", None)
         self.page_count = kwargs.get("page_count", None)
-        self.errors = kwargs.get("errors", [])
+        self.errors = kwargs.get("errors", None)
 
     @classmethod
     def _from_generated(cls, train_result):
-        return [cls(
-            name=doc.document_name,
-            status=doc.status,
-            page_count=doc.pages,
-            errors=FormRecognizerError._from_generated(doc.errors)
-        ) for doc in train_result.training_documents] if train_result.training_documents else None
+        return [
+            cls(
+                name=doc.document_name,
+                status=doc.status,
+                page_count=doc.pages,
+                errors=FormRecognizerError._from_generated(doc.errors)
+            ) for doc in train_result.training_documents
+        ] if train_result.training_documents else None
 
     def __repr__(self):
-        return "TrainingDocumentInfo(name={}, status={}, page_count={}, errors={})".format(
-            self.name, self.status, self.page_count, repr(self.errors)
-        )[:1024]
+        return "TrainingDocumentInfo(name={}, status={}, page_count={}, errors={})" \
+            .format(
+                self.name,
+                self.status,
+                self.page_count,
+                repr(self.errors)
+            )[:1024]
 
 
 class FormRecognizerError(object):
@@ -723,7 +751,9 @@ class FormRecognizerError(object):
 
     @classmethod
     def _from_generated(cls, err):
-        return [cls(code=error.code, message=error.message) for error in err] if err else []
+        return [
+            cls(code=error.code, message=error.message) for error in err
+        ] if err else []
 
     def __repr__(self):
         return "FormRecognizerError(code={}, message={})".format(self.code, self.message)[:1024]
@@ -760,9 +790,13 @@ class CustomFormModelInfo(object):
         )
 
     def __repr__(self):
-        return "CustomFormModelInfo(model_id={}, status={}, training_started_on={}, training_completed_on={})".format(
-            self.model_id, self.status, self.training_started_on, self.training_completed_on
-        )[:1024]
+        return "CustomFormModelInfo(model_id={}, status={}, training_started_on={}, training_completed_on={})" \
+            .format(
+                self.model_id,
+                self.status,
+                self.training_started_on,
+                self.training_completed_on
+            )[:1024]
 
 
 class AccountProperties(object):
@@ -784,6 +818,8 @@ class AccountProperties(object):
         )
 
     def __repr__(self):
-        return "AccountProperties(custom_model_count={}, custom_model_limit={})".format(
-            self.custom_model_count, self.custom_model_limit
-        )[:1024]
+        return "AccountProperties(custom_model_count={}, custom_model_limit={})" \
+            .format(
+                self.custom_model_count,
+                self.custom_model_limit
+            )[:1024]

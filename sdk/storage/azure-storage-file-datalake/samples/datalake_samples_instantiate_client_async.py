@@ -15,25 +15,30 @@ USAGE:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
     connection str could be obtained from portal.azure.com your storage account.
 """
-
+import asyncio
 import os
 connection_string = os.environ['AZURE_STORAGE_CONNECTION_STRING']
 
 
-def instantiate_directory_client_from_conn_str():
+async def instantiate_directory_client_from_conn_str():
     # [START instantiate_directory_client_from_conn_str]
     from azure.storage.filedatalake.aio import DataLakeDirectoryClient
     DataLakeDirectoryClient.from_connection_string(connection_string, "myfilesystem", "mydirectory")
     # [END instantiate_directory_client_from_conn_str]
 
 
-def instantiate_file_client_from_conn_str():
+async def instantiate_file_client_from_conn_str():
     # [START instantiate_file_client_from_conn_str]
     from azure.storage.filedatalake.aio import DataLakeFileClient
     DataLakeFileClient.from_connection_string(connection_string, "myfilesystem", "mydirectory", "myfile")
     # [END instantiate_file_client_from_conn_str]
 
 
+async def main():
+    await instantiate_directory_client_from_conn_str()
+    await instantiate_file_client_from_conn_str()
+
+
 if __name__ == '__main__':
-    instantiate_directory_client_from_conn_str()
-    instantiate_file_client_from_conn_str()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())

@@ -1,11 +1,21 @@
 # Release History
 
-## 4.2.0b2 (Unreleased)
+## 4.2.0 (2020-08-10)
+### Fixed
 - Fixed an `AttributeError` during `get_certificate_version`
+- `import_certificate` no longer raises `AttributeError` when the `policy`
+  keyword argument isn't passed
 - Values of `x-ms-keyvault-region` and `x-ms-keyvault-service-version` headers
-  are no longer redacted in logging output.
-- Updated minimum `azure-core` version to 1.4.0
-- `import_certificate` no longer raises `AttributeError` when the `policy` keyword argument isn't passed
+  are no longer redacted in logging output
+
+### Changed
+- Key Vault API version 7.1 is now the default 
+- Updated minimum `azure-core` version to 1.7.0
+
+### Added  
+- At construction, clients accept a `CustomHookPolicy` through the optional
+  keyword argument `custom_hook_policy`
+- All client requests include a unique ID in the header `x-ms-client-request-id`
 
 ## 4.2.0b1 (2020-03-10)
 - Support for Key Vault API version 7.1-preview

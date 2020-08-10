@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from enum import Enum
 
-from ._shared._error import _ERROR_ATTRIBUTE_MISSING
+from ._error import _ERROR_ATTRIBUTE_MISSING
 
 
 class TableEntity(dict):

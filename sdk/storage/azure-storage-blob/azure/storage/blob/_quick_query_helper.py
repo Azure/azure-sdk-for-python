@@ -10,8 +10,6 @@ from typing import Union, Iterable, IO  # pylint: disable=unused-import
 from ._shared.avro.datafile import DataFileReader
 from ._shared.avro.avro_io import DatumReader
 
-from ._models import BlobQueryError
-
 
 class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
     """A streaming object to read query results.
@@ -35,7 +33,8 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         record_delimiter='\n',
         encoding=None,
         headers=None,
-        response=None
+        response=None,
+        error_cls=None,
     ):
         self.name = name
         self.container = container
@@ -47,6 +46,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         self._encoding = encoding
         self._parsed_results = DataFileReader(QuickQueryStreamer(response), DatumReader())
         self._first_result = self._process_record(next(self._parsed_results))
+        self._error_cls = error_cls
 
     def __len__(self):
         return self._size
@@ -57,7 +57,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         if 'data' in result:
             return result.get('data')
         if 'fatal' in result:
-            error = BlobQueryError(
+            error = self._error_cls(
                 error=result['name'],
                 is_fatal=result['fatal'],
                 description=result['description'],

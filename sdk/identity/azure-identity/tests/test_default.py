@@ -10,7 +10,7 @@ from azure.identity import (
     DefaultAzureCredential,
     InteractiveBrowserCredential,
     SharedTokenCacheCredential,
-    VSCodeCredential,
+    VisualStudioCodeCredential,
 )
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.azure_cli import AzureCliCredential
@@ -121,7 +121,7 @@ def test_exclude_options():
     assert_credentials_not_present(credential, AzureCliCredential)
 
     credential = DefaultAzureCredential(exclude_visual_studio_code_credential=True)
-    assert_credentials_not_present(credential, VSCodeCredential)
+    assert_credentials_not_present(credential, VisualStudioCodeCredential)
 
     # interactive auth is excluded by default
     credential = DefaultAzureCredential(exclude_interactive_browser_credential=False)
@@ -222,17 +222,17 @@ def test_shared_cache_username():
 
 
 def test_vscode_tenant_id():
-    """the credential should allow configuring a tenant ID for VSCodeCredential by kwarg or environment"""
+    """the credential should allow configuring a tenant ID for VisualStudioCodeCredential by kwarg or environment"""
 
     expected_args = {"tenant_id": "the-tenant"}
 
-    with patch(DefaultAzureCredential.__module__ + ".VSCodeCredential") as mock_credential:
+    with patch(DefaultAzureCredential.__module__ + ".VisualStudioCodeCredential") as mock_credential:
         DefaultAzureCredential(visual_studio_code_tenant_id=expected_args["tenant_id"])
     mock_credential.assert_called_once_with(**expected_args)
 
     # tenant id can also be specified in $AZURE_TENANT_ID
     with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: expected_args["tenant_id"]}, clear=True):
-        with patch(DefaultAzureCredential.__module__ + ".VSCodeCredential") as mock_credential:
+        with patch(DefaultAzureCredential.__module__ + ".VisualStudioCodeCredential") as mock_credential:
             DefaultAzureCredential()
     mock_credential.assert_called_once_with(**expected_args)
 
@@ -240,7 +240,7 @@ def test_vscode_tenant_id():
     with patch.dict(
         os.environ, {EnvironmentVariables.AZURE_TENANT_ID: "not-" + expected_args["tenant_id"]}, clear=True
     ):
-        with patch(DefaultAzureCredential.__module__ + ".VSCodeCredential") as mock_credential:
+        with patch(DefaultAzureCredential.__module__ + ".VisualStudioCodeCredential") as mock_credential:
             DefaultAzureCredential(visual_studio_code_tenant_id=expected_args["tenant_id"])
     mock_credential.assert_called_once_with(**expected_args)
 

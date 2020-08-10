@@ -7,22 +7,22 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/copyAuthorization
+    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/custom/models/copyAuthorization
   response:
     body:
-      string: '{"modelId": "aa4d8281-27f9-439c-aa34-96be37f2c766", "accessToken":
-        "redacted", "expirationDateTimeTicks": 1594493022}'
+      string: '{"modelId": "584b5bc3-5b16-486b-8ba0-aa10d1d8576d", "accessToken":
+        "redacted", "expirationDateTimeTicks": 1596920305}'
     headers:
-      apim-request-id: e37dc7fa-e5a2-4d9f-9209-88f2f663d36d
+      apim-request-id: c0463efd-866d-4c44-af4e-eecb129a79d4
       content-type: application/json; charset=utf-8
-      date: Fri, 10 Jul 2020 18:43:41 GMT
-      location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/aa4d8281-27f9-439c-aa34-96be37f2c766
+      date: Fri, 07 Aug 2020 20:58:24 GMT
+      location: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/custom/models/584b5bc3-5b16-486b-8ba0-aa10d1d8576d
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '26'
+      x-envoy-upstream-service-time: '40'
     status:
       code: 201
       message: Created
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.0/custom/models/copyAuthorization
+    url: https://formrecognizeraccount.cognitiveservices.azure.com//formrecognizer/v2.0/custom/models/copyAuthorization
 version: 1

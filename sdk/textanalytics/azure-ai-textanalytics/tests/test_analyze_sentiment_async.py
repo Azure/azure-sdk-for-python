@@ -17,7 +17,7 @@ from azure.ai.textanalytics import (
     VERSION,
     DetectLanguageInput,
     TextDocumentInput,
-    ApiVersion
+    TextAnalyticsApiVersion
 )
 
 from testcase import GlobalTextAnalyticsAccountPreparer
@@ -61,7 +61,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
-            self.assertIsNotNone(doc.confidence_scores)
+            self.validateConfidenceScores(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
 
         self.assertEqual(len(response[0].sentences), 1)
@@ -88,7 +88,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         self.assertEqual(response[2].sentiment, "positive")
 
         for doc in response:
-            self.assertIsNotNone(doc.confidence_scores)
+            self.validateConfidenceScores(doc.confidence_scores)
             self.assertIsNotNone(doc.sentences)
 
         self.assertEqual(len(response[0].sentences), 1)
@@ -149,7 +149,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
             await client.analyze_sentiment(docs)
         assert excinfo.value.status_code == 400
         assert excinfo.value.error.code == "InvalidDocumentBatch"
-        assert "(InvalidDocumentBatch) The number of documents in the request have exceeded the data limitations" in str(excinfo.value)
+        assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -605,18 +605,16 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 aspect = mined_opinion.aspect
                 self.assertEqual('design', aspect.text)
                 self.assertEqual('positive', aspect.sentiment)
-                self.assertIsNotNone(aspect.confidence_scores.positive)
                 self.assertEqual(0.0, aspect.confidence_scores.neutral)
-                self.assertIsNotNone(aspect.confidence_scores.negative)
+                self.validateConfidenceScores(aspect.confidence_scores)
                 self.assertEqual(32, aspect.offset)
                 self.assertEqual(6, aspect.length)
 
                 sleek_opinion = mined_opinion.opinions[0]
                 self.assertEqual('sleek', sleek_opinion.text)
                 self.assertEqual('positive', sleek_opinion.sentiment)
-                self.assertIsNotNone(sleek_opinion.confidence_scores.positive)
                 self.assertEqual(0.0, sleek_opinion.confidence_scores.neutral)
-                self.assertIsNotNone(sleek_opinion.confidence_scores.negative)
+                self.validateConfidenceScores(sleek_opinion.confidence_scores)
                 self.assertEqual(9, sleek_opinion.offset)
                 self.assertEqual(5, sleek_opinion.length)
                 self.assertFalse(sleek_opinion.is_negated)
@@ -624,9 +622,8 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
                 premium_opinion = mined_opinion.opinions[1]
                 self.assertEqual('premium', premium_opinion.text)
                 self.assertEqual('positive', premium_opinion.sentiment)
-                self.assertIsNotNone(premium_opinion.confidence_scores.positive)
                 self.assertEqual(0.0, premium_opinion.confidence_scores.neutral)
-                self.assertIsNotNone(premium_opinion.confidence_scores.negative)
+                self.validateConfidenceScores(premium_opinion.confidence_scores)
                 self.assertEqual(15, premium_opinion.offset)
                 self.assertEqual(7, premium_opinion.length)
                 self.assertFalse(premium_opinion.is_negated)
@@ -646,17 +643,15 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
             self.assertEqual('food', food_aspect.text)
             self.assertEqual('negative', food_aspect.sentiment)
-            self.assertIsNotNone(food_aspect.confidence_scores.positive)
             self.assertEqual(0.0, food_aspect.confidence_scores.neutral)
-            self.assertIsNotNone(food_aspect.confidence_scores.negative)
+            self.validateConfidenceScores(food_aspect.confidence_scores)
             self.assertEqual(4, food_aspect.offset)
             self.assertEqual(4, food_aspect.length)
 
             self.assertEqual('service', service_aspect.text)
             self.assertEqual('negative', service_aspect.sentiment)
-            self.assertIsNotNone(service_aspect.confidence_scores.positive)
             self.assertEqual(0.0, service_aspect.confidence_scores.neutral)
-            self.assertIsNotNone(service_aspect.confidence_scores.negative)
+            self.validateConfidenceScores(service_aspect.confidence_scores)
             self.assertEqual(13, service_aspect.offset)
             self.assertEqual(7, service_aspect.length)
 
@@ -666,9 +661,8 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
 
             self.assertEqual('good', food_opinion.text)
             self.assertEqual('negative', food_opinion.sentiment)
-            self.assertIsNotNone(food_opinion.confidence_scores.positive)
             self.assertEqual(0.0, food_opinion.confidence_scores.neutral)
-            self.assertIsNotNone(food_opinion.confidence_scores.negative)
+            self.validateConfidenceScores(food_opinion.confidence_scores)
             self.assertEqual(28, food_opinion.offset)
             self.assertEqual(4, food_opinion.length)
             self.assertTrue(food_opinion.is_negated)
@@ -681,7 +675,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
         assert not document.sentences[0].mined_opinions
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": ApiVersion.V3_0})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     async def test_opinion_mining_v3(self, client):
         with pytest.raises(NotImplementedError) as excinfo:
             await client.analyze_sentiment(["will fail"], show_opinion_mining=True)
