@@ -433,7 +433,7 @@ class StorageTableClientTest(TableTestCase):
         tables = list(service.list_tables(raw_response_hook=callback))
         self.assertIsInstance(tables, list)
 
-    # @pytest.mark.skip("pending")
+    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_user_agent_custom(self, resource_group, location, storage_account, storage_account_key):
         custom_app = "TestApp/v1.0"

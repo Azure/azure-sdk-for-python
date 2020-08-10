@@ -100,7 +100,7 @@ class TableServicePropertiesTest(TableTestCase):
     # --Test cases per service ---------------------------------------
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    async def test_table_service_properties(self, resource_group, location, storage_account, storage_account_key):
+    async def test_table_service_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
         if 'cosmos' in url:
@@ -123,7 +123,7 @@ class TableServicePropertiesTest(TableTestCase):
     # --Test cases per feature ---------------------------------------
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    async def test_set_logging(self, resource_group, location, storage_account, storage_account_key):
+    async def test_set_logging_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
         if 'cosmos' in url:
@@ -142,7 +142,7 @@ class TableServicePropertiesTest(TableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    async def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
+    async def test_set_hour_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
         if 'cosmos' in url:
@@ -161,7 +161,7 @@ class TableServicePropertiesTest(TableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    async def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
+    async def test_set_minute_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
         if 'cosmos' in url:
@@ -181,7 +181,7 @@ class TableServicePropertiesTest(TableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    async def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
+    async def test_set_cors_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
         if 'cosmos' in url:
@@ -214,7 +214,7 @@ class TableServicePropertiesTest(TableTestCase):
 
     # --Test cases for errors ---------------------------------------
     @GlobalStorageAccountPreparer()
-    async def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
+    async def test_retention_no_days_async(self, resource_group, location, storage_account, storage_account_key):
         # Assert
         self.assertRaises(ValueError,
                           RetentionPolicy,
@@ -222,7 +222,7 @@ class TableServicePropertiesTest(TableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    async def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
+    async def test_too_many_cors_rules_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         cors = []
@@ -235,7 +235,7 @@ class TableServicePropertiesTest(TableTestCase):
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
-    async def test_retention_too_long(self, resource_group, location, storage_account, storage_account_key):
+    async def test_retention_too_long_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,

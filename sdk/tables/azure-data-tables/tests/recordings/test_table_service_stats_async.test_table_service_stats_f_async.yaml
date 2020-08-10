@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Date:
+      - Mon, 10 Aug 2020 17:22:43 GMT
+      User-Agent:
+      - azsdk-python-storage-table/12.0.0b1 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 10 Aug 2020 17:22:43 GMT
+      x-ms-version:
+      - 12.0.0b1
+    method: GET
+    uri: https://pyacrstoragestorname-secondary.table.core.windows.net/?restype=service&comp=stats
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\r\n<error
+        xmlns=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\r\n
+        \ <code>InvalidHeaderValue</code>\r\n  <message xml:lang=\"en-US\">The value
+        for one of the HTTP headers is not in the correct format.\nRequestId:916429aa-e002-002c-093a-6f3a39000000\nTime:2020-08-10T17:22:45.2031414Z</message>\r\n</error>"
+    headers:
+      content-length: '371'
+      content-type: application/xml
+      date: Mon, 10 Aug 2020 17:22:45 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 400
+      message: The value for one of the HTTP headers is not in the correct format.
+    url: https://pyacrstoragevxrwztcxj77t-secondary.table.core.windows.net/?restype=service&comp=stats
+version: 1
