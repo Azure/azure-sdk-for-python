@@ -8,13 +8,14 @@
   its key has expired or is not yet valid
 
 ### Changed
-- Key Vault API version 7.1 is now the default 
+- Key Vault API version 7.1 is now the default
 - Updated minimum `azure-core` version to 1.7.0
 
-### Added  
+### Added
 - At construction, clients accept a `CustomHookPolicy` through the optional
   keyword argument `custom_hook_policy`
 - All client requests include a unique ID in the header `x-ms-client-request-id`
+- Dependency on `azure-common` for multiapi support
 
 ## 4.2.0b1 (2020-03-10)
 - Support for Key Vault API version 7.1-preview
