@@ -1,5 +1,8 @@
 # Release History
 
+## 1.4.1 (Unreleased)
+
+
 ## 1.4.0 (2020-08-10)
 ### Added
 - `DefaultAzureCredential` uses the value of environment variable
