@@ -15,25 +15,25 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 11fe3a58-284d-45b1-892e-f0064e69b084
+      - e8bdac60-ab8f-49cc-b505-8fc455b4ae90
       content-length:
       - '0'
       date:
-      - Fri, 07 Aug 2020 21:26:25 GMT
+      - Fri, 10 Jul 2020 18:53:24 GMT
       operation-location:
-      - https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/11fe3a58-284d-45b1-892e-f0064e69b084
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/e8bdac60-ab8f-49cc-b505-8fc455b4ae90
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '260'
+      - '327'
     status:
       code: 202
       message: Accepted
@@ -49,11 +49,11 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/11fe3a58-284d-45b1-892e-f0064e69b084
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/e8bdac60-ab8f-49cc-b505-8fc455b4ae90
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-08-07T21:26:25Z",
-        "lastUpdatedDateTime": "2020-08-07T21:26:27Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:53:24Z",
+        "lastUpdatedDateTime": "2020-07-10T18:53:26Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0.6893, "width": 1688, "height":
         3000, "unit": "pixel", "language": "en"}], "documentResults": [{"docType":
         "prebuilt:receipt", "pageRange": [1, 1], "fields": {"ReceiptType": {"type":
@@ -96,11 +96,11 @@ interactions:
         "page": 1, "confidence": 0.985}}}]}}'
     headers:
       apim-request-id:
-      - d6b4c146-82c5-4f6f-828b-b693b584872a
+      - 963e01b8-a116-4583-975f-839accc2142d
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 07 Aug 2020 21:26:31 GMT
+      - Fri, 10 Jul 2020 18:53:30 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -108,7 +108,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '21'
+      - '16'
     status:
       code: 200
       message: OK
@@ -128,25 +128,25 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - a4675f0a-e3da-4b4c-b742-3d27e38c6b14
+      - f74a3004-11ef-4eac-b18c-f56f6f7ef921
       content-length:
       - '0'
       date:
-      - Fri, 07 Aug 2020 21:26:32 GMT
+      - Fri, 10 Jul 2020 18:53:30 GMT
       operation-location:
-      - https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/a4675f0a-e3da-4b4c-b742-3d27e38c6b14
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/f74a3004-11ef-4eac-b18c-f56f6f7ef921
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '352'
+      - '167'
     status:
       code: 202
       message: Accepted
@@ -162,11 +162,11 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: GET
-    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/a4675f0a-e3da-4b4c-b742-3d27e38c6b14
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/prebuilt/receipt/analyzeResults/f74a3004-11ef-4eac-b18c-f56f6f7ef921
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-08-07T21:26:32Z",
-        "lastUpdatedDateTime": "2020-08-07T21:26:35Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-07-10T18:53:31Z",
+        "lastUpdatedDateTime": "2020-07-10T18:53:33Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "angle": 0.6893, "width": 1688, "height":
         3000, "unit": "pixel", "language": "en"}], "documentResults": [{"docType":
         "prebuilt:receipt", "pageRange": [1, 1], "fields": {"ReceiptType": {"type":
@@ -209,11 +209,11 @@ interactions:
         "page": 1, "confidence": 0.985}}}]}}'
     headers:
       apim-request-id:
-      - 922c9daa-17b8-400d-801f-25ddb7a2eafe
+      - be2352cb-2dd8-4f03-ac6e-3eb914f911b7
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 07 Aug 2020 21:26:38 GMT
+      - Fri, 10 Jul 2020 18:53:37 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -221,7 +221,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '26'
+      - '15'
     status:
       code: 200
       message: OK
