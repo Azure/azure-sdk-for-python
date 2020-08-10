@@ -39,7 +39,7 @@ After installing the extension, sign in to Azure in Visual Studio Code by
 pressing `F1` to open the command palette and running the `Azure: Sign In`
 command.
 
-![Visual Studio Code Account Sign In](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/images/VsCodeLoginCommand.png)
+![Visual Studio Code Account Sign In](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/identity/azure-identity/images/VsCodeLoginCommand.png)
 
 #### Authenticating via the Azure CLI
 
@@ -48,12 +48,12 @@ signed in to the [Azure CLI][azure_cli]. To sign in to the Azure CLI, run
 `az login`. On a system with a default web browser, the Azure CLI will launch
 the browser to authenticate a user.
 
-![Azure CLI Account Sign In](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/images/AzureCliLogin.png)
+![Azure CLI Account Sign In](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/identity/azure-identity/images/AzureCliLogin.png)
 
 When no default browser is available, `az login` will use the device code
 authentication flow. This can also be selected manually by running `az login --use-device-code`.
 
-![Azure CLI Account Device Code Sign In](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/images/AzureCliLoginDeviceCode.png)
+![Azure CLI Account Device Code Sign In](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/identity/azure-identity/images/AzureCliLoginDeviceCode.png)
 
 ## Key concepts
 
@@ -75,7 +75,7 @@ the Azure Cloud because it combines common production credentials with
 development credentials. `DefaultAzureCredential` attempts to authenticate via
 the following mechanisms in this order, stopping when one succeeds:
 
-![DefaultAzureCredential authentication flow](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/images/DefaultAzureCredentialAuthenticationFlow.png)
+![DefaultAzureCredential authentication flow](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/identity/azure-identity/images/DefaultAzureCredentialAuthenticationFlow.png)
 
 - Environment - `DefaultAzureCredential` will read account information specified
   via [environment variables](#environment-variables "environment variables")
