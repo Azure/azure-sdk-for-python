@@ -1,5 +1,8 @@
 # Release History
 
+## 7.0.0b6 (Unreleased)
+
+
 ## 7.0.0b5 (2020-08-10)
 
 **New Features**
