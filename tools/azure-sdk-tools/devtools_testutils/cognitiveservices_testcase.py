@@ -36,7 +36,8 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None,
-                 random_name_enabled=True):
+                 random_name_enabled=True,
+                 **kwargs):
         super(CognitiveServicesAccountPreparer, self).__init__(name_prefix, 24,
                                                      disable_recording=disable_recording,
                                                      playback_fake_resource=playback_fake_resource,
@@ -49,6 +50,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
         self.parameter_name = parameter_name
         self.cogsci_key = ''
         self.legacy = legacy
+        self.custom_subdomain_name = kwargs.pop("custom_subdomain_name", None)
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
@@ -62,7 +64,9 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
                     'sku': {'name': self.sku},
                     'location': self.location,
                     'kind': self.kind,
-                    'properties': {}
+                    'properties': {
+                        'custom_sub_domain_name': self.custom_subdomain_name
+                    }
                 }
             )
             time.sleep(10)  # it takes a few seconds to create a cognitive services account
@@ -70,8 +74,16 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
             self.cogsci_key = self.client.accounts.list_keys(group.name, name).key1
             # FIXME: LuisAuthoringClient and LuisRuntimeClient need authoring key from ARM API (coming soon-ish)
         else:
-            self.resource = FakeCognitiveServicesAccount("https://{}.api.cognitive.microsoft.com".format(self.location))
-            self.cogsci_key = 'ZmFrZV9hY29jdW50X2tleQ=='
+            if self.custom_subdomain_name:
+                self.resource = FakeCognitiveServicesAccount(
+                    "https://{}.cognitiveservices.azure.com".format(self.custom_subdomain_name)
+                )
+                self.cogsci_key = 'ZmFrZV9hY29jdW50X2tleQ=='
+            else:
+                self.resource = FakeCognitiveServicesAccount(
+                    "https://{}.api.cognitive.microsoft.com".format(self.location)
+                )
+                self.cogsci_key = 'ZmFrZV9hY29jdW50X2tleQ=='
 
         if self.legacy:
             try:

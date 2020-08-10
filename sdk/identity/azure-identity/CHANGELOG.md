@@ -4,7 +4,24 @@
 - `DefaultAzureCredential` uses the value of environment variable
 `AZURE_CLIENT_ID` to configure a user-assigned managed identity.
 ([#10931](https://github.com/Azure/azure-sdk-for-python/issues/10931))
+- Renamed `VSCodeCredential` to `VisualStudioCodeCredential`
 
+### Breaking Changes
+- Removed application authentication APIs added in 1.4.0 beta versions. These
+  will be reintroduced in 1.5.0b1. Passing the keyword arguments below
+  generally won't cause a runtime error, but the arguments have no effect.
+  - Removed `authenticate` method from `DeviceCodeCredential`,
+    `InteractiveBrowserCredential`, and `UsernamePasswordCredential`
+  - Removed `allow_unencrypted_cache` and `enable_persistent_cache` keyword
+    arguments from `CertificateCredential`, `ClientSecretCredential`,
+    `DeviceCodeCredential`, `InteractiveBrowserCredential`, and
+    `UsernamePasswordCredential`
+  - Removed `disable_automatic_authentication` keyword argument from
+    `DeviceCodeCredential` and `InteractiveBrowserCredential`
+  - Removed `allow_unencrypted_cache` keyword argument from
+    `SharedTokenCacheCredential`
+  - Removed classes `AuthenticationRecord` and `AuthenticationRequiredError`
+  - Removed `identity_config` keyword argument from `ManagedIdentityCredential`
 
 ## 1.4.0b7 (2020-07-22)
 - `DefaultAzureCredential` has a new optional keyword argument,

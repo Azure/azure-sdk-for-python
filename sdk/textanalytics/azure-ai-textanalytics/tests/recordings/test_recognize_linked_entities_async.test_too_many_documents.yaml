@@ -12,26 +12,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/1.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.0.1 Python/3.7.7 (Darwin-17.7.0-x86_64-i386-64bit)
     method: POST
     uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.1/entities/linking?showStats=false
   response:
     body:
-      string: '{"documents":[{"id":"0","entities":[],"warnings":[]},{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]},{"id":"4","entities":[],"warnings":[]},{"id":"5","entities":[],"warnings":[]}],"errors":[{"id":"","error":{"code":"InvalidRequest","message":"The
-        request has exceeded the allowed document limits.","innererror":{"code":"InvalidDocumentBatch","message":"The
-        number of documents in the request have exceeded the data limitations. See
-        https://aka.ms/text-analytics-data-limits for additional information"}}}],"modelVersion":"2020-02-01"}'
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocumentBatch","message":"Batch
+        request contains too many records. Max 5 records are permitted."}}}'
     headers:
-      apim-request-id: 20eaf457-826e-4ef8-a088-f6c242a4cc61
+      apim-request-id: f0e9e45e-7a90-4b71-8366-c5cf0c4c4d14
       content-type: application/json; charset=utf-8
-      csp-billing-usage: CognitiveServices.TextAnalytics.BatchScoring=6
-      date: Fri, 24 Jul 2020 16:32:55 GMT
+      date: Tue, 04 Aug 2020 21:24:47 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '21'
+      x-envoy-upstream-service-time: '4'
     status:
-      code: 200
-      message: OK
+      code: 400
+      message: Bad Request
     url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.1/entities/linking?showStats=false
 version: 1

@@ -9,7 +9,7 @@ import datetime
 import msrest
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.servicebus.aio.management import ServiceBusManagementClient
-from azure.servicebus.management import QueueDescription
+from azure.servicebus.management import QueueProperties
 from azure.servicebus.aio import ServiceBusSharedKeyCredential
 from azure.servicebus._common.utils import utc_now
 
@@ -214,13 +214,8 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
             await mgmt_service.create_queue(Exception())
 
         with pytest.raises(msrest.exceptions.ValidationError):
-            await mgmt_service.create_queue(QueueDescription(name=Exception()))
-
-        with pytest.raises(msrest.exceptions.ValidationError):
             await mgmt_service.create_queue('')
 
-        with pytest.raises(msrest.exceptions.ValidationError):
-            await mgmt_service.create_queue(QueueDescription(name=''))
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
@@ -228,7 +223,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_queues(mgmt_service)
         queue_name = "dkldf"
-        await mgmt_service.create_queue(QueueDescription(name=queue_name,
+        await mgmt_service.create_queue(queue_name,
                                                     auto_delete_on_idle=datetime.timedelta(minutes=10),
                                                     dead_lettering_on_message_expiration=True, 
                                                     default_message_time_to_live=datetime.timedelta(minutes=11),
@@ -243,7 +238,7 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
                                                     #requires_duplicate_detection=True, 
                                                     requires_session=True,
                                                     support_ordering=True
-                                                    ))
+                                                    )
         try:
             queue = await mgmt_service.get_queue(queue_name)
             assert queue.name == queue_name
@@ -392,16 +387,15 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         info = queues_infos[0]
 
         assert info.size_in_bytes == 0
+        assert info.created_at is not None
         assert info.accessed_at is not None
         assert info.updated_at is not None
-        assert info.message_count == 0
-
-        assert info.message_count_details
-        assert info.message_count_details.active_message_count == 0
-        assert info.message_count_details.dead_letter_message_count == 0
-        assert info.message_count_details.transfer_dead_letter_message_count == 0
-        assert info.message_count_details.transfer_message_count == 0
-        assert info.message_count_details.scheduled_message_count == 0
+        assert info.total_message_count == 0
+        assert info.active_message_count == 0
+        assert info.dead_letter_message_count == 0
+        assert info.transfer_dead_letter_message_count == 0
+        assert info.transfer_message_count == 0
+        assert info.scheduled_message_count == 0
 
         await mgmt_service.delete_queue("test_queue")
         queues_infos = await async_pageable_to_list(mgmt_service.list_queues_runtime_info())
@@ -435,14 +429,12 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         assert queue_runtime_info.created_at is not None
         assert queue_runtime_info.accessed_at is not None
         assert queue_runtime_info.updated_at is not None
-        assert queue_runtime_info.message_count == 0
-
-        assert queue_runtime_info.message_count_details
-        assert queue_runtime_info.message_count_details.active_message_count == 0
-        assert queue_runtime_info.message_count_details.dead_letter_message_count == 0
-        assert queue_runtime_info.message_count_details.transfer_dead_letter_message_count == 0
-        assert queue_runtime_info.message_count_details.transfer_message_count == 0
-        assert queue_runtime_info.message_count_details.scheduled_message_count == 0
+        assert queue_runtime_info.total_message_count == 0
+        assert queue_runtime_info.active_message_count == 0
+        assert queue_runtime_info.dead_letter_message_count == 0
+        assert queue_runtime_info.transfer_dead_letter_message_count == 0
+        assert queue_runtime_info.transfer_message_count == 0
+        assert queue_runtime_info.scheduled_message_count == 0
         await mgmt_service.delete_queue("test_queue")
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

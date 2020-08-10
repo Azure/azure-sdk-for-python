@@ -27,7 +27,7 @@ import asyncio
 class RecognizeEntitiesSampleAsync(object):
 
     async def recognize_entities_async(self):
-        # [START batch_recognize_entities_async]
+        # [START recognize_entities_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -49,9 +49,12 @@ class RecognizeEntitiesSampleAsync(object):
         for idx, doc in enumerate(docs):
             print("\nDocument text: {}".format(documents[idx]))
             for entity in doc.entities:
-                print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
-                      "\tConfidence Score: \t", entity.confidence_score)
-        # [END batch_recognize_entities_async]
+                print("Entity: {}".format(entity.text))
+                print("...Category: {}".format(entity.category))
+                print("...Confidence Score: {}".format(entity.confidence_score))
+                print("...Offset: {}".format(entity.offset))
+                print("...Length: {}".format(entity.length))
+        # [END recognize_entities_async]
 
 
 async def main():

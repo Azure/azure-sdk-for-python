@@ -17,7 +17,6 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     TextDocumentInput,
     VERSION,
-    ApiVersion
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -54,6 +53,8 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
+                self.assertIsNotNone(entity.offset)
+                self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -78,12 +79,16 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
+                self.assertIsNotNone(entity.offset)
+                self.assertIsNotNone(entity.length)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     async def test_length_with_emoji(self, client):
-        result = await client.recognize_pii_entities(["👩 SSN: 123-12-1234"])
+        result = await client.recognize_pii_entities(["👩 SSN: 859-98-0987"])
+        self.assertEqual(result[0].entities[0].offset, 7)
+        self.assertEqual(result[0].entities[0].length, 11)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -137,7 +142,7 @@ class TestRecognizePIIEntities(AsyncTextAnalyticsTest):
             await client.recognize_pii_entities(docs)
         assert excinfo.value.status_code == 400
         assert excinfo.value.error.code == "InvalidDocumentBatch"
-        assert "(InvalidDocumentBatch) The number of documents in the request have exceeded the data limitations" in str(excinfo.value)
+        assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

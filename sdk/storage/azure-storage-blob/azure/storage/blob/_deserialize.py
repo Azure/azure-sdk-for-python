@@ -14,7 +14,7 @@ from ._models import BlobProperties, ContainerProperties, BlobAnalyticsLogging, 
     StaticWebsite, ObjectReplicationPolicy, ObjectReplicationRule
 
 if TYPE_CHECKING:
-    from azure.storage.blob._generated.models import PageList
+    from ._generated.models import PageList
 
 
 def deserialize_blob_properties(response, obj, headers):

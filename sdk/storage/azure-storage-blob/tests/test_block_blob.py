@@ -10,7 +10,7 @@ import unittest
 import pytest
 import uuid
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
@@ -22,7 +22,7 @@ from azure.storage.blob import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -57,10 +57,10 @@ class StorageBlockBlobTest(StorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    def _create_blob(self):
+    def _create_blob(self, tags=None):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(b'')
+        blob.upload_blob(b'', tags=tags)
         return blob
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
@@ -202,13 +202,17 @@ class StorageBlockBlobTest(StorageTestCase):
         blob_properties = blob_client.get_blob_properties()
         self.assertEqual(blob_properties.blob_tier, blob_tier)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     def test_get_block_list_no_blocks(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        blob = self._create_blob()
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        blob = self._create_blob(tags=tags)
 
         # Act
-        block_list = blob.get_block_list('all')
+        with self.assertRaises(ResourceModifiedError):
+            blob.get_block_list('all', if_tags_match_condition="\"condition tag\"='wrong tag'")
+        block_list = blob.get_block_list('all', if_tags_match_condition="\"tag1\"='firsttag'")
 
         # Assert
         self.assertIsNotNone(block_list)
