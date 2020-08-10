@@ -33,8 +33,8 @@ from .._deserialize import deserialize_container_properties
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version
 from .._container_client import ContainerClient as ContainerClientBase, _get_blob_name
 from .._lease import get_access_conditions
-from .._models import ContainerProperties, BlobProperties, BlobType  # pylint: disable=unused-import
-from ._models import BlobPropertiesPaged, BlobPrefix
+from .._models import ContainerProperties, BlobType, BlobProperties  # pylint: disable=unused-import
+from ._list_blobs_helper import BlobPropertiesPaged, BlobPrefix
 from ._lease_async import BlobLeaseClient
 from ._blob_client_async import BlobClient
 
