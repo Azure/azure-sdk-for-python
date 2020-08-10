@@ -23,6 +23,9 @@ parameters:
 - name: SkipPythonVersion
   type: string
   default: ''
+- name: AdditionalTestMatrix
+  type: object
+  default: []
 
 stages:
   - stage: Build
@@ -34,6 +37,7 @@ stages:
         BuildDocs: ${{parameters.BuildDocs}}
         InjectedPackages: ${{parameters.InjectedPackages}}
         SkipPythonVersion: ${{parameters.SkipPythonVersion}}
+        AdditionalTestMatrix: ${{parameters.AdditionalTestMatrix}}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:

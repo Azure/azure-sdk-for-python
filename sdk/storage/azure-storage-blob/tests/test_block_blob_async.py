@@ -11,11 +11,11 @@ import pytest
 import asyncio
 import uuid
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import GlobalStorageAccountPreparer
+from _shared.testcase import GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 from _shared.asynctestcase import AsyncStorageTestCase
 
 from azure.storage.blob import (
@@ -77,10 +77,10 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    async def _create_blob(self):
+    async def _create_blob(self, tags=None):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        await blob.upload_blob(b'')
+        await blob.upload_blob(b'', tags=tags)
         return blob
 
     async def assertBlobEqual(self, container_name, blob_name, expected_data):
@@ -237,15 +237,19 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         blob_properties = await blob_client.get_blob_properties()
         self.assertEqual(blob_properties.blob_tier, blob_tier)
 
-    @GlobalStorageAccountPreparer()
+    @GlobalResourceGroupPreparer()
+    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_block_list_no_blocks(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         await self._setup(storage_account, storage_account_key)
-        blob = await self._create_blob()
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        blob = await self._create_blob(tags=tags)
 
         # Act
-        block_list = await blob.get_block_list('all')
+        with self.assertRaises(ResourceModifiedError):
+            await blob.get_block_list('all', if_tags_match_condition="\"condition tag\"='wrong tag'")
+        block_list = await blob.get_block_list('all', if_tags_match_condition="\"tag1\"='firsttag'")
 
         # Assert
         self.assertIsNotNone(block_list)
