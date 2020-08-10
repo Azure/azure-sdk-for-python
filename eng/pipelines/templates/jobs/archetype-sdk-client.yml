@@ -39,7 +39,7 @@ parameters:
       PythonVersion: 'pypy3'
       CoverageArg: '--disablecov'
       RunForPR: false
-    AdditionalTestMatrix: []
+  AdditionalTestMatrix: []
 
 jobs:
   - job: 'Build'
