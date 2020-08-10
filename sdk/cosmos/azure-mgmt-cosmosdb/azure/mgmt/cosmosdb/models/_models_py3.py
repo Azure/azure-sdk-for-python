@@ -957,6 +957,51 @@ class ContinuousModeBackupPolicy(BackupPolicy):
         self.type = 'Continuous'
 
 
+class CorsPolicy(Model):
+    """The CORS policy for the Cosmos DB database account.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param allowed_origins: Required. The origin domains that are permitted to
+     make a request against the service via CORS.
+    :type allowed_origins: str
+    :param allowed_methods: The methods (HTTP request verbs) that the origin
+     domain may use for a CORS request.
+    :type allowed_methods: str
+    :param allowed_headers: The request headers that the origin domain may
+     specify on the CORS request.
+    :type allowed_headers: str
+    :param exposed_headers: The response headers that may be sent in the
+     response to the CORS request and exposed by the browser to the request
+     issuer.
+    :type exposed_headers: str
+    :param max_age_in_seconds: The maximum amount time that a browser should
+     cache the preflight OPTIONS request.
+    :type max_age_in_seconds: long
+    """
+
+    _validation = {
+        'allowed_origins': {'required': True},
+        'max_age_in_seconds': {'maximum': 2147483647, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'allowed_origins': {'key': 'allowedOrigins', 'type': 'str'},
+        'allowed_methods': {'key': 'allowedMethods', 'type': 'str'},
+        'allowed_headers': {'key': 'allowedHeaders', 'type': 'str'},
+        'exposed_headers': {'key': 'exposedHeaders', 'type': 'str'},
+        'max_age_in_seconds': {'key': 'maxAgeInSeconds', 'type': 'long'},
+    }
+
+    def __init__(self, *, allowed_origins: str, allowed_methods: str=None, allowed_headers: str=None, exposed_headers: str=None, max_age_in_seconds: int=None, **kwargs) -> None:
+        super(CorsPolicy, self).__init__(**kwargs)
+        self.allowed_origins = allowed_origins
+        self.allowed_methods = allowed_methods
+        self.allowed_headers = allowed_headers
+        self.exposed_headers = exposed_headers
+        self.max_age_in_seconds = max_age_in_seconds
+
+
 class CreateUpdateOptions(Model):
     """CreateUpdateOptions are a list of key-value pairs that describe the
     resource. Supported keys are "If-Match", "If-None-Match", "Session-Token"
@@ -1128,6 +1173,8 @@ class DatabaseAccountCreateUpdateProperties(Model):
     :param backup_policy: The object representing the policy for taking
      backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     :param create_mode: Required. Constant filled by server.
     :type create_mode: str
     """
@@ -1157,6 +1204,7 @@ class DatabaseAccountCreateUpdateProperties(Model):
         'api_properties': {'key': 'apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'enableAnalyticalStorage', 'type': 'bool'},
         'backup_policy': {'key': 'backupPolicy', 'type': 'BackupPolicy'},
+        'cors': {'key': 'cors', 'type': '[CorsPolicy]'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
     }
 
@@ -1166,7 +1214,7 @@ class DatabaseAccountCreateUpdateProperties(Model):
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, *, locations, consistency_policy=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, backup_policy=None, **kwargs) -> None:
+    def __init__(self, *, locations, consistency_policy=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, backup_policy=None, cors=None, **kwargs) -> None:
         super(DatabaseAccountCreateUpdateProperties, self).__init__(**kwargs)
         self.consistency_policy = consistency_policy
         self.locations = locations
@@ -1185,6 +1233,7 @@ class DatabaseAccountCreateUpdateProperties(Model):
         self.api_properties = api_properties
         self.enable_analytical_storage = enable_analytical_storage
         self.backup_policy = backup_policy
+        self.cors = cors
         self.create_mode = None
 
 
@@ -1293,6 +1342,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param backup_policy: The object representing the policy for taking
      backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     """
@@ -1347,10 +1398,11 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'restore_parameters': {'key': 'properties.restoreParameters', 'type': 'RestoreParameters'},
         'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
+        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, identity=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, create_mode="Default", restore_parameters=None, backup_policy=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, identity=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, create_mode="Default", restore_parameters=None, backup_policy=None, cors=None, **kwargs) -> None:
         super(DatabaseAccountGetResults, self).__init__(location=location, tags=tags, identity=identity, **kwargs)
         self.kind = kind
         self.provisioning_state = provisioning_state
@@ -1380,6 +1432,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.create_mode = create_mode
         self.restore_parameters = restore_parameters
         self.backup_policy = backup_policy
+        self.cors = cors
         self.system_data = None
 
 
@@ -1553,6 +1606,8 @@ class DatabaseAccountUpdateParameters(Model):
     :param backup_policy: The object representing the policy for taking
      backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     """
 
     _attribute_map = {
@@ -1575,9 +1630,10 @@ class DatabaseAccountUpdateParameters(Model):
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
         'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
+        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, backup_policy=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, consistency_policy=None, locations=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, backup_policy=None, cors=None, **kwargs) -> None:
         super(DatabaseAccountUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -1598,6 +1654,7 @@ class DatabaseAccountUpdateParameters(Model):
         self.api_properties = api_properties
         self.enable_analytical_storage = enable_analytical_storage
         self.backup_policy = backup_policy
+        self.cors = cors
 
 
 class DatabaseRestoreResource(Model):
@@ -1682,6 +1739,8 @@ class DefaultRequestDatabaseAccountCreateUpdateProperties(DatabaseAccountCreateU
     :param backup_policy: The object representing the policy for taking
      backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     :param create_mode: Required. Constant filled by server.
     :type create_mode: str
     """
@@ -1711,11 +1770,12 @@ class DefaultRequestDatabaseAccountCreateUpdateProperties(DatabaseAccountCreateU
         'api_properties': {'key': 'apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'enableAnalyticalStorage', 'type': 'bool'},
         'backup_policy': {'key': 'backupPolicy', 'type': 'BackupPolicy'},
+        'cors': {'key': 'cors', 'type': '[CorsPolicy]'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
     }
 
-    def __init__(self, *, locations, consistency_policy=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, backup_policy=None, **kwargs) -> None:
-        super(DefaultRequestDatabaseAccountCreateUpdateProperties, self).__init__(consistency_policy=consistency_policy, locations=locations, ip_rules=ip_rules, is_virtual_network_filter_enabled=is_virtual_network_filter_enabled, enable_automatic_failover=enable_automatic_failover, capabilities=capabilities, virtual_network_rules=virtual_network_rules, enable_multiple_write_locations=enable_multiple_write_locations, enable_cassandra_connector=enable_cassandra_connector, connector_offer=connector_offer, disable_key_based_metadata_write_access=disable_key_based_metadata_write_access, key_vault_key_uri=key_vault_key_uri, public_network_access=public_network_access, enable_free_tier=enable_free_tier, api_properties=api_properties, enable_analytical_storage=enable_analytical_storage, backup_policy=backup_policy, **kwargs)
+    def __init__(self, *, locations, consistency_policy=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, backup_policy=None, cors=None, **kwargs) -> None:
+        super(DefaultRequestDatabaseAccountCreateUpdateProperties, self).__init__(consistency_policy=consistency_policy, locations=locations, ip_rules=ip_rules, is_virtual_network_filter_enabled=is_virtual_network_filter_enabled, enable_automatic_failover=enable_automatic_failover, capabilities=capabilities, virtual_network_rules=virtual_network_rules, enable_multiple_write_locations=enable_multiple_write_locations, enable_cassandra_connector=enable_cassandra_connector, connector_offer=connector_offer, disable_key_based_metadata_write_access=disable_key_based_metadata_write_access, key_vault_key_uri=key_vault_key_uri, public_network_access=public_network_access, enable_free_tier=enable_free_tier, api_properties=api_properties, enable_analytical_storage=enable_analytical_storage, backup_policy=backup_policy, cors=cors, **kwargs)
         self.create_mode = 'Default'
 
 
@@ -4009,6 +4069,8 @@ class RestoreReqeustDatabaseAccountCreateUpdateProperties(DatabaseAccountCreateU
     :param backup_policy: The object representing the policy for taking
      backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     :param create_mode: Required. Constant filled by server.
     :type create_mode: str
     :param restore_parameters: Parameters to indicate the information about
@@ -4041,12 +4103,13 @@ class RestoreReqeustDatabaseAccountCreateUpdateProperties(DatabaseAccountCreateU
         'api_properties': {'key': 'apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'enableAnalyticalStorage', 'type': 'bool'},
         'backup_policy': {'key': 'backupPolicy', 'type': 'BackupPolicy'},
+        'cors': {'key': 'cors', 'type': '[CorsPolicy]'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
         'restore_parameters': {'key': 'restoreParameters', 'type': 'RestoreParameters'},
     }
 
-    def __init__(self, *, locations, consistency_policy=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, backup_policy=None, restore_parameters=None, **kwargs) -> None:
-        super(RestoreReqeustDatabaseAccountCreateUpdateProperties, self).__init__(consistency_policy=consistency_policy, locations=locations, ip_rules=ip_rules, is_virtual_network_filter_enabled=is_virtual_network_filter_enabled, enable_automatic_failover=enable_automatic_failover, capabilities=capabilities, virtual_network_rules=virtual_network_rules, enable_multiple_write_locations=enable_multiple_write_locations, enable_cassandra_connector=enable_cassandra_connector, connector_offer=connector_offer, disable_key_based_metadata_write_access=disable_key_based_metadata_write_access, key_vault_key_uri=key_vault_key_uri, public_network_access=public_network_access, enable_free_tier=enable_free_tier, api_properties=api_properties, enable_analytical_storage=enable_analytical_storage, backup_policy=backup_policy, **kwargs)
+    def __init__(self, *, locations, consistency_policy=None, ip_rules=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, disable_key_based_metadata_write_access: bool=None, key_vault_key_uri: str=None, public_network_access=None, enable_free_tier: bool=None, api_properties=None, enable_analytical_storage: bool=None, backup_policy=None, cors=None, restore_parameters=None, **kwargs) -> None:
+        super(RestoreReqeustDatabaseAccountCreateUpdateProperties, self).__init__(consistency_policy=consistency_policy, locations=locations, ip_rules=ip_rules, is_virtual_network_filter_enabled=is_virtual_network_filter_enabled, enable_automatic_failover=enable_automatic_failover, capabilities=capabilities, virtual_network_rules=virtual_network_rules, enable_multiple_write_locations=enable_multiple_write_locations, enable_cassandra_connector=enable_cassandra_connector, connector_offer=connector_offer, disable_key_based_metadata_write_access=disable_key_based_metadata_write_access, key_vault_key_uri=key_vault_key_uri, public_network_access=public_network_access, enable_free_tier=enable_free_tier, api_properties=api_properties, enable_analytical_storage=enable_analytical_storage, backup_policy=backup_policy, cors=cors, **kwargs)
         self.restore_parameters = restore_parameters
         self.create_mode = 'Restore'
 

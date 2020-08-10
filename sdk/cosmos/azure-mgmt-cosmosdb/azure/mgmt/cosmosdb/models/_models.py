@@ -957,6 +957,51 @@ class ContinuousModeBackupPolicy(BackupPolicy):
         self.type = 'Continuous'
 
 
+class CorsPolicy(Model):
+    """The CORS policy for the Cosmos DB database account.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param allowed_origins: Required. The origin domains that are permitted to
+     make a request against the service via CORS.
+    :type allowed_origins: str
+    :param allowed_methods: The methods (HTTP request verbs) that the origin
+     domain may use for a CORS request.
+    :type allowed_methods: str
+    :param allowed_headers: The request headers that the origin domain may
+     specify on the CORS request.
+    :type allowed_headers: str
+    :param exposed_headers: The response headers that may be sent in the
+     response to the CORS request and exposed by the browser to the request
+     issuer.
+    :type exposed_headers: str
+    :param max_age_in_seconds: The maximum amount time that a browser should
+     cache the preflight OPTIONS request.
+    :type max_age_in_seconds: long
+    """
+
+    _validation = {
+        'allowed_origins': {'required': True},
+        'max_age_in_seconds': {'maximum': 2147483647, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'allowed_origins': {'key': 'allowedOrigins', 'type': 'str'},
+        'allowed_methods': {'key': 'allowedMethods', 'type': 'str'},
+        'allowed_headers': {'key': 'allowedHeaders', 'type': 'str'},
+        'exposed_headers': {'key': 'exposedHeaders', 'type': 'str'},
+        'max_age_in_seconds': {'key': 'maxAgeInSeconds', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CorsPolicy, self).__init__(**kwargs)
+        self.allowed_origins = kwargs.get('allowed_origins', None)
+        self.allowed_methods = kwargs.get('allowed_methods', None)
+        self.allowed_headers = kwargs.get('allowed_headers', None)
+        self.exposed_headers = kwargs.get('exposed_headers', None)
+        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', None)
+
+
 class CreateUpdateOptions(Model):
     """CreateUpdateOptions are a list of key-value pairs that describe the
     resource. Supported keys are "If-Match", "If-None-Match", "Session-Token"
@@ -1128,6 +1173,8 @@ class DatabaseAccountCreateUpdateProperties(Model):
     :param backup_policy: The object representing the policy for taking
      backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     :param create_mode: Required. Constant filled by server.
     :type create_mode: str
     """
@@ -1157,6 +1204,7 @@ class DatabaseAccountCreateUpdateProperties(Model):
         'api_properties': {'key': 'apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'enableAnalyticalStorage', 'type': 'bool'},
         'backup_policy': {'key': 'backupPolicy', 'type': 'BackupPolicy'},
+        'cors': {'key': 'cors', 'type': '[CorsPolicy]'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
     }
 
@@ -1185,6 +1233,7 @@ class DatabaseAccountCreateUpdateProperties(Model):
         self.api_properties = kwargs.get('api_properties', None)
         self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
         self.backup_policy = kwargs.get('backup_policy', None)
+        self.cors = kwargs.get('cors', None)
         self.create_mode = None
 
 
@@ -1293,6 +1342,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):
     :param backup_policy: The object representing the policy for taking
      backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     """
@@ -1347,6 +1398,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'restore_parameters': {'key': 'properties.restoreParameters', 'type': 'RestoreParameters'},
         'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
+        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
@@ -1380,6 +1432,7 @@ class DatabaseAccountGetResults(ARMResourceProperties):
         self.create_mode = kwargs.get('create_mode', "Default")
         self.restore_parameters = kwargs.get('restore_parameters', None)
         self.backup_policy = kwargs.get('backup_policy', None)
+        self.cors = kwargs.get('cors', None)
         self.system_data = None
 
 
@@ -1553,6 +1606,8 @@ class DatabaseAccountUpdateParameters(Model):
     :param backup_policy: The object representing the policy for taking
      backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     """
 
     _attribute_map = {
@@ -1575,6 +1630,7 @@ class DatabaseAccountUpdateParameters(Model):
         'api_properties': {'key': 'properties.apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'properties.enableAnalyticalStorage', 'type': 'bool'},
         'backup_policy': {'key': 'properties.backupPolicy', 'type': 'BackupPolicy'},
+        'cors': {'key': 'properties.cors', 'type': '[CorsPolicy]'},
     }
 
     def __init__(self, **kwargs):
@@ -1598,6 +1654,7 @@ class DatabaseAccountUpdateParameters(Model):
         self.api_properties = kwargs.get('api_properties', None)
         self.enable_analytical_storage = kwargs.get('enable_analytical_storage', None)
         self.backup_policy = kwargs.get('backup_policy', None)
+        self.cors = kwargs.get('cors', None)
 
 
 class DatabaseRestoreResource(Model):
@@ -1682,6 +1739,8 @@ class DefaultRequestDatabaseAccountCreateUpdateProperties(DatabaseAccountCreateU
     :param backup_policy: The object representing the policy for taking
      backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     :param create_mode: Required. Constant filled by server.
     :type create_mode: str
     """
@@ -1711,6 +1770,7 @@ class DefaultRequestDatabaseAccountCreateUpdateProperties(DatabaseAccountCreateU
         'api_properties': {'key': 'apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'enableAnalyticalStorage', 'type': 'bool'},
         'backup_policy': {'key': 'backupPolicy', 'type': 'BackupPolicy'},
+        'cors': {'key': 'cors', 'type': '[CorsPolicy]'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
     }
 
@@ -4009,6 +4069,8 @@ class RestoreReqeustDatabaseAccountCreateUpdateProperties(DatabaseAccountCreateU
     :param backup_policy: The object representing the policy for taking
      backups on an account.
     :type backup_policy: ~azure.mgmt.cosmosdb.models.BackupPolicy
+    :param cors: The CORS policy for the Cosmos DB database account.
+    :type cors: list[~azure.mgmt.cosmosdb.models.CorsPolicy]
     :param create_mode: Required. Constant filled by server.
     :type create_mode: str
     :param restore_parameters: Parameters to indicate the information about
@@ -4041,6 +4103,7 @@ class RestoreReqeustDatabaseAccountCreateUpdateProperties(DatabaseAccountCreateU
         'api_properties': {'key': 'apiProperties', 'type': 'ApiProperties'},
         'enable_analytical_storage': {'key': 'enableAnalyticalStorage', 'type': 'bool'},
         'backup_policy': {'key': 'backupPolicy', 'type': 'BackupPolicy'},
+        'cors': {'key': 'cors', 'type': '[CorsPolicy]'},
         'create_mode': {'key': 'createMode', 'type': 'str'},
         'restore_parameters': {'key': 'restoreParameters', 'type': 'RestoreParameters'},
     }
