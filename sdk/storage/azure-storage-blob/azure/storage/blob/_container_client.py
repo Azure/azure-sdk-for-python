@@ -1191,7 +1191,7 @@ class ContainerClient(StorageAccountHostsMixin):
         return self._batch_send(*reqs, **options)
 
     def _generate_set_tiers_subrequest_options(
-        self, tier, rehydrate_priority=None, lease_access_conditions=None, **kwargs
+        self, tier, snapshot=None, version_id=None, rehydrate_priority=None, lease_access_conditions=None, **kwargs
     ):
         """This code is a copy from _generated.
 
@@ -1199,6 +1199,8 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         if not tier:
             raise ValueError("A blob tier must be specified")
+        if snapshot and version_id:
+            raise ValueError("Snapshot and version_id cannot be set at the same time")
         if_tags = kwargs.pop('if_tags', None)
 
         lease_id = None
@@ -1209,6 +1211,10 @@ class ContainerClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         # Construct parameters
         query_parameters = {}
+        if snapshot is not None:
+            query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')  # pylint: disable=protected-access
+        if version_id is not None:
+            query_parameters['versionid'] = self._client._serialize.query("version_id", version_id, 'str')  # pylint: disable=protected-access
         if timeout is not None:
             query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
         query_parameters['comp'] = self._client._serialize.query("comp", comp, 'str')  # pylint: disable=protected-access, specify-parameter-names-in-call
@@ -1249,6 +1255,8 @@ class ContainerClient(StorageAccountHostsMixin):
                 tier = blob_tier or blob.get('blob_tier')
                 query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(
                     tier=tier,
+                    snapshot=blob.get('snapshot'),
+                    version_id=blob.get('version_id'),
                     rehydrate_priority=rehydrate_priority or blob.get('rehydrate_priority'),
                     lease_access_conditions=blob.get('lease_id'),
                     if_tags=if_tags or blob.get('if_tags_match_condition'),
@@ -1309,6 +1317,10 @@ class ContainerClient(StorageAccountHostsMixin):
                     key: 'rehydrate_priority', value type: RehydratePriority
                 lease:
                     key: 'lease_id', value type: Union[str, LeaseClient]
+                snapshot:
+                    key: "snapshost", value type: str
+                version id:
+                    key: "version_id", value type: str
                 tags match condition:
                     key: 'if_tags_match_condition', value type: str
                 timeout for subrequest:

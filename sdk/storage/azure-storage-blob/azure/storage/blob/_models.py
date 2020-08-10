@@ -466,6 +466,8 @@ class BlobProperties(DictMixin):
         for at least a month. The archive tier is optimized for storing
         data that is rarely accessed and stored for at least six months
         with flexible latency requirements.
+    :ivar str rehydrate_priority:
+        Indicates the priority with which to rehydrate an archived blob
     :ivar ~datetime.datetime blob_tier_change_time:
         Indicates when the access tier was last changed.
     :ivar bool blob_tier_inferred:
@@ -533,6 +535,7 @@ class BlobProperties(DictMixin):
         self.content_settings = ContentSettings(**kwargs)
         self.lease = LeaseProperties(**kwargs)
         self.blob_tier = kwargs.get('x-ms-access-tier')
+        self.rehydrate_priority = kwargs.get('x-ms-rehydrate-priority')
         self.blob_tier_change_time = kwargs.get('x-ms-access-tier-change-time')
         self.blob_tier_inferred = kwargs.get('x-ms-access-tier-inferred')
         self.deleted = False

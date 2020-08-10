@@ -1,12 +1,16 @@
 # Release History
 
-## 1.4.0b8 (Unreleased)
+## 1.4.1 (Unreleased)
+
+
+## 1.4.0 (2020-08-10)
+### Added
 - `DefaultAzureCredential` uses the value of environment variable
 `AZURE_CLIENT_ID` to configure a user-assigned managed identity.
 ([#10931](https://github.com/Azure/azure-sdk-for-python/issues/10931))
-- Renamed `VSCodeCredential` to `VisualStudioCodeCredential`
 
 ### Breaking Changes
+- Renamed `VSCodeCredential` to `VisualStudioCodeCredential`
 - Removed application authentication APIs added in 1.4.0 beta versions. These
   will be reintroduced in 1.5.0b1. Passing the keyword arguments below
   generally won't cause a runtime error, but the arguments have no effect.

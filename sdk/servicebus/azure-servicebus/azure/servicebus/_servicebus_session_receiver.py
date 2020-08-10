@@ -40,7 +40,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
-    :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+    :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
@@ -132,7 +132,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
          sessionful entity, otherwise it must be None. In order to receive messages from the next available
          session, set this to None.  The default is None.
         :paramtype session_id: str
-        :keyword float idle_timeout: The timeout in seconds between received messages after which the receiver will
+        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.

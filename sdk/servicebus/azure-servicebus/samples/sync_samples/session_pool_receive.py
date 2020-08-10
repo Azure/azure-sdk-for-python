@@ -19,7 +19,7 @@ SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
 def message_processing(sb_client, queue_name, messages):
     while True:
         try:
-            with sb_client.get_queue_session_receiver(queue_name, idle_timeout=1) as receiver:
+            with sb_client.get_queue_session_receiver(queue_name, max_wait_time=1) as receiver:
                 renewer = AutoLockRenew()
                 renewer.register(receiver.session)
                 receiver.session.set_session_state("OPEN")
