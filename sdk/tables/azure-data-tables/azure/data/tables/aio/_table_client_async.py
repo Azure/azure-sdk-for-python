@@ -74,7 +74,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         self._loop = loop
 
     @classmethod
-    async def from_connection_string(
+    def from_connection_string(
             cls, conn_str,  # type: str
             table_name,  # type: str
             **kwargs  # type: Any
@@ -97,7 +97,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         return cls(account_url, table_name=table_name, credential=credential, **kwargs)  # type: ignore
 
     @classmethod
-    async def from_table_url(cls, table_url, credential=None, **kwargs):
+    def from_table_url(cls, table_url, credential=None, **kwargs):
         # type: (str, Optional[Any], Any) -> TableClient
         """A client to interact with a specific Table.
 
