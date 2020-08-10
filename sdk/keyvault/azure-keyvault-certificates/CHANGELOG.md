@@ -9,10 +9,11 @@
   are no longer redacted in logging output
 
 ### Changed
-- Key Vault API version 7.1 is now the default 
+- Key Vault API version 7.1 is now the default
 - Updated minimum `azure-core` version to 1.7.0
+- Dependency on `azure-common` for multiapi support
 
-### Added  
+### Added
 - At construction, clients accept a `CustomHookPolicy` through the optional
   keyword argument `custom_hook_policy`
 - All client requests include a unique ID in the header `x-ms-client-request-id`
