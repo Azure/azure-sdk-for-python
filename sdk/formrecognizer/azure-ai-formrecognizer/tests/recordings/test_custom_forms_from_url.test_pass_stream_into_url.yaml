@@ -15,18 +15,18 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/1.0.0b5 Python/3.7.3 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://formrecognizeraccount.cognitiveservices.azure.com/formrecognizer/v2.0/custom/models/xxx/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/custom/models/xxx/analyze?includeTextDetails=false
   response:
     body:
       string: '{"error": {"code": "1001", "message": "Specified model not found or
         not ready, Model Id: xxx"}}'
     headers:
       apim-request-id:
-      - b13513b6-06a3-458a-9199-27a30423309b
+      - db8ecc9f-94cf-48ec-8ec1-629e4cb7fa10
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 07 Aug 2020 21:16:19 GMT
+      - Fri, 10 Jul 2020 18:48:34 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -34,7 +34,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '14'
+      - '13'
     status:
       code: 400
       message: Bad Request
