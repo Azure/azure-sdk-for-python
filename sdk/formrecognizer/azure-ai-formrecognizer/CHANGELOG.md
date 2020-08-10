@@ -6,6 +6,7 @@ The version of this package now targets the service's v2.0 API.
 
 **Breaking Changes**
 
+- Client library version bumped to `3.0.0b1`
 - Values are now capitalized for enums `FormContentType`, `LengthUnit`, `TrainingStatus`, and `CustomFormModelStatus`
 - `document_name` renamed to `name` on `TrainingDocumentInfo`
 - Keyword argument `include_sub_folders` renamed to `include_subfolders` on `begin_training` methods
