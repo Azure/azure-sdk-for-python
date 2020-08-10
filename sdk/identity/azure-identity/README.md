@@ -193,32 +193,32 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 
 |credential|usage
 |-|-
-|`DefaultAzureCredential`|simplified authentication to get started developing applications for the Azure cloud
-|`ChainedTokenCredential`|define custom authentication flows composing multiple credentials
-|`EnvironmentCredential`|authenticate a service principal or user configured by environment variables
-|`ManagedIdentityCredential`|authenticate the managed identity of an Azure resource
+|[DefaultAzureCredential][default_cred_ref]|simplified authentication to get started developing applications for the Azure cloud
+|[ChainedTokenCredential][chain_cred_ref]|define custom authentication flows composing multiple credentials
+|[EnvironmentCredential][environment_cred_ref]|authenticate a service principal or user configured by environment variables
+|[ManagedIdentityCredential][managed_id_cred_ref]|authenticate the managed identity of an Azure resource
 
 ### Authenticating Service Principals
 
 |credential|usage
 |-|-
-|`ClientSecretCredential`| authenticate a service principal using a secret
-|`CertificateCredential`| authenticate a service principal using a certificate
+|[ClientSecretCredential][client_secret_cred_ref]| authenticate a service principal using a secret
+|[CertificateCredential][cert_cred_ref]| authenticate a service principal using a certificate
 
 ### Authenticating Users
 
 |credential|usage
 |-|-
-|`InteractiveBrowserCredential`|interactively authenticate a user with the default web browser
-|`DeviceCodeCredential`| interactively authenticate a user on a device with limited UI
-|`UsernamePasswordCredential`| authenticate a user with a username and password
+|[InteractiveBrowserCredential][interactive_cred_ref]|interactively authenticate a user with the default web browser
+|[DeviceCodeCredential][device_code_cred_ref]| interactively authenticate a user on a device with limited UI
+|[UsernamePasswordCredential][userpass_cred_ref]| authenticate a user with a username and password
 
 ### Authenticating via Development Tools
 
 |credential|usage
 |-|-
-|`AzureCliCredential`|authenticate as the user signed in to the Azure CLI
-|`VisualStudioCodeCredential`|authenticate as the user signed in to the Visual Studio Code Azure Account extension
+|[AzureCliCredential][cli_cred_ref]|authenticate as the user signed in to the Azure CLI
+|[VisualStudioCodeCredential][vscode_cred_ref]|authenticate as the user signed in to the Visual Studio Code Azure Account extension
 
 ## Environment Variables
 
