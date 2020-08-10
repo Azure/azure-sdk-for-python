@@ -90,7 +90,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 or parsed_url.netloc.startswith("127.0.0.1"):
             self.account_name = parsed_url.path.strip("/")
 
-        self.credential = format_shared_key_credential(self.account_name, credential)
+        self.credential = _format_shared_key_credential(self.account_name, credential)
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
 
@@ -331,7 +331,7 @@ class TransportWrapper(HttpTransport):
         pass
 
 
-def format_shared_key_credential(account_name, credential):
+def _format_shared_key_credential(account_name, credential):
     if isinstance(credential, six.string_types):
         if not account_name:
             raise ValueError("Unable to determine account name for shared key credential.")
