@@ -25,6 +25,8 @@
 # PRLabel: %Storage
 /sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft @kasobol-msft
 
+/sdk/appconfiguration/                     							 @xiangyan99      
+
 /sdk/applicationinsights/                                            @alexeldeib      
 
 # PRLabel: %Batch
