@@ -22,9 +22,23 @@ namespace_name = PACKAGE_NAME.replace('-', '.')
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
+try:
+    import azure
+    try:
+        ver = azure.__version__
+        raise Exception(
+            'This package is incompatible with azure=={}. '.format(ver) +
+            'Uninstall it with "pip uninstall azure".'
+        )
+    except AttributeError:
+        pass
+except ImportError:
+    pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+with open(os.path.join(package_folder_path, 'version.py')
+          if os.path.exists(os.path.join(package_folder_path, 'version.py'))
+          else os.path.join(package_folder_path, '_version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
@@ -47,7 +61,7 @@ setup(
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -62,12 +76,12 @@ setup(
     packages=find_packages(exclude=[
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
-        'samples',
         'azure',
     ]),
     install_requires=[
         'msrest>=0.5.0',
-        'azure-core<2.0.0,>=1.7.0',
+        'msrestazure>=0.4.32,<2.0.0',
+        'azure-common~=1.1',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
