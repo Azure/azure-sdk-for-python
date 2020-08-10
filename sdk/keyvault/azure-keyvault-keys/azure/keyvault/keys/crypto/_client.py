@@ -393,8 +393,8 @@ class CryptographyClient(KeyVaultClientBase):
 
         :param algorithm: verification algorithm
         :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`
-        :param bytes digest:
-        :param bytes signature:
+        :param bytes digest: the signed bytes to verify
+        :param bytes signature: the signature we are verifying
         :rtype: :class:`~azure.keyvault.keys.crypto.VerifyResult`
 
         Example:
