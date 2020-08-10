@@ -827,6 +827,20 @@ class StorageContainerTest(StorageTestCase):
 
         self.assertEqual(blobs, ['blob1', 'blob2'])
 
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_returns_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        blob_client = container.get_blob_client('blob1')
+        blob_client.upload_blob(data, standard_blob_tier=StandardBlobTier.Archive)
+        blob_client.set_standard_blob_tier(StandardBlobTier.Hot)
+
+        # Act
+        for blob_properties in container.list_blobs():
+            if blob_properties.name == blob_client.blob_name:
+                self.assertEqual(blob_properties.rehydrate_priority, "Standard")
 
     @GlobalStorageAccountPreparer()
     def test_list_blobs(self, resource_group, location, storage_account, storage_account_key):
@@ -1269,6 +1283,63 @@ class StorageContainerTest(StorageTestCase):
             raise_on_any_failure=False
         )
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
+    @GlobalStorageAccountPreparer()
+    def test_batch_set_standard_blob_tier_for_version(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
+
+        for tier in tiers:
+            response = container.delete_blobs(
+                'blob1',
+                'blob2',
+                'blob3',
+                raise_on_any_failure=False
+            )
+            blob = container.get_blob_client('blob1')
+            blob2 = container.get_blob_client('blob2')
+            blob3 = container.get_blob_client('blob3')
+            data = b'hello world'
+            resp1 = blob.upload_blob(data, overwrite=True)
+            resp2 = blob2.upload_blob(data, overwrite=True)
+            resp3 = blob3.upload_blob(data, overwrite=True)
+            snapshot = blob3.create_snapshot()
+
+            data2 = b'abc'
+            blob.upload_blob(data2, overwrite=True)
+            blob2.upload_blob(data2, overwrite=True)
+            blob3.upload_blob(data2, overwrite=True)
+
+            prop = blob.get_blob_properties()
+
+            parts = container.set_standard_blob_tier_blobs(
+                tier,
+                prop,
+                {'name': 'blob2', 'version_id': resp2['version_id']},
+                {'name': 'blob3', 'snapshot': snapshot['snapshot']},
+                raise_on_any_failure=False
+            )
+
+            parts = list(parts)
+            assert len(parts) == 3
+
+            assert parts[0].status_code in [200, 202]
+            assert parts[1].status_code in [200, 202]
+            assert parts[2].status_code in [200, 202]
+
+            blob_ref2 = blob.get_blob_properties()
+            assert tier == blob_ref2.blob_tier
+            assert not blob_ref2.blob_tier_inferred
+            assert blob_ref2.blob_tier_change_time is not None
+
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            raise_on_any_failure=False
+        )
+        
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_standard_blob_tier_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
