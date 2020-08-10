@@ -8,7 +8,7 @@
 """
 Example to show managing queue entities under a ServiceBus Namespace asynchronously, including
     - Create a queue
-    - Get a queue and runtime information
+    - Get queue properties and runtime information
     - Update a queue
     - Delete a queue
     - List queues under the given ServiceBus Namespace
