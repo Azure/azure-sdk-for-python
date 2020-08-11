@@ -6,6 +6,7 @@ Azure Resource Manager (ARM) is the next generation of management APIs
 that replace the old Azure Service Management (ASM).
 
 This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
+For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 For the older Azure Service Management (ASM) libraries, see
 [azure-servicemanagement-legacy](https://pypi.python.org/pypi/azure-servicemanagement-legacy)
