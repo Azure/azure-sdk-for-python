@@ -4,13 +4,13 @@
 
 Use the Azure Cosmos DB CORE (SQL) API Python SDKs to operate databases, containers, and the JSON documents stored in the [CORE (SQL) API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). 
 
-> These SDKs are used for database administration, application development, or data exploration related to the [CORE (SQL) API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). For all other APIs, please check the [Azure Cosmos DB documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) to evaluate the best SDK for your project.
+> These SDKs are used for the [CORE (SQL) API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). For all other APIs, please check the [Azure Cosmos DB documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) to evaluate the best SDK for your project.
 
 ## Contents of this folder
 
 ### [azure-cosmos](./azure-cosmos)
 
-This is the Azure Cosmos DB CORE (SQL) API SDK for Python, that can be used to manage databases, containers, and the JSON documents they contain in this NoSQL database service. 
+Azure Cosmos DB CORE (SQL) API SDKs for Python developers, data analysts, data engineers, data scientists, and ai engineers.
 
 Key capabilities are:
 
@@ -19,7 +19,7 @@ Key capabilities are:
 + Create, read, update, and delete the items (JSON documents) in your containers
 + Query the documents in your database using SQL-like syntax
 
-Use this package if you are creating an application or exploring data.
+Use this package if you are managing databases and containers, creating an application, or exploring data.
 
 ### [azure-mgmt-cosmosdb](./azure-mgmt-cosmosdb)
 
