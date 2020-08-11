@@ -1,16 +1,16 @@
-# Azure Cosmos DB CORE (SQL) API Python SDKs
+# Azure Cosmos DB SQL API Python SDKs
 
 [Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/) is a globally distributed, fully managed, multi-model NoSQL database service that supports document, key-value, wide-column, and graph databases. For more information, go to https://www.gotcosmos.com/ .
 
-Use the Azure Cosmos DB CORE (SQL) API Python SDKs to operate databases, containers, and the JSON documents stored in the [CORE (SQL) API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). 
+Use the Azure Cosmos DB SQL API Python SDKs to operate databases, containers, and the JSON documents stored in the [CORE (SQL) API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). 
 
-> These SDKs are used for the [CORE (SQL) API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). For all other APIs, please check the [Azure Cosmos DB documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) to evaluate the best SDK for your project.
+> These SDKs are used for the [SQL API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). For all other APIs, please check the [Azure Cosmos DB documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) to evaluate the best SDK for your project.
 
 ## Contents of this folder
 
 ### [azure-cosmos](./azure-cosmos)
 
-Azure Cosmos DB CORE (SQL) API SDKs for Python developers, data analysts, data engineers, data scientists, and ai engineers.
+Azure Cosmos DB SQL API SDKs for Python developers, data analysts, data engineers, data scientists, and ai engineers.
 
 Key capabilities are:
 
