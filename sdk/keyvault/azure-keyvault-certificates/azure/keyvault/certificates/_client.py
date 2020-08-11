@@ -177,10 +177,10 @@ class CertificateClient(KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
-                :start-after: [START get_certificate]
-                :end-before: [END get_certificate]
+                :start-after: [START get_certificate_version]
+                :end-before: [END get_certificate_version]
                 :language: python
-                :caption: Get a certificate
+                :caption: Get a certificate with a specific version
                 :dedent: 8
         """
         bundle = self._client.get_certificate(
