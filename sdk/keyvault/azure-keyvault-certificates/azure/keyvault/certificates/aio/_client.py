@@ -163,6 +163,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START get_certificate_version]
+                :end-before: [END get_certificate_version]
+                :language: python
+                :caption: Get a certificate with a specific version
+                :dedent: 8
         """
         bundle = await self._client.get_certificate(
             vault_base_url=self.vault_url,
