@@ -239,8 +239,6 @@ deleted_certificate_poller = certificate_client.begin_delete_certificate("cert-n
 deleted_certificate = deleted_certificate_poller.result()
 print(deleted_certificate.name)
 print(deleted_certificate.deleted_on)
-
-deleted_certificate_poller.wait()
 ```
 ### List properties of Certificates
 [list_properties_of_certificates](https://aka.ms/azsdk/python/keyvault-certificates/docs#azure.keyvault.certificates.CertificateClient.list_properties_of_certificates)
