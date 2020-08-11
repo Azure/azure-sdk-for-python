@@ -36,7 +36,7 @@ cloud_storage_dict = {
     "specversion":"1.0"
 }
 cloud_storage_string = json.dumps(cloud_storage_dict)
-cloud_storage_bytes = bytes(cloud_storage_string, "utf-8")
+cloud_storage_bytes = cloud_storage_string.encode("utf-8")
 
 # custom cloud event
 cloud_custom_dict = {
@@ -48,7 +48,7 @@ cloud_custom_dict = {
     "specversion":"1.0"
 }
 cloud_custom_string = json.dumps(cloud_custom_dict)
-cloud_custom_bytes = bytes(cloud_custom_string, "utf-8")
+cloud_custom_bytes = cloud_custom_string.encode("utf-8")
 
 # storage eg event
 eg_storage_dict = {
@@ -74,7 +74,7 @@ eg_storage_dict = {
 }
 
 eg_storage_string = json.dumps(eg_storage_dict)
-eg_storage_bytes = bytes(eg_storage_string, "utf-8")
+eg_storage_bytes = eg_storage_string.encode("utf-8")
 
 # custom eg event
 eg_custom_dict = {
@@ -88,7 +88,7 @@ eg_custom_dict = {
     "topic":"/subscriptions/f8aa80ae-d1c8-60ad-9bce-e1a850ba5b67/resourceGroups/sample-resource-group-test/providers/Microsoft.EventGrid/topics/egtopicsamplesub"
 }
 eg_custom_string = json.dumps(eg_custom_dict)
-eg_custom_bytes = bytes(eg_custom_string, "utf-8")
+eg_custom_bytes = eg_custom_string.encode("utf-8")
 
 class EventGridConsumerTests(AzureMgmtTestCase):
 
