@@ -129,3 +129,29 @@ class DataFlowDebugSessionInfoPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(DataFlowDebugSessionInfoPaged, self).__init__(*args, **kwargs)
+class ManagedVirtualNetworkResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ManagedVirtualNetworkResource <azure.mgmt.datafactory.models.ManagedVirtualNetworkResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagedVirtualNetworkResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ManagedVirtualNetworkResourcePaged, self).__init__(*args, **kwargs)
+class ManagedPrivateEndpointResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ManagedPrivateEndpointResource <azure.mgmt.datafactory.models.ManagedPrivateEndpointResource>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagedPrivateEndpointResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ManagedPrivateEndpointResourcePaged, self).__init__(*args, **kwargs)
