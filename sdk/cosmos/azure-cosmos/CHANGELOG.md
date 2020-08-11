@@ -1,3 +1,5 @@
+# Azure Cosmos DB CORE (SQL) API Python SDK Releases
+
 ## 4.1.0 (2020-08-10)
 
 - Added deprecation warning for "lazy" indexing mode. The backend no longer allows creating containers with this mode and will set them to consistent instead.
