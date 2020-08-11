@@ -1,5 +1,19 @@
 # Release History
 
+## 0.12.0 (2020-07-30)
+
+**Features**
+
+  - Model ActiveDirectory has a new parameter backup_operators
+  - Model VolumePropertiesDataProtection has a new parameter snapshot
+  - Model Volume has a new parameter snapshot_directory_visible
+
+**Breaking changes**
+
+  - Operation SnapshotsOperations.create has a new signature
+  - Model Snapshot no longer has parameter file_system_id
+
+
 ## 0.11.0 (2020-07-09)
 
 **Breaking changes**
