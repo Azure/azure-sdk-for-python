@@ -184,7 +184,7 @@ class AlertsOperations(object):
         :rtype:
          ~azure.mgmt.alertsmanagement.models.AlertPaged[~azure.mgmt.alertsmanagement.models.Alert]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
+         :class:`AlertsManagementErrorResponseException<azure.mgmt.alertsmanagement.models.AlertsManagementErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -257,7 +257,7 @@ class AlertsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.AlertsManagementErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -287,7 +287,7 @@ class AlertsOperations(object):
         :rtype: ~azure.mgmt.alertsmanagement.models.Alert or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
+         :class:`AlertsManagementErrorResponseException<azure.mgmt.alertsmanagement.models.AlertsManagementErrorResponseException>`
         """
         # Construct URL
         url = self.get_by_id.metadata['url']
@@ -316,7 +316,7 @@ class AlertsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.AlertsManagementErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -347,7 +347,7 @@ class AlertsOperations(object):
         :rtype: ~azure.mgmt.alertsmanagement.models.Alert or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
+         :class:`AlertsManagementErrorResponseException<azure.mgmt.alertsmanagement.models.AlertsManagementErrorResponseException>`
         """
         # Construct URL
         url = self.change_state.metadata['url']
@@ -377,7 +377,7 @@ class AlertsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.AlertsManagementErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -407,7 +407,7 @@ class AlertsOperations(object):
         :rtype: ~azure.mgmt.alertsmanagement.models.AlertModification or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
+         :class:`AlertsManagementErrorResponseException<azure.mgmt.alertsmanagement.models.AlertsManagementErrorResponseException>`
         """
         # Construct URL
         url = self.get_history.metadata['url']
@@ -436,7 +436,7 @@ class AlertsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.AlertsManagementErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -517,7 +517,7 @@ class AlertsOperations(object):
         :rtype: ~azure.mgmt.alertsmanagement.models.AlertsSummary or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
+         :class:`AlertsManagementErrorResponseException<azure.mgmt.alertsmanagement.models.AlertsManagementErrorResponseException>`
         """
         # Construct URL
         url = self.get_summary.metadata['url']
@@ -568,7 +568,7 @@ class AlertsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.AlertsManagementErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:

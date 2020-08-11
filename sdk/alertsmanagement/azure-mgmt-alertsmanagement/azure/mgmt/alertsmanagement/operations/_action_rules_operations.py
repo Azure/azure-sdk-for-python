@@ -86,7 +86,7 @@ class ActionRulesOperations(object):
         :rtype:
          ~azure.mgmt.alertsmanagement.models.ActionRulePaged[~azure.mgmt.alertsmanagement.models.ActionRule]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
+         :class:`AlertsManagementErrorResponseException<azure.mgmt.alertsmanagement.models.AlertsManagementErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -145,7 +145,7 @@ class ActionRulesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.AlertsManagementErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -210,7 +210,7 @@ class ActionRulesOperations(object):
         :rtype:
          ~azure.mgmt.alertsmanagement.models.ActionRulePaged[~azure.mgmt.alertsmanagement.models.ActionRule]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
+         :class:`AlertsManagementErrorResponseException<azure.mgmt.alertsmanagement.models.AlertsManagementErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -270,7 +270,7 @@ class ActionRulesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.AlertsManagementErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -304,7 +304,7 @@ class ActionRulesOperations(object):
         :rtype: ~azure.mgmt.alertsmanagement.models.ActionRule or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
+         :class:`AlertsManagementErrorResponseException<azure.mgmt.alertsmanagement.models.AlertsManagementErrorResponseException>`
         """
         # Construct URL
         url = self.get_by_name.metadata['url']
@@ -334,7 +334,7 @@ class ActionRulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.AlertsManagementErrorResponseException(self._deserialize, response)
 
         header_dict = {}
         deserialized = None
@@ -375,7 +375,7 @@ class ActionRulesOperations(object):
         :rtype: ~azure.mgmt.alertsmanagement.models.ActionRule or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
+         :class:`AlertsManagementErrorResponseException<azure.mgmt.alertsmanagement.models.AlertsManagementErrorResponseException>`
         """
         # Construct URL
         url = self.create_update.metadata['url']
@@ -409,7 +409,7 @@ class ActionRulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.AlertsManagementErrorResponseException(self._deserialize, response)
 
         header_dict = {}
         deserialized = None
@@ -446,7 +446,7 @@ class ActionRulesOperations(object):
         :return: bool or ClientRawResponse if raw=true
         :rtype: bool or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
+         :class:`AlertsManagementErrorResponseException<azure.mgmt.alertsmanagement.models.AlertsManagementErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -476,7 +476,7 @@ class ActionRulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.AlertsManagementErrorResponseException(self._deserialize, response)
 
         header_dict = {}
         deserialized = None
@@ -520,7 +520,7 @@ class ActionRulesOperations(object):
         :rtype: ~azure.mgmt.alertsmanagement.models.ActionRule or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
+         :class:`AlertsManagementErrorResponseException<azure.mgmt.alertsmanagement.models.AlertsManagementErrorResponseException>`
         """
         action_rule_patch = models.PatchObject(status=status, tags=tags)
 
@@ -556,7 +556,7 @@ class ActionRulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.AlertsManagementErrorResponseException(self._deserialize, response)
 
         header_dict = {}
         deserialized = None

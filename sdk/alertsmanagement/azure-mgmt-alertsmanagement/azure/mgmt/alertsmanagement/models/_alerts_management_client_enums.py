@@ -64,6 +64,12 @@ class AlertModificationEvent(str, Enum):
     alert_created = "AlertCreated"
     state_change = "StateChange"
     monitor_condition_change = "MonitorConditionChange"
+    severity_change = "SeverityChange"
+    action_rule_triggered = "ActionRuleTriggered"
+    action_rule_suppressed = "ActionRuleSuppressed"
+    actions_triggered = "ActionsTriggered"
+    actions_suppressed = "ActionsSuppressed"
+    actions_failed = "ActionsFailed"
 
 
 class SmartGroupModificationEvent(str, Enum):
@@ -85,6 +91,7 @@ class ScopeType(str, Enum):
 
     resource_group = "ResourceGroup"
     resource = "Resource"
+    subscription = "Subscription"
 
 
 class Operator(str, Enum):

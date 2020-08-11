@@ -21,6 +21,7 @@ try:
     from ._models_py3 import AlertProperties
     from ._models_py3 import AlertRule
     from ._models_py3 import AlertRulePatchObject
+    from ._models_py3 import AlertsManagementErrorResponse, AlertsManagementErrorResponseException
     from ._models_py3 import AlertsMetaData
     from ._models_py3 import AlertsMetaDataProperties
     from ._models_py3 import AlertsSummary
@@ -31,8 +32,6 @@ try:
     from ._models_py3 import Conditions
     from ._models_py3 import Detector
     from ._models_py3 import Diagnostics
-    from ._models_py3 import ErrorResponse, ErrorResponseException
-    from ._models_py3 import ErrorResponse1, ErrorResponse1Exception
     from ._models_py3 import ErrorResponseBody
     from ._models_py3 import Essentials
     from ._models_py3 import ManagedResource
@@ -43,6 +42,7 @@ try:
     from ._models_py3 import PatchObject
     from ._models_py3 import Resource
     from ._models_py3 import Scope
+    from ._models_py3 import SmartDetectorErrorResponse, SmartDetectorErrorResponseException
     from ._models_py3 import SmartGroup
     from ._models_py3 import SmartGroupAggregatedProperty
     from ._models_py3 import SmartGroupModification
@@ -64,6 +64,7 @@ except (SyntaxError, ImportError):
     from ._models import AlertProperties
     from ._models import AlertRule
     from ._models import AlertRulePatchObject
+    from ._models import AlertsManagementErrorResponse, AlertsManagementErrorResponseException
     from ._models import AlertsMetaData
     from ._models import AlertsMetaDataProperties
     from ._models import AlertsSummary
@@ -74,8 +75,6 @@ except (SyntaxError, ImportError):
     from ._models import Conditions
     from ._models import Detector
     from ._models import Diagnostics
-    from ._models import ErrorResponse, ErrorResponseException
-    from ._models import ErrorResponse1, ErrorResponse1Exception
     from ._models import ErrorResponseBody
     from ._models import Essentials
     from ._models import ManagedResource
@@ -86,6 +85,7 @@ except (SyntaxError, ImportError):
     from ._models import PatchObject
     from ._models import Resource
     from ._models import Scope
+    from ._models import SmartDetectorErrorResponse, SmartDetectorErrorResponseException
     from ._models import SmartGroup
     from ._models import SmartGroupAggregatedProperty
     from ._models import SmartGroupModification
@@ -132,6 +132,7 @@ __all__ = [
     'AlertProperties',
     'AlertRule',
     'AlertRulePatchObject',
+    'AlertsManagementErrorResponse', 'AlertsManagementErrorResponseException',
     'AlertsMetaData',
     'AlertsMetaDataProperties',
     'AlertsSummary',
@@ -142,8 +143,6 @@ __all__ = [
     'Conditions',
     'Detector',
     'Diagnostics',
-    'ErrorResponse', 'ErrorResponseException',
-    'ErrorResponse1', 'ErrorResponse1Exception',
     'ErrorResponseBody',
     'Essentials',
     'ManagedResource',
@@ -154,6 +153,7 @@ __all__ = [
     'PatchObject',
     'Resource',
     'Scope',
+    'SmartDetectorErrorResponse', 'SmartDetectorErrorResponseException',
     'SmartGroup',
     'SmartGroupAggregatedProperty',
     'SmartGroupModification',
