@@ -20,7 +20,7 @@ Key capabilities are:
 
 ### Prerequisites
 * Azure subscription - [Create a free account][azure_sub]
-* [Azure Cosmos DB account][cosmos_account] - SQL API
+* [Azure Cosmos DB account][cosmos_account] - CORE (SQL) API
 * [Python 2.7 or 3.5.3+][python]
 
 
