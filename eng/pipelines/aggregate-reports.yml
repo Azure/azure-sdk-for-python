@@ -1,26 +1,17 @@
-resources:
-  repositories:
-    - repository: azure-sdk-tools
-      type: github
-      name: Azure/azure-sdk-tools
-      endpoint: azure
-    - repository: azure-sdk-build-tools
-      type: git
-      name: internal/azure-sdk-build-tools
-
 trigger: none
 pr: none
+
 
 jobs:
 - job: 'ValidateDependencies'
   variables:
-  - template: ../variables/globals.yml
+  - template: ./templates/variables/globals.yml
 
   pool:
     vmImage: 'windows-2019'
 
   steps:
-  - template: ../steps/analyze.yml
+  - template: /eng/pipelines/templates/steps/analyze_dependency.yml
 
   - task: AzureFileCopy@2
     displayName: 'Upload dependency report'

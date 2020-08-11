@@ -45,7 +45,7 @@ with tracer.span(name="MyApplication") as span:
 
 ## Troubleshooting
 
-This client raises exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/exceptions.md).
+This client raises exceptions defined in [Azure Core](https://docs.microsoft.com/en-us/python/api/azure-core/azure.core.exceptions?view=azure-python).
 
 
 ## Next steps
