@@ -397,7 +397,7 @@ class FormTrainingClient(object):
 
         def _compose_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             model = self._client._deserialize(Model, raw_response)
-            return CustomFormModelInfo._from_generated(model)
+            return CustomFormModel._from_generated_composed(model)
 
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
