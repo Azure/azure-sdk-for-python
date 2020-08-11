@@ -8,7 +8,9 @@ These SDKs are used for the [CORE (SQL) API](https://docs.microsoft.com/en-us/az
 
 ### [azure-cosmos](./azure-cosmos)
 
-This is the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON documents they contain in this NoSQL database service. High level capabilities are:
+This is the Azure Cosmos DB CORE (SQL) API SDK for Python, that can be used to manage databases, containers, and the JSON documents they contain in this NoSQL database service. 
+
+Key capabilities are:
 
 + Create Cosmos DB databases and modify their settings
 + Create and modify containers to store collections of JSON documents
