@@ -933,7 +933,7 @@ class DeliveryRuleAction(Model):
     """An action for the delivery rule.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: UrlRedirectAction, UrlRewriteAction,
+    sub-classes are: UrlRedirectAction, UrlSigningAction, UrlRewriteAction,
     DeliveryRuleRequestHeaderAction, DeliveryRuleResponseHeaderAction,
     DeliveryRuleCacheExpirationAction, DeliveryRuleCacheKeyQueryStringAction
 
@@ -952,7 +952,7 @@ class DeliveryRuleAction(Model):
     }
 
     _subtype_map = {
-        'name': {'UrlRedirect': 'UrlRedirectAction', 'UrlRewrite': 'UrlRewriteAction', 'ModifyRequestHeader': 'DeliveryRuleRequestHeaderAction', 'ModifyResponseHeader': 'DeliveryRuleResponseHeaderAction', 'CacheExpiration': 'DeliveryRuleCacheExpirationAction', 'CacheKeyQueryString': 'DeliveryRuleCacheKeyQueryStringAction'}
+        'name': {'UrlRedirect': 'UrlRedirectAction', 'UrlSigning': 'UrlSigningAction', 'UrlRewrite': 'UrlRewriteAction', 'ModifyRequestHeader': 'DeliveryRuleRequestHeaderAction', 'ModifyResponseHeader': 'DeliveryRuleResponseHeaderAction', 'CacheExpiration': 'DeliveryRuleCacheExpirationAction', 'CacheKeyQueryString': 'DeliveryRuleCacheKeyQueryStringAction'}
     }
 
     def __init__(self, **kwargs) -> None:
@@ -4005,6 +4005,33 @@ class UrlRewriteActionParameters(Model):
         self.source_pattern = source_pattern
         self.destination = destination
         self.preserve_unmatched_path = preserve_unmatched_path
+
+
+class UrlSigningAction(DeliveryRuleAction):
+    """Defines the url signing action for the delivery rule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Constant filled by server.
+    :type name: str
+    :param parameters: Required. Defines the parameters for the action.
+    :type parameters: ~azure.mgmt.cdn.models.UrlSigningActionParameters
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'parameters': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': 'UrlSigningActionParameters'},
+    }
+
+    def __init__(self, *, parameters, **kwargs) -> None:
+        super(UrlSigningAction, self).__init__(**kwargs)
+        self.parameters = parameters
+        self.name = 'UrlSigning'
 
 
 class UrlSigningActionParameters(Model):
