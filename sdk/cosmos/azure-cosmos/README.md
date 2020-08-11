@@ -4,7 +4,8 @@
 
 Use the Azure Cosmos DB CORE (SQL) API Python SDK to operate databases, containers, and the JSON documents stored in the [CORE (SQL) API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). 
 
-> For all other APIs, please check the [Azure Cosmos DB documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) to evaluate the best SDK for your project.
+> This SDK is used for database administration, application development, or data exploration related to the [CORE (SQL) API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). For all other APIs, please check the [Azure Cosmos DB documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) to evaluate the best SDK for your project.
+
 
 Key capabilities are:
 
