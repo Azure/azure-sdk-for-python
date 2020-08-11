@@ -66,7 +66,7 @@ class TestSearchBatchingClientAsync(object):
 
 
     @mock.patch(
-        "azure.search.documents._internal._search_index_document_batching_client.SearchIndexDocumentBatchingClient.flush"
+        "azure.search.documents._internal.aio._search_index_document_batching_client_async.SearchIndexDocumentBatchingClient.flush"
     )
     async def test_flush_if_needed(self, mock_flush):
         client = SearchIndexDocumentBatchingClient("endpoint", "index name", CREDENTIAL, window=1000, batch_size=2)
