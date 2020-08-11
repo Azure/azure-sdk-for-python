@@ -138,24 +138,14 @@ class FormTrainingClient(object):
                 :caption: Training a model (without labels) with your custom forms.
         """
 
-        def callback(raw_response):
+        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
             model = self._client._deserialize(Model, raw_response)
             return CustomFormModel._from_generated(model)
 
-        cls = kwargs.pop("cls", None)
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
-        deserialization_callback = cls if cls else callback
 
-        if continuation_token:
-            return LROPoller.from_continuation_token(
-                polling_method=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
-                continuation_token=continuation_token,
-                client=self._client._client,
-                deserialization_callback=deserialization_callback
-            )
-
-        response = self._client.train_custom_model_async(  # type: ignore
+        return self._client.begin_train_custom_model_async(  # type: ignore
             train_request=TrainRequest(
                 source=training_files_url,
                 use_label_file=use_training_labels,
@@ -164,16 +154,11 @@ class FormTrainingClient(object):
                     include_sub_folders=kwargs.pop("include_subfolders", False),
                 )
             ),
-            cls=lambda pipeline_response, _, response_headers: pipeline_response,
+            cls=kwargs.pop("cls", callback),
+            continuation_token=continuation_token,
+            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
             error_map=error_map,
             **kwargs
-        )  # type: PipelineResponseType
-
-        return LROPoller(
-            self._client._client,
-            response,
-            deserialization_callback,
-            LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs)
         )
 
     @distributed_trace
