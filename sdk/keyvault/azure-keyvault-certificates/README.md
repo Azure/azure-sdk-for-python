@@ -234,8 +234,9 @@ credential = DefaultAzureCredential()
 
 certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-deleted_certificate = certificate_client.begin_delete_certificate("cert-name")
+deleted_certificate_poller = certificate_client.begin_delete_certificate("cert-name")
 
+deleted_certificate = deleted_certificate_poller.result()
 print(deleted_certificate.name)
 print(deleted_certificate.deleted_on)
 ```
