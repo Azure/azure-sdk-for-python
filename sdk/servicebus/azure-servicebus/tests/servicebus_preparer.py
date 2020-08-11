@@ -269,7 +269,7 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
                                                      playback_fake_resource=playback_fake_resource,
                                                      client_kwargs=client_kwargs)
         self.parameter_name = parameter_name
-        self.set_cache(use_cache, requires_duplicate_detection, dead_lettering_on_message_expiration, requires_session)
+        self.set_cache(use_cache, requires_duplicate_detection, dead_lettering_on_message_expiration, requires_session, lock_duration)
 
         # Queue parameters
         self.requires_duplicate_detection=requires_duplicate_detection
