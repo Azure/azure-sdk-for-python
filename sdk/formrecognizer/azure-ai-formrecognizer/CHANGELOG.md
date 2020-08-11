@@ -1,5 +1,8 @@
 # Release History
 
+## 3.0.0b2 (Unreleased)
+
+
 ## 3.0.0b1 (2020-08-11)
 
 The version of this package now targets the service's v2.0 API.
