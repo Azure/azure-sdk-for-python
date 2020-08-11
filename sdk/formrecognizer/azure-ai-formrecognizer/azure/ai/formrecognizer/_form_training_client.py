@@ -394,7 +394,22 @@ class FormTrainingClient(object):
         :param list[str] model_ids:
         :param str display_name:
         """
-        pass
+
+        def _compose_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            model = self._client._deserialize(Model, raw_response)
+            return CustomFormModelInfo._from_generated(model)
+
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        return self._client.begin_compose_custom_models_async(
+            {"model_ids": model_ids, "model_name": display_name},
+            cls=kwargs.pop("cls", _compose_callback),
+            polling=LROBasePolling(timeout=polling_interval, **kwargs),
+            error_map=error_map,
+            continuation_token=continuation_token,
+            **kwargs
+        )
 
     def get_form_recognizer_client(self, **kwargs):
         # type: (Any) -> FormRecognizerClient
