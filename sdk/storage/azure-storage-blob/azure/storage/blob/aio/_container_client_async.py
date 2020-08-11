@@ -952,6 +952,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 :dedent: 12
                 :caption: Deleting multiple blobs.
         """
+        if len(blobs) == 0:
+            return iter(list())
+
         reqs, options = self._generate_delete_blobs_options(*blobs, **kwargs)
 
         return await self._batch_send(*reqs, **options)
