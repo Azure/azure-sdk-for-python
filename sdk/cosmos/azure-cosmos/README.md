@@ -24,7 +24,7 @@ Key capabilities are:
 * [Python 2.7 or 3.5.3+][python]
 
 
-If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI][azure_cli] command:
+If you need a Cosmos DB CORE (SQL) API account, you can create one with this [Azure CLI][azure_cli] command:
 
 ```Bash
 az cosmosdb create --resource-group <resource-group-name> --name <cosmos-account-name>
