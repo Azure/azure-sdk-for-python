@@ -89,6 +89,7 @@ The following sections provide several code snippets covering some of the most c
 
 * [Create a database](#create-a-database "Create a database")
 * [Create a container](#create-a-container "Create a container")
+* [Create an Analytical Store Enabled container](#create-an-analytical-store-enabled-container "Create a container")
 * [Get an existing container](#get-an-existing-container "Get an existing container")
 * [Insert data](#insert-data "Insert data")
 * [Delete data](#delete-data "Delete data")
