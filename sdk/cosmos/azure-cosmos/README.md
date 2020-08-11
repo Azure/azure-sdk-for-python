@@ -124,6 +124,29 @@ except exceptions.CosmosHttpResponseError:
 
 The preceding snippet also handles the [CosmosHttpResponseError][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting "Troubleshooting") section.
 
+
+### Create an Analytical Store enabled container
+
+This example creates a container with [Analytical Store](https://docs.microsoft.com/en-us/azure/cosmos-db/analytical-store-introduction) enabled, for reporting, BI, AI, and Advanced Analytics with [Azure Synapse Link](https://docs.microsoft.com/en-us/azure/cosmos-db/synapse-link). 
+
+Options:
++ Null = Not enabled.
++ -1 = The data will be stored infinitely.
++ Any other number is the actual ttl, in seconds.
+
+```Python
+container_name = 'products'
+try:
+    container = database.create_container(id=container_name, partition_key=PartitionKey(path="/productName"),analytical_storage_ttl=-1)
+except exceptions.CosmosResourceExistsError:
+    container = database.get_container_client(container_name)
+except exceptions.CosmosHttpResponseError:
+    raise
+```
+
+The preceding snippet also handles the [CosmosHttpResponseError][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting "Troubleshooting") section.
+
+
 ### Get an existing container
 
 Retrieve an existing container from the database:
