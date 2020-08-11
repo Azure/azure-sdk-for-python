@@ -12,7 +12,8 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
-from ._configuration import MaintenanceManagementClientConfiguration
+from ._configuration import MaintenanceClientConfiguration
+from .operations import PublicMaintenanceConfigurationsOperations
 from .operations import ApplyUpdatesOperations
 from .operations import ConfigurationAssignmentsOperations
 from .operations import MaintenanceConfigurationsOperations
@@ -21,12 +22,14 @@ from .operations import UpdatesOperations
 from . import models
 
 
-class MaintenanceManagementClient(SDKClient):
-    """Azure Maintenance Management Client
+class MaintenanceClient(SDKClient):
+    """Maintenance Client
 
     :ivar config: Configuration for client.
-    :vartype config: MaintenanceManagementClientConfiguration
+    :vartype config: MaintenanceClientConfiguration
 
+    :ivar public_maintenance_configurations: PublicMaintenanceConfigurations operations
+    :vartype public_maintenance_configurations: azure.mgmt.maintenance.operations.PublicMaintenanceConfigurationsOperations
     :ivar apply_updates: ApplyUpdates operations
     :vartype apply_updates: azure.mgmt.maintenance.operations.ApplyUpdatesOperations
     :ivar configuration_assignments: ConfigurationAssignments operations
@@ -51,14 +54,16 @@ class MaintenanceManagementClient(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = MaintenanceManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(MaintenanceManagementClient, self).__init__(self.config.credentials, self.config)
+        self.config = MaintenanceClientConfiguration(credentials, subscription_id, base_url)
+        super(MaintenanceClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-06-01-preview'
+        self.api_version = '2020-07-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.public_maintenance_configurations = PublicMaintenanceConfigurationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.apply_updates = ApplyUpdatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.configuration_assignments = ConfigurationAssignmentsOperations(
