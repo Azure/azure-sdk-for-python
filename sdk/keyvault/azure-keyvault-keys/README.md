@@ -151,9 +151,9 @@ This section contains code snippets covering common tasks:
 * [Update an existing Key](#update-an-existing-key "Update an existing Key")
 * [Delete a Key](#delete-a-key "Delete a Key")
 * [List Keys](#list-keys "List Keys")
+* [Perform cryptographic operations](#cryptographic-operations)
 * [Asynchronously create a Key](#asynchronously-create-a-key "Asynchronously create a Key")
 * [Asynchronously list Keys](#asynchronously-list-keys "Asynchronously list Keys")
-* [Perform cryptographic operations](#cryptographic-operations)
 
 ### Create a Key
 [create_rsa_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_rsa_key) and

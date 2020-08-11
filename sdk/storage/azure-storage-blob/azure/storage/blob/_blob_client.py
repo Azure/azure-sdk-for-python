@@ -46,7 +46,7 @@ from ._serialize import (
     serialize_blob_tags,
     serialize_query_format
 )
-from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
+from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream, parse_tags
 from ._quick_query_helper import BlobQueryReader
 from ._upload_helpers import (
     upload_block_blob,
@@ -1830,12 +1830,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to download.
+
+            .. versionadded:: 12.4.0
+            This keyword argument was introduced in API version '2019-12-12'.
         :keyword str if_tags_match_condition
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
             .. versionadded:: 12.4.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword lease:
@@ -1848,9 +1853,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         mod_conditions = get_modify_conditions(kwargs)
         if standard_blob_tier is None:
             raise ValueError("A StandardBlobTier must be specified")
+        if self.snapshot and kwargs.get('version_id'):
+            raise ValueError("Snapshot and version_id cannot be set at the same time")
         try:
             self._client.blob.set_tier(
                 tier=standard_blob_tier,
+                snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 lease_access_conditions=access_conditions,
@@ -2394,7 +2402,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._get_blob_tags_options(**kwargs)
         try:
             _, tags = self._client.blob.get_tags(**options)
-            return BlobProperties._parse_tags(tags) # pylint: disable=protected-access
+            return parse_tags(tags) # pylint: disable=protected-access
         except StorageErrorException as error:
             process_storage_error(error)
 

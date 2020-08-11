@@ -216,7 +216,7 @@ class BlobItemInternal(Model):
         'properties': {'key': 'Properties', 'type': 'BlobPropertiesInternal', 'xml': {'name': 'Properties'}},
         'metadata': {'key': 'Metadata', 'type': 'BlobMetadata', 'xml': {'name': 'Metadata'}},
         'blob_tags': {'key': 'BlobTags', 'type': 'BlobTags', 'xml': {'name': 'BlobTags'}},
-        'object_replication_metadata': {'key': 'ObjectReplicationMetadata', 'type': '{str}', 'xml': {'name': 'ObjectReplicationMetadata'}},
+        'object_replication_metadata': {'key': 'OrMetadata', 'type': '{str}', 'xml': {'name': 'OrMetadata'}},
     }
     _xml_map = {
         'name': 'Blob'
@@ -1723,9 +1723,6 @@ class SourceModifiedAccessConditions(Model):
     :param source_if_none_match: Specify an ETag value to operate only on
      blobs without a matching value.
     :type source_if_none_match: str
-    :param source_if_tags: Specify a SQL where clause on blob tags to operate
-     only on blobs with a matching value.
-    :type source_if_tags: str
     """
 
     _attribute_map = {
@@ -1733,7 +1730,6 @@ class SourceModifiedAccessConditions(Model):
         'source_if_unmodified_since': {'key': '', 'type': 'rfc-1123', 'xml': {'name': 'source_if_unmodified_since'}},
         'source_if_match': {'key': '', 'type': 'str', 'xml': {'name': 'source_if_match'}},
         'source_if_none_match': {'key': '', 'type': 'str', 'xml': {'name': 'source_if_none_match'}},
-        'source_if_tags': {'key': '', 'type': 'str', 'xml': {'name': 'source_if_tags'}},
     }
     _xml_map = {
     }
@@ -1744,7 +1740,6 @@ class SourceModifiedAccessConditions(Model):
         self.source_if_unmodified_since = kwargs.get('source_if_unmodified_since', None)
         self.source_if_match = kwargs.get('source_if_match', None)
         self.source_if_none_match = kwargs.get('source_if_none_match', None)
-        self.source_if_tags = kwargs.get('source_if_tags', None)
 
 
 class StaticWebsite(Model):

@@ -587,8 +587,7 @@ def form_recognizer_account():
         random_name_enabled=True,
         kind="formrecognizer",
         name_prefix='pycog',
-        location=REGION,
-        custom_subdomain_name="formrecognizeraccount"
+        location=REGION
     )
 
     try:

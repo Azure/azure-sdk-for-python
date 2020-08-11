@@ -39,7 +39,7 @@ pip install azure-cosmos
 
 #### Configure a virtual environment (optional)
 
-Although not required, you can keep your your base system and Azure SDK environments isolated from one another if you use a virtual environment. Execute the following commands to configure and then enter a virtual environment with [venv][venv]:
+Although not required, you can keep your base system and Azure SDK environments isolated from one another if you use a virtual environment. Execute the following commands to configure and then enter a virtual environment with [venv][venv]:
 
 ```Bash
 python3 -m venv azure-cosmosdb-sdk-environment
@@ -63,7 +63,7 @@ export ACCOUNT_KEY=$(az cosmosdb list-keys --resource-group $RES_GROUP --name $A
 Once you've populated the `ACCOUNT_URI` and `ACCOUNT_KEY` environment variables, you can create the [CosmosClient][ref_cosmosclient].
 
 ```Python
-from azure.cosmos import CosmosClient, PartitionKey, exceptions
+from azure.cosmos import CosmosClient
 
 import os
 url = os.environ['ACCOUNT_URI']
@@ -102,6 +102,12 @@ The following sections provide several code snippets covering some of the most c
 After authenticating your [CosmosClient][ref_cosmosclient], you can work with any resource in the account. The code snippet below creates a SQL API database, which is the default when no API is specified when [create_database][ref_cosmosclient_create_database] is invoked.
 
 ```Python
+from azure.cosmos import CosmosClient, exceptions
+import os
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
 database_name = 'testDatabase'
 try:
     database = client.create_database(database_name)
@@ -114,7 +120,16 @@ except exceptions.CosmosResourceExistsError:
 This example creates a container with default settings. If a container with the same name already exists in the database (generating a `409 Conflict` error), the existing container is obtained instead.
 
 ```Python
+from azure.cosmos import CosmosClient, PartitionKey, exceptions
+import os
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
+database_name = 'testDatabase'
+database = client.get_database_client(database_name)
 container_name = 'products'
+
 try:
     container = database.create_container(id=container_name, partition_key=PartitionKey(path="/productName"))
 except exceptions.CosmosResourceExistsError:
@@ -153,7 +168,15 @@ The preceding snippet also handles the [CosmosHttpResponseError][ref_httpfailure
 Retrieve an existing container from the database:
 
 ```Python
+from azure.cosmos import CosmosClient
+import os
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
+database_name = 'testDatabase'
 database = client.get_database_client(database_name)
+container_name = 'products'
 container = database.get_container_client(container_name)
 ```
 
@@ -164,11 +187,19 @@ To insert items into a container, pass a dictionary containing your data to [Con
 This example inserts several items into the container, each with a unique `id`:
 
 ```Python
-database_client = client.get_database_client(database_name)
-container_client = database.get_container_client(container_name)
+from azure.cosmos import CosmosClient
+import os
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
+database_name = 'testDatabase'
+database = client.get_database_client(database_name)
+container_name = 'products'
+container = database.get_container_client(container_name)
 
 for i in range(1, 10):
-    container_client.upsert_item({
+    container.upsert_item({
             'id': 'item{0}'.format(i),
             'productName': 'Widget',
             'productModel': 'Model {0}'.format(i)
@@ -181,10 +212,21 @@ for i in range(1, 10):
 To delete items from a container, use [ContainerProxy.delete_item][ref_container_delete_item]. The SQL API in Cosmos DB does not support the SQL `DELETE` statement.
 
 ```Python
+from azure.cosmos import CosmosClient
+import os
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
+database_name = 'testDatabase'
+database = client.get_database_client(database_name)
+container_name = 'products'
+container = database.get_container_client(container_name)
+
 for item in container.query_items(
-        query='SELECT * FROM products p WHERE p.productModel = "DISCONTINUED"',
+        query='SELECT * FROM products p WHERE p.productModel = "Model 2"',
         enable_cross_partition_query=True):
-    container.delete_item(item, partition_key='Pager')
+    container.delete_item(item, partition_key='Widget')
 ```
 
 > NOTE: If you are using partitioned collection, the value of the `partitionKey` in the example code above, should be set to the value of the partition key for this particular item, not the name of the partition key column in your collection. This holds true for both point reads and deletes.
@@ -196,7 +238,15 @@ A Cosmos DB SQL API database supports querying the items in a container with [Co
 This example queries a container for items with a specific `id`:
 
 ```Python
+from azure.cosmos import CosmosClient
+import os
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
+database_name = 'testDatabase'
 database = client.get_database_client(database_name)
+container_name = 'products'
 container = database.get_container_client(container_name)
 
 # Enumerate the returned items
@@ -230,6 +280,14 @@ For more information on querying Cosmos DB databases using the SQL API, see [Que
 Get and display the properties of a database:
 
 ```Python
+from azure.cosmos import CosmosClient
+import os
+import json
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
+database_name = 'testDatabase'
 database = client.get_database_client(database_name)
 properties = database.read()
 print(json.dumps(properties))
@@ -240,8 +298,18 @@ print(json.dumps(properties))
 Certain properties of an existing container can be modified. This example sets the default time to live (TTL) for items in the container to 10 seconds:
 
 ```Python
+from azure.cosmos import CosmosClient, PartitionKey
+import os
+import json
+
+url = os.environ['ACCOUNT_URI']
+key = os.environ['ACCOUNT_KEY']
+client = CosmosClient(url, credential=key)
+database_name = 'testDatabase'
 database = client.get_database_client(database_name)
+container_name = 'products'
 container = database.get_container_client(container_name)
+
 database.replace_container(
     container,
     partition_key=PartitionKey(path="/productName"),
@@ -267,7 +335,7 @@ For example, if you try to create a container using an ID (name) that's already 
 
 ```Python
 try:
-    database.create_container(id=container_name, partition_key=PartitionKey(path="/productName")
+    database.create_container(id=container_name, partition_key=PartitionKey(path="/productName"))
 except exceptions.CosmosResourceExistsError:
     print("""Error creating container
 HTTP status code 409: The ID (name) provided for the container is already in use.
