@@ -1,10 +1,10 @@
-# Azure Cosmos DB CORE (SQL) API Python SDK
+# Azure Cosmos DB SQL API Python SDK
 
 [Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/) is a globally distributed, fully managed, multi-model NoSQL database service that supports document, key-value, wide-column, and graph databases. For more information, go to https://www.gotcosmos.com/ .
 
-Use the Azure Cosmos DB CORE (SQL) API Python SDK to operate databases, containers, and the JSON documents stored in the [CORE (SQL) API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). 
+Use the Azure Cosmos DB SQL API Python SDK to operate databases, containers, and the JSON documents stored in the [SQL API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). 
 
-> This SDK is used for the [CORE (SQL) API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). For all other APIs, please check the [Azure Cosmos DB documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) to evaluate the best SDK for your project.
+> This SDK is used for the [SQL API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). For all other APIs, please check the [Azure Cosmos DB documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) to evaluate the best SDK for your project.
 
 
 Key capabilities are:
@@ -21,11 +21,11 @@ Key capabilities are:
 
 ### Prerequisites
 * Azure subscription - [Create a free account][azure_sub]
-* [Azure Cosmos DB account][cosmos_account] - CORE (SQL) API
+* [Azure Cosmos DB account][cosmos_account] - SQL API
 * [Python 2.7 or 3.5.3+][python]
 
 
-If you need a Cosmos DB CORE (SQL) API account, you can create one with this [Azure CLI][azure_cli] command:
+If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI][azure_cli] command:
 
 ```Bash
 az cosmosdb create --resource-group <resource-group-name> --name <cosmos-account-name>
