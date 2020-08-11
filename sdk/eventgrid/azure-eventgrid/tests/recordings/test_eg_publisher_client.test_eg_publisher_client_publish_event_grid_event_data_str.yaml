@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: '[{"id": "cd9587d2-8a97-41d5-8859-376c46339548", "subject": "sample", "data":
-      "eventgridevent", "eventType": "Sample.EventGrid.Event", "eventTime": "2020-08-07T21:34:42.79032Z",
+    body: '[{"id": "56a121b0-92b9-4921-b11b-2a99b0b4c5be", "subject": "sample", "data":
+      "eventgridevent", "eventType": "Sample.EventGrid.Event", "eventTime": "2020-08-11T06:39:51.543811Z",
       "dataVersion": "2.0"}]'
     headers:
       Accept:
@@ -11,15 +11,15 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '199'
+      - '200'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-eventgridpublisherclient/unknown Python/3.8.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-eventgridpublisherclient/unknown Python/3.7.3 (Windows-10-10.0.18362-SP0)
       aeg-sas-key:
-      - cus6lOEQ+atANdNK2jb8zKRAAcQq7MjDAUr19LQBzQc=
+      - mu+h0B1P+GXAS5TCSIJVZ/oZUf+Pur3p90WxHabL2MM=
     method: POST
-    uri: https://eventgridtest2neomnjgjhm.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
+    uri: https://eventgridtestegtopic.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
   response:
     body:
       string: ''
@@ -29,7 +29,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 07 Aug 2020 21:34:41 GMT
+      - Tue, 11 Aug 2020 06:39:51 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

@@ -71,19 +71,22 @@ class EventGridTopicPreparer(AzureMgmtPreparer):
             self.resource = topic_operation.result()
             key = self.client.topics.list_shared_access_keys(group.name, name)
             self.primary_key = key.key1
+            self.endpoint = self.resource.endpoint
         else:
             self.resource = FakeResource(name=name, id=name)
             self.primary_key = "ZmFrZV9hY29jdW50X2tleQ=="    # test key copied from sb_preparer
+            self.endpoint = "https://{}.westus-1.eventgrid.azure.net/api/events".format(name)
         return {
             self.parameter_name: self.resource,
             '{}_primary_key'.format(self.parameter_name): self.primary_key,
+            '{}_endpoint'.format(self.parameter_name): self.endpoint,
         }
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
             self.client.topics.delete(group.name, name, polling=False)
-    
+
     def _get_resource_group(self, **kwargs):
         try:
             return kwargs.get(self.resource_group_parameter_name)
