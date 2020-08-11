@@ -1,8 +1,12 @@
-# Azure Cosmos DB SQL API client library for Python
+# Azure Cosmos DB CORE (SQL) API Python SDK
 
-Azure Cosmos DB is a globally distributed, multi-model database service that supports document, key-value, wide-column, and graph databases.
+[Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/) is a globally distributed, fully managed, multi-model NoSQL database service that supports document, key-value, wide-column, and graph databases. For more information, go to https://www.gotcosmos.com/ .
 
-Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON documents they contain in this NoSQL database service.
+Use the Azure Cosmos DB CORE (SQL) API Python SDK for applications development, including databases, containers, and CRUD operations with the JSON documents stored in the [CORE (SQL) API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-getting-started). 
+
+> For all other APIs, please check the [Azure Cosmos DB documentation](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) to evaluate the best SDK for your project.
+
+Key capabilities are:
 
 * Create Cosmos DB **databases** and modify their settings
 * Create and modify **containers** to store collections of JSON documents
@@ -13,9 +17,10 @@ Use the Azure Cosmos DB SQL API SDK for Python to manage databases and the JSON 
 
 
 ## Getting started
+
 ### Prerequisites
 * Azure subscription - [Create a free account][azure_sub]
-* Azure [Cosmos DB account][cosmos_account] - SQL API
+* [Azure Cosmos DB account][cosmos_account] - SQL API
 * [Python 2.7 or 3.5.3+][python]
 
 
