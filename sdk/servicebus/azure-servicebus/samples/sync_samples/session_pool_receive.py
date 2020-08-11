@@ -19,17 +19,16 @@ SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
 def message_processing(sb_client, queue_name, messages):
     while True:
         try:
-            with sb_client.get_queue_session_receiver(queue_name, idle_timeout=1) as receiver:
+            with sb_client.get_queue_session_receiver(queue_name, max_wait_time=1) as receiver:
                 renewer = AutoLockRenew()
                 renewer.register(receiver.session)
                 receiver.session.set_session_state("OPEN")
                 for message in receiver:
                     messages.append(message)
                     print("Message: {}".format(message))
-                    print("Time to live: {}".format(message.header.time_to_live))
+                    print("Time to live: {}".format(message.time_to_live))
                     print("Sequence number: {}".format(message.sequence_number))
-                    print("Enqueue Sequence number: {}".format(message.enqueue_sequence_number))
-                    print("Partition ID: {}".format(message.partition_id))
+                    print("Enqueue Sequence number: {}".format(message.enqueued_sequence_number))
                     print("Partition Key: {}".format(message.partition_key))
                     print("Locked until: {}".format(message.locked_until_utc))
                     print("Lock Token: {}".format(message.lock_token))

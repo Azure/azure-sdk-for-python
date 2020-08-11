@@ -26,7 +26,7 @@ import os
 class RecognizeEntitiesSample(object):
 
     def recognize_entities(self):
-        # [START batch_recognize_entities]
+        # [START recognize_entities]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -46,9 +46,12 @@ class RecognizeEntitiesSample(object):
         for idx, doc in enumerate(docs):
             print("\nDocument text: {}".format(documents[idx]))
             for entity in doc.entities:
-                print("Entity: \t", entity.text, "\tCategory: \t", entity.category,
-                      "\tConfidence Score: \t", entity.confidence_score)
-        # [END batch_recognize_entities]
+                print("Entity: {}".format(entity.text))
+                print("...Category: {}".format(entity.category))
+                print("...Confidence Score: {}".format(entity.confidence_score))
+                print("...Offset: {}".format(entity.offset))
+                print("...Length: {}".format(entity.length))
+        # [END recognize_entities]
 
 
 if __name__ == '__main__':

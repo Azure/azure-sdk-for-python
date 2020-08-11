@@ -27,7 +27,7 @@ import asyncio
 class ExtractKeyPhrasesSampleAsync(object):
 
     async def extract_key_phrases_async(self):
-        # [START batch_extract_key_phrases_async]
+        # [START extract_key_phrases_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -49,7 +49,7 @@ class ExtractKeyPhrasesSampleAsync(object):
                 print(doc.key_phrases)
             if doc.is_error:
                 print(doc.id, doc.error)
-        # [END batch_extract_key_phrases_async]
+        # [END extract_key_phrases_async]
 
 
 async def main():

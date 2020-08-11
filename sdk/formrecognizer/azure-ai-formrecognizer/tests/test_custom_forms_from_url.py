@@ -81,12 +81,14 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         poller = client.begin_training(container_sas_url, use_training_labels=True)
         model = poller.result()
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError) as e:
             poller = fr_client.begin_recognize_custom_forms_from_url(
                 model.model_id,
                 form_url="https://badurl.jpg"
             )
             form = poller.result()
+        self.assertIsNotNone(e.value.error.code)
+        self.assertIsNotNone(e.value.error.message)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True)

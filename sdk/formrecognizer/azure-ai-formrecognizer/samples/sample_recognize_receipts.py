@@ -15,7 +15,7 @@ DESCRIPTION:
     from receipts, see sample_strongly_typed_recognized_form.py.
 
     See fields found on a receipt here:
-    https://aka.ms/azsdk/python/formrecognizer/receiptfields
+    https://aka.ms/formrecognizer/receiptfields
 
 USAGE:
     python sample_recognize_receipts.py
@@ -31,7 +31,8 @@ import os
 class RecognizeReceiptsSample(object):
 
     def recognize_receipts(self):
-        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
+        path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
+                                                            "..", "./sample_forms/receipt/contoso-allinone.jpg"))
         # [START recognize_receipts]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
@@ -47,7 +48,7 @@ class RecognizeReceiptsSample(object):
         receipts = poller.result()
 
         for idx, receipt in enumerate(receipts):
-            print("--------Recognizing receipt #{}--------".format(idx))
+            print("--------Recognizing receipt #{}--------".format(idx+1))
             receipt_type = receipt.fields.get("ReceiptType")
             if receipt_type:
                 print("Receipt Type: {} has confidence: {}".format(receipt_type.value, receipt_type.confidence))
@@ -59,7 +60,7 @@ class RecognizeReceiptsSample(object):
                 print("Transaction Date: {} has confidence: {}".format(transaction_date.value, transaction_date.confidence))
             print("Receipt items:")
             for idx, item in enumerate(receipt.fields.get("Items").value):
-                print("...Item #{}".format(idx))
+                print("...Item #{}".format(idx+1))
                 item_name = item.value.get("Name")
                 if item_name:
                     print("......Item Name: {} has confidence: {}".format(item_name.value, item_name.confidence))

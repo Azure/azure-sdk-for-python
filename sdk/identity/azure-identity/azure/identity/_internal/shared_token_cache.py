@@ -28,9 +28,9 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, List, Mapping, Optional, Sequence
+    from typing import Any, Iterable, List, Mapping, Optional
     from .._internal import AadClientBase
-    from azure.identity import AuthenticationRecord
+    from azure.identity._auth_record import AuthenticationRecord
 
     CacheItem = Mapping[str, str]
 
@@ -90,7 +90,7 @@ class SharedTokenCacheBase(ABC):
     def __init__(self, username=None, **kwargs):  # pylint:disable=unused-argument
         # type: (Optional[str], **Any) -> None
 
-        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
+        self._auth_record = kwargs.pop("_authentication_record", None)  # type: Optional[AuthenticationRecord]
         if self._auth_record:
             # authenticate in the tenant that produced the record unless 'tenant_id' specifies another
             authenticating_tenant = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
@@ -118,7 +118,7 @@ class SharedTokenCacheBase(ABC):
             return
 
         if not self._cache and self.supported():
-            allow_unencrypted = self._client_kwargs.get("allow_unencrypted_cache", False)
+            allow_unencrypted = self._client_kwargs.get("_allow_unencrypted_cache", True)
             try:
                 self._cache = load_user_cache(allow_unencrypted)
             except Exception:  # pylint:disable=broad-except
@@ -203,7 +203,7 @@ class SharedTokenCacheBase(ABC):
         raise CredentialUnavailableError(message=message)
 
     def _get_cached_access_token(self, scopes, account):
-        # type: (Sequence[str], CacheItem) -> Optional[AccessToken]
+        # type: (Iterable[str], CacheItem) -> Optional[AccessToken]
         if "home_account_id" not in account:
             return None
 

@@ -6,6 +6,7 @@
 from io import BytesIO
 import six
 
+from ._quick_query_helper import DataLakeFileQueryReader
 from ._shared.base_client import parse_connection_str
 from ._shared.request_handlers import get_length, read_length
 from ._shared.response_handlers import return_response_headers
@@ -16,7 +17,7 @@ from ._download import StorageStreamDownloader
 from ._path_client import PathClient
 from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers
 from ._deserialize import process_storage_error
-from ._models import FileProperties
+from ._models import FileProperties, DataLakeFileQueryError
 
 
 class DataLakeFileClient(PathClient):
@@ -641,3 +642,67 @@ class DataLakeFileClient(PathClient):
         new_directory_client._rename_path('/'+self.file_system_name+'/'+self.path_name,  # pylint: disable=protected-access
                                           **kwargs)
         return new_directory_client
+
+    def query_file(self, query_expression, **kwargs):
+        # type: (str, **Any) -> DataLakeFileQueryReader
+        """Enables users to select/project on datalake file data by providing simple query expressions.
+        This operations returns a DataLakeFileQueryReader, users need to use readall() or readinto() to get query data.
+
+        :param str query_expression:
+            Required. a query statement.
+            eg. Select * from DataLakeStorage
+        :keyword Callable[Exception] on_error:
+            A function to be called on any processing errors returned by the service.
+        :keyword file_format:
+            Optional. Defines the serialization of the data currently stored in the file. The default is to
+            treat the file data as CSV data formatted in the default dialect. This can be overridden with
+            a custom DelimitedTextDialect, or alternatively a DelimitedJsonDialect.
+        :paramtype file_format:
+            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect
+        :keyword output_format:
+            Optional. Defines the output serialization for the data stream. By default the data will be returned
+            as it is represented in the file. By providing an output format, the file data will be reformatted
+            according to that profile. This value can be a DelimitedTextDialect or a DelimitedJsonDialect.
+        :paramtype output_format:
+            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect
+        :keyword lease:
+            Required if the file has an active lease. Value can be a DataLakeLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
+        :keyword ~datetime.datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :keyword ~datetime.datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :keyword str etag:
+            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
+            and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: A streaming object (DataLakeFileQueryReader)
+        :rtype: ~azure.storage.filedatalake.DataLakeFileQueryReader
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_query.py
+                :start-after: [START query]
+                :end-before: [END query]
+                :language: python
+                :dedent: 4
+                :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
+        """
+        query_expression = query_expression.replace("from DataLakeStorage", "from BlobStorage")
+        blob_quick_query_reader = self._blob_client.query_blob(query_expression,
+                                                               blob_format=kwargs.pop('file_format', None),
+                                                               error_cls=DataLakeFileQueryError,
+                                                               **kwargs)
+        return DataLakeFileQueryReader(blob_quick_query_reader)

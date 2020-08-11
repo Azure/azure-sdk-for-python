@@ -40,9 +40,8 @@ from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get
 from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
-    BlobPropertiesPaged,
-    BlobType,
-    BlobPrefix)
+    BlobType)
+from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged
 from ._lease import BlobLeaseClient, get_access_conditions
 from ._blob_client import BlobClient
 
@@ -783,6 +782,12 @@ class ContainerClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -893,6 +898,12 @@ class ContainerClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -952,6 +963,12 @@ class ContainerClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -998,6 +1015,9 @@ class ContainerClient(StorageAccountHostsMixin):
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         # Construct parameters
         timeout = kwargs.pop('timeout', None)
@@ -1027,6 +1047,8 @@ class ContainerClient(StorageAccountHostsMixin):
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._client._serialize.header(  # pylint: disable=protected-access
                 "if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._client._serialize.header("if_tags", if_tags, 'str')  # pylint: disable=protected-access
 
         return query_parameters, header_parameters
 
@@ -1039,6 +1061,7 @@ class ContainerClient(StorageAccountHostsMixin):
         delete_snapshots = kwargs.pop('delete_snapshots', None)
         if_modified_since = kwargs.pop('if_modified_since', None)
         if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        if_tags = kwargs.pop('if_tags_match_condition', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
                        'timeout': '&timeout=' + str(timeout) if timeout else ""
@@ -1057,17 +1080,20 @@ class ContainerClient(StorageAccountHostsMixin):
                     if_modified_since=if_modified_since or blob.get('if_modified_since'),
                     if_unmodified_since=if_unmodified_since or blob.get('if_unmodified_since'),
                     etag=blob.get('etag'),
+                    if_tags=if_tags or blob.get('if_tags_match_condition'),
                     match_condition=blob.get('match_condition') or MatchConditions.IfNotModified if blob.get('etag')
                     else None,
                     timeout=blob.get('timeout'),
                 )
-                query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options(**options)
             except AttributeError:
-                query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options(
+                options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
                     delete_snapshots=delete_snapshots,
                     if_modified_since=if_modified_since,
-                    if_unmodified_since=if_unmodified_since
+                    if_unmodified_since=if_unmodified_since,
+                    if_tags=if_tags
                 )
+
+            query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options(**options)
 
             req = HttpRequest(
                 "DELETE",
@@ -1113,6 +1139,8 @@ class ContainerClient(StorageAccountHostsMixin):
                     key: 'etag', value type: str
                 match the etag or not:
                     key: 'match_condition', value type: MatchConditions
+                tags match condition:
+                    key: 'if_tags_match_condition', value type: str
                 lease:
                     key: 'lease_id', value type: Union[str, LeaseClient]
                 timeout for subrequest:
@@ -1135,6 +1163,12 @@ class ContainerClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
@@ -1157,7 +1191,7 @@ class ContainerClient(StorageAccountHostsMixin):
         return self._batch_send(*reqs, **options)
 
     def _generate_set_tiers_subrequest_options(
-        self, tier, rehydrate_priority=None, lease_access_conditions=None, **kwargs
+        self, tier, snapshot=None, version_id=None, rehydrate_priority=None, lease_access_conditions=None, **kwargs
     ):
         """This code is a copy from _generated.
 
@@ -1165,6 +1199,9 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         if not tier:
             raise ValueError("A blob tier must be specified")
+        if snapshot and version_id:
+            raise ValueError("Snapshot and version_id cannot be set at the same time")
+        if_tags = kwargs.pop('if_tags', None)
 
         lease_id = None
         if lease_access_conditions is not None:
@@ -1174,6 +1211,10 @@ class ContainerClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         # Construct parameters
         query_parameters = {}
+        if snapshot is not None:
+            query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')  # pylint: disable=protected-access
+        if version_id is not None:
+            query_parameters['versionid'] = self._client._serialize.query("version_id", version_id, 'str')  # pylint: disable=protected-access
         if timeout is not None:
             query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)  # pylint: disable=protected-access
         query_parameters['comp'] = self._client._serialize.query("comp", comp, 'str')  # pylint: disable=protected-access, specify-parameter-names-in-call
@@ -1186,6 +1227,8 @@ class ContainerClient(StorageAccountHostsMixin):
                 "rehydrate_priority", rehydrate_priority, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._client._serialize.header("lease_id", lease_id, 'str')  # pylint: disable=protected-access
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._client._serialize.header("if_tags", if_tags, 'str')  # pylint: disable=protected-access
 
         return query_parameters, header_parameters
 
@@ -1197,6 +1240,7 @@ class ContainerClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
         rehydrate_priority = kwargs.pop('rehydrate_priority', None)
+        if_tags = kwargs.pop('if_tags_match_condition', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
                        'timeout': '&timeout=' + str(timeout) if timeout else ""
@@ -1211,13 +1255,16 @@ class ContainerClient(StorageAccountHostsMixin):
                 tier = blob_tier or blob.get('blob_tier')
                 query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(
                     tier=tier,
+                    snapshot=blob.get('snapshot'),
+                    version_id=blob.get('version_id'),
                     rehydrate_priority=rehydrate_priority or blob.get('rehydrate_priority'),
                     lease_access_conditions=blob.get('lease_id'),
+                    if_tags=if_tags or blob.get('if_tags_match_condition'),
                     timeout=timeout or blob.get('timeout')
                 )
             except AttributeError:
                 query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(
-                    blob_tier, rehydrate_priority=rehydrate_priority)
+                    blob_tier, rehydrate_priority=rehydrate_priority, if_tags=if_tags)
 
             req = HttpRequest(
                 "PUT",
@@ -1270,12 +1317,24 @@ class ContainerClient(StorageAccountHostsMixin):
                     key: 'rehydrate_priority', value type: RehydratePriority
                 lease:
                     key: 'lease_id', value type: Union[str, LeaseClient]
+                snapshot:
+                    key: "snapshost", value type: str
+                version id:
+                    key: "version_id", value type: str
+                tags match condition:
+                    key: 'if_tags_match_condition', value type: str
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
         :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword bool raise_on_any_failure:

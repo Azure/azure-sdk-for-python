@@ -48,7 +48,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         # In large max_batch_size case, like 5000, the pull receive would always return hundreds of messages limited by
         # the perf and time.
         self._further_pull_receive_timeout_ms = 200
-        self._idle_timeout = kwargs.get("idle_timeout", None)
+        self._max_wait_time = kwargs.get("max_wait_time", None)
 
     def _build_message(self, received, message_type=ReceivedMessage):
         message = message_type(message=received, mode=self._mode)
@@ -90,7 +90,7 @@ class SessionReceiverMixin(ReceiverMixin):
             self._session._session_id = self._session_id
 
     def _check_live(self):
-        if self._session and self._session.expired:
+        if self._session and self._session._lock_expired:  # pylint: disable=protected-access
             raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
 
     def _populate_session_attributes(self, **kwargs):

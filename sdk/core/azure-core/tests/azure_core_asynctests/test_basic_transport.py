@@ -155,7 +155,7 @@ async def test_multipart_send_with_one_changeset():
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1")
     ]
-    changeset = HttpRequest(None, None)
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
         *requests,
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
@@ -199,13 +199,13 @@ async def test_multipart_send_with_one_changeset():
 @pytest.mark.asyncio
 async def test_multipart_send_with_multiple_changesets():
     transport = MockAsyncHttpTransport()
-    changeset1 = HttpRequest(None, None)
+    changeset1 = HttpRequest("", "")
     changeset1.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1"),
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
     )
-    changeset2 = HttpRequest(None, None)
+    changeset2 = HttpRequest("", "")
     changeset2.set_multipart_mixed(
         HttpRequest("DELETE", "/container2/blob2"),
         HttpRequest("DELETE", "/container3/blob3"),
@@ -273,7 +273,7 @@ async def test_multipart_send_with_multiple_changesets():
 async def test_multipart_send_with_combination_changeset_first():
     transport = MockAsyncHttpTransport()
 
-    changeset = HttpRequest(None, None)
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1"),
@@ -326,7 +326,7 @@ async def test_multipart_send_with_combination_changeset_first():
 @pytest.mark.asyncio
 async def test_multipart_send_with_combination_changeset_last():
     transport = MockAsyncHttpTransport()
-    changeset = HttpRequest(None, None)
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container1/blob1"),
         HttpRequest("DELETE", "/container2/blob2"),
@@ -379,7 +379,7 @@ async def test_multipart_send_with_combination_changeset_last():
 @pytest.mark.asyncio
 async def test_multipart_send_with_combination_changeset_middle():
     transport = MockAsyncHttpTransport()
-    changeset = HttpRequest(None, None)
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container1/blob1"),
         boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
@@ -504,7 +504,7 @@ async def test_multipart_receive():
 
 @pytest.mark.asyncio
 async def test_multipart_receive_with_one_changeset():
-    changeset = HttpRequest(None, None)
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1")
@@ -559,12 +559,12 @@ async def test_multipart_receive_with_one_changeset():
 @pytest.mark.asyncio
 async def test_multipart_receive_with_multiple_changesets():
 
-    changeset1 = HttpRequest(None, None)
+    changeset1 = HttpRequest("", "")
     changeset1.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1")
     )
-    changeset2 = HttpRequest(None, None)
+    changeset2 = HttpRequest("", "")
     changeset2.set_multipart_mixed(
         HttpRequest("DELETE", "/container2/blob2"),
         HttpRequest("DELETE", "/container3/blob3")
@@ -645,7 +645,7 @@ async def test_multipart_receive_with_multiple_changesets():
 @pytest.mark.asyncio
 async def test_multipart_receive_with_combination_changeset_first():
 
-    changeset = HttpRequest(None, None)
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container0/blob0"),
         HttpRequest("DELETE", "/container1/blob1")
@@ -710,7 +710,7 @@ async def test_multipart_receive_with_combination_changeset_first():
 @pytest.mark.asyncio
 async def test_multipart_receive_with_combination_changeset_middle():
 
-    changeset = HttpRequest(None, None)
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(HttpRequest("DELETE", "/container1/blob1"))
 
     request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
@@ -776,7 +776,7 @@ async def test_multipart_receive_with_combination_changeset_middle():
 @pytest.mark.asyncio
 async def test_multipart_receive_with_combination_changeset_last():
 
-    changeset = HttpRequest(None, None)
+    changeset = HttpRequest("", "")
     changeset.set_multipart_mixed(
         HttpRequest("DELETE", "/container1/blob1"),
         HttpRequest("DELETE", "/container2/blob2")

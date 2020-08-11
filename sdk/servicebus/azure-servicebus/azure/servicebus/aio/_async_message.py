@@ -22,7 +22,7 @@ from ..exceptions import MessageSettleFailed
 _LOGGER = logging.getLogger(__name__)
 
 
-class ReceivedMessage(sync_message.ReceivedMessage):
+class ReceivedMessage(sync_message.ReceivedMessageBase):
     """A Service Bus Message received from service side.
 
     """

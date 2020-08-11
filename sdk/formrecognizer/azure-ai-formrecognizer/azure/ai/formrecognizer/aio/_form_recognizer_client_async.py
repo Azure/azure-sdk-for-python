@@ -102,7 +102,7 @@ class FormRecognizerClient(object):
         'image/jpeg', 'image/png' or 'image/tiff'.
 
         See fields found on a receipt here:
-        https://aka.ms/azsdk/python/formrecognizer/receiptfields
+        https://aka.ms/formrecognizer/receiptfields
 
         :param receipt: JPEG, PNG, PDF and TIFF type file stream or bytes.
             Currently only supports US sales receipts.
@@ -168,7 +168,7 @@ class FormRecognizerClient(object):
         The input document must be the location (URL) of the receipt to be analyzed.
 
         See fields found on a receipt here:
-        https://aka.ms/azsdk/python/formrecognizer/receiptfields
+        https://aka.ms/formrecognizer/receiptfields
 
         :param str receipt_url: The URL of the receipt to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
@@ -317,7 +317,7 @@ class FormRecognizerClient(object):
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
+            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a URL.")
 
         if content_type is None:
             content_type = get_content_type(form)

@@ -1,7 +1,46 @@
 # Release History
 
-## 7.0.0b5 (Unreleased)
+## 7.0.0b6 (Unreleased)
 
+
+## 7.0.0b5 (2020-08-10)
+
+**New Features**
+
+* Added new properties to Message, PeekMessage and ReceivedMessage: `content_type`, `correlation_id`, `label`,
+`message_id`, `reply_to`, `reply_to_session_id` and `to`. Please refer to the docstring for further information.
+* Added new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
+`dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`. Please refer to the docstring for further information.
+* Added support for sending received messages via `ServiceBusSender.send_messages`.
+* Added `on_lock_renew_failure` as a parameter to `AutoLockRenew.register`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion).
+* Added new supported value types int, float, datetime and timedelta for `CorrelationFilter.properties`.
+* Added new properties `parameters` and `requires_preprocessing` to `SqlRuleFilter` and `SqlRuleAction`.
+* Added an explicit method to fetch the continuous receiving iterator, `get_streaming_message_iter()` such that `max_wait_time` can be specified as an override.
+
+**Breaking Changes**
+
+* Removed/Renamed several properties and instance variables on Message (the changes applied to the inherited Message type PeekMessage and ReceivedMessage).
+  - Renamed property `user_properties` to `properties`
+      - The original instance variable `properties` which represents the AMQP properties now becomes an internal instance variable `_amqp_properties`.
+  - Removed property `enqueue_sequence_number`.
+  - Removed property `annotations`.
+  - Removed instance variable `header`.
+* Removed several properties and instance variables on PeekMessage and ReceivedMessage.
+  - Removed property `partition_id` on both type.
+  - Removed property `settled` on both type.
+  - Removed instance variable `received_timestamp_utc` on both type.
+  - Removed property `settled` on `PeekMessage`.
+  - Removed property `expired` on `ReceivedMessage`.
+* `AutoLockRenew.sleep_time` and `AutoLockRenew.renew_period` have been made internal as `_sleep_time` and `_renew_period` respectively, as it is not expected a user will have to interact with them.
+* `AutoLockRenew.shutdown` is now `AutoLockRenew.close` to normalize with other equivalent behaviors.
+* Renamed `QueueDescription`, `TopicDescription`, `SubscriptionDescription` and `RuleDescription` to `QueueProperties`, `TopicProperties`, `SubscriptionProperties`, and `RuleProperties`.
+* Renamed `QueueRuntimeInfo`, `TopicRuntimeInfo`, and `SubscriptionRuntimeInfo` to `QueueRuntimeProperties`, `TopicRuntimeProperties`, and `SubscriptionRuntimeProperties`.
+* Removed param `queue` from `create_queue`, `topic` from `create_topic`, `subscription` from `create_subscription` and `rule` from `create_rule`
+ of `ServiceBusManagementClient`. Added param `name` to them and keyword arguments for queue properties, topic properties, subscription properties and rule properties.
+* Removed model class attributes related keyword arguments from `update_queue` and `update_topic` of `ServiceBusManagementClient`. This is to encourage utilizing the model class instance instead as returned from a create_\*, list_\* or get_\* operation to ensure it is properly populated.  Properties may still be modified.
+* Model classes `QueueProperties`, `TopicProperties`, `SubscriptionProperties` and `RuleProperties` require all arguments to be present for creation.  This is to protect against lack of partial updates by requiring all properties to be specified.
+* Renamed `idle_timeout` in `get_<queue/subscription>_receiver()` to `max_wait_time` to normalize with naming elsewhere.
+* Updated uAMQP dependency to 1.2.10 such that the receiver does not shut down when generator times out, and can be received from again.
 
 ## 7.0.0b4 (2020-07-06)
 
@@ -12,8 +51,8 @@
 
 **BugFixes**
 
-* Fixed bug where sync AutoLockRenew does not shutdown itself timely.
-* Fixed bug where async AutoLockRenew does not support context manager.
+* Fixed bug where sync `AutoLockRenew` does not shutdown itself timely.
+* Fixed bug where async `AutoLockRenew` does not support context manager.
 
 **Breaking Changes**
 
@@ -141,7 +180,7 @@ Version 7.0.0b1 is a preview of our efforts to create a client library that is u
 
 * Introduces new AMQP-based API.
 * Original HTTP-based API still available under new namespace: azure.servicebus.control_client
-* For full API changes, please see updated [reference documentation](https://docs.microsoft.com/python/api/overview/azure/servicebus/client?view=azure-python).
+* For full API changes, please see updated [reference documentation](https://docs.microsoft.com/python/api/azure-servicebus/azure.servicebus?view=azure-python).
 
 Within the new namespace, the original HTTP-based API from version 0.21.1 remains unchanged (i.e. no additional features or bugfixes)
 so for those intending to only use HTTP operations - there is no additional benefit in updating at this time.

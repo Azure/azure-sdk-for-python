@@ -1,6 +1,25 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 3.0.0b1 (2020-08-11)
+
+The version of this package now targets the service's v2.0 API.
+
+**Breaking Changes**
+
+- Values are now capitalized for enums `FormContentType`, `LengthUnit`, `TrainingStatus`, and `CustomFormModelStatus`
+- `document_name` renamed to `name` on `TrainingDocumentInfo`
+- Keyword argument `include_sub_folders` renamed to `include_subfolders` on `begin_training` methods
+
+**New features**
+
+- `FormField` now has attribute `value_type` which contains the semantic data type of the field value. The options for
+`value_type` are described in the enum `FieldValueType`
+
+**Fixes and improvements**
+
+- Fixes a bug where error code and message weren't being returned on `HttpResponseError` if operation failed during polling
+- `FormField` property `value_data` is now set to `None` if no values are returned on its `FieldData`.
+Previously `value_data` returned a `FieldData` with all its attributes set to `None` in the above case.
 
 
 ## 1.0.0b4 (2020-07-07)

@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# pylint: disable=invalid-overridden-method
 import functools
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, AnyStr, Dict, List, IO, AsyncIterator,
@@ -33,8 +33,8 @@ from .._deserialize import deserialize_container_properties
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version
 from .._container_client import ContainerClient as ContainerClientBase, _get_blob_name
 from .._lease import get_access_conditions
-from .._models import ContainerProperties, BlobProperties, BlobType  # pylint: disable=unused-import
-from ._models import BlobPropertiesPaged, BlobPrefix
+from .._models import ContainerProperties, BlobType, BlobProperties  # pylint: disable=unused-import
+from ._list_blobs_helper import BlobPropertiesPaged, BlobPrefix
 from ._lease_async import BlobLeaseClient
 from ._blob_client_async import BlobClient
 
@@ -658,6 +658,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -768,6 +774,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -827,6 +839,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -886,6 +904,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                     key: 'etag', value type: str
                 match the etag or not:
                     key: 'match_condition', value type: MatchConditions
+                tags match condition:
+                    key: 'if_tags_match_condition', value type: str
                 lease:
                     key: 'lease_id', value type: Union[str, LeaseClient]
                 timeout for subrequest:
@@ -908,6 +928,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure. For optimal performance,
@@ -969,12 +995,20 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                     key: 'rehydrate_priority', value type: RehydratePriority
                 lease:
                     key: 'lease_id', value type: Union[str, LeaseClient]
+                tags match condition:
+                    key: 'if_tags_match_condition', value type: str
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
         :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
+        :keyword str if_tags_match_condition
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
+            eg. "\"tagname\"='my tag'"
+
+            .. versionadded:: 12.4.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword bool raise_on_any_failure:

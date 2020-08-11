@@ -11,8 +11,8 @@ param (
   [string] $baseUrl = "",
   # path to the root of the site for resolving rooted relative links, defaults to host root for http and file directory for local files
   [string] $rootUrl = "",
-  # list of http status codes count as broken links. Defaults to 404. 
-  [array] $errorStatusCodes = @(404),
+  # list of http status codes count as broken links. Defaults to 400, 401, 404, SocketError.HostNotFound = 11001, SocketError.NoData = 11004
+  [array] $errorStatusCodes = @(400, 401, 404, 11001, 11004),
   # flag to allow resolving relative paths or not
   [bool] $resolveRelativeLinks = $true
 )
@@ -87,7 +87,7 @@ function ResolveUri ([System.Uri]$referralUri, [string]$link)
     return $null
   }
 
-  if ($null -ne $ignoreLinks -and $ignoreLinks.Contains($link)) {
+  if ($null -ne $ignoreLinks -and ($ignoreLinks.Contains($link) -or $ignoreLinks.Contains($linkUri.ToString()))) {
     Write-Verbose "Ignoring invalid link $linkUri because it is in the ignore file."
     return $null
   }
@@ -125,7 +125,18 @@ function CheckLink ([System.Uri]$linkUri)
   }
   else {
     try {
-      $response = Invoke-WebRequest -Uri $linkUri
+      $headRequestSucceeded = $true
+      try {
+        # Attempt HEAD request first
+        $response = Invoke-WebRequest -Uri $linkUri -Method HEAD
+      }
+      catch {
+        $headRequestSucceeded = $false
+      }
+      if (!$headRequestSucceeded) {
+        # Attempt a GET request if the HEAD request failed.
+        $response = Invoke-WebRequest -Uri $linkUri -Method GET
+      }
       $statusCode = $response.StatusCode
       if ($statusCode -ne 200) {
         Write-Host "[$statusCode] while requesting $linkUri"
@@ -133,6 +144,11 @@ function CheckLink ([System.Uri]$linkUri)
     }
     catch {
       $statusCode = $_.Exception.Response.StatusCode.value__
+
+      if(!$statusCode) {
+        # Try to pull the error code from any inner SocketException we might hit
+        $statusCode = $_.Exception.InnerException.ErrorCode
+      }
 
       if ($statusCode -in $errorStatusCodes) {
         LogWarning "[$statusCode] broken link $linkUri"

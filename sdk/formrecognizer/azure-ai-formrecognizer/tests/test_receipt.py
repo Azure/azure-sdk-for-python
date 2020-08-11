@@ -51,7 +51,7 @@ class TestReceiptFromStream(FormRecognizerTest):
             myfile = fd.read()
         poller = client.begin_recognize_receipts(
             myfile,
-            content_type=FormContentType.image_png
+            content_type=FormContentType.IMAGE_PNG
         )
         result = poller.result()
         self.assertIsNotNone(result)
@@ -307,13 +307,10 @@ class TestReceiptFromStream(FormRecognizerTest):
         receipt = result[0]
 
         self.assertFormPagesHasValues(receipt.pages)
-        for field, value in receipt.__dict__.items():
-            if field not in ["receipt_items", "page_range", "pages", "fields", "form_type"]:
-                form_field = getattr(receipt, field)
-                self.assertTextContentHasValues(form_field.value_data.field_elements, receipt.page_range.first_page_number)
 
-        for field, value in receipt.fields.items():
-            self.assertTextContentHasValues(value.value_data.field_elements, receipt.page_range.first_page_number)
+        for name, field in receipt.fields.items():
+            if field.value_type not in ["list", "dictionary"] and name != "ReceiptType":  # receipt cases where value_data is None
+                self.assertFieldElementsHasValues(field.value_data.field_elements, receipt.page_range.first_page_number)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()

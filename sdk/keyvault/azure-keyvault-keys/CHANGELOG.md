@@ -1,11 +1,21 @@
 # Release History
 
-## 4.2.0b2 (Unreleased)
+## 4.2.0 (2020-08-10)
+### Fixed
 - Values of `x-ms-keyvault-region` and `x-ms-keyvault-service-version` headers
-  are no longer redacted in logging output.
-- Updated minimum `azure-core` version to 1.4.0
+  are no longer redacted in logging output
 - `CryptographyClient` will no longer perform encrypt or wrap operations when
-  its key has expired or is not yet valid.
+  its key has expired or is not yet valid
+
+### Changed
+- Key Vault API version 7.1 is now the default
+- Updated minimum `azure-core` version to 1.7.0
+
+### Added
+- At construction, clients accept a `CustomHookPolicy` through the optional
+  keyword argument `custom_hook_policy`
+- All client requests include a unique ID in the header `x-ms-client-request-id`
+- Dependency on `azure-common` for multiapi support
 
 ## 4.2.0b1 (2020-03-10)
 - Support for Key Vault API version 7.1-preview
@@ -37,7 +47,7 @@ as a context manager, a `KeyClient` closes opened sockets on exit.
 ### Breaking changes:
 - Removed `KeyClient.get_cryptography_client()` and `CryptographyClient.get_key()`
 - Moved the optional parameters of several methods into kwargs (
-[docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html)
+[docs](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-keyvault-keys/4.0.0/index.html)
 detail the new keyword arguments):
   - `create_key` now has positional parameters `name` and `key_type`
   - `create_ec_key` and `create_rsa_key` now have one positional parameter, `name`
@@ -70,8 +80,8 @@ been renamed to `KeyCurveName`, `KeyOperation`, and `KeyType`, respectively.
 - `Key` now has attribute `properties`, which holds certain properties of the
 key, such as `version`. This changes the shape of the returned `Key` type,
 as certain properties of `Key` (such as `version`) have to be accessed
-through the `properties` property. See the updated [docs](https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.keys.html)
-for details.
+through the `properties` property.
+
 - `update_key` has been renamed to `update_key_properties`
 - The `vault_url` parameter of `KeyClient` has been renamed to `vault_endpoint`
 - The property `vault_url` has been renamed to `vault_endpoint` in all models
