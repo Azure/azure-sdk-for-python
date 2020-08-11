@@ -9,7 +9,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer47fb1599?restype=container
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer47fb1599?restype=container
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
@@ -41,7 +41,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer47fb1599/blob47fb1599
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer47fb1599/blob47fb1599
   response:
     body:
       string: ''
@@ -75,7 +75,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer47fb1599/blob47fb1599?comp=appendblock
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer47fb1599/blob47fb1599?comp=appendblock
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
@@ -108,7 +108,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer47fb1599/blob47fb1599?comp=appendblock
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainer47fb1599/blob47fb1599?comp=appendblock
   response:
     body:
       string: ''
