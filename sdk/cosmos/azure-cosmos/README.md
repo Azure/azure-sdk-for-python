@@ -131,7 +131,7 @@ The preceding snippet also handles the [CosmosHttpResponseError][ref_httpfailure
 This example creates a container with [Analytical Store](https://docs.microsoft.com/en-us/azure/cosmos-db/analytical-store-introduction) enabled, for reporting, BI, AI, and Advanced Analytics with [Azure Synapse Link](https://docs.microsoft.com/en-us/azure/cosmos-db/synapse-link). 
 
 Options:
-+ Null = Not enabled.
++ 0 or Null = Not enabled.
 + -1 = The data will be stored infinitely.
 + Any other number is the actual ttl, in seconds.
 
