@@ -57,7 +57,7 @@ def _get_full_topic_hostname(topic_hostname):
 
 def _hmac(key, message):
     decoded_key = base64.b64decode(key)
-    bytes_message = bytes(message, 'ascii')
+    bytes_message = message.encode('ascii')
     hmac_new = hmac.new(decoded_key, bytes_message, hashlib.sha256).digest()
 
     return base64.b64encode(hmac_new)
