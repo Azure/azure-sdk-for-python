@@ -11,6 +11,7 @@
 
 try:
     from ._models_py3 import Column
+    from ._models_py3 import DateTimeInterval
     from ._models_py3 import Error
     from ._models_py3 import ErrorDetails
     from ._models_py3 import ErrorResponse, ErrorResponseException
@@ -24,9 +25,19 @@ try:
     from ._models_py3 import QueryRequest
     from ._models_py3 import QueryRequestOptions
     from ._models_py3 import QueryResponse
+    from ._models_py3 import ResourceChangeData
+    from ._models_py3 import ResourceChangeDataAfterSnapshot
+    from ._models_py3 import ResourceChangeDataBeforeSnapshot
+    from ._models_py3 import ResourceChangeDetailsRequestParameters
+    from ._models_py3 import ResourceChangeList
+    from ._models_py3 import ResourceChangesRequestParameters
+    from ._models_py3 import ResourceChangesRequestParametersInterval
+    from ._models_py3 import ResourcePropertyChange
+    from ._models_py3 import ResourceSnapshotData
     from ._models_py3 import Table
 except (SyntaxError, ImportError):
     from ._models import Column
+    from ._models import DateTimeInterval
     from ._models import Error
     from ._models import ErrorDetails
     from ._models import ErrorResponse, ErrorResponseException
@@ -40,6 +51,15 @@ except (SyntaxError, ImportError):
     from ._models import QueryRequest
     from ._models import QueryRequestOptions
     from ._models import QueryResponse
+    from ._models import ResourceChangeData
+    from ._models import ResourceChangeDataAfterSnapshot
+    from ._models import ResourceChangeDataBeforeSnapshot
+    from ._models import ResourceChangeDetailsRequestParameters
+    from ._models import ResourceChangeList
+    from ._models import ResourceChangesRequestParameters
+    from ._models import ResourceChangesRequestParametersInterval
+    from ._models import ResourcePropertyChange
+    from ._models import ResourceSnapshotData
     from ._models import Table
 from ._paged_models import OperationPaged
 from ._resource_graph_client_enums import (
@@ -47,10 +67,14 @@ from ._resource_graph_client_enums import (
     FacetSortOrder,
     ResultTruncated,
     ColumnDataType,
+    ChangeType,
+    ChangeCategory,
+    PropertyChangeType,
 )
 
 __all__ = [
     'Column',
+    'DateTimeInterval',
     'Error',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
@@ -64,10 +88,22 @@ __all__ = [
     'QueryRequest',
     'QueryRequestOptions',
     'QueryResponse',
+    'ResourceChangeData',
+    'ResourceChangeDataAfterSnapshot',
+    'ResourceChangeDataBeforeSnapshot',
+    'ResourceChangeDetailsRequestParameters',
+    'ResourceChangeList',
+    'ResourceChangesRequestParameters',
+    'ResourceChangesRequestParametersInterval',
+    'ResourcePropertyChange',
+    'ResourceSnapshotData',
     'Table',
     'OperationPaged',
     'ResultFormat',
     'FacetSortOrder',
     'ResultTruncated',
     'ColumnDataType',
+    'ChangeType',
+    'ChangeCategory',
+    'PropertyChangeType',
 ]

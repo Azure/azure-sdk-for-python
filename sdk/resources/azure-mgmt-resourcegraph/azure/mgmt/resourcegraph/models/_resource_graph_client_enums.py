@@ -37,3 +37,23 @@ class ColumnDataType(str, Enum):
     number = "number"
     boolean = "boolean"
     object_enum = "object"
+
+
+class ChangeType(str, Enum):
+
+    create = "Create"
+    update = "Update"
+    delete = "Delete"
+
+
+class ChangeCategory(str, Enum):
+
+    user = "User"
+    system = "System"
+
+
+class PropertyChangeType(str, Enum):
+
+    insert = "Insert"
+    update = "Update"
+    remove = "Remove"
