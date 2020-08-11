@@ -152,7 +152,7 @@ class StorageTableClientTest(TableTestCase):
             self.validate_standard_account_endpoints(service, storage_account.name, storage_account_key)
             self.assertEqual(service.scheme, 'http')
 
-    #@pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_create_service_empty_key_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -166,7 +166,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(
                 str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
 
-    #@pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_create_service_with_socket_timeout_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

@@ -5,22 +5,16 @@ interactions:
       <StorageServiceProperties><Logging><Version>1.0</Version><Delete>false</Delete><Read>false</Read><Write>false</Write><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
       /></StorageServiceProperties>'
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '528'
       Content-Type:
       - application/xml
       Date:
-      - Tue, 11 Aug 2020 15:36:25 GMT
+      - Tue, 11 Aug 2020 15:54:10 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 11 Aug 2020 15:36:25 GMT
+      - Tue, 11 Aug 2020 15:54:10 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -29,32 +23,25 @@ interactions:
     body:
       string: ''
     headers:
-      date:
-      - Tue, 11 Aug 2020 15:36:28 GMT
-      server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
-      x-ms-version:
-      - '2019-07-07'
+      date: Tue, 11 Aug 2020 15:54:12 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2019-07-07'
     status:
       code: 202
       message: Accepted
+    url: https://pyacrstoragecwx2zy44qe53.table.core.windows.net/?restype=service&comp=properties
 - request:
     body: null
     headers:
       Accept:
       - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Date:
-      - Tue, 11 Aug 2020 15:36:56 GMT
+      - Tue, 11 Aug 2020 15:54:41 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 11 Aug 2020 15:36:56 GMT
+      - Tue, 11 Aug 2020 15:54:41 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -64,17 +51,13 @@ interactions:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>false</Enabled><RetentionPolicy><Enabled>false</Enabled></RetentionPolicy></MinuteMetrics><Cors
         /></StorageServiceProperties>"
     headers:
-      content-type:
-      - application/xml
-      date:
-      - Tue, 11 Aug 2020 15:36:58 GMT
-      server:
-      - Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
-      transfer-encoding:
-      - chunked
-      x-ms-version:
-      - '2019-07-07'
+      content-type: application/xml
+      date: Tue, 11 Aug 2020 15:54:43 GMT
+      server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2019-07-07'
     status:
       code: 200
       message: OK
+    url: https://pyacrstoragecwx2zy44qe53.table.core.windows.net/?restype=service&comp=properties
 version: 1

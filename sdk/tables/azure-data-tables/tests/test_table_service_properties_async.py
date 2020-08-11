@@ -98,14 +98,13 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_table_service_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
         if 'cosmos' in url:
             pytest.skip("Cosmos Tables does not yet support service properties")
-        tsc = TableServiceClient(url, storage_account_key)
+        tsc = TableServiceClient(url, storage_account_key, logging_enable=True)
         # Act
         resp = await tsc.set_service_properties(
             analytics_logging=TableAnalyticsLogging(),
@@ -117,11 +116,10 @@ class TableServicePropertiesTest(TableTestCase):
         self.assertIsNone(resp)
         if self.is_live:
             time.sleep(30)
-        self._assert_properties_default(tsc.get_service_properties())
+        self._assert_properties_default(await tsc.get_service_properties())
 
 
     # --Test cases per feature ---------------------------------------
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_set_logging_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -137,10 +135,9 @@ class TableServicePropertiesTest(TableTestCase):
         # Assert
         if self.is_live:
             time.sleep(30)
-        received_props = tsc.get_service_properties()
+        received_props = await tsc.get_service_properties()
         self._assert_logging_equal(received_props['analytics_logging'], logging)
 
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_set_hour_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -156,10 +153,9 @@ class TableServicePropertiesTest(TableTestCase):
         # Assert
         if self.is_live:
             time.sleep(30)
-        received_props = tsc.get_service_properties()
+        received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_set_minute_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -176,10 +172,9 @@ class TableServicePropertiesTest(TableTestCase):
         # Assert
         if self.is_live:
             time.sleep(30)
-        received_props = tsc.get_service_properties()
+        received_props = await tsc.get_service_properties()
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
-    @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_set_cors_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -209,7 +204,7 @@ class TableServicePropertiesTest(TableTestCase):
         # Assert
         if self.is_live:
             time.sleep(30)
-        received_props = tsc.get_service_properties()
+        received_props = await tsc.get_service_properties()
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
@@ -240,7 +235,8 @@ class TableServicePropertiesTest(TableTestCase):
         tsc = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
-
+        
+        await tsc.set_service_properties(None, None, minute_metrics)
         # Assert
         self.assertRaises(HttpResponseError,
                           tsc.set_service_properties,

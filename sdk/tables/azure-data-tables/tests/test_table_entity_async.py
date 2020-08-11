@@ -288,7 +288,6 @@ class StorageTableEntityTest(TableTestCase):
         # self.assertIsInstance(entity.Timestamp, datetime)
 
     # --Test cases for entities ------------------------------------------
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_dictionary(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -305,7 +304,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_with_hook(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -323,7 +321,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_with_no_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -344,7 +341,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_with_full_metadata(self, resource_group, location, storage_account,
                                                     storage_account_key):
@@ -365,7 +361,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_conflict(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -382,7 +377,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_with_large_int32_value_throws(self, resource_group, location, storage_account,
                                                                storage_account_key):
@@ -403,7 +397,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_with_large_int64_value_throws(self, resource_group, location, storage_account,
                                                                storage_account_key):
@@ -424,7 +418,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_missing_pk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -440,7 +434,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_empty_string_pk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -460,7 +454,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_missing_rk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -476,7 +470,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_empty_string_rk(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -496,7 +490,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_too_many_properties(self, resource_group, location, storage_account,
                                                      storage_account_key):
@@ -517,7 +511,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_insert_entity_property_name_too_long(self, resource_group, location, storage_account,
                                                         storage_account_key):
@@ -537,7 +531,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_get_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -556,7 +550,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_get_entity_with_hook(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -579,7 +573,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_get_entity_if_match(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -604,7 +598,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_get_entity_full_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -625,7 +619,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_get_entity_no_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -646,7 +640,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_get_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -663,7 +657,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_get_entity_with_special_doubles(self, resource_group, location, storage_account,
                                                    storage_account_key):
@@ -689,7 +683,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_update_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -713,7 +707,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_update_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -730,7 +724,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_update_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -754,7 +748,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_update_entity_with_if_doesnt_match(self, resource_group, location, storage_account,
                                                       storage_account_key):
@@ -776,7 +770,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_insert_or_merge_entity_with_existing_entity(self, resource_group, location, storage_account,
                                                                storage_account_key):
@@ -797,7 +791,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_insert_or_merge_entity_with_non_existing_entity(self, resource_group, location, storage_account,
                                                                    storage_account_key):
@@ -818,7 +812,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_insert_or_replace_entity_with_existing_entity(self, resource_group, location, storage_account,
                                                                  storage_account_key):
@@ -839,7 +833,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_insert_or_replace_entity_with_non_existing_entity(self, resource_group, location, storage_account,
                                                                      storage_account_key):
@@ -860,7 +854,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_merge_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -880,7 +874,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_merge_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -897,7 +891,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_merge_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -919,7 +913,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_merge_entity_with_if_doesnt_match(self, resource_group, location, storage_account,
                                                      storage_account_key):
@@ -940,7 +934,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_delete_entity(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -958,7 +952,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_delete_entity_not_existing(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -974,7 +968,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_delete_entity_with_if_matches(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -993,7 +987,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_delete_entity_with_if_doesnt_match(self, resource_group, location, storage_account,
                                                       storage_account_key):
@@ -1013,7 +1007,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_unicode_property_value(self, resource_group, location, storage_account, storage_account_key):
         ''' regression test for github issue #57'''
@@ -1041,7 +1035,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_unicode_property_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1111,7 +1105,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_empty_and_spaces_property_value(self, resource_group, location, storage_account,
                                                    storage_account_key):
@@ -1151,7 +1145,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_none_property_value(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1170,7 +1164,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_binary_property_value(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1190,7 +1184,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_timezone(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1213,7 +1207,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_query_entities(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1233,7 +1227,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_query_zero_entities(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1251,7 +1245,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_query_entities_full_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1271,7 +1265,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_query_entities_no_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1324,7 +1318,7 @@ class StorageTableEntityTest(TableTestCase):
         # if it runs slowly, it will return fewer results and make the test fail
         self.assertEqual(len(entities), total_entities_count)
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_query_entities_with_filter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1345,7 +1339,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_query_entities_with_select(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1368,7 +1362,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_query_entities_with_top(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1386,7 +1380,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @GlobalStorageAccountPreparer()
     async def test_query_entities_with_top_and_next(self, resource_group, location, storage_account,
                                                     storage_account_key):
@@ -1423,7 +1417,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_query(self, resource_group, location, storage_account, storage_account_key):
@@ -1462,7 +1456,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
@@ -1499,7 +1493,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_add_inside_range(self, resource_group, location, storage_account, storage_account_key):
@@ -1535,7 +1529,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_add_outside_range(self, resource_group, location, storage_account, storage_account_key):
@@ -1570,7 +1564,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
@@ -1606,7 +1600,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_delete(self, resource_group, location, storage_account, storage_account_key):
@@ -1640,7 +1634,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_upper_case_table_name(self, resource_group, location, storage_account, storage_account_key):
@@ -1680,7 +1674,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    # @pytest.mark.skip("pending")
+    
     @pytest.mark.live_test_only
     @GlobalStorageAccountPreparer()
     async def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
