@@ -13,7 +13,7 @@ import re
 from azure.core.pipeline.policies import HTTPPolicy
 
 from azure.core.exceptions import ResourceExistsError
-from azure.storage.blob._shared.base_client import format_shared_key_credential
+from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.filedatalake import DataLakeServiceClient
 from testcase import (
     StorageTestCase,
@@ -34,7 +34,7 @@ class LargeFileTest(StorageTestCase):
         super(LargeFileTest, self).setUp()
         url = self._get_account_url()
         self.payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = format_shared_key_credential(self.settings.STORAGE_DATA_LAKE_ACCOUNT_NAME,
+        credential_policy = _format_shared_key_credential(self.settings.STORAGE_DATA_LAKE_ACCOUNT_NAME,
                                                          self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY)
         self.dsc = DataLakeServiceClient(url,
                                          credential=self.settings.STORAGE_DATA_LAKE_ACCOUNT_KEY,
