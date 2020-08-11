@@ -1,7 +1,10 @@
 import hashlib
 import hmac
 import base64
-from urllib.parse import quote
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib2 import quote # type: ignore
 import datetime
 
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
