@@ -430,7 +430,7 @@ class ServiceBusClient(object):
         )
 
     def get_subscription_session_receiver(self, topic_name, subscription_name, session_id=None, **kwargs):
-        # type: (str, str, str, Any) -> ServiceBusReceiver
+        # type: (str, str, str, Any) -> ServiceBusSessionReceiver
         """Get ServiceBusReceiver for the specific subscription under the topic.
 
         :param str topic_name: The name of specific Service Bus Topic the client connects to.

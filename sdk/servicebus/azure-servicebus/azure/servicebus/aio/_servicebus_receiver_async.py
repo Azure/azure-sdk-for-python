@@ -103,7 +103,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         fully_qualified_namespace: str,
         credential: "TokenCredential",
         **kwargs: Any
-    ):
+    ) -> None:
         self._message_iter = None  # type: Optional[AsyncIterator[ReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
@@ -304,7 +304,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     ) -> "ServiceBusReceiver":
         """Create a ServiceBusReceiver from a connection string.
 
-        :param conn_str: The connection string of a Service Bus.
+        :param str conn_str: The connection string of a Service Bus.
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
          the client connects to.

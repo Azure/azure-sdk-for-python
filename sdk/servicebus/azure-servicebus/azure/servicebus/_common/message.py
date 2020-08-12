@@ -9,7 +9,7 @@ import datetime
 import uuid
 import functools
 import logging
-from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable
+from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable, Any
 
 import uamqp.message
 
@@ -65,7 +65,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     """A Service Bus Message.
 
     :param body: The data to send in a single message.
-    :type body: str or bytes
+    :type body: Union[str, bytes]
 
     :keyword dict properties: The user defined properties on the message.
     :keyword str session_id: The session identifier of the message for a sessionful entity.
@@ -95,6 +95,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     """
 
     def __init__(self, body, **kwargs):
+        # type: (Union[str, bytes], Any) -> None
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", 'UTF-8')
@@ -491,7 +492,6 @@ class BatchMessage(object):
     :vartype message: ~uamqp.BatchMessage
 
     :param int max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold.
-
     """
     def __init__(self, max_size_in_bytes=None):
         # type: (Optional[int]) -> None
@@ -570,10 +570,10 @@ class PeekMessage(Message):
     This message is still on the queue, and unlocked.
     A peeked message cannot be completed, abandoned, dead-lettered or deferred.
     It has no lock token or expiry.
-
     """
 
     def __init__(self, message):
+        # type: (uamqp.message.Message) -> None
         super(PeekMessage, self).__init__(None, message=message)
 
     def _to_outgoing_message(self):
@@ -741,6 +741,7 @@ class ReceivedMessageBase(PeekMessage):
     """
 
     def __init__(self, message, mode=ReceiveSettleMode.PeekLock, **kwargs):
+        # type: (uamqp.message.Message, ReceiveSettleMode, Any) -> None
         super(ReceivedMessageBase, self).__init__(message=message)
         self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
         self._received_timestamp_utc = utc_now()

@@ -73,6 +73,7 @@ class ServiceBusSession(BaseSession):
 
         :param state: The state value.
         :type state: str, bytes or bytearray
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -102,6 +103,8 @@ class ServiceBusSession(BaseSession):
 
         This operation can also be performed as a threaded background task by registering the session
         with an `azure.servicebus.aio.AutoLockRenew` instance.
+
+        :rtype: None
 
         .. admonition:: Example:
 

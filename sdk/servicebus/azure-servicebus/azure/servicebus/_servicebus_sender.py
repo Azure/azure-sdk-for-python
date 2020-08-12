@@ -198,10 +198,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """Send Message or multiple Messages to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
         :param messages: The message or list of messages to schedule.
-        :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
+        :type messages: Union[~azure.servicebus.Message, List[~azure.servicebus.Message]]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
-        :rtype: list[int]
+        :rtype: List[int]
 
         .. admonition:: Example:
 
@@ -266,6 +266,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """Create a ServiceBusSender from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
+        :type conn_str: str
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
          Only one of queue_name or topic_name can be provided.
         :keyword str topic_name: The path of specific Service Bus Topic the client connects to.
@@ -280,7 +281,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-        :rtype: ~azure.servicebus.ServiceBusSenderClient
+
+        :rtype: ~azure.servicebus.ServiceBusSender
 
         .. admonition:: Example:
 
