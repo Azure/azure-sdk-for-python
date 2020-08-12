@@ -20,9 +20,20 @@ Key capabilities are:
 ## Getting started
 
 ### Prerequisites
-* Azure subscription - [Create a free account][azure_sub]
-* [Azure Cosmos DB account][cosmos_account] - SQL API
-* [Python 2.7 or 3.5.3+][python]
+
+- A Cosmos DB Account. You options are:
+    * Within an Azure active subscription:
+        * [Create an Azure free Account](https://azure.microsoft.com/free) or use your existing subscription 
+        * [Visual Studio Monthly Credits](https://azure.microsoft.com/pricing/member-offers/credit-for-visual-studio-subscribers)
+        * [Azure Cosmos DB Free Tier](https://docs.microsoft.com/azure/cosmos-db/optimize-dev-test#azure-cosmos-db-free-tier)
+    * Without an Azure active subscription:
+        * [Try Azure Cosmos DB for free](https://azure.microsoft.com/try/cosmosdb/), a tests environment that lasts for 30 days.
+        * [Azure Cosmos DB Emulator](https://aka.ms/cosmosdb-emulator) 
+- [Python 2.7 or 3.5.3+](https://www.python.org/downloads/), with the `python` executable in your `PATH`.
+- [Visual Studio Code](https://code.visualstudio.com/).
+- The [Python extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-python.python#overview).
+- [Git](https://www.git-scm.com/downloads). 
+- [Azure Cosmos DB SQL API SDK for Python](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos)
 
 
 If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI][azure_cli] command:
