@@ -17,10 +17,11 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import VERSION, LocationMode
+from .._base_client import parse_connection_str
 from .._generated.aio._azure_table_async import AzureTable
 from .._generated.models import TableServiceProperties, TableProperties, QueryOptions
 from .._models import service_stats_deserialize, service_properties_deserialize
-from .._error import _validate_table_name, _process_table_error
+from .._error import _process_table_error
 from .._table_service_client_base import TableServiceClientBase
 from .._models import Table
 from ._policies_async import ExponentialRetry
@@ -277,7 +278,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         )
 
     def get_table_client(
-            self, table_name, # type: Union[TableProperties, str]
+            self, table_name, # type: str
             **kwargs # type: Optional[Any]
     ):
         # type: (...) -> TableClient
