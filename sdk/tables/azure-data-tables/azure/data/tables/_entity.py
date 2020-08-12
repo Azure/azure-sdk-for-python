@@ -108,19 +108,18 @@ class EntityProperty(object):
                 self.value = UUID(value)
                 self.type = EdmType.GUID
             except ValueError:
-            self.value = value
+                self.value = value
                 self.type = EdmType.STRING
         elif isinstance(value, float):
             self.value = value
             self.type = EdmType.DOUBLE
         else:
-            return ValueError(
-                """Type of {} could not be inferred. Acceptable types are bytes, int, uuid.UUID, 
-                datetime, string, int32, int64, float, and boolean. Refer to 
+            raise ValueError(
+                """Type of {} could not be inferred. Acceptable types are bytes, int, uuid.UUID,
+                datetime, string, int32, int64, float, and boolean. Refer to
                 azure.data.tables.EdmType for more information.
                 """.format(value)
                 )
-        
 
 
 class EdmType(str, Enum):

@@ -16,7 +16,6 @@ from azure.core.exceptions import ResourceExistsError
 
 from ._entity import EntityProperty, EdmType, TableEntity
 from ._common_conversion import _decode_base64_to_bytes
-from ._generated.models import TableProperties
 from ._error import TableErrorCode
 
 if TYPE_CHECKING:
