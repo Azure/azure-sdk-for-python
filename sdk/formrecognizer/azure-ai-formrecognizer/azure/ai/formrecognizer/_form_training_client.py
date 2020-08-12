@@ -57,9 +57,10 @@ class FormTrainingClient(object):
         credential from :mod:`azure.identity`.
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
         :class:`~azure.core.credentials.TokenCredential`
-    :keyword str api_version:
+    :keyword api_version:
         The API version of the service to use for requests. It defaults to the latest service version.
         Setting to an older version may result in reduced feature compatibility.
+    :paramtype api_version: str or ~azure.ai.formrecognizer.FormRecognizerApiVersion
 
     .. admonition:: Example:
 
