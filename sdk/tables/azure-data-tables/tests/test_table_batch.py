@@ -16,6 +16,7 @@ from dateutil.tz import tzutc
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceExistsError)
+from azure.data.tables import EdmType, TableEntity, EntityProperty
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
@@ -148,6 +149,33 @@ class StorageTableBatchTest(TableTestCase):
         self.assertIsInstance(entity.timestamp, datetime)
 
     #--Test cases for batch ---------------------------------------------
+
+    def test_inferred_types(self):
+        # Arrange
+        # Act
+        entity = TableEntity()
+        entity.PartitionKey = '003'
+        entity.RowKey = 'batch_all_operations_together-1'
+        entity.test = EntityProperty(True)
+        entity.test2 = EntityProperty(b'abcdef')
+        entity.test3 = EntityProperty('c9da6455-213d-42c9-9a79-3e9149a57833')
+        entity.test4 = EntityProperty(datetime(1973, 10, 4, tzinfo=tzutc()))
+        entity.test5 = EntityProperty("stringystring")
+        entity.test6 = EntityProperty(3.14159)
+        entity.test7 = EntityProperty(100)
+        entity.test8 = EntityProperty(10, EdmType.INT32)
+
+        # Assert
+        self.assertEqual(entity.test.type, EdmType.BOOLEAN)
+        self.assertEqual(entity.test2.type, EdmType.BINARY)
+        self.assertEqual(entity.test4.type, EdmType.DATETIME)
+        self.assertEqual(entity.test5.type, EdmType.STRING)
+        self.assertEqual(entity.test6.type, EdmType.DOUBLE)
+        self.assertEqual(entity.test7.type, EdmType.INT64)
+        self.assertEqual(entity.test8.type, EdmType.INT32)
+        self.assertEqual(entity.test3.type, EdmType.GUID)
+
+
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_batch_insert(self, resource_group, location, storage_account, storage_account_key):

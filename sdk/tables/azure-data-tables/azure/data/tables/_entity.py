@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from enum import Enum
 from datetime import datetime
+from uuid import UUID
 
 from ._error import _ERROR_ATTRIBUTE_MISSING
 
@@ -76,9 +77,9 @@ class EntityProperty(object):
     """
 
     def __init__(self,
-                value=None, # type: any
-                 type=None,  # type: Union[str,EdmType] # pylint:disable=W0622
-                #  value=None  # type: Any
+        value=None, # type: Any
+        type=None,  # type: Union[str,EdmType] # pylint:disable=W0622
+        #  value=None  # type: Any
     ):
         """
         Represents an Azure Table. Returned by list_tables.
@@ -87,29 +88,39 @@ class EntityProperty(object):
         :param Any value: The value of the property.
         """
         # self.type = type
-        self.value = value
         if type is not None:
+            self.value = value
             self.type = type
         elif isinstance(value, bytes):
+            self.value = value
             self.type = EdmType.BINARY
+        elif isinstance(value, bool):
+            self.value = value
+            self.type = EdmType.BOOLEAN
         elif isinstance(value, int):
+            self.value = value
             self.type = EdmType.INT64
-        elif isinstance(value, uuid.UUID):
-            self.type = EdmType.GUID
         elif isinstance(value, datetime):
+            self.value = value
             self.type = EdmType.DATETIME
         elif isinstance(value, str):
-            self.type = EdmType.STRING
+            try:
+                self.value = UUID(value)
+                self.type = EdmType.GUID
+            except ValueError:
+            self.value = value
+                self.type = EdmType.STRING
         elif isinstance(value, float):
+            self.value = value
             self.type = EdmType.DOUBLE
-        elif isinstance(value, bool):
-            self.type = EdmType.BOOLEAN
         else:
             return ValueError(
                 """Type of {} could not be inferred. Acceptable types are bytes, int, uuid.UUID, 
-                datetime, string, int32, float, and boolean.
+                datetime, string, int32, int64, float, and boolean. Refer to 
+                azure.data.tables.EdmType for more information.
                 """.format(value)
                 )
+        
 
 
 class EdmType(str, Enum):
