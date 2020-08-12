@@ -20,12 +20,12 @@ class TableBatchOperations(object):
     '''
 
     def __init__(self):
-        self.client = 
+        self._client = None
         self._requests = []
         self._partition_key = None
         self._row_keys = []
 
-    def insert_entity(
+    def create_entity(
             self, entity # type: Union[Entity, dict]
     ):
         # (...) -> None
@@ -53,7 +53,6 @@ class TableBatchOperations(object):
         # Construct headers
 
         # Construct request
-
 
 
         pass
@@ -201,3 +200,18 @@ class TableBatchOperations(object):
             pass
 
         self._requests.append((row_key, request))
+
+
+    def __enter__(self):
+        # type: (...) -> TableBatchOperations
+        # TODO: self._client should probably be a PipelineClient of some sorts
+        self._client.__enter__() # TODO: borrowing from search
+        return self
+
+
+    def __exit__(
+            self, *args # type: Any
+    ):
+        # (...) -> None
+        self.close()
+        self._client.__exit__(*args)

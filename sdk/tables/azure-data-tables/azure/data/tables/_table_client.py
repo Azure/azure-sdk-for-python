@@ -13,23 +13,21 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import unquote  # type: ignore
 
-from azure.core.paging import ItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._deserialize import _convert_to_entity
+from ._base_client import parse_connection_str
+from ._deserialize import _convert_to_entity, _return_headers_and_deserialized
 from ._entity import TableEntity
+from ._error import _process_table_error
 from ._generated import AzureTable
 from ._generated.models import AccessPolicy, SignedIdentifier, TableProperties, QueryOptions
-from ._serialize import _get_match_headers, _add_entity_properties
-from ._base_client import parse_connection_str
-from ._table_client_base import TableClientBase
-from ._serialize import serialize_iso
-from ._deserialize import _return_headers_and_deserialized
-from ._error import _process_table_error
-from ._version import VERSION
 from ._models import TableEntityPropertiesPaged, UpdateMode, Table
-
+from ._serialize import _get_match_headers, _add_entity_properties, serialize_iso
+from ._table_batch import TableBatchOperations
+from ._table_client_base import TableClientBase
+from ._version import VERSION
 
 class TableClient(TableClientBase):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
@@ -466,3 +464,14 @@ class TableClient(TableClientBase):
                 table_entity_properties=entity,
                 **kwargs
             )
+
+    def create_batch(
+        self
+    ):
+        # (...) -> TableBatchOperations
+        """
+        return: Table batch operation for inserting new operations
+        rtype: ~azure.data.tables.TableBatchOperations
+        """
+        return TableBatchOperations()
+    
