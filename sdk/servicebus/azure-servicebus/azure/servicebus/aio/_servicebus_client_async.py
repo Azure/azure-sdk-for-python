@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, TYPE_CHECKING
+from typing import Any, List, TYPE_CHECKING
 
 import uamqp
 
 from .._base_handler import _parse_conn_str
-from ._base_handler_async import ServiceBusSharedKeyCredential
+from ._base_handler_async import ServiceBusSharedKeyCredential, BaseHandler
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
 from ._servicebus_session_receiver_async import ServiceBusSessionReceiver
@@ -71,7 +71,7 @@ class ServiceBusClient(object):
             self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
-        self._handlers = []
+        self._handlers = []  # type: List[BaseHandler]
 
     async def __aenter__(self):
         if self._connection_sharing:
