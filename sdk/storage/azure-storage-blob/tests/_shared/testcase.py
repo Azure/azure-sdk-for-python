@@ -140,8 +140,6 @@ class StorageTestCase(AzureMgmtTestCase):
     def __init__(self, *args, **kwargs):
         super(StorageTestCase, self).__init__(*args, **kwargs)
         self.replay_processors.append(XMSRequestIDBody())
-        self.logger = logging.getLogger('azure.storage')
-        self.configure_logging()
 
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
@@ -166,7 +164,7 @@ class StorageTestCase(AzureMgmtTestCase):
 
     def configure_logging(self):
         try:
-            enable_logging = True
+            enable_logging = self.get_settings_value("ENABLE_LOGGING")
         except AzureTestError:
             enable_logging = True  # That's the default value in fake settings
 
@@ -176,7 +174,7 @@ class StorageTestCase(AzureMgmtTestCase):
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
         self.logger.handlers = [handler]
-        self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.INFO)
         self.logger.propagate = True
         self.logger.disabled = False
 
