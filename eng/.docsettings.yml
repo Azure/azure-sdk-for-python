@@ -82,6 +82,7 @@ known_content_issues:
   - ['sdk/eventgrid/azure-eventgrid/README.md', '#4554']
   - ['sdk/graphrbac/azure-graphrbac/README.md', '#4554']
   - ['sdk/loganalytics/azure-loganalytics/README.md', '#4554']
+  - ['sdk/schemaregistry/azure-schemaregistry/swagger/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/swagger/README.md', '#4554']
   - ['sdk/servicefabric/azure-servicefabric/README.md', '#4554']
