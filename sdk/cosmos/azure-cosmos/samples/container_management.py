@@ -84,9 +84,9 @@ def create_container(db, id):
 
     try:
         coll = {
-            "id": "container_custom_index_policy",
+            "id": id+"_container_custom_index_policy",
             "indexingPolicy": {
-                "indexingMode": "lazy",
+                "indexingMode": "consistent",
                 "automatic": False
             }
         }
@@ -107,7 +107,7 @@ def create_container(db, id):
     print("\n2.3 Create Container - With custom provisioned throughput")
 
     try:
-        coll = {"id": "container_custom_throughput"}
+        coll = {"id": id+"_container_custom_throughput"}
         container = db.create_container(
             id=coll['id'],
             partition_key=partition_key,
@@ -122,7 +122,7 @@ def create_container(db, id):
 
     try:
         container = db.create_container(
-            id="container_unique_keys",
+            id=id+"_container_unique_keys",
             partition_key=partition_key,
             unique_key_policy={'uniqueKeys': [{'paths': ['/field1/field2', '/field3']}]}
         )
@@ -138,7 +138,7 @@ def create_container(db, id):
 
     try:
         container = db.create_container(
-            id="container_partition_key_v2",
+            id=id+"_container_partition_key_v2",
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
         properties = container.read()
@@ -152,7 +152,7 @@ def create_container(db, id):
 
     try:
         container = db.create_container(
-            id="container_partition_key_v1",
+            id=id+"_container_partition_key_v1",
             partition_key=PartitionKey(path='/id', kind='Hash', version=1)
         )
         properties = container.read()
@@ -162,6 +162,19 @@ def create_container(db, id):
     except exceptions.CosmosResourceExistsError:
         print('A container with id \'container_partition_key_v1\' already exists')
 
+        print("\n2.7 Create Container - With Analytical Store Enabled. Requires at least SDK v 4.1.0")
+
+    try:
+        container = db.create_container(
+            id=id+"_analytical_store_enabled",
+            partition_key=PartitionKey(path='/id', kind='Hash',analytical_storage_ttl=-1,)
+        )
+        properties = container.read()
+        print('Container with id \'{0}\' created'.format(container.id))
+        print('Partition Key - \'{0}\''.format(properties['partitionKey']))
+
+    except exceptions.CosmosResourceExistsError:
+        print('A container with id \'_analytical_store_enabled\' already exists')
 
 def manage_provisioned_throughput(db, id):
     print("\n3.1 Get Container provisioned throughput (RU/s)")
