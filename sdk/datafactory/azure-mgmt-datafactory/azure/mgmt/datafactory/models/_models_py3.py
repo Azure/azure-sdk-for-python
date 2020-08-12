@@ -2553,8 +2553,9 @@ class StoreWriteSettings(Model):
     """Connector write settings.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: FileServerWriteSettings, AzureDataLakeStoreWriteSettings,
-    AzureBlobFSWriteSettings, AzureBlobStorageWriteSettings, SftpWriteSettings
+    sub-classes are: AzureFileStorageWriteSettings, FileServerWriteSettings,
+    AzureDataLakeStoreWriteSettings, AzureBlobFSWriteSettings,
+    AzureBlobStorageWriteSettings, SftpWriteSettings
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2583,7 +2584,7 @@ class StoreWriteSettings(Model):
     }
 
     _subtype_map = {
-        'type': {'FileServerWriteSettings': 'FileServerWriteSettings', 'AzureDataLakeStoreWriteSettings': 'AzureDataLakeStoreWriteSettings', 'AzureBlobFSWriteSettings': 'AzureBlobFSWriteSettings', 'AzureBlobStorageWriteSettings': 'AzureBlobStorageWriteSettings', 'SftpWriteSettings': 'SftpWriteSettings'}
+        'type': {'AzureFileStorageWriteSettings': 'AzureFileStorageWriteSettings', 'FileServerWriteSettings': 'FileServerWriteSettings', 'AzureDataLakeStoreWriteSettings': 'AzureDataLakeStoreWriteSettings', 'AzureBlobFSWriteSettings': 'AzureBlobFSWriteSettings', 'AzureBlobStorageWriteSettings': 'AzureBlobStorageWriteSettings', 'SftpWriteSettings': 'SftpWriteSettings'}
     }
 
     def __init__(self, *, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, **kwargs) -> None:
@@ -4158,6 +4159,40 @@ class AzureFileStorageReadSettings(StoreReadSettings):
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
         self.type = 'AzureFileStorageReadSettings'
+
+
+class AzureFileStorageWriteSettings(StoreWriteSettings):
+    """Azure File Storage write settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, **kwargs) -> None:
+        super(AzureFileStorageWriteSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, copy_behavior=copy_behavior, **kwargs)
+        self.type = 'AzureFileStorageWriteSettings'
 
 
 class AzureFunctionActivity(ExecutionActivity):
@@ -8189,6 +8224,40 @@ class ConcurSource(TabularSource):
         self.type = 'ConcurSource'
 
 
+class ConnectionStateProperties(Model):
+    """The connection state of a managed private endpoint.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar actions_required: The actions required on the managed private
+     endpoint
+    :vartype actions_required: str
+    :ivar description: The managed private endpoint description
+    :vartype description: str
+    :ivar status: The approval status
+    :vartype status: str
+    """
+
+    _validation = {
+        'actions_required': {'readonly': True},
+        'description': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ConnectionStateProperties, self).__init__(**kwargs)
+        self.actions_required = None
+        self.description = None
+        self.status = None
+
+
 class CopyActivity(ExecutionActivity):
     """Copy activity.
 
@@ -8773,6 +8842,9 @@ class CosmosDbSqlApiSource(CopySource):
     :param preferred_regions: Preferred regions. Type: array of strings (or
      Expression with resultType array of strings).
     :type preferred_regions: object
+    :param detect_datetime: Whether detect primitive values as datetime
+     values. Type: boolean (or Expression with resultType boolean).
+    :type detect_datetime: object
     :param additional_columns: Specifies the additional columns to be added to
      source data. Type: array of objects (or Expression with resultType array
      of objects).
@@ -8793,14 +8865,16 @@ class CosmosDbSqlApiSource(CopySource):
         'query': {'key': 'query', 'type': 'object'},
         'page_size': {'key': 'pageSize', 'type': 'object'},
         'preferred_regions': {'key': 'preferredRegions', 'type': 'object'},
+        'detect_datetime': {'key': 'detectDatetime', 'type': 'object'},
         'additional_columns': {'key': 'additionalColumns', 'type': '[AdditionalColumns]'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, page_size=None, preferred_regions=None, additional_columns=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, page_size=None, preferred_regions=None, detect_datetime=None, additional_columns=None, **kwargs) -> None:
         super(CosmosDbSqlApiSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.query = query
         self.page_size = page_size
         self.preferred_regions = preferred_regions
+        self.detect_datetime = detect_datetime
         self.additional_columns = additional_columns
         self.type = 'CosmosDbSqlApiSource'
 
@@ -13007,6 +13081,54 @@ class ExportSettings(Model):
         self.type = None
 
 
+class ExposureControlBatchRequest(Model):
+    """A list of exposure control features.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param exposure_control_requests: Required. List of exposure control
+     features.
+    :type exposure_control_requests:
+     list[~azure.mgmt.datafactory.models.ExposureControlRequest]
+    """
+
+    _validation = {
+        'exposure_control_requests': {'required': True},
+    }
+
+    _attribute_map = {
+        'exposure_control_requests': {'key': 'exposureControlRequests', 'type': '[ExposureControlRequest]'},
+    }
+
+    def __init__(self, *, exposure_control_requests, **kwargs) -> None:
+        super(ExposureControlBatchRequest, self).__init__(**kwargs)
+        self.exposure_control_requests = exposure_control_requests
+
+
+class ExposureControlBatchResponse(Model):
+    """A list of exposure control feature values.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param exposure_control_responses: Required. List of exposure control
+     feature values.
+    :type exposure_control_responses:
+     list[~azure.mgmt.datafactory.models.ExposureControlResponse]
+    """
+
+    _validation = {
+        'exposure_control_responses': {'required': True},
+    }
+
+    _attribute_map = {
+        'exposure_control_responses': {'key': 'exposureControlResponses', 'type': '[ExposureControlResponse]'},
+    }
+
+    def __init__(self, *, exposure_control_responses, **kwargs) -> None:
+        super(ExposureControlBatchResponse, self).__init__(**kwargs)
+        self.exposure_control_responses = exposure_control_responses
+
+
 class ExposureControlRequest(Model):
     """The exposure control request.
 
@@ -15528,6 +15650,10 @@ class HdfsReadSettings(StoreReadSettings):
     :type modified_datetime_end: object
     :param distcp_settings: Specifies Distcp-related settings.
     :type distcp_settings: ~azure.mgmt.datafactory.models.DistcpSettings
+    :param delete_files_after_completion: Indicates whether the source files
+     need to be deleted after copy completion. Default is false. Type: boolean
+     (or Expression with resultType boolean).
+    :type delete_files_after_completion: object
     """
 
     _validation = {
@@ -15547,9 +15673,10 @@ class HdfsReadSettings(StoreReadSettings):
         'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
         'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
         'distcp_settings': {'key': 'distcpSettings', 'type': 'DistcpSettings'},
+        'delete_files_after_completion': {'key': 'deleteFilesAfterCompletion', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, enable_partition_discovery: bool=None, partition_root_path=None, modified_datetime_start=None, modified_datetime_end=None, distcp_settings=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, file_list_path=None, enable_partition_discovery: bool=None, partition_root_path=None, modified_datetime_start=None, modified_datetime_end=None, distcp_settings=None, delete_files_after_completion=None, **kwargs) -> None:
         super(HdfsReadSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
@@ -15560,6 +15687,7 @@ class HdfsReadSettings(StoreReadSettings):
         self.modified_datetime_start = modified_datetime_start
         self.modified_datetime_end = modified_datetime_end
         self.distcp_settings = distcp_settings
+        self.delete_files_after_completion = delete_files_after_completion
         self.type = 'HdfsReadSettings'
 
 
@@ -19771,6 +19899,174 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.other_errors = None
         self.last_operation = None
         self.type = 'Managed'
+
+
+class ManagedPrivateEndpoint(Model):
+    """Properties of a managed private endpoint.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param connection_state: The managed private endpoint connection state
+    :type connection_state:
+     ~azure.mgmt.datafactory.models.ConnectionStateProperties
+    :param fqdns: Fully qualified domain names
+    :type fqdns: list[str]
+    :param group_id: The groupId to which the managed private endpoint is
+     created
+    :type group_id: str
+    :ivar is_reserved: Denotes whether the managed private endpoint is
+     reserved
+    :vartype is_reserved: bool
+    :param private_link_resource_id: The ARM resource ID of the resource to
+     which the managed private endpoint is created
+    :type private_link_resource_id: str
+    :ivar provisioning_state: The managed private endpoint provisioning state
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'is_reserved': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'connection_state': {'key': 'connectionState', 'type': 'ConnectionStateProperties'},
+        'fqdns': {'key': 'fqdns', 'type': '[str]'},
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'is_reserved': {'key': 'isReserved', 'type': 'bool'},
+        'private_link_resource_id': {'key': 'privateLinkResourceId', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, additional_properties=None, connection_state=None, fqdns=None, group_id: str=None, private_link_resource_id: str=None, **kwargs) -> None:
+        super(ManagedPrivateEndpoint, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.connection_state = connection_state
+        self.fqdns = fqdns
+        self.group_id = group_id
+        self.is_reserved = None
+        self.private_link_resource_id = private_link_resource_id
+        self.provisioning_state = None
+
+
+class ManagedPrivateEndpointResource(SubResource):
+    """Managed private endpoint resource type.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource identifier.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar etag: Etag identifies change in the resource.
+    :vartype etag: str
+    :param properties: Required. Managed private endpoint properties.
+    :type properties: ~azure.mgmt.datafactory.models.ManagedPrivateEndpoint
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ManagedPrivateEndpoint'},
+    }
+
+    def __init__(self, *, properties, **kwargs) -> None:
+        super(ManagedPrivateEndpointResource, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class ManagedVirtualNetwork(Model):
+    """A managed Virtual Network associated with the Azure Data Factory.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :ivar v_net_id: Managed Virtual Network ID.
+    :vartype v_net_id: str
+    :ivar alias: Managed Virtual Network alias.
+    :vartype alias: str
+    """
+
+    _validation = {
+        'v_net_id': {'readonly': True},
+        'alias': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'v_net_id': {'key': 'vNetId', 'type': 'str'},
+        'alias': {'key': 'alias', 'type': 'str'},
+    }
+
+    def __init__(self, *, additional_properties=None, **kwargs) -> None:
+        super(ManagedVirtualNetwork, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.v_net_id = None
+        self.alias = None
+
+
+class ManagedVirtualNetworkResource(SubResource):
+    """Managed Virtual Network resource type.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource identifier.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar etag: Etag identifies change in the resource.
+    :vartype etag: str
+    :param properties: Required. Managed Virtual Network properties.
+    :type properties: ~azure.mgmt.datafactory.models.ManagedVirtualNetwork
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ManagedVirtualNetwork'},
+    }
+
+    def __init__(self, *, properties, **kwargs) -> None:
+        super(ManagedVirtualNetworkResource, self).__init__(**kwargs)
+        self.properties = properties
 
 
 class MappingDataFlow(DataFlow):
@@ -33827,6 +34123,13 @@ class XmlReadSettings(FormatReadSettings):
      reading the xml files. Allowed values: 'none', 'xsd', or 'dtd'. Type:
      string (or Expression with resultType string).
     :type validation_mode: object
+    :param detect_data_type: Indicates whether type detection is enabled when
+     reading the xml files. Type: boolean (or Expression with resultType
+     boolean).
+    :type detect_data_type: object
+    :param namespaces: Indicates whether namespace is enabled when reading the
+     xml files. Type: boolean (or Expression with resultType boolean).
+    :type namespaces: object
     :param namespace_prefixes: Namespace uri to prefix mappings to override
      the prefixes in column names when namespace is enabled, if no prefix is
      defined for a namespace uri, the prefix of xml element/attribute name in
@@ -33845,13 +34148,17 @@ class XmlReadSettings(FormatReadSettings):
         'type': {'key': 'type', 'type': 'str'},
         'compression_properties': {'key': 'compressionProperties', 'type': 'CompressionReadSettings'},
         'validation_mode': {'key': 'validationMode', 'type': 'object'},
+        'detect_data_type': {'key': 'detectDataType', 'type': 'object'},
+        'namespaces': {'key': 'namespaces', 'type': 'object'},
         'namespace_prefixes': {'key': 'namespacePrefixes', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, compression_properties=None, validation_mode=None, namespace_prefixes=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, compression_properties=None, validation_mode=None, detect_data_type=None, namespaces=None, namespace_prefixes=None, **kwargs) -> None:
         super(XmlReadSettings, self).__init__(additional_properties=additional_properties, **kwargs)
         self.compression_properties = compression_properties
         self.validation_mode = validation_mode
+        self.detect_data_type = detect_data_type
+        self.namespaces = namespaces
         self.namespace_prefixes = namespace_prefixes
         self.type = 'XmlReadSettings'
 
