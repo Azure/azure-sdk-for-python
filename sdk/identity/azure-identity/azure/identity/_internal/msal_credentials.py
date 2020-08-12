@@ -53,11 +53,6 @@ class MsalCredential(ABC):
         super(MsalCredential, self).__init__()
 
     @abc.abstractmethod
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
-        pass
-
-    @abc.abstractmethod
     def _get_app(self):
         # type: () -> msal.ClientApplication
         pass

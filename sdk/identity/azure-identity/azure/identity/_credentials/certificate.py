@@ -3,27 +3,20 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from binascii import hexlify
-import time
 from typing import TYPE_CHECKING
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.backends import default_backend
-import msal
 import six
 
-from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
-
-from .._internal.decorators import wrap_exceptions
-from .._internal.msal_credentials import MsalCredential
-from .._internal.proactive_refresh import ProactiveRefresh
+from .._internal.client_credential_base import ClientCredentialBase
 
 if TYPE_CHECKING:
     from typing import Any
 
 
-class CertificateCredential(MsalCredential, ProactiveRefresh):
+class CertificateCredential(ClientCredentialBase):
     """Authenticates as a service principal using a certificate.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
@@ -67,45 +60,3 @@ class CertificateCredential(MsalCredential, ProactiveRefresh):
             tenant_id=tenant_id,
             **kwargs
         )
-
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
-        """Request an access token for `scopes`.
-
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
-
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
-          ``response`` attribute.
-        """
-        return self._get_token_impl(*scopes, **kwargs)
-
-    @wrap_exceptions
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
-        """Default implementation suitable for confidential clients."""
-        app = self._get_app()
-        request_time = int(time.time())
-        result = app.acquire_token_silent_with_error(list(scopes), account=None, **kwargs)
-        if result and "access_token" in result and "expires_in" in result:
-            return AccessToken(result["access_token"], request_time + int(result["expires_in"]))
-        return None
-
-    @wrap_exceptions
-    def _request_token(self, *scopes, **kwargs):
-        app = self._get_app()
-        request_time = int(time.time())
-        result = app.acquire_token_for_client(list(scopes))
-        if "access_token" not in result:
-            message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
-            raise ClientAuthenticationError(message=message)
-
-        return AccessToken(result["access_token"], request_time + int(result["expires_in"]))
-
-    def _get_app(self):
-        # type: () -> msal.ConfidentialClientApplication
-        if not self._msal_app:
-            self._msal_app = self._create_app(msal.ConfidentialClientApplication)
-        return self._msal_app
