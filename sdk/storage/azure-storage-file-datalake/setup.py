@@ -93,7 +93,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.6.0",
         "msrest>=0.6.10",
-        "azure-storage-blob>=12.3.1"
+        "azure-storage-blob~=12.4.0b1"
     ],
     extras_require={
         ":python_version<'3.0'": ['futures', 'azure-storage-nspkg<4.0.0,>=3.0.0'],
