@@ -1,5 +1,19 @@
 # Release History
 
+## 12.4.0 (2020-08-12)
+**New features**
+- Added support for Object Replication Service on `list_blobs` and `get_blob_properties`.
+- Added more support for blob tags. Added `if_tags_match_condition` that allow a user to specify a SQL statement for the blob's tags to satisfy.
+- Added support for setting and getting the `default_index_document_path` of `StaticWebsite` property on the service client.
+- Added `rehydrate_priority` to BlobProperties.
+- Added support to seal an append blob. Added `test_seal_append_blob`. Added ability to specify `seal_destination_blob` on `start_copy_from_url`. `is_append_blob_sealed` property returned on get_blob_properties/download_blob/list_blobs.
+- Added support to set tier on a snapshot or version.
+
+**Fixes**
+- Fixed the bug when parsing blob url with '/' in blob name.
+- Support batch delete empty blob list.
+- Fixed `blob_samples_query` bug.
+
 ## 12.4.0b1 (2020-07-07)
 **New features**
 - Added `query_blob` API to enable users to select/project on block blob or block blob snapshot data by providing simple query expressions.
