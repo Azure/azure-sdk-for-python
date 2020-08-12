@@ -664,7 +664,8 @@ class DataLakeFileClient(PathClient):
 
     def query_file(self, query_expression, **kwargs):
         # type: (str, **Any) -> DataLakeFileQueryReader
-        """Enables users to select/project on datalake file data by providing simple query expressions.
+        """
+        Enables users to select/project on datalake file data by providing simple query expressions.
         This operations returns a DataLakeFileQueryReader, users need to use readall() or readinto() to get query data.
 
         :param str query_expression:
