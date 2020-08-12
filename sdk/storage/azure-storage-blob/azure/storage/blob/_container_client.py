@@ -1061,7 +1061,7 @@ class ContainerClient(StorageAccountHostsMixin):
         delete_snapshots = kwargs.pop('delete_snapshots', None)
         if_modified_since = kwargs.pop('if_modified_since', None)
         if_unmodified_since = kwargs.pop('if_unmodified_since', None)
-        if_tags = kwargs.pop('if_tags_match_condition', None)
+        if_tags_match_condition = kwargs.pop('if_tags_match_condition', None)
         kwargs.update({'raise_on_any_failure': raise_on_any_failure,
                        'sas': self._query_str.replace('?', '&'),
                        'timeout': '&timeout=' + str(timeout) if timeout else ""
@@ -1080,7 +1080,7 @@ class ContainerClient(StorageAccountHostsMixin):
                     if_modified_since=if_modified_since or blob.get('if_modified_since'),
                     if_unmodified_since=if_unmodified_since or blob.get('if_unmodified_since'),
                     etag=blob.get('etag'),
-                    if_tags=if_tags or blob.get('if_tags_match_condition'),
+                    if_tags_match_condition=if_tags_match_condition or blob.get('if_tags_match_condition'),
                     match_condition=blob.get('match_condition') or MatchConditions.IfNotModified if blob.get('etag')
                     else None,
                     timeout=blob.get('timeout'),
@@ -1090,7 +1090,7 @@ class ContainerClient(StorageAccountHostsMixin):
                     delete_snapshots=delete_snapshots,
                     if_modified_since=if_modified_since,
                     if_unmodified_since=if_unmodified_since,
-                    if_tags=if_tags
+                    if_tags_match_condition=if_tags_match_condition
                 )
 
             query_parameters, header_parameters = self._generate_delete_blobs_subrequest_options(**options)
