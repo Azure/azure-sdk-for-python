@@ -76,7 +76,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
 
     async def _setup(self, storage_account, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key, transport=AiohttpTestTransport())
+        self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key, transport=AiohttpTestTransport(), logging_enable=True)
         self.container_name = self.get_resource_name('utcontainer')
         self.byte_data = self.get_random_bytes(1024)
         if self.is_live:

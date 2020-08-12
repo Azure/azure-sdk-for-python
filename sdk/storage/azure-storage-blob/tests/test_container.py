@@ -1317,7 +1317,7 @@ class StorageContainerTest(StorageTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_batch_set_standard_blob_tier_for_version(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, logging_enable=True)
         container = self._create_container(bsc)
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
