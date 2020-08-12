@@ -127,6 +127,7 @@ class FormRecognizerClient(object):
 
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
+        locale = kwargs.pop("locale", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
@@ -140,6 +141,7 @@ class FormRecognizerClient(object):
             file_stream=receipt,
             content_type=content_type,
             include_text_details=include_field_elements,
+            locale=locale,
             cls=kwargs.pop("cls", self._receipt_callback),
             polling=LROBasePolling(timeout=polling_interval, **kwargs),
             error_map=error_map,
@@ -184,10 +186,12 @@ class FormRecognizerClient(object):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
+        locale = kwargs.pop("locale", None)
 
         return self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
             include_text_details=include_field_elements,
+            locale=locale,
             cls=kwargs.pop("cls", self._receipt_callback),
             polling=LROBasePolling(timeout=polling_interval, **kwargs),
             error_map=error_map,
@@ -227,7 +231,29 @@ class FormRecognizerClient(object):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        pass
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        continuation_token = kwargs.pop("continuation_token", None)
+        locale = kwargs.pop("locale", None)
+        content_type = kwargs.pop("content_type", None)
+        if content_type == "application/json":
+            raise TypeError("Call begin_recognize_business_cards_from_url() to analyze a business card from a URL.")
+
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        if content_type is None:
+            content_type = get_content_type(business_card)
+
+        return self._client.begin_analyze_business_card_async(  # type: ignore
+            file_stream=business_card,
+            content_type=content_type,
+            include_text_details=include_field_elements,
+            locale=locale,
+            cls=kwargs.pop("cls", self._receipt_callback),  # FIXME: can reuse receipt callback?
+            polling=LROBasePolling(timeout=polling_interval, **kwargs),
+            error_map=error_map,
+            continuation_token=continuation_token,
+            **kwargs
+        )
 
     @distributed_trace
     def begin_recognize_business_cards_from_url(
@@ -244,11 +270,10 @@ class FormRecognizerClient(object):
         document to be analyzed.
 
         :param str business_card_url: The URL of the business card to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
-            US sales receipts.
+            of one of the supported formats: JPEG, PNG, PDF and TIFF.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
-        :keyword str locale: Locale of the receipt. Supported locales include: en-AU, en-CA, en-GB, en-IN,
+        :keyword str locale: Locale of the business card. Supported locales include: en-AU, en-CA, en-GB, en-IN,
             en-US(default).
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
@@ -258,7 +283,22 @@ class FormRecognizerClient(object):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        pass
+
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        continuation_token = kwargs.pop("continuation_token", None)
+        include_field_elements = kwargs.pop("include_field_elements", False)
+        locale = kwargs.pop("locale", None)
+
+        return self._client.begin_analyze_business_card_async(  # type: ignore
+            file_stream={"source": business_card_url},
+            include_text_details=include_field_elements,
+            locale=locale,
+            cls=kwargs.pop("cls", self._receipt_callback),  # FIXME: can reuse receipt callback?
+            polling=LROBasePolling(timeout=polling_interval, **kwargs),
+            error_map=error_map,
+            continuation_token=continuation_token,
+            **kwargs
+        )
 
     def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._client._deserialize(AnalyzeOperationResult, raw_response)
