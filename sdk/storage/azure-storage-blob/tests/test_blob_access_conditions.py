@@ -1439,7 +1439,6 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         etag = blob.get_blob_properties().etag
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-
         # Act
         lease = blob.acquire_lease(
             lease_id=test_lease_id,
@@ -1450,6 +1449,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsInstance(lease, BlobLeaseClient)
         self.assertIsNotNone(lease.id)
+        self.assertIsNotNone(lease.etag)
+        self.assertEqual(lease.etag, etag)
 
     @GlobalStorageAccountPreparer()
     def test_lease_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):
