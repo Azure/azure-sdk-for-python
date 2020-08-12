@@ -24,6 +24,7 @@ import config
 #    2.4 - Create container with unique key
 #    2.5 - Create Container with partition key V2
 #    2.6 - Create Container with partition key V1
+#    2.7 - Create Container with analytical store enabled (requires at least SDK v 4.1.0)
 #
 # 3. Manage Container Provisioned Throughput
 #    3.1 - Get Container provisioned throughput (RU/s)
