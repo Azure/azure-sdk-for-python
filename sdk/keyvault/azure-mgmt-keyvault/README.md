@@ -7,7 +7,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 # Usage
 
-For code examples, see [Key Vault Management](https://docs.microsoft.com/python/api/overview/azure/?view=azure-python-preview)
+For code examples, see [Key Vault Management](https://docs.microsoft.com/python/api/overview/azure/key-vault)
 on docs.microsoft.com.
 
 
