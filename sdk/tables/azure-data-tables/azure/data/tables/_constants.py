@@ -7,12 +7,6 @@ import platform
 import sys
 from ._generated._version import VERSION
 
-# UserAgent string sample: 'Azure-Storage/0.37.0-0.38.0 (Python CPython 3.4.2; Windows 8)'
-# First version(0.37.0) is the common package, and the second version(0.38.0) is the service package
-USER_AGENT_STRING_SUFFIX = '(Python {} {}; {} {})'.format(platform.python_implementation(),
-                                                          platform.python_version(), platform.system(),
-                                                          platform.release())
-
 # default values for common package, in case it is used directly
 DEFAULT_X_MS_VERSION = '2018-03-28'
 
