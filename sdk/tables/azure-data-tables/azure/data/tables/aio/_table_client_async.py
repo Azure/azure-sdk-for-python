@@ -18,7 +18,7 @@ from .. import VERSION
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
-from .._models import AccessPolicy, Table
+from .._models import AccessPolicy, TableItem
 from .._serialize import serialize_iso
 from .._deserialize import _return_headers_and_deserialized
 from .._error import _process_table_error
@@ -126,16 +126,16 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> Table
+        # type: (...) -> TableItem
         """Creates a new table under the given account.
         :return: Table created
-        :rtype: Table
+        :rtype: TableItem
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         table_properties = TableProperties(table_name=self.table_name, **kwargs)
         try:
             table = await self._client.table.create(table_properties)
-            return Table(table)
+            return TableItem(table)
         except HttpResponseError as error:
             _process_table_error(error)
 

@@ -22,7 +22,7 @@ from .._generated.models import TableServiceProperties, TableProperties, QueryOp
 from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _validate_table_name, _process_table_error
 from .._table_service_client_base import TableServiceClientBase
-from .._models import Table
+from .._models import TableItem
 from ._policies_async import ExponentialRetry
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
@@ -205,13 +205,13 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> AsyncItemPaged[Table]
+        # type: (...) -> AsyncItemPaged[TableItem]
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :return: AsyncItemPaged
-        :rtype: ~AsyncItemPaged[Table]
+        :rtype: ~AsyncItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         user_select = kwargs.pop('select', None)
@@ -235,7 +235,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             filter,  # pylint: disable=W0622
             **kwargs  # type: Any
     ):
-        # type: (...) -> AsyncItemPaged[Table]
+        # type: (...) -> AsyncItemPaged[TableItem]
         """Queries tables under the given account.
         :param filter: Specify a filter to return certain tables
         :type filter: str
@@ -243,7 +243,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: A query of tables
-        :rtype: AsyncItemPaged[Table]
+        :rtype: AsyncItemPaged[TableItem]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         parameters = kwargs.pop('parameters', None)
