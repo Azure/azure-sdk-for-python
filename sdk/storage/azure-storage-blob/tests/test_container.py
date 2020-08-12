@@ -25,7 +25,7 @@ from azure.storage.blob import (
     PremiumPageBlobTier,
     generate_container_sas,
     PartialBatchErrorException,
-    generate_account_sas, ResourceTypes, AccountSasPermissions)
+    generate_account_sas, ResourceTypes, AccountSasPermissions, ContainerClient)
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -1072,6 +1072,11 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'a/')
         self.assertNamedItemInContainer(resp, 'b/')
         self.assertNamedItemInContainer(resp, 'blob4')
+
+    def test_batch_delete_empty_blob_list(self):
+        container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
+        blob_list = list()
+        container_client.delete_blobs(*blob_list)
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()

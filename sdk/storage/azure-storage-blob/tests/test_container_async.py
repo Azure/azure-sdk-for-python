@@ -1149,6 +1149,11 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(resp, 'b/')
         self.assertNamedItemInContainer(resp, 'blob4')
 
+    def test_batch_delete_empty_blob_list(self):
+        container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
+        blob_list = list()
+        container_client.delete_blobs(*blob_list)
+
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blobs_simple(self, resource_group, location, storage_account, storage_account_key):
