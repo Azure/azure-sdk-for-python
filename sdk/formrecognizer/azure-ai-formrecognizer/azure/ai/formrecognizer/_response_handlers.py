@@ -35,7 +35,9 @@ def prepare_receipt(response):
             fields={
                 key: FormField._from_generated(key, value, read_result)
                 for key, value in page.fields.items()
-            } if page.fields else None
+            } if page.fields else None,
+            form_type_confidence=page.doc_type_confidence,
+            model_id=page.model_id
         )
 
         receipts.append(receipt)
@@ -101,7 +103,9 @@ def prepare_unlabeled_result(response):
             ),
             fields=unlabeled_fields,
             form_type="form-" + str(page.cluster_id) if page.cluster_id is not None else None,
-            pages=[form_pages[index]]
+            pages=[form_pages[index]],
+            form_type_confidence=page.doc_type_confidence,
+            model_id=page.model_id
         )
         result.append(form)
 
@@ -125,6 +129,8 @@ def prepare_labeled_result(response, model_id):
             },
             pages=form_pages[doc.page_range[0]-1:doc.page_range[1]],
             form_type="form-" + model_id,
+            form_type_confidence=doc.doc_type_confidence,
+            model_id=doc.model_id
         )
         result.append(form)
     return result

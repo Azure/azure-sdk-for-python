@@ -201,12 +201,15 @@ class RecognizedForm(object):
         self.form_type_confidence = kwargs.get('form_type_confidence', None)
 
     def __repr__(self):
-        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={})" \
+        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={}, form_type_confidence={}," \
+               "model_id={})" \
             .format(
                 self.form_type,
                 repr(self.fields),
                 repr(self.page_range),
-                repr(self.pages)
+                repr(self.pages),
+                self.form_type_confidence,
+                self.model_id
             )[:1024]
 
 
