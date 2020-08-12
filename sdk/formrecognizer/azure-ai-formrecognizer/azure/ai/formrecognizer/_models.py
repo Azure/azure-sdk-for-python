@@ -491,7 +491,7 @@ class FormTable(object):
             )[:1024]
 
 
-class FormTableCell(object):
+class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
     """Represents a cell contained in a table recognized from the input document.
 
     :ivar str text: Text content of the cell.
