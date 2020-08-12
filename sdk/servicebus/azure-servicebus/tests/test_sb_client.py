@@ -28,7 +28,8 @@ from servicebus_preparer import (
     ServiceBusTopicPreparer, 
     ServiceBusQueuePreparer,
     ServiceBusNamespaceAuthorizationRulePreparer,
-    ServiceBusQueueAuthorizationRulePreparer
+    ServiceBusQueueAuthorizationRulePreparer,
+    CachedServiceBusQueuePreparer
 )
 
 class ServiceBusClientTests(AzureMgmtTestCase):
@@ -126,3 +127,43 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             with pytest.raises(ServiceBusError):
                 with client.get_queue_sender(wrong_queue.name) as sender:
                     sender.send_messages(Message("test"))
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
+
+        # context manager
+        with client:
+            assert len(client._handlers) == 0
+            sender = client.get_queue_sender(servicebus_queue.name)
+            receiver = client.get_queue_receiver(servicebus_queue.name)
+            sender._open()
+            receiver._open()
+
+            assert sender._handler and sender._running
+            assert receiver._handler and receiver._running
+            assert len(client._handlers) == 2
+
+        assert not sender._handler and not sender._running
+        assert not receiver._handler and not receiver._running
+        assert len(client._handlers) == 0
+
+        # close operation
+        sender = client.get_queue_sender(servicebus_queue.name)
+        receiver = client.get_queue_receiver(servicebus_queue.name)
+        sender._open()
+        receiver._open()
+
+        assert sender._handler and sender._running
+        assert receiver._handler and receiver._running
+        assert len(client._handlers) == 2
+
+        client.close()
+
+        assert not sender._handler and not sender._running
+        assert not receiver._handler and not receiver._running
+        assert len(client._handlers) == 0

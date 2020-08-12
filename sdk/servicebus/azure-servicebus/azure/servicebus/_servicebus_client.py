@@ -69,6 +69,7 @@ class ServiceBusClient(object):
             self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
+        self._handlers = []
 
     def __enter__(self):
         if self._connection_sharing:
@@ -89,10 +90,15 @@ class ServiceBusClient(object):
     def close(self):
         # type: () -> None
         """
-        Close down the ServiceBus client and the underlying connection.
+        Close down the ServiceBus client.
+        All spawned senders, receivers and underlying connection will be shutdown.
 
         :return: None
         """
+        for handler in self._handlers:
+            handler.close()
+        self._handlers.clear()
+
         if self._connection_sharing and self._connection:
             self._connection.destroy()
 
@@ -157,7 +163,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        return ServiceBusSender(
+        handler = ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
@@ -168,6 +174,8 @@ class ServiceBusClient(object):
             user_agent=self._config.user_agent,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_queue_receiver(self, queue_name, **kwargs):
         # type: (str, Any) -> ServiceBusReceiver
@@ -205,7 +213,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        return ServiceBusReceiver(
+        handler = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
@@ -216,6 +224,8 @@ class ServiceBusClient(object):
             user_agent=self._config.user_agent,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_queue_deadletter_receiver(self, queue_name, **kwargs):
         # type: (str, Any) -> ServiceBusReceiver
@@ -265,7 +275,7 @@ class ServiceBusClient(object):
             queue_name=queue_name,
             transfer_deadletter=kwargs.get('transfer_deadletter', False)
         )
-        return ServiceBusReceiver(
+        handler = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             entity_name=entity_name,
             credential=self._credential,
@@ -277,6 +287,8 @@ class ServiceBusClient(object):
             user_agent=self._config.user_agent,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_topic_sender(self, topic_name, **kwargs):
         # type: (str, Any) -> ServiceBusSender
@@ -300,7 +312,7 @@ class ServiceBusClient(object):
                 :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
 
         """
-        return ServiceBusSender(
+        handler = ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
             credential=self._credential,
@@ -311,6 +323,8 @@ class ServiceBusClient(object):
             user_agent=self._config.user_agent,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_subscription_receiver(self, topic_name, subscription_name, **kwargs):
         # type: (str, str, Any) -> ServiceBusReceiver
@@ -353,7 +367,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        return ServiceBusReceiver(
+        handler = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
             subscription_name=subscription_name,
@@ -365,6 +379,8 @@ class ServiceBusClient(object):
             user_agent=self._config.user_agent,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_subscription_deadletter_receiver(self, topic_name, subscription_name, **kwargs):
         # type: (str, str, Any) -> ServiceBusReceiver
@@ -416,7 +432,7 @@ class ServiceBusClient(object):
             subscription_name=subscription_name,
             transfer_deadletter=kwargs.get('transfer_deadletter', False)
         )
-        return ServiceBusReceiver(
+        handler = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             entity_name=entity_name,
             credential=self._credential,
@@ -428,6 +444,8 @@ class ServiceBusClient(object):
             user_agent=self._config.user_agent,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_subscription_session_receiver(self, topic_name, subscription_name, session_id=None, **kwargs):
         # type: (str, str, str, Any) -> ServiceBusReceiver
@@ -473,7 +491,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        return ServiceBusSessionReceiver(
+        handler = ServiceBusSessionReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
             subscription_name=subscription_name,
@@ -486,6 +504,8 @@ class ServiceBusClient(object):
             user_agent=self._config.user_agent,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
 
     def get_queue_session_receiver(self, queue_name, session_id=None, **kwargs):
         # type: (str, str, Any) -> ServiceBusSessionReceiver
@@ -526,7 +546,7 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
-        return ServiceBusSessionReceiver(
+        handler = ServiceBusSessionReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
             credential=self._credential,
@@ -538,3 +558,5 @@ class ServiceBusClient(object):
             user_agent=self._config.user_agent,
             **kwargs
         )
+        self._handlers.append(handler)
+        return handler
