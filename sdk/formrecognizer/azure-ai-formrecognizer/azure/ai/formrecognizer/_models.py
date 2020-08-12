@@ -151,11 +151,16 @@ class FormElement(object):
         Units are in pixels for images and inches for PDF.
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
+    :ivar str kind:
+        The kind of form element. Possible kinds are "word" or "line" which
+        correspond to a :class:`~azure.ai.formrecognizer.FormWord` or
+        :class:`~azure.ai.formrecognizer.FormLine`, respectively.
     """
     def __init__(self, **kwargs):
         self.bounding_box = kwargs.get("bounding_box", None)
         self.page_number = kwargs.get("page_number", None)
         self.text = kwargs.get("text", None)
+        self.kind = kwargs.get("kind", None)
 
 
 class RecognizedForm(object):
@@ -254,7 +259,7 @@ class FormField(object):
             )[:1024]
 
 
-class FieldData(FormElement):
+class FieldData(object):
     """Contains the data for the form field. This includes the text,
     location of the text on the form, and a collection of the
     elements that make up the text.
@@ -276,7 +281,9 @@ class FieldData(FormElement):
     """
 
     def __init__(self, **kwargs):
-        super(FieldData, self).__init__(**kwargs)
+        self.page_number = kwargs.get("page_number", None)
+        self.text = kwargs.get("text", None)
+        self.bounding_box = kwargs.get("bounding_box", None)
         self.field_elements = kwargs.get("field_elements", None)
 
     @classmethod
@@ -387,10 +394,11 @@ class FormLine(FormElement):
         A list of the words that make up the line.
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
+    :ivar str kind: For FormLine, this is "line".
     """
 
     def __init__(self, **kwargs):
-        super(FormLine, self).__init__(**kwargs)
+        super(FormLine, self).__init__(kind="line", **kwargs)
         self.words = kwargs.get("words", None)
 
     @classmethod
@@ -404,12 +412,13 @@ class FormLine(FormElement):
         )
 
     def __repr__(self):
-        return "FormLine(text={}, bounding_box={}, words={}, page_number={})" \
+        return "FormLine(text={}, bounding_box={}, words={}, page_number={}, kind={})" \
             .format(
                 self.text,
                 self.bounding_box,
                 repr(self.words),
-                self.page_number
+                self.page_number,
+                self.kind
             )[:1024]
 
 
@@ -426,10 +435,11 @@ class FormWord(FormElement):
         Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
+    :ivar str kind: For FormWord, this is "word".
     """
 
     def __init__(self, **kwargs):
-        super(FormWord, self).__init__(**kwargs)
+        super(FormWord, self).__init__(kind="word", **kwargs)
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
@@ -442,12 +452,13 @@ class FormWord(FormElement):
         )
 
     def __repr__(self):
-        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={})" \
+        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={}, kind={})" \
             .format(
                 self.text,
                 self.bounding_box,
                 self.confidence,
-                self.page_number
+                self.page_number,
+                self.kind
             )[:1024]
 
 
@@ -480,7 +491,7 @@ class FormTable(object):
             )[:1024]
 
 
-class FormTableCell(FormElement):
+class FormTableCell(object):
     """Represents a cell contained in a table recognized from the input document.
 
     :ivar str text: Text content of the cell.
@@ -509,14 +520,16 @@ class FormTableCell(FormElement):
     """
 
     def __init__(self, **kwargs):
-        super(FormTableCell, self).__init__(**kwargs)
+        self.text = kwargs.get("text", None)
         self.row_index = kwargs.get("row_index", None)
         self.column_index = kwargs.get("column_index", None)
         self.row_span = kwargs.get("row_span", 1)
         self.column_span = kwargs.get("column_span", 1)
+        self.bounding_box = kwargs.get("bounding_box", None)
         self.confidence = kwargs.get("confidence", None)
         self.is_header = kwargs.get("is_header", False)
         self.is_footer = kwargs.get("is_footer", False)
+        self.page_number = kwargs.get("page_number", None)
         self.field_elements = kwargs.get("field_elements", None)
 
     @classmethod
