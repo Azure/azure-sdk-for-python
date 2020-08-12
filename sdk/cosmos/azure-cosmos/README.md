@@ -83,6 +83,13 @@ Once you've initialized a [CosmosClient][ref_cosmosclient], you can interact wit
 
 For more information about these resources, see [Working with Azure Cosmos databases, containers and items][cosmos_resources].
 
+## Capabilities not currently supported
+
++ Language Native async
++ Bulk/Batch processing
++ Group By queries
++ Direct TCP Mode
+
 ## Examples
 
 The following sections provide several code snippets covering some of the most common Cosmos DB tasks, including:
