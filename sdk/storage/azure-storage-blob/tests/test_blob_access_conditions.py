@@ -1439,6 +1439,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         etag = blob.get_blob_properties().etag
         test_lease_id = '00000000-1111-2222-3333-444444444444'
+
         # Act
         lease = blob.acquire_lease(
             lease_id=test_lease_id,
