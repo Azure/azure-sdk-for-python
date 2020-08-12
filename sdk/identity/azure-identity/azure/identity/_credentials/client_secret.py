@@ -2,21 +2,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from .._internal import AadClient, ClientSecretCredentialBase
-from .._internal.decorators import log_get_token
+from typing import TYPE_CHECKING
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
+from .._internal.client_credential_base import ClientCredentialBase
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any
-    from azure.core.credentials import AccessToken
 
 
-class ClientSecretCredential(ClientSecretCredentialBase):
+class ClientSecretCredential(ClientCredentialBase):
     """Authenticates as a service principal using a client ID and client secret.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its 'directory' ID.
@@ -32,31 +27,17 @@ class ClientSecretCredential(ClientSecretCredentialBase):
           is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
-    @log_get_token("ClientSecretCredential")
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
-        """Request an access token for `scopes`.
+    def __init__(self, tenant_id, client_id, client_secret, **kwargs):
+        # type: (str, str, str, **Any) -> None
+        if not client_id:
+            raise ValueError("client_id should be the id of an Azure Active Directory application")
+        if not client_secret:
+            raise ValueError("secret should be an Azure Active Directory application's client secret")
+        if not tenant_id:
+            raise ValueError(
+                "tenant_id should be an Azure Active Directory tenant's id (also called its 'directory id')"
+            )
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
-
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :rtype: :class:`azure.core.credentials.AccessToken`
-        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
-          ``response`` attribute.
-        """
-        if not scopes:
-            raise ValueError("'get_token' requires at least one scope")
-
-        token = self._client.get_cached_access_token(scopes, query={"client_id": self._client_id})
-        if not token:
-            token = self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
-        elif self._client.should_refresh(token):
-            try:
-                self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
-            except Exception:  # pylint: disable=broad-except
-                pass
-        return token
-
-    def _get_auth_client(self, tenant_id, client_id, **kwargs):
-        return AadClient(tenant_id, client_id, **kwargs)
+        super(ClientSecretCredential, self).__init__(
+            client_id=client_id, client_credential=client_secret, tenant_id=tenant_id, **kwargs
+        )

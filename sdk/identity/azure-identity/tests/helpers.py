@@ -179,9 +179,9 @@ def validating_transport(requests, responses):
     return mock.Mock(send=mock.Mock(wraps=validate_request))
 
 
-def msal_validating_transport(requests, responses):
+def msal_validating_transport(requests, responses, **kwargs):
     """a validating transport with default responses to MSAL's discovery requests"""
-    return validating_transport([Request()] * 2 + requests, [get_discovery_response()] * 2 + responses)
+    return validating_transport([Request()] * 2 + requests, [get_discovery_response(**kwargs)] * 2 + responses)
 
 
 def urlsafeb64_decode(s):
