@@ -9366,10 +9366,6 @@ class FirewallPolicy(Resource):
      "Alert", "Deny", "Off".
     :type threat_intel_mode: str or
      ~azure.mgmt.network.v2020_03_01.models.AzureFirewallThreatIntelMode
-    :param intrusion_system_mode: The operation mode for Intrusion system. Possible values include:
-     "Enabled", "Disabled".
-    :type intrusion_system_mode: str or
-     ~azure.mgmt.network.v2020_03_01.models.FirewallPolicyIntrusionSystemMode
     """
 
     _validation = {
@@ -9395,7 +9391,6 @@ class FirewallPolicy(Resource):
         'firewalls': {'key': 'properties.firewalls', 'type': '[SubResource]'},
         'child_policies': {'key': 'properties.childPolicies', 'type': '[SubResource]'},
         'threat_intel_mode': {'key': 'properties.threatIntelMode', 'type': 'str'},
-        'intrusion_system_mode': {'key': 'properties.intrusionSystemMode', 'type': 'str'},
     }
 
     def __init__(
@@ -9406,7 +9401,6 @@ class FirewallPolicy(Resource):
         tags: Optional[Dict[str, str]] = None,
         base_policy: Optional["SubResource"] = None,
         threat_intel_mode: Optional[Union[str, "AzureFirewallThreatIntelMode"]] = None,
-        intrusion_system_mode: Optional[Union[str, "FirewallPolicyIntrusionSystemMode"]] = None,
         **kwargs
     ):
         super(FirewallPolicy, self).__init__(id=id, location=location, tags=tags, **kwargs)
@@ -9417,7 +9411,6 @@ class FirewallPolicy(Resource):
         self.firewalls = None
         self.child_policies = None
         self.threat_intel_mode = threat_intel_mode
-        self.intrusion_system_mode = intrusion_system_mode
 
 
 class FirewallPolicyRule(msrest.serialization.Model):
