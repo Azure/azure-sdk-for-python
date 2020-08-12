@@ -142,6 +142,7 @@ class FormTrainingClient(object):
             model = self._client._deserialize(Model, raw_response)
             return CustomFormModel._from_generated(model)
 
+        display_name = kwargs.pop("display_name", None)
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
@@ -152,7 +153,8 @@ class FormTrainingClient(object):
                 source_filter=TrainSourceFilter(
                     prefix=kwargs.pop("prefix", ""),
                     include_sub_folders=kwargs.pop("include_subfolders", False),
-                )
+                ),
+                model_name=display_name
             ),
             cls=kwargs.pop("cls", callback),
             continuation_token=continuation_token,
@@ -390,7 +392,7 @@ class FormTrainingClient(object):
         return self._client.begin_compose_custom_models_async(
             {"model_ids": model_ids, "model_name": display_name},
             cls=kwargs.pop("cls", _compose_callback),
-            polling=LROBasePolling(timeout=polling_interval, **kwargs),
+            polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
             error_map=error_map,
             continuation_token=continuation_token,
             **kwargs

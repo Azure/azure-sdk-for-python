@@ -31,6 +31,7 @@ def resolve_element(element, read_result):
         return FormWord._from_generated(element, page=page)
     if element_type == "line":
         return FormLine._from_generated(element, page=page)
+    # FIXME: add selection mark type once understand format returned in json pointer
 
     raise ValueError("Failed to parse element reference.")
 
@@ -60,6 +61,9 @@ def get_field_value(field, value, read_result):  # pylint: disable=too-many-retu
             key: FormField._from_generated(key, value, read_result)
             for key, value in value.value_object.items()
         }
+    if value.type == "selectionMark":
+        return value.value_selection_mark
+
     return None
 
 
@@ -249,7 +253,7 @@ class FormField(object):
     @classmethod
     def _from_generated_unlabeled(cls, field, idx, page, read_result):
         return cls(
-            value_type="string",  # unlabeled only returns string
+            value_type="string",  # unlabeled only returns string  # FIXME: this will now use KeyValueType
             label_data=FieldData._from_generated_unlabeled(field.key, page, read_result),
             value_data=FieldData._from_generated_unlabeled(field.value, page, read_result),
             value=field.value.text,
@@ -374,12 +378,14 @@ class FormPage(object):
             height=page.height,
             unit=page.unit,
             tables=None,  # receipt model does not return tables
+            selection_marks=None,  # FIXME: does receipt return selection marks?
             lines=[FormLine._from_generated(line, page=page.page) for line in page.lines]
             if page.lines else None
         ) for page in read_result]
 
     def __repr__(self):
-        return "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={})" \
+        return "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={}," \
+               "selection_marks={})" \
             .format(
                 self.page_number,
                 self.text_angle,
@@ -387,7 +393,8 @@ class FormPage(object):
                 self.height,
                 self.unit,
                 repr(self.tables),
-                repr(self.lines)
+                repr(self.lines),
+                repr(self.selection_marks)
             )[:1024]
 
 
@@ -492,6 +499,25 @@ class SelectionMark(FormElement):
         super(SelectionMark, self).__init__(**kwargs)
         self.confidence = kwargs['confidence']
         self.state = kwargs['state']
+
+    @classmethod
+    def _from_generated(cls, mark, page_number):
+        return cls(
+            confidence=mark.confidence,
+            state=mark.state,
+            bounding_box=get_bounding_box(mark.bounding_box),
+            page_number=page_number
+        )
+
+    def __repr__(self):
+        return "SelectionMark(text={}, bounding_box={}, confidence={}, page_number={}, state={})" \
+            .format(
+                self.text,
+                self.bounding_box,
+                self.confidence,
+                self.page_number,
+                self.state
+            )[:1024]
 
 
 class FormTable(object):
@@ -643,7 +669,9 @@ class CustomFormModel(object):
             errors=FormRecognizerError._from_generated(model.train_result.errors)
             if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
-            if model.train_result else None
+            if model.train_result else None,
+            attributes=ModelAttributes._from_generated(model.model_info),
+            display_name=model.model_info.model_name
         )
 
     @classmethod
@@ -662,7 +690,7 @@ class CustomFormModel(object):
 
     def __repr__(self):
         return "CustomFormModel(model_id={}, status={}, training_started_on={}, training_completed_on={}, " \
-               "submodels={}, errors={}, training_documents={})" \
+               "submodels={}, errors={}, training_documents={}, display_name={}, attributes={})" \
                 .format(
                     self.model_id,
                     self.status,
@@ -670,7 +698,9 @@ class CustomFormModel(object):
                     self.training_completed_on,
                     repr(self.submodels),
                     repr(self.errors),
-                    repr(self.training_documents)
+                    repr(self.training_documents),
+                    self.display_name,
+                    repr(self.attributes)
                 )[:1024]
 
 
@@ -698,6 +728,7 @@ class CustomFormSubmodel(object):
     def _from_generated_unlabeled(cls, model):
         return [
             cls(
+                model_id=model.model_info.model_id,
                 accuracy=None,
                 fields=CustomFormModelField._from_generated_unlabeled(fields),
                 form_type="form-" + cluster_id
@@ -708,6 +739,7 @@ class CustomFormSubmodel(object):
     def _from_generated_labeled(cls, model):
         return [
             cls(
+                model_id=model.model_info.model_id,
                 accuracy=model.train_result.average_model_accuracy,
                 fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
                         for field in model.train_result.fields} if model.train_result.fields else None,
@@ -728,11 +760,12 @@ class CustomFormSubmodel(object):
         ]
 
     def __repr__(self):
-        return "CustomFormSubmodel(accuracy={}, fields={}, form_type={})" \
+        return "CustomFormSubmodel(accuracy={}, fields={}, form_type={}, model_id={})" \
             .format(
                 self.accuracy,
                 repr(self.fields),
-                self.form_type
+                self.form_type,
+                self.model_id
             )[:1024]
 
 
@@ -891,6 +924,10 @@ class ModelAttributes(object):
             is_composed=model_info.attributes.is_composed
         )
 
+    def __repr__(self):
+        return "ModelAttributes(is_composed={})".format(self.is_composed)
+
+
 class CustomFormModelInfo(object):
     """Custom model information.
 
@@ -924,17 +961,22 @@ class CustomFormModelInfo(object):
             model_id=model_id if model_id else model.model_id,
             status=model.status,
             training_started_on=model.created_date_time,
-            training_completed_on=model.last_updated_date_time
+            training_completed_on=model.last_updated_date_time,
+            attributes=ModelAttributes._from_generated(model),
+            display_name=model.model_name
         )
 
     def __repr__(self):
-        return "CustomFormModelInfo(model_id={}, status={}, training_started_on={}, training_completed_on={})" \
-            .format(
-                self.model_id,
-                self.status,
-                self.training_started_on,
-                self.training_completed_on
-            )[:1024]
+        return "CustomFormModelInfo(model_id={}, status={}, training_started_on={}, training_completed_on={}, " \
+               "attributes={}, display_name={})" \
+                .format(
+                    self.model_id,
+                    self.status,
+                    self.training_started_on,
+                    self.training_completed_on,
+                    repr(self.attributes),
+                    self.display_name
+                )[:1024]
 
 
 class AccountProperties(object):
