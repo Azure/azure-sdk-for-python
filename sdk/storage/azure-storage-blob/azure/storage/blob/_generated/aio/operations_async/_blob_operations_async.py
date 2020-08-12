@@ -2160,9 +2160,6 @@ class BlobOperations:
         source_if_none_match = None
         if source_modified_access_conditions is not None:
             source_if_none_match = source_modified_access_conditions.source_if_none_match
-        source_if_tags = None
-        if source_modified_access_conditions is not None:
-            source_if_tags = source_modified_access_conditions.source_if_tags
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -2218,8 +2215,6 @@ class BlobOperations:
             header_parameters['x-ms-source-if-match'] = self._serialize.header("source_if_match", source_if_match, 'str')
         if source_if_none_match is not None:
             header_parameters['x-ms-source-if-none-match'] = self._serialize.header("source_if_none_match", source_if_none_match, 'str')
-        if source_if_tags is not None:
-            header_parameters['x-ms-source-if-tags'] = self._serialize.header("source_if_tags", source_if_tags, 'str')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -2725,6 +2720,9 @@ class BlobOperations:
         if_none_match = None
         if modified_access_conditions is not None:
             if_none_match = modified_access_conditions.if_none_match
+        if_tags = None
+        if modified_access_conditions is not None:
+            if_tags = modified_access_conditions.if_tags
 
         comp = "query"
 
@@ -2766,6 +2764,8 @@ class BlobOperations:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_tags is not None:
+            header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
 
         # Construct body
         if query_request is not None:

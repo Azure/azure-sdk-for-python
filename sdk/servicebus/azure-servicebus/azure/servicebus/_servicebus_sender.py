@@ -163,6 +163,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             properties=self._properties,
             error_policy=self._error_policy,
             client_name=self._name,
+            keep_alive_interval=self._config.keep_alive,
             encoding=self._config.encoding
         )
 

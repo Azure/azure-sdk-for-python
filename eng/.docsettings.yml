@@ -8,6 +8,7 @@ omitted_paths:
   - doc/*
   - sdk/**/samples/*
   - sdk/identity/azure-identity/tests/*
+
 language: python
 root_check_enabled: True
 required_readme_sections:
@@ -81,6 +82,7 @@ known_content_issues:
   - ['sdk/eventgrid/azure-eventgrid/README.md', '#4554']
   - ['sdk/graphrbac/azure-graphrbac/README.md', '#4554']
   - ['sdk/loganalytics/azure-loganalytics/README.md', '#4554']
+  - ['sdk/schemaregistry/azure-schemaregistry/swagger/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/swagger/README.md', '#4554']
   - ['sdk/servicefabric/azure-servicefabric/README.md', '#4554']
@@ -120,6 +122,8 @@ known_content_issues:
   - ['sdk/textanalytics/azure-ai-nspkg/README.md', 'nspkg and common']
   - ['sdk/eventhub/azure-eventhub/samples/README.md', 'nspkg and common']
   - ['sdk/tables/azure-data-nspkg/README.md', 'nspkg and common']
+  - ['sdk/cosmos/README.md', 'nspkg and common']
+
 
 # HISTORY.rst
   - ['sdk/core/azure/HISTORY.rst','#4554']

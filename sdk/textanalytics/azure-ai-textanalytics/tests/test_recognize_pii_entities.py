@@ -88,7 +88,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
     def test_length_with_emoji(self, client):
-        result = client.recognize_pii_entities(["👩 SSN: 123-12-1234"])
+        result = client.recognize_pii_entities(["👩 SSN: 859-98-0987"])
         self.assertEqual(result[0].entities[0].offset, 7)
         self.assertEqual(result[0].entities[0].length, 11)
 
@@ -144,7 +144,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             client.recognize_pii_entities(docs)
         assert excinfo.value.status_code == 400
         assert excinfo.value.error.code == "InvalidDocumentBatch"
-        assert "(InvalidDocumentBatch) The number of documents in the request have exceeded the data limitations" in str(excinfo.value)
+        assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()

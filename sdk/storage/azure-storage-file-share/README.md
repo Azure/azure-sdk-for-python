@@ -125,7 +125,7 @@ The Azure Storage File Share client library for Python allows you to interact wi
 use of a dedicated client object.
 
 ### Clients
-Four different clients are provided to to interact with the various components of the File Share Service:
+Four different clients are provided to interact with the various components of the File Share Service:
 1. [ShareServiceClient](https://aka.ms/azsdk-python-storage-fileshare-shareserviceclient) -
     this client represents interaction with the Azure storage account itself, and allows you to acquire preconfigured
     client instances to access the file shares within. It provides operations to retrieve and configure the service

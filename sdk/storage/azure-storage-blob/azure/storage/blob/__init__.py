@@ -52,11 +52,12 @@ from ._models import (
     CustomerProvidedEncryptionKey,
     ContainerEncryptionScope,
     BlobQueryError,
-    DelimitedJSON,
+    DelimitedJsonDialect,
     DelimitedTextDialect,
     ObjectReplicationPolicy,
     ObjectReplicationRule
 )
+from ._list_blobs_helper import BlobPrefix
 
 __version__ = VERSION
 
@@ -195,6 +196,7 @@ __all__ = [
     'CorsRule',
     'ContainerProperties',
     'BlobProperties',
+    'BlobPrefix',
     'FilteredBlob',
     'LeaseProperties',
     'ContentSettings',
@@ -215,7 +217,7 @@ __all__ = [
     'PartialBatchErrorException',
     'ContainerEncryptionScope',
     'BlobQueryError',
-    'DelimitedJSON',
+    'DelimitedJsonDialect',
     'DelimitedTextDialect',
     'BlobQueryReader',
     'ObjectReplicationPolicy',

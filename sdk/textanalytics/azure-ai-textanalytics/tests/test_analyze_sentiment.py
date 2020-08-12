@@ -16,7 +16,7 @@ from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
     VERSION,
-    ApiVersion
+    TextAnalyticsApiVersion
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -133,7 +133,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             client.analyze_sentiment(docs)
         assert excinfo.value.status_code == 400
         assert excinfo.value.error.code == "InvalidDocumentBatch"
-        assert "(InvalidDocumentBatch) The number of documents in the request have exceeded the data limitations" in str(excinfo.value)
+        assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -659,7 +659,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert not document.sentences[0].mined_opinions
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": ApiVersion.V3_0})
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     def test_opinion_mining_v3(self, client):
         with pytest.raises(NotImplementedError) as excinfo:
             client.analyze_sentiment(["will fail"], show_opinion_mining=True)

@@ -251,7 +251,7 @@ class FormRecognizerClient(object):
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
+            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a URL.")
 
         if content_type is None:
             content_type = get_content_type(form)

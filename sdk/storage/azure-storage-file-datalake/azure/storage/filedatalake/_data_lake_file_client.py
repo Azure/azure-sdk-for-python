@@ -650,20 +650,21 @@ class DataLakeFileClient(PathClient):
 
         :param str query_expression:
             Required. a query statement.
+            eg. Select * from DataLakeStorage
         :keyword Callable[Exception] on_error:
             A function to be called on any processing errors returned by the service.
         :keyword file_format:
             Optional. Defines the serialization of the data currently stored in the file. The default is to
             treat the file data as CSV data formatted in the default dialect. This can be overridden with
-            a custom DelimitedTextDialect, or alternatively a DelimitedJSON.
+            a custom DelimitedTextDialect, or alternatively a DelimitedJsonDialect.
         :paramtype file_format:
-            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJSON
+            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect
         :keyword output_format:
             Optional. Defines the output serialization for the data stream. By default the data will be returned
             as it is represented in the file. By providing an output format, the file data will be reformatted
-            according to that profile. This value can be a DelimitedTextDialect or a DelimitedJSON.
+            according to that profile. This value can be a DelimitedTextDialect or a DelimitedJsonDialect.
         :paramtype output_format:
-            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJSON
+            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect
         :keyword lease:
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -699,7 +700,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
         """
-
+        query_expression = query_expression.replace("from DataLakeStorage", "from BlobStorage")
         blob_quick_query_reader = self._blob_client.query_blob(query_expression,
                                                                blob_format=kwargs.pop('file_format', None),
                                                                error_cls=DataLakeFileQueryError,

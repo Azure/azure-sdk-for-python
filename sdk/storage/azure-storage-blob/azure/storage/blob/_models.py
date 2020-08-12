@@ -8,7 +8,7 @@
 
 from enum import Enum
 
-from azure.core.paging import PageIterator, ItemPaged
+from azure.core.paging import PageIterator
 from azure.storage.blob._generated.models import FilterBlobItem
 
 from ._shared import decode_base64_to_text
@@ -21,8 +21,6 @@ from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import StorageErrorException
-from ._generated.models import BlobPrefix as GenBlobPrefix
-from ._generated.models import BlobItemInternal
 
 
 class BlobType(str, Enum):
@@ -223,6 +221,8 @@ class StaticWebsite(GeneratedStaticWebsite):
         The default name of the index page under each directory.
     :keyword str error_document404_path:
         The absolute path of the custom 404 page.
+    :keyword str default_index_document_path:
+        Absolute path of the default index page.
     """
 
     def __init__(self, **kwargs):
@@ -230,9 +230,11 @@ class StaticWebsite(GeneratedStaticWebsite):
         if self.enabled:
             self.index_document = kwargs.get('index_document')
             self.error_document404_path = kwargs.get('error_document404_path')
+            self.default_index_document_path = kwargs.get('default_index_document_path')
         else:
             self.index_document = None
             self.error_document404_path = None
+            self.default_index_document_path = None
 
     @classmethod
     def _from_generated(cls, generated):
@@ -242,6 +244,7 @@ class StaticWebsite(GeneratedStaticWebsite):
             enabled=generated.enabled,
             index_document=generated.index_document,
             error_document404_path=generated.error_document404_path,
+            default_index_document_path=generated.default_index_document_path
         )
 
 
@@ -440,6 +443,11 @@ class BlobProperties(DictMixin):
         requested a subset of the blob.
     :ivar int append_blob_committed_block_count:
         (For Append Blobs) Number of committed blocks in the blob.
+    :ivar bool is_append_blob_sealed:
+        Indicate if the append blob is sealed or not.
+
+        .. versionadded:: 12.4.0
+
     :ivar int page_blob_sequence_number:
         (For Page Blobs) Sequence number for page blob used for coordinating
         concurrent writes.
@@ -458,6 +466,8 @@ class BlobProperties(DictMixin):
         for at least a month. The archive tier is optimized for storing
         data that is rarely accessed and stored for at least six months
         with flexible latency requirements.
+    :ivar str rehydrate_priority:
+        Indicates the priority with which to rehydrate an archived blob
     :ivar ~datetime.datetime blob_tier_change_time:
         Indicates when the access tier was last changed.
     :ivar bool blob_tier_inferred:
@@ -484,12 +494,24 @@ class BlobProperties(DictMixin):
         Whether this blob is encrypted.
     :ivar list(~azure.storage.blob.ObjectReplicationPolicy) object_replication_source_properties:
         Only present for blobs that have policy ids and rule ids applied to them.
+
+        .. versionadded:: 12.4.0
+
     :ivar str object_replication_destination_policy:
         Represents the Object Replication Policy Id that created this blob.
+
+        .. versionadded:: 12.4.0
+
     :ivar int tag_count:
         Tags count on this blob.
+
+        .. versionadded:: 12.4.0
+
     :ivar dict(str, str) tags:
         Key value pair of tags on this blob.
+
+        .. versionadded:: 12.4.0
+
     """
 
     def __init__(self, **kwargs):
@@ -506,12 +528,14 @@ class BlobProperties(DictMixin):
         self.size = kwargs.get('Content-Length')
         self.content_range = kwargs.get('Content-Range')
         self.append_blob_committed_block_count = kwargs.get('x-ms-blob-committed-block-count')
+        self.is_append_blob_sealed = kwargs.get('x-ms-blob-sealed')
         self.page_blob_sequence_number = kwargs.get('x-ms-blob-sequence-number')
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.copy = CopyProperties(**kwargs)
         self.content_settings = ContentSettings(**kwargs)
         self.lease = LeaseProperties(**kwargs)
         self.blob_tier = kwargs.get('x-ms-access-tier')
+        self.rehydrate_priority = kwargs.get('x-ms-rehydrate-priority')
         self.blob_tier_change_time = kwargs.get('x-ms-access-tier-change-time')
         self.blob_tier_inferred = kwargs.get('x-ms-access-tier-inferred')
         self.deleted = False
@@ -526,133 +550,6 @@ class BlobProperties(DictMixin):
         self.object_replication_destination_policy = kwargs.get('x-ms-or-policy-id')
         self.tag_count = kwargs.get('x-ms-tag-count')
         self.tags = None
-
-    @classmethod
-    def _from_generated(cls, generated):
-        blob = BlobProperties()
-        blob.name = generated.name
-        blob_type = get_enum_value(generated.properties.blob_type)
-        blob.blob_type = BlobType(blob_type) if blob_type else None
-        blob.etag = generated.properties.etag
-        blob.deleted = generated.deleted
-        blob.snapshot = generated.snapshot
-        blob.metadata = generated.metadata.additional_properties if generated.metadata else {}
-        blob.encrypted_metadata = generated.metadata.encrypted if generated.metadata else None
-        blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
-        blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
-        blob.last_modified = generated.properties.last_modified
-        blob.creation_time = generated.properties.creation_time
-        blob.content_settings = ContentSettings._from_generated(generated)  # pylint: disable=protected-access
-        blob.size = generated.properties.content_length
-        blob.page_blob_sequence_number = generated.properties.blob_sequence_number
-        blob.server_encrypted = generated.properties.server_encrypted
-        blob.encryption_scope = generated.properties.encryption_scope
-        blob.deleted_time = generated.properties.deleted_time
-        blob.remaining_retention_days = generated.properties.remaining_retention_days
-        blob.blob_tier = generated.properties.access_tier
-        blob.blob_tier_inferred = generated.properties.access_tier_inferred
-        blob.archive_status = generated.properties.archive_status
-        blob.blob_tier_change_time = generated.properties.access_tier_change_time
-        blob.version_id = generated.version_id
-        blob.is_current_version = generated.is_current_version
-        blob.tag_count = generated.properties.tag_count
-        blob.tags = blob._parse_tags(generated.blob_tags)  # pylint: disable=protected-access
-        return blob
-
-    @staticmethod
-    def _parse_tags(generated_tags):
-        # type: (Optional[List[BlobTag]]) -> Union[Dict[str, str], None]
-        """Deserialize a list of BlobTag objects into a dict.
-        """
-        if generated_tags:
-            tag_dict = {t.key: t.value for t in generated_tags.blob_tag_set}
-            return tag_dict
-        return None
-
-
-class BlobPropertiesPaged(PageIterator):
-    """An Iterable of Blob properties.
-
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.BlobProperties)
-    :ivar str container: The container that the blobs are listed from.
-    :ivar str delimiter: A delimiting character used for hierarchy listing.
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str container: The name of the container.
-    :param str prefix: Filters the results to return only blobs whose names
-        begin with the specified prefix.
-    :param int results_per_page: The maximum number of blobs to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
-    :param str delimiter:
-        Used to capture blobs whose names begin with the same substring up to
-        the appearance of the delimiter character. The delimiter may be a single
-        character or a string.
-    :param location_mode: Specifies the location the request should be sent to.
-        This mode only applies for RA-GRS accounts which allow secondary read access.
-        Options include 'primary' or 'secondary'.
-    """
-    def __init__(
-            self, command,
-            container=None,
-            prefix=None,
-            results_per_page=None,
-            continuation_token=None,
-            delimiter=None,
-            location_mode=None):
-        super(BlobPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb,
-            extract_data=self._extract_data_cb,
-            continuation_token=continuation_token or ""
-        )
-        self._command = command
-        self.service_endpoint = None
-        self.prefix = prefix
-        self.marker = None
-        self.results_per_page = results_per_page
-        self.container = container
-        self.delimiter = delimiter
-        self.current_page = None
-        self.location_mode = location_mode
-
-    def _get_next_cb(self, continuation_token):
-        try:
-            return self._command(
-                prefix=self.prefix,
-                marker=continuation_token or None,
-                maxresults=self.results_per_page,
-                cls=return_context_and_deserialized,
-                use_location=self.location_mode)
-        except StorageErrorException as error:
-            process_storage_error(error)
-
-    def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response = get_next_return
-        self.service_endpoint = self._response.service_endpoint
-        self.prefix = self._response.prefix
-        self.marker = self._response.marker
-        self.results_per_page = self._response.max_results
-        self.container = self._response.container_name
-        self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
-
-        return self._response.next_marker or None, self.current_page
-
-    def _build_item(self, item):
-        if isinstance(item, BlobProperties):
-            return item
-        if isinstance(item, BlobItemInternal):
-            blob = BlobProperties._from_generated(item)  # pylint: disable=protected-access
-            blob.container = self.container
-            return blob
-        return item
 
 
 class FilteredBlob(DictMixin):
@@ -733,74 +630,6 @@ class FilteredBlobPaged(PageIterator):
         if isinstance(item, FilterBlobItem):
             blob = FilteredBlob(name=item.name, container_name=item.container_name)  # pylint: disable=protected-access
             return blob
-        return item
-
-
-class BlobPrefix(ItemPaged, DictMixin):
-    """An Iterable of Blob properties.
-
-    Returned from walk_blobs when a delimiter is used.
-    Can be thought of as a virtual blob directory.
-
-    :ivar str name: The prefix, or "directory name" of the blob.
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.blob.BlobProperties)
-    :ivar str container: The container that the blobs are listed from.
-    :ivar str delimiter: A delimiting character used for hierarchy listing.
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only blobs whose names
-        begin with the specified prefix.
-    :param int results_per_page: The maximum number of blobs to retrieve per
-        call.
-    :param str marker: An opaque continuation token.
-    :param str delimiter:
-        Used to capture blobs whose names begin with the same substring up to
-        the appearance of the delimiter character. The delimiter may be a single
-        character or a string.
-    :param location_mode: Specifies the location the request should be sent to.
-        This mode only applies for RA-GRS accounts which allow secondary read access.
-        Options include 'primary' or 'secondary'.
-    """
-    def __init__(self, *args, **kwargs):
-        super(BlobPrefix, self).__init__(*args, page_iterator_class=BlobPrefixPaged, **kwargs)
-        self.name = kwargs.get('prefix')
-        self.prefix = kwargs.get('prefix')
-        self.results_per_page = kwargs.get('results_per_page')
-        self.container = kwargs.get('container')
-        self.delimiter = kwargs.get('delimiter')
-        self.location_mode = kwargs.get('location_mode')
-
-
-class BlobPrefixPaged(BlobPropertiesPaged):
-    def __init__(self, *args, **kwargs):
-        super(BlobPrefixPaged, self).__init__(*args, **kwargs)
-        self.name = self.prefix
-
-    def _extract_data_cb(self, get_next_return):
-        continuation_token, _ = super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
-        self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
-        self.current_page = [self._build_item(item) for item in self.current_page]
-        self.delimiter = self._response.delimiter
-
-        return continuation_token, self.current_page
-
-    def _build_item(self, item):
-        item = super(BlobPrefixPaged, self)._build_item(item)
-        if isinstance(item, GenBlobPrefix):
-            return BlobPrefix(
-                self._command,
-                container=self.container,
-                prefix=item.name,
-                results_per_page=self.results_per_page,
-                location_mode=self.location_mode)
         return item
 
 
@@ -1230,7 +1059,7 @@ class ContainerEncryptionScope(object):
         return None
 
 
-class DelimitedJSON(object):
+class DelimitedJsonDialect(object):
     """Defines the input or output JSON serialization for a blob data query.
 
     :keyword str delimiter: The line separator character, default value is '\n'

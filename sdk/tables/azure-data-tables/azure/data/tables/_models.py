@@ -8,15 +8,16 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from azure.data.tables._generated.models import TableServiceStats as GenTableServiceStats
 
-from ._deserialize import _convert_to_entity
-from ._shared.models import Services
-from ._shared.response_handlers import return_context_and_deserialized, process_table_error
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
-
+from ._deserialize import (
+    _convert_to_entity,
+    _return_context_and_deserialized
+)
+from ._error import _process_table_error
 
 class TableServiceStats(GenTableServiceStats):
     """Stats for the service
@@ -285,15 +286,15 @@ class TablePropertiesPaged(PageIterator):
         self._headers = None
         self.location_mode = None
 
-    def _get_next_cb(self, continuation_token):
+    def _get_next_cb(self, continuation_token, **kwargs):
         try:
             return self._command(
                 next_table_name=continuation_token or None,
-                cls=return_context_and_deserialized,
+                cls=kwargs.pop('cls', None) or _return_context_and_deserialized,
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
@@ -333,7 +334,7 @@ class TableEntityPropertiesPaged(PageIterator):
         self.table = table
         self.location_mode = None
 
-    def _get_next_cb(self, continuation_token):
+    def _get_next_cb(self, continuation_token, **kwargs):
         row_key = ""
         partition_key = ""
         for key, value in continuation_token.items():
@@ -347,11 +348,11 @@ class TableEntityPropertiesPaged(PageIterator):
                 next_row_key=row_key or None,
                 next_partition_key=partition_key or None,
                 table=self.table,
-                cls=return_context_and_deserialized,
+                cls=kwargs.pop('cls', None) or _return_context_and_deserialized,
                 use_location=self.location_mode
             )
         except HttpResponseError as error:
-            process_table_error(error)
+            _process_table_error(error)
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
@@ -457,11 +458,6 @@ def service_properties_deserialize(generated):
     }
 
 
-class TableServices(Services):
-    def __str__(self):
-        return 't'
-
-
 class Table(object):
     """
     Represents an Azure Table. Returned by list_tables.
@@ -497,3 +493,152 @@ class UpdateMode(str, Enum):
 class SASProtocol(str, Enum):
     HTTPS = "https"
     HTTP = "http"
+
+
+class PartialBatchErrorException(HttpResponseError):
+    """There is a partial failure in batch operations.
+
+    :param str message: The message of the exception.
+    :param response: Server response to be deserialized.
+    :param list parts: A list of the parts in multipart response.
+    """
+
+    def __init__(self, message, response, parts):
+        self.parts = parts
+        super(PartialBatchErrorException, self).__init__(message=message, response=response)
+
+
+
+class LocationMode(object):
+    """
+    Specifies the location the request should be sent to. This mode only applies
+    for RA-GRS accounts which allow secondary read access. All other account types
+    must use PRIMARY.
+    """
+
+    PRIMARY = 'primary'  #: Requests should be sent to the primary location.
+    SECONDARY = 'secondary'  #: Requests should be sent to the secondary location, if possible.
+
+
+class ResourceTypes(object):
+    """
+    Specifies the resource types that are accessible with the account SAS.
+
+    :param bool service:
+        Access to service-level APIs (e.g., Get/Set Service Properties,
+        Get Service Stats, List Containers/Queues/Shares)
+    :param bool object:
+        Access to object-level APIs for blobs, queue messages, and
+        files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
+    """
+
+    def __init__(self, service=False, object=False):  # pylint: disable=redefined-builtin
+        self.service = service
+        self.object = object
+        self._str = (('s' if self.service else '') +
+                     ('o' if self.object else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, string):
+        """Create a ResourceTypes from a string.
+
+        To specify service, container, or object you need only to
+        include the first letter of the word in the string. E.g. service and container,
+        you would provide a string "sc".
+
+        :param str string: Specify service, container, or object in
+            in the string with the first letter of the word.
+        :return: A ResourceTypes object
+        :rtype: ~azure.data.tables.ResourceTypes
+        """
+        res_service = 's' in string
+        res_object = 'o' in string
+
+        parsed = cls(res_service, res_object)
+        parsed._str = string  # pylint: disable = protected-access
+        return parsed
+
+
+class AccountSasPermissions(object):
+    """
+    :class:`~ResourceTypes` class to be used with generate_account_sas
+    function and for the AccessPolicies used with set_*_acl. There are two types of
+    SAS which may be used to grant resource access. One is to grant access to a
+    specific resource (resource-specific). Another is to grant access to the
+    entire service for a specific account and allow certain operations based on
+    perms found here.
+
+    :ivar bool read:
+        Valid for all signed resources types (Service, Container, and Object).
+        Permits read permissions to the specified resource type.
+    :ivar bool write:
+        Valid for all signed resources types (Service, Container, and Object).
+        Permits write permissions to the specified resource type.
+    :ivar bool delete:
+        Valid for Container and Object resource types, except for queue messages.
+    :ivar bool list:
+        Valid for Service and Container resource types only.
+    :ivar bool add:
+        Valid for the following Object resource types only: queue messages, and append blobs.
+    :ivar bool create:
+        Valid for the following Object resource types only: blobs and files.
+        Users can create new blobs or files, but may not overwrite existing
+        blobs or files.
+    :ivar bool update:
+        Valid for the following Object resource types only: queue messages.
+    :ivar bool process:
+        Valid for the following Object resource type only: queue messages.
+    """
+
+    def __init__(self, **kwargs):  # pylint: disable=redefined-builtin
+        self.read = kwargs.pop('read', None)
+        self.write = kwargs.pop('write', None)
+        self.delete = kwargs.pop('delete', None)
+        self.list = kwargs.pop('list', None)
+        self.add = kwargs.pop('add', None)
+        self.create = kwargs.pop('create', None)
+        self.update = kwargs.pop('update', None)
+        self.process = kwargs.pop('process', None)
+        self._str = (('r' if self.read else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else '') +
+                     ('a' if self.add else '') +
+                     ('c' if self.create else '') +
+                     ('u' if self.update else '') +
+                     ('p' if self.process else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission, **kwargs):  # pylint:disable=W0613
+        """Create AccountSasPermissions from a string.
+
+        To specify read, write, delete, etc. permissions you need only to
+        include the first letter of the word in the string. E.g. for read and write
+        permissions you would provide a string "rw".
+
+        :param str permission: Specify permissions in
+            the string with the first letter of the word.
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: A AccountSasPermissions object
+        :rtype: ~azure.data.tables.AccountSasPermissions
+        """
+        p_read = 'r' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+        p_add = 'a' in permission
+        p_create = 'c' in permission
+        p_update = 'u' in permission
+        p_process = 'p' in permission
+
+        parsed = cls(
+            **dict(kwargs, read=p_read, write=p_write, delete=p_delete, list=p_list, add=p_add, create=p_create,
+                   update=p_update, process=p_process))
+        parsed._str = permission  # pylint: disable = protected-access
+        return parsed
