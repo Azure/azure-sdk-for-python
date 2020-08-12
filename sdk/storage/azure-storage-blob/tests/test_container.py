@@ -1314,6 +1314,7 @@ class StorageContainerTest(StorageTestCase):
             raise_on_any_failure=False
         )
 
+    @pytest.mark.playback_test_only
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
     def test_batch_set_standard_blob_tier_for_version(self, resource_group, location, storage_account, storage_account_key):
