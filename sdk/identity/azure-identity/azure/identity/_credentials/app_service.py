@@ -12,13 +12,13 @@ from azure.core.pipeline.transport import HttpRequest
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .._internal.managed_identity_client import ManagedIdentityClient
-from .._internal.proactive_refresh import ProactiveRefresh
+from .._internal.get_token_mixin import GetTokenMixin
 
 if TYPE_CHECKING:
     from typing import Any, Optional
 
 
-class AppServiceCredential(ProactiveRefresh):
+class AppServiceCredential(GetTokenMixin):
     def __init__(self, **kwargs):
         # type: (**Any) -> None
         super(AppServiceCredential, self).__init__()
@@ -35,7 +35,7 @@ class AppServiceCredential(ProactiveRefresh):
             raise CredentialUnavailableError(
                 message="App Service managed identity configuration not found in environment"
             )
-        return self._get_token_impl(*scopes, **kwargs)
+        return self._get_token(*scopes, **kwargs)
 
     def _acquire_token_silently(self, *scopes):
         # type: (*str) -> Optional[AccessToken]

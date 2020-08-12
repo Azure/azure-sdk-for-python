@@ -7,12 +7,7 @@ import logging
 import time
 from typing import TYPE_CHECKING
 
-from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
-
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
+from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports,unused-import
@@ -22,24 +17,20 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ProactiveRefresh(ABC):
-    def __init__(self, *args, **kwargs):
-        # type: (*Any, **Any) -> None
+class GetTokenMixin(abc.ABC):
+    def __init__(self, *args: "Any", **kwargs: "Any") -> None:
         self._last_request_time = 0
-        super(ProactiveRefresh, self).__init__(*args, **kwargs)
+        super(GetTokenMixin, self).__init__(*args, **kwargs)
 
     @abc.abstractmethod
-    def _acquire_token_silently(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    async def _acquire_token_silently(self, *scopes: str) -> "Optional[AccessToken]":
         """Attempt to acquire an access token from a cache or by redeeming a refresh token"""
 
     @abc.abstractmethod
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token from the STS"""
 
-    def _should_refresh(self, token):
-        # type: (AccessToken) -> bool
+    def _should_refresh(self, token: "AccessToken") -> bool:
         now = int(time.time())
         if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
             return False
@@ -47,20 +38,19 @@ class ProactiveRefresh(ABC):
             return False
         return True
 
-    def _get_token_impl(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    async def _get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
 
         try:
-            token = self._acquire_token_silently(*scopes)
+            token = await self._acquire_token_silently(*scopes)
             if not token:
                 self._last_request_time = int(time.time())
-                token = self._request_token(*scopes)
+                token = await self._request_token(*scopes)
             elif self._should_refresh(token):
                 try:
                     self._last_request_time = int(time.time())
-                    token = self._request_token(*scopes, **kwargs)
+                    token = await self._request_token(*scopes, **kwargs)
                 except Exception:  # pylint:disable=broad-except
                     pass
             _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)

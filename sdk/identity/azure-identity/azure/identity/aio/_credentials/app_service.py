@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from .base import AsyncCredentialBase
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
-from .._internal.proactive_refresh import ProactiveRefresh
+from .._internal.get_token_mixin import GetTokenMixin
 from ... import CredentialUnavailableError
 from ..._credentials.app_service import _get_client_args
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class AppServiceCredential(AsyncCredentialBase, ProactiveRefresh):
+class AppServiceCredential(AsyncCredentialBase, GetTokenMixin):
     def __init__(self, **kwargs: "Any") -> None:
         super(AppServiceCredential, self).__init__()
 
@@ -33,7 +33,7 @@ class AppServiceCredential(AsyncCredentialBase, ProactiveRefresh):
                 message="App Service managed identity configuration not found in environment"
             )
 
-        return await self._get_token_impl(*scopes, **kwargs)
+        return await self._get_token(*scopes, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()  # pylint:disable=no-member
