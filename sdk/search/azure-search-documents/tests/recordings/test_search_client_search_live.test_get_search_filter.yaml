@@ -1,0 +1,59 @@
+interactions:
+- request:
+    body: '{"filter": "category eq ''Budget''", "orderby": "hotelName desc", "search":
+      "WiFi", "select": "hotelName,category,description"}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '125'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - B583478EFB4C1DBC374E331DA859BE86
+    method: POST
+    uri: https://search4943159f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
+  response:
+    body:
+      string: '{"value":[{"@search.score":0.19169211,"hotelName":"Express Rooms","description":"Pretty
+        good hotel","category":"Budget"},{"@search.score":0.19169211,"hotelName":"EconoStay","description":"Very
+        popular hotel in town","category":"Budget"},{"@search.score":0.2423066,"hotelName":"Countryside
+        Hotel","description":"Save up to 50% off traditional hotels.  Free WiFi, great
+        location near downtown, full kitchen, washer & dryer, 24/7 support, bowling
+        alley, fitness center and more.","category":"Budget"},{"@search.score":0.19169211,"hotelName":"Comfy
+        Place","description":"Another good hotel","category":"Budget"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '609'
+      content-type:
+      - application/json; odata.metadata=none
+      date:
+      - Wed, 29 Apr 2020 23:18:52 GMT
+      elapsed-time:
+      - '103'
+      expires:
+      - '-1'
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - c9e16d92-8a6f-11ea-889b-8c8590507855
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

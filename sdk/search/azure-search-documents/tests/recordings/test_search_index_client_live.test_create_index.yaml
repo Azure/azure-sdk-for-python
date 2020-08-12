@@ -1,0 +1,57 @@
+interactions:
+- request:
+    body: '{"name": "hotels", "fields": [{"name": "hotelId", "type": "Edm.String",
+      "key": true, "searchable": false}, {"name": "baseRate", "type": "Edm.Double"}],
+      "scoringProfiles": [{"name": "MyProfile"}], "corsOptions": {"allowedOrigins":
+      ["*"], "maxAgeInSeconds": 60}}'
+    headers:
+      Accept:
+      - application/json;odata.metadata=minimal
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '260'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      api-key:
+      - 1C166A5AB3A98880F52DC59909AC7CD1
+    method: POST
+    uri: https://searchce941332.search.windows.net/indexes?api-version=2020-06-30
+  response:
+    body:
+      string: '{"@odata.context":"https://searchce941332.search.windows.net/$metadata#indexes/$entity","@odata.etag":"\"0x8D7EC94044D5005\"","name":"hotels","defaultScoringProfile":null,"fields":[{"name":"hotelId","type":"Edm.String","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":true,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]},{"name":"baseRate","type":"Edm.Double","searchable":false,"filterable":true,"retrievable":true,"sortable":true,"facetable":true,"key":false,"indexAnalyzer":null,"searchAnalyzer":null,"analyzer":null,"synonymMaps":[]}],"scoringProfiles":[{"name":"MyProfile","functionAggregation":null,"text":null,"functions":[]}],"corsOptions":{"allowedOrigins":["*"],"maxAgeInSeconds":60},"suggesters":[],"analyzers":[],"tokenizers":[],"tokenFilters":[],"charFilters":[],"encryptionKey":null,"similarity":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '889'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Wed, 29 Apr 2020 23:21:16 GMT
+      elapsed-time:
+      - '1126'
+      etag:
+      - W/"0x8D7EC94044D5005"
+      expires:
+      - '-1'
+      location:
+      - https://searchce941332.search.windows.net/indexes('hotels')?api-version=2020-06-30
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - 1f504398-8a70-11ea-889b-8c8590507855
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 201
+      message: Created
+version: 1
