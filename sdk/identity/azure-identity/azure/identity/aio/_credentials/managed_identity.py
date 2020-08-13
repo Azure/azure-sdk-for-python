@@ -32,6 +32,10 @@ class ManagedIdentityCredential(AsyncCredentialBase):
     the keyword arguments.
 
     :keyword str client_id: a user-assigned identity's client ID. This is supported in all hosting environments.
+    :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
+      or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
+      learn what values it expects.
+    :paramtype identity_config: Mapping[str, str]
     """
 
     def __init__(self, **kwargs: "Any") -> None:
