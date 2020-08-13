@@ -1824,6 +1824,36 @@ class ScopedDeployment(msrest.serialization.Model):
         self.tags = kwargs.get('tags', None)
 
 
+class ScopedDeploymentWhatIf(msrest.serialization.Model):
+    """Deployment What-if operation parameters.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param location: Required. The location to store the deployment data.
+    :type location: str
+    :param properties: Required. The deployment properties.
+    :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.DeploymentWhatIfProperties
+    """
+
+    _validation = {
+        'location': {'required': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DeploymentWhatIfProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ScopedDeploymentWhatIf, self).__init__(**kwargs)
+        self.location = kwargs['location']
+        self.properties = kwargs['properties']
+
+
 class Sku(msrest.serialization.Model):
     """SKU for the resource.
 
@@ -1996,8 +2026,7 @@ class TagsPatchResource(msrest.serialization.Model):
 
     :param operation: The operation type for the patch API. Possible values include: "Replace",
      "Merge", "Delete".
-    :type operation: str or
-     ~azure.mgmt.resource.resources.v2019_10_01.models.TagsPatchResourceOperation
+    :type operation: str or ~azure.mgmt.resource.resources.v2019_10_01.models.TagsPatchOperation
     :param properties: The set of tags.
     :type properties: ~azure.mgmt.resource.resources.v2019_10_01.models.Tags
     """

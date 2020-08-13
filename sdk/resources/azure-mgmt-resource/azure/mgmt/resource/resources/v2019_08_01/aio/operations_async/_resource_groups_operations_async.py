@@ -78,7 +78,6 @@ class ResourceGroupsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -135,7 +134,6 @@ class ResourceGroupsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ResourceGroup')
         body_content_kwargs['content'] = body_content
@@ -148,7 +146,6 @@ class ResourceGroupsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ResourceGroup', pipeline_response)
 
@@ -186,7 +183,6 @@ class ResourceGroupsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -204,7 +200,7 @@ class ResourceGroupsOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes a resource group.
 
         When you delete a resource group, all of its resources are also deleted. Deleting a resource
@@ -219,8 +215,8 @@ class ResourceGroupsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -294,7 +290,6 @@ class ResourceGroupsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -356,7 +351,6 @@ class ResourceGroupsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ResourceGroupPatchable')
         body_content_kwargs['content'] = body_content
@@ -382,8 +376,8 @@ class ResourceGroupsOperations:
         resource_group_name: str,
         parameters: "models.ExportTemplateRequest",
         **kwargs
-    ) -> "models.ResourceGroupExportResult":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceGroupExportResult"]
+    ) -> Optional["models.ResourceGroupExportResult"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ResourceGroupExportResult"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2019-08-01"
@@ -406,7 +400,6 @@ class ResourceGroupsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ExportTemplateRequest')
         body_content_kwargs['content'] = body_content
@@ -434,7 +427,7 @@ class ResourceGroupsOperations:
         resource_group_name: str,
         parameters: "models.ExportTemplateRequest",
         **kwargs
-    ) -> "models.ResourceGroupExportResult":
+    ) -> AsyncLROPoller["models.ResourceGroupExportResult"]:
         """Captures the specified resource group as a template.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -447,8 +440,8 @@ class ResourceGroupsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: ResourceGroupExportResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.resources.v2019_08_01.models.ResourceGroupExportResult
+        :return: An instance of AsyncLROPoller that returns either ResourceGroupExportResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resource.resources.v2019_08_01.models.ResourceGroupExportResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -515,6 +508,10 @@ class ResourceGroupsOperations:
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -530,15 +527,11 @@ class ResourceGroupsOperations:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
