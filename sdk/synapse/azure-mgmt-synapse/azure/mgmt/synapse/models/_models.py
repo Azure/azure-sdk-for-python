@@ -4989,8 +4989,13 @@ class Workspace(TrackedResource):
      ~azure.mgmt.synapse.models.DataLakeStorageAccountDetails
     :param sql_administrator_login_password: SQL administrator login password
     :type sql_administrator_login_password: str
-    :ivar managed_resource_group_name: Workspace managed resource group
-    :vartype managed_resource_group_name: str
+    :param managed_resource_group_name: Workspace managed resource group. The
+     resource group name uniquely identifies the resource group within the user
+     subscriptionId. The resource group name must be no longer than 90
+     characters long, and must be alphanumeric characters
+     (Char.IsLetterOrDigit()) and '-', '_', '(', ')' and'.'. Note that the name
+     cannot end with '.'
+    :type managed_resource_group_name: str
     :ivar provisioning_state: Resource provisioning state
     :vartype provisioning_state: str
     :param sql_administrator_login: Login for workspace SQL active directory
@@ -5009,6 +5014,8 @@ class Workspace(TrackedResource):
      workspace
     :type private_endpoint_connections:
      list[~azure.mgmt.synapse.models.PrivateEndpointConnection]
+    :ivar extra_properties: Workspace level configs and feature flags
+    :vartype extra_properties: dict[str, object]
     :param identity: Identity of the workspace
     :type identity: ~azure.mgmt.synapse.models.ManagedIdentity
     """
@@ -5018,8 +5025,8 @@ class Workspace(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'managed_resource_group_name': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'extra_properties': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5037,6 +5044,7 @@ class Workspace(TrackedResource):
         'connectivity_endpoints': {'key': 'properties.connectivityEndpoints', 'type': '{str}'},
         'managed_virtual_network': {'key': 'properties.managedVirtualNetwork', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'extra_properties': {'key': 'properties.extraProperties', 'type': '{object}'},
         'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
     }
 
@@ -5044,13 +5052,14 @@ class Workspace(TrackedResource):
         super(Workspace, self).__init__(**kwargs)
         self.default_data_lake_storage = kwargs.get('default_data_lake_storage', None)
         self.sql_administrator_login_password = kwargs.get('sql_administrator_login_password', None)
-        self.managed_resource_group_name = None
+        self.managed_resource_group_name = kwargs.get('managed_resource_group_name', None)
         self.provisioning_state = None
         self.sql_administrator_login = kwargs.get('sql_administrator_login', None)
         self.virtual_network_profile = kwargs.get('virtual_network_profile', None)
         self.connectivity_endpoints = kwargs.get('connectivity_endpoints', None)
         self.managed_virtual_network = kwargs.get('managed_virtual_network', None)
         self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
+        self.extra_properties = None
         self.identity = kwargs.get('identity', None)
 
 
