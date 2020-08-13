@@ -1,5 +1,8 @@
 # Release History
 
+## 12.2.1 (Unreleased)
+
+
 ## 12.2.0 (2020-08-13)
 **Stable release of preview features**
 - Preview feature `undelete_share` on FileShareServiceClient.
