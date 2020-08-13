@@ -92,6 +92,13 @@ class EntityProperty(object):
         if type is not None:
             self.value = value
             self.type = type
+        elif isinstance(value, six.text_type):
+            try:
+                self.value = UUID(value)
+                self.type = EdmType.GUID
+            except ValueError:
+                self.value = value
+                self.type = EdmType.STRING        
         elif isinstance(value, six.binary_type):
             self.value = value
             self.type = EdmType.BINARY
@@ -104,13 +111,6 @@ class EntityProperty(object):
         elif isinstance(value, datetime):
             self.value = value
             self.type = EdmType.DATETIME
-        elif isinstance(value, six.string_types):
-            try:
-                self.value = UUID(value)
-                self.type = EdmType.GUID
-            except ValueError:
-                self.value = value
-                self.type = EdmType.STRING
         elif isinstance(value, float):
             self.value = value
             self.type = EdmType.DOUBLE
