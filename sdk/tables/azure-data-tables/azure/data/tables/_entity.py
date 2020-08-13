@@ -98,7 +98,7 @@ class EntityProperty(object):
         elif isinstance(value, bool):
             self.value = value
             self.type = EdmType.BOOLEAN
-        elif isinstance(value, int):
+        elif isinstance(value, six.integer_types):
             self.value = value
             self.type = EdmType.INT64
         elif isinstance(value, datetime):
