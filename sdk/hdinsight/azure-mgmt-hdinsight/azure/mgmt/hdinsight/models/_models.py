@@ -1188,6 +1188,9 @@ class DiskEncryptionProperties(Model):
     :param msi_resource_id: Resource ID of Managed Identity that is used to
      access the key vault.
     :type msi_resource_id: str
+    :param encryption_at_host: Indicates whether or not resource disk
+     encryption is enabled. Default value: False .
+    :type encryption_at_host: bool
     """
 
     _attribute_map = {
@@ -1196,6 +1199,7 @@ class DiskEncryptionProperties(Model):
         'key_version': {'key': 'keyVersion', 'type': 'str'},
         'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'str'},
         'msi_resource_id': {'key': 'msiResourceId', 'type': 'str'},
+        'encryption_at_host': {'key': 'encryptionAtHost', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -1205,6 +1209,7 @@ class DiskEncryptionProperties(Model):
         self.key_version = kwargs.get('key_version', None)
         self.encryption_algorithm = kwargs.get('encryption_algorithm', None)
         self.msi_resource_id = kwargs.get('msi_resource_id', None)
+        self.encryption_at_host = kwargs.get('encryption_at_host', False)
 
 
 class EncryptionInTransitProperties(Model):
