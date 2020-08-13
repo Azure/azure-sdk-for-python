@@ -28,9 +28,9 @@ Example::
 
 Configuration from the CLI is:
 
-- [az login](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli): access to credentials
-- [az account set --subscriptions](https://docs.microsoft.com/en-us/cli/azure/manage-azure-subscriptions-azure-cli): access to subscription_id
-- [az cloud set --name](https://docs.microsoft.com/en-us/cli/azure/cloud#set): access to base_url (sovereign cloud, Government, Germany, etc.)
+- [az login](https://docs.microsoft.com/cli/azure/authenticate-azure-cli): access to credentials
+- [az account set --subscriptions](https://docs.microsoft.com/cli/azure/manage-azure-subscriptions-azure-cli): access to subscription_id
+- [az cloud set --name](https://docs.microsoft.com/cli/azure/cloud#set): access to base_url (sovereign cloud, Government, Germany, etc.)
 
 Note: CLI and SDK are versioned separately. We do recommend using two different virtual environments. Information will be shared
 automatically since the CLI saves it in the $HOME folder. You do need the `azure-cli-core` package in your SDK environment to use this feature.
@@ -648,8 +648,8 @@ The upgrade to this new version causes some breaking changes for Python SDK user
 
 See MSDN documentation for details on REST API changes:
 
-* in '2013-08-15': https://msdn.microsoft.com/en-us/library/azure/dn592124.aspx
-* in '2014-02-14': https://msdn.microsoft.com/en-us/library/azure/dd894041.aspx
+* in '2013-08-15': https://msdn.microsoft.com/library/azure/dn592124.aspx
+* in '2014-02-14': https://msdn.microsoft.com/library/azure/dd894041.aspx
 
 
 The other changes in this release are:
