@@ -67,7 +67,7 @@ def _get_client_args(**kwargs):
         base_headers = {"secret": secret}
         content_callback = _parse_app_service_expires_on
         if kwargs.get("client_id"):
-            identity_config = {"clientid": kwargs.pop("client_id")}
+            identity_config["clientid"] = kwargs.pop("client_id")
 
     return dict(
         kwargs,
