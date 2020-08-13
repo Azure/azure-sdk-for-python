@@ -15,27 +15,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - E49D04111DCB1738A561CC9902D552FE
+      - 0AE9764BD0FA7E723279CDE318E7DD7A
     method: POST
     uri: https://search7d318fa.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search7d318fa.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC94AADF76DE\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
+      string: '{"@odata.context":"https://search7d318fa.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D83F1C1257893C\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '370'
+      - '390'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Wed, 29 Apr 2020 23:25:55 GMT
+      - Thu, 13 Aug 2020 00:01:47 GMT
       elapsed-time:
-      - '47'
+      - '59'
       etag:
-      - W/"0x8D7EC94AADF76DE"
+      - W/"0x8D83F1C1257893C"
       expires:
       - '-1'
       location:
@@ -47,7 +47,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - c677b57a-8a70-11ea-889b-8c8590507855
+      - 2de25bdf-dcf8-11ea-a721-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -63,27 +63,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - E49D04111DCB1738A561CC9902D552FE
+      - 0AE9764BD0FA7E723279CDE318E7DD7A
     method: GET
     uri: https://search7d318fa.search.windows.net/datasources('sample-datasource')?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search7d318fa.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC94AADF76DE\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
+      string: '{"@odata.context":"https://search7d318fa.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D83F1C1257893C\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '370'
+      - '390'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Wed, 29 Apr 2020 23:25:55 GMT
+      - Thu, 13 Aug 2020 00:01:47 GMT
       elapsed-time:
-      - '28'
+      - '20'
       etag:
-      - W/"0x8D7EC94AADF76DE"
+      - W/"0x8D83F1C1257893C"
       expires:
       - '-1'
       odata-version:
@@ -93,7 +93,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - c696f4d0-8a70-11ea-889b-8c8590507855
+      - 2e258985-dcf8-11ea-8cbd-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

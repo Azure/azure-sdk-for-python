@@ -44,7 +44,7 @@ except UnicodeDecodeError:
 TIME_TO_SLEEP = 5
 CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net'
 
-class SearchIndexesClientTest(AzureMgmtTestCase):
+class SearchIndexClientTest(AzureMgmtTestCase):
     @SearchResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer()
     def test_get_service_statistics(self, api_key, endpoint, **kwargs):

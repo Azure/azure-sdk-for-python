@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - C2268A70B7F246FB2B96488EBCFCEA29
+      - AF7406FAE688FB220E9D298B2800E555
     method: POST
     uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
   response:
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Wed, 29 Apr 2020 23:19:28 GMT
+      - Wed, 12 Aug 2020 23:56:34 GMT
       elapsed-time:
-      - '344'
+      - '30'
       expires:
       - '-1'
       odata-version:
@@ -43,7 +43,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - df7dcb6e-8a6f-11ea-889b-8c8590507855
+      - 73e0a912-dcf7-11ea-bfac-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -61,9 +61,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - C2268A70B7F246FB2B96488EBCFCEA29
+      - AF7406FAE688FB220E9D298B2800E555
     method: GET
     uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
   response:
@@ -77,9 +77,9 @@ interactions:
       content-type:
       - text/plain
       date:
-      - Wed, 29 Apr 2020 23:19:31 GMT
+      - Wed, 12 Aug 2020 23:56:38 GMT
       elapsed-time:
-      - '3'
+      - '19'
       expires:
       - '-1'
       odata-version:
@@ -89,7 +89,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e19ea206-8a6f-11ea-889b-8c8590507855
+      - 75db144b-dcf7-11ea-a560-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -107,9 +107,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - C2268A70B7F246FB2B96488EBCFCEA29
+      - AF7406FAE688FB220E9D298B2800E555
     method: GET
     uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
   response:
@@ -121,15 +121,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 29 Apr 2020 23:19:31 GMT
+      - Wed, 12 Aug 2020 23:56:38 GMT
       elapsed-time:
-      - '6'
+      - '4'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - e1a5a1b4-8a6f-11ea-889b-8c8590507855
+      - 75f02207-dcf7-11ea-8e9b-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -145,9 +145,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - C2268A70B7F246FB2B96488EBCFCEA29
+      - AF7406FAE688FB220E9D298B2800E555
     method: GET
     uri: https://searcha9211b9f.search.windows.net/indexes('drgqefsg')/docs('4')?api-version=2020-06-30
   response:
@@ -162,9 +162,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Wed, 29 Apr 2020 23:19:31 GMT
+      - Wed, 12 Aug 2020 23:56:38 GMT
       elapsed-time:
-      - '10'
+      - '14'
       expires:
       - '-1'
       odata-version:
@@ -174,7 +174,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - e1aca52c-8a6f-11ea-889b-8c8590507855
+      - 75fc1d3b-dcf7-11ea-b7a2-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

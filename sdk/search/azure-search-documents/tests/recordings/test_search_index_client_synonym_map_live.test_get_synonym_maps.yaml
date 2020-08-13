@@ -1,7 +1,8 @@
 interactions:
 - request:
-    body: '{"name": "test-syn-map-1", "format": "solr", "synonyms": "USA, United States,
-      United States of America"}'
+    body: '{"name": "test-syn-map-1", "format": "solr", "synonyms": "U\nS\nA\n,\n
+      \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n,\n \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n
+      \no\nf\n \nA\nm\ne\nr\ni\nc\na"}'
     headers:
       Accept:
       - application/json;odata.metadata=minimal
@@ -10,32 +11,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '104'
+      - '190'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - F38023663AA7831EE2B4F0FB244EF306
+      - 361CD03E1F87645198CFF5CF4F78F8B8
     method: POST
     uri: https://search43c51a2c.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search43c51a2c.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC9458B82C72\"","name":"test-syn-map-1","format":"solr","synonyms":"USA,
-        United States, United States of America","encryptionKey":null}'
+      string: '{"@odata.context":"https://search43c51a2c.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D83F1CF0854AC9\"","name":"test-syn-map-1","format":"solr","synonyms":"U\nS\nA\n,\n
+        \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n,\n \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n
+        \no\nf\n \nA\nm\ne\nr\ni\nc\na","encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '249'
+      - '335'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Wed, 29 Apr 2020 23:23:38 GMT
+      - Thu, 13 Aug 2020 00:07:59 GMT
       elapsed-time:
-      - '52'
+      - '50'
       etag:
-      - W/"0x8D7EC9458B82C72"
+      - W/"0x8D83F1CF0854AC9"
       expires:
       - '-1'
       location:
@@ -47,15 +49,15 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 744fc42c-8a70-11ea-889b-8c8590507855
+      - 0c2005ee-dcf9-11ea-b7a9-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
 - request:
-    body: '{"name": "test-syn-map-2", "format": "solr", "synonyms": "Washington, Wash.
-      => WA"}'
+    body: '{"name": "test-syn-map-2", "format": "solr", "synonyms": "W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
+      \nW\na\ns\nh\n.\n \n=\n>\n \nW\nA"}'
     headers:
       Accept:
       - application/json;odata.metadata=minimal
@@ -64,32 +66,32 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '83'
+      - '127'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - F38023663AA7831EE2B4F0FB244EF306
+      - 361CD03E1F87645198CFF5CF4F78F8B8
     method: POST
     uri: https://search43c51a2c.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search43c51a2c.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D7EC9458C32AF7\"","name":"test-syn-map-2","format":"solr","synonyms":"Washington,
-        Wash. => WA","encryptionKey":null}'
+      string: '{"@odata.context":"https://search43c51a2c.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D83F1CF09AF99F\"","name":"test-syn-map-2","format":"solr","synonyms":"W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
+        \nW\na\ns\nh\n.\n \n=\n>\n \nW\nA","encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '228'
+      - '272'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Wed, 29 Apr 2020 23:23:38 GMT
+      - Thu, 13 Aug 2020 00:08:00 GMT
       elapsed-time:
-      - '29'
+      - '59'
       etag:
-      - W/"0x8D7EC9458C32AF7"
+      - W/"0x8D83F1CF09AF99F"
       expires:
       - '-1'
       location:
@@ -101,7 +103,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 7471f916-8a70-11ea-889b-8c8590507855
+      - 0c5150eb-dcf9-11ea-b2c8-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -117,27 +119,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - F38023663AA7831EE2B4F0FB244EF306
+      - 361CD03E1F87645198CFF5CF4F78F8B8
     method: GET
     uri: https://search43c51a2c.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search43c51a2c.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D7EC9458B82C72\"","name":"test-syn-map-1","format":"solr","synonyms":"USA,
-        United States, United States of America","encryptionKey":null},{"@odata.etag":"\"0x8D7EC9458C32AF7\"","name":"test-syn-map-2","format":"solr","synonyms":"Washington,
-        Wash. => WA","encryptionKey":null}]}'
+      string: '{"@odata.context":"https://search43c51a2c.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D83F1CF0854AC9\"","name":"test-syn-map-1","format":"solr","synonyms":"U\nS\nA\n,\n
+        \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n,\n \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n
+        \no\nf\n \nA\nm\ne\nr\ni\nc\na","encryptionKey":null},{"@odata.etag":"\"0x8D83F1CF09AF99F\"","name":"test-syn-map-2","format":"solr","synonyms":"W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
+        \nW\na\ns\nh\n.\n \n=\n>\n \nW\nA","encryptionKey":null}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '391'
+      - '521'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Wed, 29 Apr 2020 23:23:38 GMT
+      - Thu, 13 Aug 2020 00:08:00 GMT
       elapsed-time:
-      - '14'
+      - '37'
       expires:
       - '-1'
       odata-version:
@@ -147,7 +150,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 747cf122-8a70-11ea-889b-8c8590507855
+      - 0c66e680-dcf9-11ea-a81c-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

@@ -15,27 +15,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - 0E3774E832B8584D0AC648C5FAA3D77C
+      - A5C20E167CF6B3174E38770E1D361094
     method: POST
     uri: https://search54bc1a2e.search.windows.net/datasources?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search54bc1a2e.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D7EC9494AD4705\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null}'
+      string: '{"@odata.context":"https://search54bc1a2e.search.windows.net/$metadata#datasources/$entity","@odata.etag":"\"0x8D83F1BBE1BAF29\"","name":"sample-datasource","description":null,"type":"azureblob","subtype":null,"credentials":{"connectionString":null},"container":{"name":"searchcontainer","query":null},"dataChangeDetectionPolicy":null,"dataDeletionDetectionPolicy":null,"encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '370'
+      - '391'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Wed, 29 Apr 2020 23:25:18 GMT
+      - Wed, 12 Aug 2020 23:59:25 GMT
       elapsed-time:
-      - '39'
+      - '105'
       etag:
-      - W/"0x8D7EC9494AD4705"
+      - W/"0x8D83F1BBE1BAF29"
       expires:
       - '-1'
       location:
@@ -47,7 +47,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - b02c12fc-8a70-11ea-889b-8c8590507855
+      - d99102c0-dcf7-11ea-9fa1-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

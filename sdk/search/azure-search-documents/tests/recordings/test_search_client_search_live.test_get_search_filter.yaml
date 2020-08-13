@@ -14,31 +14,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - B583478EFB4C1DBC374E331DA859BE86
+      - 1CEF57C35BD73F1670D96F0EF75E9235
     method: POST
     uri: https://search4943159f.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
-      string: '{"value":[{"@search.score":0.19169211,"hotelName":"Express Rooms","description":"Pretty
-        good hotel","category":"Budget"},{"@search.score":0.19169211,"hotelName":"EconoStay","description":"Very
-        popular hotel in town","category":"Budget"},{"@search.score":0.2423066,"hotelName":"Countryside
+      string: '{"value":[{"@search.score":1.0225849,"hotelName":"Express Rooms","description":"Pretty
+        good hotel","category":"Budget"},{"@search.score":1.0225849,"hotelName":"EconoStay","description":"Very
+        popular hotel in town","category":"Budget"},{"@search.score":2.3832736,"hotelName":"Countryside
         Hotel","description":"Save up to 50% off traditional hotels.  Free WiFi, great
         location near downtown, full kitchen, washer & dryer, 24/7 support, bowling
-        alley, fitness center and more.","category":"Budget"},{"@search.score":0.19169211,"hotelName":"Comfy
+        alley, fitness center and more.","category":"Budget"},{"@search.score":1.0225849,"hotelName":"Comfy
         Place","description":"Another good hotel","category":"Budget"}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '609'
+      - '606'
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Wed, 29 Apr 2020 23:18:52 GMT
+      - Wed, 12 Aug 2020 23:58:45 GMT
       elapsed-time:
-      - '103'
+      - '164'
       expires:
       - '-1'
       odata-version:
@@ -48,7 +48,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - c9e16d92-8a6f-11ea-889b-8c8590507855
+      - c1a8dcfd-dcf7-11ea-a379-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
