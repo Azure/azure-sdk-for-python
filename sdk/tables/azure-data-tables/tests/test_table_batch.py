@@ -158,7 +158,7 @@ class StorageTableBatchTest(TableTestCase):
         entity.RowKey = 'batch_all_operations_together-1'
         entity.test = EntityProperty(True)
         entity.test2 = EntityProperty(b'abcdef')
-        entity.test3 = EntityProperty('c9da6455-213d-42c9-9a79-3e9149a57833')
+        entity.test3 = EntityProperty(u'c9da6455-213d-42c9-9a79-3e9149a57833')
         entity.test4 = EntityProperty(datetime(1973, 10, 4, tzinfo=tzutc()))
         entity.test5 = EntityProperty(u"stringystring")
         entity.test6 = EntityProperty(3.14159)
