@@ -70,7 +70,6 @@ class ExpressRoutePortsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -89,7 +88,7 @@ class ExpressRoutePortsOperations:
         resource_group_name: str,
         express_route_port_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes the specified ExpressRoutePort resource.
 
         :param resource_group_name: The name of the resource group.
@@ -102,8 +101,8 @@ class ExpressRoutePortsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -181,7 +180,6 @@ class ExpressRoutePortsOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -229,7 +227,6 @@ class ExpressRoutePortsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ExpressRoutePort')
         body_content_kwargs['content'] = body_content
@@ -242,7 +239,6 @@ class ExpressRoutePortsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ExpressRoutePort', pipeline_response)
 
@@ -261,7 +257,7 @@ class ExpressRoutePortsOperations:
         express_route_port_name: str,
         parameters: "models.ExpressRoutePort",
         **kwargs
-    ) -> "models.ExpressRoutePort":
+    ) -> AsyncLROPoller["models.ExpressRoutePort"]:
         """Creates or updates the specified ExpressRoutePort resource.
 
         :param resource_group_name: The name of the resource group.
@@ -276,8 +272,8 @@ class ExpressRoutePortsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: ExpressRoutePort, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2018_11_01.models.ExpressRoutePort
+        :return: An instance of AsyncLROPoller that returns either ExpressRoutePort or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2018_11_01.models.ExpressRoutePort]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -351,7 +347,6 @@ class ExpressRoutePortsOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
@@ -378,7 +373,7 @@ class ExpressRoutePortsOperations:
         express_route_port_name: str,
         parameters: "models.TagsObject",
         **kwargs
-    ) -> "models.ExpressRoutePort":
+    ) -> AsyncLROPoller["models.ExpressRoutePort"]:
         """Update ExpressRoutePort tags.
 
         :param resource_group_name: The name of the resource group.
@@ -393,8 +388,8 @@ class ExpressRoutePortsOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: ExpressRoutePort, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2018_11_01.models.ExpressRoutePort
+        :return: An instance of AsyncLROPoller that returns either ExpressRoutePort or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2018_11_01.models.ExpressRoutePort]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -457,6 +452,10 @@ class ExpressRoutePortsOperations:
         api_version = "2018-11-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -469,15 +468,11 @@ class ExpressRoutePortsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -521,6 +516,10 @@ class ExpressRoutePortsOperations:
         api_version = "2018-11-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -532,15 +531,11 @@ class ExpressRoutePortsOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
