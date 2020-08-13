@@ -11,8 +11,8 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
-from .base import AsyncCredentialBase
 from .._authn_client import AsyncAuthnClient
+from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._constants import Endpoints, EnvironmentVariables
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ManagedIdentityCredential(AsyncCredentialBase):
+class ManagedIdentityCredential(AsyncContextManager):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of
@@ -86,7 +86,7 @@ class ManagedIdentityCredential(AsyncCredentialBase):
         return await self._credential.get_token(*scopes, **kwargs)
 
 
-class _AsyncManagedIdentityBase(_ManagedIdentityBase, AsyncCredentialBase):
+class _AsyncManagedIdentityBase(_ManagedIdentityBase, AsyncContextManager):
     def __init__(self, endpoint: str, **kwargs: "Any") -> None:
         super().__init__(endpoint=endpoint, client_cls=AsyncAuthnClient, **kwargs)
 

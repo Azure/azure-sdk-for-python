@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-from .base import AsyncCredentialBase
+from .._internal import AsyncContextManager
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
 from .._internal.get_token_mixin import GetTokenMixin
 from ... import CredentialUnavailableError
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class AppServiceCredential(AsyncCredentialBase, GetTokenMixin):
+class AppServiceCredential(AsyncContextManager, GetTokenMixin):
     def __init__(self, **kwargs: "Any") -> None:
         super(AppServiceCredential, self).__init__()
 
