@@ -4,7 +4,7 @@ This directory contains artifacts for testing azure-identity in Azure Functions.
 # prerequisite tools
 - Azure CLI
 - Azure Functions Core Tools 3.x
-  - https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local?#v2
+  - https://docs.microsoft.com/azure/azure-functions/functions-run-local?#v2
 - Docker CLI
   - https://hub.docker.com/search?q=&type=edition&offering=community
 
@@ -127,7 +127,7 @@ az functionapp config appsettings set -g $RESOURCE_GROUP -n $FUNCTION_APP_USER_A
 At the time of writing, attaching user-assigned identities is impossible through the Azure CLI
 ([Azure/azure-cli#9887](https://github.com/Azure/azure-cli/issues/9887)).
 Use the Azure Portal to attached the managed identity created above to the Functions App (see
-[App Service documentation](https://docs.microsoft.com/en-us/azure/app-service/overview-managed-identity?tabs=dotnet#adding-a-user-assigned-identity)).
+[App Service documentation](https://docs.microsoft.com/azure/app-service/overview-managed-identity?tabs=dotnet#adding-a-user-assigned-identity)).
 
 
 # build the Docker image
