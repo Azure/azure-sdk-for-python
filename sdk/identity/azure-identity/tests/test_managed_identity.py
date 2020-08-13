@@ -13,6 +13,7 @@ from azure.core.credentials import AccessToken
 from azure.identity import ManagedIdentityCredential
 from azure.identity._constants import Endpoints, EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
+import pytest
 
 from helpers import build_aad_response, validating_transport, mock_response, Request
 
@@ -92,8 +93,8 @@ def test_cloud_shell_user_assigned_identity():
         assert token == expected_token
 
 
-def test_app_service_2019_08_01():
-    """App Service 2019-08-01: IDENTITY_ENDPOINT, IDENTITY_HEADER set"""
+def test_prefers_app_service_2019_08_01():
+    """When the environment is configured for both App Service versions, the credential should prefer the most recent"""
 
     access_token = "****"
     expires_on = 42
@@ -121,11 +122,58 @@ def test_app_service_2019_08_01():
         ],
     )
 
-    environ = {EnvironmentVariables.IDENTITY_ENDPOINT: endpoint, EnvironmentVariables.IDENTITY_HEADER: secret}
+    environ = {
+        EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
+        EnvironmentVariables.IDENTITY_HEADER: secret,
+        EnvironmentVariables.MSI_ENDPOINT: endpoint,
+        EnvironmentVariables.MSI_SECRET: secret,
+    }
     with mock.patch.dict("os.environ", environ, clear=True):
         token = ManagedIdentityCredential(transport=transport).get_token(scope)
     assert token.token == access_token
     assert token.expires_on == expires_on
+
+
+def test_app_service_2019_08_01():
+    """App Service 2019-08-01: IDENTITY_ENDPOINT, IDENTITY_HEADER set"""
+
+    access_token = "****"
+    expires_on = 42
+    endpoint = "http://localhost:42/token"
+    secret = "expected-secret"
+    scope = "scope"
+
+    def send(request, **_):
+        assert request.url.startswith(endpoint)
+        assert request.method == "GET"
+        assert request.headers["X-IDENTITY-HEADER"] == secret
+        assert request.headers["User-Agent"] == USER_AGENT
+        assert request.query["api-version"] == "2019-08-01"
+        assert request.query["resource"] == scope
+
+        return mock_response(
+            json_payload={
+                "access_token": access_token,
+                "expires_on": str(expires_on),
+                "resource": scope,
+                "token_type": "Bearer",
+            }
+        )
+
+    # when configuration for both API versions is present, the credential should prefer the most recent
+    for environment in [
+        {EnvironmentVariables.IDENTITY_ENDPOINT: endpoint, EnvironmentVariables.IDENTITY_HEADER: secret},
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
+            EnvironmentVariables.IDENTITY_HEADER: secret,
+            EnvironmentVariables.MSI_ENDPOINT: endpoint,
+            EnvironmentVariables.MSI_SECRET: secret,
+        },
+    ]:
+        with mock.patch.dict("os.environ", environment, clear=True):
+            token = ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
+        assert token.token == access_token
+        assert token.expires_on == expires_on
 
 
 def test_app_service_2017_09_01():
