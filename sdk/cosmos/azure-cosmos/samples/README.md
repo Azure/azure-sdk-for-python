@@ -48,7 +48,7 @@ The following are code samples that show common scenario operations with the Azu
 ## Prerequisites
 * Python 2.7 or 3.5.3+
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure Cosmos DB account](https://docs.microsoft.com/en-us/azure/cosmos-db/create-sql-api-python#create-a-database-account) to run these samples.
+[Azure Cosmos DB account](https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account) to run these samples.
 
 ## Setup
 
