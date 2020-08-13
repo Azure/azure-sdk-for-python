@@ -1,8 +1,7 @@
 interactions:
 - request:
-    body: '{"name": "test-syn-map", "format": "solr", "synonyms": "U\nS\nA\n,\n \nU\nn\ni\nt\ne\nd\n
-      \nS\nt\na\nt\ne\ns\n,\n \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n \no\nf\n \nA\nm\ne\nr\ni\nc\na\n\n\nW\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
-      \nW\na\ns\nh\n.\n \n=\n>\n \nW\nA"}'
+    body: '{"name": "test-syn-map", "format": "solr", "synonyms": "USA, United States,
+      United States of America\nWashington, Wash. => WA"}'
     headers:
       Accept:
       - application/json;odata.metadata=minimal
@@ -11,34 +10,32 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '261'
+      - '127'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - C1C8BFB494C4A50A7B694A52FFE59A08
+      - E4D2BC8104FC99E0D2BC961984493929
     method: POST
     uri: https://search78271aec.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search78271aec.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D83F1CD8599C55\"","name":"test-syn-map","format":"solr","synonyms":"U\nS\nA\n,\n
-        \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n,\n \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n
-        \no\nf\n \nA\nm\ne\nr\ni\nc\na\n\n\nW\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n \nW\na\ns\nh\n.\n
-        \n=\n>\n \nW\nA","encryptionKey":null}'
+      string: '{"@odata.context":"https://search78271aec.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D83FAD43355D9F\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+        United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '406'
+      - '272'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 00:07:19 GMT
+      - Thu, 13 Aug 2020 17:21:06 GMT
       elapsed-time:
-      - '54'
+      - '103'
       etag:
-      - W/"0x8D83F1CD8599C55"
+      - W/"0x8D83FAD43355D9F"
       expires:
       - '-1'
       location:
@@ -50,7 +47,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - f3eb0f39-dcf8-11ea-983b-5cf37071153c
+      - 5eb2a39e-dd89-11ea-b600-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -68,26 +65,24 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - C1C8BFB494C4A50A7B694A52FFE59A08
+      - E4D2BC8104FC99E0D2BC961984493929
     method: GET
     uri: https://search78271aec.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://search78271aec.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D83F1CD8599C55\"","name":"test-syn-map","format":"solr","synonyms":"U\nS\nA\n,\n
-        \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n,\n \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n
-        \no\nf\n \nA\nm\ne\nr\ni\nc\na\n\n\nW\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n \nW\na\ns\nh\n.\n
-        \n=\n>\n \nW\nA","encryptionKey":null}]}'
+      string: '{"@odata.context":"https://search78271aec.search.windows.net/$metadata#synonymmaps","value":[{"@odata.etag":"\"0x8D83FAD43355D9F\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+        United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '410'
+      - '276'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 00:07:19 GMT
+      - Thu, 13 Aug 2020 17:21:06 GMT
       elapsed-time:
-      - '25'
+      - '28'
       expires:
       - '-1'
       odata-version:
@@ -97,7 +92,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - f42600b2-dcf8-11ea-bf30-5cf37071153c
+      - 5f19e292-dd89-11ea-81cc-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -119,7 +114,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - C1C8BFB494C4A50A7B694A52FFE59A08
+      - E4D2BC8104FC99E0D2BC961984493929
     method: DELETE
     uri: https://search78271aec.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
@@ -129,15 +124,15 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Thu, 13 Aug 2020 00:07:19 GMT
+      - Thu, 13 Aug 2020 17:21:06 GMT
       elapsed-time:
-      - '15'
+      - '17'
       expires:
       - '-1'
       pragma:
       - no-cache
       request-id:
-      - f43acccb-dcf8-11ea-a54e-5cf37071153c
+      - 5f2bb9a9-dd89-11ea-9f64-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -155,7 +150,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - C1C8BFB494C4A50A7B694A52FFE59A08
+      - E4D2BC8104FC99E0D2BC961984493929
     method: GET
     uri: https://search78271aec.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
@@ -169,9 +164,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 00:07:19 GMT
+      - Thu, 13 Aug 2020 17:21:06 GMT
       elapsed-time:
-      - '4'
+      - '5'
       expires:
       - '-1'
       odata-version:
@@ -181,7 +176,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - f44e2686-dcf8-11ea-8a4f-5cf37071153c
+      - 5f3c61d9-dd89-11ea-9ae5-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

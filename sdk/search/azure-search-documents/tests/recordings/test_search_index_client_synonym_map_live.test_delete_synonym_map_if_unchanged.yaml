@@ -1,8 +1,7 @@
 interactions:
 - request:
-    body: '{"name": "test-syn-map", "format": "solr", "synonyms": "U\nS\nA\n,\n \nU\nn\ni\nt\ne\nd\n
-      \nS\nt\na\nt\ne\ns\n,\n \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n \no\nf\n \nA\nm\ne\nr\ni\nc\na\n\n\nW\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
-      \nW\na\ns\nh\n.\n \n=\n>\n \nW\nA"}'
+    body: '{"name": "test-syn-map", "format": "solr", "synonyms": "USA, United States,
+      United States of America\nWashington, Wash. => WA"}'
     headers:
       Accept:
       - application/json;odata.metadata=minimal
@@ -11,34 +10,32 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '261'
+      - '127'
       Content-Type:
       - application/json
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - EE935D980CD9761D6D2A250AB876D611
+      - 852CE01CC548F598A8B32E8756C5E4E1
     method: POST
     uri: https://searchfabb2026.search.windows.net/synonymmaps?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://searchfabb2026.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D83F1CE06AD172\"","name":"test-syn-map","format":"solr","synonyms":"U\nS\nA\n,\n
-        \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n,\n \nU\nn\ni\nt\ne\nd\n \nS\nt\na\nt\ne\ns\n
-        \no\nf\n \nA\nm\ne\nr\ni\nc\na\n\n\nW\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n \nW\na\ns\nh\n.\n
-        \n=\n>\n \nW\nA","encryptionKey":null}'
+      string: '{"@odata.context":"https://searchfabb2026.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D83FAD5C9AB9F6\"","name":"test-syn-map","format":"solr","synonyms":"USA,
+        United States, United States of America\nWashington, Wash. => WA","encryptionKey":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '406'
+      - '272'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 00:07:32 GMT
+      - Thu, 13 Aug 2020 17:21:48 GMT
       elapsed-time:
-      - '43'
+      - '49'
       etag:
-      - W/"0x8D83F1CE06AD172"
+      - W/"0x8D83FAD5C9AB9F6"
       expires:
       - '-1'
       location:
@@ -50,7 +47,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - fbfb2ac2-dcf8-11ea-87ad-5cf37071153c
+      - 7842114f-dd89-11ea-a681-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
@@ -75,12 +72,12 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - EE935D980CD9761D6D2A250AB876D611
+      - 852CE01CC548F598A8B32E8756C5E4E1
     method: PUT
     uri: https://searchfabb2026.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
     body:
-      string: '{"@odata.context":"https://searchfabb2026.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D83F1CE0800AF7\"","name":"test-syn-map","format":"solr","synonyms":"W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
+      string: '{"@odata.context":"https://searchfabb2026.search.windows.net/$metadata#synonymmaps/$entity","@odata.etag":"\"0x8D83FAD5CAFCDB0\"","name":"test-syn-map","format":"solr","synonyms":"W\na\ns\nh\ni\nn\ng\nt\no\nn\n,\n
         \nW\na\ns\nh\n.\n \n=\n>\n \nW\nA","encryptionKey":null}'
     headers:
       cache-control:
@@ -90,11 +87,11 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 00:07:32 GMT
+      - Thu, 13 Aug 2020 17:21:48 GMT
       elapsed-time:
-      - '24'
+      - '22'
       etag:
-      - W/"0x8D83F1CE0800AF7"
+      - W/"0x8D83FAD5CAFCDB0"
       expires:
       - '-1'
       odata-version:
@@ -104,7 +101,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - fc3a18fb-dcf8-11ea-a49e-5cf37071153c
+      - 787d6163-dd89-11ea-8895-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -124,11 +121,11 @@ interactions:
       Content-Length:
       - '0'
       If-Match:
-      - '"0x8D83F1CE06AD172"'
+      - '"0x8D83FAD5C9AB9F6"'
       User-Agent:
       - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       api-key:
-      - EE935D980CD9761D6D2A250AB876D611
+      - 852CE01CC548F598A8B32E8756C5E4E1
     method: DELETE
     uri: https://searchfabb2026.search.windows.net/synonymmaps('test-syn-map')?api-version=2020-06-30
   response:
@@ -146,9 +143,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Thu, 13 Aug 2020 00:07:32 GMT
+      - Thu, 13 Aug 2020 17:21:48 GMT
       elapsed-time:
-      - '4'
+      - '16'
       expires:
       - '-1'
       odata-version:
@@ -158,7 +155,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - fc4c67ea-dcf8-11ea-b6c0-5cf37071153c
+      - 7892004f-dd89-11ea-8e4e-5cf37071153c
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:

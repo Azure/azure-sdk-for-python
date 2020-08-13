@@ -49,11 +49,11 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        solr_format_synonyms = "\n".join([
+        synonyms = [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
-        ])
-        synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+        ]
+        synonym_map = SynonymMap(name="test-syn-map", synonyms=synonyms)
         result = client.create_synonym_map(synonym_map)
         assert isinstance(result, SynonymMap)
         assert result.name == "test-syn-map"
@@ -67,11 +67,11 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        solr_format_synonyms = "\n".join([
+        synonyms = [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
-        ])
-        synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+        ]
+        synonym_map = SynonymMap(name="test-syn-map", synonyms=synonyms)
         result = client.create_synonym_map(synonym_map)
         assert len(client.get_synonym_maps()) == 1
         client.delete_synonym_map("test-syn-map")
@@ -81,11 +81,11 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_delete_synonym_map_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        solr_format_synonyms = "\n".join([
+        synonyms = [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
-        ])
-        synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+        ]
+        synonym_map = SynonymMap(name="test-syn-map", synonyms=synonyms)
         result = client.create_synonym_map(synonym_map)
         etag = result.e_tag
 
@@ -103,11 +103,11 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        solr_format_synonyms = "\n".join([
+        synonyms = [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
-        ])
-        synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+        ]
+        synonym_map = SynonymMap(name="test-syn-map", synonyms=synonyms)
         client.create_synonym_map(synonym_map)
         assert len(client.get_synonym_maps()) == 1
         result = client.get_synonym_map("test-syn-map")
@@ -122,15 +122,15 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_get_synonym_maps(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        solr_format_synonyms = "\n".join([
+        synonyms = [
             "USA, United States, United States of America",
-        ])
-        synonym_map_1 = SynonymMap(name="test-syn-map-1", synonyms=solr_format_synonyms)
+        ]
+        synonym_map_1 = SynonymMap(name="test-syn-map-1", synonyms=synonyms)
         client.create_synonym_map(synonym_map_1)
-        solr_format_synonyms = "\n".join([
+        synonyms = [
             "Washington, Wash. => WA",
-        ])
-        synonym_map_2 = SynonymMap(name="test-syn-map-2", synonyms=solr_format_synonyms)
+        ]
+        synonym_map_2 = SynonymMap(name="test-syn-map-2", synonyms=synonyms)
         client.create_synonym_map(synonym_map_2)
         result = client.get_synonym_maps()
         assert isinstance(result, list)
@@ -141,16 +141,14 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_synonym_map(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        solr_format_synonyms = "\n".join([
+        synonyms = [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
-        ])
-        synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+        ]
+        synonym_map = SynonymMap(name="test-syn-map", synonyms=synonyms)
         client.create_synonym_map(synonym_map)
         assert len(client.get_synonym_maps()) == 1
-        synonym_map.synonyms = "\n".join([
-            "Washington, Wash. => WA",
-        ])
+        synonym_map.synonyms = ["Washington, Wash. => WA",]
         client.create_or_update_synonym_map(synonym_map)
         assert len(client.get_synonym_maps()) == 1
         result = client.get_synonym_map("test-syn-map")
@@ -164,17 +162,17 @@ class SearchSynonymMapsClientTest(AzureMgmtTestCase):
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     def test_create_or_update_synonym_map_if_unchanged(self, api_key, endpoint, index_name, **kwargs):
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        solr_format_synonyms = "\n".join([
+        synonyms = [
             "USA, United States, United States of America",
             "Washington, Wash. => WA",
-        ])
-        synonym_map = SynonymMap(name="test-syn-map", synonyms=solr_format_synonyms)
+        ]
+        synonym_map = SynonymMap(name="test-syn-map", synonyms=synonyms)
         result = client.create_synonym_map(synonym_map)
         etag = result.e_tag
 
-        synonym_map.synonyms = "\n".join([
+        synonym_map.synonyms = [
             "Washington, Wash. => WA",
-        ])
+        ]
 
         client.create_or_update_synonym_map(synonym_map)
 
