@@ -63,6 +63,15 @@ def _get_match_headers(kwargs, match_param, etag_param):
     return if_match, if_none_match
 
 
+def get_access_conditions(lease):
+    # type: (Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
+    try:
+        lease_id = lease.id # type: ignore
+    except AttributeError:
+        lease_id = lease # type: ignore
+    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+
+
 def get_modify_conditions(kwargs):
     # type: (Dict[str, Any]) -> ModifiedAccessConditions
     if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
@@ -178,11 +187,3 @@ def serialize_query_format(formater):
         raise TypeError("Format must be DelimitedTextDialect or DelimitedJsonDialect.")
     return QuerySerialization(format=qq_format)
 
-
-def get_access_conditions(lease):
-    # type: (Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
-    try:
-        lease_id = lease.id # type: ignore
-    except AttributeError:
-        lease_id = lease # type: ignore
-    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
