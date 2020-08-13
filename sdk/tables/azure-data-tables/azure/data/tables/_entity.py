@@ -6,6 +6,7 @@
 from enum import Enum
 from datetime import datetime
 from uuid import UUID
+import six
 
 from ._error import _ERROR_ATTRIBUTE_MISSING
 
@@ -91,7 +92,7 @@ class EntityProperty(object):
         if type is not None:
             self.value = value
             self.type = type
-        elif isinstance(value, bytes):
+        elif isinstance(value, six.binary_type):
             self.value = value
             self.type = EdmType.BINARY
         elif isinstance(value, bool):
@@ -103,7 +104,7 @@ class EntityProperty(object):
         elif isinstance(value, datetime):
             self.value = value
             self.type = EdmType.DATETIME
-        elif isinstance(value, str):
+        elif isinstance(value, six.string_types):
             try:
                 self.value = UUID(value)
                 self.type = EdmType.GUID
