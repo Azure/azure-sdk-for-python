@@ -46,7 +46,7 @@ class ConfigurationOperations:
         cluster_name: str,
         parameters: "models.ClusterQuotaConfigurationProperties",
         **kwargs
-    ) -> "models.ClusterQuotaConfigurationProperties":
+    ) -> Optional["models.ClusterQuotaConfigurationProperties"]:
         """Replace all specified Event Hubs Cluster settings with those contained in the request body.
         Leaves the settings not specified in the request body unmodified.
 
@@ -61,7 +61,7 @@ class ConfigurationOperations:
         :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.ClusterQuotaConfigurationProperties or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClusterQuotaConfigurationProperties"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ClusterQuotaConfigurationProperties"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01-preview"
@@ -85,7 +85,6 @@ class ConfigurationOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ClusterQuotaConfigurationProperties')
         body_content_kwargs['content'] = body_content
@@ -152,7 +151,6 @@ class ConfigurationOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response

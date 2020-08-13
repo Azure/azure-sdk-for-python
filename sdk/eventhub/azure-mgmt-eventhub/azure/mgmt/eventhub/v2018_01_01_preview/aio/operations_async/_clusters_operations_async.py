@@ -74,7 +74,6 @@ class ClustersOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -112,6 +111,10 @@ class ClustersOperations:
         api_version = "2018-01-01-preview"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
@@ -124,15 +127,11 @@ class ClustersOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -199,7 +198,6 @@ class ClustersOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -223,8 +221,8 @@ class ClustersOperations:
         cluster_name: str,
         parameters: "models.Cluster",
         **kwargs
-    ) -> "models.Cluster":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Cluster"]
+    ) -> Optional["models.Cluster"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Cluster"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01-preview"
@@ -248,7 +246,6 @@ class ClustersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Cluster')
         body_content_kwargs['content'] = body_content
@@ -281,7 +278,7 @@ class ClustersOperations:
         cluster_name: str,
         parameters: "models.Cluster",
         **kwargs
-    ) -> "models.Cluster":
+    ) -> AsyncLROPoller["models.Cluster"]:
         """Creates or updates an instance of an Event Hubs Cluster.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -296,8 +293,8 @@ class ClustersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: Cluster, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Cluster
+        :return: An instance of AsyncLROPoller that returns either Cluster or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventhub.v2018_01_01_preview.models.Cluster]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -346,8 +343,8 @@ class ClustersOperations:
         cluster_name: str,
         parameters: "models.Cluster",
         **kwargs
-    ) -> "models.Cluster":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Cluster"]
+    ) -> Optional["models.Cluster"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Cluster"]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2018-01-01-preview"
@@ -371,7 +368,6 @@ class ClustersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'Cluster')
         body_content_kwargs['content'] = body_content
@@ -404,7 +400,7 @@ class ClustersOperations:
         cluster_name: str,
         parameters: "models.Cluster",
         **kwargs
-    ) -> "models.Cluster":
+    ) -> AsyncLROPoller["models.Cluster"]:
         """Modifies mutable properties on the Event Hubs Cluster. This operation is idempotent.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -419,8 +415,8 @@ class ClustersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: Cluster, or the result of cls(response)
-        :rtype: ~azure.mgmt.eventhub.v2018_01_01_preview.models.Cluster
+        :return: An instance of AsyncLROPoller that returns either Cluster or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventhub.v2018_01_01_preview.models.Cluster]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -490,7 +486,6 @@ class ClustersOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -510,7 +505,7 @@ class ClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes an existing Event Hubs Cluster. This operation is idempotent.
 
         :param resource_group_name: Name of the resource group within the azure subscription.
@@ -523,8 +518,8 @@ class ClustersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -602,7 +597,6 @@ class ClustersOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
