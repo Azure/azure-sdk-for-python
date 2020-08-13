@@ -186,4 +186,3 @@ def serialize_query_format(formater):
     else:
         raise TypeError("Format must be DelimitedTextDialect or DelimitedJsonDialect.")
     return QuerySerialization(format=qq_format)
-
