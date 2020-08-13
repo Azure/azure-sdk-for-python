@@ -1,4 +1,7 @@
 # Release History
+## 12.1.1 (Unreleased)
+
+
 ## 12.1.0 (2020-08-12)
 - Added `query_file` API to enable users to select/project on DataLake file data by providing simple query expressions.
 
