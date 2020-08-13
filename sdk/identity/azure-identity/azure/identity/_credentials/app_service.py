@@ -48,7 +48,7 @@ class AppServiceCredential(GetTokenMixin):
 
 def _get_client_args(**kwargs):
     # type: (dict) -> Optional[dict]
-    identity_config = kwargs.pop("_identity_config", None) or {}
+    identity_config = kwargs.pop("identity_config", None) or {}
 
     url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
     secret = os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
