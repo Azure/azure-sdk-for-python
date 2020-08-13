@@ -284,16 +284,16 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         # type: (...) -> TableClient
         """Get a client to interact with the specified table.
 
-               The table need not already exist.
+        The table need not already exist.
 
-               :param table:
-                   The queue. This can either be the name of the queue,
-                   or an instance of QueueProperties.
-               :type table: str or ~azure.storage.table.TableProperties
-               :returns: A :class:`~azure.data.tables.TableClient` object.
-               :rtype: ~azure.data.tables.TableClient
+        :param table:
+            The queue. This can either be the name of the queue,
+            or an instance of QueueProperties.
+        :type table: str or ~azure.storage.table.TableProperties
+        :returns: A :class:`~azure.data.tables.TableClient` object.
+        :rtype: ~azure.data.tables.TableClient
 
-               """
+        """
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
