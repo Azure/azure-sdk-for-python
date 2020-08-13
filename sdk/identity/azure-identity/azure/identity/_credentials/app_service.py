@@ -35,7 +35,7 @@ class AppServiceCredential(GetTokenMixin):
             raise CredentialUnavailableError(
                 message="App Service managed identity configuration not found in environment"
             )
-        return self._get_token(*scopes, **kwargs)
+        return super(AppServiceCredential, self).get_token(*scopes, **kwargs)
 
     def _acquire_token_silently(self, *scopes):
         # type: (*str) -> Optional[AccessToken]

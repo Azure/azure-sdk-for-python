@@ -33,7 +33,7 @@ class AppServiceCredential(AsyncCredentialBase, GetTokenMixin):
                 message="App Service managed identity configuration not found in environment"
             )
 
-        return await self._get_token(*scopes, **kwargs)
+        return await super().get_token(*scopes, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()  # pylint:disable=no-member

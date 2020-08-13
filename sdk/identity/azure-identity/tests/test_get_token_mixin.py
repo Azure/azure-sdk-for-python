@@ -31,7 +31,7 @@ class MockCredential(GetTokenMixin):
         return self.request_token(*scopes, **kwargs)
 
     def get_token(self, *_, **__):
-        return self._get_token(*_, **__)
+        return super(MockCredential, self).get_token(*_, **__)
 
 
 CACHED_TOKEN = "cached token"
