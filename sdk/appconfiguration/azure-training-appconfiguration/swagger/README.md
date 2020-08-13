@@ -27,5 +27,6 @@ license-header: MICROSOFT_MIT_NO_VERSION
 enable-xml: false
 vanilla: true
 clear-output-folder: true
+add-credentials: true
 python: true
 ```

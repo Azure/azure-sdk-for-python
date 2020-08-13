@@ -15,6 +15,8 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Optional
 
+    from azure.core.credentials import TokenCredential
+
 VERSION = "unknown"
 
 class AzureAppConfigurationConfiguration(Configuration):
@@ -23,6 +25,8 @@ class AzureAppConfigurationConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The endpoint of the App Configuration instance to send requests to.
     :type endpoint: str
     :param sync_token: Used to guarantee real-time consistency between requests.
@@ -31,18 +35,23 @@ class AzureAppConfigurationConfiguration(Configuration):
 
     def __init__(
         self,
+        credential,  # type: "TokenCredential"
         endpoint,  # type: str
         sync_token=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         super(AzureAppConfigurationConfiguration, self).__init__(**kwargs)
 
+        self.credential = credential
         self.endpoint = endpoint
         self.sync_token = sync_token
         self.api_version = "1.0"
+        self.credential_scopes = kwargs.pop('credential_scopes', [])
         kwargs.setdefault('sdk_moniker', 'azureappconfiguration/{}'.format(VERSION))
         self._configure(**kwargs)
 
@@ -60,3 +69,7 @@ class AzureAppConfigurationConfiguration(Configuration):
         self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
+        if not self.credential_scopes and not self.authentication_policy:
+            raise ValueError("You must provide either credential_scopes or authentication_policy as kwargs")
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)

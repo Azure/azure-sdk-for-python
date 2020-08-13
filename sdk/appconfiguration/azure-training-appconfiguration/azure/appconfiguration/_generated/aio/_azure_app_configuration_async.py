@@ -6,10 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration_async import AzureAppConfigurationConfiguration
 from .operations_async import AzureAppConfigurationOperationsMixin
@@ -19,6 +23,8 @@ from .. import models
 class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):
     """AzureAppConfiguration.
 
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The endpoint of the App Configuration instance to send requests to.
     :type endpoint: str
     :param sync_token: Used to guarantee real-time consistency between requests.
@@ -27,12 +33,13 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):
 
     def __init__(
         self,
+        credential: "AsyncTokenCredential",
         endpoint: str,
         sync_token: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         base_url = '{endpoint}'
-        self._config = AzureAppConfigurationConfiguration(endpoint, sync_token, **kwargs)
+        self._config = AzureAppConfigurationConfiguration(credential, endpoint, sync_token, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
