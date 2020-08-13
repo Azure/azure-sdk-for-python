@@ -24,7 +24,7 @@ class ServiceOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.table.models
+    :type models: ~azure.data.tables.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -50,7 +50,7 @@ class ServiceOperations:
         CORS (Cross-Origin Resource Sharing) rules.
 
         :param table_service_properties: The Table Service properties.
-        :type table_service_properties: ~azure.table.models.TableServiceProperties
+        :type table_service_properties: ~azure.data.tables.models.TableServiceProperties
         :param timeout: The timeout parameter is expressed in seconds.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -128,7 +128,7 @@ class ServiceOperations:
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceProperties, or the result of cls(response)
-        :rtype: ~azure.table.models.TableServiceProperties
+        :rtype: ~azure.data.tables.models.TableServiceProperties
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableServiceProperties"]
@@ -196,7 +196,7 @@ class ServiceOperations:
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceStats, or the result of cls(response)
-        :rtype: ~azure.table.models.TableServiceStats
+        :rtype: ~azure.data.tables.models.TableServiceStats
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableServiceStats"]

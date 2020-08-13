@@ -24,7 +24,7 @@ class TableOperations:
     instantiates it for you and attaches it as an attribute.
 
     :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.table.models
+    :type models: ~azure.data.tables.models
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -54,10 +54,10 @@ class TableOperations:
         :param next_table_name: A table query continuation token from a previous call.
         :type next_table_name: str
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.data.tables.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableQueryResponse, or the result of cls(response)
-        :rtype: ~azure.table.models.TableQueryResponse
+        :rtype: ~azure.data.tables.models.TableQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableQueryResponse"]
@@ -137,18 +137,18 @@ class TableOperations:
         """Creates a new table under the given account.
 
         :param table_properties: The Table properties.
-        :type table_properties: ~azure.table.models.TableProperties
+        :type table_properties: ~azure.data.tables.models.TableProperties
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when analytics logging is enabled.
         :type request_id_parameter: str
         :param response_preference: Specifies whether the response should include the inserted entity
          in the payload. Possible values are return-no-content and return-content.
-        :type response_preference: str or ~azure.table.models.ResponseFormat
+        :type response_preference: str or ~azure.data.tables.models.ResponseFormat
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.data.tables.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableResponse, or the result of cls(response)
-        :rtype: ~azure.table.models.TableResponse or None
+        :rtype: ~azure.data.tables.models.TableResponse or None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.TableResponse"]]
@@ -303,10 +303,10 @@ class TableOperations:
         :param next_row_key: An entity query continuation token from a previous call.
         :type next_row_key: str
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.data.tables.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableEntityQueryResponse, or the result of cls(response)
-        :rtype: ~azure.table.models.TableEntityQueryResponse
+        :rtype: ~azure.data.tables.models.TableEntityQueryResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableEntityQueryResponse"]
@@ -405,7 +405,7 @@ class TableOperations:
          limit that is recorded in the analytics logs when analytics logging is enabled.
         :type request_id_parameter: str
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.data.tables.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: dict mapping str to object, or the result of cls(response)
         :rtype: dict[str, object]
@@ -511,7 +511,7 @@ class TableOperations:
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.data.tables.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -615,7 +615,7 @@ class TableOperations:
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.data.tables.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -715,7 +715,7 @@ class TableOperations:
          limit that is recorded in the analytics logs when analytics logging is enabled.
         :type request_id_parameter: str
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.data.tables.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -796,11 +796,11 @@ class TableOperations:
         :type request_id_parameter: str
         :param response_preference: Specifies whether the response should include the inserted entity
          in the payload. Possible values are return-no-content and return-content.
-        :type response_preference: str or ~azure.table.models.ResponseFormat
+        :type response_preference: str or ~azure.data.tables.models.ResponseFormat
         :param table_entity_properties: The properties for the table entity.
         :type table_entity_properties: dict[str, object]
         :param query_options: Parameter group.
-        :type query_options: ~azure.table.models.QueryOptions
+        :type query_options: ~azure.data.tables.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: dict mapping str to object, or the result of cls(response)
         :rtype: dict[str, object] or None
@@ -904,7 +904,7 @@ class TableOperations:
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of SignedIdentifier, or the result of cls(response)
-        :rtype: list[~azure.table.models.SignedIdentifier]
+        :rtype: list[~azure.data.tables.models.SignedIdentifier]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[List["models.SignedIdentifier"]]
@@ -973,7 +973,7 @@ class TableOperations:
          limit that is recorded in the analytics logs when analytics logging is enabled.
         :type request_id_parameter: str
         :param table_acl: The acls for the table.
-        :type table_acl: list[~azure.table.models.SignedIdentifier]
+        :type table_acl: list[~azure.data.tables.models.SignedIdentifier]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None

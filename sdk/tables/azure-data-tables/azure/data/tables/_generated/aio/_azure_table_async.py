@@ -21,9 +21,9 @@ class AzureTable(object):
     """AzureTable.
 
     :ivar table: TableOperations operations
-    :vartype table: azure.table.aio.operations_async.TableOperations
+    :vartype table: azure.data.tables.aio.operations_async.TableOperations
     :ivar service: ServiceOperations operations
-    :vartype service: azure.table.aio.operations_async.ServiceOperations
+    :vartype service: azure.data.tables.aio.operations_async.ServiceOperations
     :param url: The URL of the service account or table that is the target of the desired operation.
     :type url: str
     """

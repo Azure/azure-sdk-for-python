@@ -35,7 +35,7 @@ class AzureTableConfiguration(Configuration):
 
         self.url = url
         self.version = "2019-02-02"
-        kwargs.setdefault('sdk_moniker', 'table/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'data-tables/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
