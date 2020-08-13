@@ -100,10 +100,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :returns: A Table service client.
         :rtype: ~azure.data.tables.TableServiceClient
         """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service='table')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, credential = parse_connection_str(
+            conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace_async
