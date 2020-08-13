@@ -34,10 +34,21 @@
     "operation_groups": {
         "operations": "Operations",
         "subscriptions": "SubscriptionsOperations",
-        "tenants": "TenantsOperations"
+        "tenants": "TenantsOperations",
     },
     "operation_mixins": {
+        "check_resource_name" : {
+            "sync": {
+                "signature": "def check_resource_name(\n    self,\n    resource_name_definition=None,  # type: Optional[\"models.ResourceName\"]\n    **kwargs  # type: Any\n):\n"
+            },
+            "async": {
+                "signature": "async def check_resource_name(\n    self,\n    resource_name_definition: Optional[\"models.ResourceName\"] = None,\n    **kwargs\n) -\u003e \"models.CheckResourceNameResult\":\n",
+                "coroutine": true
+            },
+            "doc": "    \"\"\"Checks resource name validity.\n\nA resource name is valid if it is not a reserved word, does not contains a reserved word and\ndoes not start with a reserved word.\n\n:param resource_name_definition: Resource object with values for resource name and resource\n type.\n:type resource_name_definition: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.ResourceName\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: CheckResourceNameResult, or the result of cls(response)\n:rtype: ~azure.mgmt.resource.subscriptions.v2019_11_01.models.CheckResourceNameResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\"",
+            "call": "resource_name_definition"
+        }
     },
-    "sync_imports": "None",
-    "async_imports": "None"
+    "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
+    "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}"
 }
