@@ -10,9 +10,10 @@
 - Added support to set tier on a snapshot or version.
 
 **Fixes**
-- Fixed the bug when parsing blob url with '/' in blob name.
-- Support batch delete empty blob list.
+- Fixed the bug when parsing blob url with '/' in blob name (#12563, #12568).
+- Support batch delete empty blob list (#12778, #12779).
 - Fixed `blob_samples_query` bug.
+- Fixed empty etag in acquire_blob response (#8490).
 
 ## 12.4.0b1 (2020-07-07)
 **New features**
