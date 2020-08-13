@@ -10,7 +10,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
       - 1EB3C43FAD17D88EF8BB4EEA004D98D3
     method: POST
@@ -43,7 +43,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
       - 1EB3C43FAD17D88EF8BB4EEA004D98D3
     method: GET
@@ -83,7 +83,7 @@ interactions:
       Prefer:
       - return=representation
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
       - 1EB3C43FAD17D88EF8BB4EEA004D98D3
     method: PUT
@@ -117,7 +117,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
       - 1EB3C43FAD17D88EF8BB4EEA004D98D3
     method: GET
@@ -150,7 +150,7 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/1.0.0b3 Python/3.7.3 (Darwin-19.3.0-x86_64-i386-64bit)
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Darwin-19.3.0-x86_64-i386-64bit)
       api-key:
       - 1EB3C43FAD17D88EF8BB4EEA004D98D3
     method: GET
