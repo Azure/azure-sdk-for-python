@@ -98,7 +98,7 @@ class EntityProperty(object):
                 self.type = EdmType.GUID
             except ValueError:
                 self.value = value
-                self.type = EdmType.STRING        
+                self.type = EdmType.STRING
         elif isinstance(value, six.binary_type):
             self.value = value
             self.type = EdmType.BINARY
