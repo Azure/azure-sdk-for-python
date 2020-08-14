@@ -411,7 +411,8 @@ class TableClient(TableClientBase):
                                                                                   partition_key=partition_key,
                                                                                   row_key=row_key,
                                                                                   **kwargs)
-            properties = _convert_to_entity(entity.additional_properties)
+
+            properties = _convert_to_entity(entity)
             return properties
         except HttpResponseError as error:
             _process_table_error(error)

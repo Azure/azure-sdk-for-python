@@ -6,10 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._table_operations_async import TableOperations
-from ._service_operations_async import ServiceOperations
+from ._version import VERSION
 
-__all__ = [
-    'TableOperations',
-    'ServiceOperations',
-]
+SDK_MONIKER = "data-tables/{}".format(VERSION)
