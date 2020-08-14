@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import RecoveryServicesBackupClientConfiguration
 from .operations import RecoveryServicesBackupClientOperationsMixin
+from .operations import BMSPrepareDataMoveOperationResultOperations
 from .operations import PrivateEndpointConnectionOperations
 from .operations import BackupResourceVaultConfigsOperations
 from .operations import ProtectedItemsOperations
@@ -62,6 +63,8 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesBackupClientConfiguration
 
+    :ivar bms_prepare_data_move_operation_result: BMSPrepareDataMoveOperationResult operations
+    :vartype bms_prepare_data_move_operation_result: azure.mgmt.recoveryservicesbackup.operations.BMSPrepareDataMoveOperationResultOperations
     :ivar private_endpoint_connection: PrivateEndpointConnection operations
     :vartype private_endpoint_connection: azure.mgmt.recoveryservicesbackup.operations.PrivateEndpointConnectionOperations
     :ivar backup_resource_vault_configs: BackupResourceVaultConfigs operations
@@ -159,6 +162,8 @@ class RecoveryServicesBackupClient(RecoveryServicesBackupClientOperationsMixin, 
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.bms_prepare_data_move_operation_result = BMSPrepareDataMoveOperationResultOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.private_endpoint_connection = PrivateEndpointConnectionOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.backup_resource_vault_configs = BackupResourceVaultConfigsOperations(
