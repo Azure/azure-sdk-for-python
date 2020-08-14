@@ -47,13 +47,6 @@ class FirmwareStatusType(str, Enum):
     unavailable = "unavailable"
 
 
-class StorageTargetType(str, Enum):
-
-    nfs3 = "nfs3"
-    clfs = "clfs"
-    unknown = "unknown"
-
-
 class ReasonCode(str, Enum):
 
     quota_id = "QuotaId"
