@@ -2,21 +2,14 @@
 
 This is the Microsoft Azure Authorization Management Client Library.
 This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
-For a more complete view of Azure libraries, see the [Github repo](https://github.com/Azure/azure-sdk-for-python/)
+For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 
 # Usage
 
-For the older Azure Service Management (ASM) libraries, see
-[azure-servicemanagement-legacy](https://pypi.python.org/pypi/azure-servicemanagement-legacy)
+For code examples, see [Authorization Management](https://docs.microsoft.com/python/api/overview/azure/authorization)
+on docs.microsoft.com.
 
-For a more complete set of Azure libraries, see the
-[azure sdk python release](https://aka.ms/azsdk/python/all).
-
-## Usage
-
-For code examples, see [Authorization
-Management](https://docs.microsoft.com/python/api/overview/azure/authorization)
 
 # Provide Feedback
 
