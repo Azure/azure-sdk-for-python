@@ -52,7 +52,6 @@ from ._policies import (
     StorageLoggingPolicy,
     StorageHosts, ExponentialRetry,
 )
-from ._version import VERSION
 from ._error import _process_table_error
 from ._models import PartialBatchErrorException
 from ._sdk_moniker import SDK_MONIKER
