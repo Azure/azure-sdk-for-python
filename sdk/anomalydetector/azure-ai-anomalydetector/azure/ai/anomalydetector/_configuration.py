@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import AzureKeyCredential
 
 
 class AnomalyDetectorClientConfiguration(Configuration):
@@ -27,14 +27,14 @@ class AnomalyDetectorClientConfiguration(Configuration):
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
+        credential,  # type: AzureKeyCredential
         endpoint,  # type: str
         **kwargs  # type: Any
     ):
@@ -47,7 +47,7 @@ class AnomalyDetectorClientConfiguration(Configuration):
 
         self.credential = credential
         self.endpoint = endpoint
-        kwargs.setdefault('sdk_moniker', 'cognitiveservices-anomalydetector/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'ai-anomalydetector/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
