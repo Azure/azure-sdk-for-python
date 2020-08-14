@@ -87,7 +87,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'NetworkWatcher')
         body_content_kwargs['content'] = body_content
@@ -101,7 +100,6 @@ class NetworkWatchersOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('NetworkWatcher', pipeline_response)
 
@@ -153,7 +151,6 @@ class NetworkWatchersOperations:
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -198,7 +195,6 @@ class NetworkWatchersOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
 
-        # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -218,7 +214,7 @@ class NetworkWatchersOperations:
         resource_group_name: str,
         network_watcher_name: str,
         **kwargs
-    ) -> None:
+    ) -> AsyncLROPoller[None]:
         """Deletes the specified network watcher resource.
 
         :param resource_group_name: The name of the resource group.
@@ -231,8 +227,8 @@ class NetworkWatchersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -315,7 +311,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'TagsObject')
         body_content_kwargs['content'] = body_content
@@ -357,6 +352,10 @@ class NetworkWatchersOperations:
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -369,15 +368,11 @@ class NetworkWatchersOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -422,6 +417,10 @@ class NetworkWatchersOperations:
         api_version = "2019-08-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list_all.metadata['url']  # type: ignore
@@ -433,15 +432,11 @@ class NetworkWatchersOperations:
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         async def extract_data(pipeline_response):
@@ -513,7 +508,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'TopologyParameters')
         body_content_kwargs['content'] = body_content
@@ -566,7 +560,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'VerificationIPFlowParameters')
         body_content_kwargs['content'] = body_content
@@ -580,7 +573,6 @@ class NetworkWatchersOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('VerificationIPFlowResult', pipeline_response)
 
@@ -599,7 +591,7 @@ class NetworkWatchersOperations:
         network_watcher_name: str,
         parameters: "models.VerificationIPFlowParameters",
         **kwargs
-    ) -> "models.VerificationIPFlowResult":
+    ) -> AsyncLROPoller["models.VerificationIPFlowResult"]:
         """Verify IP flow from the specified VM to a location given the currently configured NSG rules.
 
         :param resource_group_name: The name of the resource group.
@@ -614,8 +606,8 @@ class NetworkWatchersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: VerificationIPFlowResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.VerificationIPFlowResult
+        :return: An instance of AsyncLROPoller that returns either VerificationIPFlowResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.VerificationIPFlowResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -689,7 +681,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'NextHopParameters')
         body_content_kwargs['content'] = body_content
@@ -703,7 +694,6 @@ class NetworkWatchersOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('NextHopResult', pipeline_response)
 
@@ -722,7 +712,7 @@ class NetworkWatchersOperations:
         network_watcher_name: str,
         parameters: "models.NextHopParameters",
         **kwargs
-    ) -> "models.NextHopResult":
+    ) -> AsyncLROPoller["models.NextHopResult"]:
         """Gets the next hop from the specified VM.
 
         :param resource_group_name: The name of the resource group.
@@ -737,8 +727,8 @@ class NetworkWatchersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: NextHopResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.NextHopResult
+        :return: An instance of AsyncLROPoller that returns either NextHopResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.NextHopResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -812,7 +802,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'SecurityGroupViewParameters')
         body_content_kwargs['content'] = body_content
@@ -826,7 +815,6 @@ class NetworkWatchersOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('SecurityGroupViewResult', pipeline_response)
 
@@ -845,7 +833,7 @@ class NetworkWatchersOperations:
         network_watcher_name: str,
         parameters: "models.SecurityGroupViewParameters",
         **kwargs
-    ) -> "models.SecurityGroupViewResult":
+    ) -> AsyncLROPoller["models.SecurityGroupViewResult"]:
         """Gets the configured and effective security group rules on the specified VM.
 
         :param resource_group_name: The name of the resource group.
@@ -860,8 +848,8 @@ class NetworkWatchersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: SecurityGroupViewResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.SecurityGroupViewResult
+        :return: An instance of AsyncLROPoller that returns either SecurityGroupViewResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.SecurityGroupViewResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -935,7 +923,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'TroubleshootingParameters')
         body_content_kwargs['content'] = body_content
@@ -949,7 +936,6 @@ class NetworkWatchersOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('TroubleshootingResult', pipeline_response)
 
@@ -968,7 +954,7 @@ class NetworkWatchersOperations:
         network_watcher_name: str,
         parameters: "models.TroubleshootingParameters",
         **kwargs
-    ) -> "models.TroubleshootingResult":
+    ) -> AsyncLROPoller["models.TroubleshootingResult"]:
         """Initiate troubleshooting on a specified resource.
 
         :param resource_group_name: The name of the resource group.
@@ -983,8 +969,8 @@ class NetworkWatchersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: TroubleshootingResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.TroubleshootingResult
+        :return: An instance of AsyncLROPoller that returns either TroubleshootingResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.TroubleshootingResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1058,7 +1044,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'QueryTroubleshootingParameters')
         body_content_kwargs['content'] = body_content
@@ -1072,7 +1057,6 @@ class NetworkWatchersOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('TroubleshootingResult', pipeline_response)
 
@@ -1091,7 +1075,7 @@ class NetworkWatchersOperations:
         network_watcher_name: str,
         parameters: "models.QueryTroubleshootingParameters",
         **kwargs
-    ) -> "models.TroubleshootingResult":
+    ) -> AsyncLROPoller["models.TroubleshootingResult"]:
         """Get the last completed troubleshooting result on a specified resource.
 
         :param resource_group_name: The name of the resource group.
@@ -1106,8 +1090,8 @@ class NetworkWatchersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: TroubleshootingResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.TroubleshootingResult
+        :return: An instance of AsyncLROPoller that returns either TroubleshootingResult or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.TroubleshootingResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1181,7 +1165,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'FlowLogInformation')
         body_content_kwargs['content'] = body_content
@@ -1195,7 +1178,6 @@ class NetworkWatchersOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('FlowLogInformation', pipeline_response)
 
@@ -1214,7 +1196,7 @@ class NetworkWatchersOperations:
         network_watcher_name: str,
         parameters: "models.FlowLogInformation",
         **kwargs
-    ) -> "models.FlowLogInformation":
+    ) -> AsyncLROPoller["models.FlowLogInformation"]:
         """Configures flow log and traffic analytics (optional) on a specified resource.
 
         :param resource_group_name: The name of the network watcher resource group.
@@ -1229,8 +1211,8 @@ class NetworkWatchersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: FlowLogInformation, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.FlowLogInformation
+        :return: An instance of AsyncLROPoller that returns either FlowLogInformation or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.FlowLogInformation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1304,7 +1286,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'FlowLogStatusParameters')
         body_content_kwargs['content'] = body_content
@@ -1318,7 +1299,6 @@ class NetworkWatchersOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('FlowLogInformation', pipeline_response)
 
@@ -1337,7 +1317,7 @@ class NetworkWatchersOperations:
         network_watcher_name: str,
         parameters: "models.FlowLogStatusParameters",
         **kwargs
-    ) -> "models.FlowLogInformation":
+    ) -> AsyncLROPoller["models.FlowLogInformation"]:
         """Queries status of flow log and traffic analytics (optional) on a specified resource.
 
         :param resource_group_name: The name of the network watcher resource group.
@@ -1353,8 +1333,8 @@ class NetworkWatchersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: FlowLogInformation, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.FlowLogInformation
+        :return: An instance of AsyncLROPoller that returns either FlowLogInformation or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.FlowLogInformation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1428,7 +1408,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'ConnectivityParameters')
         body_content_kwargs['content'] = body_content
@@ -1442,7 +1421,6 @@ class NetworkWatchersOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ConnectivityInformation', pipeline_response)
 
@@ -1461,7 +1439,7 @@ class NetworkWatchersOperations:
         network_watcher_name: str,
         parameters: "models.ConnectivityParameters",
         **kwargs
-    ) -> "models.ConnectivityInformation":
+    ) -> AsyncLROPoller["models.ConnectivityInformation"]:
         """Verifies the possibility of establishing a direct TCP connection from a virtual machine to a
     given endpoint including another VM or an arbitrary remote server.
 
@@ -1477,8 +1455,8 @@ class NetworkWatchersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: ConnectivityInformation, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.ConnectivityInformation
+        :return: An instance of AsyncLROPoller that returns either ConnectivityInformation or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.ConnectivityInformation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1552,7 +1530,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'AzureReachabilityReportParameters')
         body_content_kwargs['content'] = body_content
@@ -1566,7 +1543,6 @@ class NetworkWatchersOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('AzureReachabilityReport', pipeline_response)
 
@@ -1585,7 +1561,7 @@ class NetworkWatchersOperations:
         network_watcher_name: str,
         parameters: "models.AzureReachabilityReportParameters",
         **kwargs
-    ) -> "models.AzureReachabilityReport":
+    ) -> AsyncLROPoller["models.AzureReachabilityReport"]:
         """Gets the relative latency score for internet service providers from a specified location to
     Azure regions.
 
@@ -1601,8 +1577,8 @@ class NetworkWatchersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: AzureReachabilityReport, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.AzureReachabilityReport
+        :return: An instance of AsyncLROPoller that returns either AzureReachabilityReport or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.AzureReachabilityReport]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1676,7 +1652,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'AvailableProvidersListParameters')
         body_content_kwargs['content'] = body_content
@@ -1690,7 +1665,6 @@ class NetworkWatchersOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('AvailableProvidersList', pipeline_response)
 
@@ -1709,7 +1683,7 @@ class NetworkWatchersOperations:
         network_watcher_name: str,
         parameters: "models.AvailableProvidersListParameters",
         **kwargs
-    ) -> "models.AvailableProvidersList":
+    ) -> AsyncLROPoller["models.AvailableProvidersList"]:
         """Lists all available internet service providers for a specified Azure region.
 
         :param resource_group_name: The name of the network watcher resource group.
@@ -1724,8 +1698,8 @@ class NetworkWatchersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: AvailableProvidersList, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.AvailableProvidersList
+        :return: An instance of AsyncLROPoller that returns either AvailableProvidersList or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.AvailableProvidersList]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
@@ -1799,7 +1773,6 @@ class NetworkWatchersOperations:
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'NetworkConfigurationDiagnosticParameters')
         body_content_kwargs['content'] = body_content
@@ -1813,7 +1786,6 @@ class NetworkWatchersOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('NetworkConfigurationDiagnosticResponse', pipeline_response)
 
@@ -1832,7 +1804,7 @@ class NetworkWatchersOperations:
         network_watcher_name: str,
         parameters: "models.NetworkConfigurationDiagnosticParameters",
         **kwargs
-    ) -> "models.NetworkConfigurationDiagnosticResponse":
+    ) -> AsyncLROPoller["models.NetworkConfigurationDiagnosticResponse"]:
         """Gets Network Configuration Diagnostic data to help customers understand and debug network
     behavior. It provides detailed information on what security rules were applied to a specified
     traffic flow and the result of evaluating these rules. Customers must provide details of a flow
@@ -1851,8 +1823,8 @@ class NetworkWatchersOperations:
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: NetworkConfigurationDiagnosticResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.NetworkConfigurationDiagnosticResponse
+        :return: An instance of AsyncLROPoller that returns either NetworkConfigurationDiagnosticResponse or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.NetworkConfigurationDiagnosticResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]

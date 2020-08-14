@@ -115,11 +115,9 @@
     "operation_mixins": {
         "check_dns_name_availability" : {
             "sync": {
-                "operation_name": "check_dns_name_availability",
                 "signature": "def check_dns_name_availability(\n    self,\n    location,  # type: str\n    domain_name_label,  # type: str\n    **kwargs  # type: Any\n):\n"
             },
             "async": {
-                "operation_name": "check_dns_name_availability",
                 "signature": "async def check_dns_name_availability(\n    self,\n    location: str,\n    domain_name_label: str,\n    **kwargs\n) -\u003e \"models.DnsNameAvailabilityResult\":\n",
                 "coroutine": true
             },
@@ -128,11 +126,9 @@
         },
         "supported_security_providers" : {
             "sync": {
-                "operation_name": "supported_security_providers",
                 "signature": "def supported_security_providers(\n    self,\n    resource_group_name,  # type: str\n    virtual_wan_name,  # type: str\n    **kwargs  # type: Any\n):\n"
             },
             "async": {
-                "operation_name": "supported_security_providers",
                 "signature": "async def supported_security_providers(\n    self,\n    resource_group_name: str,\n    virtual_wan_name: str,\n    **kwargs\n) -\u003e \"models.VirtualWanSecurityProviders\":\n",
                 "coroutine": true
             },
@@ -140,6 +136,6 @@
             "call": "resource_group_name, virtual_wan_name"
         }
     },
-    "sync_imports": "from typing import TYPE_CHECKING\nimport warnings\n\nfrom azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error\nfrom azure.core.pipeline import PipelineResponse\nfrom azure.core.pipeline.transport import HttpRequest, HttpResponse\nfrom azure.mgmt.core.exceptions import ARMErrorFormat\n\nif TYPE_CHECKING:\n    # pylint: disable=unused-import,ungrouped-imports\n    from typing import Any, Callable, Dict, Generic, Optional, TypeVar",
-    "async_imports": "from typing import Any, Callable, Dict, Generic, Optional, TypeVar\nimport warnings\n\nfrom azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error\nfrom azure.core.pipeline import PipelineResponse\nfrom azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest\nfrom azure.mgmt.core.exceptions import ARMErrorFormat"
+    "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}",
+    "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.exceptions\": [\"HttpResponseError\", \"ResourceExistsError\", \"ResourceNotFoundError\", \"map_error\"], \"azure.mgmt.core.exceptions\": [\"ARMErrorFormat\"], \"azure.core.pipeline\": [\"PipelineResponse\"], \"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}, \"stdlib\": {\"warnings\": [null]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Callable\", \"Dict\", \"Generic\", \"Optional\", \"TypeVar\"]}}}"
 }
