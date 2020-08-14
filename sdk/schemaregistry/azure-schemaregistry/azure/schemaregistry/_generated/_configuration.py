@@ -39,6 +39,7 @@ class AzureSchemaRegistryConfiguration(Configuration):
         super(AzureSchemaRegistryConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
+        self.api_version = "2018-01-01-preview"
         kwargs.setdefault('sdk_moniker', 'azureschemaregistry/{}'.format(VERSION))
         self._configure(**kwargs)
 

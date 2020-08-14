@@ -17,7 +17,7 @@ from .. import models
 
 
 class AzureSchemaRegistry(object):
-    """AzureSchemaRegistry.
+    """Azure Schema Registry is as a central schema repository for enterprise-level data infrastructure, complete with support for versioning and management.
 
     :ivar schema: SchemaOperations operations
     :vartype schema: azure.schemaregistry._generated.aio.operations_async.SchemaOperations
@@ -31,7 +31,7 @@ class AzureSchemaRegistry(object):
         endpoint: str,
         **kwargs: Any
     ) -> None:
-        base_url = 'https://{endpoint}/$schemagroups'
+        base_url = 'https://{endpoint}'
         self._config = AzureSchemaRegistryConfiguration(endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 

@@ -63,6 +63,7 @@ class SchemaOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[str]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2018-01-01-preview"
 
         # Construct URL
         url = self.get_by_id.metadata['url']  # type: ignore
@@ -74,6 +75,7 @@ class SchemaOperations(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -91,7 +93,7 @@ class SchemaOperations(object):
 
         response_headers = {}
         response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-        response_headers['X-Serialization']=self._deserialize('str', response.headers.get('X-Serialization'))
+        response_headers['X-Schema-Type']=self._deserialize('str', response.headers.get('X-Schema-Type'))
         response_headers['X-Schema-Id']=self._deserialize('str', response.headers.get('X-Schema-Id'))
         response_headers['X-Schema-Id-Location']=self._deserialize('str', response.headers.get('X-Schema-Id-Location'))
         response_headers['X-Schema-Version']=self._deserialize('int', response.headers.get('X-Schema-Version'))
@@ -101,13 +103,12 @@ class SchemaOperations(object):
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_by_id.metadata = {'url': '/getSchemaById/{schema-id}'}  # type: ignore
+    get_by_id.metadata = {'url': '/$schemagroups/getSchemaById/{schema-id}'}  # type: ignore
 
-    def get_id_by_content(
+    def query_id_by_content(
         self,
         group_name,  # type: str
         schema_name,  # type: str
-        serialization_type,  # type: str
         schema_content,  # type: str
         **kwargs  # type: Any
     ):
@@ -121,9 +122,6 @@ class SchemaOperations(object):
         :type group_name: str
         :param schema_name: Name of the registered schema.
         :type schema_name: str
-        :param serialization_type: Serialization type of the registered schema.  Must match
-         serialization type of the specified schema group.
-        :type serialization_type: str
         :param schema_content: String representation of the registered schema.
         :type schema_content: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -134,10 +132,12 @@ class SchemaOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SchemaId"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
+        x_schema_type = "avro"
+        api_version = "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
-        url = self.get_id_by_content.metadata['url']  # type: ignore
+        url = self.query_id_by_content.metadata['url']  # type: ignore
         path_format_arguments = {
             'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
             'group-name': self._serialize.url("group_name", group_name, 'str'),
@@ -147,10 +147,11 @@ class SchemaOperations(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['serialization-type'] = self._serialize.header("serialization_type", serialization_type, 'str')
+        header_parameters['X-Schema-Type'] = self._serialize.header("x_schema_type", x_schema_type, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
@@ -170,7 +171,7 @@ class SchemaOperations(object):
 
         response_headers = {}
         response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-        response_headers['X-Serialization']=self._deserialize('str', response.headers.get('X-Serialization'))
+        response_headers['X-Schema-Type']=self._deserialize('str', response.headers.get('X-Schema-Type'))
         response_headers['X-Schema-Id']=self._deserialize('str', response.headers.get('X-Schema-Id'))
         response_headers['X-Schema-Id-Location']=self._deserialize('str', response.headers.get('X-Schema-Id-Location'))
         response_headers['X-Schema-Version']=self._deserialize('int', response.headers.get('X-Schema-Version'))
@@ -180,13 +181,12 @@ class SchemaOperations(object):
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_id_by_content.metadata = {'url': '/{group-name}/schemas/{schema-name}'}  # type: ignore
+    query_id_by_content.metadata = {'url': '/$schemagroups/{group-name}/schemas/{schema-name}'}  # type: ignore
 
     def register(
         self,
         group_name,  # type: str
         schema_name,  # type: str
-        serialization_type,  # type: str
         schema_content,  # type: str
         **kwargs  # type: Any
     ):
@@ -200,9 +200,6 @@ class SchemaOperations(object):
         :type group_name: str
         :param schema_name: Name of schema being registered.
         :type schema_name: str
-        :param serialization_type: Serialization type for the schema being registered.  Must match
-         serialization type of the specified schema group.
-        :type serialization_type: str
         :param schema_content: String representation of the schema being registered.
         :type schema_content: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -213,6 +210,8 @@ class SchemaOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SchemaId"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
+        x_schema_type = "avro"
+        api_version = "2018-01-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -226,10 +225,11 @@ class SchemaOperations(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['serialization-type'] = self._serialize.header("serialization_type", serialization_type, 'str')
+        header_parameters['X-Schema-Type'] = self._serialize.header("x_schema_type", x_schema_type, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
@@ -249,7 +249,7 @@ class SchemaOperations(object):
 
         response_headers = {}
         response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-        response_headers['X-Serialization']=self._deserialize('str', response.headers.get('X-Serialization'))
+        response_headers['X-Schema-Type']=self._deserialize('str', response.headers.get('X-Schema-Type'))
         response_headers['X-Schema-Id']=self._deserialize('str', response.headers.get('X-Schema-Id'))
         response_headers['X-Schema-Id-Location']=self._deserialize('str', response.headers.get('X-Schema-Id-Location'))
         response_headers['X-Schema-Version']=self._deserialize('int', response.headers.get('X-Schema-Version'))
@@ -259,4 +259,4 @@ class SchemaOperations(object):
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    register.metadata = {'url': '/{group-name}/schemas/{schema-name}'}  # type: ignore
+    register.metadata = {'url': '/$schemagroups/{group-name}/schemas/{schema-name}'}  # type: ignore
