@@ -31,5 +31,5 @@ extends:
   parameters:
     ServiceDirectory: anomalydetector
     Artifacts:
-    - name: azure_ai_textanalytics
-      safeName: azureaitextanalytics
+    - name: azure_ai_anomalydetector
+      safeName: azureaianomalydetector
