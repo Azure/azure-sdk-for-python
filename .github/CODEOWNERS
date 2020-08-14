@@ -25,11 +25,11 @@
 # PRLabel: %Storage
 /sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft @kasobol-msft
 
-/sdk/applicationinsights/                                            @alexeldeib      
+/sdk/applicationinsights/                                            @alexeldeib
 
 # PRLabel: %Batch
 /sdk/batch/                                                          @bgklein @xingwu1
-/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish          
+/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @chlowell @iscai-msft
@@ -52,7 +52,7 @@
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
-/sdk/datalake/                                                       @ro-joowan                                                     
+/sdk/datalake/                                                       @ro-joowan
 /sdk/datadatamigration/                                              @vchske
 
 # PRLabel: %Event Grid
@@ -87,6 +87,9 @@
 
 # PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft @rakshith91
+
+# PRLabel: %Tables
+/sdk/tables/                                                         @seankane-msft
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve
