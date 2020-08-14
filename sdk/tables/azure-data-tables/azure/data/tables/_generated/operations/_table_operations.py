@@ -66,7 +66,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableQueryResponse"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         _top = None
         _select = None
@@ -158,7 +158,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableResponse"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -320,7 +320,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableEntityQueryResponse"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         _top = None
         _select = None
@@ -424,7 +424,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TableEntityQueryResponse"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         _select = None
         _filter = None
@@ -532,7 +532,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -638,7 +638,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -740,7 +740,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -827,7 +827,7 @@ class TableOperations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType[Dict[str, object]]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
+
         _format = None
         if query_options is not None:
             _format = query_options.format
@@ -867,7 +867,13 @@ class TableOperations(object):
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
+        print(url)
+        print(query_parameters)
+        print(header_parameters)
+        print(body_content_kwargs)
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        print(request)
+        print(type(self._client._pipeline))
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response

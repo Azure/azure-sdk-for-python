@@ -255,27 +255,21 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
+        changeset = HttpRequest('POST', None)
+        changeset.set_multipart_mixed(
+            *reqs,
+            policies = [StorageHeadersPolicy(), self._credential_policy],
+            boundary="changeset_{}".format(uuid4())
+        )
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='{}://{}/?comp=batch{}{}'.format(
-                self.scheme,
-                self._primary_hostname,
-                kwargs.pop('sas', None),
-                kwargs.pop('timeout', None)
-            ),
+            url='https://{}/$batch'.format(self._primary_hostname),
             headers={
-                'x-ms-version': self.api_version
+                'x-ms-version': self.api_version,
+                'DataServiceVersion': '3.0',
+                'MaxDataServiceVersion': '3.0;NetFx',
             }
         )
-
-        policies = [StorageHeadersPolicy()]
-        if self._credential_policy:
-            policies.append(self._credential_policy)
-
-        request.set_multipart_mixed(
-            *reqs,
-            policies=policies,
-            enforce_https=False
-        )
+        request.set_multipart_mixed(changeset, boundary="batch_{}".format(uuid4()))
 
         pipeline_response = self._pipeline.run(
             request, **kwargs

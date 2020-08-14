@@ -58,7 +58,7 @@ class TableClient(TableClientBase):
         super(TableClient, self).__init__(account_url, table_name, credential=credential, **kwargs)
         self._client = AzureTable(self.url, pipeline=self._pipeline)
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
-
+        print(self.url)
     @classmethod
     def from_connection_string(
             cls, conn_str,  # type: str
@@ -259,9 +259,10 @@ class TableClient(TableClientBase):
         :rtype: ~azure.data.tables.TableEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-
+        print("ENTITY: {}".format(entity))
         if "PartitionKey" in entity and "RowKey" in entity:
             entity = _add_entity_properties(entity)
+            print(entity)
             # TODO: Remove - and run test to see what happens with the service
         else:
             raise ValueError('PartitionKey and RowKey were not provided in entity')
@@ -473,5 +474,10 @@ class TableClient(TableClientBase):
         return: Table batch operation for inserting new operations
         rtype: ~azure.data.tables.TableBatchOperations
         """
-        return TableBatchOperations()
-    
+        return TableBatchOperations(
+            self._client,
+            self._client._config,
+            self._client._serialize,
+            self._client._deserialize,
+            self.table_name
+        )

@@ -19,6 +19,8 @@ from azure.core.exceptions import (
 
 from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase, LogCaptured
 
+from azure.data.tables import TableServiceClient, TableEntity
+
 #------------------------------------------------------------------------------
 TEST_TABLE_PREFIX = 'table'
 #------------------------------------------------------------------------------
@@ -148,20 +150,20 @@ class StorageTableBatchTest(TableTestCase):
         self.assertIsInstance(entity.timestamp, datetime)
 
     #--Test cases for batch ---------------------------------------------
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
     def test_batch_insert(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
             # Act
-            entity = Entity()
+            entity = TableEntity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_insert'
-            entity.test = EntityProperty(EdmType.BOOLEAN, 'true')
+            entity.test = True #EntityProperty(EdmType.BOOLEAN, 'true')
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = EntityProperty(EdmType.INT64, '1234567890')
+            entity.test4 = 1234567890 #EntityProperty(EdmType.INT64, '1234567890')
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
