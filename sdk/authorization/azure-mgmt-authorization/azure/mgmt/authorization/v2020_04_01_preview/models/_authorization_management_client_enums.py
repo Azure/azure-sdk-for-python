@@ -9,5 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.61.0"
+from enum import Enum
 
+
+class PrincipalType(str, Enum):
+
+    user = "User"
+    group = "Group"
+    service_principal = "ServicePrincipal"
+    unknown = "Unknown"
+    directory_role_template = "DirectoryRoleTemplate"
+    foreign_group = "ForeignGroup"
+    application = "Application"
+    msi = "MSI"
+    directory_object_or_group = "DirectoryObjectOrGroup"
+    everyone = "Everyone"

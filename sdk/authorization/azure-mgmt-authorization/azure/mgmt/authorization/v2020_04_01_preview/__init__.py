@@ -9,5 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.61.0"
+from ._configuration import AuthorizationManagementClientConfiguration
+from ._authorization_management_client import AuthorizationManagementClient
+__all__ = ['AuthorizationManagementClient', 'AuthorizationManagementClientConfiguration']
+
+from .version import VERSION
+
+__version__ = VERSION
 
