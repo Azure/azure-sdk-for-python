@@ -337,7 +337,7 @@ def format_shared_key_credential(account, credential):
     return credential
 
 
-def parse_connection_str(conn_str, credential, service):
+def parse_connection_str(conn_str, credential, service, keyword_args):
     conn_str = conn_str.rstrip(";")
     conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings):
@@ -378,7 +378,11 @@ def parse_connection_str(conn_str, credential, service):
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")
-    return primary, secondary, credential
+
+    if 'secondary_hostname' not in keyword_args:
+        keyword_args['secondary_hostname'] = secondary
+
+    return primary, credential
 
 
 def create_configuration(**kwargs):
