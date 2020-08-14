@@ -52,9 +52,9 @@ from ._policies import (
     StorageLoggingPolicy,
     StorageHosts, ExponentialRetry,
 )
-from ._version import VERSION
 from ._error import _process_table_error
 from ._models import PartialBatchErrorException
+from ._sdk_moniker import SDK_MONIKER
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -389,8 +389,8 @@ def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = UserAgentPolicy(
-        sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
+    config.user_agent_policy = UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs)
+        # sdk_moniker="storage-{}/{}".format(kwargs.pop('storage_sdk'), VERSION), **kwargs)
     config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
