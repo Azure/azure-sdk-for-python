@@ -36,13 +36,13 @@ from ._generated.models import (
     StorageErrorException,
     SignedIdentifier)
 from ._deserialize import deserialize_container_properties
-from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version
+from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
     BlobType)
 from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged
-from ._lease import BlobLeaseClient, get_access_conditions
+from ._lease import BlobLeaseClient
 from ._blob_client import BlobClient
 
 if TYPE_CHECKING:
