@@ -27,7 +27,7 @@ class AccountsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-11-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-02-01".
     """
 
     models = models
@@ -37,7 +37,7 @@ class AccountsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-11-01"
+        self.api_version = "2020-02-01"
 
         self.config = config
 
@@ -362,29 +362,9 @@ class AccountsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
 
-    def update(
+
+    def _update_initial(
             self, body, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Update a NetApp account.
-
-        Patch the specified NetApp account.
-
-        :param body: NetApp Account object supplied in the body of the
-         operation.
-        :type body: ~azure.mgmt.netapp.models.NetAppAccountPatch
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account
-        :type account_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: NetAppAccount or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.netapp.models.NetAppAccount or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -416,13 +396,16 @@ class AccountsOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200, 201, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
+            deserialized = self._deserialize('NetAppAccount', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('NetAppAccount', response)
 
         if raw:
@@ -430,4 +413,56 @@ class AccountsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def update(
+            self, body, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Update a NetApp account.
+
+        Patch the specified NetApp account.
+
+        :param body: NetApp Account object supplied in the body of the
+         operation.
+        :type body: ~azure.mgmt.netapp.models.NetAppAccountPatch
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account
+        :type account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns NetAppAccount or
+         ClientRawResponse<NetAppAccount> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.netapp.models.NetAppAccount]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.netapp.models.NetAppAccount]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._update_initial(
+            body=body,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('NetAppAccount', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}

@@ -7,9 +7,16 @@ For a more complete view of Azure libraries, see the [Github repo](https://githu
 
 # Usage
 
-For code examples, see [Authorization Management](https://docs.microsoft.com/python/api/overview/azure/authorization)
-on docs.microsoft.com.
+For the older Azure Service Management (ASM) libraries, see
+[azure-servicemanagement-legacy](https://pypi.python.org/pypi/azure-servicemanagement-legacy)
 
+For a more complete set of Azure libraries, see the
+[azure sdk python release](https://aka.ms/azsdk/python/all).
+
+## Usage
+
+For code examples, see [Authorization
+Management](https://docs.microsoft.com/python/api/overview/azure/authorization)
 
 # Provide Feedback
 

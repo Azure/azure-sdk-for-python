@@ -1,5 +1,10 @@
 # Release History
 
+## 5.1.0 (2020-08-10)
+
+**Features**
+  - Add UrlSigningAction
+
 ## 5.0.0 (2020-07-21)
 
 **Features**

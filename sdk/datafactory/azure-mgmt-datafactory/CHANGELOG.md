@@ -1,5 +1,33 @@
 # Release History
 
+## 0.12.0 (2020-07-29)
+
+**Features**
+
+  - Model SalesforceMarketingCloudLinkedService has a new parameter connection_properties
+  - Model ODataLinkedService has a new parameter azure_cloud_type
+  - Model SapOpenHubSource has a new parameter custom_rfc_read_table_function_module
+  - Model SapOpenHubSource has a new parameter sap_data_column_delimiter
+  - Model AzureBlobStorageLinkedService has a new parameter azure_cloud_type
+  - Model XeroLinkedService has a new parameter connection_properties
+  - Model SapTableSource has a new parameter sap_data_column_delimiter
+  - Model AzureSqlDatabaseLinkedService has a new parameter azure_cloud_type
+  - Model SapOpenHubLinkedService has a new parameter logon_group
+  - Model SapOpenHubLinkedService has a new parameter system_id
+  - Model SapOpenHubLinkedService has a new parameter message_server_service
+  - Model SapOpenHubLinkedService has a new parameter message_server
+  - Model AzureSqlDWLinkedService has a new parameter azure_cloud_type
+  - Model AzureDataLakeStoreLinkedService has a new parameter azure_cloud_type
+  - Model QuickBooksLinkedService has a new parameter connection_properties
+  - Model RestServiceLinkedService has a new parameter azure_cloud_type
+  - Model AzureSqlMILinkedService has a new parameter azure_cloud_type
+  - Model SquareLinkedService has a new parameter connection_properties
+  - Model AzureBlobFSLinkedService has a new parameter azure_cloud_type
+  - Model AzureFileStorageLinkedService has a new parameter snapshot
+  - Model AzureDatabricksLinkedService has a new parameter new_cluster_log_destination
+  - Model ZohoLinkedService has a new parameter connection_properties
+  - Added operation TriggerRunsOperations.cancel
+
 ## 0.11.0 (2020-06-16)
 
 **Features**
