@@ -280,6 +280,11 @@ class BackupShortTermRetentionPolicy(ProxyResource):
     :param retention_days: The backup retention period in days. This is how
      many days Point-in-Time Restore will be supported.
     :type retention_days: int
+    :param diff_backup_interval_in_hours: The differential backup interval in
+     hours. This is how many interval hours between each differential backup
+     will be supported. This is only applicable to live databases but not
+     dropped databases.
+    :type diff_backup_interval_in_hours: int
     """
 
     _validation = {
@@ -293,11 +298,13 @@ class BackupShortTermRetentionPolicy(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
+        'diff_backup_interval_in_hours': {'key': 'properties.diffBackupIntervalInHours', 'type': 'int'},
     }
 
-    def __init__(self, *, retention_days: int=None, **kwargs) -> None:
+    def __init__(self, *, retention_days: int=None, diff_backup_interval_in_hours: int=None, **kwargs) -> None:
         super(BackupShortTermRetentionPolicy, self).__init__(**kwargs)
         self.retention_days = retention_days
+        self.diff_backup_interval_in_hours = diff_backup_interval_in_hours
 
 
 class CheckNameAvailabilityRequest(Model):
@@ -5110,6 +5117,9 @@ class ManagedInstance(TrackedResource):
     :param sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4,
      GP_Gen5, BC_Gen4, BC_Gen5
     :type sku: ~azure.mgmt.sql.models.Sku
+    :ivar provisioning_state: Possible values include: 'Creating', 'Deleting',
+     'Updating', 'Unknown', 'Succeeded', 'Failed'
+    :vartype provisioning_state: str or ~azure.mgmt.sql.models.enum
     :param managed_instance_create_mode: Specifies the mode of database
      creation.
      Default: Regular instance creation.
@@ -5186,6 +5196,18 @@ class ManagedInstance(TrackedResource):
     :param minimal_tls_version: Minimal TLS version. Allowed values: 'None',
      '1.0', '1.1', '1.2'
     :type minimal_tls_version: str
+    :param backup_storage_redundancy: The backup storage redundancy used to
+     store backups for this instance. The options are LRS
+     (LocallyRedundantStorage), ZRS (ZoneRedundantStorage) and GRS
+     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
+    :type backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.StorageAccountType
+    :ivar current_backup_storage_redundancy: The current backup storage
+     redundancy used to store backups for this instance. The options are LRS
+     (LocallyRedundantStorage), ZRS (ZoneRedundantStorage) and GRS
+     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
+    :vartype current_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.StorageAccountType
     """
 
     _validation = {
@@ -5193,9 +5215,11 @@ class ManagedInstance(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'provisioning_state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
         'state': {'readonly': True},
         'dns_zone': {'readonly': True},
+        'current_backup_storage_redundancy': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5206,6 +5230,7 @@ class ManagedInstance(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
@@ -5226,12 +5251,15 @@ class ManagedInstance(TrackedResource):
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
+        'backup_storage_redundancy': {'key': 'properties.backupStorageRedundancy', 'type': 'str'},
+        'current_backup_storage_redundancy': {'key': 'properties.currentBackupStorageRedundancy', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, sku=None, managed_instance_create_mode=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, source_managed_instance_id: str=None, restore_point_in_time=None, proxy_override=None, timezone_id: str=None, instance_pool_id: str=None, maintenance_configuration_id: str=None, minimal_tls_version: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, sku=None, managed_instance_create_mode=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, source_managed_instance_id: str=None, restore_point_in_time=None, proxy_override=None, timezone_id: str=None, instance_pool_id: str=None, maintenance_configuration_id: str=None, minimal_tls_version: str=None, backup_storage_redundancy=None, **kwargs) -> None:
         super(ManagedInstance, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.sku = sku
+        self.provisioning_state = None
         self.managed_instance_create_mode = managed_instance_create_mode
         self.fully_qualified_domain_name = None
         self.administrator_login = administrator_login
@@ -5252,6 +5280,8 @@ class ManagedInstance(TrackedResource):
         self.instance_pool_id = instance_pool_id
         self.maintenance_configuration_id = maintenance_configuration_id
         self.minimal_tls_version = minimal_tls_version
+        self.backup_storage_redundancy = backup_storage_redundancy
+        self.current_backup_storage_redundancy = None
 
 
 class ManagedInstanceAdministrator(ProxyResource):
@@ -5824,6 +5854,42 @@ class ManagedInstancePairInfo(Model):
         self.partner_managed_instance_id = partner_managed_instance_id
 
 
+class ManagedInstancePrivateLinkServiceConnectionStateProperty(Model):
+    """ManagedInstancePrivateLinkServiceConnectionStateProperty.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. The private link service connection status.
+    :type status: str
+    :param description: Required. The private link service connection
+     description.
+    :type description: str
+    :ivar actions_required: The private link service connection description.
+    :vartype actions_required: str
+    """
+
+    _validation = {
+        'status': {'required': True},
+        'description': {'required': True},
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, *, status: str, description: str, **kwargs) -> None:
+        super(ManagedInstancePrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = None
+
+
 class ManagedInstanceUpdate(Model):
     """An update request for an Azure SQL Database managed instance.
 
@@ -5832,6 +5898,9 @@ class ManagedInstanceUpdate(Model):
 
     :param sku: Managed instance sku
     :type sku: ~azure.mgmt.sql.models.Sku
+    :ivar provisioning_state: Possible values include: 'Creating', 'Deleting',
+     'Updating', 'Unknown', 'Succeeded', 'Failed'
+    :vartype provisioning_state: str or ~azure.mgmt.sql.models.enum
     :param managed_instance_create_mode: Specifies the mode of database
      creation.
      Default: Regular instance creation.
@@ -5908,18 +5977,33 @@ class ManagedInstanceUpdate(Model):
     :param minimal_tls_version: Minimal TLS version. Allowed values: 'None',
      '1.0', '1.1', '1.2'
     :type minimal_tls_version: str
+    :param backup_storage_redundancy: The backup storage redundancy used to
+     store backups for this instance. The options are LRS
+     (LocallyRedundantStorage), ZRS (ZoneRedundantStorage) and GRS
+     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
+    :type backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.StorageAccountType
+    :ivar current_backup_storage_redundancy: The current backup storage
+     redundancy used to store backups for this instance. The options are LRS
+     (LocallyRedundantStorage), ZRS (ZoneRedundantStorage) and GRS
+     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
+    :vartype current_backup_storage_redundancy: str or
+     ~azure.mgmt.sql.models.StorageAccountType
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
 
     _validation = {
+        'provisioning_state': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
         'state': {'readonly': True},
         'dns_zone': {'readonly': True},
+        'current_backup_storage_redundancy': {'readonly': True},
     }
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
@@ -5940,12 +6024,15 @@ class ManagedInstanceUpdate(Model):
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
         'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
+        'backup_storage_redundancy': {'key': 'properties.backupStorageRedundancy', 'type': 'str'},
+        'current_backup_storage_redundancy': {'key': 'properties.currentBackupStorageRedundancy', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, sku=None, managed_instance_create_mode=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, source_managed_instance_id: str=None, restore_point_in_time=None, proxy_override=None, timezone_id: str=None, instance_pool_id: str=None, maintenance_configuration_id: str=None, minimal_tls_version: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, managed_instance_create_mode=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, source_managed_instance_id: str=None, restore_point_in_time=None, proxy_override=None, timezone_id: str=None, instance_pool_id: str=None, maintenance_configuration_id: str=None, minimal_tls_version: str=None, backup_storage_redundancy=None, tags=None, **kwargs) -> None:
         super(ManagedInstanceUpdate, self).__init__(**kwargs)
         self.sku = sku
+        self.provisioning_state = None
         self.managed_instance_create_mode = managed_instance_create_mode
         self.fully_qualified_domain_name = None
         self.administrator_login = administrator_login
@@ -5966,6 +6053,8 @@ class ManagedInstanceUpdate(Model):
         self.instance_pool_id = instance_pool_id
         self.maintenance_configuration_id = maintenance_configuration_id
         self.minimal_tls_version = minimal_tls_version
+        self.backup_storage_redundancy = backup_storage_redundancy
+        self.current_backup_storage_redundancy = None
         self.tags = tags
 
 
@@ -7861,9 +7950,9 @@ class ServerAzureADAdministrator(ProxyResource):
     :type sid: str
     :param tenant_id: Tenant ID of the administrator.
     :type tenant_id: str
-    :param azure_ad_only_authentication: Azure Active Directory only
+    :ivar azure_ad_only_authentication: Azure Active Directory only
      Authentication enabled.
-    :type azure_ad_only_authentication: bool
+    :vartype azure_ad_only_authentication: bool
     """
 
     _validation = {
@@ -7873,6 +7962,7 @@ class ServerAzureADAdministrator(ProxyResource):
         'administrator_type': {'required': True, 'constant': True},
         'login': {'required': True},
         'sid': {'required': True},
+        'azure_ad_only_authentication': {'readonly': True},
     }
 
     _attribute_map = {
@@ -7888,11 +7978,49 @@ class ServerAzureADAdministrator(ProxyResource):
 
     administrator_type = "ActiveDirectory"
 
-    def __init__(self, *, login: str, sid: str, tenant_id: str=None, azure_ad_only_authentication: bool=None, **kwargs) -> None:
+    def __init__(self, *, login: str, sid: str, tenant_id: str=None, **kwargs) -> None:
         super(ServerAzureADAdministrator, self).__init__(**kwargs)
         self.login = login
         self.sid = sid
         self.tenant_id = tenant_id
+        self.azure_ad_only_authentication = None
+
+
+class ServerAzureADOnlyAuthentication(ProxyResource):
+    """Azure Active Directory only authentication.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param azure_ad_only_authentication: Required. Azure Active Directory only
+     Authentication enabled.
+    :type azure_ad_only_authentication: bool
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'azure_ad_only_authentication': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'azure_ad_only_authentication': {'key': 'properties.azureADOnlyAuthentication', 'type': 'bool'},
+    }
+
+    def __init__(self, *, azure_ad_only_authentication: bool, **kwargs) -> None:
+        super(ServerAzureADOnlyAuthentication, self).__init__(**kwargs)
         self.azure_ad_only_authentication = azure_ad_only_authentication
 
 
