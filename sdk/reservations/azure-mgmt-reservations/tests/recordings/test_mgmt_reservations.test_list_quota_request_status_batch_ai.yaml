@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://api-dogfood.resources.windows-int.net/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimitsRequests?api-version=2019-07-19-preview
+  response:
+    body:
+      string: "{\r\n  \"@odata.context\":\"https://api-dogfood.resources.windows-int.net/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/$metadata#serviceLimitsRequests\",\"value\":[\r\n
+        \   {\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-15T00:54:34.1582378Z\",\"message\":\"Internal
+        Server Error. Please retry.\",\"code\":\"InternalServerError\",\"SerailizeCodeField\":false,\"provisioningState\":\"Failed\",\"value\":[\r\n
+        \         {\r\n            \"subRequestId\":\"1082bcc9-501b-4e3a-818f-aa63cac554f4\",\"message\":\"\",\"provisioningState\":\"Failed\",\"Limit\":201,\"Name\":{\r\n
+        \             \"Value\":\"standarddv2family\",\"LocalizedValue\":null\r\n
+        \           },\"ResourceType\":\"dedicated\"\r\n          }\r\n        ]\r\n
+        \     },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimitsRequests/3c2826c4-5b7f-47ec-ab1b-67e7316ed3eb\",\"name\":\"00000000-0000-0000-0000-000000000000/3c2826c4-5b7f-47ec-ab1b-67e7316ed3eb\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
+        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-15T00:42:55.9031571Z\",\"message\":\"Internal
+        Server Error. Please retry.\",\"code\":\"InternalServerError\",\"SerailizeCodeField\":false,\"provisioningState\":\"Failed\",\"value\":[\r\n
+        \         {\r\n            \"subRequestId\":\"cf1623b6-1d9e-4ea6-9259-79953d0f2949\",\"message\":\"\",\"provisioningState\":\"Failed\",\"Limit\":201,\"Name\":{\r\n
+        \             \"Value\":\"standarddv2family\",\"LocalizedValue\":null\r\n
+        \           },\"ResourceType\":\"dedicated\"\r\n          }\r\n        ]\r\n
+        \     },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/WestUS/serviceLimitsRequests/aab7c275-8598-4a35-af7d-9182da1c2cca\",\"name\":\"00000000-0000-0000-0000-000000000000/aab7c275-8598-4a35-af7d-9182da1c2cca\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
+        \   }\r\n  ]\r\n}"
+    headers:
+      content-length:
+      - '2003'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Sat, 15 Aug 2020 01:03:04 GMT
+      odata-version:
+      - '4.0'
+      server:
+      - Microsoft-HTTPAPI/2.0
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1
