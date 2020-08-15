@@ -378,11 +378,7 @@ class MgmtReservationsTest(AzureMgmtTestCase):
         quota = self.reservation_client.quota.list(
             self.settings.SUBSCRIPTION_ID,
             resource_provider,
-            location,
-            custom_headers={
-                "x-ms-client-tenant-id": self.settings.TENANT_ID,
-                "x-ms-home-tenant-id": self.settings.TENANT_ID
-            }
+            location
         )
         for quota_page in quota:
             if sku is None:
@@ -481,7 +477,7 @@ class MgmtReservationsTest(AzureMgmtTestCase):
     def test_list_quota_request_status_batch_ai(self):
         statuses = self._test_list_quota_request_status(
             "Microsoft.MachineLearningServices",
-            "WestUS"
+            "westus"
         )
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

@@ -14,76 +14,38 @@ interactions:
       accept-language:
       - en-US
     method: GET
-    uri: https://api-dogfood.resources.windows-int.net/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests?api-version=2019-07-19-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests?api-version=2019-07-19-preview
   response:
     body:
-      string: "{\r\n  \"@odata.context\":\"https://api-dogfood.resources.windows-int.net/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/$metadata#serviceLimitsRequests\",\"value\":[\r\n
-        \   {\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-14T23:23:53.9014628Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
-        \         {\r\n            \"subRequestId\":\"af7f6053-5f0e-4cdf-bfdb-c208f3dcc582\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":528,\"Name\":{\r\n
+      string: "{\r\n  \"@odata.context\":\"https://capacityrpprodpreview.trafficmanager.net/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/$metadata#serviceLimitsRequests\",\"value\":[\r\n
+        \   {\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-15T01:30:03.5493722Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
+        \         {\r\n            \"subRequestId\":\"06376f35-4ab8-4793-b988-3cbcb9e83760\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":240,\"Name\":{\r\n
         \             \"Value\":\"standardDv2Family\",\"LocalizedValue\":null\r\n
-        \           },\"ResourceType\":null\r\n          }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/214d48b4-78f5-402f-90f7-1ce1de74eb4e\",\"name\":\"00000000-0000-0000-0000-000000000000/214d48b4-78f5-402f-90f7-1ce1de74eb4e\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
-        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-14T23:21:25.7529987Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
-        \         {\r\n            \"subRequestId\":\"90f596d4-9785-4f63-90d9-c66b71d25865\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":527,\"Name\":{\r\n
-        \             \"Value\":\"standardDv2Family\",\"LocalizedValue\":null\r\n
-        \           },\"ResourceType\":null\r\n          }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/33a3ad3d-bb2a-4580-a4d1-3c0f48fdfa76\",\"name\":\"00000000-0000-0000-0000-000000000000/33a3ad3d-bb2a-4580-a4d1-3c0f48fdfa76\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
-        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-14T23:19:51.1752364Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
-        \         {\r\n            \"subRequestId\":\"9169d30f-318e-47ce-b08c-342104061cf8\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":526,\"Name\":{\r\n
-        \             \"Value\":\"standardDv2Family\",\"LocalizedValue\":null\r\n
-        \           },\"ResourceType\":null\r\n          }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/35137c55-8f24-4aa1-ae5a-e0b95e90eec0\",\"name\":\"00000000-0000-0000-0000-000000000000/35137c55-8f24-4aa1-ae5a-e0b95e90eec0\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
-        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-14T23:10:46.5394727Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
-        \         {\r\n            \"subRequestId\":\"d473178e-00ec-450b-8ffc-d104b36f37e1\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":524,\"Name\":{\r\n
-        \             \"Value\":\"standardDv2Family\",\"LocalizedValue\":null\r\n
-        \           },\"ResourceType\":null\r\n          }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/5e738024-bd13-4783-b7b1-2ab7bff75137\",\"name\":\"00000000-0000-0000-0000-000000000000/5e738024-bd13-4783-b7b1-2ab7bff75137\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
-        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-07-07T21:26:02.6680862Z\",\"message\":\"Quota
-        is currently unavailable in this location for this resource. Please contact
-        Support.\",\"code\":\"QuotaNotAvailableForResource\",\"SerailizeCodeField\":false,\"provisioningState\":\"Failed\",\"value\":[\r\n
-        \         {\r\n            \"subRequestId\":\"1be129d7-fe8b-4e30-a648-e8f46419751a\",\"message\":\"\",\"provisioningState\":\"Failed\",\"Limit\":12,\"Name\":{\r\n
-        \             \"Value\":\"standardHFamily\",\"LocalizedValue\":null\r\n            },\"ResourceType\":null\r\n
-        \         }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/60df4f84-d5bc-4829-8b68-00addb3d7df4\",\"name\":\"00000000-0000-0000-0000-000000000000/60df4f84-d5bc-4829-8b68-00addb3d7df4\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
-        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-07-07T21:52:32.5195029Z\",\"message\":\"Quota
-        is currently unavailable in this location for this resource. Please contact
-        Support.\",\"code\":\"QuotaNotAvailableForResource\",\"SerailizeCodeField\":false,\"provisioningState\":\"Failed\",\"value\":[\r\n
-        \         {\r\n            \"subRequestId\":\"52123ec8-1a4d-4a41-915b-6c21eb00eeaf\",\"message\":\"\",\"provisioningState\":\"Failed\",\"Limit\":12,\"Name\":{\r\n
-        \             \"Value\":\"standardHFamily\",\"LocalizedValue\":null\r\n            },\"ResourceType\":null\r\n
-        \         }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/96da331b-0c5f-4f26-ad18-1a397e837efe\",\"name\":\"00000000-0000-0000-0000-000000000000/96da331b-0c5f-4f26-ad18-1a397e837efe\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
-        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-07-07T21:52:39.838108Z\",\"message\":\"Quota
-        is currently unavailable in this location for this resource. Please contact
-        Support.\",\"code\":\"QuotaNotAvailableForResource\",\"SerailizeCodeField\":false,\"provisioningState\":\"Failed\",\"value\":[\r\n
-        \         {\r\n            \"subRequestId\":\"a94f0870-fb92-4fad-b914-f809db6c7def\",\"message\":\"\",\"provisioningState\":\"Failed\",\"Limit\":12,\"Name\":{\r\n
-        \             \"Value\":\"standardHFamily\",\"LocalizedValue\":null\r\n            },\"ResourceType\":null\r\n
-        \         }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/ac2faeb7-7baa-4917-ac7e-0810fbde2c14\",\"name\":\"00000000-0000-0000-0000-000000000000/ac2faeb7-7baa-4917-ac7e-0810fbde2c14\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
-        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-14T23:13:45.7894953Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
-        \         {\r\n            \"subRequestId\":\"d687d212-97dd-46bb-9de3-dd99c3740b72\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":525,\"Name\":{\r\n
-        \             \"Value\":\"standardDv2Family\",\"LocalizedValue\":null\r\n
-        \           },\"ResourceType\":null\r\n          }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/b58b154d-b22c-4c88-a989-47179c61e543\",\"name\":\"00000000-0000-0000-0000-000000000000/b58b154d-b22c-4c88-a989-47179c61e543\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
-        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-14T04:15:45.2643556Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
-        \         {\r\n            \"subRequestId\":\"d9bb9f4e-11e7-43f4-a991-bcbb60cbc4a6\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":521,\"Name\":{\r\n
-        \             \"Value\":\"standardDv2Family\",\"LocalizedValue\":null\r\n
-        \           },\"ResourceType\":null\r\n          }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/bd1eee95-4090-46a1-bc9e-718475778251\",\"name\":\"00000000-0000-0000-0000-000000000000/bd1eee95-4090-46a1-bc9e-718475778251\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
-        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-14T23:13:39.0651657Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
-        \         {\r\n            \"subRequestId\":\"336914e7-3eab-4da0-a150-592e18f4f8c2\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":525,\"Name\":{\r\n
-        \             \"Value\":\"standardDv2Family\",\"LocalizedValue\":null\r\n
-        \           },\"ResourceType\":null\r\n          }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/e57d8355-a07f-4590-a8fd-a228ff0ab369\",\"name\":\"00000000-0000-0000-0000-000000000000/e57d8355-a07f-4590-a8fd-a228ff0ab369\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
-        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-14T23:27:11.8987662Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
-        \         {\r\n            \"subRequestId\":\"1087c492-9b09-4e1b-9650-0a3aea59464e\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":529,\"Name\":{\r\n
-        \             \"Value\":\"standardDv2Family\",\"LocalizedValue\":null\r\n
-        \           },\"ResourceType\":null\r\n          }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/eb221be9-4227-4d12-ba18-a83cbcb45a71\",\"name\":\"00000000-0000-0000-0000-000000000000/eb221be9-4227-4d12-ba18-a83cbcb45a71\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
-        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-14T05:16:02.0913626Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
-        \         {\r\n            \"subRequestId\":\"1ad65305-3ad9-4556-9aac-ddc07456a23d\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":522,\"Name\":{\r\n
-        \             \"Value\":\"standardDv2Family\",\"LocalizedValue\":null\r\n
-        \           },\"ResourceType\":null\r\n          }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/f3db0c42-270d-4c95-b0dc-2683cc11c0c5\",\"name\":\"00000000-0000-0000-0000-000000000000/f3db0c42-270d-4c95-b0dc-2683cc11c0c5\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
+        \           },\"ResourceType\":null\r\n          }\r\n        ]\r\n      },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.Compute/locations/WestUS/serviceLimitsRequests/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee\",\"name\":\"00000000-0000-0000-0000-000000000000/0d62622e-42d6-4f52-a7a7-4bf6dcfd2fee\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
         \   }\r\n  ]\r\n}"
     headers:
+      cache-control:
+      - no-cache
       content-length:
-      - '10119'
+      - '1055'
       content-type:
       - application/json; odata.metadata=minimal
       date:
-      - Sat, 15 Aug 2020 01:03:04 GMT
+      - Sat, 15 Aug 2020 01:39:25 GMT
+      expires:
+      - '-1'
       odata-version:
       - '4.0'
+      pragma:
+      - no-cache
       server:
       - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
       x-content-type-options:
       - nosniff
     status:
