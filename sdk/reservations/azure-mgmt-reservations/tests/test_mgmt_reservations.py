@@ -13,7 +13,7 @@ from datetime import (
 import unittest
 
 # change the custom endpoint to set the environment
-_CUSTOM_ENDPOINT = "https://api-dogfood.resources.windows-int.net/"
+_CUSTOM_ENDPOINT = "https://management.azure.com/"
 
 class MgmtReservationsTest(AzureMgmtTestCase):
 
