@@ -1,0 +1,60 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimitsRequests?api-version=2019-07-19-preview
+  response:
+    body:
+      string: "{\r\n  \"@odata.context\":\"https://capacityrpprodpreview.trafficmanager.net/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/$metadata#serviceLimitsRequests\",\"value\":[\r\n
+        \   {\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-15T01:28:57.0384939Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
+        \         {\r\n            \"subRequestId\":\"c7c4f101-132d-417a-bd4c-b22f21ec55c1\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":101,\"Name\":{\r\n
+        \             \"Value\":\"standarddv2family\",\"LocalizedValue\":null\r\n
+        \           },\"ResourceType\":\"dedicated\"\r\n          }\r\n        ]\r\n
+        \     },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimitsRequests/21eccb61-9269-455a-b29b-a9e9977652d4\",\"name\":\"00000000-0000-0000-0000-000000000000/21eccb61-9269-455a-b29b-a9e9977652d4\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
+        \   },{\r\n      \"properties\":{\r\n        \"requestSubmitTime\":\"2020-08-15T01:34:03.4814026Z\",\"message\":\"\",\"code\":\"\",\"SerailizeCodeField\":false,\"provisioningState\":\"Succeeded\",\"value\":[\r\n
+        \         {\r\n            \"subRequestId\":\"6c6a7b91-3f8c-4ff9-a17b-03338e54aede\",\"message\":\"\",\"provisioningState\":\"Succeeded\",\"Limit\":102,\"Name\":{\r\n
+        \             \"Value\":\"standarddv2family\",\"LocalizedValue\":null\r\n
+        \           },\"ResourceType\":\"dedicated\"\r\n          }\r\n        ]\r\n
+        \     },\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimitsRequests/a1e1e060-ded3-4b16-86b6-7181c1f141c7\",\"name\":\"00000000-0000-0000-0000-000000000000/a1e1e060-ded3-4b16-86b6-7181c1f141c7\",\"type\":\"Microsoft.Capacity/serviceLimitsRequests\"\r\n
+        \   }\r\n  ]\r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1912'
+      content-type:
+      - application/json; odata.metadata=minimal
+      date:
+      - Sat, 15 Aug 2020 01:39:23 GMT
+      expires:
+      - '-1'
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1
