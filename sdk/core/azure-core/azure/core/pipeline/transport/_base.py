@@ -147,7 +147,9 @@ def _urljoin(base_url, stub_url):
     :rtype: str
     """
     parsed = urlparse(base_url)
-    parsed = parsed._replace(path=parsed.path + "/" + stub_url)
+    parsed = (parsed._replace(
+        path=parsed.path + "/" + stub_url) if parsed.path[-1:] != "/" else parsed._replace(
+        path=parsed.path + stub_url))
     return parsed.geturl()
 
 
