@@ -112,11 +112,10 @@ class AsyncStorageRetryPolicy(AsyncRetryPolicy, StorageRetryPolicy):
         super(AsyncStorageRetryPolicy, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings, **kwargs):
+    def get_backoff_time(self, settings):
         """
         Calculates how long to sleep before retrying.
 
-        :param **kwargs:
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -128,7 +127,7 @@ class AsyncStorageRetryPolicy(AsyncRetryPolicy, StorageRetryPolicy):
         random_range_end = backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
 
-    async def sleep(self, settings, transport):  # pylint: disable =W0236
+    async def sleep(self, settings, transport):  # pylint: disable=W0236, arguments-differ
         backoff = self.get_backoff_time(settings)
         if not backoff or backoff < 0:
             return
@@ -144,7 +143,6 @@ class AsyncStorageRetryPolicy(AsyncRetryPolicy, StorageRetryPolicy):
                 if is_retry(response, retry_settings['mode']):
                     retries_remaining = self.increment(
                         retry_settings,
-                        request=request.http_request,
                         response=response.http_response)
                     if retries_remaining:
                         await retry_hook(
@@ -157,7 +155,7 @@ class AsyncStorageRetryPolicy(AsyncRetryPolicy, StorageRetryPolicy):
                 break
             except AzureError as err:
                 retries_remaining = self.increment(
-                    retry_settings, request=request.http_request, error=err)
+                    retry_settings, error=err)
                 if retries_remaining:
                     await retry_hook(
                         retry_settings,
@@ -206,7 +204,7 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
         super(ExponentialRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings, **kwargs):
+    def get_backoff_time(self, settings, **kwargs): # pylint: disable=unused-argument
         """
         Calculates how long to sleep before retrying.
 
@@ -247,7 +245,7 @@ class LinearRetry(AsyncStorageRetryPolicy):
         super(LinearRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings, **kwargs):
+    def get_backoff_time(self, settings, **kwargs): # pylint: disable=unused-argument
         """
         Calculates how long to sleep before retrying.
 

@@ -396,10 +396,9 @@ class StorageRetryPolicy(RetryPolicy):
         self.retry_to_secondary = retry_to_secondary
         super(StorageRetryPolicy, self).__init__()
 
-    def get_backoff_time(self, setting, **kwargs):
+    def get_backoff_time(self, settings):
         """
         Calculates how long to sleep before retrying.
-        :param **kwargs:
         :param dict settings:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return:
@@ -431,7 +430,7 @@ class StorageRetryPolicy(RetryPolicy):
             updated = url._replace(netloc=settings['hosts'].get(settings['mode']))
             request.url = updated.geturl()
 
-    def configure_retries(self, request):  # pylint: disable=no-self-use
+    def configure_retries(self, request):  # pylint: disable=no-self-use, arguments-differ
         # type: (...)-> dict
         """
         :param Any request:
@@ -461,28 +460,7 @@ class StorageRetryPolicy(RetryPolicy):
             'history': []
         }
 
-    def get_backoff_time(self, settings, **kwargs):  # pylint: disable=unused-argument,no-self-use
-        """ Formula for computing the current backoff.
-        Should be calculated by child class.
-        :param Any settings:
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :rtype: float
-        """
-        return 0
-
-    def sleep(self, settings, transport):
-        # type: (...)->None
-        """
-        :param Any settings:
-        :param Any transport:
-        :return:None
-        """
-        backoff = self.get_backoff_time(settings, )
-        if not backoff or backoff < 0:
-            return
-        transport.sleep(backoff)
-
-    def increment(self, settings, request, response=None, error=None, **kwargs):  # pylint:disable=W0613
+    def increment(self, settings, request, response=None, error=None, **kwargs):  # pylint:disable=unused-argument, arguments-differ
         # type: (...)->None
         """Increment the retry counters.
 
@@ -612,10 +590,9 @@ class ExponentialRetry(StorageRetryPolicy):
         super(ExponentialRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings, **kwargs):
+    def get_backoff_time(self, settings):
         """
         Calculates how long to sleep before retrying.
-        :param **kwargs:
         :param dict settings:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return:
@@ -655,7 +632,7 @@ class LinearRetry(StorageRetryPolicy):
         super(LinearRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings, **kwargs):
+    def get_backoff_time(self, settings):
         """
         Calculates how long to sleep before retrying.
 
