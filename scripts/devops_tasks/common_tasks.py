@@ -48,7 +48,8 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-servicefabric",
     "nspkg",
     "azure-keyvault",
-    "azure-synapse"
+    "azure-synapse",
+    "azure-ai-anomalydetector",
 ]
 META_PACKAGES = ["azure", "azure-mgmt", "azure-keyvault"]
 REGRESSION_EXCLUDED_PACKAGES = [
