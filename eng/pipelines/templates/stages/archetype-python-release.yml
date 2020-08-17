@@ -147,6 +147,9 @@ stages:
               pool:
                 vmImage: ubuntu-18.04
 
+              variables:
+                CIConfigs: "{'targets':[{'path_to_config':'ci-configs/packages-preview.json','Mode':'Preview'},{'path_to_config':'ci-configs/packages-latest.json','mode':'Latest'}]}"
+
               strategy:
                 runOnce:
                   deploy:
@@ -161,6 +164,10 @@ stages:
                           Get-ChildItem -Recurse $(Pipeline.Workspace)/${{artifact.safeName}}
                         workingDirectory: $(Pipeline.Workspace)
                         displayName: Output Visible Artifacts
+                      - template: /eng/common/pipelines/templates/steps/get-pr-owners.yml
+                        parameters:
+                          TargetVariable: "OwningGHUser"
+                          ServiceDirectory: ${{parameters.ServiceDirectory}}
                       - template: /eng/common/pipelines/templates/steps/docs-metadata-release.yml
                         parameters:
                           ArtifactLocation: $(Pipeline.Workspace)/${{artifact.safeName}}
@@ -171,11 +178,13 @@ stages:
                           TargetDocRepo: 'MicrosoftDocs/azure-docs-sdk-python'
                           TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
                           TargetDocRepoName: ${{parameters.TargetDocRepoName}}
-                          PRBranchName: 'smoke-test-rdme'
-                          ArtifactName: ${{parameters.ArtifactName}}
+                          PRBranchName: onboarding-${{artifact.name}}-$(Build.BuildId)
+                          ArtifactName: ${{artifact.name}}
                           Language: 'python'
                           ServiceDirectory: ${{ parameters.ServiceDirectory }}
                           DocRepoDestinationPath: 'docs-ref-services/' 
+                          GHReviewersVariable: 'OwningGHUser'
+                          CIConfigs: $(CIConfigs)
 
           - ${{if ne(artifact.options.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion

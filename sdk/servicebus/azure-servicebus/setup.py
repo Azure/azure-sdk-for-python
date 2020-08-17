@@ -78,11 +78,13 @@ setup(
         'azure',
     ]),
     install_requires=[
-        'uamqp>=1.2.9,<2.0.0',
+        'uamqp>=1.2.10,<2.0.0',
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
         'msrest>=0.6.17,<2.0.0',
-        'azure-core<2.0.0,>=1.6.0'
+        'azure-core<2.0.0,>=1.6.0',
+        "isodate>=0.6.0",
+        "six>=1.6",
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg', 'futures'],

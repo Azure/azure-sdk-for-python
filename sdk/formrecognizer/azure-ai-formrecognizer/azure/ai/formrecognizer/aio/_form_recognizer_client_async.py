@@ -46,9 +46,10 @@ class FormRecognizerClient(object):
         credential from :mod:`azure.identity`.
     :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
         or :class:`~azure.core.credentials_async.AsyncTokenCredential`
-    :keyword str api_version:
+    :keyword api_version:
         The API version of the service to use for requests. It defaults to the latest service version.
         Setting to an older version may result in reduced feature compatibility.
+    :paramtype api_version: str or ~azure.ai.formrecognizer.FormRecognizerApiVersion
 
     .. admonition:: Example:
 
@@ -250,7 +251,7 @@ class FormRecognizerClient(object):
         continuation_token = kwargs.pop("continuation_token", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a url.")
+            raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a URL.")
 
         if content_type is None:
             content_type = get_content_type(form)

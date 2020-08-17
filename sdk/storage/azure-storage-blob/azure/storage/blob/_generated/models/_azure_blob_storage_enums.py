@@ -78,6 +78,12 @@ class BlobType(str, Enum):
     append_blob = "AppendBlob"
 
 
+class RehydratePriority(str, Enum):
+
+    high = "High"
+    standard = "Standard"
+
+
 class StorageErrorCode(str, Enum):
 
     account_already_exists = "AccountAlreadyExists"
@@ -257,12 +263,6 @@ class PremiumPageBlobAccessTier(str, Enum):
     p80 = "P80"
 
 
-class RehydratePriority(str, Enum):
-
-    high = "High"
-    standard = "Standard"
-
-
 class BlobExpiryOptions(str, Enum):
 
     never_expire = "NeverExpire"
@@ -333,6 +333,8 @@ class AccountKind(str, Enum):
     storage = "Storage"
     blob_storage = "BlobStorage"
     storage_v2 = "StorageV2"
+    file_storage = "FileStorage"
+    block_blob_storage = "BlockBlobStorage"
 
 
 class SyncCopyStatusType(str, Enum):

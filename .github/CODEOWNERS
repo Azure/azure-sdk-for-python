@@ -9,37 +9,87 @@
 /sdk/ @mayurid @lmazuel
 
 # Core
+# PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @xiangyan99 @johanste @rakshith91
 /sdk/core/azure-core/                                                @xiangyan99 @lmazuel
 
+####
 # Service team
+####
+# PRLabel: %Azure.Identity
 /sdk/identity/                                                       @chlowell @schaabs
+
+# PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @yunhaoling @YijunXieMS
-/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft
-/sdk/applicationinsights/                                            @alexeldeib
+
+# PRLabel: %Storage
+/sdk/storage/                                                        @amishra-dev @zezha-msft @annatisch @rakshith91 @xiafu-msft @tasherif-msft @kasobol-msft
+
+/sdk/applicationinsights/                                            @alexeldeib      
+
+# PRLabel: %Batch
 /sdk/batch/                                                          @bgklein @xingwu1
-/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
+/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish          
+
+# PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @chlowell @iscai-msft
+
+# PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/                                                   @alexeldeib
+
+# PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
+
+# PRLabel: %Container Instances
 /sdk/containerinstance/                                              @samkreter @xizhamsft
+
+# PRLabel: %Container Registry
 /sdk/containerregistry/                                              @djyou
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
+
+# PRLabel: %Cosmos
 /sdk/cosmos/                                                         @southpolesteve @zfoster
+
+# PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
-/sdk/datalake/                                                       @ro-joowan
+/sdk/datalake/                                                       @ro-joowan                                                     
 /sdk/datadatamigration/                                              @vchske
+
+# PRLabel: %Event Grid
 /sdk/eventgrid/                                                      @kalyanaj
+
+# PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
+
+# PRLabel: %Machine Learning Compute
 /sdk/machinelearningcompute/                                         @shutchings
+
+# PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
+
+# PRLabel: %Search
 /sdk/search/                                                         @xiangyan99 @rakshith91
+
+# PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
+
+# PRLabel: %SQL
 /sql/sql/                                                            @jaredmoo
+
+# PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @yunhaoling @YijunXieMS @KieranBrantnerMagee
+
+# PRLabel: %Synapse
 /sdk/synapse/                                                        @aim-for-better @idear1203
+
+# PRLabel: %Cognitive - Text Analytics
 /sdk/textanalytics/                                                  @kristapratico @iscai-msft
+
+# PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft @rakshith91
+
+# PRLabel: %Tables
+/sdk/tables/                                                         @seankane-msft
 
 # Smoke Tests
 /common/smoketest/                                                   @lmazuel @chlowell @annatisch @rakshith91 @shurd @southpolesteve

@@ -1,6 +1,40 @@
 # Release History
 
-## 1.4.0b7 (Unreleased)
+## 1.5.0b1 (Unreleased)
+### Added
+- Application authentication APIs from 1.4.0b7
+ 
+## 1.4.0 (2020-08-10)
+### Added
+- `DefaultAzureCredential` uses the value of environment variable
+`AZURE_CLIENT_ID` to configure a user-assigned managed identity.
+([#10931](https://github.com/Azure/azure-sdk-for-python/issues/10931))
+
+### Breaking Changes
+- Renamed `VSCodeCredential` to `VisualStudioCodeCredential`
+- Removed application authentication APIs added in 1.4.0 beta versions. These
+  will be reintroduced in 1.5.0b1. Passing the keyword arguments below
+  generally won't cause a runtime error, but the arguments have no effect.
+  - Removed `authenticate` method from `DeviceCodeCredential`,
+    `InteractiveBrowserCredential`, and `UsernamePasswordCredential`
+  - Removed `allow_unencrypted_cache` and `enable_persistent_cache` keyword
+    arguments from `CertificateCredential`, `ClientSecretCredential`,
+    `DeviceCodeCredential`, `InteractiveBrowserCredential`, and
+    `UsernamePasswordCredential`
+  - Removed `disable_automatic_authentication` keyword argument from
+    `DeviceCodeCredential` and `InteractiveBrowserCredential`
+  - Removed `allow_unencrypted_cache` keyword argument from
+    `SharedTokenCacheCredential`
+  - Removed classes `AuthenticationRecord` and `AuthenticationRequiredError`
+  - Removed `identity_config` keyword argument from `ManagedIdentityCredential`
+
+## 1.4.0b7 (2020-07-22)
+- `DefaultAzureCredential` has a new optional keyword argument,
+`visual_studio_code_tenant_id`, which sets the tenant the credential should
+authenticate in when authenticating as the Azure user signed in to Visual
+Studio Code.
+- Renamed `AuthenticationRecord.deserialize` positional parameter `json_string`
+to `data`.
 
 
 ## 1.4.0b6 (2020-07-07)
@@ -200,7 +234,7 @@ the Azure CLI's client ID will be used.
   `client_id`
   - transport configuration is now done through keyword arguments as
   described in
-  [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/configuration.md)
+  [`azure-core` documentation](https://github.com/Azure/azure-sdk-for-python/blob/azure-identity_1.0.0/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport)
 
 ### Fixes and improvements:
 - Authenticating with a single sign-on shared with other Microsoft applications
@@ -220,7 +254,7 @@ its use in national clouds
 ### New features:
 - `AuthorizationCodeCredential` authenticates with a previously obtained
 authorization code. See Azure Active Directory's
-[authorization code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow)
+[authorization code documentation](https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
 for more information about this authentication flow.
 - Multi-cloud support: client credentials accept the authority of an Azure Active
 Directory authentication endpoint as an `authority` keyword argument. Known
@@ -275,9 +309,9 @@ revamped configuration API. Static `create_config` methods have been renamed
 
 ### New features:
 - Added credentials for authenticating users:
-[`DeviceCodeCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.DeviceCodeCredential),
-[`InteractiveBrowserCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.InteractiveBrowserCredential),
-[`UsernamePasswordCredential`](https://azure.github.io/azure-sdk-for-python/ref/azure.identity.html#azure.identity.UsernamePasswordCredential)
+ - `DeviceCodeCredential`
+ - `InteractiveBrowserCredential`
+ - `UsernamePasswordCredential`
   - async versions of these credentials will be added in a future release
 
 ## 1.0.0b1 (2019-06-28)

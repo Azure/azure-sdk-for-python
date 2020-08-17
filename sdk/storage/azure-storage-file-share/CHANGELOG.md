@@ -1,5 +1,9 @@
 # Release History
 
+## 12.2.0 (2020-08-13)
+**Stable release of preview features**
+- Preview feature `undelete_share` on FileShareServiceClient.
+
 ## 12.2.0b1 (2020-07-07)
 **New features**
 - Added `undelete_share` on FileShareServiceClient so that users can restore deleted share on share soft delete enabled account. Users can also list deleted shares when `list_shares` by specifying `include_deleted=True`.
@@ -173,7 +177,7 @@ https://aka.ms/azure-sdk-preview1-python.
     - `FileClient`: The client handles operations for a particular file. This includes creating or deleting that file, as well as upload and download data and managing properties.
 
     These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account, share, directory or file).
-    For full details on the new API, please see the [reference documentation](http://azure.github.io/azure-sdk-for-python/ref/azure.storage.file.html).
+    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/ref/Storage.html#azure-storage-file-share).
 - The copy file operation now returns a polling object that can be used to check the status of the operation, as well as abort the operation.
 - The `close_handles` operation now return a polling object that can be used to check the status of the operation.
 - Download operations now return a streaming object that can download data in multiple ways:

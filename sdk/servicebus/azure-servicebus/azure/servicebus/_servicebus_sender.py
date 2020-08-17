@@ -18,7 +18,7 @@ from .exceptions import (
     OperationTimeoutError,
     _ServiceBusErrorPolicy,
     )
-from ._common.utils import create_authentication
+from ._common.utils import create_authentication, copy_messages_to_sendable_if_needed
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
@@ -68,6 +68,7 @@ class SenderMixin(object):
             if not isinstance(message, Message):
                 raise ValueError("Scheduling batch messages only supports iterables containing Message Objects."
                                  " Received instead: {}".format(message.__class__.__name__))
+            message = copy_messages_to_sendable_if_needed(message)
             message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
@@ -109,6 +110,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
 
     .. admonition:: Example:
 
@@ -161,6 +163,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             properties=self._properties,
             error_policy=self._error_policy,
             client_name=self._name,
+            keep_alive_interval=self._config.keep_alive,
             encoding=self._config.encoding
         )
 
@@ -276,6 +279,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
         :rtype: ~azure.servicebus.ServiceBusSenderClient
 
         .. admonition:: Example:
@@ -324,6 +328,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        message = copy_messages_to_sendable_if_needed(message)
         try:
             batch = self.create_batch()
             batch._from_list(message)  # pylint: disable=protected-access

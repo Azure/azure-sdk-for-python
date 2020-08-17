@@ -13,7 +13,7 @@ from azure.core import MatchConditions
 
 from ._models import (
     ContainerEncryptionScope,
-    DelimitedJSON
+    DelimitedJsonDialect
 )
 from ._generated.models import (
     ModifiedAccessConditions,
@@ -26,7 +26,7 @@ from ._generated.models import (
     JsonTextConfiguration,
     QueryFormatType,
     BlobTag,
-    BlobTags
+    BlobTags, LeaseAccessConditions
 )
 
 
@@ -63,6 +63,15 @@ def _get_match_headers(kwargs, match_param, etag_param):
     return if_match, if_none_match
 
 
+def get_access_conditions(lease):
+    # type: (Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
+    try:
+        lease_id = lease.id # type: ignore
+    except AttributeError:
+        lease_id = lease # type: ignore
+    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+
+
 def get_modify_conditions(kwargs):
     # type: (Dict[str, Any]) -> ModifiedAccessConditions
     if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
@@ -70,7 +79,8 @@ def get_modify_conditions(kwargs):
         if_modified_since=kwargs.pop('if_modified_since', None),
         if_unmodified_since=kwargs.pop('if_unmodified_since', None),
         if_match=if_match or kwargs.pop('if_match', None),
-        if_none_match=if_none_match or kwargs.pop('if_none_match', None)
+        if_none_match=if_none_match or kwargs.pop('if_none_match', None),
+        if_tags=kwargs.pop('if_tags_match_condition', None)
     )
 
 
@@ -81,7 +91,8 @@ def get_source_conditions(kwargs):
         source_if_modified_since=kwargs.pop('source_if_modified_since', None),
         source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
         source_if_match=if_match or kwargs.pop('source_if_match', None),
-        source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None)
+        source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None),
+        source_if_tags=kwargs.pop('source_if_tags_match_condition', None)
     )
 
 
@@ -147,7 +158,7 @@ def serialize_blob_tags(tags=None):
 
 
 def serialize_query_format(formater):
-    if isinstance(formater, DelimitedJSON):
+    if isinstance(formater, DelimitedJsonDialect):
         serialization_settings = JsonTextConfiguration(
             record_separator=formater.delimiter
         )
@@ -173,5 +184,5 @@ def serialize_query_format(formater):
     elif not formater:
         return None
     else:
-        raise TypeError("Format must be DelimitedTextDialect or DelimitedJSON.")
+        raise TypeError("Format must be DelimitedTextDialect or DelimitedJsonDialect.")
     return QuerySerialization(format=qq_format)

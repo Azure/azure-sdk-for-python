@@ -12,7 +12,7 @@ from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
 from azure.storage.blob import (
     BlobServiceClient,
     DelimitedTextDialect,
-    DelimitedJSON,
+    DelimitedJsonDialect,
     BlobQueryError
 )
 
@@ -377,7 +377,7 @@ class StorageQuickQueryTest(StorageTestCase):
         def on_error(error):
             errors.append(error)
 
-        input_format = DelimitedJSON()
+        input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
@@ -423,7 +423,7 @@ class StorageQuickQueryTest(StorageTestCase):
         def on_error(error):
             errors.append(error)
 
-        input_format = DelimitedJSON()
+        input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
@@ -470,9 +470,9 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
 
         def on_error(error):
-            raise error
+            raise Exception(error.description)
 
-        input_format = DelimitedJSON()
+        input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
@@ -484,7 +484,7 @@ class StorageQuickQueryTest(StorageTestCase):
             on_error=on_error,
             blob_format=input_format,
             output_format=output_format)
-        with pytest.raises(BlobQueryError):
+        with pytest.raises(Exception):
             query_result = resp.readall()
         self._teardown(bsc)
 
@@ -513,9 +513,9 @@ class StorageQuickQueryTest(StorageTestCase):
         errors = []
 
         def on_error(error):
-            raise error
+            raise Exception(error.description)
 
-        input_format = DelimitedJSON()
+        input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
@@ -528,7 +528,7 @@ class StorageQuickQueryTest(StorageTestCase):
             blob_format=input_format,
             output_format=output_format)
 
-        with pytest.raises(BlobQueryError):
+        with pytest.raises(Exception):
             for record in resp.records():
                 print(record)
         self._teardown(bsc)
@@ -551,7 +551,7 @@ class StorageQuickQueryTest(StorageTestCase):
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         blob_client.upload_blob(data, overwrite=True)
 
-        input_format = DelimitedJSON()
+        input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
@@ -588,7 +588,7 @@ class StorageQuickQueryTest(StorageTestCase):
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         blob_client.upload_blob(data, overwrite=True)
 
-        input_format = DelimitedJSON()
+        input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
             delimiter=';',
             quotechar="'",
@@ -786,8 +786,8 @@ class StorageQuickQueryTest(StorageTestCase):
         def on_error(error):
             errors.append(error)
 
-        input_format = DelimitedJSON(delimiter='\n')
-        output_format = DelimitedJSON(delimiter=';')
+        input_format = DelimitedJsonDialect(delimiter='\n')
+        output_format = DelimitedJsonDialect(delimiter=';')
 
         resp = blob_client.query_blob(
             "SELECT name from BlobStorage",
@@ -823,8 +823,8 @@ class StorageQuickQueryTest(StorageTestCase):
         def on_error(error):
             errors.append(error)
 
-        input_format = DelimitedJSON(delimiter='\n')
-        output_format = DelimitedJSON(delimiter=';')
+        input_format = DelimitedJsonDialect(delimiter='\n')
+        output_format = DelimitedJsonDialect(delimiter=';')
 
         resp = blob_client.query_blob(
             "SELECT name from BlobStorage",
@@ -860,7 +860,7 @@ class StorageQuickQueryTest(StorageTestCase):
         def on_error(error):
             errors.append(error)
 
-        input_format = DelimitedJSON(delimiter='\n')
+        input_format = DelimitedJsonDialect(delimiter='\n')
         output_format = None
 
         resp = blob_client.query_blob(

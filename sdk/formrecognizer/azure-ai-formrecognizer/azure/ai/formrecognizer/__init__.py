@@ -31,10 +31,13 @@ from ._models import (
     CustomFormModel,
     CustomFormSubmodel,
     CustomFormModelField,
+    FieldValueType
 )
+from ._api_versions import FormRecognizerApiVersion
 
 
 __all__ = [
+    "FormRecognizerApiVersion",
     'FormRecognizerClient',
     'FormTrainingClient',
     'LengthUnit',
@@ -59,6 +62,7 @@ __all__ = [
     'CustomFormModel',
     'CustomFormSubmodel',
     'CustomFormModelField',
+    'FieldValueType'
 ]
 
 __VERSION__ = VERSION

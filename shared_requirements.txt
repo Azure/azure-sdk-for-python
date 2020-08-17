@@ -96,6 +96,7 @@ cryptography>=2.1.4
 futures
 mock
 typing
+typing-extensions
 msal<2.0.0,>=1.3.0
 msal-extensions~=0.2.2
 msrest>=0.5.0
@@ -109,6 +110,7 @@ aiohttp>=3.0
 aiodns>=2.0
 python-dateutil>=2.8.0
 six>=1.6
+isodate>=0.6.0
 #override azure azure-keyvault~=1.0
 #override azure-mgmt-core azure-core<2.0.0,>=1.7.0
 #override azure-appconfiguration azure-core<2.0.0,>=1.0.0
@@ -120,9 +122,9 @@ six>=1.6
 #override azure-keyvault-certificates msrest>=0.6.0
 #override azure-keyvault-keys msrest>=0.6.0
 #override azure-keyvault-secrets msrest>=0.6.0
-#override azure-keyvault-certificates azure-core<2.0.0,>=1.4.0
-#override azure-keyvault-keys azure-core<2.0.0,>=1.4.0
-#override azure-keyvault-secrets azure-core<2.0.0,>=1.4.0
+#override azure-keyvault-certificates azure-core<2.0.0,>=1.7.0
+#override azure-keyvault-keys azure-core<2.0.0,>=1.7.0
+#override azure-keyvault-secrets azure-core<2.0.0,>=1.7.0
 #override azure-ai-textanalytics msrest>=0.6.0
 #override azure-ai-textanalytics azure-core<2.0.0,>=1.4.0
 #override azure-search-documents azure-core<2.0.0,>=1.4.0
@@ -136,7 +138,7 @@ six>=1.6
 #override azure-storage-file-share msrest>=0.6.10
 #override azure-storage-file-datalake azure-core<2.0.0,>=1.6.0
 #override azure-storage-file-datalake msrest>=0.6.10
-#override azure-storage-file-datalake azure-storage-blob>=12.3.1
+#override azure-storage-file-datalake azure-storage-blob~=12.4.0
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
@@ -146,10 +148,11 @@ opentelemetry-api==0.10b0
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
 #override azure-eventhub uamqp<2.0,>=1.2.7
 #override azure-appconfiguration msrest>=0.6.10
-#override azure-servicebus uamqp>=1.2.9,<2.0.0
+#override azure-servicebus uamqp>=1.2.10,<2.0.0
 #override azure-servicebus msrest>=0.6.17,<2.0.0
 #override azure-servicebus azure-core<2.0.0,>=1.6.0
 #override azure-search-documents msrest>=0.6.10
 #override azure-synapse-accesscontrol azure-core>=1.6.0,<2.0.0
 #override azure-synapse-spark azure-core>=1.6.0,<2.0.0
 #override azure-synapse-artifacts azure-core>=1.6.0,<2.0.0
+#override azure-data-tables msrest>=0.6.10

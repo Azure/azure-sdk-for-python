@@ -53,7 +53,7 @@ from ..exceptions import (
     SessionLockExpired,
     MessageSettleFailed,
     MessageContentTooLarge)
-from .utils import utc_from_timestamp, utc_now
+from .utils import utc_from_timestamp, utc_now, copy_messages_to_sendable_if_needed
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
     from .._servicebus_session_receiver import ServiceBusSessionReceiver
@@ -540,6 +540,7 @@ class BatchMessage(object):
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
         """
+        message = copy_messages_to_sendable_if_needed(message)
         message_size = message.message.get_message_encoded_size()
 
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
@@ -574,6 +575,35 @@ class PeekMessage(Message):
 
     def __init__(self, message):
         super(PeekMessage, self).__init__(None, message=message)
+
+    def _to_outgoing_message(self):
+        # type: () -> Message
+        amqp_message = self.message
+        amqp_body = amqp_message._body  # pylint: disable=protected-access
+
+        if isinstance(amqp_body, uamqp.message.DataBody):
+            body = b''.join(amqp_body.data)
+        else:
+            # amqp_body is type of uamqp.message.ValueBody
+            body = amqp_body.data
+
+        return Message(
+            body=body,
+            content_type=self.content_type,
+            correlation_id=self.correlation_id,
+            label=self.label,
+            message_id=self.message_id,
+            partition_key=self.partition_key,
+            properties=self.properties,
+            reply_to=self.reply_to,
+            reply_to_session_id=self.reply_to_session_id,
+            session_id=self.session_id,
+            scheduled_enqueue_time_utc=self.scheduled_enqueue_time_utc,
+            time_to_live=self.time_to_live,
+            to=self.to,
+            via_partition_key=self.via_partition_key
+        )
+
 
     @property
     def dead_letter_error_description(self):
@@ -847,16 +877,6 @@ class ReceivedMessageBase(PeekMessage):
             expiry_in_seconds = self.message.annotations[_X_OPT_LOCKED_UNTIL]/1000
             self._expiry = utc_from_timestamp(expiry_in_seconds)
         return self._expiry
-
-    @property
-    def settled(self):
-        # type: () -> bool
-        """Whether the message has been settled.
-        This will aways be `True` for a message received using ReceiveAndDelete mode,
-        otherwise it will be `False` until the message is completed or otherwise settled.
-        :rtype: bool
-        """
-        return self._settled
 
 
 class ReceivedMessage(ReceivedMessageBase):

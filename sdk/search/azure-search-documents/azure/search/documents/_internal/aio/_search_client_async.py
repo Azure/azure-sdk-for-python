@@ -9,15 +9,17 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
 from .._generated.aio import SearchIndexClient
 from .._generated.models import IndexBatch, IndexingResult
+from .._search_documents_error import RequestEntityTooLargeError
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from ..._api_versions import validate_api_version
 from ..._headers_mixin import HeadersMixin
 from ..._version import SDK_MONIKER
+from ._search_index_document_batching_client_async import SearchIndexDocumentBatchingClient
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Union
+    from typing import Any
     from azure.core.credentials import AzureKeyCredential
 
 
@@ -49,12 +51,14 @@ class SearchClient(HeadersMixin):
 
         api_version = kwargs.pop('api_version', None)
         validate_api_version(api_version)
+        self._index_documents_batch = IndexDocumentsBatch()
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._credential = credential  # type: AzureKeyCredential
         self._client = SearchIndexClient(
             endpoint=endpoint, index_name=index_name, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: SearchIndexClient
+
 
     def __repr__(self):
         # type: () -> str
@@ -68,6 +72,11 @@ class SearchClient(HeadersMixin):
 
         """
         return await self._client.close()
+
+    def get_index_document_batching_client(self, **kwargs):
+        # type: (str, dict) -> SearchIndexDocumentBatchingClient
+        """Return a search index document batching client"""
+        return SearchIndexDocumentBatchingClient(self._endpoint, self._index_name, self._credential, **kwargs)
 
     @distributed_trace_async
     async def get_document_count(self, **kwargs):
@@ -495,13 +504,41 @@ class SearchClient(HeadersMixin):
         :type batch: IndexDocumentsBatch
         :rtype:  List[IndexingResult]
         """
-        index_documents = IndexBatch(actions=batch.actions)
+        return await self._index_documents_actions(actions=batch.actions, **kwargs)
+
+    @distributed_trace_async
+    async def _index_documents_actions(self, actions, **kwargs):
+        # type: (List[IndexAction], **Any) -> List[IndexingResult]
+        error_map = {413: RequestEntityTooLargeError}
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        batch_response = await self._client.documents.index(
-            batch=index_documents, **kwargs
-        )
-        return cast(List[IndexingResult], batch_response.results)
+        try:
+            index_documents = IndexBatch(actions=actions)
+            batch_response = await self._client.documents.index(batch=index_documents, error_map=error_map, **kwargs)
+            return cast(List[IndexingResult], batch_response.results)
+        except RequestEntityTooLargeError:
+            if len(actions) == 1:
+                raise
+            pos = round(len(actions) / 2)
+            batch_response_first_half = await self._index_documents_actions(
+                actions=actions[:pos],
+                error_map=error_map,
+                **kwargs
+            )
+            if batch_response_first_half:
+                result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
+            else:
+                result_first_half = []
+            batch_response_second_half = await self._index_documents_actions(
+                actions=actions[pos:],
+                error_map=error_map,
+                **kwargs
+            )
+            if batch_response_second_half:
+                result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
+            else:
+                result_second_half = []
+            return result_first_half.extend(result_second_half)
 
     async def __aenter__(self):
         # type: () -> SearchClient

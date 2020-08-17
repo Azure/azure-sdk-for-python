@@ -226,8 +226,8 @@ class DocumentLanguage(msrest.serialization.Model):
 
     :param id: Required. Unique, non-empty document identifier.
     :type id: str
-    :param detected_languages: Required. A list of extracted languages.
-    :type detected_languages: list[~azure.ai.textanalytics.v3_1_preview_1.models.DetectedLanguage]
+    :param detected_language: Required. Detected Language.
+    :type detected_language: ~azure.ai.textanalytics.v3_1_preview_1.models.DetectedLanguage
     :param warnings: Required. Warnings encountered while processing document.
     :type warnings: list[~azure.ai.textanalytics.v3_1_preview_1.models.TextAnalyticsWarning]
     :param statistics: if showStats=true was specified in the request this field will contain
@@ -237,13 +237,13 @@ class DocumentLanguage(msrest.serialization.Model):
 
     _validation = {
         'id': {'required': True},
-        'detected_languages': {'required': True},
+        'detected_language': {'required': True},
         'warnings': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'detected_languages': {'key': 'detectedLanguages', 'type': '[DetectedLanguage]'},
+        'detected_language': {'key': 'detectedLanguage', 'type': 'DetectedLanguage'},
         'warnings': {'key': 'warnings', 'type': '[TextAnalyticsWarning]'},
         'statistics': {'key': 'statistics', 'type': 'DocumentStatistics'},
     }
@@ -254,7 +254,7 @@ class DocumentLanguage(msrest.serialization.Model):
     ):
         super(DocumentLanguage, self).__init__(**kwargs)
         self.id = kwargs['id']
-        self.detected_languages = kwargs['detected_languages']
+        self.detected_language = kwargs['detected_language']
         self.warnings = kwargs['warnings']
         self.statistics = kwargs.get('statistics', None)
 

@@ -449,6 +449,17 @@ class StorageClientTestAsync(AsyncStorageTestCase):
         self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertEqual(service.url, 'http://local-machine:11002/custom/account/path/foo/bar?snapshot=baz')
 
+    def test_create_blob_client_with_sub_directory_path_in_blob_name(self):
+        blob_url = "https://testaccount.blob.core.windows.net/containername/dir1/sub000/2010_Unit150_Ivan097_img0003.jpg"
+        blob_client = BlobClient.from_blob_url(blob_url)
+        self.assertEqual(blob_client.container_name, "containername")
+        self.assertEqual(blob_client.blob_name, "dir1/sub000/2010_Unit150_Ivan097_img0003.jpg")
+
+        blob_emulator_url = 'http://127.0.0.1:1000/devstoreaccount1/containername/dir1/sub000/2010_Unit150_Ivan097_img0003.jpg'
+        blob_client = BlobClient.from_blob_url(blob_emulator_url)
+        self.assertEqual(blob_client.container_name, "containername")
+        self.assertEqual(blob_client.blob_name, "dir1/sub000/2010_Unit150_Ivan097_img0003.jpg")
+
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_request_callback_signed_header_async(self, resource_group, location, storage_account, storage_account_key):

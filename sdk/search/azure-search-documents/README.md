@@ -37,7 +37,7 @@ Use the Azure.Search.Documents client library to:
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/search/azure-search-documents) |
 [Package (PyPI)](https://pypi.org/project/azure-search-documents/) |
 [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/index.html) |
-[Product documentation](https://docs.microsoft.com/en-us/azure/search/search-what-is-azure-search) |
+[Product documentation](https://docs.microsoft.com/azure/search/search-what-is-azure-search) |
 [Samples](samples)
 
 
@@ -398,9 +398,9 @@ result =  client.search(search_text="spa", logging_enable=True)
 
 ## Next steps
 
-* [Go further with Azure.Search.Documents and our samples](samples)
-* [Watch a demo or deep dive video](https://azure.microsoft.com/resources/videos/index/?services=search)
-* [Read more about the Azure Cognitive Search service](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
+* Go further with Azure.Search.Documents and our [samples](samples)
+* Watch a [demo or deep dive video](https://azure.microsoft.com/resources/videos/index/?services=search)
+* Read more about the [Azure Cognitive Search service](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
 
 ## Contributing
 
@@ -430,13 +430,13 @@ additional questions or comments.
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_core]: ../../core/azure-core/README.md
 [azure_sub]: https://azure.microsoft.com/free/
-[search_resource]: https://docs.microsoft.com/en-us/azure/search/search-create-service-portal
+[search_resource]: https://docs.microsoft.com/azure/search/search-create-service-portal
 [azure_portal]: https://portal.azure.com
 
 [create_search_service_docs]: https://docs.microsoft.com/azure/search/search-create-service-portal
 [create_search_service_ps]: https://docs.microsoft.com/azure/search/search-manage-powershell#create-or-delete-a-service
 [create_search_service_cli]: https://docs.microsoft.com/cli/azure/search/service?view=azure-cli-latest#az-search-service-create
-[search_contrib]: ../CONTRIBUTING.md
+[search_contrib]: https://github.com/Azure/azure-sdk-for-python/blob/master/CONTRIBUTING.md
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 
 [cla]: https://cla.microsoft.com

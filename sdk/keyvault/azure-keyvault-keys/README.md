@@ -138,7 +138,7 @@ Azure Key Vault can create and store RSA and elliptic curve keys. Both can
 optionally be protected by hardware security modules (HSMs). Azure Key Vault
 can also perform cryptographic operations with them. For more information about
 keys and supported operations and algorithms, see the
-[Key Vault documentation](https://docs.microsoft.com/en-us/azure/key-vault/about-keys-secrets-and-certificates#key-vault-keys).
+[Key Vault documentation](https://docs.microsoft.com/azure/key-vault/about-keys-secrets-and-certificates#key-vault-keys).
 
 [KeyClient][key_client_docs] can create keys in the vault, get existing keys
 from the vault, update key metadata, and delete keys, as shown in the
@@ -151,14 +151,14 @@ This section contains code snippets covering common tasks:
 * [Update an existing Key](#update-an-existing-key "Update an existing Key")
 * [Delete a Key](#delete-a-key "Delete a Key")
 * [List Keys](#list-keys "List Keys")
+* [Perform cryptographic operations](#cryptographic-operations)
 * [Asynchronously create a Key](#asynchronously-create-a-key "Asynchronously create a Key")
 * [Asynchronously list Keys](#asynchronously-list-keys "Asynchronously list Keys")
-* [Perform cryptographic operations](#cryptographic-operations)
 
 ### Create a Key
-[create_rsa_key](https://aka.ms/azsdk-python-keyvault-keys-create-rsa-key-ref) and
-[create_ec_key](https://aka.ms/azsdk-python-keyvault-keys-create-ec-key-rf) create RSA and elliptic curve keys in the
-vault, respectively. If a key with the same name already exists, a new version
+[create_rsa_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_rsa_key) and
+[create_ec_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.create_ec_key)
+create RSA and elliptic curve keys in the vault, respectively. If a key with the same name already exists, a new version
 of that key is created.
 
 ```python
@@ -181,7 +181,8 @@ print(ec_key.key_type)
 ```
 
 ### Retrieve a Key
-[get_key](https://aka.ms/azsdk-python-keyvault-keys-get-key-ref) retrieves a key previously stored in the vault.
+[get_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.get_key) retrieves a key
+previously stored in the Vault.
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
@@ -194,7 +195,8 @@ print(key.name)
 ```
 
 ### Update an existing Key
-[update_key_properties](https://aka.ms/azsdk-python-keyvault-keys-update-key-ref) updates the properties of a key previously stored in the Key Vault.
+[update_key_properties](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.update_key_properties)
+updates the properties of a key previously stored in the Key Vault.
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
@@ -211,10 +213,10 @@ print(updated_key.properties.enabled)
 ```
 
 ### Delete a Key
-[begin_delete_key](https://aka.ms/azsdk-python-keyvault-keys-begin-delete-key-ref) requests Key Vault delete a key, returning a poller which allows you to
-wait for the deletion to finish. Waiting is helpful when the vault has [soft-delete][soft_delete]
-enabled, and you want to purge (permanently delete) the key as soon as possible.
-When [soft-delete][soft_delete] is disabled, `begin_delete_key` itself is permanent.
+[begin_delete_key](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.begin_delete_key)
+requests Key Vault delete a key, returning a poller which allows you to wait for the deletion to finish. Waiting is
+helpful when the vault has [soft-delete][soft_delete] enabled, and you want to purge (permanently delete) the key as
+soon as possible. When [soft-delete][soft_delete] is disabled, `begin_delete_key` itself is permanent.
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -229,8 +231,8 @@ print(deleted_key.name)
 print(deleted_key.deleted_date)
 ```
 ### List keys
-[list_properties_of_keys](https://aka.ms/azsdk-python-keyvault-keys-list-properties-keys-ref) lists the
-properties of all of the keys in the client's vault.
+[list_properties_of_keys](https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient.list_properties_of_keys)
+lists the properties of all of the keys in the client's vault.
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -247,8 +249,8 @@ for key in keys:
 ```
 
 ### Cryptographic operations
-[CryptographyClient][crypto_client_docs] enables cryptographic operations (encrypt/decrypt,
-wrap/unwrap, sign/verify) using a particular key.
+[CryptographyClient](https://aka.ms/azsdk/python/keyvault-keys/crypto/docs#azure.keyvault.keys.crypto.CryptographyClient)
+enables cryptographic operations (encrypt/decrypt, wrap/unwrap, sign/verify) using a particular key.
 
 ```py
 from azure.identity import DefaultAzureCredential
@@ -267,7 +269,7 @@ decrypted = crypto_client.decrypt(result.algorithm, result.ciphertext)
 ```
 
 See the
-[package documentation](https://aka.ms/azsdk-python-keyvault-keys-crypto-ref)
+[package documentation][crypto_client_docs]
 for more details of the cryptography API.
 
 ### Async API
@@ -296,9 +298,10 @@ async with client:
 ```
 
 ### Asynchronously create a Key
-[create_rsa_key](https://aka.ms/azsdk-python-keyvault-keys-async-create-rsa-key-ref) and
-[create_ec_key](https://aka.ms/azsdk-python-keyvault-keys-async-create-ec-key-ref) create RSA and elliptic curve keys in the vault, respectively.
-If a key with the same name already exists, a new version of the key is created.
+[create_rsa_key](https://aka.ms/azsdk/python/keyvault-keys/aio/docs#azure.keyvault.keys.aio.KeyClient.create_rsa_key) and
+[create_ec_key](https://aka.ms/azsdk/python/keyvault-keys/aio/docs#azure.keyvault.keys.aio.KeyClient.create_ec_key)
+create RSA and elliptic curve keys in the vault, respectively. If a key with the same name already exists, a new
+version of the key is created.
 
 ```python
 from azure.identity.aio import DefaultAzureCredential
@@ -319,8 +322,8 @@ print(ec_key.key_type)
 ```
 
 ### Asynchronously list keys
-[list_properties_of_keys](https://aka.ms/azsdk-python-keyvault-keys-async-list-properties-keys-ref) lists the
-properties of all of the keys in the client's vault.
+[list_properties_of_keys](https://aka.ms/azsdk/python/keyvault-keys/aio/docs#azure.keyvault.keys.aio.KeyClient.list_properties_of_keys)
+lists the properties of all of the keys in the client's vault.
 
 ```python
 from azure.identity.aio import DefaultAzureCredential
@@ -426,7 +429,7 @@ additional questions or comments.
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity
 [azure_identity_pypi]: https://pypi.org/project/azure-identity/
 [azure_sub]: https://azure.microsoft.com/free/
-[default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
+[default_cred_ref]: https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/hello_world.py
 [hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/hello_world_async.py
@@ -436,16 +439,14 @@ additional questions or comments.
 [list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/list_operations_async.py
 [recover_purge_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/recover_purge_operations.py
 [recover_purge_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/samples/recover_purge_operations_async.py
-[keyvault_docs]: https://docs.microsoft.com/en-us/azure/key-vault/
+[keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [pip]: https://pypi.org/project/pip/
 [pypi_package_keys]: https://pypi.org/project/azure-keyvault-keys/
-[reference_docs]: https://aka.ms/azsdk-python-keyvault-keys-docs
-[key_client_docs]: https://aka.ms/azsdk-python-keyvault-keys-keyclient
-[crypto_client_docs]: https://aka.ms/azsdk-python-keyvault-keys-cryptographyclient
+[reference_docs]: https://aka.ms/azsdk/python/keyvault-keys/docs
+[key_client_docs]: https://aka.ms/azsdk/python/keyvault-keys/docs#azure.keyvault.keys.KeyClient
+[crypto_client_docs]: https://aka.ms/azsdk/python/keyvault-keys/crypto/docs
 [key_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/azure/keyvault/keys
 [key_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples
-[soft_delete]: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
-[test_examples_keys]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/tests/test_samples_keys.py
-[test_example_keys_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/tests/test_samples_keys_async.py
+[soft_delete]: https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-keys%2FFREADME.png)
