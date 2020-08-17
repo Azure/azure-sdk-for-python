@@ -1,5 +1,13 @@
 # Release History
 
+## 0.11.0 (2020-07-15)
+
+**Features**
+
+  - Model MetricTrigger has a new parameter metric_namespace
+  - Model MetricTrigger has a new parameter dimensions
+  - Added operation group ManagementGroupDiagnosticSettingsOperations
+
 ## 0.10.0 (2020-06-08)
 
 **Features**

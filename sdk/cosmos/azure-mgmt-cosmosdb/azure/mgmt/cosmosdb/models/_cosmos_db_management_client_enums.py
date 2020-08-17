@@ -50,6 +50,25 @@ class ServerVersion(str, Enum):
     three_full_stop_six = "3.6"
 
 
+class CreateMode(str, Enum):
+
+    default = "Default"
+    restore = "Restore"
+
+
+class RestoreMode(str, Enum):
+
+    point_in_time = "PointInTime"
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
+
+
 class IndexingMode(str, Enum):
 
     consistent = "Consistent"
@@ -113,6 +132,14 @@ class TriggerOperation(str, Enum):
     update = "Update"
     delete = "Delete"
     replace = "Replace"
+
+
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
 
 
 class KeyKind(str, Enum):

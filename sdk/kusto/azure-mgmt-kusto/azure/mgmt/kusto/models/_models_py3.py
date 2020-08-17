@@ -518,8 +518,12 @@ class Cluster(TrackedResource):
     :param enable_purge: A boolean value that indicates if the purge
      operations are enabled. Default value: False .
     :type enable_purge: bool
-    :param language_extensions: List of the cluster's language extensions.
-    :type language_extensions: ~azure.mgmt.kusto.models.LanguageExtensionsList
+    :ivar language_extensions: List of the cluster's language extensions.
+    :vartype language_extensions:
+     ~azure.mgmt.kusto.models.LanguageExtensionsList
+    :param enable_double_encryption: A boolean value that indicates if double
+     encryption is enabled. Default value: False .
+    :type enable_double_encryption: bool
     """
 
     _validation = {
@@ -533,6 +537,7 @@ class Cluster(TrackedResource):
         'uri': {'readonly': True},
         'data_ingestion_uri': {'readonly': True},
         'state_reason': {'readonly': True},
+        'language_extensions': {'readonly': True},
     }
 
     _attribute_map = {
@@ -557,9 +562,10 @@ class Cluster(TrackedResource):
         'key_vault_properties': {'key': 'properties.keyVaultProperties', 'type': 'KeyVaultProperties'},
         'enable_purge': {'key': 'properties.enablePurge', 'type': 'bool'},
         'language_extensions': {'key': 'properties.languageExtensions', 'type': 'LanguageExtensionsList'},
+        'enable_double_encryption': {'key': 'properties.enableDoubleEncryption', 'type': 'bool'},
     }
 
-    def __init__(self, *, location: str, sku, tags=None, zones=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, language_extensions=None, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, tags=None, zones=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, enable_double_encryption: bool=False, **kwargs) -> None:
         super(Cluster, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.zones = zones
@@ -576,7 +582,8 @@ class Cluster(TrackedResource):
         self.virtual_network_configuration = virtual_network_configuration
         self.key_vault_properties = key_vault_properties
         self.enable_purge = enable_purge
-        self.language_extensions = language_extensions
+        self.language_extensions = None
+        self.enable_double_encryption = enable_double_encryption
 
 
 class ClusterCheckNameRequest(Model):
@@ -775,8 +782,12 @@ class ClusterUpdate(Resource):
     :param enable_purge: A boolean value that indicates if the purge
      operations are enabled. Default value: False .
     :type enable_purge: bool
-    :param language_extensions: List of the cluster's language extensions.
-    :type language_extensions: ~azure.mgmt.kusto.models.LanguageExtensionsList
+    :ivar language_extensions: List of the cluster's language extensions.
+    :vartype language_extensions:
+     ~azure.mgmt.kusto.models.LanguageExtensionsList
+    :param enable_double_encryption: A boolean value that indicates if double
+     encryption is enabled. Default value: False .
+    :type enable_double_encryption: bool
     """
 
     _validation = {
@@ -788,6 +799,7 @@ class ClusterUpdate(Resource):
         'uri': {'readonly': True},
         'data_ingestion_uri': {'readonly': True},
         'state_reason': {'readonly': True},
+        'language_extensions': {'readonly': True},
     }
 
     _attribute_map = {
@@ -811,9 +823,10 @@ class ClusterUpdate(Resource):
         'key_vault_properties': {'key': 'properties.keyVaultProperties', 'type': 'KeyVaultProperties'},
         'enable_purge': {'key': 'properties.enablePurge', 'type': 'bool'},
         'language_extensions': {'key': 'properties.languageExtensions', 'type': 'LanguageExtensionsList'},
+        'enable_double_encryption': {'key': 'properties.enableDoubleEncryption', 'type': 'bool'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, sku=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, language_extensions=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, sku=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, enable_double_encryption: bool=False, **kwargs) -> None:
         super(ClusterUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -831,7 +844,8 @@ class ClusterUpdate(Resource):
         self.virtual_network_configuration = virtual_network_configuration
         self.key_vault_properties = key_vault_properties
         self.enable_purge = enable_purge
-        self.language_extensions = language_extensions
+        self.language_extensions = None
+        self.enable_double_encryption = enable_double_encryption
 
 
 class Database(ProxyResource):
@@ -1278,17 +1292,25 @@ class EventGridDataConnection(DataConnection):
     :type event_hub_resource_id: str
     :param consumer_group: Required. The event hub consumer group.
     :type consumer_group: str
-    :param table_name: Required. The table where the data should be ingested.
-     Optionally the table information can be added to each message.
+    :param table_name: The table where the data should be ingested. Optionally
+     the table information can be added to each message.
     :type table_name: str
     :param mapping_rule_name: The mapping rule to be used to ingest the data.
      Optionally the mapping information can be added to each message.
     :type mapping_rule_name: str
-    :param data_format: Required. The data format of the message. Optionally
-     the data format can be added to each message. Possible values include:
-     'MULTIJSON', 'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW',
-     'SINGLEJSON', 'AVRO', 'TSVE', 'PARQUET', 'ORC'
+    :param data_format: The data format of the message. Optionally the data
+     format can be added to each message. Possible values include: 'MULTIJSON',
+     'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
+     'AVRO', 'TSVE', 'PARQUET', 'ORC', 'APACHEAVRO', 'W3CLOGFILE'
     :type data_format: str or ~azure.mgmt.kusto.models.EventGridDataFormat
+    :param ignore_first_record: A Boolean value that, if set to true,
+     indicates that ingestion should ignore the first record of every file
+    :type ignore_first_record: bool
+    :param blob_storage_event_type: The name of blob storage event type to
+     process. Possible values include: 'Microsoft.Storage.BlobCreated',
+     'Microsoft.Storage.BlobRenamed'
+    :type blob_storage_event_type: str or
+     ~azure.mgmt.kusto.models.BlobStorageEventType
     """
 
     _validation = {
@@ -1299,8 +1321,6 @@ class EventGridDataConnection(DataConnection):
         'storage_account_resource_id': {'required': True},
         'event_hub_resource_id': {'required': True},
         'consumer_group': {'required': True},
-        'table_name': {'required': True},
-        'data_format': {'required': True},
     }
 
     _attribute_map = {
@@ -1315,9 +1335,11 @@ class EventGridDataConnection(DataConnection):
         'table_name': {'key': 'properties.tableName', 'type': 'str'},
         'mapping_rule_name': {'key': 'properties.mappingRuleName', 'type': 'str'},
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
+        'ignore_first_record': {'key': 'properties.ignoreFirstRecord', 'type': 'bool'},
+        'blob_storage_event_type': {'key': 'properties.blobStorageEventType', 'type': 'str'},
     }
 
-    def __init__(self, *, storage_account_resource_id: str, event_hub_resource_id: str, consumer_group: str, table_name: str, data_format, location: str=None, mapping_rule_name: str=None, **kwargs) -> None:
+    def __init__(self, *, storage_account_resource_id: str, event_hub_resource_id: str, consumer_group: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, ignore_first_record: bool=None, blob_storage_event_type=None, **kwargs) -> None:
         super(EventGridDataConnection, self).__init__(location=location, **kwargs)
         self.storage_account_resource_id = storage_account_resource_id
         self.event_hub_resource_id = event_hub_resource_id
@@ -1325,6 +1347,8 @@ class EventGridDataConnection(DataConnection):
         self.table_name = table_name
         self.mapping_rule_name = mapping_rule_name
         self.data_format = data_format
+        self.ignore_first_record = ignore_first_record
+        self.blob_storage_event_type = blob_storage_event_type
         self.kind = 'EventGrid'
 
 
@@ -1362,7 +1386,7 @@ class EventHubDataConnection(DataConnection):
     :param data_format: The data format of the message. Optionally the data
      format can be added to each message. Possible values include: 'MULTIJSON',
      'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
-     'AVRO', 'TSVE', 'PARQUET', 'ORC'
+     'AVRO', 'TSVE', 'PARQUET', 'ORC', 'APACHEAVRO', 'W3CLOGFILE'
     :type data_format: str or ~azure.mgmt.kusto.models.EventHubDataFormat
     :param event_system_properties: System properties of the event hub
     :type event_system_properties: list[str]
@@ -1551,7 +1575,7 @@ class IotHubDataConnection(DataConnection):
     :param data_format: The data format of the message. Optionally the data
      format can be added to each message. Possible values include: 'MULTIJSON',
      'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
-     'AVRO', 'TSVE', 'PARQUET', 'ORC'
+     'AVRO', 'TSVE', 'PARQUET', 'ORC', 'APACHEAVRO', 'W3CLOGFILE'
     :type data_format: str or ~azure.mgmt.kusto.models.IotHubDataFormat
     :param event_system_properties: System properties of the iot hub
     :type event_system_properties: list[str]

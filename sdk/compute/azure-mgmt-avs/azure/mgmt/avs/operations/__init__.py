@@ -13,10 +13,14 @@ from ._operations import Operations
 from ._locations_operations import LocationsOperations
 from ._private_clouds_operations import PrivateCloudsOperations
 from ._clusters_operations import ClustersOperations
+from ._hcx_enterprise_sites_operations import HcxEnterpriseSitesOperations
+from ._authorizations_operations import AuthorizationsOperations
 
 __all__ = [
     'Operations',
     'LocationsOperations',
     'PrivateCloudsOperations',
     'ClustersOperations',
+    'HcxEnterpriseSitesOperations',
+    'AuthorizationsOperations',
 ]

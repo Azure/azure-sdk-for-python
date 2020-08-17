@@ -1,5 +1,16 @@
 # Release History
 
+## 0.20.0 (2020-06-22)
+
+**Features**
+
+  - Model ManagedDatabase has a new parameter last_backup_name
+  - Model ManagedDatabase has a new parameter auto_complete_restore
+  - Model ManagedDatabaseUpdate has a new parameter last_backup_name
+  - Model ManagedDatabaseUpdate has a new parameter auto_complete_restore
+  - Model ManagedInstanceOperation has a new parameter operation_parameters
+  - Model ManagedInstanceOperation has a new parameter operation_steps
+
 ## 0.19.0 (2020-06-22)
 
 **Features**

@@ -13,9 +13,9 @@ interactions:
       "Small"}, "osProfile": {"linuxOperatingSystemProfile": {"username": "sshuser",
       "password": "Password1!"}}}]}, "storageProfile": {"storageaccounts": [{"name":
       "hdipy.dfs.core.windows.net", "isDefault": true, "fileSystem": "hdisdk-adlgen2bcf612a0",
-      "key": "cI5dH3vF9VQQb2lk3u6O9ZrPNbIi02z4h4RGJLeTnkQZEWDtW7pemAeVjwOmCte3+J5kDST5alDXLi9T8g9ERg=="},
+      "key": "0Zd4mATRo+axwaMw7Al7ThV6kDNhjrTdnXgXhO5kvupeRfBis+nVU5+oEZ3LNf4cx888gZWRianNn2HDlTWBXQ=="},
       {"name": "hdipy2.blob.core.windows.net", "isDefault": false, "container": "hdisdk-adlgen2bcf612a0",
-      "key": "7mbmWY9oG5XJtPRzJFM///S9uGIVxsEm5Api/oSD4IV2jWVfZoZBGIJl9D1Rd7CuA76Zfqt2XUEv78o1wb9KAA=="}]}}}\'''''
+      "key": "T5iMlRLkAUnWX6QNCLrSH/zdpidNQcsQJfYdgpI8/Qur0o/l798TUhulhIlNwsOuqGpc/yj7A8WRJDF3pnyJWQ=="}]}}}\'''''
     headers:
       Accept:
       - application/json
@@ -29,7 +29,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -37,20 +37,20 @@ interactions:
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0","name":"hdisdk-adlgen2bcf612a0","type":"Microsoft.HDInsight/clusters","location":"North
-        Central US","etag":"a85276f6-61e4-40d3-be1d-eca2a118a7a8","tags":{},"properties":{"clusterVersion":"3.6.1000.67","clusterHdpVersion":"","osType":"Linux","clusterDefinition":{"blueprint":"https://blueprints.azurehdinsight.net/hadoop-3.6.1000.67.2004291541.json","kind":"hadoop","componentVersion":{"hadoop":"2.7"}},"computeProfile":{"roles":[{"name":"headnode","targetInstanceCount":2,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"workernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"zookeepernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a2_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false}]},"provisioningState":"InProgress","clusterState":"Accepted","createdDate":"2020-05-29T04:20:42.887","quotaInfo":{"coresUsed":20},"tier":"standard","storageProfile":{"storageaccounts":[{"name":"hdipy.dfs.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":"hdisdk-adlgen2bcf612a0","container":null,"saskey":null,"isDefault":true},{"name":"hdipy2.blob.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":null,"container":"hdisdk-adlgen2bcf612a0","saskey":null,"isDefault":false}]}}}'
+        Central US","etag":"473d614d-13c1-4772-baa9-04581b543eba","tags":{},"properties":{"clusterVersion":"3.6.1000.67","clusterHdpVersion":"","osType":"Linux","clusterDefinition":{"blueprint":"https://blueprints.azurehdinsight.net/hadoop-3.6.1000.67.2006100202.json","kind":"hadoop","componentVersion":{"hadoop":"2.7"}},"clusterId":"89949b90054f42fb86966cf6c12c7345","computeProfile":{"roles":[{"name":"headnode","targetInstanceCount":2,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"workernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"zookeepernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a2_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false}]},"provisioningState":"InProgress","clusterState":"Accepted","createdDate":"2020-07-17T13:21:38.523","quotaInfo":{"coresUsed":20},"tier":"standard","encryptionInTransitProperties":{"isEncryptionInTransitEnabled":false},"storageProfile":{"storageaccounts":[{"name":"hdipy.dfs.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":"hdisdk-adlgen2bcf612a0","container":null,"saskey":null,"isDefault":true,"fileshare":null},{"name":"hdipy2.blob.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":null,"container":"hdisdk-adlgen2bcf612a0","saskey":null,"isDefault":false,"fileshare":null}]},"excludedServicesConfig":{"m_Item1":"default","m_Item2":""}}}'
     headers:
       azure-asyncoperation:
       - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
       cache-control:
       - no-cache
       content-length:
-      - '1689'
+      - '1901'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:20:44 GMT
+      - Fri, 17 Jul 2020 13:21:39 GMT
       etag:
-      - '"a85276f6-61e4-40d3-be1d-eca2a118a7a8"'
+      - '"473d614d-13c1-4772-baa9-04581b543eba"'
       expires:
       - '-1'
       pragma:
@@ -72,7 +72,7 @@ interactions:
       x-ms-hdi-served-by:
       - northcentralus
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -87,7 +87,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -101,7 +101,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:21:17 GMT
+      - Fri, 17 Jul 2020 13:22:12 GMT
       expires:
       - '-1'
       pragma:
@@ -134,7 +134,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -148,7 +148,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:21:47 GMT
+      - Fri, 17 Jul 2020 13:22:43 GMT
       expires:
       - '-1'
       pragma:
@@ -181,7 +181,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -195,7 +195,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:22:17 GMT
+      - Fri, 17 Jul 2020 13:23:16 GMT
       expires:
       - '-1'
       pragma:
@@ -228,7 +228,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -242,7 +242,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:22:48 GMT
+      - Fri, 17 Jul 2020 13:23:47 GMT
       expires:
       - '-1'
       pragma:
@@ -275,7 +275,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -289,7 +289,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:23:19 GMT
+      - Fri, 17 Jul 2020 13:24:17 GMT
       expires:
       - '-1'
       pragma:
@@ -322,7 +322,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -336,7 +336,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:23:49 GMT
+      - Fri, 17 Jul 2020 13:24:48 GMT
       expires:
       - '-1'
       pragma:
@@ -369,7 +369,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -383,7 +383,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:24:20 GMT
+      - Fri, 17 Jul 2020 13:25:19 GMT
       expires:
       - '-1'
       pragma:
@@ -416,7 +416,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -430,7 +430,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:24:50 GMT
+      - Fri, 17 Jul 2020 13:25:50 GMT
       expires:
       - '-1'
       pragma:
@@ -463,7 +463,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -477,7 +477,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:25:21 GMT
+      - Fri, 17 Jul 2020 13:26:22 GMT
       expires:
       - '-1'
       pragma:
@@ -510,7 +510,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -524,7 +524,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:25:51 GMT
+      - Fri, 17 Jul 2020 13:26:52 GMT
       expires:
       - '-1'
       pragma:
@@ -557,7 +557,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -571,7 +571,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:26:22 GMT
+      - Fri, 17 Jul 2020 13:27:23 GMT
       expires:
       - '-1'
       pragma:
@@ -604,7 +604,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -618,7 +618,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:26:53 GMT
+      - Fri, 17 Jul 2020 13:27:54 GMT
       expires:
       - '-1'
       pragma:
@@ -651,7 +651,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -665,7 +665,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:27:23 GMT
+      - Fri, 17 Jul 2020 13:28:26 GMT
       expires:
       - '-1'
       pragma:
@@ -698,7 +698,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -712,7 +712,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:27:55 GMT
+      - Fri, 17 Jul 2020 13:28:57 GMT
       expires:
       - '-1'
       pragma:
@@ -745,7 +745,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -759,7 +759,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:28:25 GMT
+      - Fri, 17 Jul 2020 13:29:29 GMT
       expires:
       - '-1'
       pragma:
@@ -792,7 +792,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -806,7 +806,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:28:56 GMT
+      - Fri, 17 Jul 2020 13:30:00 GMT
       expires:
       - '-1'
       pragma:
@@ -839,7 +839,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -853,7 +853,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:29:27 GMT
+      - Fri, 17 Jul 2020 13:30:31 GMT
       expires:
       - '-1'
       pragma:
@@ -886,7 +886,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -900,7 +900,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:29:57 GMT
+      - Fri, 17 Jul 2020 13:31:02 GMT
       expires:
       - '-1'
       pragma:
@@ -933,7 +933,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -947,7 +947,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:30:27 GMT
+      - Fri, 17 Jul 2020 13:31:33 GMT
       expires:
       - '-1'
       pragma:
@@ -980,7 +980,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -994,7 +994,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:30:58 GMT
+      - Fri, 17 Jul 2020 13:32:03 GMT
       expires:
       - '-1'
       pragma:
@@ -1027,7 +1027,289 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
+  response:
+    body:
+      string: '{"status":"InProgress"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '23'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 17 Jul 2020 13:32:35 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-hdi-matched-rule:
+      - ClusterResourcesAndSubResources
+      x-ms-hdi-routed-to:
+      - RegionalRp
+      x-ms-hdi-served-by:
+      - northcentralus
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
+  response:
+    body:
+      string: '{"status":"InProgress"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '23'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 17 Jul 2020 13:33:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-hdi-matched-rule:
+      - ClusterResourcesAndSubResources
+      x-ms-hdi-routed-to:
+      - RegionalRp
+      x-ms-hdi-served-by:
+      - northcentralus
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
+  response:
+    body:
+      string: '{"status":"InProgress"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '23'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 17 Jul 2020 13:33:36 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-hdi-matched-rule:
+      - ClusterResourcesAndSubResources
+      x-ms-hdi-routed-to:
+      - RegionalRp
+      x-ms-hdi-served-by:
+      - northcentralus
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
+  response:
+    body:
+      string: '{"status":"InProgress"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '23'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 17 Jul 2020 13:34:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-hdi-matched-rule:
+      - ClusterResourcesAndSubResources
+      x-ms-hdi-routed-to:
+      - RegionalRp
+      x-ms-hdi-served-by:
+      - northcentralus
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
+  response:
+    body:
+      string: '{"status":"InProgress"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '23'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 17 Jul 2020 13:34:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-hdi-matched-rule:
+      - ClusterResourcesAndSubResources
+      x-ms-hdi-routed-to:
+      - RegionalRp
+      x-ms-hdi-served-by:
+      - northcentralus
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
+  response:
+    body:
+      string: '{"status":"InProgress"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '23'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 17 Jul 2020 13:35:12 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-hdi-matched-rule:
+      - ClusterResourcesAndSubResources
+      x-ms-hdi-routed-to:
+      - RegionalRp
+      x-ms-hdi-served-by:
+      - northcentralus
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0/azureasyncoperations/create?api-version=2018-06-01-preview
   response:
@@ -1041,7 +1323,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:31:28 GMT
+      - Fri, 17 Jul 2020 13:35:42 GMT
       expires:
       - '-1'
       pragma:
@@ -1074,22 +1356,22 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.5.0 Azure-SDK-For-Python
+        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0?api-version=2018-06-01-preview
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hdipy-bcf612a0/providers/Microsoft.HDInsight/clusters/hdisdk-adlgen2bcf612a0","name":"hdisdk-adlgen2bcf612a0","type":"Microsoft.HDInsight/clusters","location":"North
-        Central US","etag":"a85276f6-61e4-40d3-be1d-eca2a118a7a8","tags":{},"properties":{"clusterVersion":"3.6.1000.67","clusterHdpVersion":"2.6.5.3022-3","osType":"Linux","clusterDefinition":{"blueprint":"https://blueprints.azurehdinsight.net/hadoop-3.6.1000.67.2004291541.json","kind":"hadoop","componentVersion":{"hadoop":"2.7"}},"computeProfile":{"roles":[{"name":"headnode","targetInstanceCount":2,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"workernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"zookeepernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a2_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false}]},"provisioningState":"Succeeded","clusterState":"Running","createdDate":"2020-05-29T04:20:42.887","quotaInfo":{"coresUsed":20},"connectivityEndpoints":[{"name":"SSH","protocol":"TCP","location":"hdisdk-adlgen2bcf612a0-ssh.azurehdinsight.net","port":22},{"name":"HTTPS","protocol":"TCP","location":"hdisdk-adlgen2bcf612a0.azurehdinsight.net","port":443}],"tier":"standard","storageProfile":{"storageaccounts":[{"name":"hdipy.dfs.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":"hdisdk-adlgen2bcf612a0","container":null,"saskey":null,"isDefault":true},{"name":"hdipy2.blob.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":null,"container":"hdisdk-adlgen2bcf612a0","saskey":null,"isDefault":false}]}}}'
+        Central US","etag":"473d614d-13c1-4772-baa9-04581b543eba","tags":{},"properties":{"clusterVersion":"3.6.1000.67","clusterHdpVersion":"2.6.5.3025-2","osType":"Linux","clusterDefinition":{"blueprint":"https://blueprints.azurehdinsight.net/hadoop-3.6.1000.67.2006100202.json","kind":"hadoop","componentVersion":{"hadoop":"2.7"}},"clusterId":"89949b90054f42fb86966cf6c12c7345","computeProfile":{"roles":[{"name":"headnode","targetInstanceCount":2,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"workernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a4_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false},{"name":"zookeepernode","targetInstanceCount":3,"hardwareProfile":{"vmSize":"standard_a2_v2"},"osProfile":{"linuxOperatingSystemProfile":{"username":"sshuser"}},"encryptDataDisks":false}]},"provisioningState":"Succeeded","clusterState":"Running","createdDate":"2020-07-17T13:21:38.523","quotaInfo":{"coresUsed":20},"connectivityEndpoints":[{"name":"SSH","protocol":"TCP","location":"hdisdk-adlgen2bcf612a0-ssh.azurehdinsight.net","port":22},{"name":"HTTPS","protocol":"TCP","location":"hdisdk-adlgen2bcf612a0.azurehdinsight.net","port":443}],"tier":"standard","encryptionInTransitProperties":{"isEncryptionInTransitEnabled":false},"storageProfile":{"storageaccounts":[{"name":"hdipy.dfs.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":"hdisdk-adlgen2bcf612a0","container":null,"saskey":null,"isDefault":true,"fileshare":null},{"name":"hdipy2.blob.core.windows.net","resourceId":null,"msiResourceId":null,"key":null,"fileSystem":null,"container":"hdisdk-adlgen2bcf612a0","saskey":null,"isDefault":false,"fileshare":null}]},"excludedServicesConfig":{"m_Item1":"default","m_Item2":""}}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '1926'
+      - '2138'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 29 May 2020 04:31:29 GMT
+      - Fri, 17 Jul 2020 13:35:44 GMT
       expires:
       - '-1'
       pragma:

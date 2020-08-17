@@ -4,7 +4,7 @@ parameters:
   EnvVars: {}
   ServiceDirectory: ''
   PythonVersion: ''
-  OSName: ''
+  OSVmImage: ''
   BeforeTestSteps: []
   AfterTestSteps: []
   CoverageArg: ''
@@ -23,14 +23,13 @@ steps:
     inputs:
       versionSpec: '${{ parameters.PythonVersion }}'
 
-  - template: eng/pipelines/templates/scripts/verify-agent-os.yml@azure-sdk-tools
-    parameters:
-      OSName: ${{ parameters.OSName }}
+  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
 
   - script: |
       python -m pip install pip==20.1
       pip install -r eng/ci_tools.txt
       pip --version
+      pip freeze
     displayName: 'Prep Environment'
 
   - ${{ parameters.BeforeTestSteps }}
@@ -56,7 +55,7 @@ steps:
     condition: always()
     inputs:
       testResultsFiles: '**/*test*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
+      testRunTitle: '$(OSName) Python ${{ parameters.PythonVersion }}'
       failTaskOnFailedTests: true
 
   - template: publish-coverage.yml

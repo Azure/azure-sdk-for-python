@@ -18,6 +18,7 @@ try:
     from ._models_py3 import ExportPolicyRule
     from ._models_py3 import MetricSpecification
     from ._models_py3 import MountTarget
+    from ._models_py3 import MountTargetProperties
     from ._models_py3 import NetAppAccount
     from ._models_py3 import NetAppAccountPatch
     from ._models_py3 import Operation
@@ -34,6 +35,7 @@ try:
     from ._models_py3 import VolumePropertiesDataProtection
     from ._models_py3 import VolumePropertiesExportPolicy
     from ._models_py3 import VolumeRevert
+    from ._models_py3 import VolumeSnapshotProperties
 except (SyntaxError, ImportError):
     from ._models import ActiveDirectory
     from ._models import AuthorizeRequest
@@ -43,6 +45,7 @@ except (SyntaxError, ImportError):
     from ._models import ExportPolicyRule
     from ._models import MetricSpecification
     from ._models import MountTarget
+    from ._models import MountTargetProperties
     from ._models import NetAppAccount
     from ._models import NetAppAccountPatch
     from ._models import Operation
@@ -59,6 +62,7 @@ except (SyntaxError, ImportError):
     from ._models import VolumePropertiesDataProtection
     from ._models import VolumePropertiesExportPolicy
     from ._models import VolumeRevert
+    from ._models import VolumeSnapshotProperties
 from ._paged_models import CapacityPoolPaged
 from ._paged_models import NetAppAccountPaged
 from ._paged_models import OperationPaged
@@ -83,6 +87,7 @@ __all__ = [
     'ExportPolicyRule',
     'MetricSpecification',
     'MountTarget',
+    'MountTargetProperties',
     'NetAppAccount',
     'NetAppAccountPatch',
     'Operation',
@@ -99,6 +104,7 @@ __all__ = [
     'VolumePropertiesDataProtection',
     'VolumePropertiesExportPolicy',
     'VolumeRevert',
+    'VolumeSnapshotProperties',
     'OperationPaged',
     'NetAppAccountPaged',
     'CapacityPoolPaged',

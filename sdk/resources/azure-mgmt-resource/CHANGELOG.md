@@ -1,5 +1,15 @@
 # Release History
 
+## 10.2.0 (2020-08-03)
+
+**Features**
+
+  - Model ProviderResourceType has a new parameter api_profiles
+  - Model ProviderResourceType has a new parameter default_api_version
+  - Model Alias has a new parameter default_metadata
+  - Model AliasPath has a new parameter metadata
+  - Added operation group SubscriptionClientOperationsMixin
+
 ## 10.1.0 (2020-06-30)
 
 **Features**

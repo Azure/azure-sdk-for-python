@@ -935,19 +935,6 @@ class WorkloadClassifierPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(WorkloadClassifierPaged, self).__init__(*args, **kwargs)
-class ManagedDatabasePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ManagedDatabase <azure.mgmt.sql.models.ManagedDatabase>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ManagedDatabase]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ManagedDatabasePaged, self).__init__(*args, **kwargs)
 class ServerAzureADAdministratorPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ServerAzureADAdministrator <azure.mgmt.sql.models.ServerAzureADAdministrator>` object
@@ -1039,3 +1026,16 @@ class SyncMemberPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SyncMemberPaged, self).__init__(*args, **kwargs)
+class ManagedDatabasePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ManagedDatabase <azure.mgmt.sql.models.ManagedDatabase>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagedDatabase]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ManagedDatabasePaged, self).__init__(*args, **kwargs)

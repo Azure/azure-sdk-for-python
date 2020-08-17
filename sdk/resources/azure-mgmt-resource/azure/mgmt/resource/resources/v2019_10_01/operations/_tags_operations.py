@@ -445,7 +445,7 @@ class TagsOperations(object):
         :param operation: The operation type for the patch API. Possible
          values include: 'Replace', 'Merge', 'Delete'
         :type operation: str or
-         ~azure.mgmt.resource.resources.v2019_10_01.models.enum
+         ~azure.mgmt.resource.resources.v2019_10_01.models.TagsPatchOperation
         :param properties: The set of tags.
         :type properties:
          ~azure.mgmt.resource.resources.v2019_10_01.models.Tags

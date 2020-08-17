@@ -49,6 +49,12 @@ class ComparisonOperationType(str, Enum):
     less_than_or_equal = "LessThanOrEqual"
 
 
+class ScaleRuleMetricDimensionOperationType(str, Enum):
+
+    equals = "Equals"
+    not_equals = "NotEquals"
+
+
 class ScaleDirection(str, Enum):
 
     none = "None"

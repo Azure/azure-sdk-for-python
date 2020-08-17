@@ -13,13 +13,14 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import SubscriptionClientConfiguration
+from .operations import SubscriptionClientOperationsMixin
 from .operations import Operations
 from .operations import SubscriptionsOperations
 from .operations import TenantsOperations
 from . import models
 
 
-class SubscriptionClient(SDKClient):
+class SubscriptionClient(SubscriptionClientOperationsMixin, SDKClient):
     """All resource groups and resources exist within subscriptions. These operation enable you get information about your subscriptions and tenants. A tenant is a dedicated instance of Azure Active Directory (Azure AD) for your organization.
 
     :ivar config: Configuration for client.

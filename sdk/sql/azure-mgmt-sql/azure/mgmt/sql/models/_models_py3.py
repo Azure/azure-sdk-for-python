@@ -4740,6 +4740,12 @@ class ManagedDatabase(TrackedResource):
     :param long_term_retention_backup_resource_id: The name of the Long Term
      Retention backup to be used for restore of this managed database.
     :type long_term_retention_backup_resource_id: str
+    :param auto_complete_restore: Whether to auto complete restore of this
+     managed database.
+    :type auto_complete_restore: bool
+    :param last_backup_name: Last backup file name for restore of this managed
+     database.
+    :type last_backup_name: str
     """
 
     _validation = {
@@ -4775,9 +4781,11 @@ class ManagedDatabase(TrackedResource):
         'failover_group_id': {'key': 'properties.failoverGroupId', 'type': 'str'},
         'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
         'long_term_retention_backup_resource_id': {'key': 'properties.longTermRetentionBackupResourceId', 'type': 'str'},
+        'auto_complete_restore': {'key': 'properties.autoCompleteRestore', 'type': 'bool'},
+        'last_backup_name': {'key': 'properties.lastBackupName', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, collation: str=None, restore_point_in_time=None, catalog_collation=None, create_mode=None, storage_container_uri: str=None, source_database_id: str=None, restorable_dropped_database_id: str=None, storage_container_sas_token: str=None, recoverable_database_id: str=None, long_term_retention_backup_resource_id: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, collation: str=None, restore_point_in_time=None, catalog_collation=None, create_mode=None, storage_container_uri: str=None, source_database_id: str=None, restorable_dropped_database_id: str=None, storage_container_sas_token: str=None, recoverable_database_id: str=None, long_term_retention_backup_resource_id: str=None, auto_complete_restore: bool=None, last_backup_name: str=None, **kwargs) -> None:
         super(ManagedDatabase, self).__init__(location=location, tags=tags, **kwargs)
         self.collation = collation
         self.status = None
@@ -4794,6 +4802,8 @@ class ManagedDatabase(TrackedResource):
         self.failover_group_id = None
         self.recoverable_database_id = recoverable_database_id
         self.long_term_retention_backup_resource_id = long_term_retention_backup_resource_id
+        self.auto_complete_restore = auto_complete_restore
+        self.last_backup_name = last_backup_name
 
 
 class ManagedDatabaseRestoreDetailsResult(ProxyResource):
@@ -5015,6 +5025,12 @@ class ManagedDatabaseUpdate(Model):
     :param long_term_retention_backup_resource_id: The name of the Long Term
      Retention backup to be used for restore of this managed database.
     :type long_term_retention_backup_resource_id: str
+    :param auto_complete_restore: Whether to auto complete restore of this
+     managed database.
+    :type auto_complete_restore: bool
+    :param last_backup_name: Last backup file name for restore of this managed
+     database.
+    :type last_backup_name: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -5043,10 +5059,12 @@ class ManagedDatabaseUpdate(Model):
         'failover_group_id': {'key': 'properties.failoverGroupId', 'type': 'str'},
         'recoverable_database_id': {'key': 'properties.recoverableDatabaseId', 'type': 'str'},
         'long_term_retention_backup_resource_id': {'key': 'properties.longTermRetentionBackupResourceId', 'type': 'str'},
+        'auto_complete_restore': {'key': 'properties.autoCompleteRestore', 'type': 'bool'},
+        'last_backup_name': {'key': 'properties.lastBackupName', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, collation: str=None, restore_point_in_time=None, catalog_collation=None, create_mode=None, storage_container_uri: str=None, source_database_id: str=None, restorable_dropped_database_id: str=None, storage_container_sas_token: str=None, recoverable_database_id: str=None, long_term_retention_backup_resource_id: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, collation: str=None, restore_point_in_time=None, catalog_collation=None, create_mode=None, storage_container_uri: str=None, source_database_id: str=None, restorable_dropped_database_id: str=None, storage_container_sas_token: str=None, recoverable_database_id: str=None, long_term_retention_backup_resource_id: str=None, auto_complete_restore: bool=None, last_backup_name: str=None, tags=None, **kwargs) -> None:
         super(ManagedDatabaseUpdate, self).__init__(**kwargs)
         self.collation = collation
         self.status = None
@@ -5063,6 +5081,8 @@ class ManagedDatabaseUpdate(Model):
         self.failover_group_id = None
         self.recoverable_database_id = recoverable_database_id
         self.long_term_retention_backup_resource_id = long_term_retention_backup_resource_id
+        self.auto_complete_restore = auto_complete_restore
+        self.last_backup_name = last_backup_name
         self.tags = tags
 
 
@@ -5649,6 +5669,12 @@ class ManagedInstanceOperation(ProxyResource):
     :vartype description: str
     :ivar is_cancellable: Whether the operation can be cancelled.
     :vartype is_cancellable: bool
+    :ivar operation_parameters: The operation parameters.
+    :vartype operation_parameters:
+     ~azure.mgmt.sql.models.ManagedInstanceOperationParametersPair
+    :ivar operation_steps: The operation steps.
+    :vartype operation_steps:
+     ~azure.mgmt.sql.models.ManagedInstanceOperationSteps
     """
 
     _validation = {
@@ -5668,6 +5694,8 @@ class ManagedInstanceOperation(ProxyResource):
         'estimated_completion_time': {'readonly': True},
         'description': {'readonly': True},
         'is_cancellable': {'readonly': True},
+        'operation_parameters': {'readonly': True},
+        'operation_steps': {'readonly': True},
     }
 
     _attribute_map = {
@@ -5687,6 +5715,8 @@ class ManagedInstanceOperation(ProxyResource):
         'estimated_completion_time': {'key': 'properties.estimatedCompletionTime', 'type': 'iso-8601'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'is_cancellable': {'key': 'properties.isCancellable', 'type': 'bool'},
+        'operation_parameters': {'key': 'properties.operationParameters', 'type': 'ManagedInstanceOperationParametersPair'},
+        'operation_steps': {'key': 'properties.operationSteps', 'type': 'ManagedInstanceOperationSteps'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -5704,6 +5734,72 @@ class ManagedInstanceOperation(ProxyResource):
         self.estimated_completion_time = None
         self.description = None
         self.is_cancellable = None
+        self.operation_parameters = None
+        self.operation_steps = None
+
+
+class ManagedInstanceOperationParametersPair(Model):
+    """The parameters of a managed instance operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar current_parameters: The current parameters.
+    :vartype current_parameters:
+     ~azure.mgmt.sql.models.UpsertManagedServerOperationParameters
+    :ivar requested_parameters: The requested parameters.
+    :vartype requested_parameters:
+     ~azure.mgmt.sql.models.UpsertManagedServerOperationParameters
+    """
+
+    _validation = {
+        'current_parameters': {'readonly': True},
+        'requested_parameters': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'current_parameters': {'key': 'currentParameters', 'type': 'UpsertManagedServerOperationParameters'},
+        'requested_parameters': {'key': 'requestedParameters', 'type': 'UpsertManagedServerOperationParameters'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ManagedInstanceOperationParametersPair, self).__init__(**kwargs)
+        self.current_parameters = None
+        self.requested_parameters = None
+
+
+class ManagedInstanceOperationSteps(Model):
+    """The steps of a managed instance operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar total_steps: The total number of operation steps.
+    :vartype total_steps: str
+    :ivar current_step: The number of current operation steps.
+    :vartype current_step: int
+    :ivar steps_list: The operation steps list.
+    :vartype steps_list:
+     list[~azure.mgmt.sql.models.UpsertManagedServerOperationStep]
+    """
+
+    _validation = {
+        'total_steps': {'readonly': True},
+        'current_step': {'readonly': True},
+        'steps_list': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'total_steps': {'key': 'totalSteps', 'type': 'str'},
+        'current_step': {'key': 'currentStep', 'type': 'int'},
+        'steps_list': {'key': 'stepsList', 'type': '[UpsertManagedServerOperationStep]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ManagedInstanceOperationSteps, self).__init__(**kwargs)
+        self.total_steps = None
+        self.current_step = None
+        self.steps_list = None
 
 
 class ManagedInstancePairInfo(Model):
@@ -9693,6 +9789,59 @@ class UnlinkParameters(Model):
     def __init__(self, *, forced_termination: bool=None, **kwargs) -> None:
         super(UnlinkParameters, self).__init__(**kwargs)
         self.forced_termination = forced_termination
+
+
+class UpsertManagedServerOperationParameters(Model):
+    """UpsertManagedServerOperationParameters.
+
+    :param family:
+    :type family: str
+    :param tier:
+    :type tier: str
+    :param v_cores:
+    :type v_cores: int
+    :param storage_size_in_gb:
+    :type storage_size_in_gb: int
+    """
+
+    _attribute_map = {
+        'family': {'key': 'family', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+        'v_cores': {'key': 'vCores', 'type': 'int'},
+        'storage_size_in_gb': {'key': 'storageSizeInGB', 'type': 'int'},
+    }
+
+    def __init__(self, *, family: str=None, tier: str=None, v_cores: int=None, storage_size_in_gb: int=None, **kwargs) -> None:
+        super(UpsertManagedServerOperationParameters, self).__init__(**kwargs)
+        self.family = family
+        self.tier = tier
+        self.v_cores = v_cores
+        self.storage_size_in_gb = storage_size_in_gb
+
+
+class UpsertManagedServerOperationStep(Model):
+    """UpsertManagedServerOperationStep.
+
+    :param order:
+    :type order: int
+    :param name:
+    :type name: str
+    :param status: Possible values include: 'NotStarted', 'InProgress',
+     'SlowedDown', 'Completed', 'Failed', 'Canceled'
+    :type status: str or ~azure.mgmt.sql.models.enum
+    """
+
+    _attribute_map = {
+        'order': {'key': 'order', 'type': 'int'},
+        'name': {'key': 'name', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, *, order: int=None, name: str=None, status=None, **kwargs) -> None:
+        super(UpsertManagedServerOperationStep, self).__init__(**kwargs)
+        self.order = order
+        self.name = name
+        self.status = status
 
 
 class Usage(Model):

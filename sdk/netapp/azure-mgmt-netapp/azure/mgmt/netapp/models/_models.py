@@ -38,6 +38,10 @@ class ActiveDirectory(Model):
     :param site: The Active Directory site the service will limit Domain
      Controller discovery to
     :type site: str
+    :param backup_operators: Users to be added to the Built-in Backup Operator
+     active directory group. A list of unique usernames without domain
+     specifier
+    :type backup_operators: list[str]
     """
 
     _attribute_map = {
@@ -50,6 +54,7 @@ class ActiveDirectory(Model):
         'smb_server_name': {'key': 'smbServerName', 'type': 'str'},
         'organizational_unit': {'key': 'organizationalUnit', 'type': 'str'},
         'site': {'key': 'site', 'type': 'str'},
+        'backup_operators': {'key': 'backupOperators', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -63,6 +68,7 @@ class ActiveDirectory(Model):
         self.smb_server_name = kwargs.get('smb_server_name', None)
         self.organizational_unit = kwargs.get('organizational_unit', None)
         self.site = kwargs.get('site', None)
+        self.backup_operators = kwargs.get('backup_operators', None)
 
 
 class AuthorizeRequest(Model):
@@ -242,9 +248,10 @@ class ExportPolicyRule(Model):
     :type unix_read_write: bool
     :param cifs: Allows CIFS protocol
     :type cifs: bool
-    :param nfsv3: Allows NFSv3 protocol
+    :param nfsv3: Allows NFSv3 protocol. Enable only for NFSv3 type volumes
     :type nfsv3: bool
-    :param nfsv41: Allows NFSv4.1 protocol
+    :param nfsv41: Allows NFSv4.1 protocol. Enable only for NFSv4.1 type
+     volumes
     :type nfsv41: bool
     :param allowed_clients: Client ingress specification as comma separated
      string with IPv4 CIDRs, IPv4 host addresses and host names
@@ -402,6 +409,72 @@ class MountTarget(Model):
         self.name = None
         self.type = None
         self.tags = kwargs.get('tags', None)
+        self.mount_target_id = None
+        self.file_system_id = kwargs.get('file_system_id', None)
+        self.ip_address = None
+        self.subnet = kwargs.get('subnet', None)
+        self.start_ip = kwargs.get('start_ip', None)
+        self.end_ip = kwargs.get('end_ip', None)
+        self.gateway = kwargs.get('gateway', None)
+        self.netmask = kwargs.get('netmask', None)
+        self.smb_server_fqdn = kwargs.get('smb_server_fqdn', None)
+
+
+class MountTargetProperties(Model):
+    """Mount target properties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar mount_target_id: mountTargetId. UUID v4 used to identify the
+     MountTarget
+    :vartype mount_target_id: str
+    :param file_system_id: Required. fileSystemId. UUID v4 used to identify
+     the MountTarget
+    :type file_system_id: str
+    :ivar ip_address: ipAddress. The mount target's IPv4 address
+    :vartype ip_address: str
+    :param subnet: subnet. The subnet
+    :type subnet: str
+    :param start_ip: startIp. The start of IPv4 address range to use when
+     creating a new mount target
+    :type start_ip: str
+    :param end_ip: endIp. The end of IPv4 address range to use when creating a
+     new mount target
+    :type end_ip: str
+    :param gateway: gateway. The gateway of the IPv4 address range to use when
+     creating a new mount target
+    :type gateway: str
+    :param netmask: netmask. The netmask of the IPv4 address range to use when
+     creating a new mount target
+    :type netmask: str
+    :param smb_server_fqdn: smbServerFQDN. The SMB server's Fully Qualified
+     Domain Name, FQDN
+    :type smb_server_fqdn: str
+    """
+
+    _validation = {
+        'mount_target_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
+        'file_system_id': {'required': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
+        'ip_address': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'mount_target_id': {'key': 'mountTargetId', 'type': 'str'},
+        'file_system_id': {'key': 'fileSystemId', 'type': 'str'},
+        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'subnet': {'key': 'subnet', 'type': 'str'},
+        'start_ip': {'key': 'startIp', 'type': 'str'},
+        'end_ip': {'key': 'endIp', 'type': 'str'},
+        'gateway': {'key': 'gateway', 'type': 'str'},
+        'netmask': {'key': 'netmask', 'type': 'str'},
+        'smb_server_fqdn': {'key': 'smbServerFqdn', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MountTargetProperties, self).__init__(**kwargs)
         self.mount_target_id = None
         self.file_system_id = kwargs.get('file_system_id', None)
         self.ip_address = None
@@ -759,9 +832,6 @@ class Snapshot(Model):
     :vartype type: str
     :ivar snapshot_id: snapshotId. UUID v4 used to identify the Snapshot
     :vartype snapshot_id: str
-    :param file_system_id: fileSystemId. UUID v4 used to identify the
-     FileSystem
-    :type file_system_id: str
     :ivar created: name. The creation date of the snapshot
     :vartype created: datetime
     :ivar provisioning_state: Azure lifecycle management
@@ -774,7 +844,6 @@ class Snapshot(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'snapshot_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'file_system_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'created': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -785,7 +854,6 @@ class Snapshot(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'snapshot_id': {'key': 'properties.snapshotId', 'type': 'str'},
-        'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
@@ -797,7 +865,6 @@ class Snapshot(Model):
         self.name = None
         self.type = None
         self.snapshot_id = None
-        self.file_system_id = kwargs.get('file_system_id', None)
         self.created = None
         self.provisioning_state = None
 
@@ -851,7 +918,7 @@ class Volume(Model):
      Must have the delegation Microsoft.NetApp/volumes
     :type subnet_id: str
     :param mount_targets: mountTargets. List of mount targets
-    :type mount_targets: list[~azure.mgmt.netapp.models.MountTarget]
+    :type mount_targets: list[~azure.mgmt.netapp.models.MountTargetProperties]
     :param volume_type: What type of volume is this
     :type volume_type: str
     :param data_protection: DataProtection. DataProtection type volumes
@@ -860,6 +927,10 @@ class Volume(Model):
      ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
     :param is_restoring: Restoring
     :type is_restoring: bool
+    :param snapshot_directory_visible: If enabled (true) the volume will
+     contain a read-only .snapshot directory which provides access to each of
+     the volume's snapshots (default to true).
+    :type snapshot_directory_visible: bool
     """
 
     _validation = {
@@ -892,10 +963,11 @@ class Volume(Model):
         'snapshot_id': {'key': 'properties.snapshotId', 'type': 'str'},
         'baremetal_tenant_id': {'key': 'properties.baremetalTenantId', 'type': 'str'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
-        'mount_targets': {'key': 'properties.mountTargets', 'type': '[MountTarget]'},
+        'mount_targets': {'key': 'properties.mountTargets', 'type': '[MountTargetProperties]'},
         'volume_type': {'key': 'properties.volumeType', 'type': 'str'},
         'data_protection': {'key': 'properties.dataProtection', 'type': 'VolumePropertiesDataProtection'},
         'is_restoring': {'key': 'properties.isRestoring', 'type': 'bool'},
+        'snapshot_directory_visible': {'key': 'properties.snapshotDirectoryVisible', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -919,6 +991,7 @@ class Volume(Model):
         self.volume_type = kwargs.get('volume_type', None)
         self.data_protection = kwargs.get('data_protection', None)
         self.is_restoring = kwargs.get('is_restoring', None)
+        self.snapshot_directory_visible = kwargs.get('snapshot_directory_visible', None)
 
 
 class VolumePatch(Model):
@@ -1007,15 +1080,19 @@ class VolumePropertiesDataProtection(Model):
 
     :param replication: Replication. Replication properties
     :type replication: ~azure.mgmt.netapp.models.ReplicationObject
+    :param snapshot: Snapshot. Snapshot properties.
+    :type snapshot: ~azure.mgmt.netapp.models.VolumeSnapshotProperties
     """
 
     _attribute_map = {
         'replication': {'key': 'replication', 'type': 'ReplicationObject'},
+        'snapshot': {'key': 'snapshot', 'type': 'VolumeSnapshotProperties'},
     }
 
     def __init__(self, **kwargs):
         super(VolumePropertiesDataProtection, self).__init__(**kwargs)
         self.replication = kwargs.get('replication', None)
+        self.snapshot = kwargs.get('snapshot', None)
 
 
 class VolumePropertiesExportPolicy(Model):
@@ -1050,3 +1127,19 @@ class VolumeRevert(Model):
     def __init__(self, **kwargs):
         super(VolumeRevert, self).__init__(**kwargs)
         self.snapshot_id = kwargs.get('snapshot_id', None)
+
+
+class VolumeSnapshotProperties(Model):
+    """Volume Snapshot Properties.
+
+    :param snapshot_policy_id: Snapshot Policy ResourceId
+    :type snapshot_policy_id: str
+    """
+
+    _attribute_map = {
+        'snapshot_policy_id': {'key': 'snapshotPolicyId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VolumeSnapshotProperties, self).__init__(**kwargs)
+        self.snapshot_policy_id = kwargs.get('snapshot_policy_id', None)

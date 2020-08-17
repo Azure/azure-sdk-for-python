@@ -93,5 +93,5 @@ pip install azure-eventhub-checkpointstoreblob-aio  # async version
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.1.0/azure.eventhub.html) to learn more about
+Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/5.2.0b1/azure.eventhub.html) to learn more about
 what you can do with the Azure Event Hubs client library.

@@ -252,7 +252,7 @@ class MultiOrderbyTests(unittest.TestCase):
                         where_string = "WHERE root." + self.NUMBER_FIELD + " % 2 = 0" if has_filter else ""
                         query = "SELECT " + top_string + " [" + select_item_builder + "] " + \
                                 "FROM root " + where_string + " " + \
-                                "ORDER BY " + orderby_item_builder
+                                "ORDER BY " + orderby_item_builder  # nosec
 
                         expected_ordered_list = self.top(self.sort(self.filter(self.items, has_filter), composite_index, invert), has_top, top_count)
 

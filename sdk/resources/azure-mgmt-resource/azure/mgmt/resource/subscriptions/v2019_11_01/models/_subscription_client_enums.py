@@ -45,3 +45,9 @@ class TenantCategory(str, Enum):
     home = "Home"
     projected_by = "ProjectedBy"
     managed_by = "ManagedBy"
+
+
+class ResourceNameStatus(str, Enum):
+
+    allowed = "Allowed"
+    reserved = "Reserved"

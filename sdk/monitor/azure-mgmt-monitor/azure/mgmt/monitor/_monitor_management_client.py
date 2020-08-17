@@ -116,6 +116,7 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
            * 2019-03-01: :mod:`v2019_03_01.models<azure.mgmt.monitor.v2019_03_01.models>`
            * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.monitor.v2019_06_01.models>`
            * 2019-10-17-preview: :mod:`v2019_10_17.models<azure.mgmt.monitor.v2019_10_17.models>`
+           * 2020-01-01-preview: :mod:`v2020_01_01_preview.models<azure.mgmt.monitor.v2020_01_01_preview.models>`
         """
         if api_version == '2015-04-01':
             from .v2015_04_01 import models
@@ -170,6 +171,9 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
             return models
         elif api_version == '2019-10-17-preview':
             from .v2019_10_17 import models
+            return models
+        elif api_version == '2020-01-01-preview':
+            from .v2020_01_01_preview import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
@@ -366,6 +370,19 @@ class MonitorManagementClient(MultiApiClientMixin, SDKClient):
         api_version = self._get_api_version('log_profiles')
         if api_version == '2016-03-01':
             from .v2016_03_01.operations import LogProfilesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def management_group_diagnostic_settings(self):
+        """Instance depends on the API version:
+
+           * 2020-01-01-preview: :class:`ManagementGroupDiagnosticSettingsOperations<azure.mgmt.monitor.v2020_01_01_preview.operations.ManagementGroupDiagnosticSettingsOperations>`
+        """
+        api_version = self._get_api_version('management_group_diagnostic_settings')
+        if api_version == '2020-01-01-preview':
+            from .v2020_01_01_preview.operations import ManagementGroupDiagnosticSettingsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

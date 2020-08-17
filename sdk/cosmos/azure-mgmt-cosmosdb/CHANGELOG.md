@@ -1,5 +1,49 @@
 # Release History
 
+## 0.16.0 (2020-07-31)
+
+**Features**
+
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountUpdateParameters has a new parameter backup_policy
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model ARMResourceProperties has a new parameter identity
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter system_data
+  - Model DatabaseAccountGetResults has a new parameter backup_policy
+  - Model DatabaseAccountGetResults has a new parameter create_mode
+  - Model DatabaseAccountGetResults has a new parameter instance_id
+  - Model DatabaseAccountGetResults has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter restore_parameters
+  - Added operation group RestorableDatabaseAccountsOperations
+
+**Breaking changes**
+
+  - Model DatabaseAccountCreateUpdateParameters has a new signature
+
 ## 0.15.0 (2020-06-11)
 
 **Features**

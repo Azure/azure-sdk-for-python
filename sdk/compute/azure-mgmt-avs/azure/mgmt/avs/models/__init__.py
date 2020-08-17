@@ -11,19 +11,21 @@
 
 try:
     from ._models_py3 import AdminCredentials
-    from ._models_py3 import ApiError, ApiErrorException
-    from ._models_py3 import ApiErrorBase
     from ._models_py3 import Circuit
     from ._models_py3 import Cluster
-    from ._models_py3 import ClusterProperties
-    from ._models_py3 import DefaultClusterProperties
+    from ._models_py3 import ClusterUpdate
+    from ._models_py3 import ClusterUpdateProperties
     from ._models_py3 import Endpoints
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import ExpressRouteAuthorization
+    from ._models_py3 import HcxEnterpriseSite
     from ._models_py3 import IdentitySource
+    from ._models_py3 import ManagementCluster
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PrivateCloud
-    from ._models_py3 import PrivateCloudProperties
+    from ._models_py3 import PrivateCloudUpdate
     from ._models_py3 import Quota
     from ._models_py3 import Resource
     from ._models_py3 import Sku
@@ -31,50 +33,59 @@ try:
     from ._models_py3 import Trial
 except (SyntaxError, ImportError):
     from ._models import AdminCredentials
-    from ._models import ApiError, ApiErrorException
-    from ._models import ApiErrorBase
     from ._models import Circuit
     from ._models import Cluster
-    from ._models import ClusterProperties
-    from ._models import DefaultClusterProperties
+    from ._models import ClusterUpdate
+    from ._models import ClusterUpdateProperties
     from ._models import Endpoints
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorResponse
     from ._models import ExpressRouteAuthorization
+    from ._models import HcxEnterpriseSite
     from ._models import IdentitySource
+    from ._models import ManagementCluster
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PrivateCloud
-    from ._models import PrivateCloudProperties
+    from ._models import PrivateCloudUpdate
     from ._models import Quota
     from ._models import Resource
     from ._models import Sku
     from ._models import TrackedResource
     from ._models import Trial
 from ._paged_models import ClusterPaged
+from ._paged_models import ExpressRouteAuthorizationPaged
+from ._paged_models import HcxEnterpriseSitePaged
 from ._paged_models import OperationPaged
 from ._paged_models import PrivateCloudPaged
 from ._avs_client_enums import (
+    TrialStatus,
     QuotaEnabled,
+    ExpressRouteAuthorizationProvisioningState,
     SslEnum,
     PrivateCloudProvisioningState,
     InternetEnum,
     ClusterProvisioningState,
+    HcxEnterpriseSiteStatus,
 )
 
 __all__ = [
     'AdminCredentials',
-    'ApiError', 'ApiErrorException',
-    'ApiErrorBase',
     'Circuit',
     'Cluster',
-    'ClusterProperties',
-    'DefaultClusterProperties',
+    'ClusterUpdate',
+    'ClusterUpdateProperties',
     'Endpoints',
+    'ErrorAdditionalInfo',
+    'ErrorResponse',
     'ExpressRouteAuthorization',
+    'HcxEnterpriseSite',
     'IdentitySource',
+    'ManagementCluster',
     'Operation',
     'OperationDisplay',
     'PrivateCloud',
-    'PrivateCloudProperties',
+    'PrivateCloudUpdate',
     'Quota',
     'Resource',
     'Sku',
@@ -83,9 +94,14 @@ __all__ = [
     'OperationPaged',
     'PrivateCloudPaged',
     'ClusterPaged',
+    'HcxEnterpriseSitePaged',
+    'ExpressRouteAuthorizationPaged',
+    'TrialStatus',
     'QuotaEnabled',
+    'ExpressRouteAuthorizationProvisioningState',
     'SslEnum',
     'PrivateCloudProvisioningState',
     'InternetEnum',
     'ClusterProvisioningState',
+    'HcxEnterpriseSiteStatus',
 ]

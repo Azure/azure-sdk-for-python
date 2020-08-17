@@ -1,10 +1,22 @@
 parameters:
-  Artifacts: []
-  ServiceDirectory: not-specified
-  EmulatorMsiUrl: 'https://aka.ms/cosmosdb-emulator'
-  EmulatorStartParameters: ''
-  InjectedPackages: ''
-  BuildDocs: true
+- name: Artifacts
+  type: object
+  default: []
+- name: ServiceDirectory
+  type: string
+  default: not-specified
+- name: EmulatorMsiUrl
+  type: string
+  default: https://aka.ms/cosmosdb-emulator
+- name: InjectedPackages
+  type: string
+  default: ''
+- name: BuildDocs
+  type: boolean
+  default: true
+- name: EmulatorStartParameters
+  type: string
+  default: ''
 
 stages:
   - stage: Build
@@ -21,17 +33,15 @@ stages:
           matrix:
             Windows_Python35:
               OSVmImage: 'windows-2019'
-              OSName: Windows
               PythonVersion: '3.5'
             Windows_Python27:
               OSVmImage: 'windows-2019'
-              OSName: Windows
               PythonVersion: '2.7'
         pool:
           vmImage: $(OSVmImage)
 
         steps:
-          - template: eng/pipelines/templates/steps/cosmos-emulator.yml@azure-sdk-tools
+          - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
             parameters:
               EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
               StartParameters: ${{ parameters.EmulatorStartParameters }}
@@ -43,14 +53,14 @@ stages:
                 ACCOUNT_HOST: https://localhost:8081/
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               PythonVersion: $(PythonVersion)
-              OSName: $(OSName)
+              OSVmImage: $(OSVmImage)
               ToxTestEnv: 'whl,sdist'
               BuildDocs: ${{parameters.BuildDocs}}
               InjectedPackages: ${{parameters.InjectedPackages}}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
-    - template: pipelines/stages/archetype-python-release.yml@azure-sdk-build-tools
+    - template: archetype-python-release.yml
       parameters:
         DependsOn: Build
         ServiceDirectory: ${{parameters.ServiceDirectory}}

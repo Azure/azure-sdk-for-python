@@ -1,5 +1,40 @@
 # Release History
 
+## 5.1.0 (2020-08-10)
+
+**Features**
+  - Add UrlSigningAction
+
+## 5.0.0 (2020-07-21)
+
+**Features**
+
+  - Model Origin has a new parameter private_link_approval_message
+  - Model Origin has a new parameter enabled
+  - Model Origin has a new parameter weight
+  - Model Origin has a new parameter origin_host_header
+  - Model Origin has a new parameter private_link_resource_id
+  - Model Origin has a new parameter private_link_location
+  - Model Origin has a new parameter private_link_alias
+  - Model Origin has a new parameter priority
+  - Model Origin has a new parameter private_endpoint_status
+  - Model EndpointUpdateParameters has a new parameter url_signing_keys
+  - Model EndpointUpdateParameters has a new parameter default_origin_group
+  - Model Endpoint has a new parameter url_signing_keys
+  - Model Endpoint has a new parameter origin_groups
+  - Model Endpoint has a new parameter default_origin_group
+  - Added operation OriginsOperations.create
+  - Added operation OriginsOperations.delete
+  - Added operation group OriginGroupsOperations
+
+**Breaking changes**
+
+  - Model Origin no longer has parameter location
+  - Model Origin no longer has parameter tags
+  - Model CustomDomain no longer has parameter custom_https_parameters
+  - Model DeepCreatedOrigin has a new signature
+  - Model OriginUpdateParameters has a new signature
+
 ## 4.1.0rc1 (2020-01-18)
 
 **Features**
