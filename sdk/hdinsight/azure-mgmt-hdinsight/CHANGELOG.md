@@ -1,5 +1,29 @@
 # Release History
 
+## 1.7.0 (2020-08-13)
+
+**Features**
+
+  - Model DiskEncryptionProperties has a new parameter encryption_at_host
+
+## 1.6.0 (2020-07-17)
+
+**Features**
+
+  - Added operation group VirtualMachinesOperations
+
+## 1.5.1 (2020-06-11)
+
+**Bugfixes**
+
+  - Fix the List Response
+
+## 1.5.0 (2020-05-29)
+
+**Features**
+
+  - Added operation group VirtualMachinesOperations
+
 ## 1.4.0 (2020-01-16)
 
 **Features**
