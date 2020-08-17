@@ -676,6 +676,36 @@ class CertificateClientTests(KeyVaultTestCase):
             assert version_properties.version == cert.properties.version
             assert version_properties.x509_thumbprint == cert.properties.x509_thumbprint
 
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
+    async def test_list_properties_of_certificates_2016_10_01(self, client, **kwargs):
+        certs = client.list_properties_of_certificates()
+        async for cert in certs:
+            pass
+
+        with pytest.raises(NotImplementedError) as excinfo:
+            certs = client.list_properties_of_certificates(include_pending=True)
+            async for cert in certs:
+                pass
+
+        assert "The 'include_pending' parameter to `list_properties_of_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
+    async def test_list_deleted_certificates_2016_10_01(self, client, **kwargs):
+        certs = client.list_deleted_certificates()
+        async for cert in certs:
+            pass
+
+        with pytest.raises(NotImplementedError) as excinfo:
+            certs = client.list_deleted_certificates(include_pending=True)
+            async for cert in certs:
+                pass
+
+        assert "The 'include_pending' parameter to `list_deleted_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
+
     class _CustomHookPolicy(object):
         pass
 
@@ -684,15 +714,3 @@ class CertificateClientTests(KeyVaultTestCase):
     @KeyVaultClientPreparer(client_kwargs={"custom_hook_policy": _CustomHookPolicy()})
     async def test_custom_hook_policy(self, client, **kwargs):
         assert isinstance(client._client._config.custom_hook_policy, CertificateClientTests._CustomHookPolicy)
-
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
-    async def test_list_properties_of_certificates_2016_10_01(self, client, **kwargs):
-        await client.list_properties_of_certificates()
-
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
-    async def test_list_deleted_certificates_2016_10_01(self, client, **kwargs):
-        await client.list_deleted_certificates()
