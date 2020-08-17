@@ -74,7 +74,6 @@ from ._managed_database_vulnerability_assessment_rule_baselines_operations impor
 from ._managed_database_vulnerability_assessment_scans_operations import ManagedDatabaseVulnerabilityAssessmentScansOperations
 from ._managed_database_vulnerability_assessments_operations import ManagedDatabaseVulnerabilityAssessmentsOperations
 from ._instance_failover_groups_operations import InstanceFailoverGroupsOperations
-from ._backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
 from ._tde_certificates_operations import TdeCertificatesOperations
 from ._managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations
 from ._managed_instance_keys_operations import ManagedInstanceKeysOperations
@@ -85,7 +84,6 @@ from ._server_vulnerability_assessments_operations import ServerVulnerabilityAss
 from ._managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
 from ._instance_pools_operations import InstancePoolsOperations
 from ._usages_operations import UsagesOperations
-from ._managed_instances_operations import ManagedInstancesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._servers_operations import ServersOperations
@@ -94,12 +92,15 @@ from ._long_term_retention_managed_instance_backups_operations import LongTermRe
 from ._managed_instance_long_term_retention_policies_operations import ManagedInstanceLongTermRetentionPoliciesOperations
 from ._workload_groups_operations import WorkloadGroupsOperations
 from ._workload_classifiers_operations import WorkloadClassifiersOperations
-from ._server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from ._managed_instance_operations import ManagedInstanceOperations
+from ._server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from ._sync_groups_operations import SyncGroupsOperations
 from ._sync_members_operations import SyncMembersOperations
+from ._managed_instances_operations import ManagedInstancesOperations
+from ._backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
 from ._managed_database_restore_details_operations import ManagedDatabaseRestoreDetailsOperations
 from ._managed_databases_operations import ManagedDatabasesOperations
+from ._server_azure_ad_only_authentications_operations import ServerAzureADOnlyAuthenticationsOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -167,7 +168,6 @@ __all__ = [
     'ManagedDatabaseVulnerabilityAssessmentScansOperations',
     'ManagedDatabaseVulnerabilityAssessmentsOperations',
     'InstanceFailoverGroupsOperations',
-    'BackupShortTermRetentionPoliciesOperations',
     'TdeCertificatesOperations',
     'ManagedInstanceTdeCertificatesOperations',
     'ManagedInstanceKeysOperations',
@@ -178,7 +178,6 @@ __all__ = [
     'ManagedDatabaseSensitivityLabelsOperations',
     'InstancePoolsOperations',
     'UsagesOperations',
-    'ManagedInstancesOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
     'ServersOperations',
@@ -187,10 +186,13 @@ __all__ = [
     'ManagedInstanceLongTermRetentionPoliciesOperations',
     'WorkloadGroupsOperations',
     'WorkloadClassifiersOperations',
-    'ServerAzureADAdministratorsOperations',
     'ManagedInstanceOperations',
+    'ServerAzureADAdministratorsOperations',
     'SyncGroupsOperations',
     'SyncMembersOperations',
+    'ManagedInstancesOperations',
+    'BackupShortTermRetentionPoliciesOperations',
     'ManagedDatabaseRestoreDetailsOperations',
     'ManagedDatabasesOperations',
+    'ServerAzureADOnlyAuthenticationsOperations',
 ]
