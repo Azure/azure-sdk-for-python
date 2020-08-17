@@ -1450,6 +1450,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsInstance(lease, BlobLeaseClient)
         self.assertIsNotNone(lease.id)
+        self.assertIsNotNone(lease.etag)
+        self.assertEqual(lease.etag, etag)
 
     @GlobalStorageAccountPreparer()
     def test_lease_blob_with_if_match_fail(self, resource_group, location, storage_account, storage_account_key):

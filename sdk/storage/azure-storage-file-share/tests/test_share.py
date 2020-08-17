@@ -77,6 +77,15 @@ class StorageShareTest(StorageTestCase):
                 pass
 
     # --Test cases for shares -----------------------------------------
+    def test_create_share_client(self):
+        share_client = ShareClient.from_share_url("http://127.0.0.1:11002/account/customized/path/share?snapshot=baz&", credential={"account_name": "myaccount", "account_key": "key"})
+        self.assertEqual(share_client.share_name, "share")
+        self.assertEqual(share_client.snapshot, "baz")
+
+        share_client = ShareClient.from_share_url("http://127.0.0.1:11002/account/share?snapshot=baz&", credential="credential")
+        self.assertEqual(share_client.share_name, "share")
+        self.assertEqual(share_client.snapshot, "baz")
+
     @GlobalStorageAccountPreparer()
     def test_create_share(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)

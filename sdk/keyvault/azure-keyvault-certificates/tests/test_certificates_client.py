@@ -11,6 +11,7 @@ from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormaliz
 
 from azure.keyvault.certificates import (
     AdministratorContact,
+    ApiVersion,
     CertificateClient,
     CertificateContact,
     CertificatePolicyAction,
@@ -622,6 +623,19 @@ class CertificateClientTests(KeyVaultTestCase):
                 except (ValueError, KeyError):
                     # this means the message is not JSON or has no kty property
                     pass
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
+    def test_2016_10_01_models(self, client, **kwargs):
+        """The client should correctly deserialize version 2016-10-01 models"""
+
+        cert_name = self.get_resource_name("cert")
+        cert = client.begin_create_certificate(cert_name, CertificatePolicy.get_default()).result()
+
+        # these properties don't exist in version 2016-10-01
+        assert cert.policy.key_curve_name is None
+        assert cert.policy.certificate_transparency is None
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()

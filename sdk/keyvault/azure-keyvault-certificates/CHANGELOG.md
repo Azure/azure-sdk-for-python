@@ -1,5 +1,8 @@
 # Release History
 
+## 4.2.1 (Unreleased)
+
+
 ## 4.2.0 (2020-08-11)
 ### Fixed
 - Fixed an `AttributeError` during `get_certificate_version`

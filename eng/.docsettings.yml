@@ -48,6 +48,7 @@ known_content_issues:
   - ['sdk/synapse/azure-synapse-spark/README.md', '#4554']
   - ['sdk/synapse/azure-synapse-artifacts/README.md', '#4554']
   - ['sdk/synapse/azure-synapse-nspkg/README.md', '#4554']
+  - ['sdk/anomalydetector/azure-ai-anomalydetector/README.md', '#4554']
   - ['sdk/applicationinsights/azure-applicationinsights/README.md', '#4554']
   - ['sdk/batch/azure-batch/README.md', '#4554']
   - ['sdk/cognitiveservices/azure-cognitiveservices-anomalydetector/README.md', '#4554']
@@ -82,6 +83,7 @@ known_content_issues:
   - ['sdk/eventgrid/azure-eventgrid/README.md', '#4554']
   - ['sdk/graphrbac/azure-graphrbac/README.md', '#4554']
   - ['sdk/loganalytics/azure-loganalytics/README.md', '#4554']
+  - ['sdk/schemaregistry/azure-schemaregistry/swagger/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/swagger/README.md', '#4554']
   - ['sdk/servicefabric/azure-servicefabric/README.md', '#4554']
@@ -94,6 +96,7 @@ known_content_issues:
   - ['sdk/storage/azure-storage-queue/swagger/README.md', '#4554']
   - ['sdk/storage/README.md', '#4554']
   - ['sdk/textanalytics/azure-ai-textanalytics/samples/README.md', '#4554']
+  - ['sdk/anomalydetector/azure-ai-anomalydetector/README.md', '#4554']
 
   # nspckg and common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']

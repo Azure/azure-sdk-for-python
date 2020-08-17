@@ -1,5 +1,13 @@
 # Release History
 
+## 3.0.0b2 (Unreleased)
+
+**New features**
+
+- Client-level, keyword argument `api_version` can be used to specify the service API version to use. Currently only v2.0
+is supported. See the enum `FormRecognizerApiVersion` for supported API versions.
+- `FormWord` and `FormLine` now have attribute `kind` which specifies the kind of element it is, e.g. "word" or "line"
+
 ## 3.0.0b1 (2020-08-11)
 
 The version of this package now targets the service's v2.0 API.

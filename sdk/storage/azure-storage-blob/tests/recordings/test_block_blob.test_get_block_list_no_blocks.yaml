@@ -17,7 +17,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainera4381254?restype=container
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainera4381254?restype=container
   response:
     body:
       string: ''
@@ -63,7 +63,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainera4381254/bloba4381254
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainera4381254/bloba4381254
   response:
     body:
       string: ''
@@ -109,7 +109,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainera4381254/bloba4381254?blocklisttype=all&comp=blocklist
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainera4381254/bloba4381254?blocklisttype=all&comp=blocklist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
@@ -148,7 +148,7 @@ interactions:
       x-ms-version:
       - '2019-12-12'
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainera4381254/bloba4381254?blocklisttype=all&comp=blocklist
+    uri: https://storagenamestorname.blob.core.windows.net/utcontainera4381254/bloba4381254?blocklisttype=all&comp=blocklist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks
