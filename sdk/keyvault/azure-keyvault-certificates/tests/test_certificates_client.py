@@ -22,6 +22,7 @@ from azure.keyvault.certificates import (
     LifetimeAction,
     CertificateIssuer,
     IssuerProperties,
+    ApiVersion,
 )
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
@@ -669,3 +670,15 @@ class CertificateClientTests(KeyVaultTestCase):
     @KeyVaultClientPreparer(client_kwargs={"custom_hook_policy": _CustomHookPolicy()})
     def test_custom_hook_policy(self, client, **kwargs):
         assert isinstance(client._client._config.custom_hook_policy, CertificateClientTests._CustomHookPolicy)
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
+    def test_list_properties_of_certificates_2016_10_01(self, client, **kwargs):
+        client.list_properties_of_certificates()
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @KeyVaultPreparer()
+    @KeyVaultClientPreparer(client_kwargs={"api_version": ApiVersion.V2016_10_01})
+    def test_list_deleted_certificates_2016_10_01(self, client, **kwargs):
+        client.list_deleted_certificates()
