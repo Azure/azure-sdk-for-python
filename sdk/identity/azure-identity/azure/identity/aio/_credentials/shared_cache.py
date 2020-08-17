@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING
 from ... import CredentialUnavailableError
 from ..._constants import AZURE_CLI_CLIENT_ID
 from ..._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
+from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
 from .._internal.decorators import log_get_token_async
-from .base import AsyncCredentialBase
 
 if TYPE_CHECKING:
     from typing import Any
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from ..._internal.aad_client import AadClientBase
 
 
-class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
+class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username:

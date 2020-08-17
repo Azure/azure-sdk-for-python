@@ -10,9 +10,9 @@ from .._internal.decorators import log_get_token_async
 
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
+from .._internal import AsyncContextManager
 from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
-from .base import AsyncCredentialBase
 
 if TYPE_CHECKING:
     from typing import Any, Optional, Union
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EnvironmentCredential(AsyncCredentialBase):
+class EnvironmentCredential(AsyncContextManager):
     """A credential configured by environment variables.
 
     This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
