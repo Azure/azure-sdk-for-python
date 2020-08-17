@@ -168,12 +168,12 @@ class StorageTableBatchTest(TableTestCase):
         # Assert
         self.assertEqual(entity.test.type, EdmType.BOOLEAN)
         self.assertEqual(entity.test2.type, EdmType.BINARY)
+        self.assertEqual(entity.test3.type, EdmType.GUID)
         self.assertEqual(entity.test4.type, EdmType.DATETIME)
         self.assertEqual(entity.test5.type, EdmType.STRING)
         self.assertEqual(entity.test6.type, EdmType.DOUBLE)
         self.assertEqual(entity.test7.type, EdmType.INT64)
         self.assertEqual(entity.test8.type, EdmType.INT32)
-        self.assertEqual(entity.test3.type, EdmType.GUID)
 
 
     @pytest.mark.skip("pending")

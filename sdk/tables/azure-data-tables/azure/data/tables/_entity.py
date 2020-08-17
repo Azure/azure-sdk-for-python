@@ -80,7 +80,6 @@ class EntityProperty(object):
     def __init__(self,
         value=None, # type: Any
         type=None,  # type: Union[str,EdmType] # pylint:disable=W0622
-        #  value=None  # type: Any
     ):
         """
         Represents an Azure Table. Returned by list_tables.
@@ -88,31 +87,24 @@ class EntityProperty(object):
         :param Union[str, EdmType] type: The type of the property.
         :param Any value: The value of the property.
         """
-        # self.type = type
+        self.value = value
         if type is not None:
-            self.value = value
             self.type = type
         elif isinstance(value, six.text_type):
             try:
                 self.value = UUID(value)
                 self.type = EdmType.GUID
             except ValueError:
-                self.value = value
                 self.type = EdmType.STRING
         elif isinstance(value, six.binary_type):
-            self.value = value
             self.type = EdmType.BINARY
         elif isinstance(value, bool):
-            self.value = value
             self.type = EdmType.BOOLEAN
         elif isinstance(value, six.integer_types):
-            self.value = value
             self.type = EdmType.INT64
         elif isinstance(value, datetime):
-            self.value = value
             self.type = EdmType.DATETIME
         elif isinstance(value, float):
-            self.value = value
             self.type = EdmType.DOUBLE
         else:
             raise ValueError(
