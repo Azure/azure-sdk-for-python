@@ -3,7 +3,9 @@
 ## 1.5.0b1 (Unreleased)
 ### Added
 - Application authentication APIs from 1.4.0b7
- 
+- `ManagedIdentityCredential` supports the latest version of App Service
+  ([#11346](https://github.com/Azure/azure-sdk-for-python/issues/11346))
+
 ## 1.4.0 (2020-08-10)
 ### Added
 - `DefaultAzureCredential` uses the value of environment variable
