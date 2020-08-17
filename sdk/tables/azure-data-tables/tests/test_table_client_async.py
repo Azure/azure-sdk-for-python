@@ -152,7 +152,7 @@ class StorageTableClientTest(TableTestCase):
             self.validate_standard_account_endpoints(service, storage_account.name, storage_account_key)
             self.assertEqual(service.scheme, 'http')
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_create_service_empty_key_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -166,7 +166,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(
                 str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
 
-    
+
     @GlobalStorageAccountPreparer()
     async def test_create_service_with_socket_timeout_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -491,11 +491,11 @@ class StorageTableClientTest(TableTestCase):
         # Arrange
         table_url = "https://{}.table.core.windows.net:443/foo".format(storage_account.name)
         invalid_table_name = "my_table"
-        
+
         # Assert
         with pytest.raises(ValueError) as excinfo:
             service = TableClient(account_url=table_url, table_name=invalid_table_name, credential=storage_account_key)
-            
+
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
 
     async def test_error_with_malformed_conn_str_async(self):
@@ -506,7 +506,7 @@ class StorageTableClientTest(TableTestCase):
                 # Act
                 with self.assertRaises(ValueError) as e:
                     service = service_type[0].from_connection_string(conn_str, table_name="test")
-                
+
                 if conn_str in("", "foobar", "foo;bar;baz", ";"):
                     self.assertEqual(
                         str(e.exception), "Connection string is either blank or malformed.")
