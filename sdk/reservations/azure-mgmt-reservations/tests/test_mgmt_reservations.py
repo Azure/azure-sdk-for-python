@@ -8,12 +8,23 @@ from azure.mgmt.reservations.models import (
 )
 from datetime import (
     datetime,
-    timezone
+    timedelta,
+    tzinfo
 )
 import unittest
 
 # change the custom endpoint to set the environment
 _CUSTOM_ENDPOINT = "https://management.azure.com/"
+
+ZERO = timedelta(0)
+
+class UTC(tzinfo):
+  def utcoffset(self, dt):
+    return ZERO
+  def tzname(self, dt):
+    return "UTC"
+  def dst(self, dt):
+    return ZERO
 
 class MgmtReservationsTest(AzureMgmtTestCase):
 
@@ -446,7 +457,8 @@ class MgmtReservationsTest(AzureMgmtTestCase):
         )
 
     def _test_list_quota_request_status(self, provider_id, location):
-        last_year = datetime.now(timezone.utc)
+        utc = UTC()
+        last_year = datetime.now(utc)
         last_year = last_year.replace(year = last_year.year - 1)
         statuses = self.reservation_client.quota_request_status.list(
              self.settings.SUBSCRIPTION_ID,
