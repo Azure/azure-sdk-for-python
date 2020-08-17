@@ -224,7 +224,7 @@ class SecretClient(AsyncKeyVaultClientBase):
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
-         Example:
+        Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
                 :start-after: [START backup_secret]
                 :end-before: [END backup_secret]

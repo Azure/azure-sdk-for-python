@@ -76,6 +76,18 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(certificate.policy.issuer_name)
 
         # [END get_certificate]
+
+        version = certificate.properties.version
+
+        # [START get_certificate_version]
+
+        certificate = await certificate_client.get_certificate_version(cert_name, version)
+
+        print(certificate.id)
+        print(certificate.properties.version)
+
+        # [END get_certificate_version]
+
         # [START update_certificate]
 
         # update attributes of an existing certificate

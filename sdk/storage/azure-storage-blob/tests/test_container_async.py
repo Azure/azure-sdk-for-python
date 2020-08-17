@@ -905,6 +905,32 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
                          'application/octet-stream')
         self.assertIsNotNone(blobs[0].creation_time)
 
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_list_blobs_with_object_replication_policy(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = await self._create_container(bsc)
+        data = b'hello world'
+        b_c = container.get_blob_client('blob1')
+        await b_c.upload_blob(data, overwrite=True)
+        metadata = {'hello': 'world', 'number': '42'}
+        await b_c.set_blob_metadata(metadata)
+
+        prop = await b_c.get_blob_properties()
+
+        await container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+
+        # Act
+        blobs_list = container.list_blobs()
+        number_of_blobs_with_policy = 0
+        async for blob in blobs_list:
+            if blob.object_replication_source_properties is not None:
+                number_of_blobs_with_policy += 1
+
+        # Assert
+        self.assertIsNot(number_of_blobs_with_policy, 0)
+
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_list_blobs_leased_blob(self, resource_group, location, storage_account, storage_account_key):
@@ -1123,6 +1149,11 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(resp, 'b/')
         self.assertNamedItemInContainer(resp, 'blob4')
 
+    def test_batch_delete_empty_blob_list(self):
+        container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
+        blob_list = list()
+        container_client.delete_blobs(*blob_list)
+
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blobs_simple(self, resource_group, location, storage_account, storage_account_key):
@@ -1151,7 +1182,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         assert response[2].status_code == 202
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blobs_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1359,7 +1390,7 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
                 )
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_standard_blob_tier_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
