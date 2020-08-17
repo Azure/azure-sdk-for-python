@@ -167,7 +167,7 @@ class StorageTableBatchTest(TableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()
-            batch.create_item(entity)
+            batch.create_entity(entity)
             resp = self.table.commit_batch(batch)
 
             # Assert
@@ -409,7 +409,7 @@ class StorageTableBatchTest(TableTestCase):
             batch = self.table.create_batch()
             for i in range(100):
                 entity.RowKey = str(i)
-                batch.create_item(entity)
+                batch.create_entity(entity)
             self.table.commit_batch(batch)
 
             entities = list(self.table.query_items("PartitionKey eq 'batch_inserts'"))
@@ -445,7 +445,7 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             entity.RowKey = 'batch_all_operations_together'
-            batch.create_item(entity)
+            batch.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-1'
             batch.delete_item(entity.PartitionKey, entity.RowKey)
             entity.RowKey = 'batch_all_operations_together-2'
@@ -493,7 +493,7 @@ class StorageTableBatchTest(TableTestCase):
 
             with self.table.create_batch() as batch:
                 entity.RowKey = 'batch_all_operations_together'
-                batch.create_item(entity)
+                batch.create_entity(entity)
                 entity.RowKey = 'batch_all_operations_together-1'
                 batch.delete_item(entity.PartitionKey, entity.RowKey)
                 entity.RowKey = 'batch_all_operations_together-2'
@@ -534,20 +534,20 @@ class StorageTableBatchTest(TableTestCase):
             entity.test5 = datetime.utcnow()
 
             batch = TableBatchClient()
-            batch.create_item(entity)
+            batch.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-2'
-            batch.create_item(entity)
+            batch.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-3'
-            batch.create_item(entity)
+            batch.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-4'
-            batch.create_item(entity)
+            batch.create_entity(entity)
 
             self.table.commit_batch(batch)
             table2.commit_batch(batch)
 
             batch = TableBatchClient()
             entity.RowKey = 'batch_all_operations_together'
-            batch.create_item(entity)
+            batch.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-1'
             batch.delete_item(entity.PartitionKey, entity.RowKey)
             entity.RowKey = 'batch_all_operations_together-2'
@@ -617,7 +617,7 @@ class StorageTableBatchTest(TableTestCase):
 
             # Assert
             with self.assertRaises(ValueError):
-                batch.create_item(entity)
+                batch.create_entity(entity)
         finally:
             self._tear_down()
 
@@ -637,7 +637,7 @@ class StorageTableBatchTest(TableTestCase):
                     entity = Entity()
                     entity.PartitionKey = 'large'
                     entity.RowKey = 'item{0}'.format(i)
-                    batch.create_item(entity)
+                    batch.create_entity(entity)
 
             # Assert
         finally:

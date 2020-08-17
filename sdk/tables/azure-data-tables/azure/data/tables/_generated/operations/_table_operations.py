@@ -867,13 +867,14 @@ class TableOperations(object):
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
-        print(url)
-        print(query_parameters)
-        print(header_parameters)
-        print(body_content_kwargs)
+        print("URL: {}".format(url))
+        print("QPs: {}".format(query_parameters))
+        print("HPs: {}".format(header_parameters))
+        print("BCkwargs: {}".format(body_content_kwargs))
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        print(request)
-        print(type(self._client._pipeline))
+        print("REQUEST BODY: {}".format(request.body))
+        print("TYPE CLIENT: {}".format(self._client))
+        print("TYPE: {}".format(type(self._client._pipeline)))
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response

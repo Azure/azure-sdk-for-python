@@ -262,7 +262,6 @@ class TableClient(TableClientBase):
         print("ENTITY: {}".format(entity))
         if "PartitionKey" in entity and "RowKey" in entity:
             entity = _add_entity_properties(entity)
-            print(entity)
             # TODO: Remove - and run test to see what happens with the service
         else:
             raise ValueError('PartitionKey and RowKey were not provided in entity')
@@ -476,8 +475,17 @@ class TableClient(TableClientBase):
         """
         return TableBatchOperations(
             self._client,
-            self._client._config,
             self._client._serialize,
             self._client._deserialize,
+            self._client._config,
             self.table_name
         )
+
+    def commit_batch(
+        self,
+        batch, # type: TableBatchOperations
+        **kwargs # type: Any
+    ):
+        # (...) -> HttpResponse
+        print("TOTAL REQS: {}".format(len(batch._requests)))
+        return self._batch_send(batch._requests, **kwargs)

@@ -16,6 +16,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 import logging
+from uuid import uuid4
 
 
 
@@ -29,7 +30,12 @@ import six
 from azure.core.configuration import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport, HttpTransport
+from azure.core.pipeline.transport import (
+    RequestsTransport,
+    HttpTransport,
+    HttpRequest,
+    HttpResponse
+)
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
@@ -251,6 +257,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self, *reqs,  # type: HttpRequest
         **kwargs
     ):
+        print("\nBASE CLIENT")
         """Given a series of request, do a Storage batch call.
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
@@ -271,9 +278,11 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         )
         request.set_multipart_mixed(changeset, boundary="batch_{}".format(uuid4()))
 
+        print("REQUEST: {}".format(request))
         pipeline_response = self._pipeline.run(
-            request, **kwargs
+            request, stream=False, **kwargs
         )
+        print("RESPONSE: {}".format(pipeline_response))
         response = pipeline_response.http_response
 
         try:
