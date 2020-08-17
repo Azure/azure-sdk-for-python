@@ -13,8 +13,8 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.8.1 (Windows-10-10.0.18362-SP0) msrest/0.6.13 msrest_azure/0.6.3
-        azure-mgmt-hdinsight/1.4.0 Azure-SDK-For-Python
+      - python/3.6.8 (Windows-10-10.0.19041-SP0) msrest/0.6.13 msrest_azure/0.4.34
+        azure-mgmt-hdinsight/1.7.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -31,7 +31,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 17 Jul 2020 13:37:46 GMT
+      - Fri, 14 Aug 2020 08:21:33 GMT
       expires:
       - '-1'
       pragma:
