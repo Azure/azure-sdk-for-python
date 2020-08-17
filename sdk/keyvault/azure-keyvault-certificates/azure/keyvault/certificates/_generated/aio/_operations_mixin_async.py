@@ -81,7 +81,7 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupKeyResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.BackupKeyResult
+        :rtype: ~azure.keyvault.v2016_10_01.models.BackupKeyResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('backup_key')
@@ -115,7 +115,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupSecretResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.BackupSecretResult
+        :rtype: ~azure.keyvault.v2016_10_01.models.BackupSecretResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('backup_secret')
@@ -181,10 +181,10 @@ class KeyVaultClientOperationsMixin(object):
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param parameters: The parameters to create a certificate.
-        :type parameters: ~azure.keyvault.v7_1.models.CertificateCreateParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.CertificateCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.CertificateOperation
+        :rtype: ~azure.keyvault.v2016_10_01.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('create_certificate')
@@ -222,10 +222,10 @@ class KeyVaultClientOperationsMixin(object):
          new key.
         :type key_name: str
         :param parameters: The parameters to create a key.
-        :type parameters: ~azure.keyvault.v7_0.models.KeyCreateParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.KeyCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.KeyBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('create_key')
@@ -266,10 +266,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for the decryption operation.
-        :type parameters: ~azure.keyvault.v7_0.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v2016_10_01.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('decrypt')
@@ -304,7 +304,7 @@ class KeyVaultClientOperationsMixin(object):
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedCertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.DeletedCertificateBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.DeletedCertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('delete_certificate')
@@ -337,7 +337,7 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Contacts, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.Contacts
+        :rtype: ~azure.keyvault.v2016_10_01.models.Contacts
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('delete_certificate_contacts')
@@ -373,7 +373,7 @@ class KeyVaultClientOperationsMixin(object):
         :type issuer_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IssuerBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.IssuerBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.IssuerBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('delete_certificate_issuer')
@@ -410,7 +410,7 @@ class KeyVaultClientOperationsMixin(object):
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.CertificateOperation
+        :rtype: ~azure.keyvault.v2016_10_01.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('delete_certificate_operation')
@@ -448,7 +448,7 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedKeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.DeletedKeyBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.DeletedKeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('delete_key')
@@ -471,7 +471,7 @@ class KeyVaultClientOperationsMixin(object):
         storage_account_name: str,
         sas_definition_name: str,
         **kwargs
-    ) -> "models.DeletedSasDefinitionBundle":
+    ) -> "models.SasDefinitionBundle":
         """Deletes a SAS definition from a specified storage account. This operation requires the
         storage/deletesas permission.
 
@@ -482,8 +482,8 @@ class KeyVaultClientOperationsMixin(object):
         :param sas_definition_name: The name of the SAS definition.
         :type sas_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeletedSasDefinitionBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.DeletedSasDefinitionBundle
+        :return: SasDefinitionBundle, or the result of cls(response)
+        :rtype: ~azure.keyvault.v2016_10_01.models.SasDefinitionBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('delete_sas_definition')
@@ -517,7 +517,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedSecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.DeletedSecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('delete_secret')
@@ -539,7 +539,7 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url: str,
         storage_account_name: str,
         **kwargs
-    ) -> "models.DeletedStorageBundle":
+    ) -> "models.StorageBundle":
         """Deletes a storage account. This operation requires the storage/delete permission.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -547,8 +547,8 @@ class KeyVaultClientOperationsMixin(object):
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DeletedStorageBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.DeletedStorageBundle
+        :return: StorageBundle, or the result of cls(response)
+        :rtype: ~azure.keyvault.v2016_10_01.models.StorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('delete_storage_account')
@@ -591,10 +591,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for the encryption operation.
-        :type parameters: ~azure.keyvault.v7_0.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v2016_10_01.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('encrypt')
@@ -627,12 +627,11 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate in the given vault.
         :type certificate_name: str
-        :param certificate_version: The version of the certificate. This URI fragment is optional. If
-         not specified, the latest version of the certificate is returned.
+        :param certificate_version: The version of the certificate.
         :type certificate_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.CertificateBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_certificate')
@@ -665,7 +664,7 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Contacts, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.Contacts
+        :rtype: ~azure.keyvault.v2016_10_01.models.Contacts
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_certificate_contacts')
@@ -702,7 +701,7 @@ class KeyVaultClientOperationsMixin(object):
         :type issuer_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IssuerBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.IssuerBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.IssuerBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_certificate_issuer')
@@ -740,7 +739,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateIssuerListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.CertificateIssuerListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.CertificateIssuerListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_certificate_issuers')
@@ -776,7 +775,7 @@ class KeyVaultClientOperationsMixin(object):
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.CertificateOperation
+        :rtype: ~azure.keyvault.v2016_10_01.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_certificate_operation')
@@ -812,7 +811,7 @@ class KeyVaultClientOperationsMixin(object):
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificatePolicy, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.CertificatePolicy
+        :rtype: ~azure.keyvault.v2016_10_01.models.CertificatePolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_certificate_policy')
@@ -852,7 +851,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.CertificateListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.CertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_certificate_versions')
@@ -875,7 +874,6 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url: str,
         maxresults: Optional[int] = None,
-        include_pending: Optional[bool] = None,
         **kwargs
     ) -> AsyncItemPaged["models.CertificateListResult"]:
         """List certificates in a specified key vault.
@@ -888,12 +886,9 @@ class KeyVaultClientOperationsMixin(object):
         :param maxresults: Maximum number of results to return in a page. If not specified the service
          will return up to 25 results.
         :type maxresults: int
-        :param include_pending: Specifies whether to include certificates which are not completely
-         provisioned.
-        :type include_pending: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CertificateListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.CertificateListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.CertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_certificates')
@@ -910,7 +905,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.get_certificates(vault_base_url, maxresults, include_pending, **kwargs)
+        return mixin_instance.get_certificates(vault_base_url, maxresults, **kwargs)
 
     async def get_deleted_certificate(
         self,
@@ -930,7 +925,7 @@ class KeyVaultClientOperationsMixin(object):
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedCertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.DeletedCertificateBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.DeletedCertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_certificate')
@@ -953,7 +948,6 @@ class KeyVaultClientOperationsMixin(object):
         self,
         vault_base_url: str,
         maxresults: Optional[int] = None,
-        include_pending: Optional[bool] = None,
         **kwargs
     ) -> AsyncItemPaged["models.DeletedCertificateListResult"]:
         """Lists the deleted certificates in the specified vault currently available for recovery.
@@ -968,12 +962,9 @@ class KeyVaultClientOperationsMixin(object):
         :param maxresults: Maximum number of results to return in a page. If not specified the service
          will return up to 25 results.
         :type maxresults: int
-        :param include_pending: Specifies whether to include certificates which are not completely
-         provisioned.
-        :type include_pending: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedCertificateListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_1.models.DeletedCertificateListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.DeletedCertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_certificates')
@@ -990,7 +981,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.get_deleted_certificates(vault_base_url, maxresults, include_pending, **kwargs)
+        return mixin_instance.get_deleted_certificates(vault_base_url, maxresults, **kwargs)
 
     async def get_deleted_key(
         self,
@@ -1010,7 +1001,7 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedKeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.DeletedKeyBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.DeletedKeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_key')
@@ -1048,7 +1039,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedKeyListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_0.models.DeletedKeyListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.DeletedKeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_keys')
@@ -1153,7 +1144,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedSecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.DeletedSecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_secret')
@@ -1188,7 +1179,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedSecretListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_0.models.DeletedSecretListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.DeletedSecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_secrets')
@@ -1286,12 +1277,11 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param key_name: The name of the key to get.
         :type key_name: str
-        :param key_version: Adding the version parameter retrieves a specific version of a key. This
-         URI fragment is optional. If not specified, the latest version of the key is returned.
+        :param key_version: Adding the version parameter retrieves a specific version of a key.
         :type key_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.KeyBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_key')
@@ -1329,7 +1319,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_0.models.KeyListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_key_versions')
@@ -1366,7 +1356,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_0.models.KeyListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_keys')
@@ -1401,7 +1391,7 @@ class KeyVaultClientOperationsMixin(object):
         :type sas_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SasDefinitionBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.SasDefinitionBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.SasDefinitionBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_sas_definition')
@@ -1437,7 +1427,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SasDefinitionListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_0.models.SasDefinitionListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.SasDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_sas_definitions')
@@ -1470,12 +1460,11 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param secret_name: The name of the secret.
         :type secret_name: str
-        :param secret_version: The version of the secret. This URI fragment is optional. If not
-         specified, the latest version of the secret is returned.
+        :param secret_version: The version of the secret.
         :type secret_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.SecretBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_secret')
@@ -1513,7 +1502,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecretListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_0.models.SecretListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.SecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_secret_versions')
@@ -1549,7 +1538,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecretListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_0.models.SecretListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.SecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_secrets')
@@ -1581,7 +1570,7 @@ class KeyVaultClientOperationsMixin(object):
         :type storage_account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.StorageBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.StorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_storage_account')
@@ -1614,7 +1603,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StorageListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v7_0.models.StorageListResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.v2016_10_01.models.StorageListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_storage_accounts')
@@ -1650,10 +1639,10 @@ class KeyVaultClientOperationsMixin(object):
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param parameters: The parameters to import the certificate.
-        :type parameters: ~azure.keyvault.v7_1.models.CertificateImportParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.CertificateImportParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.CertificateBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('import_certificate')
@@ -1690,10 +1679,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_name: Name for the imported key.
         :type key_name: str
         :param parameters: The parameters to import a key.
-        :type parameters: ~azure.keyvault.v7_0.models.KeyImportParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.KeyImportParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.KeyBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('import_key')
@@ -1728,10 +1717,10 @@ class KeyVaultClientOperationsMixin(object):
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param parameters: The parameters to merge certificate.
-        :type parameters: ~azure.keyvault.v7_1.models.CertificateMergeParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.CertificateMergeParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.CertificateBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('merge_certificate')
@@ -1909,7 +1898,7 @@ class KeyVaultClientOperationsMixin(object):
         :type certificate_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.CertificateBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('recover_deleted_certificate')
@@ -1947,7 +1936,7 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.KeyBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('recover_deleted_key')
@@ -2017,7 +2006,7 @@ class KeyVaultClientOperationsMixin(object):
         :type secret_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.SecretBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('recover_deleted_secret')
@@ -2082,10 +2071,10 @@ class KeyVaultClientOperationsMixin(object):
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
         :param parameters: The parameters to regenerate storage account key.
-        :type parameters: ~azure.keyvault.v7_0.models.StorageAccountRegenerteKeyParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.StorageAccountRegenerteKeyParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.StorageBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.StorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('regenerate_storage_account_key')
@@ -2158,10 +2147,10 @@ class KeyVaultClientOperationsMixin(object):
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param parameters: The parameters to restore the key.
-        :type parameters: ~azure.keyvault.v7_0.models.KeyRestoreParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.KeyRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.KeyBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('restore_key')
@@ -2192,10 +2181,10 @@ class KeyVaultClientOperationsMixin(object):
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param parameters: The parameters to restore the secret.
-        :type parameters: ~azure.keyvault.v7_0.models.SecretRestoreParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.SecretRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.SecretBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('restore_secret')
@@ -2258,10 +2247,10 @@ class KeyVaultClientOperationsMixin(object):
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param contacts: The contacts for the key vault certificate.
-        :type contacts: ~azure.keyvault.v7_1.models.Contacts
+        :type contacts: ~azure.keyvault.v2016_10_01.models.Contacts
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Contacts, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.Contacts
+        :rtype: ~azure.keyvault.v2016_10_01.models.Contacts
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('set_certificate_contacts')
@@ -2297,10 +2286,10 @@ class KeyVaultClientOperationsMixin(object):
         :param issuer_name: The name of the issuer.
         :type issuer_name: str
         :param parameter: Certificate issuer set parameter.
-        :type parameter: ~azure.keyvault.v7_1.models.CertificateIssuerSetParameters
+        :type parameter: ~azure.keyvault.v2016_10_01.models.CertificateIssuerSetParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IssuerBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.IssuerBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.IssuerBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('set_certificate_issuer')
@@ -2337,10 +2326,10 @@ class KeyVaultClientOperationsMixin(object):
         :param sas_definition_name: The name of the SAS definition.
         :type sas_definition_name: str
         :param parameters: The parameters to create a SAS definition.
-        :type parameters: ~azure.keyvault.v7_0.models.SasDefinitionCreateParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.SasDefinitionCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SasDefinitionBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.SasDefinitionBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.SasDefinitionBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('set_sas_definition')
@@ -2375,10 +2364,10 @@ class KeyVaultClientOperationsMixin(object):
         :param secret_name: The name of the secret.
         :type secret_name: str
         :param parameters: The parameters for setting the secret.
-        :type parameters: ~azure.keyvault.v7_0.models.SecretSetParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.SecretSetParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.SecretBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('set_secret')
@@ -2409,10 +2398,10 @@ class KeyVaultClientOperationsMixin(object):
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
         :param parameters: The parameters to create a storage account.
-        :type parameters: ~azure.keyvault.v7_0.models.StorageAccountCreateParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.StorageAccountCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.StorageBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.StorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('set_storage_account')
@@ -2450,10 +2439,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for the signing operation.
-        :type parameters: ~azure.keyvault.v7_0.models.KeySignParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.KeySignParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v2016_10_01.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('sign')
@@ -2492,10 +2481,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for the key operation.
-        :type parameters: ~azure.keyvault.v7_0.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v2016_10_01.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('unwrap_key')
@@ -2533,10 +2522,10 @@ class KeyVaultClientOperationsMixin(object):
         :param certificate_version: The version of the certificate.
         :type certificate_version: str
         :param parameters: The parameters for certificate update.
-        :type parameters: ~azure.keyvault.v7_1.models.CertificateUpdateParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.CertificateUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.CertificateBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.CertificateBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('update_certificate')
@@ -2572,10 +2561,10 @@ class KeyVaultClientOperationsMixin(object):
         :param issuer_name: The name of the issuer.
         :type issuer_name: str
         :param parameter: Certificate issuer update parameter.
-        :type parameter: ~azure.keyvault.v7_1.models.CertificateIssuerUpdateParameters
+        :type parameter: ~azure.keyvault.v2016_10_01.models.CertificateIssuerUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IssuerBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.IssuerBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.IssuerBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('update_certificate_issuer')
@@ -2611,10 +2600,10 @@ class KeyVaultClientOperationsMixin(object):
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param certificate_operation: The certificate operation response.
-        :type certificate_operation: ~azure.keyvault.v7_1.models.CertificateOperationUpdateParameter
+        :type certificate_operation: ~azure.keyvault.v2016_10_01.models.CertificateOperationUpdateParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.CertificateOperation
+        :rtype: ~azure.keyvault.v2016_10_01.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('update_certificate_operation')
@@ -2650,10 +2639,10 @@ class KeyVaultClientOperationsMixin(object):
         :param certificate_name: The name of the certificate in the given vault.
         :type certificate_name: str
         :param certificate_policy: The policy for the certificate.
-        :type certificate_policy: ~azure.keyvault.v7_1.models.CertificatePolicy
+        :type certificate_policy: ~azure.keyvault.v2016_10_01.models.CertificatePolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificatePolicy, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.CertificatePolicy
+        :rtype: ~azure.keyvault.v2016_10_01.models.CertificatePolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('update_certificate_policy')
@@ -2693,10 +2682,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key to update.
         :type key_version: str
         :param parameters: The parameters of the key to update.
-        :type parameters: ~azure.keyvault.v7_0.models.KeyUpdateParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.KeyUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.KeyBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('update_key')
@@ -2731,10 +2720,10 @@ class KeyVaultClientOperationsMixin(object):
         :param sas_definition_name: The name of the SAS definition.
         :type sas_definition_name: str
         :param parameters: The parameters to update a SAS definition.
-        :type parameters: ~azure.keyvault.v7_0.models.SasDefinitionUpdateParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.SasDefinitionUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SasDefinitionBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.SasDefinitionBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.SasDefinitionBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('update_sas_definition')
@@ -2772,10 +2761,10 @@ class KeyVaultClientOperationsMixin(object):
         :param secret_version: The version of the secret.
         :type secret_version: str
         :param parameters: The parameters for update secret operation.
-        :type parameters: ~azure.keyvault.v7_0.models.SecretUpdateParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.SecretUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecretBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.SecretBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.SecretBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('update_secret')
@@ -2807,10 +2796,10 @@ class KeyVaultClientOperationsMixin(object):
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
         :param parameters: The parameters to update a storage account.
-        :type parameters: ~azure.keyvault.v7_0.models.StorageAccountUpdateParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.StorageAccountUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.StorageBundle
+        :rtype: ~azure.keyvault.v2016_10_01.models.StorageBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('update_storage_account')
@@ -2850,10 +2839,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for verify operations.
-        :type parameters: ~azure.keyvault.v7_0.models.KeyVerifyParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.KeyVerifyParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyVerifyResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.KeyVerifyResult
+        :rtype: ~azure.keyvault.v2016_10_01.models.KeyVerifyResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('verify')
@@ -2894,10 +2883,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for wrap operation.
-        :type parameters: ~azure.keyvault.v7_0.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v2016_10_01.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_0.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v2016_10_01.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('wrap_key')

@@ -7,7 +7,8 @@
         "description": "The key vault client performs cryptographic key operations and vault operations against the Key Vault service.",
         "base_url": null,
         "custom_base_url": "\u0027{vaultBaseUrl}\u0027",
-        "azure_arm": false
+        "azure_arm": false,
+        "has_lro_operations": false
     },
     "global_parameters": {
         "sync_method": {
@@ -22,7 +23,8 @@
         "credential": false,
         "credential_scopes": null,
         "credential_default_policy_type": "BearerTokenCredentialPolicy",
-        "credential_default_policy_type_has_async_version": true
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
     },
     "operation_groups": {
     },
