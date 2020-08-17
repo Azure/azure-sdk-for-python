@@ -39,7 +39,7 @@ async def main():
                 await msg.dead_letter()
 
         print('receiving deadlettered messages')
-        dlq_receiver = servicebus_client.get_queue_deadletter_receiver(queue_name=QUEUE_NAME, prefetch=10)
+        dlq_receiver = servicebus_client.get_queue_deadletter_receiver(queue_name=QUEUE_NAME, prefetch_count=10)
         async with dlq_receiver:
             received_msgs = await dlq_receiver.receive_messages(max_batch_size=10, max_wait_time=5)
             for msg in received_msgs:

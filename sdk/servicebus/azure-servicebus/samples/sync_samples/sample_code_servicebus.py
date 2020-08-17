@@ -315,13 +315,13 @@ def example_session_ops_sync():
         # [START get_session_state_sync]
         with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
-            session_state = session.get_session_state()
+            session_state = session.get_state()
         # [END get_session_state_sync]
 
         # [START set_session_state_sync]
         with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
-            session_state = session.set_session_state("START")
+            session_state = session.set_state("START")
         # [END set_session_state_sync]
 
         # [START session_renew_lock_sync]

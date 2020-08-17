@@ -62,16 +62,16 @@ MGMT_REQUEST_LOCK_TOKENS = 'lock-tokens'
 MGMT_REQUEST_SEQUENCE_NUMBERS = 'sequence-numbers'
 MGMT_REQUEST_RECEIVER_SETTLE_MODE = 'receiver-settle-mode'
 MGMT_REQUEST_FROM_SEQUENCE_NUMBER = 'from-sequence-number'
-MGMT_REQUEST_MESSAGE_COUNT = 'message-count'
+MGMT_REQUEST_MAX_MESSAGE_COUNT = 'message-count'
 MGMT_REQUEST_MESSAGE = 'message'
 MGMT_REQUEST_MESSAGES = 'messages'
 MGMT_REQUEST_MESSAGE_ID = 'message-id'
 MGMT_REQUEST_PARTITION_KEY = 'partition-key'
 MGMT_REQUEST_VIA_PARTITION_KEY = 'via-partition-key'
 MGMT_REQUEST_DEAD_LETTER_REASON = 'deadletter-reason'
-MGMT_REQUEST_DEAD_LETTER_DESCRIPTION = 'deadletter-description'
+MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION = 'deadletter-description'
 RECEIVER_LINK_DEAD_LETTER_REASON = 'DeadLetterReason'
-RECEIVER_LINK_DEAD_LETTER_DESCRIPTION = 'DeadLetterErrorDescription'
+RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION = 'DeadLetterErrorDescription'
 MGMT_REQUEST_OP_TYPE_ENTITY_MGMT = b"entity-mgmt"
 
 MESSAGE_COMPLETE = 'complete'
@@ -106,7 +106,7 @@ DEAD_LETTER_QUEUE_SUFFIX = '/$DeadLetterQueue'
 TRANSFER_DEAD_LETTER_QUEUE_SUFFIX = '/$Transfer' + DEAD_LETTER_QUEUE_SUFFIX
 
 
-class ReceiveSettleMode(Enum):
+class ReceiveMode(Enum):
     PeekLock = constants.ReceiverSettleMode.PeekLock
     ReceiveAndDelete = constants.ReceiverSettleMode.ReceiveAndDelete
 

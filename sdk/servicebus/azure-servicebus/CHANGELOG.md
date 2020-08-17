@@ -2,6 +2,25 @@
 
 ## 7.0.0b6 (Unreleased)
 
+**New Features**
+
+* `renew_lock()` now returns the UTC datetime that the lock is set to expire at.
+* `receive_deferred_messages()` can now take a single sequence number as well as a list of sequence numbers.
+
+**Breaking Changes**
+
+* Renamed `prefetch` to `prefetch_count`.
+* Renamed `ReceiveSettleMode` enum to `ReceiveMode`, and respectively the `mode` parameter to `receive_mode`
+* `retry_total`, `retry_backoff_factor` and `retry_backoff_max` are now defined at the `ServiceBusClient` level and inherited by senders and receivers created from it.
+* No longer export `NEXT_AVAILABLE` in `azure.servicebus` module.  A null `session_id` will suffice.
+* Renamed parameter `message_count` to `max_message_count` as fewer messages may be present for method `peek_messages()` and `receive_messages()` 
+* Renamed `PeekMessage` to `PeekedMessage`
+* Renamed `get_session_state()` and `set_session_state()` to `get_state()` and `set_state()` accordingly.
+* Renamed `session_id` to `id`
+* Renamed parameter `description` to `error_description` for method `dead_letter()`
+* Renamed properties `created_time` and `modified_time` to `created_at_utc` and `modified_at_utc` within `AuthorizationRule` and `NamespaceProperties`
+* Removed parameter `requires_preprocessing` from `SqlRuleFilter` and `SqlRuleAction`
+* Removed property `namespace_type` from `NamespaceProperties`
 
 ## 7.0.0b5 (2020-08-10)
 

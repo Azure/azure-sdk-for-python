@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import logging
+import datetime
 from typing import Union
 import six
 
@@ -39,7 +40,7 @@ class ServiceBusSession(BaseSession):
             :caption: Get session from a receiver
     """
 
-    async def get_session_state(self):
+    async def get_state(self):
         # type: () -> str
         """Get the session state.
 
@@ -59,7 +60,7 @@ class ServiceBusSession(BaseSession):
         self._check_live()
         response = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_GET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id},
+            {MGMT_REQUEST_SESSION_ID: self.id},
             mgmt_handlers.default
         )
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
@@ -67,12 +68,12 @@ class ServiceBusSession(BaseSession):
             session_state = session_state.decode('UTF-8')
         return session_state
 
-    async def set_session_state(self, state):
+    async def set_state(self, state):
         # type: (Union[str, bytes, bytearray]) -> None
         """Set the session state.
 
         :param state: The state value.
-        :type state: str, bytes or bytearray
+        :type state: Union[str, bytes, bytearray]
 
         .. admonition:: Example:
 
@@ -87,12 +88,12 @@ class ServiceBusSession(BaseSession):
         state = state.encode(self._encoding) if isinstance(state, six.text_type) else state
         return await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
+            {MGMT_REQUEST_SESSION_ID: self.id, MGMT_REQUEST_SESSION_STATE: bytearray(state)},
             mgmt_handlers.default
         )
 
     async def renew_lock(self):
-        # type: () -> None
+        # type: () -> datetime.datetime
         """Renew the session lock.
 
         This operation must be performed periodically in order to retain a lock on the
@@ -102,6 +103,9 @@ class ServiceBusSession(BaseSession):
 
         This operation can also be performed as a threaded background task by registering the session
         with an `azure.servicebus.aio.AutoLockRenew` instance.
+
+        :returns: The utc datetime the lock is set to expire at.
+        :rtype: datetime
 
         .. admonition:: Example:
 
@@ -115,7 +119,9 @@ class ServiceBusSession(BaseSession):
         self._check_live()
         expiry = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
-            {MGMT_REQUEST_SESSION_ID: self.session_id},
+            {MGMT_REQUEST_SESSION_ID: self.id},
             mgmt_handlers.default
         )
         self._locked_until_utc = utc_from_timestamp(expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0)
+
+        return self._locked_until_utc

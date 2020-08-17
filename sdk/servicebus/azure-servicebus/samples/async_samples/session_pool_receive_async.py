@@ -24,7 +24,7 @@ async def message_processing(servicebus_client, queue_name):
             async with servicebus_client.get_queue_session_receiver(queue_name, max_wait_time=1) as receiver:
                 renewer = AutoLockRenew()
                 renewer.register(receiver.session)
-                await receiver.session.set_session_state("OPEN")
+                await receiver.session.set_state("OPEN")
                 async for message in receiver:
                     print("Message: {}".format(message))
                     print("Time to live: {}".format(message.time_to_live))
@@ -36,7 +36,7 @@ async def message_processing(servicebus_client, queue_name):
                     print("Enqueued time: {}".format(message.enqueued_time_utc))
                     await message.complete()
                     if str(message) == 'shutdown':
-                        await receiver.session.set_session_state("CLOSED")
+                        await receiver.session.set_state("CLOSED")
                         break
                 await renewer.close()
         except NoActiveSession:

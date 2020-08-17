@@ -6,6 +6,7 @@ import asyncio
 import collections
 import functools
 import logging
+import six
 from typing import Any, TYPE_CHECKING, List, Optional, AsyncIterator
 
 from uamqp import ReceiveClientAsync, types, Message
@@ -20,13 +21,13 @@ from .._common.constants import (
     REQUEST_RESPONSE_PEEK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_RENEWLOCK_OPERATION,
-    ReceiveSettleMode,
+    ReceiveMode,
     MGMT_REQUEST_DISPOSITION_STATUS,
     MGMT_REQUEST_LOCK_TOKENS,
     MGMT_REQUEST_SEQUENCE_NUMBERS,
     MGMT_REQUEST_RECEIVER_SETTLE_MODE,
     MGMT_REQUEST_FROM_SEQUENCE_NUMBER,
-    MGMT_REQUEST_MESSAGE_COUNT
+    MGMT_REQUEST_MAX_MESSAGE_COUNT
 )
 from .._common import mgmt_handlers
 from ._async_utils import create_authentication
@@ -61,18 +62,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
-    :keyword mode: The mode with which messages will be retrieved from the entity. The two options
+    :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
      lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
      will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
      if the client fails to process the message.
      The default mode is PeekLock.
-    :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+    :paramtype receive_mode: ~azure.servicebus.ReceiveMode
     :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-    :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
-     Default value is 3.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.servicebus.TransportType
@@ -80,12 +79,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-    :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+    :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
      This setting is only for advanced performance tuning. Increasing this value will improve message throughput
      performance but increase the chance that messages will expire while they are cached if they're not
      processed fast enough.
      The default value is 0, meaning messages will be received from the service and processed one at a time.
-     In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+     In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count` (if provided)
      within its request to the service.
 
     .. admonition:: Example:
@@ -184,10 +183,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             on_attach=self._on_attach,
             auto_complete=False,
             encoding=self._config.encoding,
-            receive_settle_mode=self._mode.value,
-            send_settle_mode=SenderSettleMode.Settled if self._mode == ReceiveSettleMode.ReceiveAndDelete else None,
+            receive_settle_mode=self._receive_mode.value,
+            send_settle_mode=SenderSettleMode.Settled if self._receive_mode == ReceiveMode.ReceiveAndDelete else None,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
-            prefetch=self._prefetch,
+            prefetch=self._prefetch_count,
             keep_alive_interval=self._config.keep_alive,
             shutdown_after_timeout=False
         )
@@ -216,33 +215,33 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self._message_iter = None
 
 
-    async def _receive(self, max_batch_size=None, timeout=None):
+    async def _receive(self, max_message_count=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
         # pylint: disable=protected-access
         await self._open()
 
         amqp_receive_client = self._handler
         received_messages_queue = amqp_receive_client._received_messages
-        max_batch_size = max_batch_size or self._prefetch
+        max_message_count = max_message_count or self._prefetch_count
         timeout_ms = 1000 * (timeout or self._max_wait_time) if (timeout or self._max_wait_time) else 0
         abs_timeout_ms = amqp_receive_client._counter.get_current_ms() + timeout_ms if timeout_ms else 0
 
         batch = []  # type: List[Message]
-        while not received_messages_queue.empty() and len(batch) < max_batch_size:
+        while not received_messages_queue.empty() and len(batch) < max_message_count:
             batch.append(received_messages_queue.get())
             received_messages_queue.task_done()
-        if len(batch) >= max_batch_size:
+        if len(batch) >= max_message_count:
             return [self._build_message(message) for message in batch]
 
-        # Dynamically issue link credit if max_batch_size > 1 when the prefetch is the default value 1
-        if max_batch_size and self._prefetch == 1 and max_batch_size > 1:
-            link_credit_needed = max_batch_size - len(batch)
+        # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
+        if max_message_count and self._prefetch_count == 1 and max_message_count > 1:
+            link_credit_needed = max_message_count - len(batch)
             await amqp_receive_client.message_handler.reset_link_credit_async(link_credit_needed)
 
         first_message_received = expired = False
         receiving = True
-        while receiving and not expired and len(batch) < max_batch_size:
-            while receiving and received_messages_queue.qsize() < max_batch_size:
+        while receiving and not expired and len(batch) < max_message_count:
+            while receiving and received_messages_queue.qsize() < max_message_count:
                 if abs_timeout_ms and amqp_receive_client._counter.get_current_ms() > abs_timeout_ms:
                     expired = True
                     break
@@ -254,7 +253,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                     first_message_received = True
                     abs_timeout_ms = amqp_receive_client._counter.get_current_ms() + \
                                      self._further_pull_receive_timeout_ms
-            while not received_messages_queue.empty() and len(batch) < max_batch_size:
+            while not received_messages_queue.empty() and len(batch) < max_message_count:
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
 
@@ -310,18 +309,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          the client connects to.
         :keyword str subscription_name: The path of specific Service Bus Subscription under the
          specified Topic the client connects to.
-        :keyword mode: The mode with which messages will be retrieved from the entity. The two options
+        :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
          will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
          if the client fails to process the message.
          The default mode is PeekLock.
-        :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :paramtype receive_mode: ~azure.servicebus.ReceiveMode
         :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
-         Default value is 3.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.servicebus.TransportType
@@ -329,12 +326,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+        :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
          performance but increase the chance that messages will expire while they are cached if they're not
          processed fast enough.
          The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count` (if provided)
          within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
@@ -360,7 +357,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
         return cls(**constructor_args)
 
-    async def receive_messages(self, max_batch_size=None, max_wait_time=None):
+    async def receive_messages(self, max_message_count=None, max_wait_time=None):
         # type: (int, float) -> List[ReceivedMessage]
         """Receive a batch of messages at once.
 
@@ -368,15 +365,15 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         perform an ad-hoc receive as a single call.
 
         Note that the number of messages retrieved in a single batch will be dependent on
-        whether `prefetch` was set for the receiver. If `prefetch` is not set for the receiver, the receiver would
-        try to cache max_batch_size (if provided) messages within the request to the service.
+        whether `prefetch_count` was set for the receiver. If `prefetch_count` is not set for the receiver,
+        the receiver would try to cache max_message_count (if provided) messages within the request to the service.
 
         This call will prioritize returning quickly over meeting a specified batch size, and so will
         return as soon as at least one message is received and there is a gap in incoming messages regardless
         of the specified batch size.
 
-        :param int max_batch_size: Maximum number of messages in the batch. Actual number
-         returned will depend on prefetch size and incoming stream rate.
+        :param int max_message_count: Maximum number of messages in the batch. Actual number
+         returned will depend on prefetch_count size and incoming stream rate.
         :param float max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, and no messages arrive within the
@@ -396,19 +393,19 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self._check_live()
         return await self._do_retryable_operation(
             self._receive,
-            max_batch_size=max_batch_size,
+            max_message_count=max_message_count,
             timeout=max_wait_time,
             require_timeout=True
         )
 
     async def receive_deferred_messages(self, sequence_numbers):
-        # type: (List[int]) -> List[ReceivedMessage]
+        # type: (Union[int, List[int]]) -> List[ReceivedMessage]
         """Receive messages that have previously been deferred.
 
         When receiving deferred messages from a partitioned entity, all of the supplied
         sequence numbers must be messages from the same partition.
 
-        :param list[int] sequence_numbers: A list of the sequence numbers of messages that have been
+        :param Union[int, list[int]] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
         :rtype: list[~azure.servicebus.aio.ReceivedMessage]
 
@@ -423,13 +420,15 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         """
         self._check_live()
+        if isinstance(sequence_numbers, six.integer_types):
+            sequence_numbers = [sequence_numbers]
         if not sequence_numbers:
             raise ValueError("At least one sequence number must be specified.")
         await self._open()
         try:
-            receive_mode = self._mode.value.value
+            receive_mode = self._receive_mode.value.value
         except AttributeError:
-            receive_mode = int(self._mode)
+            receive_mode = int(self._receive_mode)
         message = {
             MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
             MGMT_REQUEST_RECEIVER_SETTLE_MODE: types.AMQPuInt(receive_mode)
@@ -437,7 +436,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         self._populate_message_properties(message)
 
-        handler = functools.partial(mgmt_handlers.deferred_message_op, mode=self._mode, message_type=ReceivedMessage)
+        handler = functools.partial(mgmt_handlers.deferred_message_op, receive_mode=self._receive_mode, message_type=ReceivedMessage)
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
@@ -447,16 +446,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             m._receiver = self  # pylint: disable=protected-access
         return messages
 
-    async def peek_messages(self, message_count=1, sequence_number=0):
+    async def peek_messages(self, max_message_count=1, sequence_number=0):
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
         deferred or dead-lettered.
 
-        :param int message_count: The maximum number of messages to try and peek. The default
+        :param int max_message_count: The maximum number of messages to try and peek. The default
          value is 1.
         :param int sequence_number: A message sequence number from which to start browsing messages.
-        :rtype: list[~azure.servicebus.PeekMessage]
+        :rtype: list[~azure.servicebus.PeekedMessage]
 
         .. admonition:: Example:
 
@@ -470,7 +469,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self._check_live()
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
-        if int(message_count) < 1:
+        if int(max_message_count) < 1:
             raise ValueError("count must be 1 or greater.")
         if int(sequence_number) < 1:
             raise ValueError("start_from must be 1 or greater.")
@@ -479,7 +478,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         message = {
             MGMT_REQUEST_FROM_SEQUENCE_NUMBER: types.AMQPLong(sequence_number),
-            MGMT_REQUEST_MESSAGE_COUNT: message_count
+            MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count
         }
 
         self._populate_message_properties(message)

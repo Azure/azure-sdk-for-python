@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import logging
+import datetime
 from typing import Optional
 
 from .._common import message as sync_message
@@ -30,7 +31,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
             self,
             settle_operation,
             dead_letter_reason=None,
-            dead_letter_description=None,
+            dead_letter_error_description=None,
     ):
         try:
             if not self._is_deferred_message:
@@ -40,7 +41,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
                         self._settle_via_receiver_link(
                             settle_operation,
                             dead_letter_reason=dead_letter_reason,
-                            dead_letter_description=dead_letter_description
+                            dead_letter_error_description=dead_letter_error_description
                         )
                     )
                     return
@@ -53,7 +54,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
                     )
             await self._settle_via_mgmt_link(settle_operation,
                                              dead_letter_reason=dead_letter_reason,
-                                             dead_letter_description=dead_letter_description)()
+                                             dead_letter_error_description=dead_letter_error_description)()
         except Exception as e:
             raise MessageSettleFailed(settle_operation, e)
 
@@ -74,7 +75,8 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         self._settled = True
 
     async def dead_letter(  # type: ignore
-            self, reason: Optional[str] = None, description: Optional[str] = None
+            self, reason: Optional[str] = None,
+            error_description: Optional[str] = None
     ) -> None:  # pylint: disable=unused-argument
         """Move the message to the Dead Letter queue.
 
@@ -83,7 +85,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
 
         :param str reason: The reason for dead-lettering the message.
-        :param str description: The detailed description for dead-lettering the message.
+        :param str error_description: The detailed description for dead-lettering the message.
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
@@ -91,7 +93,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
-        await self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_reason=reason, dead_letter_description=description)
+        await self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_reason=reason, dead_letter_error_description=error_description)
         self._settled = True
 
     async def abandon(self) -> None:  # type: ignore
@@ -125,7 +127,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         await self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
-    async def renew_lock(self) -> None:  # type: ignore
+    async def renew_lock(self) -> datetime.datetime:
         """Renew the message lock.
 
         This will maintain the lock on the message to ensure
@@ -135,7 +137,8 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         background task by registering the message with an `azure.servicebus.aio.AutoLockRenew` instance.
         This operation is only available for non-sessionful messages.
 
-        :rtype: None
+        :returns: The utc datetime the lock is set to expire at.
+        :rtype: datetime.datetime
         :raises: TypeError if the message is sessionful.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
@@ -153,3 +156,5 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
 
         expiry = await self._receiver._renew_locks(token)  # pylint: disable=protected-access
         self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
+        
+        return self._expiry

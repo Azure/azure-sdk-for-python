@@ -20,8 +20,7 @@ from ...management._generated.models import QueueDescriptionFeed, TopicDescripti
     QueueDescriptionEntry, SubscriptionDescriptionFeed, SubscriptionDescriptionEntry, RuleDescriptionEntry, \
     RuleDescriptionFeed, NamespacePropertiesEntry, CreateTopicBody, CreateTopicBodyContent, \
     TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, \
-    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, \
-    NamespaceProperties
+    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent
 
 from ..._common.utils import parse_conn_str
 from ..._common.constants import JWT_TOKEN_SCOPE
@@ -32,7 +31,7 @@ from ...management._generated.aio._service_bus_management_client_async import Se
 from ...management import _constants as constants
 from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
 from ...management._models import QueueRuntimeProperties, QueueProperties, TopicProperties, TopicRuntimeProperties, \
-    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties
+    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties, NamespaceProperties
 from ...management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from ...management._handle_response_error import _handle_response_error
 from ...management._model_workaround import avoid_timedelta_overflow
@@ -155,7 +154,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             entry.content.queue_description)
         return queue_description
 
-    async def get_queue_runtime_info(self, queue_name: str, **kwargs) -> QueueRuntimeProperties:
+    async def get_queue_runtime_properties(self, queue_name: str, **kwargs) -> QueueRuntimeProperties:
         """Get the runtime information of a queue.
 
         :param str queue_name: The name of the queue.
@@ -165,9 +164,9 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Queue {} does not exist".format(queue_name))
-        runtime_info = QueueRuntimeProperties._from_internal_entity(queue_name,
+        runtime_properties = QueueRuntimeProperties._from_internal_entity(queue_name,
             entry.content.queue_description)
-        return runtime_info
+        return runtime_properties
 
     async def create_queue(self, name: str, **kwargs) -> QueueProperties:
         """Create a queue.
@@ -342,7 +341,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data)
 
-    def list_queues_runtime_info(self, **kwargs) -> AsyncItemPaged[QueueRuntimeProperties]:
+    def list_queues_runtime_properties(self, **kwargs) -> AsyncItemPaged[QueueRuntimeProperties]:
         """List the runtime information of the queues in a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of QueueRuntimeProperties.
@@ -375,7 +374,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         topic_description = TopicProperties._from_internal_entity(topic_name, entry.content.topic_description)
         return topic_description
 
-    async def get_topic_runtime_info(self, topic_name: str, **kwargs) -> TopicRuntimeProperties:
+    async def get_topic_runtime_properties(self, topic_name: str, **kwargs) -> TopicRuntimeProperties:
         """Get the runtime information of a topic.
 
         :param str topic_name: The name of the topic.
@@ -541,7 +540,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data)
 
-    def list_topics_runtime_info(self, **kwargs) -> AsyncItemPaged[TopicRuntimeProperties]:
+    def list_topics_runtime_properties(self, **kwargs) -> AsyncItemPaged[TopicRuntimeProperties]:
         """List the topics runtime information of a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of TopicRuntimeProperties.
@@ -582,7 +581,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             entry.title, entry.content.subscription_description)
         return subscription
 
-    async def get_subscription_runtime_info(
+    async def get_subscription_runtime_properties(
             self, topic: Union[str, TopicProperties], subscription_name: str, **kwargs
     ) -> SubscriptionRuntimeProperties:
         """Get a topic subscription runtime info.
@@ -779,7 +778,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         return AsyncItemPaged(
             get_next, extract_data)
 
-    def list_subscriptions_runtime_info(
+    def list_subscriptions_runtime_properties(
             self, topic: Union[str, TopicProperties], **kwargs) -> AsyncItemPaged[SubscriptionRuntimeProperties]:
         """List the subscriptions runtime information of a ServiceBus.
 
@@ -866,7 +865,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
             name,
             filter=kwargs.pop("filter", None),
             action=kwargs.pop("action", None),
-            created_at=None
+            created_at_utc=None
         )
         to_create = rule._to_internal_entity()
 
@@ -1004,7 +1003,7 @@ class ServiceBusManagementClient:  #pylint:disable=too-many-public-methods
         """
         entry_el = await self._impl.namespace.get(api_version=constants.API_VERSION, **kwargs)
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
-        return namespace_entry.content.namespace_properties
+        return NamespaceProperties._from_internal_entity(namespace_entry.content.namespace_properties)
 
     async def close(self) -> None:
         await self._impl.close()

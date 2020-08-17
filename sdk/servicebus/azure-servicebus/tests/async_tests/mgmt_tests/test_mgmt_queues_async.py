@@ -194,14 +194,14 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_queues(mgmt_service)
         queue_name = "eidk"
-        created_at = utc_now()
+        created_at_utc = utc_now()
         await mgmt_service.create_queue(queue_name)
         try:
             queue = await mgmt_service.get_queue(queue_name)
             assert queue.name == queue_name
             assert queue.entity_availability_status == 'Available'
             assert queue.status == 'Active'
-            # assert created_at < queue.created_at < utc_now() + datetime.timedelta(minutes=10) # TODO: Should be created_at_utc for consistency with dataplane.
+            # assert created_at_utc < queue.created_at_utc < utc_now() + datetime.timedelta(minutes=10)
         finally:
             await mgmt_service.delete_queue(queue_name)
 
@@ -367,18 +367,18 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_async_mgmt_queue_list_runtime_info_basic(self, servicebus_namespace_connection_string):
+    async def test_async_mgmt_queue_list_runtime_properties_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_queues(mgmt_service)
         queues = await async_pageable_to_list(mgmt_service.list_queues())
-        queues_infos = await async_pageable_to_list(mgmt_service.list_queues_runtime_info())
+        queues_infos = await async_pageable_to_list(mgmt_service.list_queues_runtime_properties())
 
         assert len(queues) == len(queues_infos) == 0
 
         await mgmt_service.create_queue("test_queue")
 
         queues = await async_pageable_to_list(mgmt_service.list_queues())
-        queues_infos = await async_pageable_to_list(mgmt_service.list_queues_runtime_info())
+        queues_infos = await async_pageable_to_list(mgmt_service.list_queues_runtime_properties())
 
         assert len(queues) == 1 and len(queues_infos) == 1
 
@@ -387,9 +387,9 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         info = queues_infos[0]
 
         assert info.size_in_bytes == 0
-        assert info.created_at is not None
-        assert info.accessed_at is not None
-        assert info.updated_at is not None
+        assert info.created_at_utc is not None
+        assert info.accessed_at_utc is not None
+        assert info.updated_at_utc is not None
         assert info.total_message_count == 0
         assert info.active_message_count == 0
         assert info.dead_letter_message_count == 0
@@ -398,54 +398,54 @@ class ServiceBusManagementClientQueueAsyncTests(AzureMgmtTestCase):
         assert info.scheduled_message_count == 0
 
         await mgmt_service.delete_queue("test_queue")
-        queues_infos = await async_pageable_to_list(mgmt_service.list_queues_runtime_info())
+        queues_infos = await async_pageable_to_list(mgmt_service.list_queues_runtime_properties())
         assert len(queues_infos) == 0
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_async_mgmt_queue_list_runtime_info_with_negative_parameters(self, servicebus_namespace_connection_string):
+    async def test_async_mgmt_queue_list_runtime_properties_with_negative_parameters(self, servicebus_namespace_connection_string):
         pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await run_test_async_mgmt_list_with_negative_parameters(AsyncMgmtQueueListRuntimeInfoTestHelper(mgmt_service))
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_async_mgmt_queue_list_runtime_info_with_parameters(self, servicebus_namespace_connection_string):
+    async def test_async_mgmt_queue_list_runtime_properties_with_parameters(self, servicebus_namespace_connection_string):
         pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await run_test_async_mgmt_list_with_parameters(AsyncMgmtQueueListRuntimeInfoTestHelper(mgmt_service))
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_async_mgmt_queue_get_runtime_info_basic(self, servicebus_namespace_connection_string):
+    async def test_async_mgmt_queue_get_runtime_properties_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_queues(mgmt_service)
         await mgmt_service.create_queue("test_queue")
-        queue_runtime_info = await mgmt_service.get_queue_runtime_info("test_queue")
+        queue_runtime_properties = await mgmt_service.get_queue_runtime_properties("test_queue")
 
-        assert queue_runtime_info
-        assert queue_runtime_info.name == "test_queue"
-        assert queue_runtime_info.size_in_bytes == 0
-        assert queue_runtime_info.created_at is not None
-        assert queue_runtime_info.accessed_at is not None
-        assert queue_runtime_info.updated_at is not None
-        assert queue_runtime_info.total_message_count == 0
-        assert queue_runtime_info.active_message_count == 0
-        assert queue_runtime_info.dead_letter_message_count == 0
-        assert queue_runtime_info.transfer_dead_letter_message_count == 0
-        assert queue_runtime_info.transfer_message_count == 0
-        assert queue_runtime_info.scheduled_message_count == 0
+        assert queue_runtime_properties
+        assert queue_runtime_properties.name == "test_queue"
+        assert queue_runtime_properties.size_in_bytes == 0
+        assert queue_runtime_properties.created_at_utc is not None
+        assert queue_runtime_properties.accessed_at_utc is not None
+        assert queue_runtime_properties.updated_at_utc is not None
+        assert queue_runtime_properties.total_message_count == 0
+        assert queue_runtime_properties.active_message_count == 0
+        assert queue_runtime_properties.dead_letter_message_count == 0
+        assert queue_runtime_properties.transfer_dead_letter_message_count == 0
+        assert queue_runtime_properties.transfer_message_count == 0
+        assert queue_runtime_properties.scheduled_message_count == 0
         await mgmt_service.delete_queue("test_queue")
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_async_mgmt_queue_get_runtime_info_negative(self, servicebus_namespace_connection_string):
+    async def test_async_mgmt_queue_get_runtime_properties_negative(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         with pytest.raises(msrest.exceptions.ValidationError):
-            await mgmt_service.get_queue_runtime_info(None)
+            await mgmt_service.get_queue_runtime_properties(None)
 
         with pytest.raises(msrest.exceptions.ValidationError):
-            await mgmt_service.get_queue_runtime_info("")
+            await mgmt_service.get_queue_runtime_properties("")
 
         with pytest.raises(ResourceNotFoundError):
-            await mgmt_service.get_queue_runtime_info("non_existing_queue")
+            await mgmt_service.get_queue_runtime_properties("non_existing_queue")

@@ -50,8 +50,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     :keyword str topic_name: The path of specific Service Bus Topic the client connects to.
      Only one of queue_name or topic_name can be provided.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-    :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
-     Default value is 3.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.servicebus.TransportType
@@ -212,8 +210,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
         :keyword str topic_name: The path of specific Service Bus Topic the client connects to.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
-         Default value is 3.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.servicebus.TransportType

@@ -214,18 +214,18 @@ class ServiceBusManagementClientTopicAsyncTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_async_mgmt_topic_list_runtime_info(self, servicebus_namespace_connection_string, **kwargs):
+    async def test_async_mgmt_topic_list_runtime_properties(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topics = await async_pageable_to_list(mgmt_service.list_topics())
-        topics_infos = await async_pageable_to_list(mgmt_service.list_topics_runtime_info())
+        topics_infos = await async_pageable_to_list(mgmt_service.list_topics_runtime_properties())
 
         assert len(topics) == len(topics_infos) == 0
 
         await mgmt_service.create_topic("test_topic")
 
         topics = await async_pageable_to_list(mgmt_service.list_topics())
-        topics_infos = await async_pageable_to_list(mgmt_service.list_topics_runtime_info())
+        topics_infos = await async_pageable_to_list(mgmt_service.list_topics_runtime_properties())
 
         assert len(topics) == 1 and len(topics_infos) == 1
 
@@ -233,32 +233,32 @@ class ServiceBusManagementClientTopicAsyncTests(AzureMgmtTestCase):
 
         info = topics_infos[0]
 
-        assert info.accessed_at is not None
-        assert info.updated_at is not None
+        assert info.accessed_at_utc is not None
+        assert info.updated_at_utc is not None
         assert info.subscription_count is 0
         assert info.size_in_bytes == 0
         assert info.scheduled_message_count == 0
 
         await mgmt_service.delete_topic("test_topic")
-        topics_infos = await async_pageable_to_list(mgmt_service.list_topics_runtime_info())
+        topics_infos = await async_pageable_to_list(mgmt_service.list_topics_runtime_properties())
         assert len(topics_infos) == 0
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_async_mgmt_topic_get_runtime_info_basic(self, servicebus_namespace_connection_string):
+    async def test_async_mgmt_topic_get_runtime_properties_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         await mgmt_service.create_topic("test_topic")
         try:
-            topic_runtime_info = await mgmt_service.get_topic_runtime_info("test_topic")
+            topic_runtime_properties = await mgmt_service.get_topic_runtime_properties("test_topic")
 
-            assert topic_runtime_info
-            assert topic_runtime_info.name == "test_topic"
-            assert topic_runtime_info.created_at is not None
-            assert topic_runtime_info.accessed_at is not None
-            assert topic_runtime_info.updated_at is not None
-            assert topic_runtime_info.subscription_count is 0
-            assert topic_runtime_info.size_in_bytes == 0
-            assert topic_runtime_info.scheduled_message_count == 0
+            assert topic_runtime_properties
+            assert topic_runtime_properties.name == "test_topic"
+            assert topic_runtime_properties.created_at_utc is not None
+            assert topic_runtime_properties.accessed_at_utc is not None
+            assert topic_runtime_properties.updated_at_utc is not None
+            assert topic_runtime_properties.subscription_count is 0
+            assert topic_runtime_properties.size_in_bytes == 0
+            assert topic_runtime_properties.scheduled_message_count == 0
         finally:
             await mgmt_service.delete_topic("test_topic")

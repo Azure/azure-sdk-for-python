@@ -20,7 +20,7 @@ from ._generated.models import QueueDescriptionFeed, TopicDescriptionEntry, \
     QueueDescriptionEntry, SubscriptionDescriptionFeed, SubscriptionDescriptionEntry, RuleDescriptionEntry, \
     RuleDescriptionFeed, NamespacePropertiesEntry, CreateTopicBody, CreateTopicBodyContent, \
     TopicDescriptionFeed, CreateSubscriptionBody, CreateSubscriptionBodyContent, CreateRuleBody, \
-    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent, NamespaceProperties
+    CreateRuleBodyContent, CreateQueueBody, CreateQueueBodyContent
 from ._utils import extract_data_template, get_next_template, deserialize_rule_key_values, serialize_rule_key_values, \
     extract_rule_data_template
 from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
@@ -34,7 +34,7 @@ from ._generated._service_bus_management_client import ServiceBusManagementClien
 from ._model_workaround import avoid_timedelta_overflow
 from . import _constants as constants
 from ._models import QueueRuntimeProperties, QueueProperties, TopicProperties, TopicRuntimeProperties, \
-    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties
+    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties, NamespaceProperties
 from ._handle_response_error import _handle_response_error
 
 if TYPE_CHECKING:
@@ -149,7 +149,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         queue_description = QueueProperties._from_internal_entity(queue_name, entry.content.queue_description)
         return queue_description
 
-    def get_queue_runtime_info(self, queue_name, **kwargs):
+    def get_queue_runtime_properties(self, queue_name, **kwargs):
         # type: (str, Any) -> QueueRuntimeProperties
         """Get the runtime information of a queue.
 
@@ -160,8 +160,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         entry = QueueDescriptionEntry.deserialize(entry_ele)
         if not entry.content:
             raise ResourceNotFoundError("Queue {} does not exist".format(queue_name))
-        runtime_info = QueueRuntimeProperties._from_internal_entity(queue_name, entry.content.queue_description)
-        return runtime_info
+        runtime_properties = QueueRuntimeProperties._from_internal_entity(queue_name, entry.content.queue_description)
+        return runtime_properties
 
     def create_queue(self, name, **kwargs):
         # type: (str, Any) -> QueueProperties
@@ -342,7 +342,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         return ItemPaged(
             get_next, extract_data)
 
-    def list_queues_runtime_info(self, **kwargs):
+    def list_queues_runtime_properties(self, **kwargs):
         # type: (Any) -> ItemPaged[QueueRuntimeProperties]
         """List the runtime information of the queues in a ServiceBus namespace.
 
@@ -377,7 +377,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         topic_description = TopicProperties._from_internal_entity(topic_name, entry.content.topic_description)
         return topic_description
 
-    def get_topic_runtime_info(self, topic_name, **kwargs):
+    def get_topic_runtime_properties(self, topic_name, **kwargs):
         # type: (str, Any) -> TopicRuntimeProperties
         """Get a the runtime information of a topic.
 
@@ -552,7 +552,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         return ItemPaged(
             get_next, extract_data)
 
-    def list_topics_runtime_info(self, **kwargs):
+    def list_topics_runtime_properties(self, **kwargs):
         # type: (Any) -> ItemPaged[TopicRuntimeProperties]
         """List the topics runtime information of a ServiceBus namespace.
 
@@ -593,7 +593,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             entry.title, entry.content.subscription_description)
         return subscription
 
-    def get_subscription_runtime_info(self, topic, subscription_name, **kwargs):
+    def get_subscription_runtime_properties(self, topic, subscription_name, **kwargs):
         # type: (Union[str, TopicProperties], str, Any) -> SubscriptionRuntimeProperties
         """Get a topic subscription runtime info.
 
@@ -786,7 +786,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         return ItemPaged(
             get_next, extract_data)
 
-    def list_subscriptions_runtime_info(self, topic, **kwargs):
+    def list_subscriptions_runtime_properties(self, topic, **kwargs):
         # type: (Union[str, TopicProperties], Any) -> ItemPaged[SubscriptionRuntimeProperties]
         """List the subscriptions runtime information of a ServiceBus Topic.
 
@@ -872,7 +872,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
             name,
             filter=kwargs.pop("filter", None),
             action=kwargs.pop("action", None),
-            created_at=None
+            created_at_utc=None
         )
         to_create = rule._to_internal_entity()
 
@@ -1007,7 +1007,7 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         """
         entry_el = self._impl.namespace.get(api_version=constants.API_VERSION, **kwargs)
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
-        return namespace_entry.content.namespace_properties
+        return NamespaceProperties._from_internal_entity(namespace_entry.content.namespace_properties)
 
     def close(self):
         # type: () -> None

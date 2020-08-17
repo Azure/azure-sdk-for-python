@@ -200,13 +200,13 @@ with ServiceBusClient.from_connection_string(connstr) as client:
         if received_message_array:
             print(str(received_message_array[0]))
 
-    with client.get_queue_receiver(queue_name, prefetch=5) as receiver:
-        received_message_array = receiver.receive_messages(max_batch_size=5, max_wait_time=10)  # try to receive maximum 5 messages in a batch within 10 seconds
+    with client.get_queue_receiver(queue_name) as receiver:
+        received_message_array = receiver.receive_messages(max_message_count=5, max_wait_time=10)  # try to receive maximum 5 messages in a batch within 10 seconds
         for message in received_message_array:
             print(str(message))
 ```
 
-In this example, max_batch_size (and prefetch, as required by max_batch_size) declares the maximum number of messages to attempt receiving before hitting a max_wait_time as specified in seconds.
+In this example, max_message_count declares the maximum number of messages to attempt receiving before hitting a max_wait_time as specified in seconds.
 
 > **NOTE:** It should also be noted that `ServiceBusReceiver.peek_messages()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
 
@@ -265,7 +265,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 When receiving from a queue, you have multiple actions you can take on the messages you receive.
 
 > **NOTE**: You can only settle `ReceivedMessage` objects which are received in `ReceiveSettleMode.PeekLock` mode (this is the default).
-> `ReceiveSettleMode.ReceiveAndDelete` mode removes the message from the queue on receipt.  `PeekMessage` messages
+> `ReceiveSettleMode.ReceiveAndDelete` mode removes the message from the queue on receipt.  `PeekedMessage` messages
 > returned from `peek()` cannot be settled, as the message lock is not taken like it is in the aforementioned receive methods.  Sessionful messages have a similar limitation.
 
 If the message has a lock as mentioned above, settlement will fail if the message lock has expired.  

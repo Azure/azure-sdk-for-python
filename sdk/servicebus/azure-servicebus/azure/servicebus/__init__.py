@@ -14,8 +14,8 @@ from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session_receiver import ServiceBusSessionReceiver
 from ._servicebus_session import ServiceBusSession
 from ._base_handler import ServiceBusSharedKeyCredential
-from ._common.message import Message, BatchMessage, PeekMessage, ReceivedMessage
-from ._common.constants import ReceiveSettleMode, NEXT_AVAILABLE
+from ._common.message import Message, BatchMessage, PeekedMessage, ReceivedMessage
+from ._common.constants import ReceiveMode
 from ._common.auto_lock_renewer import AutoLockRenew
 
 TransportType = constants.TransportType
@@ -23,10 +23,9 @@ TransportType = constants.TransportType
 __all__ = [
     'Message',
     'BatchMessage',
-    'PeekMessage',
+    'PeekedMessage',
     'ReceivedMessage',
-    'ReceiveSettleMode',
-    'NEXT_AVAILABLE',
+    'ReceiveMode',
     'ServiceBusClient',
     'ServiceBusReceiver',
     'ServiceBusSessionReceiver',

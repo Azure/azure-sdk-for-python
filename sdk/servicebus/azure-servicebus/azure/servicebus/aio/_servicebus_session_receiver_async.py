@@ -40,13 +40,13 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
-    :keyword mode: The mode with which messages will be retrieved from the entity. The two options
+    :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
      lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
      will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
      if the client fails to process the message.
      The default mode is PeekLock.
-    :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+    :paramtype receive_mode: ~azure.servicebus.ReceiveMode
     :keyword session_id: A specific session from which to receive. This must be specified for a
      sessionful entity, otherwise it must be None. In order to receive messages from the next available
      session, set this to None.  The default is None.
@@ -54,8 +54,6 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
     :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
      automatically shutdown. The default value is 0, meaning no timeout.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-    :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
-     Default value is 3.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.servicebus.TransportType
@@ -63,12 +61,12 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-    :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+    :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
      This setting is only for advanced performance tuning. Increasing this value will improve message throughput
      performance but increase the chance that messages will expire while they are cached if they're not
      processed fast enough.
      The default value is 0, meaning messages will be received from the service and processed one at a time.
-     In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+     In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count` (if provided)
      within its request to the service.
 
     .. admonition:: Example:
@@ -105,13 +103,13 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
          the client connects to.
         :keyword str subscription_name: The path of specific Service Bus Subscription under the
          specified Topic the client connects to.
-        :keyword mode: The mode with which messages will be retrieved from the entity. The two options
+        :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
          will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
          if the client fails to process the message.
          The default mode is PeekLock.
-        :paramtype mode: ~azure.servicebus.ReceiveSettleMode
+        :paramtype receive_mode: ~azure.servicebus.ReceiveMode
         :keyword session_id: A specific session from which to receive. This must be specified for a
          sessionful entity, otherwise it must be None. In order to receive messages from the next available
          session, set this to None.  The default is None.
@@ -119,8 +117,6 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
         :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
          automatically shutdown. The default value is 0, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword int retry_total: The total number of attempts to redo a failed operation when an error occurs.
-         Default value is 3.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.servicebus.TransportType
@@ -128,12 +124,12 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-        :keyword int prefetch: The maximum number of messages to cache with each request to the service.
+        :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
          performance but increase the chance that messages will expire while they are cached if they're not
          processed fast enough.
          The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch being 0, `ServiceBusReceiver.receive` would try to cache `max_batch_size` (if provided)
+         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count` (if provided)
          within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusSessionReceiver
 

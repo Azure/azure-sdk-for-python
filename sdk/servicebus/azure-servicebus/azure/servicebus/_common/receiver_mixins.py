@@ -12,7 +12,7 @@ from .constants import (
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
-    ReceiveSettleMode
+    ReceiveMode
 )
 from ..exceptions import (
     _ServiceBusErrorPolicy,
@@ -32,7 +32,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
         self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
         self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
-        self._mode = kwargs.get("mode", ReceiveSettleMode.PeekLock)
+        self._receive_mode = kwargs.get("receive_mode", ReceiveMode.PeekLock)
         self._error_policy = _ServiceBusErrorPolicy(
             max_retries=self._config.retry_total
         )
@@ -40,18 +40,18 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._last_received_sequenced_number = None
         self._message_iter = None
         self._connection = kwargs.get("connection")
-        prefetch = kwargs.get("prefetch", 0)
-        if int(prefetch) < 0 or int(prefetch) > 50000:
-            raise ValueError("Prefetch must be an integer between 0 and 50000 inclusive.")
-        self._prefetch = prefetch + 1
+        prefetch_count = kwargs.get("prefetch_count", 0)
+        if int(prefetch_count) < 0 or int(prefetch_count) > 50000:
+            raise ValueError("prefetch_count must be an integer between 0 and 50000 inclusive.")
+        self._prefetch_count = prefetch_count + 1
         # The relationship between the amount can be received and the time interval is linear: amount ~= perf * interval
-        # In large max_batch_size case, like 5000, the pull receive would always return hundreds of messages limited by
+        # In large max_message_count case, like 5000, the pull receive would always return hundreds of messages limited by
         # the perf and time.
         self._further_pull_receive_timeout_ms = 200
         self._max_wait_time = kwargs.get("max_wait_time", None)
 
     def _build_message(self, received, message_type=ReceivedMessage):
-        message = message_type(message=received, mode=self._mode)
+        message = message_type(message=received, receive_mode=self._receive_mode)
         message._receiver = self  # pylint: disable=protected-access
         self._last_received_sequenced_number = message.sequence_number
         return message

@@ -22,7 +22,7 @@ def message_processing(sb_client, queue_name, messages):
             with sb_client.get_queue_session_receiver(queue_name, max_wait_time=1) as receiver:
                 renewer = AutoLockRenew()
                 renewer.register(receiver.session)
-                receiver.session.set_session_state("OPEN")
+                receiver.session.set_state("OPEN")
                 for message in receiver:
                     messages.append(message)
                     print("Message: {}".format(message))
@@ -35,7 +35,7 @@ def message_processing(sb_client, queue_name, messages):
                     print("Enqueued time: {}".format(message.enqueued_time_utc))
                     message.complete()
                     if str(message) == 'shutdown':
-                        receiver.session.set_session_state("CLOSED")
+                        receiver.session.set_state("CLOSED")
                 renewer.close()
         except NoActiveSession:
             print("There are no non-empty sessions remaining; exiting.  This may present as a UserError in the azure portal.")

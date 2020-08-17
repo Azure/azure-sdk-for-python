@@ -230,7 +230,7 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_async_mgmt_subscription_list_runtime_info(self, servicebus_namespace_connection_string, **kwargs):
+    async def test_async_mgmt_subscription_list_runtime_properties(self, servicebus_namespace_connection_string, **kwargs):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = 'dkoamv'
@@ -238,14 +238,14 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
         await mgmt_service.create_topic(topic_name)
 
         subs = await async_pageable_to_list(mgmt_service.list_subscriptions(topic_name))
-        subs_infos = await async_pageable_to_list(mgmt_service.list_subscriptions_runtime_info(topic_name))
+        subs_infos = await async_pageable_to_list(mgmt_service.list_subscriptions_runtime_properties(topic_name))
 
         assert len(subs) == len(subs_infos) == 0
 
         await mgmt_service.create_subscription(topic_name, subscription_name)
 
         subs = await async_pageable_to_list(mgmt_service.list_subscriptions(topic_name))
-        subs_infos = await async_pageable_to_list(mgmt_service.list_subscriptions_runtime_info(topic_name))
+        subs_infos = await async_pageable_to_list(mgmt_service.list_subscriptions_runtime_properties(topic_name))
 
         assert len(subs) == 1 and len(subs_infos) == 1
 
@@ -253,9 +253,9 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
 
         info = subs_infos[0]
 
-        assert info.accessed_at is not None
-        assert info.updated_at is not None
-        assert info.created_at is not None
+        assert info.accessed_at_utc is not None
+        assert info.updated_at_utc is not None
+        assert info.created_at_utc is not None
         assert info.total_message_count == 0
         assert info.active_message_count == 0
         assert info.dead_letter_message_count == 0
@@ -263,14 +263,14 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
         assert info.transfer_message_count == 0
 
         await mgmt_service.delete_subscription(topic_name, subscription_name)
-        subs_infos = await async_pageable_to_list(mgmt_service.list_subscriptions_runtime_info(topic_name))
+        subs_infos = await async_pageable_to_list(mgmt_service.list_subscriptions_runtime_properties(topic_name))
         assert len(subs_infos) == 0
 
         await mgmt_service.delete_topic(topic_name)
 
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    async def test_async_mgmt_subscription_get_runtime_info_basic(self, servicebus_namespace_connection_string):
+    async def test_async_mgmt_subscription_get_runtime_properties_basic(self, servicebus_namespace_connection_string):
         mgmt_service = ServiceBusManagementClient.from_connection_string(servicebus_namespace_connection_string)
         await clear_topics(mgmt_service)
         topic_name = 'dcvxqa'
@@ -278,18 +278,18 @@ class ServiceBusManagementClientSubscriptionAsyncTests(AzureMgmtTestCase):
 
         await mgmt_service.create_topic(topic_name)
         await mgmt_service.create_subscription(topic_name, subscription_name)
-        sub_runtime_info = await mgmt_service.get_subscription_runtime_info(topic_name, subscription_name)
+        sub_runtime_properties = await mgmt_service.get_subscription_runtime_properties(topic_name, subscription_name)
 
-        assert sub_runtime_info
-        assert sub_runtime_info.name == subscription_name
-        assert sub_runtime_info.created_at is not None
-        assert sub_runtime_info.accessed_at is not None
-        assert sub_runtime_info.updated_at is not None
-        assert sub_runtime_info.total_message_count == 0
-        assert sub_runtime_info.active_message_count == 0
-        assert sub_runtime_info.dead_letter_message_count == 0
-        assert sub_runtime_info.transfer_dead_letter_message_count == 0
-        assert sub_runtime_info.transfer_message_count == 0
+        assert sub_runtime_properties
+        assert sub_runtime_properties.name == subscription_name
+        assert sub_runtime_properties.created_at_utc is not None
+        assert sub_runtime_properties.accessed_at_utc is not None
+        assert sub_runtime_properties.updated_at_utc is not None
+        assert sub_runtime_properties.total_message_count == 0
+        assert sub_runtime_properties.active_message_count == 0
+        assert sub_runtime_properties.dead_letter_message_count == 0
+        assert sub_runtime_properties.transfer_dead_letter_message_count == 0
+        assert sub_runtime_properties.transfer_message_count == 0
 
         await mgmt_service.delete_subscription(topic_name, subscription_name)
         await mgmt_service.delete_topic(topic_name)

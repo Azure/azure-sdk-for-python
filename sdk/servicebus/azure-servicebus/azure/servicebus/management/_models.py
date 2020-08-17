@@ -18,8 +18,9 @@ from ._generated.models import QueueDescription as InternalQueueDescription, \
     SqlRuleAction as InternalSqlRuleAction, \
     EmptyRuleAction as InternalEmptyRuleAction, \
     CorrelationFilter as InternalCorrelationFilter, \
+    NamespaceProperties as InternalNamespaceProperties, \
     SqlFilter as InternalSqlFilter, TrueFilter as InternalTrueFilter, FalseFilter as InternalFalseFilter, \
-    KeyValue
+    KeyValue, AuthorizationRule as InternalAuthorizationRule
 
 from ._model_workaround import adjust_attribute_map
 from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
@@ -27,6 +28,9 @@ from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 adjust_attribute_map()
 
 
+# These helpers are to ensure that the Properties objects can't be constructed without all args present, 
+# as a compromise between our use of kwargs to flatten arg-lists and trying to de-incentivise manual instantiation
+# while still trying to provide some guardrails.
 def extract_kwarg_template(kwargs, extraction_missing_args, name):
     try:
         return kwargs[name]
@@ -90,6 +94,72 @@ class DictMixin(object):
         if key in self.__dict__:
             return self.__dict__[key]
         return default
+
+
+class NamespaceProperties(DictMixin):
+    """The metadata related to a Service Bus namespace.
+
+    :ivar alias: Alias for the geo-disaster recovery Service Bus namespace.
+    :type alias: str
+    :ivar created_at_utc: The exact time the namespace was created.
+    :type created_at_utc: ~datetime.datetime
+    :ivar messaging_sku: The SKU for the messaging entity. Possible values include: "Basic",
+     "Standard", "Premium".
+    :type messaging_sku: str or ~azure.servicebus.management._generated.models.MessagingSku
+    :ivar messaging_units: The number of messaging units allocated to the namespace.
+    :type messaging_units: int
+    :ivar modified_at_utc: The exact time the namespace was last modified.
+    :type modified_at_utc: ~datetime.datetime
+    :ivar name: Name of the namespace.
+    :type name: str
+    """
+    def __init__(
+        self,
+        name,
+        **kwargs
+    ):
+        # type: (str, Any) -> None
+        self.name = name
+
+        extraction_missing_args = []  # type: List[str]
+        extract_kwarg = functools.partial(extract_kwarg_template, kwargs, extraction_missing_args)
+
+        self.alias = extract_kwarg('alias', None)
+        self.created_at_utc = extract_kwarg('created_at_utc', None)
+        self.messaging_sku = extract_kwarg('messaging_sku', None)
+        self.messaging_units = extract_kwarg('messaging_units', None)
+        self.modified_at_utc = extract_kwarg('modified_at_utc', None)
+        self.name = extract_kwarg('name', None)
+        self.namespace_type = extract_kwarg('namespace_type', None)
+
+        validate_extraction_missing_args(extraction_missing_args)
+
+
+    @classmethod
+    def _from_internal_entity(cls, name, internal_entity):
+        # type: (str, InternalNamespaceProperties) -> NamespaceProperties
+        namespace_properties = cls(
+            name,
+            alias=internal_entity.alias,
+            created_at_utc=internal_entity.created_time,
+            messaging_sku=internal_entity.messaging_sku,
+            messaging_units=internal_entity.messaging_units,
+            modified_at_utc=internal_entity.modified_time,
+            name=internal_entity.name,
+            namespace_type=internal_entity.namespace_type,
+        )
+        return namespace_properties
+
+    def _to_internal_entity(self):
+        internal_entity = InternalNamespaceProperties()
+        internal_entity.alias = self.alias
+        internal_entity.created_time = self.created_at_utc
+        internal_entity.messaging_sku = self.messaging_sku
+        internal_entity.messaging_units = self.messaging_units
+        internal_entity.modified_time = self.modified_at_utc
+        internal_entity.namespace_type = self.namespace_type
+
+        return internal_entity
 
 
 class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
@@ -201,7 +271,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         # type: (str, InternalQueueDescription) -> QueueProperties
         qd = cls(
             name,
-            authorization_rules=internal_qd.authorization_rules,
+            authorization_rules=[AuthorizationRule._from_internal_entity(r) for r in internal_qd.authorization_rules] if internal_qd.authorization_rules else internal_qd.authorization_rules,
             auto_delete_on_idle=internal_qd.auto_delete_on_idle,
             dead_lettering_on_message_expiration=internal_qd.dead_lettering_on_message_expiration,
             default_message_time_to_live=internal_qd.default_message_time_to_live,
@@ -230,7 +300,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             internal_qd = InternalQueueDescription()
             self._internal_qd = internal_qd
 
-        self._internal_qd.authorization_rules = self.authorization_rules
+        self._internal_qd.authorization_rules = [r._to_internal_entity() for r in self.authorization_rules] if self.authorization_rules else self.authorization_rules
         self._internal_qd.auto_delete_on_idle = self.auto_delete_on_idle
         self._internal_qd.dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration
         self._internal_qd.default_message_time_to_live = self.default_message_time_to_live
@@ -280,7 +350,7 @@ class QueueRuntimeProperties(object):
         return self._name
 
     @property
-    def accessed_at(self):
+    def accessed_at_utc(self):
         """Last time a message was sent, or the last time there was a receive request to this queue.
 
         :rtype:  ~datetime.datetime
@@ -288,7 +358,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.accessed_at
 
     @property
-    def created_at(self):
+    def created_at_utc(self):
         """The exact time the queue was created.
 
         :rtype: ~datetime.datetime
@@ -296,7 +366,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.created_at
 
     @property
-    def updated_at(self):
+    def updated_at_utc(self):
         """The exact the entity was updated.
 
         :rtype: ~datetime.datetime
@@ -458,7 +528,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             enable_batched_operations=internal_td.enable_batched_operations,
             size_in_bytes=internal_td.size_in_bytes,
             is_anonymous_accessible=internal_td.is_anonymous_accessible,
-            authorization_rules=internal_td.authorization_rules,
+            authorization_rules=[AuthorizationRule._from_internal_entity(r) for r in internal_td.authorization_rules] if internal_td.authorization_rules else internal_td.authorization_rules,
             status=internal_td.status,
             support_ordering=internal_td.support_ordering,
             auto_delete_on_idle=internal_td.auto_delete_on_idle,
@@ -482,7 +552,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self._internal_td.enable_batched_operations = self.enable_batched_operations
         self._internal_td.size_in_bytes = self.size_in_bytes
         self._internal_td.is_anonymous_accessible = self.is_anonymous_accessible
-        self._internal_td.authorization_rules = self.authorization_rules
+        self._internal_td.authorization_rules = [r._to_internal_entity() for r in self.authorization_rules] if self.authorization_rules else self.authorization_rules
         self._internal_td.status = self.status
         self._internal_td.support_ordering = self.support_ordering
         self._internal_td.auto_delete_on_idle = self.auto_delete_on_idle
@@ -521,7 +591,7 @@ class TopicRuntimeProperties(object):
         return self._name
 
     @property
-    def accessed_at(self):
+    def accessed_at_utc(self):
         """Last time a message was sent, or the last time there was a receive request
 
         :rtype: ~datetime.datetime
@@ -529,7 +599,7 @@ class TopicRuntimeProperties(object):
         return self._internal_td.accessed_at
 
     @property
-    def created_at(self):
+    def created_at_utc(self):
         """The exact time the queue was created.
 
         :rtype: ~datetime.datetime
@@ -537,7 +607,7 @@ class TopicRuntimeProperties(object):
         return self._internal_td.created_at
 
     @property
-    def updated_at(self):
+    def updated_at_utc(self):
         """The exact time the entity was updated.
 
         :rtype: ~datetime.datetime
@@ -713,7 +783,7 @@ class SubscriptionRuntimeProperties(object):
         return self._name
 
     @property
-    def accessed_at(self):
+    def accessed_at_utc(self):
         """Last time a message was sent, or the last time there was a receive request
 
         :rtype: ~datetime.datetime
@@ -721,7 +791,7 @@ class SubscriptionRuntimeProperties(object):
         return self._internal_sd.accessed_at
 
     @property
-    def created_at(self):
+    def created_at_utc(self):
         """The exact time the subscription was created.
 
         :rtype: ~datetime.datetime
@@ -729,7 +799,7 @@ class SubscriptionRuntimeProperties(object):
         return self._internal_sd.created_at
 
     @property
-    def updated_at(self):
+    def updated_at_utc(self):
         """The exact time the entity is updated.
 
         :rtype: ~datetime.datetime
@@ -787,8 +857,8 @@ class RuleProperties(DictMixin):
      ~azure.servicebus.management.SqlRuleFilter]
     :ivar action: The action of the rule.
     :type action: Optional[~azure.servicebus.management.SqlRuleAction]
-    :ivar created_at: The exact time the rule was created.
-    :type created_at: ~datetime.datetime
+    :ivar created_at_utc: The exact time the rule was created.
+    :type created_at_utc: ~datetime.datetime
     """
 
     def __init__(self, name, **kwargs):
@@ -802,7 +872,7 @@ class RuleProperties(DictMixin):
 
         self.filter = extract_kwarg('filter')
         self.action = extract_kwarg('action')
-        self.created_at = extract_kwarg('created_at')
+        self.created_at_utc = extract_kwarg('created_at_utc')
 
         validate_extraction_missing_args(extraction_missing_args)
 
@@ -815,7 +885,7 @@ class RuleProperties(DictMixin):
             if internal_rule.filter and isinstance(internal_rule.filter, tuple(RULE_CLASS_MAPPING.keys())) else None,
             action=RULE_CLASS_MAPPING[type(internal_rule.action)]._from_internal_entity(internal_rule.action)
             if internal_rule.action and isinstance(internal_rule.action, tuple(RULE_CLASS_MAPPING.keys())) else None,
-            created_at=internal_rule.created_at
+            created_at_utc=internal_rule.created_at
         )
         rule._internal_rule = deepcopy(internal_rule)
         return rule
@@ -826,7 +896,7 @@ class RuleProperties(DictMixin):
             self._internal_rule = InternalRuleDescription()
         self._internal_rule.filter = self.filter._to_internal_entity() if self.filter else TRUE_FILTER  # type: ignore
         self._internal_rule.action = self.action._to_internal_entity() if self.action else EMPTY_RULE_ACTION
-        self._internal_rule.created_at = self.created_at
+        self._internal_rule.created_at = self.created_at_utc
         self._internal_rule.name = self.name
 
         return self._internal_rule
@@ -910,15 +980,13 @@ class SqlRuleFilter(object):
     :type sql_expression: str
     :param parameters: Sets the value of the sql expression parameters if any.
     :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
-    :param requires_preprocessing: Value that indicates whether the rule
-     filter requires preprocessing. Default value: True .
     :type requires_preprocessing: bool
     """
-    def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=True):
+    def __init__(self, sql_expression=None, parameters=None):
         # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]], bool) -> None
         self.sql_expression = sql_expression
         self.parameters = parameters
-        self.requires_preprocessing = requires_preprocessing
+        self.requires_preprocessing = None
 
     @classmethod
     def _from_internal_entity(cls, internal_sql_rule_filter):
@@ -944,7 +1012,7 @@ class TrueRuleFilter(SqlRuleFilter):
     """A sql filter with a sql expression that is always True
     """
     def __init__(self):
-        super(TrueRuleFilter, self).__init__("1=1", None, True)
+        super(TrueRuleFilter, self).__init__("1=1", None)
 
     def _to_internal_entity(self):
         internal_entity = InternalTrueFilter()
@@ -959,7 +1027,7 @@ class FalseRuleFilter(SqlRuleFilter):
     """A sql filter with a sql expression that is always True
     """
     def __init__(self):
-        super(FalseRuleFilter, self).__init__("1>1", None, True)
+        super(FalseRuleFilter, self).__init__("1>1", None)
 
     def _to_internal_entity(self):
         internal_entity = InternalFalseFilter()
@@ -977,15 +1045,13 @@ class SqlRuleAction(object):
     :type sql_expression: str
     :param parameters: Sets the value of the sql expression parameters if any.
     :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
-    :param requires_preprocessing: Value that indicates whether the rule
-     action requires preprocessing. Default value: True .
     :type requires_preprocessing: bool
     """
-    def __init__(self, sql_expression=None, parameters=None, requires_preprocessing=True):
-        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]], bool) -> None
+    def __init__(self, sql_expression=None, parameters=None):
+        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]]) -> None
         self.sql_expression = sql_expression
         self.parameters = parameters
-        self.requires_preprocessing = requires_preprocessing
+        self.requires_preprocessing = None
 
     @classmethod
     def _from_internal_entity(cls, internal_sql_rule_action):
@@ -1015,3 +1081,70 @@ RULE_CLASS_MAPPING = {
 }  # type: Dict[Type[Model], Type]
 EMPTY_RULE_ACTION = InternalEmptyRuleAction()
 TRUE_FILTER = TrueRuleFilter()
+
+
+class AuthorizationRule(object):
+    """Authorization rule of an entity.
+
+    :param type: The authorization type.
+    :type type: str
+    :param claim_type: The claim type.
+    :type claim_type: str
+    :param claim_value: The claim value.
+    :type claim_value: str
+    :param rights: Access rights of the entity. Values are 'Send', 'Listen', or 'Manage'.
+    :type rights: list[AccessRights]
+    :param created_at_utc: The date and time when the authorization rule was created.
+    :type created_at_utc: ~datetime.datetime
+    :param modified_at_utc: The date and time when the authorization rule was modified.
+    :type modified_at_utc: ~datetime.datetime
+    :param key_name: The authorization rule key name.
+    :type key_name: str
+    :param primary_key: The primary key of the authorization rule.
+    :type primary_key: str
+    :param secondary_key: The primary key of the authorization rule.
+    :type secondary_key: str
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        # type: (Any) -> None
+        super(AuthorizationRule, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.claim_type = kwargs.get('claim_type', None)
+        self.claim_value = kwargs.get('claim_value', None)
+        self.rights = kwargs.get('rights', None)
+        self.created_at_utc = kwargs.get('created_at_utc', None)
+        self.modified_at_utc = kwargs.get('modified_at_utc', None)
+        self.key_name = kwargs.get('key_name', None)
+        self.primary_key = kwargs.get('primary_key', None)
+        self.secondary_key = kwargs.get('secondary_key', None)
+
+    @classmethod
+    def _from_internal_entity(cls, internal_authorization_rule):
+        authorization_rule = cls()
+        authorization_rule.claim_type = internal_authorization_rule.claim_type
+        authorization_rule.claim_value = internal_authorization_rule.claim_value
+        authorization_rule.rights = internal_authorization_rule.rights
+        authorization_rule.created_at_utc = internal_authorization_rule.created_time
+        authorization_rule.modified_at_utc = internal_authorization_rule.modified_time
+        authorization_rule.key_name = internal_authorization_rule.key_name
+        authorization_rule.primary_key = internal_authorization_rule.primary_key
+        authorization_rule.secondary_key = internal_authorization_rule.secondary_key
+
+        return authorization_rule
+
+    def _to_internal_entity(self):
+        # type: () -> InternalAuthorizationRule
+        internal_entity = InternalAuthorizationRule()
+        internal_entity.claim_type = self.claim_type
+        internal_entity.claim_value = self.claim_value
+        internal_entity.rights = self.rights
+        internal_entity.created_time = self.created_at_utc
+        internal_entity.modified_time = self.modified_at_utc
+        internal_entity.key_name = self.key_name
+        internal_entity.primary_key = self.primary_key
+        internal_entity.secondary_key = self.secondary_key
+        return internal_entity
