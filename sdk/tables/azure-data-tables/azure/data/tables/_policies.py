@@ -354,185 +354,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
                 )
 
 
-class StorageRetryPolicy(HTTPPolicy):
-    """
-    The base class for Exponential and Linear retries containing shared code.
-    """
-
-    def __init__(self, **kwargs):
-        self.total_retries = kwargs.pop('retry_total', 10)
-        self.connect_retries = kwargs.pop('retry_connect', 3)
-        self.read_retries = kwargs.pop('retry_read', 3)
-        self.status_retries = kwargs.pop('retry_status', 3)
-        self.retry_to_secondary = kwargs.pop('retry_to_secondary', False)
-        super(StorageRetryPolicy, self).__init__()
-
-    def _set_next_host_location(self, settings, request):  # pylint: disable=no-self-use
-        """
-        A function which sets the next host location on the request, if applicable.
-
-        :param ~azure.storage.models.RetryContext context:
-            The retry context containing the previous host location and the request
-            to evaluate and possibly modify.
-        """
-        if settings['hosts'] and all(settings['hosts'].values()):
-            url = urlparse(request.url)
-            # If there's more than one possible location, retry to the alternative
-            if settings['mode'] == LocationMode.PRIMARY:
-                settings['mode'] = LocationMode.SECONDARY
-            else:
-                settings['mode'] = LocationMode.PRIMARY
-            updated = url._replace(netloc=settings['hosts'].get(settings['mode']))
-            request.url = updated.geturl()
-
-    def configure_retries(self, request):  # pylint: disable=no-self-use
-        # type: (...)-> dict
-        """
-        :param Any request:
-        :param kwargs:
-        :return:
-        :rtype:dict
-        """
-        body_position = None
-        if hasattr(request.http_request.body, 'read'):
-            try:
-                body_position = request.http_request.body.tell()
-            except (AttributeError, UnsupportedOperation):
-                # if body position cannot be obtained, then retries will not work
-                pass
-        options = request.context.options
-        return {
-            'total': options.pop("retry_total", self.total_retries),
-            'connect': options.pop("retry_connect", self.connect_retries),
-            'read': options.pop("retry_read", self.read_retries),
-            'status': options.pop("retry_status", self.status_retries),
-            'retry_secondary': options.pop("retry_to_secondary", self.retry_to_secondary),
-            'mode': options.pop("location_mode", LocationMode.PRIMARY),
-            'hosts': options.pop("hosts", None),
-            'hook': options.pop("retry_hook", None),
-            'body_position': body_position,
-            'count': 0,
-            'history': []
-        }
-
-    def get_backoff_time(self, settings, **kwargs):  # pylint: disable=unused-argument,no-self-use
-        """ Formula for computing the current backoff.
-        Should be calculated by child class.
-        :param Any settings:
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :rtype: float
-        """
-        return 0
-
-    def sleep(self, settings, transport):
-        # type: (...)->None
-        """
-        :param Any settings:
-        :param Any transport:
-        :return:None
-        """
-        backoff = self.get_backoff_time(settings, )
-        if not backoff or backoff < 0:
-            return
-        transport.sleep(backoff)
-
-    def increment(self, settings, request, response=None, error=None, **kwargs):  # pylint:disable=W0613
-        # type: (...)->None
-        """Increment the retry counters.
-
-        :param Any request:
-        :param dict settings:
-        :param Any response: A pipeline response object.
-        :param Any error: An error encountered during the request, or
-            None if the response was received successfully.
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Whether the retry attempts are exhausted.
-        :rtype: None
-        """
-        settings['total'] -= 1
-
-        if error and isinstance(error, ServiceRequestError):
-            # Errors when we're fairly sure that the server did not receive the
-            # request, so it should be safe to retry.
-            settings['connect'] -= 1
-            settings['history'].append(RequestHistory(request, error=error))
-
-        elif error and isinstance(error, ServiceResponseError):
-            # Errors that occur after the request has been started, so we should
-            # assume that the server began processing it.
-            settings['read'] -= 1
-            settings['history'].append(RequestHistory(request, error=error))
-
-        else:
-            # Incrementing because of a server error like a 500 in
-            # status_forcelist and a the given method is in the whitelist
-            if response:
-                settings['status'] -= 1
-                settings['history'].append(RequestHistory(request, http_response=response))
-
-        if not is_exhausted(settings):
-            if request.method not in ['PUT'] and settings['retry_secondary']:
-                self._set_next_host_location(settings, request)
-
-            # rewind the request body if it is a stream
-            if request.body and hasattr(request.body, 'read'):
-                # no position was saved, then retry would not work
-                if settings['body_position'] is None:
-                    return False
-                try:
-                    # attempt to rewind the body to the initial position
-                    request.body.seek(settings['body_position'], SEEK_SET)
-                except (UnsupportedOperation, ValueError):
-                    # if body is not seekable, then retry would not work
-                    return False
-            settings['count'] += 1
-            return True
-        return False
-
-    def send(self, request):
-        """
-        :param Any request:
-        :return: None
-        """
-        retries_remaining = True
-        response = None
-        retry_settings = self.configure_retries(request)
-        while retries_remaining:
-            try:
-                response = self.next.send(request)
-                if is_retry(response, retry_settings['mode']):
-                    retries_remaining = self.increment(
-                        retry_settings,
-                        request=request.http_request,
-                        response=response.http_response)
-                    if retries_remaining:
-                        retry_hook(
-                            retry_settings,
-                            request=request.http_request,
-                            response=response.http_response,
-                            error=None)
-                        self.sleep(retry_settings, request.context.transport)
-                        continue
-                break
-            except AzureError as err:
-                retries_remaining = self.increment(
-                    retry_settings, request=request.http_request, error=err)
-                if retries_remaining:
-                    retry_hook(
-                        retry_settings,
-                        request=request.http_request,
-                        response=None,
-                        error=err)
-                    self.sleep(retry_settings, request.context.transport)
-                    continue
-                raise err
-        if retry_settings['history']:
-            response.context['history'] = retry_settings['history']
-        response.http_response.location_mode = retry_settings['mode']
-        return response
-
-
-class RetryPolicyToBeNamed(RetryPolicy):
+class StorageRetryPolicy(RetryPolicy):
     """
     A base class for retry policies for the Table Client and Table Service Client
     """
@@ -572,7 +394,7 @@ class RetryPolicyToBeNamed(RetryPolicy):
         self.read_retries = kwargs.pop('retry_read', 3)
         self.status_retries = kwargs.pop('retry_status', 3)
         self.retry_to_secondary = retry_to_secondary
-        super(RetryPolicyToBeNamed, self).__init__()
+        super(StorageRetryPolicy, self).__init__()
 
     def get_backoff_time(self, setting, **kwargs):
         """
@@ -754,7 +576,6 @@ class RetryPolicyToBeNamed(RetryPolicy):
             response.context['history'] = retry_settings['history']
         response.http_response.location_mode = retry_settings['mode']
         return response
-
 
 
 class ExponentialRetry(StorageRetryPolicy):

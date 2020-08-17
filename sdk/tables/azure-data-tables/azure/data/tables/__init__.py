@@ -24,7 +24,7 @@ from ._models import (
     ResourceTypes,
     AccountSasPermissions,
 )
-from ._policies import ExponentialRetry, LinearRetry, RetryPolicyToBeNamed
+from ._policies import ExponentialRetry, LinearRetry
 from ._version import VERSION
 from ._deserialize import TableErrorCode
 
@@ -54,5 +54,4 @@ __all__ = [
     'RetentionPolicy',
     'generate_table_sas',
     'SASProtocol',
-    'RetryPolicyToBeNamed'
 ]
