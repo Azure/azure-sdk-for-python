@@ -22,7 +22,6 @@ try:
     from ._models_py3 import MachineExtensionInstanceViewStatus
     from ._models_py3 import MachineExtensionPropertiesInstanceView
     from ._models_py3 import MachineExtensionPropertiesModel
-    from ._models_py3 import MachineExtensionsListResult
     from ._models_py3 import MachineExtensionUpdate
     from ._models_py3 import MachineExtensionUpdatePropertiesModel
     from ._models_py3 import MachineIdentity
@@ -58,7 +57,6 @@ except (SyntaxError, ImportError):
     from ._models import MachineExtensionInstanceViewStatus
     from ._models import MachineExtensionPropertiesInstanceView
     from ._models import MachineExtensionPropertiesModel
-    from ._models import MachineExtensionsListResult
     from ._models import MachineExtensionUpdate
     from ._models import MachineExtensionUpdatePropertiesModel
     from ._models import MachineIdentity
@@ -81,6 +79,7 @@ except (SyntaxError, ImportError):
     from ._models import Sku
     from ._models import TrackedResource
     from ._models import UpdateResource
+from ._paged_models import MachineExtensionPaged
 from ._paged_models import MachinePaged
 from ._paged_models import OperationValuePaged
 from ._hybrid_compute_management_client_enums import (
@@ -104,7 +103,6 @@ __all__ = [
     'MachineExtensionInstanceViewStatus',
     'MachineExtensionPropertiesInstanceView',
     'MachineExtensionPropertiesModel',
-    'MachineExtensionsListResult',
     'MachineExtensionUpdate',
     'MachineExtensionUpdatePropertiesModel',
     'MachineIdentity',
@@ -128,6 +126,7 @@ __all__ = [
     'TrackedResource',
     'UpdateResource',
     'MachinePaged',
+    'MachineExtensionPaged',
     'OperationValuePaged',
     'StatusTypes',
     'StatusLevelTypes',
