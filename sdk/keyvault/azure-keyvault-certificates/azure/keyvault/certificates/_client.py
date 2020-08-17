@@ -554,6 +554,11 @@ class CertificateClient(KeyVaultClientBase):
         """
         max_page_size = kwargs.pop("max_page_size", None)
 
+        if self.api_version == "2016-10-01" and kwargs.get("include_pending"):
+            raise NotImplementedError(
+                "The 'include_pending' parameter to `list_deleted_certificates` "
+                "is only available for API versions v7.0 and up"
+            )
         return self._client.get_deleted_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
@@ -587,6 +592,12 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
         max_page_size = kwargs.pop("max_page_size", None)
+
+        if self.api_version == "2016-10-01" and kwargs.get("include_pending"):
+            raise NotImplementedError(
+                "The 'include_pending' parameter to `list_properties_of_certificates` "
+                "is only available for API versions v7.0 and up"
+            )
 
         return self._client.get_certificates(
             vault_base_url=self._vault_url,

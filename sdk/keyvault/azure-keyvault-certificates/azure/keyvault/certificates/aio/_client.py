@@ -512,7 +512,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         deletion-specific information.
 
         :keyword bool include_pending: Specifies whether to include certificates which are
-         not completely deleted.
+         not completely deleted. Only available for API versions v7.0 and up
         :return: An iterator like instance of DeletedCertificate
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.DeletedCertificate]
@@ -528,6 +528,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         max_page_size = kwargs.pop("max_page_size", None)
 
+        if self.api_version == "2016-10-01" and kwargs.get("include_pending"):
+            raise NotImplementedError(
+                "The 'include_pending' parameter to `list_deleted_certificates` "
+                "is only available for API versions v7.0 and up"
+            )
         return self._client.get_deleted_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
@@ -542,7 +547,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         Requires certificates/list permission.
 
         :keyword bool include_pending: Specifies whether to include certificates which are not
-         completely provisioned.
+         completely provisioned. Only available for API versions v7.0 and up
         :returns: An iterator like instance of CertificateProperties
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.CertificateProperties]
@@ -558,6 +563,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         max_page_size = kwargs.pop("max_page_size", None)
 
+        if self.api_version == "2016-10-01" and kwargs.get("include_pending"):
+            raise NotImplementedError(
+                "The 'include_pending' parameter to `list_properties_of_certificates` "
+                "is only available for API versions v7.0 and up"
+            )
         return self._client.get_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
