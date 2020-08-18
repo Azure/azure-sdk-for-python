@@ -1,8 +1,6 @@
 [packaging]
 package_name = "azure-mgmt-automanage"
-package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "MyService Management"
-package_doc_id = ""
+package_pprint_name = "Auto Management"
+package_doc_id = "automanage"
 is_stable = false
 is_arm = true
-need_msrestazure = true
