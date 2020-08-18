@@ -14,7 +14,7 @@ except ImportError:
     import mock
 
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
-from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response
+from azure.core.pipeline.transport._base import HttpClientTransportResponse, HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
 import logging
@@ -86,6 +86,13 @@ def test_http_request_serialization():
         b'I am groot'
     )
     assert serialized == expected
+
+
+def test_url_join():
+    assert _urljoin('devstoreaccount1', '') == 'devstoreaccount1/'
+    assert _urljoin('devstoreaccount1', 'testdir/') == 'devstoreaccount1/testdir/'
+    assert _urljoin('devstoreaccount1/', '') == 'devstoreaccount1/'
+    assert _urljoin('devstoreaccount1/', 'testdir/') == 'devstoreaccount1/testdir/'
 
 
 def test_http_client_response():
