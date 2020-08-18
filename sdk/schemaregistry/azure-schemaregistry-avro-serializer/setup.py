@@ -12,8 +12,8 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-schemaregistry"
-PACKAGE_PPRINT_NAME = "SchemaRegistry"
+PACKAGE_NAME = "azure-schemaregistry-avro-serializer"
+PACKAGE_PPRINT_NAME = "Schema Registry Avro Serializer"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -80,6 +80,7 @@ setup(
     install_requires=[
         'msrest>=0.5.0',
         'azure-core<2.0.0,>=1.2.2'
+        'azure-schemaregistry==1.0.0b1'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg', 'futures'],

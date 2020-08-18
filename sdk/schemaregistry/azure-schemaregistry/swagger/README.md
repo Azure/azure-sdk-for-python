@@ -16,5 +16,7 @@ no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 python: true
+add-credential: true
+credential-scopes: "https://eventhubs.azure.net/.default"
 package-version: "1.0.0b1"
 ```
