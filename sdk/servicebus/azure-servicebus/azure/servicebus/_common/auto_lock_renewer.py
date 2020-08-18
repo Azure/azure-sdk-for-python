@@ -55,7 +55,7 @@ class AutoLockRenew(object):
     def __init__(self, executor=None, max_workers=None):
         # type: (ThreadPoolExecutor, int) -> None
         """Auto renew locks for messages and sessions using a background thread pool.
-    
+
         :param executor: A user-specified thread pool. This cannot be combined with
          setting `max_workers`.
         :type executor: ~concurrent.futures.ThreadPoolExecutor
@@ -126,8 +126,8 @@ class AutoLockRenew(object):
         :param renewable: A locked entity that needs to be renewed.
         :type renewable: Union[~azure.servicebus.ReceivedMessage, ~azure.servicebus.ServiceBusSession]
         :param timeout: A time in seconds that the lock should be maintained for. Default value is 300 (5 minutes).
-        :type timeout: float         
-        :param on_lock_renew_failure: A callback may be specified to be called when the lock is lost on the renewable 
+        :type timeout: float
+        :param on_lock_renew_failure: A callback may be specified to be called when the lock is lost on the renewable
          that is being registered. Default value is None (no callback).
         :type on_lock_renew_failure: Optional[LockRenewFailureCallback]
 

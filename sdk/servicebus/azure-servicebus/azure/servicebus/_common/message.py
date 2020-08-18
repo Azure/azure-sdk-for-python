@@ -771,10 +771,9 @@ class ReceivedMessageBase(PeekMessage):
     def _settle_via_mgmt_link(self, settle_operation, dead_letter_reason=None, dead_letter_description=None):
         # type: (str, Optional[str], Optional[str]) -> Callable
         # pylint: disable=protected-access
-        
+
         if not self._receiver:
             raise ServiceBusError("Cannot settle a message without an associated receiver.")
-            # TODO: Question for anna: this makes mypy happy and seems cleaner than a bunch of #ignores, but is also non-idiomatic?
 
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(
