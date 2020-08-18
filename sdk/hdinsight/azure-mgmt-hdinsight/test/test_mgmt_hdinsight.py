@@ -137,7 +137,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         cluster = create_poller.result()
         self.validate_cluster(cluster_name, create_params, cluster)
 
-    # @unittest.skip('skipping temporarily to unblock azure-keyvault checkin')
+    @unittest.skip('skipping temporarily to unblock azure-keyvault checkin')
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
     @KeyVaultPreparer(name_prefix='hdipy', location=LOCATION, enable_soft_delete=True)

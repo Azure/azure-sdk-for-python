@@ -11,6 +11,8 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -24,7 +26,7 @@ class QuotaOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Api version. Constant value: "2019-07-19-preview".
+    :ivar api_version: API version. Constant value: "2019-07-19-preview".
     """
 
     models = models
@@ -38,24 +40,20 @@ class QuotaOperations(object):
 
         self.config = config
 
-    def list_status(
+    def get(
             self, subscription_id, provider_id, location, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the current quota limit and usages for the resource provider for
-        the specified location for the specific resource in the parameter.
-
-        This API gets the current quota limit and usages for the specific
-        resource for resource provider for the specified location. This
-        response can be used to submit quotaRequests.
+        """Gets the current service limits (quotas) and usage of a resource. The
+        response from Get API can be leveraged to submit quota update requests.
 
         :param subscription_id: Azure subscription id.
         :type subscription_id: str
-        :param provider_id: Azure resource Provider id.
+        :param provider_id: Azure resource provider id.
         :type provider_id: str
         :param location: Azure region.
         :type location: str
-        :param resource_name: The Resource name for the specific resource
-         provider, such as SKU name for Microsoft.Compute, pool for
-         Microsoft.Batch.
+        :param resource_name: The resource name for a resource provider, such
+         as SKU name for Microsoft.Compute, Sku or TotalLowPriorityCores for
+         Microsoft.MachineLearningServices
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -69,7 +67,7 @@ class QuotaOperations(object):
          :class:`ExceptionResponseException<azure.mgmt.reservations.models.ExceptionResponseException>`
         """
         # Construct URL
-        url = self.list_status.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
             'providerId': self._serialize.url("provider_id", provider_id, 'str'),
@@ -113,4 +111,316 @@ class QuotaOperations(object):
             return client_raw_response
 
         return deserialized
-    list_status.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/resourceProviders/{providerId}/locations/{location}/serviceLimits/{resourceName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/resourceProviders/{providerId}/locations/{location}/serviceLimits/{resourceName}'}
+
+
+    def _create_or_update_initial(
+            self, subscription_id, provider_id, location, resource_name, properties=None, custom_headers=None, raw=False, **operation_config):
+        create_quota_request = models.CurrentQuotaLimitBase(properties=properties)
+
+        # Construct URL
+        url = self.create_or_update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'providerId': self._serialize.url("provider_id", provider_id, 'str'),
+            'location': self._serialize.url("location", location, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(create_quota_request, 'CurrentQuotaLimitBase')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            raise models.ExceptionResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('QuotaRequestOneResourceSubmitResponse', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('QuotaRequestSubmitResponse201', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, subscription_id, provider_id, location, resource_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update the service limits (quota) of a resource to requested
+        value.
+        Steps:
+        1. Make the Get request to get the quota information for specific
+        resource.
+        2. To increase the quota, update the limit field in the response from
+        Get request to new value.
+        3. Submit the JSON to the quota request API to update the quota.
+        The Create quota request may be constructed as follows. The PUT
+        operation can be used to update the quota.
+
+        :param subscription_id: Azure subscription id.
+        :type subscription_id: str
+        :param provider_id: Azure resource provider id.
+        :type provider_id: str
+        :param location: Azure region.
+        :type location: str
+        :param resource_name: The resource name for a resource provider, such
+         as SKU name for Microsoft.Compute, Sku or TotalLowPriorityCores for
+         Microsoft.MachineLearningServices
+        :type resource_name: str
+        :param properties: Quota properties for the resource.
+        :type properties: ~azure.mgmt.reservations.models.QuotaProperties
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns object or
+         ClientRawResponse<object> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
+        :raises:
+         :class:`ExceptionResponseException<azure.mgmt.reservations.models.ExceptionResponseException>`
+        """
+        raw_result = self._create_or_update_initial(
+            subscription_id=subscription_id,
+            provider_id=provider_id,
+            location=location,
+            resource_name=resource_name,
+            properties=properties,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('object', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/resourceProviders/{providerId}/locations/{location}/serviceLimits/{resourceName}'}
+
+
+    def _update_initial(
+            self, subscription_id, provider_id, location, resource_name, properties=None, custom_headers=None, raw=False, **operation_config):
+        create_quota_request = models.CurrentQuotaLimitBase(properties=properties)
+
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+            'providerId': self._serialize.url("provider_id", provider_id, 'str'),
+            'location': self._serialize.url("location", location, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(create_quota_request, 'CurrentQuotaLimitBase')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 201]:
+            raise models.ExceptionResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('QuotaRequestOneResourceSubmitResponse', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('QuotaRequestSubmitResponse201', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update(
+            self, subscription_id, provider_id, location, resource_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Update the service limits (quota) of a resource to requested value.
+        Steps:
+        1. Make the Get request to get the quota information for specific
+        resource.
+        2. To increase the quota, update the limit field in the response from
+        Get request to new value.
+        3. Submit the JSON to the quota request API to update the quota.
+        The Update quota request may be constructed as follows. The PATCH
+        operation can be used to update the quota.
+
+        :param subscription_id: Azure subscription id.
+        :type subscription_id: str
+        :param provider_id: Azure resource provider id.
+        :type provider_id: str
+        :param location: Azure region.
+        :type location: str
+        :param resource_name: The resource name for a resource provider, such
+         as SKU name for Microsoft.Compute, Sku or TotalLowPriorityCores for
+         Microsoft.MachineLearningServices
+        :type resource_name: str
+        :param properties: Quota properties for the resource.
+        :type properties: ~azure.mgmt.reservations.models.QuotaProperties
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns object or
+         ClientRawResponse<object> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
+        :raises:
+         :class:`ExceptionResponseException<azure.mgmt.reservations.models.ExceptionResponseException>`
+        """
+        raw_result = self._update_initial(
+            subscription_id=subscription_id,
+            provider_id=provider_id,
+            location=location,
+            resource_name=resource_name,
+            properties=properties,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('object', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/resourceProviders/{providerId}/locations/{location}/serviceLimits/{resourceName}'}
+
+    def list(
+            self, subscription_id, provider_id, location, custom_headers=None, raw=False, **operation_config):
+        """Get a list of current service limits (quota) and usages of all the
+        resources. The response from List API can be leveraged to submit quota
+        update requests.
+
+        :param subscription_id: Azure subscription id.
+        :type subscription_id: str
+        :param provider_id: Azure resource provider id.
+        :type provider_id: str
+        :param location: Azure region.
+        :type location: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of CurrentQuotaLimitBase
+        :rtype:
+         ~azure.mgmt.reservations.models.CurrentQuotaLimitBasePaged[~azure.mgmt.reservations.models.CurrentQuotaLimitBase]
+        :raises:
+         :class:`ExceptionResponseException<azure.mgmt.reservations.models.ExceptionResponseException>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
+                    'providerId': self._serialize.url("provider_id", provider_id, 'str'),
+                    'location': self._serialize.url("location", location, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ExceptionResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.CurrentQuotaLimitBasePaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Capacity/resourceProviders/{providerId}/locations/{location}/serviceLimits'}

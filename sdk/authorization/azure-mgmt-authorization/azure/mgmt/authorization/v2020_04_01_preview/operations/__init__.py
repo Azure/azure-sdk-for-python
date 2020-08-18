@@ -9,5 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.61.0"
+from ._role_assignments_operations import RoleAssignmentsOperations
 
+__all__ = [
+    'RoleAssignmentsOperations',
+]
