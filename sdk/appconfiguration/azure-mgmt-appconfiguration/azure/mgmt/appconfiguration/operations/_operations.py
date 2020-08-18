@@ -64,7 +64,7 @@ class Operations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.NameAvailabilityStatus"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01-preview"
+        api_version = "2020-06-01"
         content_type = kwargs.pop("content_type", "application/json")
 
         # Construct URL
@@ -83,7 +83,6 @@ class Operations(object):
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
-        # Construct and send request
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(check_name_availability_parameters, 'CheckNameAvailabilityParameters')
         body_content_kwargs['content'] = body_content
@@ -126,9 +125,13 @@ class Operations(object):
         cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationDefinitionListResult"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2019-11-01-preview"
+        api_version = "2020-06-01"
 
         def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = 'application/json'
+
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']  # type: ignore
@@ -138,15 +141,11 @@ class Operations(object):
                 if skip_token is not None:
                     query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
 
+                request = self._client.get(url, query_parameters, header_parameters)
             else:
                 url = next_link
                 query_parameters = {}  # type: Dict[str, Any]
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+                request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def extract_data(pipeline_response):
