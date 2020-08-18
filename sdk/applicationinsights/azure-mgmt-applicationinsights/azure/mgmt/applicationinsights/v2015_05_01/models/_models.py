@@ -236,6 +236,12 @@ class ApplicationInsightsComponent(ComponentsResource):
      resources.
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.applicationinsights.v2015_05_01.models.PrivateLinkScopedResource]
+    :param ingestion_mode: Indicates the flow of the ingestion. Possible
+     values include: 'ApplicationInsights',
+     'ApplicationInsightsWithDiagnosticSettings', 'LogAnalytics'. Default
+     value: "ApplicationInsights" .
+    :type ingestion_mode: str or
+     ~azure.mgmt.applicationinsights.v2015_05_01.models.IngestionMode
     """
 
     _validation = {
@@ -280,6 +286,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         'disable_ip_masking': {'key': 'properties.DisableIpMasking', 'type': 'bool'},
         'immediate_purge_data_on30_days': {'key': 'properties.ImmediatePurgeDataOn30Days', 'type': 'bool'},
         'private_link_scoped_resources': {'key': 'properties.PrivateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
+        'ingestion_mode': {'key': 'properties.IngestionMode', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -302,6 +309,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.disable_ip_masking = kwargs.get('disable_ip_masking', None)
         self.immediate_purge_data_on30_days = kwargs.get('immediate_purge_data_on30_days', None)
         self.private_link_scoped_resources = None
+        self.ingestion_mode = kwargs.get('ingestion_mode', "ApplicationInsights")
 
 
 class ApplicationInsightsComponentAnalyticsItem(Model):

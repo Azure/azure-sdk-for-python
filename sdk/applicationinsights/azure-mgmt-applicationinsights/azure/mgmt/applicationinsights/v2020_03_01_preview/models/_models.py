@@ -180,9 +180,10 @@ class ComponentLinkedStorageAccountsPatch(Model):
 
 
 class ErrorResponse(Model):
-    """Describe the format of an Error response.
+    """Error response indicates Insights service is not able to process the
+    incoming request. The reason is provided in the error message.
 
-    :param code: Error code
+    :param code: Error code.
     :type code: str
     :param message: Error message indicating why the operation failed.
     :type message: str

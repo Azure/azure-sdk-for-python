@@ -101,7 +101,7 @@ class QueryPacksOperations(object):
         deserialized = models.LogAnalyticsQueryPackPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/microsoft.insights/queryPacks'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Insights/queryPacks'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
@@ -170,7 +170,7 @@ class QueryPacksOperations(object):
         deserialized = models.LogAnalyticsQueryPackPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/queryPacks'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/queryPacks'}
 
     def delete(
             self, resource_group_name, query_pack_name, custom_headers=None, raw=False, **operation_config):
@@ -224,7 +224,7 @@ class QueryPacksOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/queryPacks/{queryPackName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/queryPacks/{queryPackName}'}
 
     def get(
             self, resource_group_name, query_pack_name, custom_headers=None, raw=False, **operation_config):
@@ -287,7 +287,7 @@ class QueryPacksOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/queryPacks/{queryPackName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/queryPacks/{queryPackName}'}
 
     def create_or_update(
             self, resource_group_name, query_pack_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -362,7 +362,7 @@ class QueryPacksOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/queryPacks/{queryPackName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/queryPacks/{queryPackName}'}
 
     def update_tags(
             self, resource_group_name, query_pack_name, tags=None, custom_headers=None, raw=False, **operation_config):
@@ -434,4 +434,4 @@ class QueryPacksOperations(object):
             return client_raw_response
 
         return deserialized
-    update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/queryPacks/{queryPackName}'}
+    update_tags.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/queryPacks/{queryPackName}'}

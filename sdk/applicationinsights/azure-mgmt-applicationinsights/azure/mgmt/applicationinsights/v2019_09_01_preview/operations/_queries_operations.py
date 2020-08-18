@@ -123,10 +123,10 @@ class QueriesOperations(object):
         deserialized = models.LogAnalyticsQueryPackQueryPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/queryPacks/{queryPackName}/queries'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/queryPacks/{queryPackName}/queries'}
 
     def search(
-            self, resource_group_name, query_pack_name, query_search_properties, top=None, include_body=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, query_pack_name, top=None, include_body=None, skip_token=None, related=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Search a list of Queries defined within a Log Analytics QueryPack
         according to given search properties.
 
@@ -136,10 +136,6 @@ class QueriesOperations(object):
         :param query_pack_name: The name of the Log Analytics QueryPack
          resource.
         :type query_pack_name: str
-        :param query_search_properties: Properties by which to search queries
-         in the given Log Analytics QueryPack.
-        :type query_search_properties:
-         ~azure.mgmt.applicationinsights.v2019_09_01_preview.models.LogAnalyticsQueryPackQuerySearchProperties
         :param top: Maximum items returned in page.
         :type top: int
         :param include_body: Flag indicating whether or not to return the body
@@ -148,6 +144,11 @@ class QueriesOperations(object):
         :param skip_token: Base64 encoded token used to fetch the next page of
          items. Default is null.
         :type skip_token: str
+        :param related: The related metadata items for the function.
+        :type related:
+         ~azure.mgmt.applicationinsights.v2019_09_01_preview.models.LogAnalyticsQueryPackQuerySearchPropertiesRelated
+        :param tags: Tags associated with the query.
+        :type tags: dict[str, list[str]]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -159,6 +160,8 @@ class QueriesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.applicationinsights.v2019_09_01_preview.models.ErrorResponseException>`
         """
+        query_search_properties = models.LogAnalyticsQueryPackQuerySearchProperties(related=related, tags=tags)
+
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -219,10 +222,10 @@ class QueriesOperations(object):
         deserialized = models.LogAnalyticsQueryPackQueryPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    search.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/queryPacks/{queryPackName}/queries/search'}
+    search.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/queryPacks/{queryPackName}/queries/search'}
 
     def get(
-            self, resource_group_name, query_pack_name, query_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, query_pack_name, id, custom_headers=None, raw=False, **operation_config):
         """Gets a specific Log Analytics Query defined within a Log Analytics
         QueryPack.
 
@@ -232,9 +235,9 @@ class QueriesOperations(object):
         :param query_pack_name: The name of the Log Analytics QueryPack
          resource.
         :type query_pack_name: str
-        :param query_id: The id of a specific query defined in the Log
-         Analytics QueryPack
-        :type query_id: str
+        :param id: The id of a specific query defined in the Log Analytics
+         QueryPack
+        :type id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -253,7 +256,7 @@ class QueriesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'queryPackName': self._serialize.url("query_pack_name", query_pack_name, 'str'),
-            'queryId': self._serialize.url("query_id", query_id, 'str')
+            'id': self._serialize.url("id", id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -287,10 +290,10 @@ class QueriesOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/queryPacks/{queryPackName}/queries/{queryId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/queryPacks/{queryPackName}/queries/{id}'}
 
     def put(
-            self, resource_group_name, query_pack_name, query_id, query_payload, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, query_pack_name, id, query_payload, custom_headers=None, raw=False, **operation_config):
         """Adds or Updates a specific Query within a Log Analytics QueryPack.
 
         :param resource_group_name: The name of the resource group. The name
@@ -299,9 +302,9 @@ class QueriesOperations(object):
         :param query_pack_name: The name of the Log Analytics QueryPack
          resource.
         :type query_pack_name: str
-        :param query_id: The id of a specific query defined in the Log
-         Analytics QueryPack
-        :type query_id: str
+        :param id: The id of a specific query defined in the Log Analytics
+         QueryPack
+        :type id: str
         :param query_payload: Properties that need to be specified to create a
          new query and add it to a Log Analytics QueryPack.
         :type query_payload:
@@ -324,7 +327,7 @@ class QueriesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'queryPackName': self._serialize.url("query_pack_name", query_pack_name, 'str'),
-            'queryId': self._serialize.url("query_id", query_id, 'str')
+            'id': self._serialize.url("id", id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -362,10 +365,85 @@ class QueriesOperations(object):
             return client_raw_response
 
         return deserialized
-    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/queryPacks/{queryPackName}/queries/{queryId}'}
+    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/queryPacks/{queryPackName}/queries/{id}'}
+
+    def update(
+            self, resource_group_name, query_pack_name, id, query_payload, custom_headers=None, raw=False, **operation_config):
+        """Adds or Updates a specific Query within a Log Analytics QueryPack.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param query_pack_name: The name of the Log Analytics QueryPack
+         resource.
+        :type query_pack_name: str
+        :param id: The id of a specific query defined in the Log Analytics
+         QueryPack
+        :type id: str
+        :param query_payload: Properties that need to be specified to create a
+         new query and add it to a Log Analytics QueryPack.
+        :type query_payload:
+         ~azure.mgmt.applicationinsights.v2019_09_01_preview.models.LogAnalyticsQueryPackQuery
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: LogAnalyticsQueryPackQuery or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.applicationinsights.v2019_09_01_preview.models.LogAnalyticsQueryPackQuery
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.applicationinsights.v2019_09_01_preview.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'queryPackName': self._serialize.url("query_pack_name", query_pack_name, 'str'),
+            'id': self._serialize.url("id", id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(query_payload, 'LogAnalyticsQueryPackQuery')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('LogAnalyticsQueryPackQuery', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/queryPacks/{queryPackName}/queries/{id}'}
 
     def delete(
-            self, resource_group_name, query_pack_name, query_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, query_pack_name, id, custom_headers=None, raw=False, **operation_config):
         """Deletes a specific Query defined within an Log Analytics QueryPack.
 
         :param resource_group_name: The name of the resource group. The name
@@ -374,9 +452,9 @@ class QueriesOperations(object):
         :param query_pack_name: The name of the Log Analytics QueryPack
          resource.
         :type query_pack_name: str
-        :param query_id: The id of a specific query defined in the Log
-         Analytics QueryPack
-        :type query_id: str
+        :param id: The id of a specific query defined in the Log Analytics
+         QueryPack
+        :type id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -393,7 +471,7 @@ class QueriesOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'queryPackName': self._serialize.url("query_pack_name", query_pack_name, 'str'),
-            'queryId': self._serialize.url("query_id", query_id, 'str')
+            'id': self._serialize.url("id", id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -420,4 +498,4 @@ class QueriesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/queryPacks/{queryPackName}/queries/{queryId}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/queryPacks/{queryPackName}/queries/{id}'}
