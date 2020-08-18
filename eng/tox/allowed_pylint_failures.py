@@ -47,4 +47,5 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-synapse-spark",
     "azure-synapse-accesscontrol",
     "azure-synapse-nspkg",
+    "azure-ai-anomalydetector",
 ]

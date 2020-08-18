@@ -71,7 +71,6 @@ class TestCopyModel(FormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True, copy=True)
     def test_copy_model_fail_bad_model_id(self, client, container_sas_url, location, resource_id):
-        pytest.skip("service team will tell us when to enable this test")
 
         poller = client.begin_training(container_sas_url, use_training_labels=False)
         model = poller.result()

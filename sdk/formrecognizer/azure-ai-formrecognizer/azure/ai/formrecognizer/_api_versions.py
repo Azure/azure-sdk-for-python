@@ -3,16 +3,25 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from enum import Enum
 
-_SUPPORTED_API_VERSIONS = [
-    "2.0",
-]
+
+class FormRecognizerApiVersion(str, Enum):
+    """Form Recognizer service API versions supported by this package"""
+
+    V2_0 = "v2.0"
+
 
 def validate_api_version(api_version):
     # type: (str) -> None
-    """Raise error if api_version is invalid """
+    """Raise ValueError if api_version is invalid """
     if not api_version:
         return
-    if api_version not in _SUPPORTED_API_VERSIONS:
-        versions = '\n'.join(_SUPPORTED_API_VERSIONS)
-        raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
+
+    try:
+        api_version = FormRecognizerApiVersion(api_version)
+    except ValueError:
+        raise ValueError(
+            "Unsupported API version '{}'. Please select from:\n{}".format(
+                api_version, ", ".join(v.value for v in FormRecognizerApiVersion))
+        )

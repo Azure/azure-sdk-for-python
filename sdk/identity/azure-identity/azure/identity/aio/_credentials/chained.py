@@ -7,7 +7,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
-from .base import AsyncCredentialBase
+from .._internal import AsyncContextManager
 from ... import CredentialUnavailableError
 from ..._credentials.chained import _get_error_message
 
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ChainedTokenCredential(AsyncCredentialBase):
+class ChainedTokenCredential(AsyncContextManager):
     """A sequence of credentials that is itself a credential.
 
     Its :func:`get_token` method calls ``get_token`` on each credential in the sequence, in order, returning the first

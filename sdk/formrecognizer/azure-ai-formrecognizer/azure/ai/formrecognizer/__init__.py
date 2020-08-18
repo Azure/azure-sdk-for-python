@@ -33,9 +33,11 @@ from ._models import (
     CustomFormModelField,
     FieldValueType
 )
+from ._api_versions import FormRecognizerApiVersion
 
 
 __all__ = [
+    "FormRecognizerApiVersion",
     'FormRecognizerClient',
     'FormTrainingClient',
     'LengthUnit',

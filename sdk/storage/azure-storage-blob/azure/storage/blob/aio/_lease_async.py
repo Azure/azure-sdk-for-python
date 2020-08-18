@@ -115,7 +115,7 @@ class BlobLeaseClient(LeaseClientBase):
             process_storage_error(error)
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
-        self.etag = kwargs.get('etag')  # type: str
+        self.etag = response.get('etag')  # type: str
 
     @distributed_trace_async
     async def renew(self, **kwargs):

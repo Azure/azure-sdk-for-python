@@ -23,3 +23,4 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.auth_timeout = kwargs.get("auth_timeout", 60)  # type: int
         self.encoding = kwargs.get("encoding", "UTF-8")
         self.auto_reconnect = kwargs.get("auto_reconnect", True)
+        self.keep_alive = kwargs.get("keep_alive", 30)

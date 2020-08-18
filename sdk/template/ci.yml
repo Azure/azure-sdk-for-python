@@ -11,6 +11,7 @@ trigger:
   paths:
     include:
     - sdk/template/
+    - eng/common/
 
 pr:
   branches:

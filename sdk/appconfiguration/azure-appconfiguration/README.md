@@ -294,12 +294,12 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
-[appconfig_docs]: https://docs.microsoft.com/en-us/azure/azure-app-configuration/
+[appconfig_docs]: https://docs.microsoft.com/azure/azure-app-configuration/
 [appconfig_rest]: https://github.com/Azure/AppConfiguration#rest-api-reference
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
 [configuration_client_class]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/appconfiguration/azure-appconfiguration/azure/appconfiguration/_azure_appconfiguration_client.py
 [package]: https://pypi.org/project/azure-appconfiguration/
-[configuration_store]: https://azure.microsoft.com/en-us/services/app-configuration/
+[configuration_store]: https://azure.microsoft.com/services/app-configuration/
 [default_cred_ref]: https://aka.ms/azsdk-python-identity-default-cred-ref
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity

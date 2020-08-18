@@ -181,7 +181,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertTrue(exists)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_blob_exists_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -521,7 +521,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertEqual(props.content_settings.content_disposition, 'inline')
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_properties_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -793,7 +793,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
     @pytest.mark.live_test_only
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_blob_metadata_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         # bug in devtools...converts upper case header to lowercase
@@ -857,7 +857,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         self.assertIsNone(resp)
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_delete_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -1296,7 +1296,7 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
             await self._disable_soft_delete()
 
     @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(location="canadacentral", name_prefix='storagename')
+    @StorageAccountPreparer(random_name_enabled=True, location="canadacentral", name_prefix='storagename')
     @AsyncStorageTestCase.await_prepared_test
     async def test_async_copy_blob_with_if_tags(self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)

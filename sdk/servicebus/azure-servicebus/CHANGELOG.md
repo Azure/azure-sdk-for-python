@@ -1,12 +1,15 @@
 # Release History
 
+## 7.0.0b6 (Unreleased)
+
+
 ## 7.0.0b5 (2020-08-10)
 
 **New Features**
 
 * Added new properties to Message, PeekMessage and ReceivedMessage: `content_type`, `correlation_id`, `label`,
 `message_id`, `reply_to`, `reply_to_session_id` and `to`. Please refer to the docstring for further information.
-* Added new properties to PeekedMessaged and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
+* Added new properties to PeekMessage and ReceivedMessage: `enqueued_sequence_number`, `dead_letter_error_description`,
 `dead_letter_reason`, `dead_letter_source`, `delivery_count` and `expires_at_utc`. Please refer to the docstring for further information.
 * Added support for sending received messages via `ServiceBusSender.send_messages`.
 * Added `on_lock_renew_failure` as a parameter to `AutoLockRenew.register`, taking a callback for when the lock is lost non-intentially (e.g. not via settling, shutdown, or autolockrenew duration completion).

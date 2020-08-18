@@ -26,7 +26,7 @@ from ._generated.models import (
     JsonTextConfiguration,
     QueryFormatType,
     BlobTag,
-    BlobTags
+    BlobTags, LeaseAccessConditions
 )
 
 
@@ -61,6 +61,15 @@ def _get_match_headers(kwargs, match_param, etag_param):
     else:
         raise TypeError("Invalid match condition: {}".format(match_condition))
     return if_match, if_none_match
+
+
+def get_access_conditions(lease):
+    # type: (Optional[Union[BlobLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
+    try:
+        lease_id = lease.id # type: ignore
+    except AttributeError:
+        lease_id = lease # type: ignore
+    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
 
 
 def get_modify_conditions(kwargs):
