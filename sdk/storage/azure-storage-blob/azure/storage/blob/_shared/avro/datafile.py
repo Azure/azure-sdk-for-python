@@ -107,11 +107,16 @@ class DataFileReader(object):
         # get ready to read
         self._block_count = 0
 
+        # event_position and block_count are to support reading from current position in the future read,
+        # no need to downloading from the beginning of avro file with these two attr.
+        if hasattr(self._reader, 'event_position'):
+            self.reader.track_event_position()
+
+        self._cur_event_index = 0
         # header_reader indicates reader only has partial content. The reader doesn't have block header,
         # so we read use the block count stored last time.
         # Also ChangeFeed only has codec==null, so use _raw_decoder is good.
         if self._header_reader is not None:
-            self._block_count = self._reader.block_count
             self._datum_decoder = self._raw_decoder
 
         self.datum_reader.writer_schema = (
@@ -222,16 +227,27 @@ class DataFileReader(object):
         """Return the next datum in the file."""
         if self.block_count == 0:
             self._skip_sync()
+
+            # event_position and block_count are to support reading from current position in the future read,
+            # no need to downloading from the beginning of avro file with these two attr.
+            if hasattr(self._reader, 'event_position'):
+                self.reader.track_event_position()
+
             self._read_block_header()
+            self._cur_event_index = 0
 
         datum = self.datum_reader.read(self.datum_decoder)
         self._block_count -= 1
+        self._cur_event_index += 1
 
-        # event_position and block_count are to support reading from current position in the future read,
-        # no need to downloading from the beginning of avro file with these two attr.
+        # This only applies for changefeed
         if hasattr(self._reader, 'event_position'):
-            self.reader.block_count = self.block_count
-            self.reader.track_event_position()
+            if self.block_count == 0:
+                # the next event to be read is at index 0 in the new chunk of blocks,
+                self.reader.track_event_position()
+                self.reader.set_event_index(0)
+            else:
+                self.reader.set_event_index(self._cur_event_index)
 
         return datum
 
