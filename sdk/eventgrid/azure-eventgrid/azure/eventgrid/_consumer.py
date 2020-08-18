@@ -36,9 +36,10 @@ class EventGridConsumer(object):
 
         :raise: :class:`ValueError`, when events do not follow CloudEvent or EventGridEvent schema.
         """
+        encode = kwargs.pop('encoding', 'utf-8')
         try:
             if isinstance(event, six.binary_type):
-                event = json.loads(event.decode('utf-8'))
+                event = json.loads(event.decode(encode))
             elif isinstance(event, six.string_types):
                 event = json.loads(event)
             return DeserializedEvent(event)

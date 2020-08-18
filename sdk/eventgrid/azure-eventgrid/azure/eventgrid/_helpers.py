@@ -31,7 +31,7 @@ def generate_shared_access_signature(topic_hostname, shared_access_key, expirati
     encoded_expiration_utc = quote(str(expiration_date_utc), safe=constants.SAFE_ENCODE)
 
     unsigned_sas = "r={}&e={}".format(encoded_resource, encoded_expiration_utc)
-    signature = quote(_hmac(shared_access_key, unsigned_sas), safe=constants.SAFE_ENCODE)
+    signature = quote(_generate_hmac(shared_access_key, unsigned_sas), safe=constants.SAFE_ENCODE)
     signed_sas = "{}&s={}".format(unsigned_sas, signature)
     return signed_sas
 
@@ -55,7 +55,7 @@ def _get_full_topic_hostname(topic_hostname):
     
     return topic_hostname
 
-def _hmac(key, message):
+def _generate_hmac(key, message):
     decoded_key = base64.b64decode(key)
     bytes_message = message.encode('ascii')
     hmac_new = hmac.new(decoded_key, bytes_message, hashlib.sha256).digest()

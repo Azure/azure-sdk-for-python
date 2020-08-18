@@ -47,7 +47,7 @@ class EventGridTopicPreparer(AzureMgmtPreparer):
         if random_name_enabled:
             self.resource_moniker = self.name_prefix + "egtopic"
         
-        self.set_cache(use_cache, name_prefix)
+        self.set_cache(use_cache)
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
