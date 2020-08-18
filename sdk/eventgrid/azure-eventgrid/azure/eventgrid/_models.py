@@ -60,7 +60,7 @@ class CloudEvent(InternalCloudEvent):   #pylint:disable=too-many-instance-attrib
     }
 
     def __init__(self, source, type, **kwargs):
-        # type: (Any) -> None
+        # type: (str, str, Any) -> None
         kwargs.setdefault('id', uuid.uuid4())
         kwargs.setdefault("source", source)
         kwargs.setdefault("type", type)
@@ -119,7 +119,7 @@ class EventGridEvent(InternalEventGridEvent):
     }
 
     def __init__(self, subject, event_type, **kwargs):
-        # type: (Any) -> None
+        # type: (str, str, Any) -> None
         kwargs.setdefault('id', uuid.uuid4())
         kwargs.setdefault('subject', subject)
         kwargs.setdefault("event_type", event_type)
@@ -191,7 +191,7 @@ class CustomEvent(DictMixin):
     """
 
     def __init__(self, *args, **kwargs):
-        # type: (Any) -> None
+        # type: (Any, Any) -> None
         self._update(*args, **kwargs)
 
     def _update(self, *args, **kwargs):

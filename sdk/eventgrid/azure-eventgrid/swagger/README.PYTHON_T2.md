@@ -1,4 +1,4 @@
-# Azure EventGrid Client Generation for Python
+# Azure EventGrid Client for Python
 
 > see https://aka.ms/autorest
 

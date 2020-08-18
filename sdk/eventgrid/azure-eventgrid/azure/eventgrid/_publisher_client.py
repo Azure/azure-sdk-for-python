@@ -54,4 +54,4 @@ class EventGridPublisherClient(object):
             serialized_events = [dict(e) for e in events]
             self._client.publish_custom_event_events(self._topic_hostname, serialized_events, **kwargs)
         else:
-            raise Exception("Event schema is not correct. Please send as list of all CloudEvents, list of all EventGridEvents, or list of all CustomEvents.")
+            raise ValueError("Event schema is not correct.")
