@@ -1,4 +1,4 @@
-# Azure Cosmos DB SQL API client SDK for Python
+# Azure Cosmos DB SQL API client library for Python
 
 Azure Cosmos DB is a globally distributed, multi-model database service that supports document, key-value, wide-column, and graph databases.
 
