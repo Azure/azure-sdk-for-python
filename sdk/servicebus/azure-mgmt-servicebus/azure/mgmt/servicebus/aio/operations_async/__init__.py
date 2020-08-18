@@ -6,17 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._namespaces_operations import NamespacesOperations
-from ._disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
-from ._migration_configs_operations import MigrationConfigsOperations
-from ._queues_operations import QueuesOperations
-from ._topics_operations import TopicsOperations
-from ._subscriptions_operations import SubscriptionsOperations
-from ._rules_operations import RulesOperations
-from ._regions_operations import RegionsOperations
-from ._premium_messaging_regions_operations import PremiumMessagingRegionsOperations
-from ._event_hubs_operations import EventHubsOperations
+from ._operations_async import Operations
+from ._namespaces_operations_async import NamespacesOperations
+from ._disaster_recovery_configs_operations_async import DisasterRecoveryConfigsOperations
+from ._migration_configs_operations_async import MigrationConfigsOperations
+from ._queues_operations_async import QueuesOperations
+from ._topics_operations_async import TopicsOperations
+from ._subscriptions_operations_async import SubscriptionsOperations
+from ._rules_operations_async import RulesOperations
+from ._regions_operations_async import RegionsOperations
+from ._premium_messaging_regions_operations_async import PremiumMessagingRegionsOperations
+from ._event_hubs_operations_async import EventHubsOperations
 
 __all__ = [
     'Operations',
