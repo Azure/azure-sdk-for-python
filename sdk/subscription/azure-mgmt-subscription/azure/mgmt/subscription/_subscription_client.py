@@ -16,7 +16,6 @@ from ._configuration import SubscriptionClientConfiguration
 from .operations import SubscriptionsOperations
 from .operations import TenantsOperations
 from .operations import SubscriptionOperations
-from .operations import SubscriptionOperationOperations
 from .operations import Operations
 from . import models
 
@@ -33,8 +32,6 @@ class SubscriptionClient(SDKClient):
     :vartype tenants: azure.mgmt.subscription.operations.TenantsOperations
     :ivar subscription: Subscription operations
     :vartype subscription: azure.mgmt.subscription.operations.SubscriptionOperations
-    :ivar subscription_operation: SubscriptionOperation operations
-    :vartype subscription_operation: azure.mgmt.subscription.operations.SubscriptionOperationOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.subscription.operations.Operations
 
@@ -59,8 +56,6 @@ class SubscriptionClient(SDKClient):
         self.tenants = TenantsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.subscription = SubscriptionOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.subscription_operation = SubscriptionOperationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
