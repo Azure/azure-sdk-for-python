@@ -9,18 +9,18 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
     method: GET
     uri: https://servicebustestsbname.servicebus.windows.net/$Resources/topics?$skip=0&$top=100&api-version=2017-04
   response:
     body:
-      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-07-02T05:59:00Z</updated><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://servicebustesteotyq3ucg7.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04</id><updated>2020-08-17T17:53:18Z</updated><link
+        rel="self" href="https://servicebustesteotyq3ucg7.servicebus.windows.net/$Resources/topics?$skip=0&amp;$top=100&amp;api-version=2017-04"/></feed>
     headers:
       content-type:
       - application/atom+xml;type=feed;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:58:59 GMT
+      - Mon, 17 Aug 2020 17:53:18 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -45,21 +45,21 @@ interactions:
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/iweidk?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/iweidk?api-version=2017-04</id><title
-        type="text">iweidk</title><published>2020-07-02T05:59:00Z</published><updated>2020-07-02T05:59:00Z</updated><author><name>servicebustestshi5frbomp</name></author><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/iweidk?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustesteotyq3ucg7.servicebus.windows.net/iweidk?api-version=2017-04</id><title
+        type="text">iweidk</title><published>2020-08-17T17:53:18Z</published><updated>2020-08-17T17:53:18Z</updated><author><name>servicebustesteotyq3ucg7</name></author><link
+        rel="self" href="https://servicebustesteotyq3ucg7.servicebus.windows.net/iweidk?api-version=2017-04"/><content
         type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-07-02T05:59:00.54Z</CreatedAt><UpdatedAt>2020-07-02T05:59:00.567Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2020-08-17T17:53:18.76Z</CreatedAt><UpdatedAt>2020-08-17T17:53:18.853Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:59:00 GMT
+      - Mon, 17 Aug 2020 17:53:19 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -86,23 +86,23 @@ interactions:
       Content-Type:
       - application/atom+xml
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
     method: PUT
     uri: https://servicebustestsbname.servicebus.windows.net/iweidk/subscriptions/kdosako?api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustestshi5frbomp.servicebus.windows.net/iweidk/subscriptions/kdosako?api-version=2017-04</id><title
-        type="text">kdosako</title><published>2020-07-02T05:59:01Z</published><updated>2020-07-02T05:59:01Z</updated><link
-        rel="self" href="https://servicebustestshi5frbomp.servicebus.windows.net/iweidk/subscriptions/kdosako?api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://servicebustesteotyq3ucg7.servicebus.windows.net/iweidk/subscriptions/kdosako?api-version=2017-04</id><title
+        type="text">kdosako</title><published>2020-08-17T17:53:19Z</published><updated>2020-08-17T17:53:19Z</updated><link
+        rel="self" href="https://servicebustesteotyq3ucg7.servicebus.windows.net/iweidk/subscriptions/kdosako?api-version=2017-04"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-07-02T05:59:01.0659053Z</CreatedAt><UpdatedAt>2020-07-02T05:59:01.0659053Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-08-17T17:53:19.4799703Z</CreatedAt><UpdatedAt>2020-08-17T17:53:19.4799703Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:59:00 GMT
+      - Mon, 17 Aug 2020 17:53:19 GMT
       etag:
-      - '637292663405670000'
+      - '637332835988530000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -122,24 +122,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
     method: GET
     uri: https://servicebustestsbname.servicebus.windows.net/iweidk/subscriptions/kdosako?enrich=false&api-version=2017-04
   response:
     body:
-      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustestshi5frbomp.servicebus.windows.net/iweidk/subscriptions/kdosako?enrich=false&amp;api-version=2017-04</id><title
-        type="text">kdosako</title><published>2020-07-02T05:59:01Z</published><updated>2020-07-02T05:59:01Z</updated><link
-        rel="self" href="sb://servicebustestshi5frbomp.servicebus.windows.net/iweidk/subscriptions/kdosako?enrich=false&amp;api-version=2017-04"/><content
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>sb://servicebustesteotyq3ucg7.servicebus.windows.net/iweidk/subscriptions/kdosako?enrich=false&amp;api-version=2017-04</id><title
+        type="text">kdosako</title><published>2020-08-17T17:53:19Z</published><updated>2020-08-17T17:53:19Z</updated><link
+        rel="self" href="sb://servicebustesteotyq3ucg7.servicebus.windows.net/iweidk/subscriptions/kdosako?enrich=false&amp;api-version=2017-04"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-07-02T05:59:01.0634521Z</CreatedAt><UpdatedAt>2020-07-02T05:59:01.0634521Z</UpdatedAt><AccessedAt>2020-07-02T05:59:01.0634521Z</AccessedAt><CountDetails
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT13S</LockDuration><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>PT11M</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>14</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2020-08-17T17:53:19.4784974Z</CreatedAt><UpdatedAt>2020-08-17T17:53:19.4784974Z</UpdatedAt><AccessedAt>2020-08-17T17:53:19.48Z</AccessedAt><CountDetails
         xmlns:d3p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d3p1:ActiveMessageCount>0</d3p1:ActiveMessageCount><d3p1:DeadLetterMessageCount>0</d3p1:DeadLetterMessageCount><d3p1:ScheduledMessageCount>0</d3p1:ScheduledMessageCount><d3p1:TransferMessageCount>0</d3p1:TransferMessageCount><d3p1:TransferDeadLetterMessageCount>0</d3p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>PT10M</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
     headers:
       content-type:
       - application/atom+xml;type=entry;charset=utf-8
       date:
-      - Thu, 02 Jul 2020 05:59:00 GMT
+      - Mon, 17 Aug 2020 17:53:19 GMT
       etag:
-      - '637292663405670000'
+      - '637332835988530000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -161,7 +161,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/iweidk/subscriptions/kdosako?api-version=2017-04
   response:
@@ -171,9 +171,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:59:00 GMT
+      - Mon, 17 Aug 2020 17:53:19 GMT
       etag:
-      - '637292663405670000'
+      - '637332835988530000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -193,7 +193,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.7.7 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-servicebusmanagementclient/2017-04 Python/3.8.2 (Windows-10-10.0.18362-SP0)
     method: DELETE
     uri: https://servicebustestsbname.servicebus.windows.net/iweidk?api-version=2017-04
   response:
@@ -203,9 +203,9 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 02 Jul 2020 05:59:01 GMT
+      - Mon, 17 Aug 2020 17:53:20 GMT
       etag:
-      - '637292663405670000'
+      - '637332835988530000'
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
