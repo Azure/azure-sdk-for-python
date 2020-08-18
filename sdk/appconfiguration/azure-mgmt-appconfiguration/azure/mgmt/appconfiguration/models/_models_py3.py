@@ -241,6 +241,11 @@ class ConfigurationStoreUpdateParameters(Model):
 
     :param encryption: The encryption settings of the configuration store.
     :type encryption: ~azure.mgmt.appconfiguration.models.EncryptionProperties
+    :param public_network_access: Control permission for data plane traffic
+     coming from public networks while private endpoint is enabled. Possible
+     values include: 'Enabled', 'Disabled'
+    :type public_network_access: str or
+     ~azure.mgmt.appconfiguration.models.PublicNetworkAccess
     :param identity: The managed identity information for the configuration
      store.
     :type identity: ~azure.mgmt.appconfiguration.models.ResourceIdentity
@@ -252,14 +257,16 @@ class ConfigurationStoreUpdateParameters(Model):
 
     _attribute_map = {
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, encryption=None, identity=None, sku=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, encryption=None, public_network_access=None, identity=None, sku=None, tags=None, **kwargs) -> None:
         super(ConfigurationStoreUpdateParameters, self).__init__(**kwargs)
         self.encryption = encryption
+        self.public_network_access = public_network_access
         self.identity = identity
         self.sku = sku
         self.tags = tags
