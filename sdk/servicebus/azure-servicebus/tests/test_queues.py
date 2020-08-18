@@ -1710,12 +1710,15 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
 
             with sender, receiver:
                 sender.send_messages([Message("message1"), Message("message2")])
 
-                messages = receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                messages = []
+                for message in receiver:
+                    messages.append(message)
+
                 receiver_handler = receiver._handler
                 assert len(messages) == 2
                 time.sleep(4 * 60 + 5)  # 240s is the service defined connection idle timeout
@@ -1724,7 +1727,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages[1].complete()  # check receiver link operation
 
                 time.sleep(60)  # sleep another one minute to ensure we pass the lock_duration time
-                messages = receiver.receive_messages(max_message_count=20, max_wait_time=5)
+
+                messages = []
+                for message in receiver:
+                    messages.append(message)
+
                 assert len(messages) == 0  # make sure messages are removed from the queue
                 assert receiver_handler == receiver._handler  # make sure no reconnection happened
 

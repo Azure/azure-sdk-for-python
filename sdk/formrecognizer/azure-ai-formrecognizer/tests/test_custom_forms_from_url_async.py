@@ -92,16 +92,18 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
         fr_client = client.get_form_recognizer_client()
 
         async with client:
-            training_poller = await client.begin_training(container_sas_url, use_training_labels=True)
+            training_poller = await client.begin_training(container_sas_url, use_training_labels=False)
             model = await training_poller.result()
 
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError) as e:
                 async with fr_client:
                     poller = await fr_client.begin_recognize_custom_forms_from_url(
                         model.model_id,
                         form_url="https://badurl.jpg"
                     )
                     result = await poller.result()
+            self.assertEqual(e.value.error.code, "2003")
+            self.assertIsNotNone(e.value.error.message)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True)

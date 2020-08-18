@@ -7,8 +7,8 @@ from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import CredentialUnavailableError
-from azure.identity._auth_record import AuthenticationRecord
+from azure.identity import AuthenticationRecord, CredentialUnavailableError
+from azure.identity.aio import SharedTokenCacheCredential
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
     KNOWN_ALIASES,
@@ -18,7 +18,6 @@ from azure.identity._internal.shared_token_cache import (
     NO_MATCHING_ACCOUNTS,
 )
 from azure.identity._internal.user_agent import USER_AGENT
-from azure.identity.aio import SharedTokenCacheCredential
 from msal import TokenCache
 import pytest
 
@@ -594,7 +593,7 @@ async def test_authority_environment_variable():
 async def test_authentication_record_empty_cache():
     record = AuthenticationRecord("tenant_id", "client_id", "authority", "home_account_id", "username")
     transport = Mock(side_effect=Exception("the credential shouldn't send a request"))
-    credential = SharedTokenCacheCredential(_authentication_record=record, transport=transport, _cache=TokenCache())
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=TokenCache())
 
     with pytest.raises(CredentialUnavailableError):
         await credential.get_token("scope")
@@ -616,7 +615,7 @@ async def test_authentication_record_no_match():
             "not-" + username, "not-" + object_id, "different-" + tenant_id, client_id="not-" + client_id,
         ),
     )
-    credential = SharedTokenCacheCredential(_authentication_record=record, transport=transport, _cache=cache)
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=cache)
 
     with pytest.raises(CredentialUnavailableError):
         await credential.get_token("scope")
@@ -643,7 +642,7 @@ async def test_authentication_record():
         requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
     )
-    credential = SharedTokenCacheCredential(_authentication_record=record, transport=transport, _cache=cache)
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=cache)
 
     token = await credential.get_token("scope")
     assert token.token == expected_access_token
@@ -680,7 +679,7 @@ async def test_auth_record_multiple_accounts_for_username():
         requests=[Request(authority=authority, required_data={"refresh_token": expected_refresh_token})],
         responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
     )
-    credential = SharedTokenCacheCredential(_authentication_record=record, transport=transport, _cache=cache)
+    credential = SharedTokenCacheCredential(authentication_record=record, transport=transport, _cache=cache)
 
     token = await credential.get_token("scope")
     assert token.token == expected_access_token
@@ -695,7 +694,7 @@ async def test_authentication_record_authenticating_tenant():
 
     with patch.object(SharedTokenCacheCredential, "_get_auth_client") as get_auth_client:
         credential = SharedTokenCacheCredential(
-            _authentication_record=record, _cache=TokenCache(), tenant_id=expected_tenant_id
+            authentication_record=record, _cache=TokenCache(), tenant_id=expected_tenant_id
         )
         with pytest.raises(CredentialUnavailableError):
             # this raises because the cache is empty
@@ -706,7 +705,6 @@ async def test_authentication_record_authenticating_tenant():
     assert kwargs["tenant_id"] == expected_tenant_id
 
 
-@pytest.mark.skip("in 1.4.0 allow_unencrypted_cache is private and defaults to True")
 @pytest.mark.asyncio
 async def test_allow_unencrypted_cache():
     """The credential should use an unencrypted cache when encryption is unavailable and the user explicitly allows it.
@@ -721,7 +719,7 @@ async def test_allow_unencrypted_cache():
     mock_extensions = msal_extensions_patch.start()
 
     # the credential should prefer an encrypted cache even when the user allows an unencrypted one
-    SharedTokenCacheCredential(_allow_unencrypted_cache=True)
+    SharedTokenCacheCredential(allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
     mock_extensions.PersistedTokenCache.reset_mock()
 
@@ -730,12 +728,12 @@ async def test_allow_unencrypted_cache():
 
     # encryption unavailable, no opt in to unencrypted cache -> credential should be unavailable
     credential = SharedTokenCacheCredential()
+    assert mock_extensions.PersistedTokenCache.call_count == 0
     with pytest.raises(CredentialUnavailableError):
         await credential.get_token("scope")
-    assert mock_extensions.PersistedTokenCache.call_count == 0
 
     # still no encryption, but now we allow the unencrypted fallback
-    SharedTokenCacheCredential(_allow_unencrypted_cache=True)
+    SharedTokenCacheCredential(allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
     msal_extensions_patch.stop()

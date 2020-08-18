@@ -1332,12 +1332,15 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
 
             async with sender, receiver:
                 await sender.send_messages([Message("message1"), Message("message2")])
 
-                messages = await receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                messages = []
+                async for message in receiver:
+                    messages.append(message)
+
                 receiver_handler = receiver._handler
                 assert len(messages) == 2
                 await asyncio.sleep(4 * 60 + 5)  # 240s is the service defined connection idle timeout
@@ -1346,7 +1349,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await messages[1].complete()  # check receiver link operation
 
                 await asyncio.sleep(60)  # sleep another one minute to ensure we pass the lock_duration time
-                messages = await receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                messages = []
+                async for message in receiver:
+                    messages.append(message)
+
                 assert len(messages) == 0  # make sure messages are removed from the queue
                 assert receiver_handler == receiver._handler  # make sure no reconnection happened
 

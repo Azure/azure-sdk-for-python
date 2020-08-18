@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      api-key:
+      - 79DE9EEE6A30E1C16205290CD80B1F18
+    method: GET
+    uri: https://search751b1688.search.windows.net/indexes('drgqefsg')/docs('1000')?api-version=2020-06-30
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Wed, 12 Aug 2020 23:55:33 GMT
+      elapsed-time:
+      - '277'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-id:
+      - 4f4093a8-dcf7-11ea-a4cb-5cf37071153c
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+    status:
+      code: 404
+      message: Not Found
+version: 1

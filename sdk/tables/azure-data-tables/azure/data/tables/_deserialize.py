@@ -16,7 +16,6 @@ from azure.core.exceptions import ResourceExistsError
 
 from ._entity import EntityProperty, EdmType, TableEntity
 from ._common_conversion import _decode_base64_to_bytes
-from ._generated.models import TableProperties
 from ._error import TableErrorCode
 
 if TYPE_CHECKING:
@@ -62,11 +61,11 @@ def _deserialize_table_creation(response, _, headers):
 
 
 def _from_entity_binary(value):
-    return EntityProperty(EdmType.BINARY, _decode_base64_to_bytes(value))
+    return EntityProperty(_decode_base64_to_bytes(value))
 
 
 def _from_entity_int32(value):
-    return EntityProperty(EdmType.INT32, int(value))
+    return EntityProperty(int(value))
 
 
 zero = datetime.timedelta(0)  # same as 00:00

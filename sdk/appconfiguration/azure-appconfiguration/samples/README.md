@@ -40,4 +40,4 @@ pip install azure-appconfiguration
 <!-- LINKS -->
 [azure_sub]: https://azure.microsoft.com/free/
 [azure_cli]: https://docs.microsoft.com/cli/azure
-[configuration_store]: https://azure.microsoft.com/en-us/services/app-configuration/
+[configuration_store]: https://azure.microsoft.com/services/app-configuration/

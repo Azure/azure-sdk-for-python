@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING
 from ... import CredentialUnavailableError
 from ..._constants import AZURE_CLI_CLIENT_ID
 from ..._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
+from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
 from .._internal.decorators import log_get_token_async
-from .base import AsyncCredentialBase
 
 if TYPE_CHECKING:
     from typing import Any
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from ..._internal.aad_client import AadClientBase
 
 
-class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
+class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username:
@@ -29,6 +29,10 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncCredentialBase):
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
+    :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
+        :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
+        is unavailable. Defaults to False.
     """
 
     async def __aenter__(self):

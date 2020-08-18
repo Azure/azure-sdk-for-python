@@ -5,8 +5,8 @@
 from typing import TYPE_CHECKING
 
 from ..._exceptions import CredentialUnavailableError
-from .._credentials.base import AsyncCredentialBase
 from ..._constants import AZURE_VSCODE_CLIENT_ID
+from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
 from .._internal.decorators import log_get_token_async
 from ..._credentials.vscode import get_credentials
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AccessToken
 
 
-class VisualStudioCodeCredential(AsyncCredentialBase):
+class VisualStudioCodeCredential(AsyncContextManager):
     """Authenticates as the Azure user signed in to Visual Studio Code.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
