@@ -33,7 +33,7 @@ from .._generated.models import (
 from .._helpers import error_map, get_authentication_policy, POLLING_INTERVAL
 from .._models import (
     CustomFormModelInfo,
-    AccountProperties,
+    FormRecognizerAccountProperties,
     CustomFormModel
 )
 from .._user_agent import USER_AGENT
@@ -245,12 +245,12 @@ class FormTrainingClient(object):
         )
 
     @distributed_trace_async
-    async def get_account_properties(self, **kwargs: Any) -> AccountProperties:
+    async def get_account_properties(self, **kwargs: Any) -> FormRecognizerAccountProperties:
         """Get information about the models on the form recognizer account.
 
         :return: Summary of models on account - custom model count,
             custom model limit.
-        :rtype: ~azure.ai.formrecognizer.AccountProperties
+        :rtype: ~azure.ai.formrecognizer.FormRecognizerAccountProperties
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -263,7 +263,7 @@ class FormTrainingClient(object):
                 :caption: Get properties for the form recognizer account.
         """
         response = await self._client.get_custom_models(error_map=error_map, **kwargs)
-        return AccountProperties._from_generated(response.summary)
+        return FormRecognizerAccountProperties._from_generated(response.summary)
 
     @distributed_trace_async
     async def get_custom_model(self, model_id: str, **kwargs: Any) -> CustomFormModel:

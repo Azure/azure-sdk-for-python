@@ -814,7 +814,7 @@ class CustomFormModelInfo(object):
             )[:1024]
 
 
-class AccountProperties(object):
+class FormRecognizerAccountProperties(object):
     """Summary of all the custom models on the account.
 
     :ivar int custom_model_count: Current count of trained custom models.
@@ -833,7 +833,7 @@ class AccountProperties(object):
         )
 
     def __repr__(self):
-        return "AccountProperties(custom_model_count={}, custom_model_limit={})" \
+        return "FormRecognizerAccountProperties(custom_model_count={}, custom_model_limit={})" \
             .format(
                 self.custom_model_count,
                 self.custom_model_limit

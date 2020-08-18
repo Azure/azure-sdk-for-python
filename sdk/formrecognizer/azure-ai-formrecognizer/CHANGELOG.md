@@ -4,6 +4,10 @@
 
 First stable release of the azure-ai-formrecognizer client library.
 
+**Breaking Changes**
+
+- Model `AccountProperties` renamed to `FormRecognizerAccountProperties`
+
 **New features**
 
 - Client-level, keyword argument `api_version` can be used to specify the service API version to use. Currently only v2.0

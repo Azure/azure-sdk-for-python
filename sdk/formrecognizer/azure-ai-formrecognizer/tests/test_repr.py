@@ -160,6 +160,6 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_account_properties(self):
-        model = _models.AccountProperties(custom_model_count=100, custom_model_limit=1000)
-        model_repr = "AccountProperties(custom_model_count=100, custom_model_limit=1000)"
+        model = _models.FormRecognizerAccountProperties(custom_model_count=100, custom_model_limit=1000)
+        model_repr = "FormRecognizerAccountProperties(custom_model_count=100, custom_model_limit=1000)"
         assert repr(model) == model_repr
