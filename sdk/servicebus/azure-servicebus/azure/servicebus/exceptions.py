@@ -232,8 +232,8 @@ class MessageSendFailed(ServiceBusError):
         self.condition = None
         self.description = None
         if hasattr(inner_exception, 'condition'):
-            self.condition = inner_exception.condition
-            self.description = inner_exception.description
+            self.condition = inner_exception.condition      # type: ignore
+            self.description = inner_exception.description  # type: ignore
         self.inner_exception = inner_exception
         super(MessageSendFailed, self).__init__(message, inner_exception)
 

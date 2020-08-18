@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 
 import uamqp
 from uamqp.message import MessageProperties
-from .._base_handler import _generate_sas_token
+from .._base_handler import _generate_sas_token, _AccessToken
 from .._common._configuration import Configuration
 from .._common.utils import create_properties
 from .._common.constants import (
@@ -40,7 +40,7 @@ class ServiceBusSharedKeyCredential(object):
         self.key = key
         self.token_type = TOKEN_TYPE_SASTOKEN
 
-    async def get_token(self, *scopes: str, **kwargs: Any) -> "AccessToken":  # pylint:disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: Any) -> _AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)

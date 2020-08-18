@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Union
 
 import uamqp
 
@@ -125,7 +125,7 @@ class ServiceBusClient(object):
         return cls(
             fully_qualified_namespace=host,
             entity_name=entity_in_conn_str or kwargs.pop("entity_name", None),
-            credential=ServiceBusSharedKeyCredential(policy, key),
+            credential=ServiceBusSharedKeyCredential(policy, key), # type: ignore
             **kwargs
         )
 

@@ -52,7 +52,8 @@ from ..exceptions import (
     MessageLockExpired,
     SessionLockExpired,
     MessageSettleFailed,
-    MessageContentTooLarge)
+    MessageContentTooLarge,
+    ServiceBusError)
 from .utils import utc_from_timestamp, utc_now, copy_messages_to_sendable_if_needed
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
@@ -574,7 +575,7 @@ class PeekMessage(Message):
 
     def __init__(self, message):
         # type: (uamqp.message.Message) -> None
-        super(PeekMessage, self).__init__(None, message=message)
+        super(PeekMessage, self).__init__(None, message=message) # type: ignore
 
     def _to_outgoing_message(self):
         # type: () -> Message
@@ -746,8 +747,8 @@ class ReceivedMessageBase(PeekMessage):
         self._settled = (mode == ReceiveSettleMode.ReceiveAndDelete)
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
-        self.auto_renew_error = None
-        self._receiver = None  # type: ignore
+        self.auto_renew_error = None # type: Optional[Exception]
+        self._receiver = None  # type: Optional[Union[ServiceBusReceiver, ServiceBusSessionReceiver]]
         self._expiry = None
 
     def _check_live(self, action):
@@ -770,6 +771,11 @@ class ReceivedMessageBase(PeekMessage):
     def _settle_via_mgmt_link(self, settle_operation, dead_letter_reason=None, dead_letter_description=None):
         # type: (str, Optional[str], Optional[str]) -> Callable
         # pylint: disable=protected-access
+        
+        if not self._receiver:
+            raise ServiceBusError("Cannot settle a message without an associated receiver.")
+            # TODO: Question for anna: this makes mypy happy and seems cleaner than a bunch of #ignores, but is also non-idiomatic?
+
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(
                 self._receiver._settle_message,
@@ -823,13 +829,14 @@ class ReceivedMessageBase(PeekMessage):
     @property
     def _lock_expired(self):
         # type: () -> bool
+        # pylint: disable=protected-access
         """
         Whether the lock on the message has expired.
 
         :rtype: bool
         """
         try:
-            if self._receiver.session:  # pylint: disable=protected-access
+            if self._receiver.session:  # type: ignore
                 raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
         except AttributeError: # Is not a session receiver
             pass
@@ -860,6 +867,7 @@ class ReceivedMessageBase(PeekMessage):
     @property
     def locked_until_utc(self):
         # type: () -> Optional[datetime.datetime]
+        # pylint: disable=protected-access
         """
         The UTC datetime until which the message will be locked in the queue/subscription.
         When the lock expires, delivery count of hte message is incremented and the message
@@ -868,7 +876,7 @@ class ReceivedMessageBase(PeekMessage):
         :rtype: datetime.datetime
         """
         try:
-            if self._settled or self._receiver.session:  # pylint: disable=protected-access
+            if self._settled or self._receiver.session:  # type: ignore
                 return None
         except AttributeError:  # not settled, and isn't session receiver.
             pass
@@ -1022,6 +1030,7 @@ class ReceivedMessage(ReceivedMessageBase):
 
     def renew_lock(self):
         # type: () -> None
+        # pylint: disable=protected-access,no-member
         """Renew the message lock.
 
         This will maintain the lock on the message to ensure it is not returned to the queue
@@ -1042,7 +1051,7 @@ class ReceivedMessage(ReceivedMessageBase):
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
         """
         try:
-            if self._receiver.session:
+            if self._receiver.session: # type: ignore
                 raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         except AttributeError:
             pass
@@ -1051,5 +1060,5 @@ class ReceivedMessage(ReceivedMessageBase):
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
 
-        expiry = self._receiver._renew_locks(token)  # pylint: disable=protected-access,no-member
+        expiry = self._receiver._renew_locks(token)  # type: ignore
         self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
