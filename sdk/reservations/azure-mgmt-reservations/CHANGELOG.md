@@ -1,5 +1,32 @@
 # Release History
 
+## 0.8.0 (2020-07-15)
+
+**Features**
+
+  - Added operation QuotaOperations.get
+  - Added operation QuotaOperations.create_or_update
+  - Added operation QuotaOperations.list
+  - Added operation QuotaOperations.update
+  - Added operation group QuotaRequestStatusOperations
+
+**Breaking changes**
+
+  - Model SupportRequestAction no longer has parameter auto_quota_increase_state
+  - Model QuotaRequestOneResourceSubmitResponse no longer has parameter resource_type
+  - Model QuotaRequestOneResourceSubmitResponse no longer has parameter limit
+  - Model QuotaRequestOneResourceSubmitResponse no longer has parameter unit
+  - Model QuotaRequestOneResourceSubmitResponse no longer has parameter name1
+  - Model QuotaRequestOneResourceSubmitResponse no longer has parameter current_value
+  - Model QuotaRequestOneResourceSubmitResponse no longer has parameter quota_period
+  - Model EmailActions has a new signature
+  - Model CurrentQuotaLimit has a new signature
+  - Model CurrentQuotaLimitBase has a new signature
+  - Removed operation QuotaOperations.list_status
+  - Removed operation group QuotasOperations
+  - Removed operation group QuotaRequestOperations
+  - Removed operation group QuotaRequestsOperations
+
 ## 0.7.0 (2020-01-29)
 
 **Features**
