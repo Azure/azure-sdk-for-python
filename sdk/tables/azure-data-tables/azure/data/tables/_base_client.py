@@ -51,7 +51,8 @@ from ._policies import (
     StorageResponseHook,
     StorageLoggingPolicy,
     StorageHosts,
-    StorageRetryPolicy
+    StorageRetryPolicy,
+    ExponentialRetry
 )
 from ._error import _process_table_error
 from ._models import PartialBatchErrorException

@@ -143,6 +143,7 @@ class AsyncStorageRetryPolicy(AsyncRetryPolicy, StorageRetryPolicy):
                 if is_retry(response, retry_settings['mode']):
                     retries_remaining = self.increment(
                         retry_settings,
+                        request=request.http_request
                         response=response.http_response)
                     if retries_remaining:
                         await retry_hook(

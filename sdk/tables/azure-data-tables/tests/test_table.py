@@ -15,16 +15,16 @@ from datetime import (
     timedelta,
 )
 
-    
+
 from azure.data.tables import (
-    ResourceTypes, 
-    AccountSasPermissions, 
-    TableSasPermissions, 
-    CorsRule, 
-    RetentionPolicy, 
-    UpdateMode, 
-    AccessPolicy, 
-    TableAnalyticsLogging, 
+    ResourceTypes,
+    AccountSasPermissions,
+    TableSasPermissions,
+    CorsRule,
+    RetentionPolicy,
+    UpdateMode,
+    AccessPolicy,
+    TableAnalyticsLogging,
     Metrics
 )
 from azure.core.pipeline import Pipeline

@@ -362,7 +362,7 @@ class StorageRetryPolicy(RetryPolicy):
         self,
         initial_backoff=15, # type: int
         increment_base=3, # type: int
-        retry_total=3, # type: int
+        retry_total=10, # type: int
         retry_to_secondary=False, # type: bool
         random_jitter_range=3, # type: int
         **kwargs # type: Any
@@ -459,6 +459,18 @@ class StorageRetryPolicy(RetryPolicy):
             'count': 0,
             'history': []
         }
+
+    def sleep(self, settings, transport):
+        # type: (...) -> None
+        """
+        :param Any settings:
+        :param Any transport:
+        :return:None
+        """
+        backoff = self.get_backoff_time(settings, )
+        if not backoff or backoff < 0:
+            return
+        transport.sleep(backoff)
 
     def increment(self, settings, request, response=None, error=None, **kwargs):  # pylint:disable=unused-argument, arguments-differ
         # type: (...)->None

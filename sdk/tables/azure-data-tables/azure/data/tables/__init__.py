@@ -53,5 +53,5 @@ __all__ = [
     'EdmType',
     'RetentionPolicy',
     'generate_table_sas',
-    'SASProtocol',
+    'SASProtocol'
 ]
