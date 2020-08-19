@@ -9,8 +9,11 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties
+from ._shared.models import get_enum_value
+
 from ._shared.response_handlers import deserialize_metadata
-from ._models import BlobProperties, ContainerProperties, BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy, \
+from ._models import ContainerProperties, BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy, \
     StaticWebsite, ObjectReplicationPolicy, ObjectReplicationRule
 
 if TYPE_CHECKING:
@@ -20,7 +23,7 @@ if TYPE_CHECKING:
 def deserialize_blob_properties(response, obj, headers):
     blob_properties = BlobProperties(
         metadata=deserialize_metadata(response, obj, headers),
-        object_replication_source_properties=deserialize_ors_policies(response),
+        object_replication_source_properties=deserialize_ors_policies(response.headers),
         **headers
     )
     if 'Content-Range' in headers:
@@ -31,20 +34,21 @@ def deserialize_blob_properties(response, obj, headers):
     return blob_properties
 
 
-def deserialize_ors_policies(response):
+def deserialize_ors_policies(policy_dictionary):
+
+    if policy_dictionary is None:
+        return None
     # For source blobs (blobs that have policy ids and rule ids applied to them),
     # the header will be formatted as "x-ms-or-<policy_id>_<rule_id>: {Complete, Failed}".
     # The value of this header is the status of the replication.
-    or_policy_status_headers = {key: val for key, val in response.headers.items()
-                                if key.startswith('x-ms-or') and key != 'x-ms-or-policy-id'}
+    or_policy_status_headers = {key: val for key, val in policy_dictionary.items()
+                                if 'or-' in key and key != 'x-ms-or-policy-id'}
 
     parsed_result = {}
 
-    # all the ors headers have the same prefix, so we note down its length here to avoid recalculating it repeatedly
-    header_prefix_length = len('x-ms-or-')
-
     for key, val in or_policy_status_headers.items():
-        policy_and_rule_ids = key[header_prefix_length:].split('_')
+        # list blobs gives or-policy_rule and get blob properties gives x-ms-or-policy_rule
+        policy_and_rule_ids = key.split('or-')[1].split('_')
         policy_id = policy_and_rule_ids[0]
         rule_id = policy_and_rule_ids[1]
 
@@ -106,3 +110,48 @@ def service_properties_deserialize(generated):
         'delete_retention_policy': RetentionPolicy._from_generated(generated.delete_retention_policy),  # pylint: disable=protected-access
         'static_website': StaticWebsite._from_generated(generated.static_website),  # pylint: disable=protected-access
     }
+
+
+def get_blob_properties_from_generated_code(generated):
+    blob = BlobProperties()
+    blob.name = generated.name
+    blob_type = get_enum_value(generated.properties.blob_type)
+    blob.blob_type = BlobType(blob_type) if blob_type else None
+    blob.etag = generated.properties.etag
+    blob.deleted = generated.deleted
+    blob.snapshot = generated.snapshot
+    blob.is_append_blob_sealed = generated.properties.is_sealed
+    blob.metadata = generated.metadata.additional_properties if generated.metadata else {}
+    blob.encrypted_metadata = generated.metadata.encrypted if generated.metadata else None
+    blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
+    blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
+    blob.last_modified = generated.properties.last_modified
+    blob.creation_time = generated.properties.creation_time
+    blob.content_settings = ContentSettings._from_generated(generated)  # pylint: disable=protected-access
+    blob.size = generated.properties.content_length
+    blob.page_blob_sequence_number = generated.properties.blob_sequence_number
+    blob.server_encrypted = generated.properties.server_encrypted
+    blob.encryption_scope = generated.properties.encryption_scope
+    blob.deleted_time = generated.properties.deleted_time
+    blob.remaining_retention_days = generated.properties.remaining_retention_days
+    blob.blob_tier = generated.properties.access_tier
+    blob.rehydrate_priority = generated.properties.rehydrate_priority
+    blob.blob_tier_inferred = generated.properties.access_tier_inferred
+    blob.archive_status = generated.properties.archive_status
+    blob.blob_tier_change_time = generated.properties.access_tier_change_time
+    blob.version_id = generated.version_id
+    blob.is_current_version = generated.is_current_version
+    blob.tag_count = generated.properties.tag_count
+    blob.tags = parse_tags(generated.blob_tags)  # pylint: disable=protected-access
+    blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata)
+    return blob
+
+
+def parse_tags(generated_tags):
+    # type: (Optional[List[BlobTag]]) -> Union[Dict[str, str], None]
+    """Deserialize a list of BlobTag objects into a dict.
+    """
+    if generated_tags:
+        tag_dict = {t.key: t.value for t in generated_tags.blob_tag_set}
+        return tag_dict
+    return None

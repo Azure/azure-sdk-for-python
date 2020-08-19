@@ -84,12 +84,17 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             raise ValueError("Invalid service: {}".format(service))
         service_name = service.split('-')[0]
         account = parsed_url.netloc.split(".{}.core.".format(service_name))
-        self.account_name = account[0] if len(account) > 1 else None
-        secondary_hostname = None
 
-        self.credential = format_shared_key_credential(account, credential)
+        self.account_name = account[0] if len(account) > 1 else None
+        if not self.account_name and parsed_url.netloc.startswith("localhost") \
+                or parsed_url.netloc.startswith("127.0.0.1"):
+            self.account_name = parsed_url.path.strip("/")
+
+        self.credential = _format_shared_key_credential(self.account_name, credential)
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
+
+        secondary_hostname = None
         if hasattr(self.credential, "account_name"):
             self.account_name = self.credential.account_name
             secondary_hostname = "{}-secondary.{}.{}".format(
@@ -326,11 +331,11 @@ class TransportWrapper(HttpTransport):
         pass
 
 
-def format_shared_key_credential(account, credential):
+def _format_shared_key_credential(account_name, credential):
     if isinstance(credential, six.string_types):
-        if len(account) < 2:
+        if not account_name:
             raise ValueError("Unable to determine account name for shared key credential.")
-        credential = {"account_name": account[0], "account_key": credential}
+        credential = {"account_name": account_name, "account_key": credential}
     if isinstance(credential, dict):
         if "account_name" not in credential:
             raise ValueError("Shared key credential missing 'account_name")

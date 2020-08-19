@@ -11,8 +11,8 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
-from .base import AsyncCredentialBase
 from .._authn_client import AsyncAuthnClient
+from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._constants import Endpoints, EnvironmentVariables
@@ -25,20 +25,38 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ManagedIdentityCredential(AsyncCredentialBase):
+class ManagedIdentityCredential(AsyncContextManager):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of
     the keyword arguments.
 
     :keyword str client_id: a user-assigned identity's client ID. This is supported in all hosting environments.
+    :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
+      or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
+      learn what values it expects.
+    :paramtype identity_config: Mapping[str, str]
     """
 
     def __init__(self, **kwargs: "Any") -> None:
         self._credential = None
-        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
-            _LOGGER.info("%s will use MSI", self.__class__.__name__)
-            self._credential = MsiCredential(**kwargs)
+
+        if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT) and os.environ.get(
+            EnvironmentVariables.IDENTITY_HEADER
+        ):
+            _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
+            from .app_service import AppServiceCredential
+
+            self._credential = AppServiceCredential(**kwargs)
+        elif os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            if os.environ.get(EnvironmentVariables.MSI_SECRET):
+                _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
+                from .app_service import AppServiceCredential
+
+                self._credential = AppServiceCredential(**kwargs)
+            else:
+                _LOGGER.info("%s will use MSI", self.__class__.__name__)
+                self._credential = MsiCredential(**kwargs)
         else:
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
@@ -68,7 +86,7 @@ class ManagedIdentityCredential(AsyncCredentialBase):
         return await self._credential.get_token(*scopes, **kwargs)
 
 
-class _AsyncManagedIdentityBase(_ManagedIdentityBase, AsyncCredentialBase):
+class _AsyncManagedIdentityBase(_ManagedIdentityBase, AsyncContextManager):
     def __init__(self, endpoint: str, **kwargs: "Any") -> None:
         super().__init__(endpoint=endpoint, client_cls=AsyncAuthnClient, **kwargs)
 

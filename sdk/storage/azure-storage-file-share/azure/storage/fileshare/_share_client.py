@@ -110,10 +110,10 @@ class ShareClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_share_url(cls, share_url,  # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
+                       snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
+                       credential=None,  # type: Optional[Any]
+                       **kwargs  # type: Any
+                       ):
         # type: (...) -> ShareClient
         """
         :param str share_url: The full URI to the share.
@@ -135,12 +135,31 @@ class ShareClient(StorageAccountHostsMixin):
         parsed_url = urlparse(share_url.rstrip('/'))
         if not (parsed_url.path and parsed_url.netloc):
             raise ValueError("Invalid URL: {}".format(share_url))
-        account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
-        path_snapshot, _ = parse_query(parsed_url.query)
-        share_name = unquote(parsed_url.path.lstrip('/'))
-        snapshot = snapshot or unquote(path_snapshot)
 
-        return cls(account_url, share_name, snapshot, credential, **kwargs)
+        share_path = parsed_url.path.lstrip('/').split('/')
+        account_path = ""
+        if len(share_path) > 1:
+            account_path = "/" + "/".join(share_path[:-1])
+        account_url = "{}://{}{}?{}".format(
+            parsed_url.scheme,
+            parsed_url.netloc.rstrip('/'),
+            account_path,
+            parsed_url.query)
+
+        share_name = unquote(share_path[-1])
+        path_snapshot, _ = parse_query(parsed_url.query)
+        if snapshot:
+            try:
+                path_snapshot = snapshot.snapshot # type: ignore
+            except AttributeError:
+                try:
+                    path_snapshot = snapshot['snapshot'] # type: ignore
+                except TypeError:
+                    path_snapshot = snapshot
+
+        if not share_name:
+            raise ValueError("Invalid URL. Please provide a URL with a valid share name")
+        return cls(account_url, share_name, path_snapshot, credential, **kwargs)
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location

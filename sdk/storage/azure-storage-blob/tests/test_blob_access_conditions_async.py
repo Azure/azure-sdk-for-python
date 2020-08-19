@@ -1542,6 +1542,8 @@ class StorageBlobAccessConditionsAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertIsInstance(lease, BlobLeaseClient)
         self.assertIsNotNone(lease.id)
+        self.assertIsNotNone(lease.etag)
+        self.assertEqual(lease.etag, etag)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

@@ -6,8 +6,7 @@ import datetime
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import DeviceCodeCredential
-from azure.identity._exceptions import AuthenticationRequiredError
+from azure.identity import AuthenticationRequiredError, DeviceCodeCredential
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
@@ -78,7 +77,7 @@ def test_authenticate():
         tenant_id=tenant_id,
         _cache=TokenCache(),
     )
-    record = credential._authenticate(scopes=(scope,))
+    record = credential.authenticate(scopes=(scope,))
     assert record.authority == environment
     assert record.home_account_id == object_id + "." + home_tenant
     assert record.tenant_id == home_tenant
@@ -94,7 +93,7 @@ def test_disable_automatic_authentication():
 
     empty_cache = TokenCache()  # empty cache makes silent auth impossible
     transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
-    credential = DeviceCodeCredential("client-id", _disable_automatic_authentication=True, transport=transport, _cache=empty_cache)
+    credential = DeviceCodeCredential("client-id", disable_automatic_authentication=True, transport=transport, _cache=empty_cache)
 
     with pytest.raises(AuthenticationRequiredError):
         credential.get_token("scope")
