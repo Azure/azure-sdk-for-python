@@ -160,10 +160,10 @@ class StorageTableBatchTest(TableTestCase):
             entity = TableEntity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_insert'
-            entity.test = True #EntityProperty(EdmType.BOOLEAN, 'true')
+            entity.test = True
             entity.test2 = 'value'
             entity.test3 = 3
-            entity.test4 = 1234567890 #EntityProperty(EdmType.INT64, '1234567890')
+            entity.test4 = 1234567890
             entity.test5 = datetime.utcnow()
 
             batch = self.table.create_batch()

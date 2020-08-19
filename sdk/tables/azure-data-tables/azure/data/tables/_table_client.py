@@ -487,5 +487,4 @@ class TableClient(TableClientBase):
         **kwargs # type: Any
     ):
         # (...) -> HttpResponse
-        print("TOTAL REQS: {}".format(len(batch._requests)))
         return self._batch_send(batch._requests, **kwargs)
