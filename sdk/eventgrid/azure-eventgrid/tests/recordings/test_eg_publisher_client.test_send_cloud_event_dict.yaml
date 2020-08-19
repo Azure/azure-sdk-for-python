@@ -16,31 +16,24 @@ interactions:
       User-Agent:
       - azsdk-python-eventgridpublisherclient/unknown Python/3.7.3 (Windows-10-10.0.18362-SP0)
       aeg-sas-key:
-      - CNX1dEvFh9P+c93UazUJ0+FSB4v104amtip6jD/KQsY=
+      - dHUaOOg5xRj+D7iH/AC92GyHweLx9ugrDuMDg4e5Xvw=
     method: POST
-    uri: https://eventgridtestegtopic.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
+    uri: https://cloudeventgridtestegtopic.westus-1.eventgrid.azure.net/api/events?api-version=2018-01-01
   response:
     body:
-      string: "{\r\n    \"error\": {\r\n        \"code\": \"BadRequest\",\r\n        \"message\":
-        \"Unexpected property 'source' found in JSON. Report '5a0ead52-e8aa-4b1e-b34e-6c70f25010d7:3:8/19/2020
-        2:54:42 AM (UTC)' to our forums for assistance or raise a support ticket.\",\r\n
-        \       \"details\": [{\r\n            \"code\": \"InputJsonInvalid\",\r\n
-        \           \"message\": \"Unexpected property 'source' found in JSON. Report
-        '5a0ead52-e8aa-4b1e-b34e-6c70f25010d7:3:8/19/2020 2:54:42 AM (UTC)' to our
-        forums for assistance or raise a support ticket.\"\r\n    }]\r\n  }\r\n}"
+      string: ''
     headers:
+      api-supported-versions:
+      - '2018-01-01'
       content-length:
-      - '527'
-      content-type:
-      - application/json; charset=utf-8
+      - '0'
       date:
-      - Wed, 19 Aug 2020 02:54:42 GMT
+      - Wed, 19 Aug 2020 03:36:44 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
     status:
-      code: 400
-      message: Unexpected property 'source' found in JSON. Report '5a0ead52-e8aa-4b1e-b34e-6c70f25010d7:3:8/19/2020
-        2:54:42 AM (UTC)' to our forums for assistance or raise a support ticket.
+      code: 200
+      message: OK
 version: 1

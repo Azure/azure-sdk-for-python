@@ -83,36 +83,36 @@ class EventGridPublisherClientTests(AzureMgmtTestCase):
                 )
         client.send(cloud_event)
 
-    # @pytest.mark.liveTest
-    # @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    # @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
-    # def test_send_cloud_event_data_str(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
-    #     akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
-    #     client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
-    #     cloud_event = CloudEvent(
-    #             source = "http://samplesource.dev",
-    #             data = "cloudevent",
-    #             type="Sample.Cloud.Event"
-    #             )
-    #     client.send(cloud_event)
-
-
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
-    def test_send_cloud_event_data_as_list(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    def test_send_cloud_event_data_str(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
-        cloud_event1 = CloudEvent(
+        cloud_event = CloudEvent(
                 source = "http://samplesource.dev",
                 data = "cloudevent",
                 type="Sample.Cloud.Event"
                 )
-        client.send([cloud_event1])
+        client.send(cloud_event)
+
 
     @pytest.mark.liveTest
     @CachedResourceGroupPreparer(name_prefix='eventgridtest')
-    @CachedEventGridTopicPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
+    def test_send_cloud_event_data_as_list(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
+        akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
+        client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
+        cloud_event = CloudEvent(
+                source = "http://samplesource.dev",
+                data = "cloudevent",
+                type="Sample.Cloud.Event"
+                )
+        client.send([cloud_event])
+
+    @pytest.mark.liveTest
+    @CachedResourceGroupPreparer(name_prefix='eventgridtest')
+    @CachedEventGridTopicPreparer(name_prefix='cloudeventgridtest')
     def test_send_cloud_event_dict(self, resource_group, eventgrid_topic, eventgrid_topic_primary_key, eventgrid_topic_endpoint):
         akc_credential = AzureKeyCredential(eventgrid_topic_primary_key)
         client = EventGridPublisherClient(eventgrid_topic_endpoint, akc_credential)
