@@ -716,6 +716,20 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(properties.lease.status, 'unlocked')
 
     @GlobalStorageAccountPreparer()
+    def test_if_blob_exists(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
+        self._setup()
+        self._create_container_and_block_blob(
+            self.container_name, 'blob1', b'hello world', bsc)
+        test_datetime = (datetime.utcnow() -
+                         timedelta(minutes=15))
+        # Act
+        blob = bsc.get_blob_client(self.container_name, 'blob1')
+        blob_version_id = blob.get_blob_properties().get("version_id")
+        self.assertEqual(blob.exists(version_id=blob_version_id), True)
+        self.assertEqual(blob.exists(version_id="bad_version_id"), False)
+
+    @GlobalStorageAccountPreparer()
     def test_get_blob_properties_with_if_modified_fail(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()

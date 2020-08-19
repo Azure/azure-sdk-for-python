@@ -918,6 +918,28 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace()
+    def exists(self, timeout=None, version_id=None):
+        # type: (**Any) -> bool
+        """
+        Returns True if a blob exists with the defined parameters, and returns
+        False otherwise.
+
+        :param str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to check if it exists.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: boolean
+        """
+        try:
+            self._client.blob.get_properties(
+                timeout=timeout,
+                version_id=version_id)
+            return True
+        except StorageErrorException:
+            return False
+
     @distributed_trace
     def get_blob_properties(self, **kwargs):
         # type: (**Any) -> BlobProperties
