@@ -166,7 +166,7 @@ def create_container(db, id):
     try:
         container = db.create_container(
             id=id+"_container_analytical_store",
-            partition_key=PartitionKey(path='/id', kind='Hash',analytical_storage_ttl=-1)
+            partition_key=PartitionKey(path='/id', kind='Hash'),analytical_storage_ttl=-1
         )
         properties = container.read()
         print('Container with id \'{0}\' created'.format(container.id))
