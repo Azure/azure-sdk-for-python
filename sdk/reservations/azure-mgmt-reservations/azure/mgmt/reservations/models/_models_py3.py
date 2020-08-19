@@ -781,7 +781,10 @@ class PurchaseRequest(Model):
     :type location: str
     :param reserved_resource_type: Possible values include: 'VirtualMachines',
      'SqlDatabases', 'SuseLinux', 'CosmosDb', 'RedHat', 'SqlDataWarehouse',
-     'VMwareCloudSimple', 'RedHatOsa'
+     'VMwareCloudSimple', 'RedHatOsa', 'Databricks', 'AppService',
+     'ManagedDisk', 'BlockBlob', 'RedisCache', 'AzureDataExplorer', 'MySql',
+     'MariaDb', 'PostgreSql', 'DedicatedHost', 'SapHana',
+     'SqlAzureHybridBenefit'
     :type reserved_resource_type: str or
      ~azure.mgmt.reservations.models.ReservedResourceType
     :param billing_scope_id:
@@ -1376,7 +1379,10 @@ class ReservationProperties(Model):
 
     :param reserved_resource_type: Possible values include: 'VirtualMachines',
      'SqlDatabases', 'SuseLinux', 'CosmosDb', 'RedHat', 'SqlDataWarehouse',
-     'VMwareCloudSimple', 'RedHatOsa'
+     'VMwareCloudSimple', 'RedHatOsa', 'Databricks', 'AppService',
+     'ManagedDisk', 'BlockBlob', 'RedisCache', 'AzureDataExplorer', 'MySql',
+     'MariaDb', 'PostgreSql', 'DedicatedHost', 'SapHana',
+     'SqlAzureHybridBenefit'
     :type reserved_resource_type: str or
      ~azure.mgmt.reservations.models.ReservedResourceType
     :param instance_flexibility: Possible values include: 'On', 'Off'
