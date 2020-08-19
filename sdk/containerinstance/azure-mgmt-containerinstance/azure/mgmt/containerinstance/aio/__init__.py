@@ -6,14 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._container_groups_operations import ContainerGroupsOperations
-from ._operations import Operations
-from ._location_operations import LocationOperations
-from ._containers_operations import ContainersOperations
-
-__all__ = [
-    'ContainerGroupsOperations',
-    'Operations',
-    'LocationOperations',
-    'ContainersOperations',
-]
+from ._container_instance_management_client_async import ContainerInstanceManagementClient
+__all__ = ['ContainerInstanceManagementClient']
