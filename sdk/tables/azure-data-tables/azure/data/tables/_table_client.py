@@ -259,7 +259,6 @@ class TableClient(TableClientBase):
         :rtype: ~azure.data.tables.TableEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        print("ENTITY: {}".format(entity))
         if "PartitionKey" in entity and "RowKey" in entity:
             entity = _add_entity_properties(entity)
             # TODO: Remove - and run test to see what happens with the service
@@ -487,4 +486,4 @@ class TableClient(TableClientBase):
         **kwargs # type: Any
     ):
         # (...) -> HttpResponse
-        return self._batch_send(batch._requests, **kwargs)
+        return self._batch_send(*batch._requests, **kwargs)

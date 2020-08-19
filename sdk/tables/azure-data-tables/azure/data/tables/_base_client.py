@@ -257,7 +257,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self, *reqs,  # type: List[HttpRequest]
         **kwargs
     ):
-        print("\nBASE CLIENT")
         """Given a series of request, do a Storage batch call.
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
