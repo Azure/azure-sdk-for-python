@@ -9,11 +9,11 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Tue, 11 Aug 2020 15:53:39 GMT
+      - Wed, 19 Aug 2020 21:23:45 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 11 Aug 2020 15:53:39 GMT
+      - Wed, 19 Aug 2020 21:23:45 GMT
       x-ms-version:
       - '2019-07-07'
     method: PUT
@@ -22,25 +22,25 @@ interactions:
     body:
       string: ''
     headers:
-      date: Tue, 11 Aug 2020 15:53:41 GMT
+      date: Wed, 19 Aug 2020 21:23:45 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-07-07'
     status:
       code: 202
       message: Accepted
-    url: https://pyacrstoragecwx2zy44qe53.table.core.windows.net/?restype=service&comp=properties
+    url: https://pyacrstorageuwjvfxhidgpv.table.core.windows.net/?restype=service&comp=properties
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       Date:
-      - Tue, 11 Aug 2020 15:54:10 GMT
+      - Wed, 19 Aug 2020 21:24:16 GMT
       User-Agent:
       - azsdk-python-storage-table/2019-07-07 Python/3.8.4 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 11 Aug 2020 15:54:10 GMT
+      - Wed, 19 Aug 2020 21:24:16 GMT
       x-ms-version:
       - '2019-07-07'
     method: GET
@@ -51,7 +51,7 @@ interactions:
         /><ExposedHeaders /><MaxAgeInSeconds>0</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>www.xyz.com,www.ab.com,www.bc.com</AllowedOrigins><AllowedHeaders>x-ms-meta-xyz,x-ms-meta-foo,x-ms-meta-data*,x-ms-meta-target*</AllowedHeaders><ExposedHeaders>x-ms-meta-abc,x-ms-meta-bcd,x-ms-meta-data*,x-ms-meta-source*</ExposedHeaders><MaxAgeInSeconds>500</MaxAgeInSeconds></CorsRule></Cors></StorageServiceProperties>"
     headers:
       content-type: application/xml
-      date: Tue, 11 Aug 2020 15:54:12 GMT
+      date: Wed, 19 Aug 2020 21:24:15 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       vary: Origin
@@ -59,5 +59,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://pyacrstoragecwx2zy44qe53.table.core.windows.net/?restype=service&comp=properties
+    url: https://pyacrstorageuwjvfxhidgpv.table.core.windows.net/?restype=service&comp=properties
 version: 1
