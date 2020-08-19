@@ -1,5 +1,12 @@
 # Release History
 
+## 9.3.0 (2020-06-24)
+
+**Features**
+
+  - Model ManagedClusterWindowsProfile has a new parameter license_type
+  - Added operation ManagedClustersOperations.upgrade_node_image_version
+
 ## 9.2.0 (2020-06-24)
 
 **Features**
