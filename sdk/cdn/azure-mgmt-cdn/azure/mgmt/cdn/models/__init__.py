@@ -109,6 +109,7 @@ try:
     from ._models_py3 import UrlRedirectActionParameters
     from ._models_py3 import UrlRewriteAction
     from ._models_py3 import UrlRewriteActionParameters
+    from ._models_py3 import UrlSigningAction
     from ._models_py3 import UrlSigningActionParameters
     from ._models_py3 import UrlSigningKey
     from ._models_py3 import UrlSigningParamIdentifier
@@ -217,6 +218,7 @@ except (SyntaxError, ImportError):
     from ._models import UrlRedirectActionParameters
     from ._models import UrlRewriteAction
     from ._models import UrlRewriteActionParameters
+    from ._models import UrlSigningAction
     from ._models import UrlSigningActionParameters
     from ._models import UrlSigningKey
     from ._models import UrlSigningParamIdentifier
@@ -385,6 +387,7 @@ __all__ = [
     'UrlRedirectActionParameters',
     'UrlRewriteAction',
     'UrlRewriteActionParameters',
+    'UrlSigningAction',
     'UrlSigningActionParameters',
     'UrlSigningKey',
     'UrlSigningParamIdentifier',

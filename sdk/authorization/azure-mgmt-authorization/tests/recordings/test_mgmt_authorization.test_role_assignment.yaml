@@ -1,63 +1,101 @@
 interactions:
 - request:
-    body: 'b''b\''b\\\''b\\\\\\\''{"properties": {"roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
-      "principalId": "6d33bfc8-e476-11e8-915d-f2801f1b9fd1"}}\\\\\\\''\\\''\'''''
+    body: 'b''b\''{"properties": {"roleDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
+      "principalId": "c0b47275-7607-4249-a417-af79e7ec1a91"}}\'''''
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['233']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.6.0 msrest_azure/0.4.34
-          azure-mgmt-authorization/0.50.2 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '233'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-5.3.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-authorization/0.52.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_authorization_test_role_assignment9e52125c/providers/Microsoft.Authorization/roleAssignments/ddfe2dc0-9858-442f-aca3-ac215947a815?api-version=2018-09-01-preview
   response:
-    body: {string: '{"properties":{"roleDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c","principalId":"6d33bfc8-e476-11e8-915d-f2801f1b9fd1","principalType":"ServicePrincipal","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_authorization_test_role_assignment9e52125c","createdOn":"2018-11-09T23:22:30.7697296Z","updatedOn":"2018-11-09T23:22:30.7697296Z","createdBy":null,"updatedBy":"6d33bfc8-e476-11e8-915d-f2801f1b9fd1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_authorization_test_role_assignment9e52125c/providers/Microsoft.Authorization/roleAssignments/ddfe2dc0-9858-442f-aca3-ac215947a815","type":"Microsoft.Authorization/roleAssignments","name":"ddfe2dc0-9858-442f-aca3-ac215947a815"}'}
+    body:
+      string: '{"properties":{"roleDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c","principalId":"c0b47275-7607-4249-a417-af79e7ec1a91","principalType":"User","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_authorization_test_role_assignment9e52125c","createdOn":"2020-08-14T02:05:51.7782618Z","updatedOn":"2020-08-14T02:05:51.7782618Z","createdBy":null,"updatedBy":"4faa32fd-963a-464d-b6bf-c12cf48c0317"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_authorization_test_role_assignment9e52125c/providers/Microsoft.Authorization/roleAssignments/ddfe2dc0-9858-442f-aca3-ac215947a815","type":"Microsoft.Authorization/roleAssignments","name":"ddfe2dc0-9858-442f-aca3-ac215947a815"}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['857']
-      content-type: [application/json; charset=utf-8]
-      date: ['Fri, 09 Nov 2018 23:22:31 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-IIS/10.0]
-      set-cookie: [x-ms-gateway-slice=productionb; path=/; secure; HttpOnly]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-charge: ['2']
-    status: {code: 201, message: Created}
+      cache-control:
+      - no-cache
+      content-length:
+      - '845'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 14 Aug 2020 02:05:52 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      set-cookie:
+      - x-ms-gateway-slice=Production; path=/; secure; samesite=none; httponly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Cookie: [x-ms-gateway-slice=productionb]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) msrest/0.6.0 msrest_azure/0.4.34
-          azure-mgmt-authorization/0.50.2 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Cookie:
+      - x-ms-gateway-slice=Production
+      User-Agent:
+      - python/3.6.9 (Linux-5.3.0-1032-azure-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-authorization/0.52.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_authorization_test_role_assignment9e52125c/providers/Microsoft.Authorization/roleAssignments/ddfe2dc0-9858-442f-aca3-ac215947a815?api-version=2018-09-01-preview
   response:
-    body: {string: '{"properties":{"roleDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c","principalId":"6d33bfc8-e476-11e8-915d-f2801f1b9fd1","principalType":"ServicePrincipal","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_authorization_test_role_assignment9e52125c","createdOn":"2018-11-09T23:22:31.8326536Z","updatedOn":"2018-11-09T23:22:31.8326536Z","createdBy":"6d33bfc8-e476-11e8-915d-f2801f1b9fd1","updatedBy":"6d33bfc8-e476-11e8-915d-f2801f1b9fd1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_authorization_test_role_assignment9e52125c/providers/Microsoft.Authorization/roleAssignments/ddfe2dc0-9858-442f-aca3-ac215947a815","type":"Microsoft.Authorization/roleAssignments","name":"ddfe2dc0-9858-442f-aca3-ac215947a815"}'}
+    body:
+      string: '{"properties":{"roleDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c","principalId":"c0b47275-7607-4249-a417-af79e7ec1a91","principalType":"User","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_authorization_test_role_assignment9e52125c","createdOn":"2020-08-14T02:05:52.0532407Z","updatedOn":"2020-08-14T02:05:52.0532407Z","createdBy":"4faa32fd-963a-464d-b6bf-c12cf48c0317","updatedBy":"4faa32fd-963a-464d-b6bf-c12cf48c0317"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_authorization_test_role_assignment9e52125c/providers/Microsoft.Authorization/roleAssignments/ddfe2dc0-9858-442f-aca3-ac215947a815","type":"Microsoft.Authorization/roleAssignments","name":"ddfe2dc0-9858-442f-aca3-ac215947a815"}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['891']
-      content-type: [application/json; charset=utf-8]
-      date: ['Fri, 09 Nov 2018 23:22:34 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-IIS/10.0]
-      set-cookie: [x-ms-gateway-slice=productionb; path=/; secure; HttpOnly]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-deletes: ['14999']
-      x-ms-request-charge: ['2']
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '879'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 14 Aug 2020 02:05:53 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      set-cookie:
+      - x-ms-gateway-slice=Production; path=/; secure; HttpOnly; SameSite=None
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 200
+      message: OK
 version: 1

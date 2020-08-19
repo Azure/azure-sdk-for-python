@@ -1,0 +1,109 @@
+interactions:
+- request:
+    body: '{"properties": {"settings": {"autoQuotaIncreaseState": "Enabled"}, "onFailure":
+      {"emailActions": {"emailAddresses": [{"emailAddress": "failure@contoso.com"},
+      {"emailAddress": "failure1@contoso.com"}]}}, "onSuccess": {"emailActions": {"emailAddresses":
+      [{"emailAddress": "success@contoso.com"}, {"emailAddress": "success1@contoso.com"}]}},
+      "supportTicketAction": {"severity": "Minimal", "firstName": "Jane", "lastName":
+      "Doe", "country": "United States", "phoneNumber": "+1 555-555-5555", "primaryEmailAddress":
+      "primary@contoso.com", "supportLanguage": "en-US", "preferredContactMethod":
+      "Email", "alternateEmailAddresses": ["support1@contoso.com", "support2@contoso.com"]}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '675'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/autoQuotaIncrease?api-version=2019-07-19-preview
+  response:
+    body:
+      string: '{"properties":{"settings":{"autoQuotaIncreaseState":"Enabled"},"onSuccess":{"emailActions":{"emailAddresses":[{"emailAddress":"success@contoso.com"},{"emailAddress":"success1@contoso.com"}]}},"onFailure":{"emailActions":{"emailAddresses":[{"emailAddress":"failure@contoso.com"},{"emailAddress":"failure1@contoso.com"}]}},"supportTicketAction":{"severity":"Minimal","firstName":"Jane","lastName":"Doe","country":"United
+        States","phoneNumber":"+1 555-555-5555","primaryEmailAddress":"primary@contoso.com","alternateEmailAddresses":["support1@contoso.com","support2@contoso.com"],"supportLanguage":"en-US","preferredContactMethod":"Email"}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/autoQuotaIncrease","name":"Automatic
+        Quota Increase","type":"Microsoft.Capacity/autoQuotaIncrease"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '824'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 15 Aug 2020 01:39:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-resource-requests:
+      - '7'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/autoQuotaIncrease?api-version=2019-07-19-preview
+  response:
+    body:
+      string: '{"properties":{"settings":{"autoQuotaIncreaseState":"Enabled"},"onSuccess":{"emailActions":{"emailAddresses":[{"emailAddress":"success@contoso.com"},{"emailAddress":"success1@contoso.com"}]}},"onFailure":{"emailActions":{"emailAddresses":[{"emailAddress":"failure@contoso.com"},{"emailAddress":"failure1@contoso.com"}]}},"supportTicketAction":{"severity":"Minimal","firstName":"Jane","lastName":"Doe","country":"United
+        States","phoneNumber":"+1 555-555-5555","primaryEmailAddress":"primary@contoso.com","alternateEmailAddresses":["support1@contoso.com","support2@contoso.com"],"supportLanguage":"en-US","preferredContactMethod":"Email"}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/autoQuotaIncrease","name":"Automatic
+        Quota Increase","type":"Microsoft.Capacity/autoQuotaIncrease"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '824'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 15 Aug 2020 01:39:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

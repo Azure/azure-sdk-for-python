@@ -1,0 +1,248 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits?api-version=2019-07-19-preview
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardDFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardDFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":101,"name":{"value":"standardDFamily","localizedValue":"Standard
+        D Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardDv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":101,"name":{"value":"standardDv2Family","localizedValue":"Standard
+        Dv2 Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardDSv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDSv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardDSv2Family","localizedValue":"Standard
+        DSv2 Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardFSv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardFSv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardFSv2Family","localizedValue":"Standard
+        FSv2 Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardNCFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardNCFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardNCFamily","localizedValue":"Standard
+        NC Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardNCSv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardNCSv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNCSv2Family","localizedValue":"Standard
+        NCSv2 Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardNCSv3Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardNCSv3Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNCSv3Family","localizedValue":"Standard
+        NCSv3 Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardNDSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardNDSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNDSFamily","localizedValue":"Standard
+        NDS Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardNDSv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardNDSv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNDSv2Family","localizedValue":"Standard
+        NDSv2 Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardNVFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardNVFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":100,"name":{"value":"standardNVFamily","localizedValue":"Standard
+        NV Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardMSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardMSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardMSFamily","localizedValue":"Standard
+        MS Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardNVSv3Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardNVSv3Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardNVSv3Family","localizedValue":"Standard
+        NVSv3 Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardHBrsv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardHBrsv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardHBrsv2Family","localizedValue":"Standard
+        HBrsv2 Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardHCSFamily","type":"Microsoft.Capacity/ServiceLimits","name":"standardHCSFamily","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":0,"name":{"value":"standardHCSFamily","localizedValue":"Standard
+        HCS Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/TotalLowPriorityCores","type":"Microsoft.Capacity/ServiceLimits","name":"TotalLowPriorityCores","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":301,"name":{"value":"TotalLowPriorityCores","localizedValue":"Total
+        Cluster Low Priority Regional vCPUs"},"resourceType":"lowPriority"}}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '7284'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 15 Aug 2020 01:34:02 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"limit": 102, "unit": "Count", "name": {"value": "standardDv2Family"},
+      "resourceType": "dedicated"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '116'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardDv2Family?api-version=2019-07-19-preview
+  response:
+    body:
+      string: '{"properties":{"requestSubmitTime":"0001-01-01T00:00:00","message":null,"provisioningState":"InProgress","currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":102,"name":{"value":"standarddv2family","localizedValue":null},"resourceType":"dedicated"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimitsRequests/a1e1e060-ded3-4b16-86b6-7181c1f141c7","name":"a1e1e060-ded3-4b16-86b6-7181c1f141c7","type":"Microsoft.Capacity/serviceLimitsRequests"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/operationsStatus/a1e1e060-ded3-4b16-86b6-7181c1f141c7?api-version=2019-07-19-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '585'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 15 Aug 2020 01:34:03 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimitsRequests/a1e1e060-ded3-4b16-86b6-7181c1f141c7?api-version=2019-07-19-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/operationsStatus/a1e1e060-ded3-4b16-86b6-7181c1f141c7?api-version=2019-07-19-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/operationsStatus/a1e1e060-ded3-4b16-86b6-7181c1f141c7","name":"a1e1e060-ded3-4b16-86b6-7181c1f141c7","status":"InProgress","startTime":"2020-08-15T01:34:03.4814026Z","error":null}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/operationsStatus/a1e1e060-ded3-4b16-86b6-7181c1f141c7?api-version=2019-07-19-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '336'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 15 Aug 2020 01:34:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/operationsStatus/a1e1e060-ded3-4b16-86b6-7181c1f141c7?api-version=2019-07-19-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/operationsStatus/a1e1e060-ded3-4b16-86b6-7181c1f141c7","name":"a1e1e060-ded3-4b16-86b6-7181c1f141c7","status":"Succeeded","startTime":"2020-08-15T01:34:03.4814026Z","error":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '335'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 15 Aug 2020 01:35:03 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimitsRequests/a1e1e060-ded3-4b16-86b6-7181c1f141c7?api-version=2019-07-19-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.8 (Windows-10-10.0.18362-SP0) msrest/0.6.17 msrest_azure/0.6.4
+        azure-mgmt-reservations/0.8.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardDv2Family?api-version=2019-07-19-preview
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Capacity/resourceProviders/Microsoft.MachineLearningServices/locations/westus/serviceLimits/standardDv2Family","type":"Microsoft.Capacity/ServiceLimits","name":"standardDv2Family","properties":{"currentValue":0,"unit":"Count","quotaPeriod":null,"properties":null,"limit":102,"name":{"value":"standardDv2Family","localizedValue":"Standard
+        Dv2 Family Cluster Dedicated vCPUs"},"resourceType":"dedicated"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '482'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sat, 15 Aug 2020 01:35:04 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1
