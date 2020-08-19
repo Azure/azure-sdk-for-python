@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class ActionRulePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ActionRule <azure.mgmt.alertsmanagement.models.ActionRule>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ActionRule]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ActionRulePaged, self).__init__(*args, **kwargs)
 class OperationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Operation <azure.mgmt.alertsmanagement.models.Operation>` object
@@ -51,19 +64,6 @@ class SmartGroupPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SmartGroupPaged, self).__init__(*args, **kwargs)
-class ActionRulePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ActionRule <azure.mgmt.alertsmanagement.models.ActionRule>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ActionRule]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ActionRulePaged, self).__init__(*args, **kwargs)
 class AlertRulePaged(Paged):
     """
     A paging container for iterating over a list of :class:`AlertRule <azure.mgmt.alertsmanagement.models.AlertRule>` object

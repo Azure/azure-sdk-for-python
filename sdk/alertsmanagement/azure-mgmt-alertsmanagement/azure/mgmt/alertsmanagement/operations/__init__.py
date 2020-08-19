@@ -9,16 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._action_rules_operations import ActionRulesOperations
 from ._operations import Operations
 from ._alerts_operations import AlertsOperations
 from ._smart_groups_operations import SmartGroupsOperations
-from ._action_rules_operations import ActionRulesOperations
 from ._smart_detector_alert_rules_operations import SmartDetectorAlertRulesOperations
 
 __all__ = [
+    'ActionRulesOperations',
     'Operations',
     'AlertsOperations',
     'SmartGroupsOperations',
-    'ActionRulesOperations',
     'SmartDetectorAlertRulesOperations',
 ]
