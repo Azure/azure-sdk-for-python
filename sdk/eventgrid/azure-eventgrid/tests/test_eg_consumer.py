@@ -18,12 +18,15 @@ from _mocks import (
     cloud_storage_dict,
     cloud_storage_string,
     cloud_storage_bytes,
-    eg_storage_dict,
-    eg_storage_string,
-    eg_storage_bytes,
+    cloud_custom_dict,
+    cloud_custom_string,
+    cloud_custom_bytes,
     eg_custom_dict,
     eg_custom_string,
-    eg_custom_bytes
+    eg_custom_bytes,
+    eg_storage_dict,
+    eg_storage_string,
+    eg_storage_bytes
     )
 
 class EventGridConsumerTests(AzureMgmtTestCase):
