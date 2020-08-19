@@ -78,11 +78,9 @@ class TableClient(TableClientBase):
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
         """
-        account_url, secondary, credential = parse_connection_str(
-            conn_str=conn_str, credential=None, service='table')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
-        return cls(account_url, table_name=table_name, credential=credential, **kwargs)  # type: ignore
+        account_url, credential = parse_connection_str(
+            conn_str=conn_str, credential=None, service='table', keyword_args=kwargs)
+        return cls(account_url, table_name=table_name, credential=credential, **kwargs)
 
     @classmethod
     def from_table_url(cls, table_url, credential=None, **kwargs):
@@ -413,7 +411,8 @@ class TableClient(TableClientBase):
                                                                                   partition_key=partition_key,
                                                                                   row_key=row_key,
                                                                                   **kwargs)
-            properties = _convert_to_entity(entity.additional_properties)
+
+            properties = _convert_to_entity(entity)
             return properties
         except HttpResponseError as error:
             _process_table_error(error)

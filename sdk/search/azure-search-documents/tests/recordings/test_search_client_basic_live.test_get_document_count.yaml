@@ -1,0 +1,48 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata.metadata=none
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-search-documents/11.1.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      api-key:
+      - 30FEF70E45F2263C6565AD0BF8C374DC
+    method: GET
+    uri: https://search485f15b7.search.windows.net/indexes('drgqefsg')/docs/$count?api-version=2020-06-30
+  response:
+    body:
+      string: "\uFEFF10"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '5'
+      content-type:
+      - text/plain
+      date:
+      - Wed, 12 Aug 2020 23:55:19 GMT
+      elapsed-time:
+      - '68'
+      expires:
+      - '-1'
+      odata-version:
+      - '4.0'
+      pragma:
+      - no-cache
+      preference-applied:
+      - odata.include-annotations="*"
+      request-id:
+      - 46da5b45-dcf7-11ea-a265-5cf37071153c
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1
