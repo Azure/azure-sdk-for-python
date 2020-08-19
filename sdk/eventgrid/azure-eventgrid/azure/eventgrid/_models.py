@@ -155,6 +155,8 @@ class DeserializedEvent():
         model.data: Returns a system event type(StorageBlobCreated, StorageBlobDeleted, etc.). If model.type/model.event_type is not defined in the 
           system registry, returns None.
 
+        :raise: :class:`ValueError`, when events do not follow CloudEvent or EventGridEvent schema.
+
         :rtype: Union[CloudEvent, EventGridEvent]
         """
         if not self._model:
