@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0 (2020-08-19)
+## 3.0.0 (2020-08-20)
 
 First stable release of the azure-ai-formrecognizer client library.
 
