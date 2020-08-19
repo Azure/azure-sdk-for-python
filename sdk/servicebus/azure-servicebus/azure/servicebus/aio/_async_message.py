@@ -93,7 +93,9 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
-        await self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_reason=reason, dead_letter_error_description=error_description)
+        await self._settle_message(MESSAGE_DEAD_LETTER,
+                                   dead_letter_reason=reason,
+                                   dead_letter_error_description=error_description)
         self._settled = True
 
     async def abandon(self) -> None:  # type: ignore
@@ -155,6 +157,6 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
             raise ValueError("Unable to renew lock - no lock token found.")
 
         expiry = await self._receiver._renew_locks(token)  # pylint: disable=protected-access
-        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
-        
+        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0) # type: datetime.datetime
+
         return self._expiry

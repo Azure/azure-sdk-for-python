@@ -28,7 +28,7 @@ from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 adjust_attribute_map()
 
 
-# These helpers are to ensure that the Properties objects can't be constructed without all args present, 
+# These helpers are to ensure that the Properties objects can't be constructed without all args present,
 # as a compromise between our use of kwargs to flatten arg-lists and trying to de-incentivise manual instantiation
 # while still trying to provide some guardrails.
 def extract_kwarg_template(kwargs, extraction_missing_args, name):
@@ -124,13 +124,13 @@ class NamespaceProperties(DictMixin):
         extraction_missing_args = []  # type: List[str]
         extract_kwarg = functools.partial(extract_kwarg_template, kwargs, extraction_missing_args)
 
-        self.alias = extract_kwarg('alias', None)
-        self.created_at_utc = extract_kwarg('created_at_utc', None)
-        self.messaging_sku = extract_kwarg('messaging_sku', None)
-        self.messaging_units = extract_kwarg('messaging_units', None)
-        self.modified_at_utc = extract_kwarg('modified_at_utc', None)
-        self.name = extract_kwarg('name', None)
-        self.namespace_type = extract_kwarg('namespace_type', None)
+        self.name = name
+        self.alias = extract_kwarg('alias')
+        self.created_at_utc = extract_kwarg('created_at_utc')
+        self.messaging_sku = extract_kwarg('messaging_sku')
+        self.messaging_units = extract_kwarg('messaging_units')
+        self.modified_at_utc = extract_kwarg('modified_at_utc')
+        self.namespace_type = extract_kwarg('namespace_type')
 
         validate_extraction_missing_args(extraction_missing_args)
 
@@ -145,7 +145,6 @@ class NamespaceProperties(DictMixin):
             messaging_sku=internal_entity.messaging_sku,
             messaging_units=internal_entity.messaging_units,
             modified_at_utc=internal_entity.modified_time,
-            name=internal_entity.name,
             namespace_type=internal_entity.namespace_type,
         )
         return namespace_properties
@@ -271,7 +270,8 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         # type: (str, InternalQueueDescription) -> QueueProperties
         qd = cls(
             name,
-            authorization_rules=[AuthorizationRule._from_internal_entity(r) for r in internal_qd.authorization_rules] if internal_qd.authorization_rules else internal_qd.authorization_rules,
+            authorization_rules=[AuthorizationRule._from_internal_entity(r) for r in internal_qd.authorization_rules] \
+                if internal_qd.authorization_rules else internal_qd.authorization_rules,
             auto_delete_on_idle=internal_qd.auto_delete_on_idle,
             dead_lettering_on_message_expiration=internal_qd.dead_lettering_on_message_expiration,
             default_message_time_to_live=internal_qd.default_message_time_to_live,
@@ -300,7 +300,8 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             internal_qd = InternalQueueDescription()
             self._internal_qd = internal_qd
 
-        self._internal_qd.authorization_rules = [r._to_internal_entity() for r in self.authorization_rules] if self.authorization_rules else self.authorization_rules
+        self._internal_qd.authorization_rules = [r._to_internal_entity() for r in self.authorization_rules] \
+            if self.authorization_rules else self.authorization_rules
         self._internal_qd.auto_delete_on_idle = self.auto_delete_on_idle
         self._internal_qd.dead_lettering_on_message_expiration = self.dead_lettering_on_message_expiration
         self._internal_qd.default_message_time_to_live = self.default_message_time_to_live
@@ -528,7 +529,8 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             enable_batched_operations=internal_td.enable_batched_operations,
             size_in_bytes=internal_td.size_in_bytes,
             is_anonymous_accessible=internal_td.is_anonymous_accessible,
-            authorization_rules=[AuthorizationRule._from_internal_entity(r) for r in internal_td.authorization_rules] if internal_td.authorization_rules else internal_td.authorization_rules,
+            authorization_rules=[AuthorizationRule._from_internal_entity(r) for r in internal_td.authorization_rules] \
+                if internal_td.authorization_rules else internal_td.authorization_rules,
             status=internal_td.status,
             support_ordering=internal_td.support_ordering,
             auto_delete_on_idle=internal_td.auto_delete_on_idle,
@@ -552,7 +554,8 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         self._internal_td.enable_batched_operations = self.enable_batched_operations
         self._internal_td.size_in_bytes = self.size_in_bytes
         self._internal_td.is_anonymous_accessible = self.is_anonymous_accessible
-        self._internal_td.authorization_rules = [r._to_internal_entity() for r in self.authorization_rules] if self.authorization_rules else self.authorization_rules
+        self._internal_td.authorization_rules = [r._to_internal_entity() for r in self.authorization_rules] \
+            if self.authorization_rules else self.authorization_rules
         self._internal_td.status = self.status
         self._internal_td.support_ordering = self.support_ordering
         self._internal_td.auto_delete_on_idle = self.auto_delete_on_idle
@@ -980,10 +983,9 @@ class SqlRuleFilter(object):
     :type sql_expression: str
     :param parameters: Sets the value of the sql expression parameters if any.
     :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
-    :type requires_preprocessing: bool
     """
     def __init__(self, sql_expression=None, parameters=None):
-        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]], bool) -> None
+        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]]) -> None
         self.sql_expression = sql_expression
         self.parameters = parameters
         self.requires_preprocessing = None
@@ -1111,7 +1113,6 @@ class AuthorizationRule(object):
         **kwargs
     ):
         # type: (Any) -> None
-        super(AuthorizationRule, self).__init__(**kwargs)
         self.type = kwargs.get('type', None)
         self.claim_type = kwargs.get('claim_type', None)
         self.claim_value = kwargs.get('claim_value', None)

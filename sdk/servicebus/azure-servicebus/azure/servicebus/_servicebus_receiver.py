@@ -5,8 +5,9 @@
 import time
 import logging
 import functools
+from typing import Any, List, TYPE_CHECKING, Optional, Dict, Iterator, Union
+
 import six
-from typing import Any, List, TYPE_CHECKING, Optional, Dict, Iterator
 
 from uamqp import ReceiveClient, types, Message
 from uamqp.constants import SenderSettleMode
@@ -84,8 +85,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      performance but increase the chance that messages will expire while they are cached if they're not
      processed fast enough.
      The default value is 0, meaning messages will be received from the service and processed one at a time.
-     In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count` (if provided)
-     within its request to the service.
+     In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
+     (if provided) within its request to the service.
 
     .. admonition:: Example:
 
@@ -276,7 +277,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
 
     def _renew_locks(self, *lock_tokens):
-        # type: (*str) -> Any
+        # type: (str) -> Any
         message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
@@ -334,8 +335,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          performance but increase the chance that messages will expire while they are cached if they're not
          processed fast enough.
          The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count` (if provided)
-         within its request to the service.
+         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
+         (if provided) within its request to the service.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         .. admonition:: Example:

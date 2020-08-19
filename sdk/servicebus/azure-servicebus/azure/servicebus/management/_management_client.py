@@ -1007,7 +1007,8 @@ class ServiceBusManagementClient:  # pylint:disable=too-many-public-methods
         """
         entry_el = self._impl.namespace.get(api_version=constants.API_VERSION, **kwargs)
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
-        return NamespaceProperties._from_internal_entity(namespace_entry.content.namespace_properties)
+        return NamespaceProperties._from_internal_entity(namespace_entry.title,
+                                                         namespace_entry.content.namespace_properties)
 
     def close(self):
         # type: () -> None

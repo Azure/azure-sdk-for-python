@@ -21,7 +21,6 @@ from .exceptions import SessionLockExpired
 from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
-    import datetime
     from ._servicebus_session_receiver import ServiceBusSessionReceiver
     from .aio._servicebus_session_receiver_async import ServiceBusSessionReceiver as ServiceBusSessionReceiverAsync
 
@@ -29,9 +28,9 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class BaseSession(object):
-    def __init__(self, id, receiver, encoding="UTF-8"):
+    def __init__(self, session_id, receiver, encoding="UTF-8"):
         # type: (str, Union[ServiceBusSessionReceiver, ServiceBusSessionReceiverAsync], str) -> None
-        self._id = id
+        self._id = session_id
         self._receiver = receiver
         self._encoding = encoding
         self._session_start = None
@@ -173,6 +172,7 @@ class ServiceBusSession(BaseSession):
             {MGMT_REQUEST_SESSION_ID: self.id},
             mgmt_handlers.default
         )
-        self._locked_until_utc = utc_from_timestamp(expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0)
+        expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0
+        self._locked_until_utc = utc_from_timestamp(expiry_timestamp) # type: datetime.datetime
 
         return self._locked_until_utc

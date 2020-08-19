@@ -66,8 +66,8 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
      performance but increase the chance that messages will expire while they are cached if they're not
      processed fast enough.
      The default value is 0, meaning messages will be received from the service and processed one at a time.
-     In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count` (if provided)
-     within its request to the service.
+     In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
+     (if provided) within its request to the service.
 
     .. admonition:: Example:
 
@@ -145,8 +145,8 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
          performance but increase the chance that messages will expire while they are cached if they're not
          processed fast enough.
          The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count` (if provided)
-         within its request to the service.
+         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
+         (if provided) within its request to the service.
         :rtype: ~azure.servicebus.ServiceBusSessionReceiver
 
         .. admonition:: Example:

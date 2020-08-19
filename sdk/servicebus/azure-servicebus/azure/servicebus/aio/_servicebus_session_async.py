@@ -122,6 +122,7 @@ class ServiceBusSession(BaseSession):
             {MGMT_REQUEST_SESSION_ID: self.id},
             mgmt_handlers.default
         )
-        self._locked_until_utc = utc_from_timestamp(expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0)
+        expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0
+        self._locked_until_utc = utc_from_timestamp(expiry_timestamp) # type: datetime.datetime
 
         return self._locked_until_utc

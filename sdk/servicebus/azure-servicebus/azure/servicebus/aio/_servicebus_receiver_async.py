@@ -6,8 +6,9 @@ import asyncio
 import collections
 import functools
 import logging
+from typing import Any, TYPE_CHECKING, List, Optional, AsyncIterator, Union
+
 import six
-from typing import Any, TYPE_CHECKING, List, Optional, AsyncIterator
 
 from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
@@ -84,8 +85,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      performance but increase the chance that messages will expire while they are cached if they're not
      processed fast enough.
      The default value is 0, meaning messages will be received from the service and processed one at a time.
-     In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count` (if provided)
-     within its request to the service.
+     In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
+     (if provided) within its request to the service.
 
     .. admonition:: Example:
 
@@ -331,8 +332,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          performance but increase the chance that messages will expire while they are cached if they're not
          processed fast enough.
          The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count` (if provided)
-         within its request to the service.
+         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
+         (if provided) within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -436,7 +437,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         self._populate_message_properties(message)
 
-        handler = functools.partial(mgmt_handlers.deferred_message_op, receive_mode=self._receive_mode, message_type=ReceivedMessage)
+        handler = functools.partial(mgmt_handlers.deferred_message_op,
+                                   receive_mode=self._receive_mode,
+                                   message_type=ReceivedMessage)
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,

@@ -9,7 +9,7 @@ import datetime
 import uuid
 import functools
 import logging
-from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable
+from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable, Any
 
 import uamqp.message
 
@@ -748,7 +748,7 @@ class ReceivedMessageBase(PeekedMessage):
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self.auto_renew_error = None
         self._receiver = None  # type: ignore
-        self._expiry = None
+        self._expiry = None # type: Optional[datetime.datetime]
 
     def _check_live(self, action):
         # pylint: disable=no-member
@@ -963,7 +963,9 @@ class ReceivedMessage(ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
-        self._settle_message(MESSAGE_DEAD_LETTER, dead_letter_reason=reason, dead_letter_error_description=error_description)
+        self._settle_message(MESSAGE_DEAD_LETTER,
+                             dead_letter_reason=reason,
+                             dead_letter_error_description=error_description)
         self._settled = True
 
     def abandon(self):
@@ -1053,6 +1055,6 @@ class ReceivedMessage(ReceivedMessageBase):
             raise ValueError("Unable to renew lock - no lock token found.")
 
         expiry = self._receiver._renew_locks(token)  # pylint: disable=protected-access,no-member
-        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
+        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0) # type: datetime.datetime
 
         return self._expiry
