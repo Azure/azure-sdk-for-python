@@ -2921,21 +2921,25 @@ class RestorePolicyProperties(Model):
     :param days: how long this blob can be restored. It should be great than
      zero and less than DeleteRetentionPolicy.days.
     :type days: int
-    :ivar last_enabled_time: Returns the date and time the restore policy was
-     last enabled.
+    :ivar last_enabled_time: Deprecated in favor of minRestoreTime property.
     :vartype last_enabled_time: datetime
+    :ivar min_restore_time: Returns the minimum date and time that the restore
+     can be started.
+    :vartype min_restore_time: datetime
     """
 
     _validation = {
         'enabled': {'required': True},
         'days': {'maximum': 365, 'minimum': 1},
         'last_enabled_time': {'readonly': True},
+        'min_restore_time': {'readonly': True},
     }
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'days': {'key': 'days', 'type': 'int'},
         'last_enabled_time': {'key': 'lastEnabledTime', 'type': 'iso-8601'},
+        'min_restore_time': {'key': 'minRestoreTime', 'type': 'iso-8601'},
     }
 
     def __init__(self, *, enabled: bool, days: int=None, **kwargs) -> None:
@@ -2943,6 +2947,7 @@ class RestorePolicyProperties(Model):
         self.enabled = enabled
         self.days = days
         self.last_enabled_time = None
+        self.min_restore_time = None
 
 
 class Restriction(Model):
