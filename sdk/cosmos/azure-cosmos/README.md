@@ -100,7 +100,7 @@ The following sections provide several code snippets covering some of the most c
 
 * [Create a database](#create-a-database "Create a database")
 * [Create a container](#create-a-container "Create a container")
-* [Create an Analytical Store Enabled container](#create-an-analytical-store-enabled-container "Create a container")
+* [Create an analytical store enabled container](#create-an-analytical-store-enabled-container "Create a container")
 * [Get an existing container](#get-an-existing-container "Get an existing container")
 * [Insert data](#insert-data "Insert data")
 * [Delete data](#delete-data "Delete data")
@@ -149,15 +149,15 @@ except exceptions.CosmosHttpResponseError:
     raise
 ```
 
-### Create an Analytical Store enabled container
+### Create an analytical store enabled container
 
 This example creates a container with [Analytical Store](https://docs.microsoft.com/en-us/azure/cosmos-db/analytical-store-introduction) enabled, for reporting, BI, AI, and Advanced Analytics with [Azure Synapse Link](https://docs.microsoft.com/en-us/azure/cosmos-db/synapse-link).
 
 Options:
 
-+ 0 or Null = Not enabled.
-+ -1 = The data will be stored infinitely.
-+ Any other number is the actual ttl, in seconds.
++ 0 or Null or not informed: Not enabled.
++ -1: The data will be stored infinitely.
++ Any other number: the actual ttl, in seconds.
 
 ```Python
 container_name = 'products'
