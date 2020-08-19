@@ -265,20 +265,27 @@ def test_default_credential_shared_cache_use(mock_credential):
 
 
 def test_managed_identity_client_id():
-    """The credential should initialize ManagedIdentityCredential with the value of AZURE_CLIENT_ID"""
+    """the credential should accept a user-assigned managed identity's client ID by kwarg or environment variable"""
 
-    expected_client_id = "the-client"
-    with patch.dict(os.environ, {EnvironmentVariables.AZURE_CLIENT_ID: expected_client_id}, clear=True):
+    expected_args = {"client_id": "the-client"}
+
+    with patch(DefaultAzureCredential.__module__ + ".ManagedIdentityCredential") as mock_credential:
+        DefaultAzureCredential(managed_identity_client_id=expected_args["client_id"])
+    mock_credential.assert_called_once_with(**expected_args)
+
+    # client id can also be specified in $AZURE_CLIENT_ID
+    with patch.dict(os.environ, {EnvironmentVariables.AZURE_CLIENT_ID: expected_args["client_id"]}, clear=True):
         with patch(DefaultAzureCredential.__module__ + ".ManagedIdentityCredential") as mock_credential:
             DefaultAzureCredential()
+    mock_credential.assert_called_once_with(**expected_args)
 
-    mock_credential.assert_called_once_with(client_id=expected_client_id)
-
-    with patch.dict(os.environ, {}, clear=True):
+    # keyword argument should override environment variable
+    with patch.dict(
+        os.environ, {EnvironmentVariables.AZURE_CLIENT_ID: "not-" + expected_args["client_id"]}, clear=True
+    ):
         with patch(DefaultAzureCredential.__module__ + ".ManagedIdentityCredential") as mock_credential:
-            DefaultAzureCredential()
-
-    mock_credential.assert_called_once_with(client_id=None)
+            DefaultAzureCredential(managed_identity_client_id=expected_args["client_id"])
+    mock_credential.assert_called_once_with(**expected_args)
 
 
 def get_credential_for_shared_cache_test(expected_refresh_token, expected_access_token, cache, **kwargs):

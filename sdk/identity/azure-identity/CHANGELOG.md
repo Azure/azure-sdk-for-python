@@ -5,6 +5,9 @@
 - Application authentication APIs from 1.4.0b7
 - `ManagedIdentityCredential` supports the latest version of App Service
   ([#11346](https://github.com/Azure/azure-sdk-for-python/issues/11346))
+- `DefaultAzureCredential` allows specifying the client ID of a user-assigned
+  managed identity via keyword argument `managed_identity_client_id`
+  ([#12991](https://github.com/Azure/azure-sdk-for-python/issues/12991)) 
 
 ## 1.4.0 (2020-08-10)
 ### Added
