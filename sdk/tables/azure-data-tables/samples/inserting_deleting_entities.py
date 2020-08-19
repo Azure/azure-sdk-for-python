@@ -1,9 +1,11 @@
+import os
+
 class InsertDeleteEntity(object):
-    connection_string = "DefaultEndpointsProtocol=https;AccountName=example;AccountKey=fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK==;EndpointSuffix=core.windows.net"
-    table_name = "NAME"
-    account_url = "https://example.table.core.windows.net/"
-    account_name = "example"
-    access_key = "fasgfbhBDFAShjDQ4jkvbnaBFHJOWS6gkjngdakeKFNLK=="
+    connection_string = os.getenv("AZURE_TABLES_CONNECTION_STRING")
+    access_key = os.getenv("AZURE_TABLES_KEY")
+    account_url = os.getenv("AZURE_TABLES_ACCOUNT_URL")
+    account_name = os.getenv("AZURE_TABLES_ACCOUNT_NAME")
+    table_name = "OfficeSupplies"
 
     # Assuming there is a created table
     entity = {
@@ -19,40 +21,41 @@ class InsertDeleteEntity(object):
         from azure.data.tables import TableClient
         from azure.core.exceptions import ResourceExistsError
 
-        table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
+        # table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
+        table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
+
         try:
             inserted_entity = table_client.create_entity(entity=self.entity)
-            # inserted_entity type is dict[str,object]
+
             print(inserted_entity.items())  # print out key-value pair of entity
         except ResourceExistsError:
-            print("EntityExists")
+            print("Entity already exists")
 
     def delete_entity(self):
 
         from azure.data.tables import TableClient
-        from azure.core.exceptions import ResourceNotFoundError
+        from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
         from azure.core import MatchConditions
 
-        table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
+        # table_client = TableClient(account_url=self.account_url, credential=self.access_key, table_name=self.table_name)
+        table_client = TableClient.from_connection_string(self.connection_string, self.table_name)
 
         # Create entity to delete (to showcase etag)
-        entity_created = table_client.create_entity(entity=self.entity)
-
-        # show without calling metadata, cannot access etag
         try:
-            entity_created.etag
-        except AttributeError:
-            print("Need to get metadata of entity")
-
-        # In order to access etag as a part of the entity, need to call metadata on the entity
-        metadata = entity_created.metadata()
-
-        # Can now get etag
-        etag = metadata['etag']
+            entity_created = table_client.create_entity(entity=self.entity)
+        except ResourceExistsError as e:
+            print("Entity already exists!")
 
         try:
             # will delete if match_condition and etag are satisfied
-            table_client.delete_entity(entity=self.entity, etag=etag, match_condition=MatchConditions.IfNotModified)
+            table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"])
+            print("Successfully deleted!")
 
         except ResourceNotFoundError:
-            print("EntityDoesNotExists")
+            print("Entity does not exists")
+
+
+if __name__ == '__main__':
+    ide = InsertDeleteEntity()
+    ide.create_entity()
+    ide.delete_entity()
