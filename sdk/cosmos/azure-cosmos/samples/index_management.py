@@ -22,7 +22,6 @@ PARTITION_KEY = PartitionKey(path='/id', kind='Hash')
 #   excludedPaths
 #
 # We can toggle 'automatic' to eiher be True or False depending upon whether we want to have indexing over all columns by default or not.
-# indexingMode can be either of consistent, lazy or none
 #
 # We can provide options while creating documents. indexingDirective is one such,
 # by which we can tell whether it should be included or excluded in the index of the parent container.
