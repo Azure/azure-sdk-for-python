@@ -923,8 +923,9 @@ class ManagedCluster(Resource):
     :param enable_rbac: Whether to enable Kubernetes Role-Based Access
      Control.
     :type enable_rbac: bool
-    :param enable_pod_security_policy: (PREVIEW) Whether to enable Kubernetes
-     Pod security policy.
+    :param enable_pod_security_policy: (DEPRECATING) Whether to enable
+     Kubernetes pod security policy (preview). This feature is set for removal
+     on October 15th, 2020. Learn more at aka.ms/aks/azpodpolicy.
     :type enable_pod_security_policy: bool
     :param network_profile: Profile of network configuration.
     :type network_profile:
