@@ -155,3 +155,16 @@ class ServerKeyPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ServerKeyPaged, self).__init__(*args, **kwargs)
+class ServerSecurityAlertPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerSecurityAlertPolicy <azure.mgmt.rdbms.postgresql.models.ServerSecurityAlertPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerSecurityAlertPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerSecurityAlertPolicyPaged, self).__init__(*args, **kwargs)
