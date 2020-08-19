@@ -498,6 +498,7 @@ class StorageTableClientTest(TableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
 
+    @GlobalStorageAccountPreparer() 
     async def test_error_with_malformed_conn_str_async(self):
         # Arrange
 
@@ -525,7 +526,7 @@ class StorageTableClientTest(TableTestCase):
             # Assert
             async with service:
                 assert hasattr(service, 'close')
-                service.close()
+                await service.close()
 
     @GlobalStorageAccountPreparer()
     async def test_closing_pipeline_client_simple_async(self, resource_group, location, storage_account, storage_account_key):
@@ -534,7 +535,7 @@ class StorageTableClientTest(TableTestCase):
             # Act
             service = client(
                 self.account_url(storage_account, "table"), credential=storage_account_key, table_name='table')
-            service.close()
+            await service.close()
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
