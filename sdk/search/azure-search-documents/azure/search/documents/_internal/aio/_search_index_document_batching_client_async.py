@@ -7,7 +7,7 @@ from typing import cast, List, TYPE_CHECKING
 import time
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import HttpResponseError, ServiceResponseTimeoutError
+from azure.core.exceptions import ServiceResponseTimeoutError
 from ._timer import Timer
 from .._utils import is_retryable_status_code
 from .._search_index_document_batching_client_base import SearchIndexDocumentBatchingClientBase
@@ -45,7 +45,11 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
 
     def __init__(self, endpoint, index_name, credential, **kwargs):
         # type: (str, str, AzureKeyCredential, **Any) -> None
-        super(SearchIndexDocumentBatchingClient, self).__init__(endpoint, index_name, credential, **kwargs)
+        super(SearchIndexDocumentBatchingClient, self).__init__(
+            endpoint=endpoint,
+            index_name=index_name,
+            credential=credential,
+            **kwargs)
         self._index_documents_batch = IndexDocumentsBatch()
         self._client = SearchIndexClient(
             endpoint=endpoint, index_name=index_name, sdk_moniker=SDK_MONIKER, **kwargs
@@ -94,7 +98,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
         return await self._client.close()
 
     @distributed_trace_async
-    async def flush(self, timeout=86400):
+    async def flush(self, timeout=86400, **kwargs):    # pylint:disable=unused-argument
         # type: (bool) -> bool
         """Flush the batch.
 
@@ -110,7 +114,7 @@ class SearchIndexDocumentBatchingClient(SearchIndexDocumentBatchingClientBase, H
             if remaining < 0:
                 raise ServiceResponseTimeoutError("Service response time out")
             result = await self._process(timeout=remaining)
-            if (result):
+            if result:
                 has_error = True
         return has_error
 

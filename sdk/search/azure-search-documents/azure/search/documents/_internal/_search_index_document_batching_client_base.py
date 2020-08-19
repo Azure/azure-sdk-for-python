@@ -53,27 +53,6 @@ class SearchIndexDocumentBatchingClientBase(HeadersMixin):
         self._hook = kwargs.pop('hook', None)
         self._retry_counter = {}
 
-    def _cleanup(self, flush=True):
-        # type: () -> None
-        """Clean up the client.
-
-        :param bool flush: flush the actions queue before shutdown the client
-            Default to True.
-        :raises: ~azure.core.exceptions.HttpResponseError,
-                 ~azure.core.exceptions.ServiceResponseTimeoutError
-                 ~azure.search.documents.RequestEntityTooLargeError
-        """
-        if flush:
-            self.flush()
-        if self._auto_flush:
-            self._timer.cancel()
-
-    def __repr__(self):
-        # type: () -> str
-        return "<SearchIndexDocumentBatchingClient [endpoint={}, index={}]>".format(
-            repr(self._endpoint), repr(self._index_name)
-        )[:1024]
-
     @property
     def batch_size(self):
         # type: () -> int
