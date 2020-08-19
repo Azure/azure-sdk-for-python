@@ -16,8 +16,8 @@ from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase
 from azure.core.exceptions import HttpResponseError
 # ------------------------------------------------------------------------------
 SERVICES = {
-    #TableServiceClient: 'table',
-    #TableClient: 'table',
+    TableServiceClient: 'table',
+    TableClient: 'table',
     #TableServiceClient: 'cosmos',
     #TableClient: 'cosmos',
 }
@@ -41,9 +41,9 @@ class StorageTableClientTest(TableTestCase):
         self.assertTrue(
             ('{}.{}'.format(account_name, 'table.core.windows.net') in service.url) or
             ('{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url))
-        self.assertTrue(
-            ('{}-secondary.{}'.format(account_name, 'table.core.windows.net') in service.secondary_endpoint) or
-            ('{}-secondary.{}'.format(account_name, 'table.cosmos.azure.com') in service.secondary_endpoint))
+        # self.assertTrue(
+        #     ('{}-secondary.{}'.format(account_name, 'table.core.windows.net') in service.secondary_endpoint) or
+        #     ('{}-secondary.{}'.format(account_name, 'table.cosmos.azure.com') in service.secondary_endpoint))
 
     # --Direct Parameters Test Cases --------------------------------------------
     @GlobalStorageAccountPreparer()
@@ -133,10 +133,10 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(service.primary_endpoint.startswith(
+            self.assertTrue(service._primary_endpoint.startswith(
                 'https://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
-            self.assertTrue(service.secondary_endpoint.startswith(
-                'https://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
+            # self.assertTrue(service.secondary_endpoint.startswith(
+            #     'https://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
 
     @GlobalStorageAccountPreparer()
     async def test_create_service_protocol_async(self, resource_group, location, storage_account, storage_account_key):
@@ -230,8 +230,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.table.cosmos.azure.com'))
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(service.primary_endpoint.startswith('https://' + storage_account.name + '.table.cosmos.azure.com'))
-            self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.cosmos.azure.com'))
+            self.assertTrue(service._primary_endpoint.startswith('https://' + storage_account.name + '.table.cosmos.azure.com'))
+            # self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.cosmos.azure.com'))
             self.assertEqual(service.scheme, 'https')
 
     @GlobalStorageAccountPreparer()
@@ -250,11 +250,11 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(
-                service.primary_endpoint.startswith(
+                service._primary_endpoint.startswith(
                     'http://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
-            self.assertTrue(
-                service.secondary_endpoint.startswith(
-                    'http://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
+            # self.assertTrue(
+            #     service.secondary_endpoint.startswith(
+            #         'http://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
             self.assertEqual(service.scheme, 'http')
 
     @GlobalStorageAccountPreparer()
@@ -282,8 +282,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com'))
-            self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.core.windows.net'))
+            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+            # self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.core.windows.net'))
 
     @GlobalStorageAccountPreparer()
     async def test_create_service_with_conn_str_custom_domain_trailing_slash_async(self, resource_group, location, storage_account, storage_account_key):
@@ -300,8 +300,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com'))
-            self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.core.windows.net'))
+            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+            # self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.core.windows.net'))
 
     @GlobalStorageAccountPreparer()
     async def test_create_service_with_conn_str_custom_domain_sec_override_async(self, resource_group, location, storage_account, storage_account_key):
@@ -319,8 +319,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com'))
-            self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com'))
+            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+            # self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com'))
 
     @GlobalStorageAccountPreparer()
     async def test_create_service_with_conn_str_fails_if_sec_without_primary_async(self, resource_group, location, storage_account, storage_account_key):
@@ -354,8 +354,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com'))
-            self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com'))
+            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+            # self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com'))
 
     @pytest.mark.skip("pending")
     @GlobalStorageAccountPreparer()
@@ -372,7 +372,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertEqual(service.primary_hostname, 'local-machine:11002/custom/account/path')
+            self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
 
         service = TableServiceClient(account_url=custom_account_url)
         self.assertEqual(service.account_name, None)
@@ -523,7 +523,7 @@ class StorageTableClientTest(TableTestCase):
                 self.account_url(storage_account, "table"), credential=storage_account_key, table_name='table')
 
             # Assert
-            with service:
+            async with service:
                 assert hasattr(service, 'close')
                 service.close()
 

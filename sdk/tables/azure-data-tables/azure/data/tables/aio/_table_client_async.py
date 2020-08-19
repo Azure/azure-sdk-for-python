@@ -15,6 +15,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import VERSION
+from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
@@ -66,6 +67,29 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         self._client = AzureTable(self.url, pipeline=self._pipeline, loop=loop)
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable = W0212
         self._loop = loop
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str,  # type: str
+            table_name,  # type: str
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> TableClient
+        """Create TableClient from a Connection String.
+
+        :param conn_str:
+            A connection string to an Azure Storage or Cosmos account.
+        :type conn_str: str
+        :param table_name: The table name.
+        :type table_name: str
+        :returns: A table client.
+        :rtype: ~azure.data.tables.TableClient
+        """
+        account_url, secondary, credential = parse_connection_str(
+            conn_str=conn_str, credential=None, service='table')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(account_url, table_name=table_name, credential=credential, **kwargs)  # type: ignore
 
     @distributed_trace_async
     async def get_table_access_policy(

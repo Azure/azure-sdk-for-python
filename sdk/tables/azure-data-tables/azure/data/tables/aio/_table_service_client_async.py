@@ -17,6 +17,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .. import VERSION, LocationMode
+from .._base_client import parse_connection_str
 from .._generated.aio._azure_table_async import AzureTable
 from .._generated.models import TableServiceProperties, TableProperties, QueryOptions
 from .._models import service_stats_deserialize, service_properties_deserialize
@@ -85,6 +86,25 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         self._client = AzureTable(url=self.url, pipeline=self._pipeline, loop=loop)  # type: ignore
         self._client._config.version = kwargs.get('api_version', VERSION)  # pylint: disable=protected-access
         self._loop = loop
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str,  # type: str
+            **kwargs  # type: Any
+    ):  # type: (...) -> TableServiceClient
+        """Create TableServiceClient from a Connection String.
+
+        :param conn_str:
+            A connection string to an Azure Storage or Cosmos account.
+        :type conn_str: str
+        :returns: A Table service client.
+        :rtype: ~azure.data.tables.TableServiceClient
+        """
+        account_url, secondary, credential = parse_connection_str(
+            conn_str=conn_str, credential=None, service='table')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_service_stats(self, **kwargs):

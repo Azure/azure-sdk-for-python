@@ -143,8 +143,8 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            # self.assertTrue(service.primary_endpoint.startswith(
-            #     'https://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
+            self.assertTrue(service._primary_endpoint.startswith(
+                'https://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
             # self.assertTrue(service.secondary_endpoint.startswith(
             #     'https://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
 
@@ -244,7 +244,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(service.url.startswith('https://' + storage_account.name + '.table.cosmos.azure.com'))
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            # self.assertTrue(service.primary_endpoint.startswith('https://' + storage_account.name + '.table.cosmos.azure.com'))
+            self.assertTrue(service._primary_endpoint.startswith('https://' + storage_account.name + '.table.cosmos.azure.com'))
             # self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.cosmos.azure.com'))
             self.assertEqual(service.scheme, 'https')
 
@@ -264,9 +264,9 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            # self.assertTrue(
-            #     service.primary_endpoint.startswith(
-            #         'http://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
+            self.assertTrue(
+                service._primary_endpoint.startswith(
+                    'http://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
             # self.assertTrue(
             #     service.secondary_endpoint.startswith(
             #         'http://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
@@ -299,7 +299,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            # self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com'))
+            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
             # self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.core.windows.net'))
 
     #@pytest.mark.skip("pending")
@@ -318,7 +318,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            # self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com'))
+            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
             # self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.core.windows.net'))
 
     #@pytest.mark.skip("pending")
@@ -338,7 +338,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            # self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com'))
+            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
             # self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com'))
 
     #@pytest.mark.skip("pending")
@@ -375,7 +375,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.account_name, storage_account.name)
             self.assertEqual(service.credential.account_name, storage_account.name)
             self.assertEqual(service.credential.account_key, storage_account_key)
-            # self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com'))
+            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
             # self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com'))
 
     # @pytest.mark.skip("pending")
